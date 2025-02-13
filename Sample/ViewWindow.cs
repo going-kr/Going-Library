@@ -26,16 +26,20 @@ using System.Reflection.Metadata;
 using System.Drawing;
 using Going.UI.Utils;
 using Going.UI.Datas;
+using Going.UI.Containers;
+using Going.UI.Collections;
 
 namespace Sample
 {
-    public class ViewWindow : GameWindow
+    public class ViewWindow : GameWindow, IGoContainer
     {
         #region Properties
         public int Width => Size.X;
         public int Height => Size.Y;
 
         public bool Debug { get; set; } = false;
+
+        public GoControlCollection Childrens { get; } = [];
         #endregion
 
         #region Member Variable
@@ -61,7 +65,9 @@ namespace Sample
         {
             if (Environment.OSVersion.Platform == PlatformID.Unix) this.WindowState = WindowState.Fullscreen;
 
-            
+            Childrens.Initialize(this);
+            Childrens.Add(new GoLabel { Left = 10, Top = 10, Width = 120, Height = 150, Text = "동해물과 백두산이 마르고 닳도록\n하느님이 보우하사 우리 나라 만세\n무궁화 삼천리 화려강산\n대한 사람 대한으로 길이 보전하세", BorderOnly = true, ContentAlignment = GoContentAlignment.TopLeft, TextPadding = new GoPadding(10) });
+            Childrens.Add(new GoButton { Left = 200, Top = 10, Width = 90, Height = 40, IconString = "fa-check", Text = "확인" });
         }
         #endregion
 
@@ -113,6 +119,7 @@ namespace Sample
                 canvas.Clear(new SKColor(32, 32, 32));
 
                 var topMargin = 0;
+                var borderWidth = 0;
                 using (new SKAutoCanvasRestore(canvas))
                 {
                     #region Translate
@@ -124,22 +131,23 @@ namespace Sample
                         var borderX = ((windowRect.right - windowRect.left) - clientRect.right) / 2;
                         var titleH = (windowRect.bottom - windowRect.top) - clientRect.bottom - borderX;
                         topMargin = titleH + borderX;
+                        borderWidth = borderX * 2;
                         canvas.Translate(0, titleH + borderX);
                     }
                     #endregion
                     #region Draw Content
-                    UI.Draw(canvas, [lbl, btn]);
+                    UI.Draw(canvas, Childrens);
                     #endregion
                     #region Debug
                     if (Debug)
                     {
                         using (var p = new SKPaint { IsAntialias = true })
                         {
-                            var rt = Util.FromRect(0, Height - topMargin - 20, Width, 20);
+                            var rt = Util.FromRect(0, Height - topMargin - 20, Width - borderWidth, 20);
                             p.Color = SKColors.Black;
                             p.IsStroke = false;
                             canvas.DrawRect(rt, p);
-                            Util.DrawText(canvas, $"UpdateTime : {UpdateTime * 1000:0 ms}", "나눔고딕", 12, rt, SKColors.White, GoContentAlignment.MiddleRight);
+                            Util.DrawText(canvas, $"UpdateTime : {UpdateTime * 1000:0 ms} ", "나눔고딕", 12, rt, SKColors.White, GoContentAlignment.MiddleRight);
                         }
                     }
                     #endregion
@@ -156,9 +164,6 @@ namespace Sample
                 }
             }
         }
-
-        GoLabel lbl = new GoLabel { Left = 10, Top = 10, Width = 120, Height = 150, Text = "동해물과 백두산이 마르고 닳도록\n하느님이 보우하사 우리 나라 만세\n무궁화 삼천리 화려강산\n대한 사람 대한으로 길이 보전하세", BorderOnly = true, ContentAlignment = GoContentAlignment.TopLeft, TextPadding = new GoPadding(10) };
-        GoButton btn = new GoButton { Left = 200, Top = 10, Width = 90, Height = 40, IconString = "fa-check", Text = "확인" };
         #endregion
         #region OnUpdateFrame
         protected override void OnUpdateFrame(FrameEventArgs args)
@@ -167,8 +172,7 @@ namespace Sample
 
             if (ctx != null && target != null)
             {
-                lbl.Update();
-                btn.Update();
+                UI.Update(Childrens);
             }
         }
         #endregion
@@ -179,7 +183,7 @@ namespace Sample
             float y = MousePosition.Y;
             GoMouseButton mb = ToGoMouseButton(e.Button);
 
-            UI.MouseDown([lbl, btn], x, y, mb);
+            UI.MouseDown(Childrens, x, y, mb);
 
             base.OnMouseDown(e);
         }
@@ -191,8 +195,8 @@ namespace Sample
             float y = MousePosition.Y;
             GoMouseButton mb = ToGoMouseButton(e.Button);
 
-            UI.MouseUp([lbl, btn], x, y, mb);
-            if ((DateTime.Now - dcTime).TotalMilliseconds < 300) UI.MouseDoubleClick([lbl, btn], x, y, mb);
+            UI.MouseUp(Childrens, x, y, mb);
+            if ((DateTime.Now - dcTime).TotalMilliseconds < 300) UI.MouseDoubleClick(Childrens, x, y, mb);
 
             dcTime = DateTime.Now;
             base.OnMouseUp(e);
@@ -204,7 +208,7 @@ namespace Sample
             float x = MousePosition.X;
             float y = MousePosition.Y;
 
-            UI.MouseMove([lbl, btn], x, y);
+            UI.MouseMove(Childrens, x, y);
 
             base.OnMouseMove(e);
         }
@@ -215,7 +219,7 @@ namespace Sample
             float x = MousePosition.X;
             float y = MousePosition.Y;
 
-            UI.MouseWheel([lbl, btn], x, y, e.OffsetY);
+            UI.MouseWheel(Childrens, x, y, e.OffsetY);
 
             base.OnMouseWheel(e);
         }
@@ -299,7 +303,7 @@ namespace Sample
         {
             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
             {
-                int darkMode =dark ? 1 : 0;
+                int darkMode = dark ? 1 : 0;
                 int result = DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, ref darkMode, sizeof(int));
             }
         }
