@@ -26,7 +26,7 @@ namespace Going.UI.Forms.Controls
         public GoRoundType Round { get => btn.Round; set { if (btn.Round != value) { btn.Round = value; Invalidate(); } } }
 
         public bool BackgroundDraw { get => btn.BackgroundDraw; set { if (btn.BackgroundDraw != value) { btn.BackgroundDraw = value; Invalidate(); } } }
-        public bool BorderOnly { get => btn.BorderOnly; set { if (btn.BackgroundDraw != value) { btn.BorderOnly = value; Invalidate(); } } }
+        public bool BorderOnly { get => btn.BorderOnly; set { if (btn.BorderOnly != value) { btn.BorderOnly = value; Invalidate(); } } }
         #endregion
 
         #region Event
@@ -99,6 +99,23 @@ namespace Going.UI.Forms.Controls
             btn.MouseMove(-1, -1);
             Invalidate();
             base.OnMouseLeave(e);
+        }
+        #endregion
+
+        #region OnEnabledChanged
+        protected override void OnEnabledChanged(EventArgs e)
+        {
+            btn.Enabled = Enabled;
+            Invalidate();
+            base.OnEnabledChanged(e);
+        }
+        #endregion
+        #region OnVisibleChanged
+        protected override void OnVisibleChanged(EventArgs e)
+        {
+            btn.Visible = Visible;
+            Invalidate();
+            base.OnVisibleChanged(e);
         }
         #endregion
         #endregion

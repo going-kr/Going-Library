@@ -27,8 +27,7 @@ using System.Drawing;
 using Going.UI.Utils;
 using Going.UI.Datas;
 using Going.UI.Containers;
-using Going.UI.Collections;
-using GUI = Going.UI.Utils.UI;
+using Going.UI.Themes;
 
 namespace Going.UI.OpenTK
 {
@@ -40,7 +39,7 @@ namespace Going.UI.OpenTK
 
         public bool Debug { get; set; } = false;
 
-        public GoControlCollection Childrens { get; } = [];
+        public List<IGoControl> Childrens { get; } = [];
         #endregion
 
         #region Member Variable
@@ -66,9 +65,11 @@ namespace Going.UI.OpenTK
         {
             if (Environment.OSVersion.Platform == PlatformID.Unix) this.WindowState = WindowState.Fullscreen;
 
-            Childrens.Initialize(this);
-            Childrens.Add(new GoLabel { Left = 10, Top = 10, Width = 120, Height = 150, Text = "동해물과 백두산이 마르고 닳도록\n하느님이 보우하사 우리 나라 만세\n무궁화 삼천리 화려강산\n대한 사람 대한으로 길이 보전하세", BorderOnly = true, ContentAlignment = GoContentAlignment.TopLeft, TextPadding = new GoPadding(10) });
-            Childrens.Add(new GoButton { Left = 200, Top = 10, Width = 90, Height = 40, IconString = "fa-check", Text = "확인" });
+            var pnl = new GoPanel { Left = 20, Top = 20, Width = 500, Height = 300, IconString = "fa-check" };
+            Childrens.Add(pnl);
+
+            pnl.Childrens.Add(new GoLabel { Left = 10, Top = 40, Width = 120, Height = 150, LabelColor = "Base3", Text = "동해물과 백두산이 마르고 닳도록\n하느님이 보우하사 우리 나라 만세\n무궁화 삼천리 화려강산\n대한 사람 대한으로 길이 보전하세", BorderOnly = true, ContentAlignment = GoContentAlignment.TopLeft, TextPadding = new GoPadding(10) });
+            pnl.Childrens.Add(new GoButton { Left = 200, Top = 40, Width = 90, Height = 40, IconString = "fa-check", Text = "확인" });
         }
         #endregion
 
@@ -117,7 +118,7 @@ namespace Going.UI.OpenTK
                 var canvas = surface.Canvas;
 
                 #region Draw
-                canvas.Clear(new SKColor(32, 32, 32));
+                canvas.Clear(GoTheme.Current.Back);
 
                 var topMargin = 0;
                 var borderWidth = 0;
@@ -137,7 +138,7 @@ namespace Going.UI.OpenTK
                     }
                     #endregion
                     #region Draw Content
-                    GUI.Draw(canvas, Childrens);
+                    GUI.Draw(canvas, this);
                     #endregion
                     #region Debug
                     if (Debug)
@@ -173,7 +174,7 @@ namespace Going.UI.OpenTK
 
             if (ctx != null && target != null)
             {
-                GUI.Update(Childrens);
+                GUI.Update(this);
             }
         }
         #endregion
@@ -184,7 +185,7 @@ namespace Going.UI.OpenTK
             float y = MousePosition.Y;
             GoMouseButton mb = ToGoMouseButton(e.Button);
 
-            GUI.MouseDown(Childrens, x, y, mb);
+            GUI.MouseDown(this, x, y, mb);
 
             base.OnMouseDown(e);
         }
@@ -196,8 +197,8 @@ namespace Going.UI.OpenTK
             float y = MousePosition.Y;
             GoMouseButton mb = ToGoMouseButton(e.Button);
 
-            GUI.MouseUp(Childrens, x, y, mb);
-            if ((DateTime.Now - dcTime).TotalMilliseconds < 300) GUI.MouseDoubleClick(Childrens, x, y, mb);
+            GUI.MouseUp(this, x, y, mb);
+            if ((DateTime.Now - dcTime).TotalMilliseconds < 300) GUI.MouseDoubleClick(this, x, y, mb);
 
             dcTime = DateTime.Now;
             base.OnMouseUp(e);
@@ -209,7 +210,7 @@ namespace Going.UI.OpenTK
             float x = MousePosition.X;
             float y = MousePosition.Y;
 
-            GUI.MouseMove(Childrens, x, y);
+            GUI.MouseMove(this, x, y);
 
             base.OnMouseMove(e);
         }
@@ -220,7 +221,7 @@ namespace Going.UI.OpenTK
             float x = MousePosition.X;
             float y = MousePosition.Y;
 
-            GUI.MouseWheel(Childrens, x, y, e.OffsetY);
+            GUI.MouseWheel(this, x, y, e.OffsetY);
 
             base.OnMouseWheel(e);
         }
