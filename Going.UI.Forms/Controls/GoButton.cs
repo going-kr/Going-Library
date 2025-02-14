@@ -34,7 +34,7 @@ namespace Going.UI.Forms.Controls
         #endregion
 
         #region Member Variable
-        UIButton btn = new();
+        UIButton btn = new UIButton();
         #endregion
 
         #region Override
