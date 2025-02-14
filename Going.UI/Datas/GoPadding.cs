@@ -13,7 +13,7 @@ namespace Going.UI.Datas
         public float Right { get; set; }
         public float Bottom { get; set; }
 
-        public GoPadding(float all) => this.Left = this.Top = this.Right = this.Bottom = all;
+        public GoPadding(float all) => Left = Top = Right = Bottom = all;
         public GoPadding(float left, float top, float right, float bottom)
         {
             Left = left;
