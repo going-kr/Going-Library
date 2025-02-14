@@ -19,6 +19,7 @@ namespace Going.UI.Controls
         public float IconSize { get; set; } = 12;
         public GoDirectionHV IconDirection { get; set; }
         public float IconGap { get; set; } = 5;
+
         public string Text { get; set; } = "label";
         public string FontName { get; set; } = "나눔고딕";
         public float FontSize { get; set; } = 12;

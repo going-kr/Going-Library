@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Going.Forms.Controls
+namespace Going.UI.Forms.Controls
 {
     public class GoControl : SKControl
     {
@@ -86,9 +86,11 @@ namespace Going.Forms.Controls
         #endregion
         #endregion
     }
+
+    public class ContentDrawEventArgs(SKCanvas Canvas)
+    {
+        public SKCanvas Canvas { get; } = Canvas;
+    }
 }
 
-public class ContentDrawEventArgs(SKCanvas Canvas)
-{
-    public SKCanvas Canvas { get; } = Canvas;
-}
+

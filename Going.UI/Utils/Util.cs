@@ -27,6 +27,8 @@ namespace Going.UI.Utils
         #region Method
         #region From
         #region FromArgb
+        public static Color FromArgb(SKColor c) => Color.FromArgb(c.Alpha, c.Red, c.Green, c.Blue);
+
         public static SKColor FromArgb(Color c) => new SKColor(c.R, c.G, c.B, c.A);
         public static SKColor FromArgb(int c) => new SKColor(Convert.ToByte(((uint)c & 0xFF0000) >> 16), Convert.ToByte(((uint)c & 0xFF00) >> 8), Convert.ToByte(((uint)c & 0xFF)), Convert.ToByte(((uint)c & 0xFF000000) >> 24));
         public static SKColor FromArgb(byte a, byte r, byte g, byte b) => new SKColor(r, g, b, a);

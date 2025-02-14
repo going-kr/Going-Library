@@ -5,11 +5,13 @@ VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Going.UI", "Going.UI\Going.UI.csproj", "{31108846-9D73-4624-833A-1BDE6A5E981F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample", "Sample\Sample.csproj", "{C393DB56-B67B-48FB-B695-2964B316247F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleOpenTK", "SampleOpenTK\SampleOpenTK.csproj", "{C393DB56-B67B-48FB-B695-2964B316247F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Going.Forms", "Going.Forms\Going.Forms.csproj", "{A014D64F-027B-4EAC-AFDA-87468E27BEB5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Going.UI.Forms", "Going.UI.Forms\Going.UI.Forms.csproj", "{A014D64F-027B-4EAC-AFDA-87468E27BEB5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleForms", "SampleForms\SampleForms.csproj", "{70D5E607-622C-43A3-9408-52CE04F40C7B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Going.UI.OpenTK", "Going.UI.OpenTK\Going.UI.OpenTK.csproj", "{2D61CA91-EE9A-4DD1-8926-01F95AC35393}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{70D5E607-622C-43A3-9408-52CE04F40C7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{70D5E607-622C-43A3-9408-52CE04F40C7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{70D5E607-622C-43A3-9408-52CE04F40C7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D61CA91-EE9A-4DD1-8926-01F95AC35393}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D61CA91-EE9A-4DD1-8926-01F95AC35393}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D61CA91-EE9A-4DD1-8926-01F95AC35393}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D61CA91-EE9A-4DD1-8926-01F95AC35393}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

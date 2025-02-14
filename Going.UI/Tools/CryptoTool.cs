@@ -42,129 +42,136 @@ namespace Going.UI.Tools
         #endregion
 
         #region AES256
-        #region Encrypt
-        public static string EncryptAES256(string Input, string key, Encoding enc = null)
+        public static string EncryptAES256(string input, string key, Encoding? enc = null)
         {
-            if (enc == null) enc = Encoding.UTF8;
-            byte[] xBuff = null;
+            enc ??= Encoding.UTF8;
+            byte[] keyBytes = GetKeyBytes256(key);
+            byte[] iv = GenerateIV();
 
-            using (RijndaelManaged aes = new RijndaelManaged())
+            using (Aes aes = Aes.Create())
             {
-                aes.KeySize = 256;
-                aes.BlockSize = 128;
+                aes.Key = keyBytes;
+                aes.IV = iv;
                 aes.Mode = CipherMode.CBC;
                 aes.Padding = PaddingMode.PKCS7;
-                aes.Key = enc.GetBytes(key);
-                aes.IV = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-                var encrypt = aes.CreateEncryptor(aes.Key, aes.IV);
-                using (var ms = new MemoryStream())
+                using (ICryptoTransform encryptor = aes.CreateEncryptor())
+                using (MemoryStream ms = new MemoryStream())
                 {
-                    using (var cs = new CryptoStream(ms, encrypt, CryptoStreamMode.Write))
+                    ms.Write(iv, 0, iv.Length); // IV를 앞부분에 저장
+                    using (CryptoStream cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
+                    using (StreamWriter sw = new StreamWriter(cs, enc))
                     {
-                        byte[] xXml = enc.GetBytes(Input);
-                        cs.Write(xXml, 0, xXml.Length);
+                        sw.Write(input);
                     }
-
-                    xBuff = ms.ToArray();
+                    return Convert.ToBase64String(ms.ToArray()); // Base64 인코딩
                 }
             }
-
-            if (xBuff != null) return Convert.ToBase64String(xBuff);
-            else return null;
         }
-        #endregion
-        #region Decrypt
-        public static string DecryptAES256(string Input, string key, Encoding enc = null)
-        {
-            if (enc == null) enc = Encoding.UTF8;
-            byte[] xBuff = null;
 
-            using (RijndaelManaged aes = new RijndaelManaged())
+        public static string DecryptAES256(string input, string key, Encoding? enc = null)
+        {
+            enc ??= Encoding.UTF8;
+            byte[] keyBytes = GetKeyBytes256(key);
+            byte[] encryptedBytes = Convert.FromBase64String(input);
+
+            using (Aes aes = Aes.Create())
             {
-                aes.KeySize = 256;
-                aes.BlockSize = 128;
+                aes.Key = keyBytes;
+                aes.IV = new byte[16]; // IV 저장 공간
+                Array.Copy(encryptedBytes, aes.IV, 16); // 저장된 IV 복사
                 aes.Mode = CipherMode.CBC;
                 aes.Padding = PaddingMode.PKCS7;
-                aes.Key = enc.GetBytes(key);
-                aes.IV = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-                var decrypt = aes.CreateDecryptor();
-                using (var ms = new MemoryStream())
+                using (ICryptoTransform decryptor = aes.CreateDecryptor())
+                using (MemoryStream ms = new MemoryStream(encryptedBytes, 16, encryptedBytes.Length - 16))
+                using (CryptoStream cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read))
+                using (StreamReader sr = new StreamReader(cs, enc))
                 {
-                    using (var cs = new CryptoStream(ms, decrypt, CryptoStreamMode.Write))
-                    {
-                        byte[] xXml = Convert.FromBase64String(Input);
-                        cs.Write(xXml, 0, xXml.Length);
-                    }
-
-                    xBuff = ms.ToArray();
+                    return sr.ReadToEnd();
                 }
             }
-            if (xBuff != null) return enc.GetString(xBuff);
-            else return null;
         }
-        #endregion
+
+        private static byte[] GetKeyBytes256(string key)
+        {
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                return sha256.ComputeHash(Encoding.UTF8.GetBytes(key));
+            }
+        }
+
         #endregion
 
         #region AES128
-        #region Encrypt
-        public static string EncryptAES128(string Input, string key, Encoding enc = null)
+        public static string EncryptAES128(string input, string key, Encoding enc = null)
         {
-            if (enc == null) enc = Encoding.UTF8;
+            enc ??= Encoding.UTF8;
+            byte[] keyBytes = GetKeyBytes128(key);
+            byte[] iv = GenerateIV();
 
-            byte[] CipherBytes = null;
-            using (RijndaelManaged RijndaelCipher = new RijndaelManaged())
+            using (Aes aes = Aes.Create())
             {
-                byte[] PlainText = enc.GetBytes(Input);
-                byte[] Salt = enc.GetBytes(key.Length.ToString());
+                aes.Key = keyBytes;
+                aes.IV = iv;
+                aes.Mode = CipherMode.CBC;
+                aes.Padding = PaddingMode.PKCS7;
 
-                PasswordDeriveBytes SecretKey = new PasswordDeriveBytes(key, Salt);
-                ICryptoTransform Encryptor = RijndaelCipher.CreateEncryptor(SecretKey.GetBytes(32), SecretKey.GetBytes(16));
-
-                MemoryStream memoryStream = new MemoryStream();
-                CryptoStream cryptoStream = new CryptoStream(memoryStream, Encryptor, CryptoStreamMode.Write);
-
-                cryptoStream.Write(PlainText, 0, PlainText.Length);
-                cryptoStream.FlushFinalBlock();
-
-                CipherBytes = memoryStream.ToArray();
-
-                memoryStream.Close();
-                cryptoStream.Close();
+                using (ICryptoTransform encryptor = aes.CreateEncryptor())
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    ms.Write(iv, 0, iv.Length); // IV를 앞부분에 저장
+                    using (CryptoStream cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
+                    using (StreamWriter sw = new StreamWriter(cs, enc))
+                    {
+                        sw.Write(input);
+                    }
+                    return Convert.ToBase64String(ms.ToArray()); // Base64 인코딩
+                }
             }
-
-            if (CipherBytes != null) return Convert.ToBase64String(CipherBytes);
-            else return null;
         }
-        #endregion
-        #region Decrypt
-        public static string DecryptAES128(string Input, string key, Encoding enc = null)
+
+        public static string DecryptAES128(string input, string key, Encoding enc = null)
         {
-            if (enc == null) enc = Encoding.UTF8;
+            enc ??= Encoding.UTF8;
+            byte[] keyBytes = GetKeyBytes128(key);
+            byte[] encryptedBytes = Convert.FromBase64String(input);
 
-            byte[] PlainText = null;
-            int DecryptedCount = 0;
-            using (RijndaelManaged RijndaelCipher = new RijndaelManaged())
+            using (Aes aes = Aes.Create())
             {
-                byte[] EncryptedData = Convert.FromBase64String(Input);
-                byte[] Salt = enc.GetBytes(key.Length.ToString());
+                aes.Key = keyBytes;
+                aes.IV = new byte[16]; // IV 저장 공간
+                Array.Copy(encryptedBytes, aes.IV, 16); // 저장된 IV 복사
+                aes.Mode = CipherMode.CBC;
+                aes.Padding = PaddingMode.PKCS7;
 
-                PasswordDeriveBytes SecretKey = new PasswordDeriveBytes(key, Salt);
-                ICryptoTransform Decryptor = RijndaelCipher.CreateDecryptor(SecretKey.GetBytes(32), SecretKey.GetBytes(16));
-                MemoryStream memoryStream = new MemoryStream(EncryptedData);
-                CryptoStream cryptoStream = new CryptoStream(memoryStream, Decryptor, CryptoStreamMode.Read);
-
-                PlainText = new byte[EncryptedData.Length];
-                DecryptedCount = cryptoStream.Read(PlainText, 0, PlainText.Length);
-
-                memoryStream.Close();
-                cryptoStream.Close();
+                using (ICryptoTransform decryptor = aes.CreateDecryptor())
+                using (MemoryStream ms = new MemoryStream(encryptedBytes, 16, encryptedBytes.Length - 16))
+                using (CryptoStream cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read))
+                using (StreamReader sr = new StreamReader(cs, enc))
+                {
+                    return sr.ReadToEnd();
+                }
             }
-            if (PlainText != null) return enc.GetString(PlainText, 0, DecryptedCount);
-            else return null;
         }
-        #endregion
+
+        private static byte[] GetKeyBytes128(string key)
+        {
+            using (MD5 md5 = MD5.Create()) // AES-128은 16바이트 키 필요 → MD5 해시 사용
+            {
+                return md5.ComputeHash(Encoding.UTF8.GetBytes(key)); // 16바이트 키 생성
+            }
+        }
+
+        private static byte[] GenerateIV()
+        {
+            byte[] iv = new byte[16];
+            using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(iv);
+            }
+            return iv;
+        }
         #endregion
     }
 }

@@ -28,10 +28,11 @@ using Going.UI.Utils;
 using Going.UI.Datas;
 using Going.UI.Containers;
 using Going.UI.Collections;
+using GUI = Going.UI.Utils.UI;
 
-namespace Sample
+namespace Going.UI.OpenTK
 {
-    public class ViewWindow : GameWindow, IGoContainer
+    public class GoViewWindow : GameWindow, IGoContainer
     {
         #region Properties
         public int Width => Size.X;
@@ -53,10 +54,10 @@ namespace Sample
         #endregion
 
         #region Constructor
-        public ViewWindow(int width, int height)
+        public GoViewWindow(int width, int height, WindowBorder Style)
             : base(GameWindowSettings.Default, new NativeWindowSettings()
             {
-                WindowBorder = WindowBorder.Resizable,
+                WindowBorder = Style,
                 ClientSize = new Vector2i(width, height),
                 StartVisible = false,
                 API = (Environment.OSVersion.Platform == PlatformID.Unix ? ContextAPI.OpenGLES : ContextAPI.OpenGL),
@@ -136,7 +137,7 @@ namespace Sample
                     }
                     #endregion
                     #region Draw Content
-                    UI.Draw(canvas, Childrens);
+                    GUI.Draw(canvas, Childrens);
                     #endregion
                     #region Debug
                     if (Debug)
@@ -172,7 +173,7 @@ namespace Sample
 
             if (ctx != null && target != null)
             {
-                UI.Update(Childrens);
+                GUI.Update(Childrens);
             }
         }
         #endregion
@@ -183,7 +184,7 @@ namespace Sample
             float y = MousePosition.Y;
             GoMouseButton mb = ToGoMouseButton(e.Button);
 
-            UI.MouseDown(Childrens, x, y, mb);
+            GUI.MouseDown(Childrens, x, y, mb);
 
             base.OnMouseDown(e);
         }
@@ -195,8 +196,8 @@ namespace Sample
             float y = MousePosition.Y;
             GoMouseButton mb = ToGoMouseButton(e.Button);
 
-            UI.MouseUp(Childrens, x, y, mb);
-            if ((DateTime.Now - dcTime).TotalMilliseconds < 300) UI.MouseDoubleClick(Childrens, x, y, mb);
+            GUI.MouseUp(Childrens, x, y, mb);
+            if ((DateTime.Now - dcTime).TotalMilliseconds < 300) GUI.MouseDoubleClick(Childrens, x, y, mb);
 
             dcTime = DateTime.Now;
             base.OnMouseUp(e);
@@ -208,7 +209,7 @@ namespace Sample
             float x = MousePosition.X;
             float y = MousePosition.Y;
 
-            UI.MouseMove(Childrens, x, y);
+            GUI.MouseMove(Childrens, x, y);
 
             base.OnMouseMove(e);
         }
@@ -219,7 +220,7 @@ namespace Sample
             float x = MousePosition.X;
             float y = MousePosition.Y;
 
-            UI.MouseWheel(Childrens, x, y, e.OffsetY);
+            GUI.MouseWheel(Childrens, x, y, e.OffsetY);
 
             base.OnMouseWheel(e);
         }

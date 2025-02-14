@@ -9,11 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="OpenTK" Version="4.9.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Going.UI\Going.UI.csproj" />
+    <ProjectReference Include="..\Going.UI.OpenTK\Going.UI.OpenTK.csproj" />
   </ItemGroup>
 
 </Project>

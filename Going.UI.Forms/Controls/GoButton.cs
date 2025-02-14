@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UIButton = Going.UI.Controls.GoButton;
 
-namespace Going.Forms.Controls
+namespace Going.UI.Forms.Controls
 {
     public class GoButton : GoControl
     {
@@ -27,6 +27,10 @@ namespace Going.Forms.Controls
 
         public bool BackgroundDraw { get => btn.BackgroundDraw; set { if (btn.BackgroundDraw != value) { btn.BackgroundDraw = value; Invalidate(); } } }
         public bool BorderOnly { get => btn.BorderOnly; set { if (btn.BackgroundDraw != value) { btn.BorderOnly = value; Invalidate(); } } }
+        #endregion
+
+        #region Event
+        public event EventHandler ButtonClicked { add => btn.ButtonClicked += value; remove => btn.ButtonClicked -= value; }
         #endregion
 
         #region Member Variable
@@ -98,7 +102,5 @@ namespace Going.Forms.Controls
         }
         #endregion
         #endregion
-
-
     }
 }
