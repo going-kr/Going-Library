@@ -14,14 +14,14 @@ namespace Going.UI.Datas
         public float Bottom { get; set; }
 
         public GoPadding(float all) => this.Left = this.Top = this.Right = this.Bottom = all;
-        public GoPadding(float Left, float Top, float Right, float Bottom)
+        public GoPadding(float left, float top, float right, float bottom)
         {
-            this.Left = Left;
-            this.Top = Top;
-            this.Right = Right;
-            this.Bottom = Bottom;
+            Left = left;
+            Top = top;
+            Right = right;
+            Bottom = bottom;
         }
 
-        //주석
+        // 주석은 이렇게 다는 겁니다.
     }
 }
