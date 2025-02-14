@@ -21,5 +21,7 @@ namespace Going.UI.Datas
             this.Right = Right;
             this.Bottom = Bottom;
         }
+
+        // 주석은 이렇게 다는 겁니다.
     }
 }
