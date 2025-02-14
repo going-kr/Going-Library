@@ -21,5 +21,7 @@ namespace Going.UI.Datas
             this.Right = Right;
             this.Bottom = Bottom;
         }
+
+        //주석
     }
 }
