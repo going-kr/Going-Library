@@ -13,36 +13,43 @@ namespace Going.UI.Forms.Controls
     public class GoButton : GoControl
     {
         #region Properties
-        public string? IconString { get => btn.IconString; set { if (btn.IconString != value) { btn.IconString = value; Invalidate(); } } }
-        public float IconSize { get => btn.IconSize; set { if (btn.IconSize != value) { btn.IconSize = value; Invalidate(); } } }
-        public GoDirectionHV IconDirection { get => btn.IconDirection; set { if (btn.IconDirection != value) { btn.IconDirection = value; Invalidate(); } } }
-        public float IconGap { get => btn.IconGap; set { if (btn.IconGap != value) { btn.IconGap = value; Invalidate(); } } }
-        public override string Text { get => btn.Text; set { if (btn.Text != value) { btn.Text = value; Invalidate(); } } }
-        public string FontName { get => btn.FontName; set { if (btn.FontName != value) { btn.FontName = value; Invalidate(); } } }
-        public float FontSize { get => btn.FontSize; set { if (btn.FontSize != value) { btn.FontSize = value; Invalidate(); } } }
+        public string? IconString { get => control.IconString; set { if (control.IconString != value) { control.IconString = value; Invalidate(); } } }
+        public float IconSize { get => control.IconSize; set { if (control.IconSize != value) { control.IconSize = value; Invalidate(); } } }
+        public GoDirectionHV IconDirection { get => control.IconDirection; set { if (control.IconDirection != value) { control.IconDirection = value; Invalidate(); } } }
+        public float IconGap { get => control.IconGap; set { if (control.IconGap != value) { control.IconGap = value; Invalidate(); } } }
+        public override string Text { get => control.Text; set { if (control.Text != value) { control.Text = value; Invalidate(); } } }
+        public string FontName { get => control.FontName; set { if (control.FontName != value) { control.FontName = value; Invalidate(); } } }
+        public float FontSize { get => control.FontSize; set { if (control.FontSize != value) { control.FontSize = value; Invalidate(); } } }
 
-        public string TextColor { get => btn.TextColor; set { if (btn.TextColor != value) { btn.TextColor = value; Invalidate(); } } }
-        public string ButtonColor { get => btn.ButtonColor; set { if (btn.ButtonColor != value) { btn.ButtonColor = value; Invalidate(); } } }
-        public GoRoundType Round { get => btn.Round; set { if (btn.Round != value) { btn.Round = value; Invalidate(); } } }
+        public string TextColor { get => control.TextColor; set { if (control.TextColor != value) { control.TextColor = value; Invalidate(); } } }
+        public string ButtonColor { get => control.ButtonColor; set { if (control.ButtonColor != value) { control.ButtonColor = value; Invalidate(); } } }
+        public GoRoundType Round { get => control.Round; set { if (control.Round != value) { control.Round = value; Invalidate(); } } }
 
-        public bool BackgroundDraw { get => btn.BackgroundDraw; set { if (btn.BackgroundDraw != value) { btn.BackgroundDraw = value; Invalidate(); } } }
-        public bool BorderOnly { get => btn.BorderOnly; set { if (btn.BorderOnly != value) { btn.BorderOnly = value; Invalidate(); } } }
+        public bool BackgroundDraw { get => control.BackgroundDraw; set { if (control.BackgroundDraw != value) { control.BackgroundDraw = value; Invalidate(); } } }
+        public bool BorderOnly { get => control.BorderOnly; set { if (control.BorderOnly != value) { control.BorderOnly = value; Invalidate(); } } }
         #endregion
 
         #region Event
-        public event EventHandler ButtonClicked { add => btn.ButtonClicked += value; remove => btn.ButtonClicked -= value; }
+        public event EventHandler ButtonClicked { add => control.ButtonClicked += value; remove => control.ButtonClicked -= value; }
         #endregion
 
         #region Member Variable
-        UIButton btn = new UIButton();
+        UIButton control = new UIButton();
+        #endregion
+
+        #region Constructor
+        public GoButton()
+        {
+            SetStyle(ControlStyles.Selectable, true);
+        }
         #endregion
 
         #region Override
         #region OnContentDraw
         protected override void OnContentDraw(ContentDrawEventArgs e)
         {
-            btn.Bounds = Util.FromRect(0, 0, Width, Height);
-            btn.Draw(e.Canvas);
+            control.Bounds = Util.FromRect(0, 0, Width, Height);
+            control.Draw(e.Canvas);
             base.OnContentDraw(e);
         }
         #endregion
@@ -50,7 +57,8 @@ namespace Going.UI.Forms.Controls
         #region OnMouseDown
         protected override void OnMouseDown(MouseEventArgs e)
         {
-            btn.MouseDown(e.X, e.Y, ToGoMouseButton(e.Button));
+            Select();
+            control.MouseDown(e.X, e.Y, ToGoMouseButton(e.Button));
             Invalidate();
             base.OnMouseDown(e);
         }
@@ -58,7 +66,7 @@ namespace Going.UI.Forms.Controls
         #region OnMouseUp
         protected override void OnMouseUp(MouseEventArgs e)
         {
-            btn.MouseUp(e.X, e.Y, ToGoMouseButton(e.Button));
+            control.MouseUp(e.X, e.Y, ToGoMouseButton(e.Button));
             Invalidate();
             base.OnMouseUp(e);
         }
@@ -66,7 +74,7 @@ namespace Going.UI.Forms.Controls
         #region OnMouseMove
         protected override void OnMouseMove(MouseEventArgs e)
         {
-            btn.MouseMove(e.X, e.Y);
+            control.MouseMove(e.X, e.Y);
             Invalidate();
             base.OnMouseMove(e);
         }
@@ -74,21 +82,21 @@ namespace Going.UI.Forms.Controls
         #region OnMouseDown
         protected override void OnMouseDoubleClick(MouseEventArgs e)
         {
-            btn.MouseDoubleClick(e.X, e.Y, ToGoMouseButton(e.Button));
+            control.MouseDoubleClick(e.X, e.Y, ToGoMouseButton(e.Button));
             base.OnMouseDoubleClick(e);
         }
         #endregion
         #region OnMouseWheel
         protected override void OnMouseWheel(MouseEventArgs e)
         {
-            btn.MouseWheel(e.X, e.Y, e.Delta / 120F);
+            control.MouseWheel(e.X, e.Y, e.Delta / 120F);
             base.OnMouseWheel(e);
         }
         #endregion
         #region OnMouseEnter
         protected override void OnMouseEnter(EventArgs e)
         {
-            btn.MouseMove(0, 0);
+            control.MouseMove(0, 0);
             Invalidate();
             base.OnMouseEnter(e);
         }
@@ -96,7 +104,7 @@ namespace Going.UI.Forms.Controls
         #region OnMouseLeave
         protected override void OnMouseLeave(EventArgs e)
         {
-            btn.MouseMove(-1, -1);
+            control.MouseMove(-1, -1);
             Invalidate();
             base.OnMouseLeave(e);
         }
@@ -105,7 +113,7 @@ namespace Going.UI.Forms.Controls
         #region OnEnabledChanged
         protected override void OnEnabledChanged(EventArgs e)
         {
-            btn.Enabled = Enabled;
+            control.Enabled = Enabled;
             Invalidate();
             base.OnEnabledChanged(e);
         }
@@ -113,7 +121,7 @@ namespace Going.UI.Forms.Controls
         #region OnVisibleChanged
         protected override void OnVisibleChanged(EventArgs e)
         {
-            btn.Visible = Visible;
+            control.Visible = Visible;
             Invalidate();
             base.OnVisibleChanged(e);
         }

@@ -28,14 +28,20 @@ using Going.UI.Utils;
 using Going.UI.Datas;
 using Going.UI.Containers;
 using Going.UI.Themes;
+using OpenTK.Windowing.Common.Input;
+using Going.UI.Icons;
+using Image = OpenTK.Windowing.Common.Input.Image;
+using Going.UI.OpenTK.Input;
+using Going.UI.Input;
 
-namespace Going.UI.OpenTK
+namespace Going.UI.OpenTK.Windows
 {
     public class GoViewWindow : GameWindow, IGoContainer
     {
         #region Properties
         public int Width => Size.X;
         public int Height => Size.Y;
+        public string? TItleIconString { get; set; }
 
         public bool Debug { get; set; } = false;
 
@@ -49,7 +55,7 @@ namespace Going.UI.OpenTK
         private SKSurface? surface;
         private DateTime dcTime = DateTime.Now;
         private bool IsFirstRender = true;
-        private IntPtr Handle;
+        private nint Handle;
         #endregion
 
         #region Constructor
@@ -59,17 +65,13 @@ namespace Going.UI.OpenTK
                 WindowBorder = Style,
                 ClientSize = new Vector2i(width, height),
                 StartVisible = false,
-                API = (Environment.OSVersion.Platform == PlatformID.Unix ? ContextAPI.OpenGLES : ContextAPI.OpenGL),
-                APIVersion = (Environment.OSVersion.Platform == PlatformID.Unix ? new Version(3, 1) : new Version(3, 2))
+                API = Environment.OSVersion.Platform == PlatformID.Unix ? ContextAPI.OpenGLES : ContextAPI.OpenGL,
+                APIVersion = Environment.OSVersion.Platform == PlatformID.Unix ? new Version(3, 1) : new Version(3, 2)
             })
         {
-            if (Environment.OSVersion.Platform == PlatformID.Unix) this.WindowState = WindowState.Fullscreen;
+            if (Environment.OSVersion.Platform == PlatformID.Unix) WindowState = WindowState.Fullscreen;
 
-            var pnl = new GoPanel { Left = 20, Top = 20, Width = 500, Height = 300, IconString = "fa-check" };
-            Childrens.Add(pnl);
-
-            pnl.Childrens.Add(new GoLabel { Left = 10, Top = 40, Width = 120, Height = 150, LabelColor = "Base3", Text = "동해물과 백두산이 마르고 닳도록\n하느님이 보우하사 우리 나라 만세\n무궁화 삼천리 화려강산\n대한 사람 대한으로 길이 보전하세", BorderOnly = true, ContentAlignment = GoContentAlignment.TopLeft, TextPadding = new GoPadding(10) });
-            pnl.Childrens.Add(new GoButton { Left = 200, Top = 40, Width = 90, Height = 40, IconString = "fa-check", Text = "확인" });
+            GoInputEventer.Current.InputString += OpenTKInputManager.Current.InputString;
         }
         #endregion
 
@@ -130,16 +132,34 @@ namespace Going.UI.OpenTK
                         GetWindowRect(Handle, out var windowRect);
                         GetClientRect(Handle, out var clientRect);
 
-                        var borderX = ((windowRect.right - windowRect.left) - clientRect.right) / 2;
-                        var titleH = (windowRect.bottom - windowRect.top) - clientRect.bottom - borderX;
+                        var borderX = (windowRect.right - windowRect.left - clientRect.right) / 2;
+                        var titleH = windowRect.bottom - windowRect.top - clientRect.bottom - borderX;
                         topMargin = titleH + borderX;
                         borderWidth = borderX * 2;
                         canvas.Translate(0, titleH + borderX);
                     }
                     #endregion
-                    #region Draw Content
-                    GUI.Draw(canvas, this);
+
+                    #region Input
+                    if (OpenTKInputManager.Current.IsInput)
+                    {
+                        OpenTKInputManager.Current.ScreenSize = new SKSize(Width - borderWidth, Height - topMargin);
+
+                        var (transY, rtInputBounds) = OpenTKInputManager.Current.InputerBounds();
+                        using (new SKAutoCanvasRestore(canvas))
+                        {
+                            canvas.Translate(0, transY);
+                            GUI.Draw(canvas, this);
+
+                            if (rtInputBounds.HasValue)
+                                Util.DrawBox(canvas, rtInputBounds.Value, SKColors.Transparent, SKColors.Cyan, GoRoundType.All, GoTheme.Current.Corner);
+                        }
+
+                        OpenTKInputManager.Current.Draw(canvas);
+                    }
+                    else GUI.Draw(canvas, this);
                     #endregion
+
                     #region Debug
                     if (Debug)
                     {
@@ -161,6 +181,8 @@ namespace Going.UI.OpenTK
 
                 if (IsFirstRender)
                 {
+                    var ico = CreateTitleIcon();
+                    if (ico != null) Icon = ico;
                     IsFirstRender = false;
                     IsVisible = true;
                 }
@@ -185,7 +207,8 @@ namespace Going.UI.OpenTK
             float y = MousePosition.Y;
             GoMouseButton mb = ToGoMouseButton(e.Button);
 
-            GUI.MouseDown(this, x, y, mb);
+            if (OpenTKInputManager.Current.IsInput) OpenTKInputManager.Current.MouseDown(x, y, mb);
+            else GUI.MouseDown(this, x, y, mb);
 
             base.OnMouseDown(e);
         }
@@ -197,8 +220,12 @@ namespace Going.UI.OpenTK
             float y = MousePosition.Y;
             GoMouseButton mb = ToGoMouseButton(e.Button);
 
-            GUI.MouseUp(this, x, y, mb);
-            if ((DateTime.Now - dcTime).TotalMilliseconds < 300) GUI.MouseDoubleClick(this, x, y, mb);
+            if (OpenTKInputManager.Current.IsInput) OpenTKInputManager.Current.MouseUp(x, y, mb);
+            else
+            {
+                GUI.MouseUp(this, x, y, mb);
+                if ((DateTime.Now - dcTime).TotalMilliseconds < 300) GUI.MouseDoubleClick(this, x, y, mb);
+            }
 
             dcTime = DateTime.Now;
             base.OnMouseUp(e);
@@ -210,7 +237,8 @@ namespace Going.UI.OpenTK
             float x = MousePosition.X;
             float y = MousePosition.Y;
 
-            GUI.MouseMove(this, x, y);
+            if (OpenTKInputManager.Current.IsInput) OpenTKInputManager.Current.MouseMove(x, y);
+            else GUI.MouseMove(this, x, y);
 
             base.OnMouseMove(e);
         }
@@ -280,6 +308,30 @@ namespace Going.UI.OpenTK
             return ret;
         }
         #endregion
+
+        #region CreateTitleIcon
+        WindowIcon? CreateTitleIcon()
+        {
+            WindowIcon? ret = null;
+            if (GoIconManager.Contains(TItleIconString ?? ""))
+            {
+                var iconSize = 16;
+                var color = GoTheme.Current.Fore;
+                using var surface = SKSurface.Create(new SKImageInfo(iconSize, iconSize, SKColorType.Rgba8888));
+                var canvas = surface.Canvas;
+
+                canvas.Clear(SKColors.Transparent);
+                Util.DrawIcon(canvas, TItleIconString, iconSize, Util.FromRect(0, 0, iconSize, iconSize), color);
+
+                using var img = surface.Snapshot();
+                using var bmp = SKBitmap.FromImage(img);
+                byte[] pixels = new byte[bmp.Width * bmp.Height * 4];
+                Marshal.Copy(bmp.GetPixels(), pixels, 0, bmp.Width * bmp.Height * 4);
+                return new WindowIcon(new Image(iconSize, iconSize, pixels));
+            }
+            return ret;
+        }
+        #endregion
         #endregion
 
         #region Interop
@@ -287,13 +339,13 @@ namespace Going.UI.OpenTK
         private const int DWMWA_BACKGROUND_COLOR = 26;
 
         [DllImport("dwmapi.dll", EntryPoint = "DwmSetWindowAttribute")]
-        private static extern int DwmSetWindowAttribute(IntPtr hwnd, int dwAttribute, ref int pvAttribute, int cbAttribute);
+        private static extern int DwmSetWindowAttribute(nint hwnd, int dwAttribute, ref int pvAttribute, int cbAttribute);
 
         [DllImport("user32.dll")]
-        static extern bool GetClientRect(IntPtr hWnd, out RECT lpRect);
+        static extern bool GetClientRect(nint hWnd, out RECT lpRect);
 
         [DllImport("user32.dll")]
-        static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
+        static extern bool GetWindowRect(nint hWnd, out RECT lpRect);
 
         [StructLayout(LayoutKind.Sequential)]
         struct RECT
@@ -301,7 +353,7 @@ namespace Going.UI.OpenTK
             public int left, top, right, bottom;
         }
 
-        void DarkMode(IntPtr hwnd, bool dark)
+        void DarkMode(nint hwnd, bool dark)
         {
             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
             {

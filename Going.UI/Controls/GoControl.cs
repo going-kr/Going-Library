@@ -27,9 +27,10 @@ namespace Going.UI.Controls
         [JsonIgnore] public float Bottom { get => bounds.Bottom; set => bounds.Bottom = value; }
         [JsonIgnore] public float Width { get => bounds.Width; set => bounds.Right = value + bounds.Left; }
         [JsonIgnore] public float Height { get => bounds.Height; set => bounds.Bottom = value + bounds.Top; }
+        [JsonIgnore] public float ScreenX => Parent != null && Parent is GoControl pc ? pc.ScreenX + X : X;
+        [JsonIgnore] public float ScreenY => Parent != null && Parent is GoControl pc ? pc.ScreenY + Y : Y;
 
-
-        [JsonIgnore] public bool FirstRender { get; internal set; } = false;
+        [JsonIgnore] public bool FirstRender { get; internal set; } = true;
         [JsonIgnore] public IGoContainer? Parent { get; internal set; }
         #endregion
 

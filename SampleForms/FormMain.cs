@@ -1,4 +1,5 @@
 using Going.UI.Forms.Dialogs;
+using Going.UI.Forms.Input;
 
 namespace SampleForms
 {

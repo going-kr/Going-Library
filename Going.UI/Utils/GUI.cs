@@ -17,7 +17,8 @@ namespace Going.UI.Utils
         {
             foreach (var c in container.Childrens)
             {
-                if (c.FirstRender && c is GoControl c2) c2.Parent = container;
+                if (c.FirstRender && c is GoControl c2)
+                    c2.Parent = container;
 
                 using (new SKAutoCanvasRestore(canvas))
                 {

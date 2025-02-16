@@ -31,6 +31,8 @@ namespace Going.UI.Controls
         [JsonIgnore] float Height { get; set; }
         [JsonIgnore] bool FirstRender { get; }
         [JsonIgnore] IGoContainer? Parent { get; }
+        [JsonIgnore] float ScreenX { get; }
+        [JsonIgnore] float ScreenY { get; }
 
         void Draw(SKCanvas canvas);
         void Update();

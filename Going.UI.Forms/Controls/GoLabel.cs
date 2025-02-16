@@ -17,51 +17,51 @@ namespace Going.UI.Forms.Controls
     public class GoLabel : GoControl
     {
         #region Properties
-        public string? IconString { get => lbl.IconString; set { if (lbl.IconString != value) { lbl.IconString = value; Invalidate(); } } }
-        public float IconSize { get => lbl.IconSize; set { if (lbl.IconSize != value) { lbl.IconSize = value; Invalidate(); } } }
-        public GoDirectionHV IconDirection { get => lbl.IconDirection; set { if (lbl.IconDirection != value) { lbl.IconDirection = value; Invalidate(); } } }
-        public float IconGap { get => lbl.IconGap; set { if (lbl.IconGap != value) { lbl.IconGap = value; Invalidate(); } } }
+        public string? IconString { get => control.IconString; set { if (control.IconString != value) { control.IconString = value; Invalidate(); } } }
+        public float IconSize { get => control.IconSize; set { if (control.IconSize != value) { control.IconSize = value; Invalidate(); } } }
+        public GoDirectionHV IconDirection { get => control.IconDirection; set { if (control.IconDirection != value) { control.IconDirection = value; Invalidate(); } } }
+        public float IconGap { get => control.IconGap; set { if (control.IconGap != value) { control.IconGap = value; Invalidate(); } } }
 
         [Editor(typeof(MultilineStringEditor), typeof(UITypeEditor))]
-        public override string Text { get => lbl.Text; set { if (lbl.Text != value) { lbl.Text = value; Invalidate(); } } }
-        public string FontName { get => lbl.FontName; set { if (lbl.FontName != value) { lbl.FontName = value; Invalidate(); } } }
-        public float FontSize { get => lbl.FontSize; set { if (lbl.FontSize != value) { lbl.FontSize = value; Invalidate(); } } }
+        public override string Text { get => control.Text; set { if (control.Text != value) { control.Text = value; Invalidate(); } } }
+        public string FontName { get => control.FontName; set { if (control.FontName != value) { control.FontName = value; Invalidate(); } } }
+        public float FontSize { get => control.FontSize; set { if (control.FontSize != value) { control.FontSize = value; Invalidate(); } } }
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public GoPadding TextPadding
         {
-            get => lbl.TextPadding;
+            get => control.TextPadding;
             set
             {
-                if (lbl.TextPadding.Left != value.Left || lbl.TextPadding.Top != value.Top || 
-                    lbl.TextPadding.Right != value.Right || lbl.TextPadding.Bottom != value.Bottom)
+                if (control.TextPadding.Left != value.Left || control.TextPadding.Top != value.Top || 
+                    control.TextPadding.Right != value.Right || control.TextPadding.Bottom != value.Bottom)
                 {
-                    lbl.TextPadding = value; 
+                    control.TextPadding = value; 
                     Invalidate();
                 }
             }
         }
 
-        public GoContentAlignment ContentAlignment { get => lbl.ContentAlignment; set { if (lbl.ContentAlignment != value) { lbl.ContentAlignment = value; Invalidate(); } } }
+        public GoContentAlignment ContentAlignment { get => control.ContentAlignment; set { if (control.ContentAlignment != value) { control.ContentAlignment = value; Invalidate(); } } }
 
-        public string TextColor { get => lbl.TextColor; set { if (lbl.TextColor != value) { lbl.TextColor = value; Invalidate(); } } }
-        public string LabelColor { get => lbl.LabelColor; set { if (lbl.LabelColor != value) { lbl.LabelColor = value; Invalidate(); } } }
-        public GoRoundType Round { get => lbl.Round; set { if (lbl.Round != value) { lbl.Round = value; Invalidate(); } } }
+        public string TextColor { get => control.TextColor; set { if (control.TextColor != value) { control.TextColor = value; Invalidate(); } } }
+        public string LabelColor { get => control.LabelColor; set { if (control.LabelColor != value) { control.LabelColor = value; Invalidate(); } } }
+        public GoRoundType Round { get => control.Round; set { if (control.Round != value) { control.Round = value; Invalidate(); } } }
 
-        public bool BackgroundDraw { get => lbl.BackgroundDraw; set { if (lbl.BackgroundDraw != value) { lbl.BackgroundDraw = value; Invalidate(); } } }
-        public bool BorderOnly { get => lbl.BorderOnly; set { if (lbl.BorderOnly != value) { lbl.BorderOnly = value; Invalidate(); } } }
+        public bool BackgroundDraw { get => control.BackgroundDraw; set { if (control.BackgroundDraw != value) { control.BackgroundDraw = value; Invalidate(); } } }
+        public bool BorderOnly { get => control.BorderOnly; set { if (control.BorderOnly != value) { control.BorderOnly = value; Invalidate(); } } }
         #endregion
 
         #region Member Variable
-        UILabel lbl = new UILabel();
+        UILabel control = new UILabel();
         #endregion
 
         #region Override
         #region OnContentDraw
         protected override void OnContentDraw(ContentDrawEventArgs e)
         {
-            lbl.Bounds = Util.FromRect(0, 0, Width, Height);
-            lbl.Draw(e.Canvas);
+            control.Bounds = Util.FromRect(0, 0, Width, Height);
+            control.Draw(e.Canvas);
             base.OnContentDraw(e);
         }
         #endregion
@@ -69,7 +69,7 @@ namespace Going.UI.Forms.Controls
         #region OnMouseDown
         protected override void OnMouseDown(MouseEventArgs e)
         {
-            lbl.MouseDown(e.X, e.Y, ToGoMouseButton(e.Button));
+            control.MouseDown(e.X, e.Y, ToGoMouseButton(e.Button));
             Invalidate();
             base.OnMouseDown(e);
         }
@@ -77,7 +77,7 @@ namespace Going.UI.Forms.Controls
         #region OnMouseUp
         protected override void OnMouseUp(MouseEventArgs e)
         {
-            lbl.MouseUp(e.X, e.Y, ToGoMouseButton(e.Button));
+            control.MouseUp(e.X, e.Y, ToGoMouseButton(e.Button));
             Invalidate();
             base.OnMouseUp(e);
         }
@@ -85,7 +85,7 @@ namespace Going.UI.Forms.Controls
         #region OnMouseMove
         protected override void OnMouseMove(MouseEventArgs e)
         {
-            lbl.MouseMove(e.X, e.Y);
+            control.MouseMove(e.X, e.Y);
             Invalidate();
             base.OnMouseMove(e);
         }
@@ -93,21 +93,21 @@ namespace Going.UI.Forms.Controls
         #region OnMouseDown
         protected override void OnMouseDoubleClick(MouseEventArgs e)
         {
-            lbl.MouseDoubleClick(e.X, e.Y, ToGoMouseButton(e.Button));
+            control.MouseDoubleClick(e.X, e.Y, ToGoMouseButton(e.Button));
             base.OnMouseDoubleClick(e);
         }
         #endregion
         #region OnMouseWheel
         protected override void OnMouseWheel(MouseEventArgs e)
         {
-            lbl.MouseWheel(e.X, e.Y, e.Delta / 120F);
+            control.MouseWheel(e.X, e.Y, e.Delta / 120F);
             base.OnMouseWheel(e);
         }
         #endregion
         #region OnMouseEnter
         protected override void OnMouseEnter(EventArgs e)
         {
-            lbl.MouseMove(0, 0);
+            control.MouseMove(0, 0);
             Invalidate();
             base.OnMouseEnter(e);
         }
@@ -115,7 +115,7 @@ namespace Going.UI.Forms.Controls
         #region OnMouseLeave
         protected override void OnMouseLeave(EventArgs e)
         {
-            lbl.MouseMove(-1, -1);
+            control.MouseMove(-1, -1);
             Invalidate();
             base.OnMouseLeave(e);
         }
@@ -124,7 +124,7 @@ namespace Going.UI.Forms.Controls
         #region OnEnabledChanged
         protected override void OnEnabledChanged(EventArgs e)
         {
-            lbl.Enabled = Enabled;
+            control.Enabled = Enabled;
             Invalidate();
             base.OnEnabledChanged(e);
         }
@@ -132,7 +132,7 @@ namespace Going.UI.Forms.Controls
         #region OnVisibleChanged
         protected override void OnVisibleChanged(EventArgs e)
         {
-            lbl.Visible = Visible;
+            control.Visible = Visible;
             Invalidate();
             base.OnVisibleChanged(e);
         }

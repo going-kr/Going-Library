@@ -65,6 +65,7 @@ namespace Going.UI.Forms.Controls
         {
             var cBack = GoTheme.Current.ToColor(BackgroundColor);
             e.Surface.Canvas.Clear(cBack);
+
             OnContentDraw(new ContentDrawEventArgs(e.Surface.Canvas));
 
             base.OnPaintSurface(e);
