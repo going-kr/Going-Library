@@ -60,7 +60,8 @@ namespace Going.UI.Forms.Input
             {
                 int WM_LBUTTONDOWN = 0x0201;
                 int WM_RBUTTONDOWN = 0x0204;
-
+                
+                // 해당 마우스 이벤트 메세지를 내가 먼저 볼 수 있게 만드는 객체 : IMessageFilter, Message 객체로 후킹 가능
                 if (m.Msg == WM_LBUTTONDOWN || m.Msg == WM_RBUTTONDOWN)
                 {
                     int x = m.LParam.ToInt32() & 0xFFFF;
