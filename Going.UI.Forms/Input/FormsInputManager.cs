@@ -1,4 +1,5 @@
-﻿using Going.UI.Input;
+﻿using Going.UI.Controls;
+using Going.UI.Input;
 using Going.UI.Themes;
 using Going.UI.Tools;
 using Going.UI.Utils;
@@ -45,6 +46,7 @@ namespace Going.UI.Forms.Input
                         InputControl.Controls.Remove(txt);
                         InputControl = null;
                         InputCallback = null;
+                        GoInputEventer.Current.ClearInputControl();
                     }
                 }
             };
@@ -70,6 +72,7 @@ namespace Going.UI.Forms.Input
                         InputControl.Controls.Remove(txt);
                         InputControl = null;
                         InputCallback = null;
+                        GoInputEventer.Current.ClearInputControl();
                     }
                 }
             }
@@ -78,7 +81,7 @@ namespace Going.UI.Forms.Input
         #endregion
 
         #region InputString
-        public void InputString(Control control, SKRect bounds, string fontName, float fontSize, string backColor, string textColor, Action<string> callback, string? value = null)
+        public void InputString(Control control, IGoControl baseControl, SKRect bounds, string fontName, float fontSize, string backColor, string textColor, Action<string> callback, string? value = null)
         {
             if (InputControl == null)
             {
@@ -86,6 +89,7 @@ namespace Going.UI.Forms.Input
                 InputBounds = bounds;
                 InputCallback = callback;
                 InputType = InputType.String;
+                GoInputEventer.Current.SetInputControl(baseControl);
 
                 if (txt.Font.Name != fontName || txt.Font.Size != fontSize / 0.75F)
                 {
