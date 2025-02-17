@@ -140,24 +140,16 @@ namespace Going.UI.OpenTK.Windows
                     }
                     #endregion
 
-                    #region Input
-                    if (OpenTKInputManager.Current.IsInput)
+                    #region Draw
+                    OpenTKInputManager.Current.ScreenSize = new SKSize(Width - borderWidth, Height - topMargin);
+
+                    using (new SKAutoCanvasRestore(canvas))
                     {
-                        OpenTKInputManager.Current.ScreenSize = new SKSize(Width - borderWidth, Height - topMargin);
-
-                        var (transY, rtInputBounds) = OpenTKInputManager.Current.InputerBounds();
-                        using (new SKAutoCanvasRestore(canvas))
-                        {
-                            canvas.Translate(0, transY);
-                            GUI.Draw(canvas, this);
-
-                            if (rtInputBounds.HasValue)
-                                Util.DrawBox(canvas, rtInputBounds.Value, SKColors.Transparent, SKColors.Cyan, GoRoundType.All, GoTheme.Current.Corner);
-                        }
-
-                        OpenTKInputManager.Current.Draw(canvas);
+                        canvas.Translate(0, OpenTKInputManager.Current.TranslateY);
+                        GUI.Draw(canvas, this);
                     }
-                    else GUI.Draw(canvas, this);
+
+                    OpenTKInputManager.Current.Draw(canvas);
                     #endregion
 
                     #region Debug

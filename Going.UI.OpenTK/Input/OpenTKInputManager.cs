@@ -8,6 +8,7 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -23,16 +24,49 @@ namespace Going.UI.OpenTK.Input
         public static OpenTKInputManager Current => _instance.Value;
 
         public bool IsInput => InputControl != null;
-        public IGoControl? InputControl { get; private set; }
-        public SKRect InputBounds { get; private set; }
+        public IGoControl? InputControl => GoInputEventer.Current.InputControl;
         public InputType InputType { get; private set; }
-        private Action<string>? InputCallback;
 
         public SKSize ScreenSize { get => keyboard.ScreenSize; set => keyboard.ScreenSize = value; }
+
+        #region TranslateY
+        public float TranslateY
+        {
+            get
+            {
+                float tranY = 0;
+                if (InputControl != null)
+                {
+                    switch (InputType)
+                    {
+                        case InputType.String:
+                            {
+                                var rt = Util.FromRect(InputControl.ScreenX + InputBounds.Left, InputControl.ScreenY + InputBounds.Top, InputBounds.Width, InputBounds.Height);
+                                if (CollisionTool.Check(keyboard.Bounds, rt))
+                                {
+                                    var ty = ((ScreenSize.Height - keyboard.Bounds.Height) / 2) - rt.MidY;
+
+                                    if (ani.Variable == "set")
+                                        tranY = ani.IsPlaying ? ani.Value(AnimationAccel.DCL, 0, ty) : ty;
+                                    else
+                                        tranY = ani.IsPlaying ? ani.Value(AnimationAccel.DCL, ty, 0) : 0;
+                                }
+                            }
+                            break;
+                    }
+                }
+                return Convert.ToInt32(tranY);
+            }
+        }
+        #endregion
         #endregion
 
         #region Member Variable
-        TKKeyboard keyboard = new TKKeyboard();
+        private TKKeyboard keyboard = new TKKeyboard();
+
+        private SKRect InputBounds;
+        private Action<string>? InputCallback;
+        private Animation ani = new();
         #endregion
 
         #region Constructor
@@ -43,8 +77,7 @@ namespace Going.UI.OpenTK.Input
                 if (InputControl != null && InputCallback != null)
                 {
                     InputCallback(keyboard.Text ?? "");
-                    InputControl = null;
-                    InputCallback = null;
+                    ani.Start(200, "clear", GoInputEventer.Current.ClearInputControl);
                 }
             };
         }
@@ -55,7 +88,9 @@ namespace Going.UI.OpenTK.Input
         {
             if (InputControl == null)
             {
-                InputControl = control;
+                GoInputEventer.Current.SetInputControl(control);
+                ani.Start(200, "set");
+
                 InputBounds = bounds;
                 InputCallback = callback;
                 InputType = InputType.String;
@@ -67,7 +102,7 @@ namespace Going.UI.OpenTK.Input
         #region Draw / Mouse
         public void Draw(SKCanvas canvas)
         {
-            if (InputControl != null)
+            if (InputControl != null && !(ani.IsPlaying && ani.Variable == "clear"))
             {
                 switch (InputType)
                 {
@@ -75,20 +110,19 @@ namespace Going.UI.OpenTK.Input
                 }
             }
         }
-        
+
         public void MouseDown(float x, float y, GoMouseButton button)
         {
-            if (InputControl != null)
+            if (InputControl != null && !(ani.IsPlaying && ani.Variable == "clear"))
             {
                 switch (InputType)
                 {
                     case InputType.String:
                         if (!keyboard.MouseDown(x, y, button))
                         {
-                            if (InputControl != null && InputCallback != null)
+                            if (InputControl != null)
                             {
-                                InputControl = null;
-                                InputCallback = null;
+                                ani.Start(200, "clear", GoInputEventer.Current.ClearInputControl);
                             }
                         }
                         break;
@@ -98,7 +132,7 @@ namespace Going.UI.OpenTK.Input
 
         public void MouseUp(float x, float y, GoMouseButton button)
         {
-            if (InputControl != null)
+            if (InputControl != null && !(ani.IsPlaying && ani.Variable == "clear"))
             {
                 switch (InputType)
                 {
@@ -109,7 +143,7 @@ namespace Going.UI.OpenTK.Input
 
         public void MouseMove(float x, float y)
         {
-            if (InputControl != null)
+            if (InputControl != null && !(ani.IsPlaying && ani.Variable == "clear"))
             {
                 switch (InputType)
                 {
@@ -119,31 +153,7 @@ namespace Going.UI.OpenTK.Input
         }
         #endregion
 
-        #region Input
-        public (float tranY, SKRect? rtInputBounds) InputerBounds()
-        {
-            float tranY = 0;
-            SKRect? rtInputBounds = null;
-            if (InputControl != null)
-            {
-                switch (InputType)
-                {
-                    case InputType.String:
-                        {
-                            var rt = Util.FromRect(InputControl.ScreenX + InputBounds.Left, InputControl.ScreenY + InputBounds.Top, InputBounds.Width, InputBounds.Height);
-                            rtInputBounds = rt;
-                            if (CollisionTool.Check(keyboard.Bounds, rt))
-                            {
-                                tranY = ((ScreenSize.Height - keyboard.Bounds.Height)/ 2) - rt.MidY;
-                                //tranY = -keyboard.Bounds.Height;
-                            }
-                        }
-                        break;
-                }
-            }
-            return (tranY, rtInputBounds);
-        }
-        #endregion
+      
 
     }
 }

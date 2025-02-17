@@ -42,6 +42,8 @@ namespace Going.UI.Themes
         public SKColor Danger { get; set; }
         public SKColor Warning { get; set; }
         public SKColor Good { get; set; }
+
+        public SKColor Input { get; set; }
          
         public int Corner { get; set; } = 5;
         public int Alpha { get; set; }
@@ -156,6 +158,8 @@ namespace Going.UI.Themes
             Danger = SKColors.DarkRed;
             Warning = SKColors.DarkOrange;
             Good = SKColors.Green;
+
+            Input = SKColors.Cyan;
 
             ScrollBar = Base1;
             ScrollCursor = Base3;

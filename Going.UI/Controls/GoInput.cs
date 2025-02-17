@@ -61,6 +61,7 @@ namespace Going.UI.Controls
             var cBorder = thm.ToColor(BorderColor);
             var cFill = thm.ToColor(FillColor);
             var cValue = thm.ToColor(ValueColor);
+            var cInput = thm.Input;
             #endregion
             #region bounds
             var rts = Areas();
@@ -124,7 +125,7 @@ namespace Going.UI.Controls
             Util.DrawBox(canvas, rtBox, SKColors.Transparent, cBorder, Round, thm.Corner);
             #endregion
 
-            #region Hover Border
+            #region Border2
             if (useB)
             {
                 buttonLoop((i, btn, rt) =>
@@ -138,6 +139,8 @@ namespace Going.UI.Controls
                     }
                 });
             }
+
+            if (GoInputEventer.Current.InputControl == this) Util.DrawBox(canvas, rtValue, SKColors.Transparent, cInput, rndValue, thm.Corner);
             #endregion
 
             base.OnDraw(canvas);

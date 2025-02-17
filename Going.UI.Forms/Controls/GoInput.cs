@@ -56,7 +56,7 @@ namespace Going.UI.Forms.Controls
             GoInputEventer.Current.InputString += (c, bounds, callback, value) =>
             {
                 if (c == control)
-                    FormsInputManager.Current.InputString(this, bounds, FontName, FontSize, ValueColor, TextColor, callback, value);
+                    FormsInputManager.Current.InputString(this, control, bounds, FontName, FontSize, ValueColor, TextColor, callback, value);
             };
         }
         #endregion
