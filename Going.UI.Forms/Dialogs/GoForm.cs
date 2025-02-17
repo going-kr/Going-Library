@@ -14,6 +14,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Going.UI.Forms.Input;
 
 namespace Going.UI.Forms.Dialogs
 {
@@ -53,7 +54,7 @@ namespace Going.UI.Forms.Dialogs
             get => strIconString;
             set { if (strIconString != value) { strIconString = value; Invalidate(); } }
         }
-         
+
         public float TitleIconSize
         {
             get => nIconSize;
@@ -149,6 +150,9 @@ namespace Going.UI.Forms.Dialogs
             Font = new Font("나눔고딕", 9);
             ResizeRedraw = true;
             #endregion
+
+            var v = FormsInputManager.Current;
+
         }
         #endregion
 

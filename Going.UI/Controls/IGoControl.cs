@@ -16,6 +16,11 @@ namespace Going.UI.Controls
     {
         string Name { get; set; }
         SKRect Bounds { get; set; }
+        GoPadding Margin { get; set; }
+        bool Fill { get; set; }
+        bool Visible { get; set; }
+        bool Enabled { get; set; }
+
         [JsonIgnore] float X { get; set; }
         [JsonIgnore] float Y { get; set; }
         [JsonIgnore] float Left { get; set; }
@@ -24,10 +29,10 @@ namespace Going.UI.Controls
         [JsonIgnore] float Bottom { get; set; }
         [JsonIgnore] float Width { get; set; }
         [JsonIgnore] float Height { get; set; }
-        GoPadding Margin { get; set; } 
-        bool Fill { get; set; }
-        [JsonIgnore] IGoContainer? Parent { get; set; }
-
+        [JsonIgnore] bool FirstRender { get; }
+        [JsonIgnore] IGoContainer? Parent { get; }
+        [JsonIgnore] float ScreenX { get; }
+        [JsonIgnore] float ScreenY { get; }
 
         void Draw(SKCanvas canvas);
         void Update();

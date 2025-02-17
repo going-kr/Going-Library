@@ -1,3 +1,5 @@
+using Going.UI.Forms.Input;
+
 namespace SampleForms
 {
     internal static class Program

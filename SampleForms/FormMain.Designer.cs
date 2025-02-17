@@ -28,13 +28,25 @@
         /// </summary>
         private void InitializeComponent()
         {
+            Going.UI.Datas.GoButtonInfo goButtonInfo1 = new Going.UI.Datas.GoButtonInfo();
+            Going.UI.Datas.GoButtonInfo goButtonInfo2 = new Going.UI.Datas.GoButtonInfo();
+            Going.UI.Datas.GoButtonInfo goButtonInfo5 = new Going.UI.Datas.GoButtonInfo();
+            Going.UI.Datas.GoButtonInfo goButtonInfo6 = new Going.UI.Datas.GoButtonInfo();
+            Going.UI.Datas.GoButtonInfo goButtonInfo3 = new Going.UI.Datas.GoButtonInfo();
+            Going.UI.Datas.GoButtonInfo goButtonInfo4 = new Going.UI.Datas.GoButtonInfo();
             goButton1 = new Going.UI.Forms.Controls.GoButton();
+            goLabel1 = new Going.UI.Forms.Controls.GoLabel();
+            goPanel2 = new Going.UI.Forms.Containers.GoPanel();
+            goButton2 = new Going.UI.Forms.Controls.GoButton();
+            goInputString1 = new Going.UI.Forms.Controls.GoInputString();
+            goInputString2 = new Going.UI.Forms.Controls.GoInputString();
+            goPanel2.SuspendLayout();
             SuspendLayout();
             // 
             // goButton1
             // 
-            goButton1.BackColor = Color.FromArgb(50, 50, 50);
-            goButton1.BackgroundColor = "Back";
+            goButton1.BackColor = Color.FromArgb(60, 60, 60);
+            goButton1.BackgroundColor = "Base2";
             goButton1.BackgroundDraw = true;
             goButton1.BorderOnly = false;
             goButton1.ButtonColor = "Base3";
@@ -44,14 +56,173 @@
             goButton1.IconGap = 5F;
             goButton1.IconSize = 12F;
             goButton1.IconString = "fa-check";
-            goButton1.Location = new Point(302, 34);
+            goButton1.Location = new Point(166, 53);
             goButton1.Name = "goButton1";
             goButton1.Round = Going.UI.Enums.GoRoundType.All;
-            goButton1.Size = new Size(165, 49);
+            goButton1.Size = new Size(160, 40);
             goButton1.TabIndex = 0;
             goButton1.TabStop = false;
             goButton1.Text = "확인";
             goButton1.TextColor = "Fore";
+            // 
+            // goLabel1
+            // 
+            goLabel1.BackColor = Color.FromArgb(60, 60, 60);
+            goLabel1.BackgroundColor = "Base2";
+            goLabel1.BackgroundDraw = true;
+            goLabel1.BorderOnly = true;
+            goLabel1.ContentAlignment = Going.UI.Enums.GoContentAlignment.TopLeft;
+            goLabel1.FontName = "나눔고딕";
+            goLabel1.FontSize = 12F;
+            goLabel1.IconDirection = Going.UI.Enums.GoDirectionHV.Horizon;
+            goLabel1.IconGap = 5F;
+            goLabel1.IconSize = 12F;
+            goLabel1.IconString = null;
+            goLabel1.LabelColor = "Base3";
+            goLabel1.Location = new Point(13, 53);
+            goLabel1.Name = "goLabel1";
+            goLabel1.Round = Going.UI.Enums.GoRoundType.All;
+            goLabel1.Size = new Size(147, 188);
+            goLabel1.TabIndex = 1;
+            goLabel1.TabStop = false;
+            goLabel1.Text = "동해물과 백두산이 마르고 닳도록 \r\n하나님이 보우하사 우리 나라 만세\r\n무궁화 삼천리 화려강산 \r\n대한 사람 대한으로 길이 보전 하세";
+            goLabel1.TextColor = "Fore";
+            goLabel1.TextPadding.Bottom = 10F;
+            goLabel1.TextPadding.Left = 10F;
+            goLabel1.TextPadding.Right = 10F;
+            goLabel1.TextPadding.Top = 10F;
+            // 
+            // goPanel2
+            // 
+            goPanel2.BackColor = Color.FromArgb(50, 50, 50);
+            goPanel2.BackgroundColor = "Back";
+            goPanel2.BackgroundDraw = true;
+            goPanel2.BorderOnly = false;
+            goButtonInfo1.IconString = "fa-plus";
+            goButtonInfo1.Name = "add";
+            goButtonInfo1.Size = "50%";
+            goButtonInfo1.Text = null;
+            goButtonInfo2.IconString = "fa-minus";
+            goButtonInfo2.Name = "del";
+            goButtonInfo2.Size = "50%";
+            goButtonInfo2.Text = null;
+            goPanel2.Buttons.Add(goButtonInfo1);
+            goPanel2.Buttons.Add(goButtonInfo2);
+            goPanel2.ButtonWidth = 60F;
+            goPanel2.Controls.Add(goInputString2);
+            goPanel2.Controls.Add(goInputString1);
+            goPanel2.Controls.Add(goButton2);
+            goPanel2.Controls.Add(goLabel1);
+            goPanel2.Controls.Add(goButton1);
+            goPanel2.FontName = "나눔고딕";
+            goPanel2.FontSize = 12F;
+            goPanel2.IconDirection = Going.UI.Enums.GoDirectionHV.Horizon;
+            goPanel2.IconGap = 5F;
+            goPanel2.IconSize = 12F;
+            goPanel2.IconString = "fa-check";
+            goPanel2.Location = new Point(60, 35);
+            goPanel2.Name = "goPanel2";
+            goPanel2.Padding = new Padding(10, 50, 10, 10);
+            goPanel2.PanelColor = "Base2";
+            goPanel2.Round = Going.UI.Enums.GoRoundType.All;
+            goPanel2.Size = new Size(509, 254);
+            goPanel2.TabIndex = 2;
+            goPanel2.TabStop = false;
+            goPanel2.Text = "Panel";
+            goPanel2.TextColor = "Fore";
+            goPanel2.TitleHeight = 40F;
+            // 
+            // goButton2
+            // 
+            goButton2.BackColor = Color.FromArgb(60, 60, 60);
+            goButton2.BackgroundColor = "Base2";
+            goButton2.BackgroundDraw = true;
+            goButton2.BorderOnly = false;
+            goButton2.ButtonColor = "danger";
+            goButton2.FontName = "나눔고딕";
+            goButton2.FontSize = 12F;
+            goButton2.IconDirection = Going.UI.Enums.GoDirectionHV.Horizon;
+            goButton2.IconGap = 5F;
+            goButton2.IconSize = 12F;
+            goButton2.IconString = "fa-ban";
+            goButton2.Location = new Point(166, 99);
+            goButton2.Name = "goButton2";
+            goButton2.Round = Going.UI.Enums.GoRoundType.All;
+            goButton2.Size = new Size(160, 40);
+            goButton2.TabIndex = 2;
+            goButton2.TabStop = false;
+            goButton2.Text = "취소";
+            goButton2.TextColor = "Fore";
+            // 
+            // goInputString1
+            // 
+            goInputString1.BackColor = Color.FromArgb(60, 60, 60);
+            goInputString1.BackgroundColor = "Base2";
+            goInputString1.BorderColor = "Base3";
+            goButtonInfo5.IconString = "fa-upload";
+            goButtonInfo5.Name = "up";
+            goButtonInfo5.Size = "50%";
+            goButtonInfo5.Text = null;
+            goButtonInfo6.IconString = "fa-download";
+            goButtonInfo6.Name = "down";
+            goButtonInfo6.Size = "50%";
+            goButtonInfo6.Text = null;
+            goInputString1.Buttons.Add(goButtonInfo5);
+            goInputString1.Buttons.Add(goButtonInfo6);
+            goInputString1.ButtonSize = 80F;
+            goInputString1.Direction = Going.UI.Enums.GoDirectionHV.Horizon;
+            goInputString1.FillColor = "Base3";
+            goInputString1.FontName = "나눔고딕";
+            goInputString1.FontSize = 12F;
+            goInputString1.IconGap = 5F;
+            goInputString1.IconSize = 12F;
+            goInputString1.IconString = null;
+            goInputString1.Location = new Point(166, 155);
+            goInputString1.Name = "goInputString1";
+            goInputString1.Round = Going.UI.Enums.GoRoundType.All;
+            goInputString1.Size = new Size(330, 40);
+            goInputString1.TabIndex = 3;
+            goInputString1.TabStop = false;
+            goInputString1.Text = "goInputString1";
+            goInputString1.TextColor = "Fore";
+            goInputString1.Title = "테스트 1";
+            goInputString1.TitleSize = 100F;
+            goInputString1.ValueColor = "Base1";
+            // 
+            // goInputString2
+            // 
+            goInputString2.BackColor = Color.FromArgb(60, 60, 60);
+            goInputString2.BackgroundColor = "Base2";
+            goInputString2.BorderColor = "Base3";
+            goButtonInfo3.IconString = "fa-upload";
+            goButtonInfo3.Name = "up";
+            goButtonInfo3.Size = "50%";
+            goButtonInfo3.Text = null;
+            goButtonInfo4.IconString = "fa-download";
+            goButtonInfo4.Name = "down";
+            goButtonInfo4.Size = "50%";
+            goButtonInfo4.Text = null;
+            goInputString2.Buttons.Add(goButtonInfo3);
+            goInputString2.Buttons.Add(goButtonInfo4);
+            goInputString2.ButtonSize = 80F;
+            goInputString2.Direction = Going.UI.Enums.GoDirectionHV.Horizon;
+            goInputString2.FillColor = "Base3";
+            goInputString2.FontName = "나눔고딕";
+            goInputString2.FontSize = 12F;
+            goInputString2.IconGap = 5F;
+            goInputString2.IconSize = 12F;
+            goInputString2.IconString = null;
+            goInputString2.Location = new Point(166, 201);
+            goInputString2.Name = "goInputString2";
+            goInputString2.Round = Going.UI.Enums.GoRoundType.All;
+            goInputString2.Size = new Size(330, 40);
+            goInputString2.TabIndex = 4;
+            goInputString2.TabStop = false;
+            goInputString2.Text = "goInputString2";
+            goInputString2.TextColor = "Fore";
+            goInputString2.Title = "테스트 2";
+            goInputString2.TitleSize = 100F;
+            goInputString2.ValueColor = "Base1";
             // 
             // FormMain
             // 
@@ -59,16 +230,23 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(50, 50, 50);
             ClientSize = new Size(800, 450);
-            Controls.Add(goButton1);
+            Controls.Add(goPanel2);
             Name = "FormMain";
             Text = "Sample Window";
             Title = "Sample Window";
             TitleIconString = "fa-check";
+            goPanel2.ResumeLayout(false);
             ResumeLayout(false);
         }
 
         #endregion
 
         private Going.UI.Forms.Controls.GoButton goButton1;
+        private Going.UI.Forms.Controls.GoLabel goLabel1;
+        private Going.UI.Forms.Containers.GoPanel goPanel1;
+        private Going.UI.Forms.Containers.GoPanel goPanel2;
+        private Going.UI.Forms.Controls.GoButton goButton2;
+        private Going.UI.Forms.Controls.GoInputString goInputString1;
+        private Going.UI.Forms.Controls.GoInputString goInputString2;
     }
 }

@@ -1,4 +1,5 @@
-﻿using Going.UI.Collections;
+﻿using Going.UI.Controls;
+using Going.UI.Datas;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,6 @@ namespace Going.UI.Containers
 {
     public interface IGoContainer 
     {
-        GoControlCollection Childrens { get; }
+        List<IGoControl> Childrens { get; }
     }
 }

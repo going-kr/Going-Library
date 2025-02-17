@@ -1,6 +1,7 @@
-﻿using Going.UI.Enums;
+﻿using Going.UI.Containers;
+using Going.UI.Enums;
+using Going.UI.Forms.Controls;
 using Going.UI.Themes;
-using OpenTK.Input;
 using SkiaSharp;
 using SkiaSharp.Views.Desktop;
 using System;
@@ -8,17 +9,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
-namespace Going.UI.Forms.Controls
+namespace Going.UI.Forms.Containers
 {
-    public class GoControl : SKControl
+    public class GoContainer : ContainerControl
     {
         #region Properties
         private string sBackgroundColor = "Back";
         public string BackgroundColor
         {
-            get => sBackgroundColor; 
+            get => sBackgroundColor;
             set
             {
                 if (sBackgroundColor != value)
@@ -39,7 +39,7 @@ namespace Going.UI.Forms.Controls
         #endregion
 
         #region Constructor
-        public GoControl()
+        public GoContainer()
         {
             this.SetStyle(ControlStyles.SupportsTransparentBackColor | ControlStyles.DoubleBuffer | ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
             this.SetStyle(ControlStyles.ResizeRedraw, true);
@@ -61,14 +61,22 @@ namespace Going.UI.Forms.Controls
         protected override void OnEnabledChanged(EventArgs e) { Invalidate(); base.OnEnabledChanged(e); }
         #endregion
         #region OnPaintSurface
-        protected override void OnPaintSurface(SKPaintSurfaceEventArgs e)
+        protected override void OnPaint(PaintEventArgs e)
         {
-            var cBack = GoTheme.Current.ToColor(BackgroundColor);
-            e.Surface.Canvas.Clear(cBack);
+            base.OnPaint(e);
 
-            OnContentDraw(new ContentDrawEventArgs(e.Surface.Canvas));
+            using (var bitmap = new SKBitmap(this.Width, this.Height))
+            using (var canvas = new SKCanvas(bitmap))
+            using (var surface = SKSurface.Create(bitmap.Info))
+            {
+                var cBack = GoTheme.Current.ToColor(BackgroundColor);
+                canvas.Clear(cBack);
 
-            base.OnPaintSurface(e);
+                OnContentDraw(new ContentDrawEventArgs(canvas));
+
+                using (var bmp = bitmap.ToBitmap())
+                    e.Graphics.DrawImage(bmp, new Rectangle(0, 0, bmp.Width, bmp.Height));
+            }
         }
         #endregion
         #region OnContentDraw
@@ -103,11 +111,4 @@ namespace Going.UI.Forms.Controls
         #endregion
         #endregion
     }
-
-    public class ContentDrawEventArgs(SKCanvas Canvas)
-    {
-        public SKCanvas Canvas { get; } = Canvas;
-    }
 }
-
-
