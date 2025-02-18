@@ -72,6 +72,7 @@ namespace Going.UI.OpenTK.Windows
             if (Environment.OSVersion.Platform == PlatformID.Unix) WindowState = WindowState.Fullscreen;
 
             GoInputEventer.Current.InputString += OpenTKInputManager.Current.InputString;
+            GoInputEventer.Current.InputNumber += OpenTKInputManager.Current.InputNumber;
         }
         #endregion
 

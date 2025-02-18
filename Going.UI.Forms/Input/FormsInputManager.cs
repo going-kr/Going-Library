@@ -10,6 +10,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using TextBox = System.Windows.Forms.TextBox;
 
 namespace Going.UI.Forms.Input
 {
@@ -23,11 +25,16 @@ namespace Going.UI.Forms.Input
         public Control? InputControl { get; private set; }
         public SKRect InputBounds { get; private set; }
         public InputType InputType { get; private set; }
-        private Action<string>? InputCallback;
+        
         #endregion
 
         #region Member Variable
-        TextBox txt = new TextBox { BorderStyle = BorderStyle.None, TextAlign = HorizontalAlignment.Center };
+        private TextBox txt = new TextBox { BorderStyle = BorderStyle.None, TextAlign = HorizontalAlignment.Center };
+        private Action<string>? InputCallback;
+        private Type ValueType;
+        private object ValueOrigin;
+        private bool IsMinusInput = false;
+        double vmin, vmax;
         #endregion
 
         #region Constructor
@@ -35,17 +42,58 @@ namespace Going.UI.Forms.Input
         {
             Application.AddMessageFilter(this);
 
-            txt.TextChanged += (o, s) => { if (InputControl != null && InputCallback != null) InputCallback(txt.Text); };
+            txt.TextChanged += (o, s) =>
+            {
+                if (InputControl != null)
+                {
+                    if (InputType == InputType.String) InputCallback?.Invoke(txt.Text);
+                    else
+                    {
+                        var t = ValueType;
+
+                        var selectionStart = txt.SelectionStart;
+                        var selectionLength = txt.SelectionLength;
+                        var newText = String.Empty;
+
+                        #region parse
+                        if (t == typeof(float) || t == typeof(double) || t == typeof(decimal))
+                        {
+                            var bComma = false;
+                            foreach (Char c in txt.Text.ToCharArray())
+                            {
+                                if (Char.IsDigit(c) || Char.IsControl(c) || (c == '.' && !bComma && txt.Text != ".") || (newText.Length == 0 && (c == '-' || c == '+') && IsMinusInput)) newText += c;
+                                if (c == '.' && txt.Text != ".") bComma = true;
+                            }
+                            txt.Text = newText;
+                            txt.SelectionStart = selectionStart <= txt.Text.Length ? selectionStart : txt.Text.Length;
+                        }
+                        else if (t == typeof(sbyte) || t == typeof(short) || t == typeof(int) || t == typeof(long) ||
+                                t == typeof(byte) || t == typeof(ushort) || t == typeof(uint) || t == typeof(ulong))
+                        {
+                            foreach (var c in txt.Text.ToCharArray())
+                            {
+                                if (Char.IsDigit(c) || Char.IsControl(c) || (newText.Length == 0 && (c == '-' || c == '+') && IsMinusInput)) newText += c;
+                            }
+                        }
+                        #endregion
+
+                        txt.Text = newText;
+                        txt.SelectionStart = selectionStart <= txt.Text.Length ? selectionStart : txt.Text.Length;
+                     
+                        InputCallback?.Invoke(txt.Text);
+                    }
+                }
+            };
+
             txt.KeyDown += (o, s) =>
             {
                 if (s.KeyCode == Keys.Escape || s.KeyCode == Keys.Enter)
                 {
-                    if (InputControl != null && InputCallback != null)
+                    if (InputControl != null)
                     {
-                        InputCallback(txt.Text);
+                        InputCallback?.Invoke(txt.Text);
                         InputControl.Controls.Remove(txt);
                         InputControl = null;
-                        InputCallback = null;
                         GoInputEventer.Current.ClearInputControl();
                     }
                 }
@@ -71,7 +119,6 @@ namespace Going.UI.Forms.Input
                     {
                         InputControl.Controls.Remove(txt);
                         InputControl = null;
-                        InputCallback = null;
                         GoInputEventer.Current.ClearInputControl();
                     }
                 }
@@ -105,6 +152,58 @@ namespace Going.UI.Forms.Input
                 txt.BackColor = Util.FromArgb(GoTheme.Current.ToColor(backColor));
                 txt.ForeColor = Util.FromArgb(GoTheme.Current.ToColor(textColor));
                 txt.Text = value;
+
+                InputControl.Controls.Add(txt);
+                txt.Focus();
+                txt.SelectAll();
+            }
+            else txt.Focus();
+        }
+        #endregion
+
+        #region InputNumber
+        public void InputNumber<T>(Control control, IGoControl baseControl, SKRect bounds, string fontName, float fontSize, string backColor, string textColor, Action<string> callback, Type type, object value, object? min, object? max)
+        {
+            if (InputControl == null)
+            {
+                InputControl = control;
+                InputBounds = bounds;
+                InputCallback = callback;
+                InputType = InputType.Number;
+                ValueType = type;
+                ValueOrigin = value;
+
+                #region MinusInput
+                if (type == typeof(sbyte)) { vmax = ((sbyte?)max ?? sbyte.MaxValue); vmin = ((sbyte?)min ?? sbyte.MinValue); IsMinusInput = vmax < 0 || vmin < 0; }
+                else if (type == typeof(short)) { vmax = ((short?)max ?? short.MaxValue); vmin = ((short?)min ?? short.MinValue); IsMinusInput = vmax < 0 || vmin < 0; }
+                else if (type == typeof(int)) { vmax = ((int?)max ?? int.MaxValue); vmin = ((int?)min ?? int.MinValue); IsMinusInput = vmax < 0 || vmin < 0; }
+                else if (type == typeof(long)) { vmax = ((long?)max ?? long.MaxValue); vmin = ((long?)min ?? long.MinValue); IsMinusInput = vmax < 0 || vmin < 0; }
+                else if (type == typeof(byte)) { vmax = ((byte?)max ?? byte.MaxValue); vmin = ((byte?)min ?? byte.MinValue); IsMinusInput = false; }
+                else if (type == typeof(ushort)) { vmax = ((ushort?)max ?? ushort.MaxValue); vmin = ((ushort?)min ?? ushort.MinValue); IsMinusInput = false; }
+                else if (type == typeof(uint)) { vmax = ((uint?)max ?? uint.MaxValue); vmin = ((uint?)min ?? uint.MinValue); IsMinusInput = false; }
+                else if (type == typeof(ulong)) { vmax = ((ulong?)max ?? ulong.MaxValue); vmin = ((ulong?)min ?? ulong.MinValue); IsMinusInput = false; }
+                else if (type == typeof(float)) { vmax = Convert.ToDouble((float?)max ?? float.MaxValue); vmin = Convert.ToDouble((float?)min ?? float.MinValue); IsMinusInput = vmax < 0 || vmin < 0; }
+                else if (type == typeof(double)) { vmax = Convert.ToDouble((double?)max ?? double.MaxValue); vmin = Convert.ToDouble((double?)min ?? double.MinValue); IsMinusInput = vmax < 0 || vmin < 0; }
+                else if (type == typeof(decimal)) { vmax = Convert.ToDouble((decimal?)max ?? decimal.MaxValue); vmin = Convert.ToDouble((decimal?)min ?? decimal.MinValue); IsMinusInput = vmax < 0 || vmin < 0; }
+                else IsMinusInput = false;
+                #endregion
+
+                GoInputEventer.Current.SetInputControl(baseControl);
+
+                if (txt.Font.Name != fontName || txt.Font.Size != fontSize / 0.75F)
+                {
+                    var old = txt.Font;
+                    txt.Font = new Font(fontName, fontSize * 0.75F);
+                    old.Dispose();
+                }
+
+                var rt = bounds;
+                var h = txt.Height;
+                var ass = 1;
+                txt.Bounds = new Rectangle((int)rt.Left + 5, (int)rt.MidY - h / 2 + ass, (int)rt.Width - 10, h);
+                txt.BackColor = Util.FromArgb(GoTheme.Current.ToColor(backColor));
+                txt.ForeColor = Util.FromArgb(GoTheme.Current.ToColor(textColor));
+                txt.Text = ValueTool.ToString(value, null);
 
                 InputControl.Controls.Add(txt);
                 txt.Focus();

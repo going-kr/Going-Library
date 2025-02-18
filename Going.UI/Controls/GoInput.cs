@@ -37,6 +37,7 @@ namespace Going.UI.Controls
 
         public float? ButtonSize { get; set; }
         public List<GoButtonInfo> Buttons { get; set; } = [];
+        public virtual bool Valid => true;
 
         private bool UseTitle => TitleSize.HasValue && TitleSize.Value > 0;
         private bool UseButton => ButtonSize.HasValue && ButtonSize.Value > 0 && Buttons.Count > 0;
@@ -140,7 +141,7 @@ namespace Going.UI.Controls
                 });
             }
 
-            if (GoInputEventer.Current.InputControl == this) Util.DrawBox(canvas, rtValue, SKColors.Transparent, cInput, rndValue, thm.Corner);
+            if (GoInputEventer.Current.InputControl == this) Util.DrawBox(canvas, rtValue, SKColors.Transparent, !Valid ? SKColors.Red : cInput, rndValue, thm.Corner);
             #endregion
 
             base.OnDraw(canvas);
@@ -294,5 +295,95 @@ namespace Going.UI.Controls
         #endregion
     }
 
+    public class GoInputNumber<T> : GoInput where T : struct
+    {
+        #region Value
+        private T sVal = default(T);
+        public T Value
+        {
+            get => sVal;
+            set
+            {
+                if (!sVal.Equals(value))
+                {
+                    sVal = value;
+                    ValueChanged?.Invoke(this, EventArgs.Empty);
+                }
+            }
+        }
 
+        public T? Minimum { get; set; } = null;
+        public T? Maximum { get; set; } = null;
+
+        public string? FormatString { get; set; } = null;
+
+        public override bool Valid => bValid;
+        #endregion
+
+        #region Event
+        public event EventHandler? ValueChanged;
+        #endregion
+
+        #region Member Variable
+        bool bValid = true;
+        T valOrigin;
+        #endregion
+
+        #region Constructor
+        public GoInputNumber()
+        {
+            if (typeof(T) == typeof(sbyte)) { }
+            else if (typeof(T) == typeof(short)) { }
+            else if (typeof(T) == typeof(int)) { }
+            else if (typeof(T) == typeof(long)) { }
+            else if (typeof(T) == typeof(byte)) { }
+            else if (typeof(T) == typeof(ushort)) { }
+            else if (typeof(T) == typeof(uint)) { }
+            else if (typeof(T) == typeof(ulong)) { }
+            else if (typeof(T) == typeof(float)) { }
+            else if (typeof(T) == typeof(double)) { }
+            else if (typeof(T) == typeof(decimal)) { }
+            else throw new Exception("숫자 자료형이 아닙니다");
+        }
+        #endregion
+
+        #region OnDrawValue
+        protected override void OnDrawValue(SKCanvas canvas, SKRect rtValue)
+        {
+            var thm = GoTheme.Current;
+            var cText = thm.ToColor(TextColor);
+
+            var text = ValueTool.ToString(Value, FormatString) ?? "";
+            Util.DrawText(canvas, text, FontName, FontSize, rtValue, cText);
+        }
+        #endregion
+
+        #region OnValueClick
+        protected override void OnValueClick(float x, float y, GoMouseButton button)
+        {
+            bValid = true;
+            valOrigin = Value;
+            GoInputEventer.Current.GenNumber(this, Areas()["Value"], (s) =>
+            {
+                var v = ValueTool.FromString<T>(s);
+                if (v != null) bValid = ValueTool.Valid((T)v, Minimum, Maximum);
+                else bValid = false;
+
+                if (v != null)
+                {
+                    if (bValid) Value = (T)v;
+                    else Value = ValueTool.Constrain((T)v, Minimum, Maximum);
+                }
+                else
+                {
+                    Value = valOrigin;
+                }
+
+            }, Value, Minimum, Maximum);
+        }
+        #endregion
+    }
+
+    public class GoInputInt : GoInputNumber<int> { }
+    public class GoInputDouble : GoInputNumber<double> { }
 }
