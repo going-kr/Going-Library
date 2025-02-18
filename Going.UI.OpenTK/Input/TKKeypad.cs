@@ -20,7 +20,7 @@ namespace Going.UI.OpenTK.Input
     internal class TKKeypad
     {
         #region Const 
-        public int MessageTime = 2000;
+        public int MessageTime = 1000;
         #endregion
 
         #region Properties

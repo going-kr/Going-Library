@@ -1,4 +1,5 @@
-﻿using SkiaSharp;
+﻿using Going.UI.Managers;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;

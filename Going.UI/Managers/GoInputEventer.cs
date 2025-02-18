@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
 
-namespace Going.UI.Input
+namespace Going.UI.Managers
 {
     public class GoInputEventer
     {

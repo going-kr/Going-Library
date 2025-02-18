@@ -8,6 +8,8 @@ namespace SampleForms
         public FormMain()
         {
             InitializeComponent();
+
+            Keys a; ;
         }
     }
 }

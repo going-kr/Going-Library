@@ -30,6 +30,10 @@ view.Childrens.Add(new GoInputInt { Left = 330, Top = 380, Width = 300, Height =
 view.Childrens.Add(new GoInputDouble{ Left = 330, Top = 430, Width = 300, Height = 40, TitleSize = 90, Title = "실수", });
 view.Childrens.Add(new GoInputDouble { Left = 330, Top = 480, Width = 300, Height = 40, TitleSize = 90, Title = "실수\r\n( -20 ~ 50 )", Minimum = -20, Maximum = 100 });
 
+var lb = new GoListBox { Left = 480, Top = 20, Width = 450, Height = 300, SelectionMode = GoItemSelectionMode.Multi };
+view.Childrens.Add(lb);
+for (int i = 1; i <= 100; i++) lb.Items.Add(new() { Text = $"테스트 {i}" });
+
 view.VSync = VSyncMode.On;
 view.CenterWindow();
 view.Run();

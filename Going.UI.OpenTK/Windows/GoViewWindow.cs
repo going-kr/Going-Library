@@ -29,10 +29,9 @@ using Going.UI.Datas;
 using Going.UI.Containers;
 using Going.UI.Themes;
 using OpenTK.Windowing.Common.Input;
-using Going.UI.Icons;
 using Image = OpenTK.Windowing.Common.Input.Image;
 using Going.UI.OpenTK.Input;
-using Going.UI.Input;
+using Going.UI.Managers;
 
 namespace Going.UI.OpenTK.Windows
 {
@@ -260,6 +259,20 @@ namespace Going.UI.OpenTK.Windows
 
             OnRenderFrame(new FrameEventArgs());
             base.OnResize(e);
+        }
+        #endregion
+        #region OnKeyDown
+        protected override void OnKeyDown(KeyboardKeyEventArgs e)
+        {
+            GUI.KeyDown(this, e.Shift, e.Control, e.Alt, (GoKeys)e.Key);
+            base.OnKeyDown(e);
+        }
+        #endregion
+        #region OnKeyUp
+        protected override void OnKeyUp(KeyboardKeyEventArgs e)
+        {
+            GUI.KeyUp(this, e.Shift, e.Control, e.Alt, (GoKeys)e.Key);
+            base.OnKeyDown(e);
         }
         #endregion
         #endregion

@@ -58,6 +58,18 @@ namespace Going.UI.Containers
             base.OnMouseWheel(x, y, delta);
             GUI.MouseWheel(this, x, y, delta);
         }
+
+        protected override void OnKeyDown(bool Shift, bool Control, bool Alt, GoKeys key)
+        {
+            base.OnKeyDown(Shift, Control, Alt, key);
+            GUI.KeyDown(this, Shift, Control, Alt, key);
+        }
+
+        protected override void OnKeyUp(bool Shift, bool Control, bool Alt, GoKeys key)
+        {
+            base.OnKeyUp(Shift, Control, Alt, key);
+            GUI.KeyUp(this, Shift, Control, Alt, key);
+        }
         #endregion
 
         #region Virtual

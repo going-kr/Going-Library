@@ -1,5 +1,5 @@
 ﻿using Going.UI.Controls;
-using Going.UI.Input;
+using Going.UI.Managers;
 using Going.UI.Themes;
 using Going.UI.Tools;
 using Going.UI.Utils;
@@ -31,8 +31,8 @@ namespace Going.UI.Forms.Input
         #region Member Variable
         private TextBox txt = new TextBox { BorderStyle = BorderStyle.None, TextAlign = HorizontalAlignment.Center };
         private Action<string>? InputCallback;
-        private Type ValueType;
-        private object ValueOrigin;
+        private Type? ValueType;
+        private object? ValueOrigin;
         private bool IsMinusInput = false;
         double vmin, vmax;
         #endregion

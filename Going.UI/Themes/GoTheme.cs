@@ -43,8 +43,10 @@ namespace Going.UI.Themes
         public SKColor Warning { get; set; }
         public SKColor Good { get; set; }
 
-        public SKColor Input { get; set; }
-         
+        public SKColor Hignlight { get; set; }
+        public SKColor Error { get; set; }
+        public SKColor Select { get; set; }
+
         public int Corner { get; set; } = 5;
         public int Alpha { get; set; }
         public float DownBrightness { get; set; }
@@ -90,7 +92,11 @@ namespace Going.UI.Themes
                         case "danger": ret = Danger; break;
                         case "warning": ret = Warning; break;
                         case "good": ret = Good; break;
-                             
+
+                        case "hignlight": ret = Hignlight; break;
+                        case "error": ret = Error; break;
+                        case "select": ret = Select; break;
+
                         #region default
                         default:
                             {
@@ -159,7 +165,9 @@ namespace Going.UI.Themes
             Warning = SKColors.DarkOrange;
             Good = SKColors.Green;
 
-            Input = SKColors.Cyan;
+            Hignlight = SKColors.Cyan;
+            Error = SKColors.Red;
+            Select = SKColors.Teal;
 
             ScrollBar = Base1;
             ScrollCursor = Base3;

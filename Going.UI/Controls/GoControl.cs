@@ -2,7 +2,9 @@
 using Going.UI.Controls;
 using Going.UI.Datas;
 using Going.UI.Enums;
+using Going.UI.Managers;
 using Going.UI.Themes;
+using Going.UI.Tools;
 using Going.UI.Utils;
 using SkiaSharp;
 using System.Text.Json.Serialization;
@@ -12,12 +14,15 @@ namespace Going.UI.Controls
     public class GoControl : IGoControl
     {
         #region Properties
+        public static int LongClickTime { get; set; } = 2000;
+
         public string Name { get; set; }
         public SKRect Bounds { get => bounds; set => bounds = value; }
         public GoPadding Margin { get; set; } = new(3, 3, 3, 3);
         public bool Fill { get; set; } = false;
         public bool Visible { get; set; } = true;
         public bool Enabled { get; set; } = true;
+        public bool Selectable { get; protected set; } = false;
 
         [JsonIgnore] public float X { get => bounds.Left; set => bounds.Left = value; }
         [JsonIgnore] public float Y { get => bounds.Top; set => bounds.Top = value; }
@@ -34,20 +39,40 @@ namespace Going.UI.Controls
         [JsonIgnore] public IGoContainer? Parent { get; internal set; }
         #endregion
 
+        #region Event
+        public event EventHandler<GoMouseClickEventArgs>? MouseClicked;
+        public event EventHandler<GoMouseClickEventArgs>? MouseLongClicked;
+        public event EventHandler<GoMouseClickEventArgs>? MouseDown;
+        public event EventHandler<GoMouseClickEventArgs>? MouseUp;
+        public event EventHandler<GoMouseClickEventArgs>? MouseDoubleClicked;
+        public event EventHandler<GoMouseEventArgs>? MouseMove;
+        public event EventHandler<GoMouseEventArgs>? MouseWheel;
+        public event EventHandler<SKCanvas>? Drawn;
+        #endregion
+
         #region Member Variable
         private SKRect bounds = new SKRect(0, 0, 70, 30);
+        private float dx, dy;
+        private bool bDown = false;
+        private DateTime downTime;
         #endregion
 
         #region Method
-        protected virtual void OnDraw(SKCanvas canvas) { }
-        protected virtual void OnUpdate() { }
-        protected virtual void OnMouseDown(float x, float y, GoMouseButton button) { }
-        protected virtual void OnMouseUp(float x, float y, GoMouseButton button) { }
-        protected virtual void OnMouseDoubleClick(float x, float y, GoMouseButton button) { }
-        protected virtual void OnMouseMove(float x, float y) { }
-        protected virtual void OnMouseWheel(float x, float y, float delta) { }
+        protected virtual void OnDraw(SKCanvas canvas) { Drawn?.Invoke(this, canvas); }
 
-        public void Draw(SKCanvas canvas)
+        protected virtual void OnUpdate() {  }
+        protected virtual void OnMouseDown(float x, float y, GoMouseButton button) { MouseDown?.Invoke(this, new GoMouseClickEventArgs(x, y, button)); }
+        protected virtual void OnMouseUp(float x, float y, GoMouseButton button) { MouseUp?.Invoke(this, new GoMouseClickEventArgs(x, y, button)); }
+        protected virtual void OnMouseClick(float x, float y, GoMouseButton button) { MouseClicked?.Invoke(this, new GoMouseClickEventArgs(x, y, button)); }
+        protected virtual void OnMouseLongClick(float x, float y, GoMouseButton button) { MouseLongClicked?.Invoke(this, new GoMouseClickEventArgs(x, y, button)); }
+        protected virtual void OnMouseDoubleClick(float x, float y, GoMouseButton button) { MouseDoubleClicked?.Invoke(this, new GoMouseClickEventArgs(x, y, button)); }
+        protected virtual void OnMouseMove(float x, float y) { MouseMove?.Invoke(this, new GoMouseEventArgs(x, y)); }
+        protected virtual void OnMouseWheel(float x, float y, float delta) { MouseWheel?.Invoke(this, new GoMouseWheelEventArgs(x, y, delta)); }
+        protected virtual void OnKeyDown(bool Shift, bool Control, bool Alt, GoKeys key) {  }
+        protected virtual void OnKeyUp(bool Shift, bool Control, bool Alt, GoKeys key) {  }
+
+
+        public void FireDraw(SKCanvas canvas)
         {
             if (Visible)
             {
@@ -60,12 +85,46 @@ namespace Going.UI.Controls
             }
         }
 
-        public void Update() { OnUpdate(); }
-        public void MouseDown(float x, float y, GoMouseButton button) { OnMouseDown(x, y, button); }
-        public void MouseUp(float x, float y, GoMouseButton button) { OnMouseUp(x, y, button); }
-        public void MouseDoubleClick(float x, float y, GoMouseButton button) { OnMouseDoubleClick(x, y, button); }
-        public void MouseMove(float x, float y) { OnMouseMove(x, y); }
-        public void MouseWheel(float x, float y, float delta) { OnMouseWheel(x, y, delta); }
+        public void FireUpdate() { OnUpdate(); }
+        public void FireMouseDown(float x, float y, GoMouseButton button)
+        {
+            var rts = Areas();
+            var rtContent = rts["Content"];
+            if (CollisionTool.Check(rtContent, x, y))
+            {
+                //if (Selectable) GoControlManager.Select(this);
+
+                dx = x; dy = y;
+                bDown = true;
+                downTime = DateTime.Now; 
+                OnMouseDown(x, y, button);
+                Task.Run(async () =>
+                {
+                    while (bDown && (DateTime.Now - downTime).TotalMilliseconds < LongClickTime) await Task.Delay(100);
+                    downTime = DateTime.Now;
+
+                    if ((DateTime.Now - downTime).TotalMilliseconds >= LongClickTime && CollisionTool.Check(rtContent, x, y))
+                        OnMouseLongClick(x, y, button);
+
+                });
+            }
+        }
+        public void FireMouseUp(float x, float y, GoMouseButton button)
+        {
+            if (bDown)
+            {
+                OnMouseUp(x, y, button);
+                bDown = false;
+
+                var dist = Math.Abs(MathTool.GetDistance(new SKPoint(dx, dy), new SKPoint(x, y)));
+                if (CollisionTool.Check(Util.FromRect(0, 0, Width, Height), x, y) && dist < 3) OnMouseClick(x, y, button);
+            }
+        }
+        public void FireMouseDoubleClick(float x, float y, GoMouseButton button) { OnMouseDoubleClick(x, y, button); }
+        public void FireMouseMove(float x, float y) { OnMouseMove(x, y); }
+        public void FireMouseWheel(float x, float y, float delta) { OnMouseWheel(x, y, delta); }
+        public void FireKeyDown(bool Shift, bool Control, bool Alt, GoKeys key) { OnKeyDown(Shift, Control, Alt, key); }
+        public void FireKeyUp(bool Shift, bool Control, bool Alt, GoKeys key) { OnKeyUp(Shift, Control, Alt, key); }
 
         public virtual Dictionary<string, SKRect> Areas() => new() { { "Content", Util.FromRect(0, 0, Width - 1, Height - 1) } };
         #endregion

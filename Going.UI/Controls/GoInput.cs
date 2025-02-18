@@ -1,7 +1,7 @@
 ﻿using Going.UI.Datas;
 using Going.UI.Enums;
 using Going.UI.Extensions;
-using Going.UI.Input;
+using Going.UI.Managers;
 using Going.UI.Themes;
 using Going.UI.Tools;
 using Going.UI.Utils;
@@ -47,6 +47,13 @@ namespace Going.UI.Controls
         private bool bValueDown = false;
         #endregion
 
+        #region Constructor
+        public GoInput()
+        {
+            Selectable = true;
+        }
+        #endregion
+
         #region Event
         public event EventHandler<ButtonClickEventArgs>? ButtonClicked;
         #endregion
@@ -62,7 +69,7 @@ namespace Going.UI.Controls
             var cBorder = thm.ToColor(BorderColor);
             var cFill = thm.ToColor(FillColor);
             var cValue = thm.ToColor(ValueColor);
-            var cInput = thm.Input;
+            var cInput = !Valid ? thm.Error : thm.Hignlight;
             #endregion
             #region bounds
             var rts = Areas();
@@ -141,7 +148,7 @@ namespace Going.UI.Controls
                 });
             }
 
-            if (GoInputEventer.Current.InputControl == this) Util.DrawBox(canvas, rtValue, SKColors.Transparent, !Valid ? SKColors.Red : cInput, rndValue, thm.Corner);
+            if (GoInputEventer.Current.InputControl == this) Util.DrawBox(canvas, rtValue, SKColors.Transparent,cInput, rndValue, thm.Corner);
             #endregion
 
             base.OnDraw(canvas);

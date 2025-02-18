@@ -49,7 +49,7 @@ namespace Going.UI.Forms.Controls
         protected override void OnContentDraw(ContentDrawEventArgs e)
         {
             control.Bounds = Util.FromRect(0, 0, Width, Height);
-            control.Draw(e.Canvas);
+            control.FireDraw(e.Canvas);
             base.OnContentDraw(e);
         }
         #endregion
@@ -58,7 +58,7 @@ namespace Going.UI.Forms.Controls
         protected override void OnMouseDown(MouseEventArgs e)
         {
             Select();
-            control.MouseDown(e.X, e.Y, ToGoMouseButton(e.Button));
+            control.FireMouseDown(e.X, e.Y, ToGoMouseButton(e.Button));
             Invalidate();
             base.OnMouseDown(e);
         }
@@ -66,7 +66,7 @@ namespace Going.UI.Forms.Controls
         #region OnMouseUp
         protected override void OnMouseUp(MouseEventArgs e)
         {
-            control.MouseUp(e.X, e.Y, ToGoMouseButton(e.Button));
+            control.FireMouseUp(e.X, e.Y, ToGoMouseButton(e.Button));
             Invalidate();
             base.OnMouseUp(e);
         }
@@ -74,7 +74,7 @@ namespace Going.UI.Forms.Controls
         #region OnMouseMove
         protected override void OnMouseMove(MouseEventArgs e)
         {
-            control.MouseMove(e.X, e.Y);
+            control.FireMouseMove(e.X, e.Y);
             Invalidate();
             base.OnMouseMove(e);
         }
@@ -82,21 +82,21 @@ namespace Going.UI.Forms.Controls
         #region OnMouseDown
         protected override void OnMouseDoubleClick(MouseEventArgs e)
         {
-            control.MouseDoubleClick(e.X, e.Y, ToGoMouseButton(e.Button));
+            control.FireMouseDoubleClick(e.X, e.Y, ToGoMouseButton(e.Button));
             base.OnMouseDoubleClick(e);
         }
         #endregion
         #region OnMouseWheel
         protected override void OnMouseWheel(MouseEventArgs e)
         {
-            control.MouseWheel(e.X, e.Y, e.Delta / 120F);
+            control.FireMouseWheel(e.X, e.Y, e.Delta / 120F);
             base.OnMouseWheel(e);
         }
         #endregion
         #region OnMouseEnter
         protected override void OnMouseEnter(EventArgs e)
         {
-            control.MouseMove(0, 0);
+            control.FireMouseMove(0, 0);
             Invalidate();
             base.OnMouseEnter(e);
         }
@@ -104,7 +104,7 @@ namespace Going.UI.Forms.Controls
         #region OnMouseLeave
         protected override void OnMouseLeave(EventArgs e)
         {
-            control.MouseMove(-1, -1);
+            control.FireMouseMove(-1, -1);
             Invalidate();
             base.OnMouseLeave(e);
         }

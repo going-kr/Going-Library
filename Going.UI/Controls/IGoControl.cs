@@ -34,12 +34,15 @@ namespace Going.UI.Controls
         [JsonIgnore] float ScreenX { get; }
         [JsonIgnore] float ScreenY { get; }
 
-        void Draw(SKCanvas canvas);
-        void Update();
-        void MouseDown(float x, float y, GoMouseButton button);
-        void MouseUp(float x, float y, GoMouseButton button);
-        void MouseDoubleClick(float x, float y, GoMouseButton button);
-        void MouseMove(float x, float y) ;
-        void MouseWheel(float x, float y, float delta);
+        void FireDraw(SKCanvas canvas);
+        void FireUpdate();
+        void FireMouseDown(float x, float y, GoMouseButton button);
+        void FireMouseUp(float x, float y, GoMouseButton button);
+        void FireMouseDoubleClick(float x, float y, GoMouseButton button);
+        void FireMouseMove(float x, float y) ;
+        void FireMouseWheel(float x, float y, float delta);
+        void FireKeyDown(bool Shift, bool Control, bool Alt, GoKeys key) { }
+        void FireKeyUp(bool Shift, bool Control, bool Alt, GoKeys key) { }
+
     }
 }
