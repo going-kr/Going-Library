@@ -135,10 +135,10 @@ namespace Going.UI.Controls
             var areas = Areas();
             var contentBox = areas["Content"];
 
-            DrawBackground(canvas, contentBox, colors.background);
+            DrawSliderBackground(canvas, contentBox, colors.background);
             DrawSliderContent(canvas, contentBox, colors);
         }
-        private void DrawBackground(SKCanvas canvas, SKRect rect, SKColor color)
+        private void DrawSliderBackground(SKCanvas canvas, SKRect rect, SKColor color)
         {
             using var paint = new SKPaint();
             paint.IsAntialias = true;
