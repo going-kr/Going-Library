@@ -44,8 +44,11 @@ namespace Going.UI.Controls
         #endregion
 
         #region Constructor
-        public GoSlider()
+        public GoSlider(bool isDragging, SKRect trackRect, SKRect handleRect)
         {
+            this.isDragging = isDragging;
+            this.trackRect = trackRect;
+            this.handleRect = handleRect;
             Selectable = true;
         }
         #endregion
