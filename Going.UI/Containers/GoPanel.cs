@@ -45,6 +45,13 @@ namespace Going.UI.Containers
         public event EventHandler<ButtonClickEventArgs>? ButtonClicked;
         #endregion
 
+        #region Constructor
+        public GoPanel ()
+        {
+            Selectable = true;
+        }
+        #endregion
+
         #region Override
         #region OnContainerDraw
         protected override void OnContainerDraw(SKCanvas canvas)

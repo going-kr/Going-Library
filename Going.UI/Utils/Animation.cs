@@ -10,6 +10,12 @@ namespace Going.UI.Utils
 {
     public class Animation
     {
+        #region Const
+        public const int Time1 = 200;
+
+        private const double EffectLevel = -5.0;
+        #endregion
+
         #region Properties
         public double TotalMillls { get; private set; }
         public double PlayMillis => tmStart.HasValue ? (DateTime.Now - tmStart.Value).TotalMilliseconds : 0;
@@ -51,8 +57,11 @@ namespace Going.UI.Utils
         #endregion
         #region Linear / Accel / Decel
         double Linear(double now, double goal) => now + (goal - now) * MathTool.Constrain(PlayMillis / TotalMillls, 0, 1);
-        double Accel(double now, double goal) => goal - (goal - now) * Math.Sqrt(1.0 - (Math.Pow(MathTool.Constrain(PlayMillis / TotalMillls, 0.0, 1.0), 2.0) / Math.Pow(1.0, 2.0)));
-        double Decel(double now, double goal) => now + (goal - now) * Math.Sqrt(1.0 - (Math.Pow(1.0 - MathTool.Constrain(PlayMillis / TotalMillls, 0.0, 1.0), 2.0) / Math.Pow(1.0, 2.0)));
+        //double Accel(double now, double goal) => goal - (goal - now) * Math.Sqrt(1.0 - (Math.Pow(MathTool.Constrain(PlayMillis / TotalMillls, 0.0, 1.0), 2.0) / Math.Pow(1.0, 2.0)));
+        //double Decel(double now, double goal) => now + (goal - now) * Math.Sqrt(1.0 - (Math.Pow(1.0 - MathTool.Constrain(PlayMillis / TotalMillls, 0.0, 1.0), 2.0) / Math.Pow(1.0, 2.0)));
+
+        double Decel(double now, double goal) => now + (goal - now) * (1.0 - Math.Exp(EffectLevel * MathTool.Constrain(PlayMillis / TotalMillls, 0.0001, 0.9999)));
+        double Accel(double now, double goal) => goal - (goal - now) * (1.0 - Math.Exp(EffectLevel * (1.0 - MathTool.Constrain(PlayMillis / TotalMillls, 0.0001, 0.9999))));
         #endregion
 
         #region Value

@@ -34,6 +34,15 @@ namespace Going.UI.Controls
 
         #region Event
         public event EventHandler? ButtonClicked;
+        public event EventHandler? ButtonLongClicked;
+        public event EventHandler? ButtonDoubleClicked;
+        #endregion
+
+        #region Constructor
+        public GoButton()
+        {
+            Selectable = true;
+        }
         #endregion
 
         #region Member Variable

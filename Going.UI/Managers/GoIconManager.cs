@@ -1,4 +1,5 @@
-﻿using SkiaSharp;
+﻿using Going.UI.Icons;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Going.UI.Icons
+namespace Going.UI.Managers
 {
     public class GoIconManager
     {

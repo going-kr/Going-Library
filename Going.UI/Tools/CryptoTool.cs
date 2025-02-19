@@ -104,7 +104,7 @@ namespace Going.UI.Tools
         #endregion
 
         #region AES128
-        public static string EncryptAES128(string input, string key, Encoding enc = null)
+        public static string EncryptAES128(string input, string key, Encoding? enc = null)
         {
             enc ??= Encoding.UTF8;
             byte[] keyBytes = GetKeyBytes128(key);
@@ -131,7 +131,7 @@ namespace Going.UI.Tools
             }
         }
 
-        public static string DecryptAES128(string input, string key, Encoding enc = null)
+        public static string DecryptAES128(string input, string key, Encoding? enc = null)
         {
             enc ??= Encoding.UTF8;
             byte[] keyBytes = GetKeyBytes128(key);

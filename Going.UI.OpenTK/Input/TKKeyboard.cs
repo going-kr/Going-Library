@@ -1,7 +1,7 @@
 ﻿using Going.UI.Datas;
 using Going.UI.Enums;
 using Going.UI.Extensions;
-using Going.UI.Input;
+using Going.UI.Managers;
 using Going.UI.Themes;
 using Going.UI.Tools;
 using Going.UI.Utils;
@@ -33,7 +33,7 @@ namespace Going.UI.OpenTK.Input
         #region Properties
         public string? Text { get => lbl.Value; set => lbl.Value = value; }
         public SKRect Bounds { get; set; }
-        public SKSize ScreenSize { get; set; }
+        //public SKSize ScreenSize { get; set; }
         public bool UseShiftHolding { get; set; } = false;
 
         public bool IsHangul => exts["Han"].Checked;
@@ -378,7 +378,6 @@ namespace Going.UI.OpenTK.Input
 
             parseHangul.InitState();
         }
-
         #endregion
 
         #region Method
@@ -394,39 +393,38 @@ namespace Going.UI.OpenTK.Input
             p.Color = thm.Base1;
             canvas.DrawRect(Bounds, p);
 
-            lbl.Draw(canvas, thm);
-            foreach (var c in btns.Values) c.Draw(canvas, thm, GoRoundType.All);
-            foreach (var c in exts.Values) c.Draw(canvas, thm, GoRoundType.All);
+            lbl.Draw(canvas, thm, thm.Base3, thm.Base1);
+            foreach (var c in btns.Values.Where(x => x.Visible)) c.Draw(canvas, thm, GoRoundType.All);
+            foreach (var c in exts.Values.Where(x => x.Visible)) c.Draw(canvas, thm, GoRoundType.All);
         }
         #endregion
 
         #region Mouse
         public bool MouseDown(float x, float y, GoMouseButton button)
         {
-            foreach (var c in btns.Values) c.MouseDown(x, y, button);
-            foreach (var c in exts.Values) c.MouseDown(x, y, button);
+            foreach (var c in btns.Values.Where(x => x.Visible)) c.MouseDown(x, y, button);
+            foreach (var c in exts.Values.Where(x => x.Visible)) c.MouseDown(x, y, button);
 
             return CollisionTool.Check(Bounds, x, y);
         }
 
         public void MouseUp(float x, float y, GoMouseButton button)
         {
-            foreach (var c in btns.Values) c.MouseUp(x, y, button);
-            foreach (var c in exts.Values) c.MouseUp(x, y, button);
+            foreach (var c in btns.Values.Where(x => x.Visible)) c.MouseUp(x, y, button);
+            foreach (var c in exts.Values.Where(x => x.Visible)) c.MouseUp(x, y, button);
         }
 
         public void MouseMove(float x, float y)
         {
-            foreach (var c in btns.Values) c.MouseMove(x, y);
-            foreach (var c in exts.Values) c.MouseMove(x, y);
+            foreach (var c in btns.Values.Where(x => x.Visible)) c.MouseMove(x, y);
+            foreach (var c in exts.Values.Where(x => x.Visible)) c.MouseMove(x, y);
         }
         #endregion
 
         #region Areas
         private void Areas()
         {
-            var kh = Math.Max(360, ScreenSize.Height * 0.4F);
-            var rt = Util.FromRect(0, ScreenSize.Height - kh, ScreenSize.Width, kh);
+            var rt = Bounds;
             var rows = Util.Rows(Util.FromRect(rt, new GoPadding(5)), ["15%", "17%", "17%", "17%", "17%", "17%"]);
             var cols0 = Util.Columns(rows[0], ["100%", "10px", "50px", "50px"]);
             var cols1 = Util.Columns(rows[1], ["10%", "10%", "10%", "10%", "10%", "10%", "10%", "10%", "10%", "10%"]);
@@ -508,6 +506,8 @@ namespace Going.UI.OpenTK.Input
             SetButtonText();
         }
         #endregion
+
+        public float GetHeight(SKSize ScreenSize) => Math.Max(360, ScreenSize.Height * 0.4F);
         #endregion
 
         #region Event
@@ -578,6 +578,7 @@ namespace Going.UI.OpenTK.Input
         public bool Hover { get; private set; }
         public bool Down { get; private set; }
         public SKRect Bounds;
+        public bool Visible { get; set; } = true;
         #endregion
 
         #region Event
@@ -595,7 +596,7 @@ namespace Going.UI.OpenTK.Input
                                          c.BrightnessTransmit(Hover ? thm.HoverBorderBrightness : 0), round, thm.Corner);
 
             if (Down) rt.Offset(0, 1);
-            Util.DrawTextIcon(canvas, Text, "나눔고딕", 14, IconString, 12, GoDirectionHV.Horizon, 5, rt, ct);
+            Util.DrawTextIcon(canvas, Text, "나눔고딕", 14, IconString, 18, GoDirectionHV.Horizon, 5, rt, ct);
         }
 
         public void MouseDown(float x, float y, GoMouseButton button)
@@ -628,6 +629,7 @@ namespace Going.UI.OpenTK.Input
         public bool Hover { get; private set; }
         public bool Down { get; private set; }
         public SKRect Bounds;
+        public bool Visible { get; set; } = true;
         #endregion
 
         #region Event
@@ -681,9 +683,9 @@ namespace Going.UI.OpenTK.Input
         public string? Value { get; set; }
         public SKRect Bounds { get; set; }
 
-        public void Draw(SKCanvas canvas, GoTheme thm)
+        public void Draw(SKCanvas canvas, GoTheme thm, SKColor border, SKColor fill)
         {
-            Util.DrawBox(canvas, Bounds, thm.Base1, thm.Base3, GoRoundType.All, thm.Corner);
+            Util.DrawBox(canvas, Bounds, fill, border, GoRoundType.All, thm.Corner);
             Util.DrawText(canvas, Value, "나눔고딕", 14, Bounds, thm.Fore);
         }
     }

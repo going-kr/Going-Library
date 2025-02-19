@@ -1,6 +1,6 @@
 ﻿using Going.UI.Controls;
 using Going.UI.Enums;
-using Going.UI.Input;
+using Going.UI.Managers;
 using Going.UI.Themes;
 using Going.UI.Tools;
 using Going.UI.Utils;
@@ -27,7 +27,7 @@ namespace Going.UI.OpenTK.Input
         public IGoControl? InputControl => GoInputEventer.Current.InputControl;
         public InputType InputType { get; private set; }
 
-        public SKSize ScreenSize { get => keyboard.ScreenSize; set => keyboard.ScreenSize = value; }
+        public SKSize ScreenSize { get; set; }
 
         #region TranslateY
         public float TranslateY
@@ -42,9 +42,30 @@ namespace Going.UI.OpenTK.Input
                         case InputType.String:
                             {
                                 var rt = Util.FromRect(InputControl.ScreenX + InputBounds.Left, InputControl.ScreenY + InputBounds.Top, InputBounds.Width, InputBounds.Height);
-                                if (CollisionTool.Check(keyboard.Bounds, rt))
+                                var kh = keyboard.GetHeight(ScreenSize);
+                                var rtk = Util.FromRect(0, ScreenSize.Height - kh, ScreenSize.Width, kh);
+
+                                if (CollisionTool.Check(rtk, rt))
                                 {
-                                    var ty = ((ScreenSize.Height - keyboard.Bounds.Height) / 2) - rt.MidY;
+                                    var ty = -kh;
+
+                                    if (ani.Variable == "set")
+                                        tranY = ani.IsPlaying ? ani.Value(AnimationAccel.DCL, 0, ty) : ty;
+                                    else
+                                        tranY = ani.IsPlaying ? ani.Value(AnimationAccel.DCL, ty, 0) : 0;
+                                }
+                            }
+                            break;
+
+                        case InputType.Number:
+                            {
+                                var rt = Util.FromRect(InputControl.ScreenX + InputBounds.Left, InputControl.ScreenY + InputBounds.Top, InputBounds.Width, InputBounds.Height);
+                                var kh = keypad.GetHeight(ScreenSize);
+                                var rtk = Util.FromRect(0, ScreenSize.Height - kh, ScreenSize.Width, kh);
+
+                                if (CollisionTool.Check(rtk, rt))
+                                {
+                                    var ty = -kh;
 
                                     if (ani.Variable == "set")
                                         tranY = ani.IsPlaying ? ani.Value(AnimationAccel.DCL, 0, ty) : ty;
@@ -62,7 +83,8 @@ namespace Going.UI.OpenTK.Input
         #endregion
 
         #region Member Variable
-        private TKKeyboard keyboard = new TKKeyboard();
+        private TKKeyboard keyboard = new();
+        private TKKeypad keypad = new();
 
         private SKRect InputBounds;
         private Action<string>? InputCallback;
@@ -77,7 +99,16 @@ namespace Going.UI.OpenTK.Input
                 if (InputControl != null && InputCallback != null)
                 {
                     InputCallback(keyboard.Text ?? "");
-                    ani.Start(200, "clear", GoInputEventer.Current.ClearInputControl);
+                    ani.Start(Animation.Time1, "clear", GoInputEventer.Current.ClearInputControl);
+                }
+            };
+
+            keypad.Completed += (s) =>
+            {
+                if (InputControl != null && InputCallback != null)
+                {
+                    InputCallback(keypad.Text ?? "");
+                    ani.Start(Animation.Time1, "clear", GoInputEventer.Current.ClearInputControl);
                 }
             };
         }
@@ -89,7 +120,7 @@ namespace Going.UI.OpenTK.Input
             if (InputControl == null)
             {
                 GoInputEventer.Current.SetInputControl(control);
-                ani.Start(200, "set");
+                ani.Start(Animation.Time1, "set");
 
                 InputBounds = bounds;
                 InputCallback = callback;
@@ -97,16 +128,58 @@ namespace Going.UI.OpenTK.Input
                 keyboard.Set(value);
             }
         }
+
+        public void InputNumber(IGoControl control, SKRect bounds, Action<string> callback, Type valueType, object value, object? min, object? max)
+        {
+            if (InputControl == null)
+            {
+                GoInputEventer.Current.SetInputControl(control);
+                ani.Start(Animation.Time1, "set");
+
+                InputBounds = bounds;
+                InputCallback = callback;
+                InputType = InputType.Number;
+                keypad.Set(valueType, value, min, max);
+            }
+        }
         #endregion
 
         #region Draw / Mouse
         public void Draw(SKCanvas canvas)
         {
-            if (InputControl != null && !(ani.IsPlaying && ani.Variable == "clear"))
+            if (InputControl != null)
             {
                 switch (InputType)
                 {
-                    case InputType.String: keyboard.Draw(canvas); break;
+                    case InputType.String:
+                        {
+                            var kh = keyboard.GetHeight(ScreenSize);
+                            var rtS = Util.FromRect(0, ScreenSize.Height - kh, ScreenSize.Width, kh);
+                            var rtH = Util.FromRect(0, ScreenSize.Height, ScreenSize.Width, kh);
+
+                            if (ani.Variable == "set")
+                                keyboard.Bounds = ani.IsPlaying ? ani.Value(AnimationAccel.DCL, rtH, rtS) : rtS;
+                            else
+                                keyboard.Bounds = ani.IsPlaying ? ani.Value(AnimationAccel.DCL, rtS, rtH) : rtH;
+                         
+                            keyboard.Draw(canvas);
+                        }
+                        break;
+
+                    case InputType.Number:
+                        {
+                            var kh = keypad.GetHeight(ScreenSize);
+                            var rtS = Util.FromRect(0, ScreenSize.Height - kh, ScreenSize.Width, kh);
+                            var rtH = Util.FromRect(0, ScreenSize.Height, ScreenSize.Width, kh);
+
+                            if (ani.Variable == "set")
+                                keypad.Bounds = ani.IsPlaying ? ani.Value(AnimationAccel.DCL, rtH, rtS) : rtS;
+                            else
+                                keypad.Bounds = ani.IsPlaying ? ani.Value(AnimationAccel.DCL, rtS, rtH) : rtH;
+
+                            keypad.Draw(canvas);
+                        }
+                        break;
                 }
             }
         }
@@ -119,12 +192,14 @@ namespace Going.UI.OpenTK.Input
                 {
                     case InputType.String:
                         if (!keyboard.MouseDown(x, y, button))
-                        {
                             if (InputControl != null)
-                            {
-                                ani.Start(200, "clear", GoInputEventer.Current.ClearInputControl);
-                            }
-                        }
+                                ani.Start(Animation.Time1, "clear", GoInputEventer.Current.ClearInputControl);
+                        break;
+
+                    case InputType.Number:
+                        if (!keypad.MouseDown(x, y, button))
+                            if (InputControl != null)
+                                ani.Start(Animation.Time1, "clear", GoInputEventer.Current.ClearInputControl);
                         break;
                 }
             }
@@ -137,6 +212,7 @@ namespace Going.UI.OpenTK.Input
                 switch (InputType)
                 {
                     case InputType.String: keyboard.MouseUp(x, y, button); break;
+                    case InputType.Number: keypad.MouseUp(x, y, button); break;
                 }
             }
         }
@@ -148,12 +224,10 @@ namespace Going.UI.OpenTK.Input
                 switch (InputType)
                 {
                     case InputType.String: keyboard.MouseMove(x, y); break;
+                    case InputType.Number: keypad.MouseMove(x, y); break;
                 }
             }
         }
         #endregion
-
-      
-
     }
 }
