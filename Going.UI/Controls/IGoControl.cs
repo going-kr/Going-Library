@@ -1,5 +1,6 @@
 ﻿using Going.UI.Containers;
 using Going.UI.Datas;
+using Going.UI.Design;
 using Going.UI.Enums;
 using Going.UI.Utils;
 using SkiaSharp;
@@ -31,9 +32,11 @@ namespace Going.UI.Controls
         [JsonIgnore] float Height { get; set; }
         [JsonIgnore] bool FirstRender { get; }
         [JsonIgnore] IGoContainer? Parent { get; }
+        [JsonIgnore] GoDesign? Design { get; }
         [JsonIgnore] float ScreenX { get; }
         [JsonIgnore] float ScreenY { get; }
 
+        void FireInit(GoDesign? design);
         void FireDraw(SKCanvas canvas);
         void FireUpdate();
         void FireMouseDown(float x, float y, GoMouseButton button);

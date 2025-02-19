@@ -1,5 +1,4 @@
-﻿using Going.UI.Containers;
-using Going.UI.Datas;
+﻿using Going.UI.Datas;
 using Going.UI.Enums;
 using Going.UI.Extensions;
 using Going.UI.Managers;
@@ -10,14 +9,12 @@ using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Going.UI.Controls
 {
-    public abstract class GoInput : GoControl
+    public abstract class GoValue : GoControl
     {
         #region Properties
         public string? IconString { get; set; }
@@ -31,7 +28,7 @@ namespace Going.UI.Controls
         public string TextColor { get; set; } = "Fore";
         public string BorderColor { get; set; } = "Base3";
         public string FillColor { get; set; } = "Base3";
-        public string ValueColor { get; set; } = "Base1";
+        public string ValueColor { get; set; } = "Base2";
         public GoRoundType Round { get; set; } = GoRoundType.All;
 
         public float? TitleSize { get; set; }
@@ -39,7 +36,6 @@ namespace Going.UI.Controls
 
         public float? ButtonSize { get; set; }
         public List<GoButtonInfo> Buttons { get; set; } = [];
-        public virtual bool Valid => true;
 
         private bool UseTitle => TitleSize.HasValue && TitleSize.Value > 0;
         private bool UseButton => ButtonSize.HasValue && ButtonSize.Value > 0 && Buttons.Count > 0;
@@ -50,7 +46,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Constructor
-        public GoInput()
+        public GoValue()
         {
             Selectable = true;
         }
@@ -58,6 +54,7 @@ namespace Going.UI.Controls
 
         #region Event
         public event EventHandler<ButtonClickEventArgs>? ButtonClicked;
+        public event EventHandler? ValueClicked;
         #endregion
 
         #region Override
@@ -71,7 +68,6 @@ namespace Going.UI.Controls
             var cBorder = thm.ToColor(BorderColor);
             var cFill = thm.ToColor(FillColor);
             var cValue = thm.ToColor(ValueColor);
-            var cInput = !Valid ? thm.Error : thm.Hignlight;
             #endregion
             #region bounds
             var rts = Areas();
@@ -149,8 +145,6 @@ namespace Going.UI.Controls
                     }
                 });
             }
-
-            if (GoInputEventer.Current.InputControl == this) Util.DrawBox(canvas, rtValue, SKColors.Transparent,cInput, rndValue, thm.Corner);
             #endregion
 
             base.OnDraw(canvas);
@@ -200,7 +194,7 @@ namespace Going.UI.Controls
             if (bValueDown)
             {
                 var rtValue = Areas()["Value"];
-                if (CollisionTool.Check(rtValue, x, y)) OnValueClick(x, y, button);
+                ValueClicked?.Invoke(this, EventArgs.Empty);
                 bValueDown = false;
             }
             #endregion
@@ -242,7 +236,6 @@ namespace Going.UI.Controls
 
         #region Abstract
         protected abstract void OnDrawValue(SKCanvas canvas, SKRect valueBounds);
-        protected abstract void OnValueClick(float x, float y, GoMouseButton button);
         #endregion
 
         #region Method
@@ -263,26 +256,10 @@ namespace Going.UI.Controls
         #endregion
     }
 
-    public class GoInputString : GoInput
+    public class GoValueString : GoValue
     {
         #region Properties
-        private string sVal = "";
-        public string Value
-        {
-            get => sVal;
-            set
-            {
-                if (sVal != value)
-                {
-                    sVal = value;
-                    ValueChanged?.Invoke(this, System.EventArgs.Empty);
-                }
-            }
-        }
-        #endregion
-
-        #region Event
-        public event EventHandler? ValueChanged;
+        public string? Value { get; set; }
         #endregion
 
         #region OnDrawValue
@@ -292,57 +269,22 @@ namespace Going.UI.Controls
             var cText = thm.ToColor(TextColor);
 
             Util.DrawText(canvas, Value, FontName, FontSize, rtValue, cText);
-
-        }
-        #endregion
-
-        #region OnValueClick
-        protected override void OnValueClick(float x, float y, GoMouseButton button)
-        {
-            GoInputEventer.Current.FireInputString(this, Areas()["Value"], (s) => Value = s, Value);
         }
         #endregion
     }
 
-    public class GoInputNumber<T> : GoInput where T : struct
+    public class GoValueNumber<T> : GoValue where T : struct
     {
         #region Properties
-        private T sVal = default(T);
-        public T Value
-        {
-            get => sVal;
-            set
-            {
-                if (!sVal.Equals(value))
-                {
-                    sVal = value;
-                    ValueChanged?.Invoke(this, EventArgs.Empty);
-                }
-            }
-        }
-
-        public T? Minimum { get; set; } = null;
-        public T? Maximum { get; set; } = null;
-
+        public T Value { get; set; }
         public string? FormatString { get; set; } = null;
-
-        public override bool Valid => bValid;
 
         public string? Unit { get; set; }
         public float? UnitSize { get; set; } = null;
         #endregion
 
-        #region Event
-        public event EventHandler? ValueChanged;
-        #endregion
-
-        #region Member Variable
-        bool bValid = true;
-        T valOrigin;
-        #endregion
-
         #region Constructor
-        public GoInputNumber()
+        public GoValueNumber()
         {
             if (typeof(T) == typeof(sbyte)) { }
             else if (typeof(T) == typeof(short)) { }
@@ -372,7 +314,7 @@ namespace Going.UI.Controls
             var text = ValueTool.ToString(Value, FormatString) ?? "";
             Util.DrawText(canvas, text, FontName, FontSize, rtText, cText);
 
-            if(UnitSize.HasValue)
+            if (UnitSize.HasValue)
             {
                 Util.DrawText(canvas, Unit, FontName, FontSize, rtUnit, cText);
 
@@ -386,75 +328,30 @@ namespace Going.UI.Controls
         }
         #endregion
 
-        #region OnValueClick
-        protected override void OnValueClick(float x, float y, GoMouseButton button)
-        {
-            var rtValue = Areas()["Value"];
-            var (rtText, rtUnit) = bounds(rtValue);
-
-            bValid = true;
-            valOrigin = Value;
-            
-            GoInputEventer.Current.FireInputNumber(this, rtText, (s) =>
-            {
-                var v = ValueTool.FromString<T>(s);
-                if (v != null) bValid = ValueTool.Valid((T)v, Minimum, Maximum);
-                else bValid = false;
-
-                if (v != null)
-                {
-                    if (bValid) Value = (T)v;
-                    else Value = ValueTool.Constrain((T)v, Minimum, Maximum);
-                }
-                else
-                {
-                    Value = valOrigin;
-                }
-
-            }, Value, Minimum, Maximum);
-        }
-        #endregion
-
         #region bounds
         (SKRect rtText, SKRect rtUnit) bounds(SKRect rtValue)
         {
-            var rts = Util.Columns(rtValue, ["100%", $"{UnitSize??0}px"]);
-         
+            var rts = Util.Columns(rtValue, ["100%", $"{UnitSize ?? 0}px"]);
+
             return (rts[0], rts[1]);
         }
         #endregion
     }
 
-    public class GoInputInteger : GoInputNumber<int> { }
-    public class GoInputFloat : GoInputNumber<double> { }
+    public class GoValueInteger : GoValueNumber<int> { }
+    public class GoValueFloat : GoValueNumber<double> { }
 
-    public class GoInputBoolean : GoInput
+    public class GoValueBoolean : GoValue
     {
         #region Properties
-        private bool sVal = false;
-        public bool Value
-        {
-            get => sVal;
-            set
-            {
-                if (sVal != value)
-                {
-                    sVal = value;
-                    ValueChanged?.Invoke(this, System.EventArgs.Empty);
-                }
-            }
-        }
+        public bool Value { get; set; }
 
         public string? OnText { get; set; } = "ON";
         public string? OffText { get; set; } = "OFF";
         public string? OnIconString { get; set; }
         public string? OffIconString { get; set; }
         #endregion
-
-        #region Event
-        public event EventHandler? ValueChanged;
-        #endregion
-
+         
         #region OnDrawValue
         protected override void OnDrawValue(SKCanvas canvas, SKRect rtValue)
         {
@@ -479,18 +376,7 @@ namespace Going.UI.Controls
             canvas.DrawLine(rtValue.MidX, rtValue.Top + 10, rtValue.MidX, rtValue.Bottom - 10, p);
         }
         #endregion
-
-        #region OnValueClick
-        protected override void OnValueClick(float x, float y, GoMouseButton button)
-        {
-            var rtValue = Areas()["Value"];
-            var (rtOn, rtOff) = bounds(rtValue);
-
-            if (CollisionTool.Check(rtOn, x, y)) Value = true;
-            else if (CollisionTool.Check(rtOff, x, y)) Value = false;
-        }
-        #endregion
-
+         
         #region bounds
         (SKRect rtOn, SKRect rtOff) bounds(SKRect rtValue)
         {
@@ -499,88 +385,4 @@ namespace Going.UI.Controls
         }
         #endregion
     }
-
-    public class GoInputCombo : GoInput
-    {
-        #region Properties
-        public List<GoListItem> Items { get; set; } = [];
-
-        private int nSelIndex = -1;
-        public int SelectedIndex
-        {
-            get => nSelIndex;
-            set
-            {
-                if (nSelIndex != value)
-                {
-                    nSelIndex = value;
-                    SelectedIndexChanged?.Invoke(this, EventArgs.Empty);
-                }
-            }
-        }
-        #endregion
-
-        #region Event
-        public event EventHandler? SelectedIndexChanged;
-        #endregion
-
-        #region Member Variable
-        GoDropDownWindow dwnd = new GoDropDownWindow ();
-        #endregion
-
-        #region OnDrawValue
-        protected override void OnDrawValue(SKCanvas canvas, SKRect rtValue)
-        {
-            var thm = GoTheme.Current;
-            using var p = new SKPaint { IsAntialias = false };
-
-            var cBorder = thm.ToColor(BorderColor);
-            var cText = thm.ToColor(TextColor);
-            var (rtText, rtArrow) = bounds(rtValue);
-
-            #region item
-            if (SelectedIndex >= 0 && SelectedIndex < Items.Count)
-            {
-                var item = Items[SelectedIndex];
-                Util.DrawTextIcon(canvas, item.Text, FontName, FontSize, item.IconString, IconSize, GoDirectionHV.Horizon, IconGap, rtText, cText);
-            }
-            #endregion
-
-            #region sep
-            using var pe = SKPathEffect.CreateDash([2, 2], 2);
-            p.StrokeWidth = 1;
-            p.IsStroke = false;
-            p.Color = Util.FromArgb(128, cBorder);
-            p.PathEffect = pe;
-            canvas.DrawLine(rtArrow.Left, rtValue.Top + 10, rtArrow.Left, rtValue.Bottom - 10, p);
-            #endregion
-
-            #region arrow
-            Util.DrawIcon(canvas, dwnd.Visible ? "fa-angle-up" : "fa-angle-down", 14, rtArrow, cText);
-            #endregion
-        }
-        #endregion
-
-        #region OnValueClick
-        protected override void OnValueClick(float x, float y, GoMouseButton button)
-        {
-            var rtValue = Areas()["Value"];
-
-            if (CollisionTool.Check(rtValue, x, y))
-            {
-                dwnd.Bounds = Util.FromRect(ScreenX + rtValue.Left, ScreenY + rtValue.Bottom, rtValue.Width, 150);
-                Design?.ShowDropDownWindow(dwnd);
-            }
-        }
-        #endregion
-
-        #region bounds
-        (SKRect rtText, SKRect rtArrow) bounds(SKRect rtValue)
-        {
-            var rts = Util.Columns(rtValue, ["100%", "40px"]);
-            return (rts[0], rts[1]);
-        }
-        #endregion
-    }
-
 }

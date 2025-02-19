@@ -402,7 +402,7 @@ namespace Going.UI.Utils
                 }
                 else
                 {
-                    throw new ArgumentException("Invalid size format. Use 'px' or '%'.");
+                    //throw new ArgumentException("Invalid size format. Use 'px' or '%'.");
                 }
             }
 
