@@ -14,25 +14,26 @@ pnl.Buttons.Add(new GoButtonInfo { Name = "add", IconString = "fa-plus", Size = 
 pnl.Buttons.Add(new GoButtonInfo { Name = "del", IconString = "fa-minus", Size = "50%" });
 
 view.Childrens.Add(pnl);
-pnl.Childrens.Add(new GoLabel { Left = 10, Top = 50, Width = 120, Height = 140, LabelColor = "Base3", Text = "µ¿ÇØ¹°°ú ¹éµÎ»êÀÌ ¸¶¸£°í ´âµµ·Ï \r\nÇÏ³ª´ÔÀÌ º¸¿ìÇÏ»ç ¿ì¸® ³ª¶ó ¸¸¼¼\r\n¹«±ÃÈ­ »ïÃµ¸® È­·Á°­»ê \r\n´ëÇÑ »ç¶÷ ´ëÇÑÀ¸·Î ±æÀÌ º¸Àü ÇÏ¼¼", BorderOnly = true, ContentAlignment = GoContentAlignment.TopLeft, TextPadding = new GoPadding(10) });
-pnl.Childrens.Add(new GoButton { Left = 140, Top = 50, Width = 90, Height = 40, IconString = "fa-check", Text = "Å×½ºÆ® 1" });
-pnl.Childrens.Add(new GoButton { Left = 240, Top = 50, Width = 90, Height = 40, IconString = "fa-ban", Text = "Å×½ºÆ® 2", ButtonColor = "danger" });
-pnl.Childrens.Add(new GoInputString { Left = 140, Top = 100, Width = 300, Height = 40, TitleSize = 90, Title = "¹®ÀÚ¿­ 1", Value = "Test1", ButtonSize = 80, Buttons = [new GoButtonInfo { IconString = "fa-download", Size = "50%" }, new GoButtonInfo { IconString = "fa-upload", Size = "50%" }] });
-pnl.Childrens.Add(new GoInputString { Left = 140, Top = 150, Width = 300, Height = 40, TitleSize = 90, Title = "¹®ÀÚ¿­ 2", Value = "Test2", ButtonSize = 80, Buttons = [new GoButtonInfo { IconString = "fa-download", Size = "50%" }, new GoButtonInfo { IconString = "fa-upload", Size = "50%" }] });
+pnl.Childrens.Add(new GoLabel { Left = 10, Top = 50, Width = 120, Height = 140, LabelColor = "Base3", Text = "ë™í•´ë¬¼ê³¼ ë°±ë‘ì‚°ì´ ë§ˆë¥´ê³  ë‹³ë„ë¡ \r\ní•˜ë‚˜ë‹˜ì´ ë³´ìš°í•˜ì‚¬ ìš°ë¦¬ ë‚˜ë¼ ë§Œì„¸\r\në¬´ê¶í™” ì‚¼ì²œë¦¬ í™”ë ¤ê°•ì‚° \r\nëŒ€í•œ ì‚¬ëŒ ëŒ€í•œìœ¼ë¡œ ê¸¸ì´ ë³´ì „ í•˜ì„¸", BorderOnly = true, ContentAlignment = GoContentAlignment.TopLeft, TextPadding = new GoPadding(10) });
+pnl.Childrens.Add(new GoButton { Left = 140, Top = 50, Width = 90, Height = 40, IconString = "fa-check", Text = "í…ŒìŠ¤íŠ¸ 1" });
+pnl.Childrens.Add(new GoButton { Left = 240, Top = 50, Width = 90, Height = 40, IconString = "fa-ban", Text = "í…ŒìŠ¤íŠ¸ 2", ButtonColor = "danger" });
+pnl.Childrens.Add(new GoInputString { Left = 140, Top = 100, Width = 300, Height = 40, TitleSize = 90, Title = "ë¬¸ìì—´ 1", Value = "Test1", ButtonSize = 80, Buttons = [new GoButtonInfo { IconString = "fa-download", Size = "50%" }, new GoButtonInfo { IconString = "fa-upload", Size = "50%" }] });
+pnl.Childrens.Add(new GoInputString { Left = 140, Top = 150, Width = 300, Height = 40, TitleSize = 90, Title = "ë¬¸ìì—´ 2", Value = "Test2", ButtonSize = 80, Buttons = [new GoButtonInfo { IconString = "fa-download", Size = "50%" }, new GoButtonInfo { IconString = "fa-upload", Size = "50%" }] });
+pnl.Childrens.Add(new GoSlider { Left = 140, Top = 200, Width = 300, Height = 40 });
 
-view.Childrens.Add(new GoInputString { Left = 20, Top = 330, Width = 300, Height = 40, TitleSize = 90, Title = "ÀÔ·Â 1", });
-view.Childrens.Add(new GoInputString { Left = 20, Top = 380, Width = 300, Height = 40, TitleSize = 90, Title = "ÀÔ·Â 2", });
-view.Childrens.Add(new GoInputString { Left = 20, Top = 430, Width = 300, Height = 40, TitleSize = 90, Title = "ÀÔ·Â 3", });
-view.Childrens.Add(new GoInputString { Left = 20, Top = 480, Width = 300, Height = 40, TitleSize = 90, Title = "ÀÔ·Â 4", });
+view.Childrens.Add(new GoInputString { Left = 20, Top = 330, Width = 300, Height = 40, TitleSize = 90, Title = "ì…ë ¥ 1", });
+view.Childrens.Add(new GoInputString { Left = 20, Top = 380, Width = 300, Height = 40, TitleSize = 90, Title = "ì…ë ¥ 2", });
+view.Childrens.Add(new GoInputString { Left = 20, Top = 430, Width = 300, Height = 40, TitleSize = 90, Title = "ì…ë ¥ 3", });
+view.Childrens.Add(new GoInputString { Left = 20, Top = 480, Width = 300, Height = 40, TitleSize = 90, Title = "ì…ë ¥ 4", });
 
-view.Childrens.Add(new GoInputInt { Left = 330, Top = 330, Width = 300, Height = 40, TitleSize = 90, Title = "Á¤¼ö", });
-view.Childrens.Add(new GoInputInt { Left = 330, Top = 380, Width = 300, Height = 40, TitleSize = 90, Title = "Á¤¼ö\r\n( 0 ~ 100)", Minimum  = 0, Maximum = 100 });
-view.Childrens.Add(new GoInputDouble{ Left = 330, Top = 430, Width = 300, Height = 40, TitleSize = 90, Title = "½Ç¼ö", });
-view.Childrens.Add(new GoInputDouble { Left = 330, Top = 480, Width = 300, Height = 40, TitleSize = 90, Title = "½Ç¼ö\r\n( -20 ~ 50 )", Minimum = -20, Maximum = 100 });
+view.Childrens.Add(new GoInputInt { Left = 330, Top = 330, Width = 300, Height = 40, TitleSize = 90, Title = "ì •ìˆ˜", });
+view.Childrens.Add(new GoInputInt { Left = 330, Top = 380, Width = 300, Height = 40, TitleSize = 90, Title = "ì •ìˆ˜\r\n( 0 ~ 100)", Minimum  = 0, Maximum = 100 });
+view.Childrens.Add(new GoInputDouble{ Left = 330, Top = 430, Width = 300, Height = 40, TitleSize = 90, Title = "ì‹¤ìˆ˜", });
+view.Childrens.Add(new GoInputDouble { Left = 330, Top = 480, Width = 300, Height = 40, TitleSize = 90, Title = "ì‹¤ìˆ˜\r\n( -20 ~ 50 )", Minimum = -20, Maximum = 100 });
 
 var lb = new GoListBox { Left = 480, Top = 20, Width = 450, Height = 300, SelectionMode = GoItemSelectionMode.Multi };
 view.Childrens.Add(lb);
-for (int i = 1; i <= 100; i++) lb.Items.Add(new() { Text = $"Å×½ºÆ® {i}" });
+for (int i = 1; i <= 100; i++) lb.Items.Add(new() { Text = $"í…ŒìŠ¤íŠ¸ {i}" });
 
 view.VSync = VSyncMode.On;
 view.CenterWindow();

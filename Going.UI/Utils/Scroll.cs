@@ -17,7 +17,7 @@ namespace Going.UI.Utils
         #region Const
         const float GapSize = 10;
         const float GapTime = 1;
-        const double decelerationRate = 0.996;
+        const double DecelerationRate = 0.996;
         const int TaskInterval = 10;
         const bool Cut = true;
         internal const int GestureTime = 100;
@@ -134,7 +134,7 @@ namespace Going.UI.Utils
         double initVel;
         double destPos;
         double destTime;
-        double dCoeff = 1000 * Math.Log(decelerationRate);
+        double dCoeff = 1000 * Math.Log(DecelerationRate);
         double threshold = 0.1;
 
         bool IsTouchStart;
@@ -340,7 +340,7 @@ namespace Going.UI.Utils
                             {
                                 time = (DateTime.Now - stime).TotalMilliseconds;
                                 var oldV = ScrollPosition;
-                                var newV = (MathTool.Constrain((initPos + (Math.Pow(decelerationRate, time) - 1) / dCoeff * initVel), 0, tot));
+                                var newV = (MathTool.Constrain((initPos + (Math.Pow(DecelerationRate, time) - 1) / dCoeff * initVel), 0, tot));
                                 if (oldV != newV) { ScrollPosition = (newV); try { ScrollChanged?.Invoke(); } catch { } }
 
                                 await Task.Delay(TaskInterval);
@@ -519,7 +519,7 @@ namespace Going.UI.Utils
                             {
                                 time = (DateTime.Now - stime).TotalMilliseconds;
                                 var oldV = ScrollPosition;
-                                var newV = (MathTool.Constrain((initPos + (Math.Pow(decelerationRate, time) - 1) / dCoeff * initVel), 0, tot));
+                                var newV = (MathTool.Constrain((initPos + (Math.Pow(DecelerationRate, time) - 1) / dCoeff * initVel), 0, tot));
                                 if (oldV != newV) { ScrollPosition = (newV); try { ScrollChanged?.Invoke(); } catch { } }
 
                                 await Task.Delay(TaskInterval);
