@@ -1,6 +1,6 @@
 ﻿using Going.UI.Enums;
 using Going.UI.Utils;
-using UISlider = Going.UI.Controls.GoSliderBasic;
+using UISlider = Going.UI.Controls.GoSlider;
 
 namespace Going.UI.Forms.Controls
 {

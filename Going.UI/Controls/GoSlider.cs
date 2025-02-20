@@ -8,7 +8,7 @@ using SkiaSharp;
 
 namespace Going.UI.Controls
 {
-    public abstract class GoSlider : GoControl
+    public class GoSlider : GoControl
     {
         #region Properties
         // 아이콘 설정
@@ -16,15 +16,6 @@ namespace Going.UI.Controls
         public float IconSize { get; set; } = 12;
         public float IconGap { get; set; } = 5;
         public GoDirectionHV IconDirection { get; set; }
-        // 타이틀 설정
-        public float? TitleSize { get; set; }
-        public string? Title { get; set; }
-        // 입력 설정
-        public float? InputSize { get; set; }
-        public string? InputValue { get; set; }
-        // 버튼 설정
-        public float? ButtonSize { get; set; }
-        public string? ButtonText { get; set; }
         // 슬라이더 라벨 설정
         public string Text { get; set; } = "label";
         public string FontName { get; set; } = "나눔고딕";
@@ -50,9 +41,6 @@ namespace Going.UI.Controls
         private const float TrackHeight = 4f;
         // 슬라이더 상태값 설정
         private List<GoButtonInfo> Buttons { get; set; } = [];
-        private bool UseTitle => TitleSize is > 0;
-        private bool UseInput => InputSize is > 0;
-        private bool UseButton => ButtonSize is > 0;
         #endregion
 
         #region Event
@@ -61,7 +49,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Constructor
-        protected GoSlider()
+        public GoSlider()
         {
             Selectable = true;
         }
@@ -135,25 +123,6 @@ namespace Going.UI.Controls
             base.OnMouseUp(x, y, button);
         }
         #endregion
-        #region Areas
-        public override Dictionary<string, SKRect> Areas()
-        {
-            var dic = base.Areas();
-
-            var rts = Direction == GoDirectionHV.Vertical ? Util.Rows(dic["Content"], [$"{TitleSize ?? 0}px", "100%", $"{InputSize ?? 0}px", $"{ButtonSize ?? 0}px"])
-                                                          : Util.Columns(dic["Content"], [$"{TitleSize ?? 0}px", "100%", $"{InputSize ?? 0}px", $"{ButtonSize ?? 0}px"]);
-            dic["Title"] = rts[0];
-            dic["Value"] = rts[1];
-            dic["Input"] = rts[2];
-            dic["Button"] = rts[3];
-
-            return dic;
-        }
-        #endregion
-        #endregion
-
-        #region Abstract
-        protected abstract void OnDrawValue(SKCanvas canvas, SKRect rect);
         #endregion
 
         #region Method
@@ -165,17 +134,6 @@ namespace Going.UI.Controls
             var colors = GetThemeColors(thm);
             var areas = Areas();
             var contentBox = areas["Content"];
-
-            var useT = UseTitle;
-            var useI = UseInput;
-            var useB = UseButton;
-            var rnds = Util.Rounds(Direction, Round, (TitleSize.HasValue ? 1 : 0) + 1 + + (InputSize.HasValue ? 1 : 0) + (ButtonSize.HasValue ? 1 : 0));
-            var rndTitle = TitleSize.HasValue ? rnds[0] : GoRoundType.Rect;
-            var rndValue = TitleSize.HasValue ? rnds[1] : rnds[0];
-            var rndInput = InputSize.HasValue ? rnds[2] : GoRoundType.Rect;
-            var rndButton = ButtonSize.HasValue ? rnds[^1] : GoRoundType.Rect;
-            var rndButtons = Util.Rounds(GoDirectionHV.Horizon, rndButton, ButtonSize.HasValue ? Buttons.Count : 0);
-
 
             DrawSliderBackground(canvas, thm, contentBox, colors.background);
             UpdateLayout(contentBox);   // 슬라이더 트랙과 핸들 값 업데이트
@@ -218,14 +176,14 @@ namespace Going.UI.Controls
         }
         #endregion
         #region DrawSliderHandle
-        private void DrawSliderHandle(SKCanvas canvask, SKRect rect, SKColor color)
+        private void DrawSliderHandle(SKCanvas canvas, SKRect rect, SKColor color)
         {
             // 핸들 그리기
             using var handlePaint = new SKPaint();
             handlePaint.IsAntialias = true;
             handlePaint.Color = color;
             handlePaint.Style = SKPaintStyle.Fill;
-            canvask.DrawCircle(handleRect.MidX, handleRect.MidY, HandleRadius, handlePaint);
+            canvas.DrawCircle(handleRect.MidX, handleRect.MidY, HandleRadius, handlePaint);
         }
         #endregion
         #endregion
@@ -310,39 +268,6 @@ namespace Going.UI.Controls
         }
         #endregion
         #endregion
-        #endregion
-    }
-
-    public class GoSliderBasic : GoSlider
-    {
-        #region Properties
-        private string sVal = "";
-        public string Value
-        {
-            get => sVal;
-            set
-            {
-                if (sVal != value)
-                {
-                    sVal = value;
-                    ValueChanged?.Invoke(this, EventArgs.Empty);
-                }
-            }
-        }
-        #endregion
-
-        #region Event
-        public event EventHandler? ValueChanged;
-        #endregion
-
-        #region OnDrawValue
-        protected override void OnDrawValue(SKCanvas canvas, SKRect rtValue)
-        {
-            var thm = GoTheme.Current;
-            var cText = thm.ToColor(TextColor);
-
-            Util.DrawText(canvas, Value, FontName, FontSize, rtValue, cText);
-        }
         #endregion
     }
 }
