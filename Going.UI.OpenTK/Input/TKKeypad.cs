@@ -178,7 +178,7 @@ namespace Going.UI.OpenTK.Input
         private void Areas()
         {
             var rt = Bounds;
-            var rts = Util.Grid(Util.FromRect(rt, new GoPadding(5)), ["14%", "14%", "14%", "14%", "14%", "14%", "16%"], ["30%", "35%", "35%"]);
+            var rts = Util.Grid(Util.FromRect(rt, new GoPadding(5)), ["14%", "14%", "14%", "14%", "14%", "14%", "16%"], ["32%", "34%", "34%"]);
             Bounds = rt;
 
             #region Inflate
@@ -314,7 +314,7 @@ namespace Going.UI.OpenTK.Input
         }
         #endregion
 
-        public float GetHeight(SKSize ScreenSize) => Math.Max(240, ScreenSize.Height * 0.35F);
+        public float GetHeight(SKSize ScreenSize) => Math.Max(240, ScreenSize.Height * 0.3F);
         #endregion
 
     }

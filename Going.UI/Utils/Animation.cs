@@ -3,6 +3,7 @@ using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,6 +18,7 @@ namespace Going.UI.Utils
         #endregion
 
         #region Properties
+        public static bool Use { get; set; } = true;
         public double TotalMillls { get; private set; }
         public double PlayMillis => tmStart.HasValue ? (DateTime.Now - tmStart.Value).TotalMilliseconds : 0;
         public bool IsPlaying { get; private set; }
@@ -31,19 +33,22 @@ namespace Going.UI.Utils
         #region Start
         public void Start(double totalMillis, string? variable = null, Action? act = null)
         {
-            if (!IsPlaying)
+            if (Use)
             {
-                this.tmStart = DateTime.Now;
-                this.TotalMillls = totalMillis;
-                this.Variable = variable;
-
-                Task.Run(async () =>
+                if (!IsPlaying)
                 {
-                    IsPlaying = true;
-                    await Task.Delay(TimeSpan.FromMilliseconds(totalMillis));
-                    act?.Invoke();
-                    Stop();
-                });
+                    this.tmStart = DateTime.Now;
+                    this.TotalMillls = totalMillis;
+                    this.Variable = variable;
+
+                    Task.Run(async () =>
+                    {
+                        IsPlaying = true;
+                        await Task.Delay(TimeSpan.FromMilliseconds(totalMillis));
+                        act?.Invoke();
+                        Stop();
+                    });
+                }
             }
         }
         #endregion

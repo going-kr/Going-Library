@@ -1,6 +1,8 @@
 ﻿using Going.UI.Containers;
 using Going.UI.Controls;
+using Going.UI.Design;
 using Going.UI.Enums;
+using Going.UI.Tools;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -13,57 +15,72 @@ namespace Going.UI.Utils
 {
     public class GUI
     {
+        public static void Init(GoDesign? design, IGoContainer container )
+        {
+            foreach (var c in container.Childrens)
+                c.FireInit(design);
+        }
+
         public static void Draw(SKCanvas canvas, IGoContainer container)
         {
             foreach (var c in container.Childrens)
             {
-                if (c.FirstRender && c is GoControl c2)
-                    c2.Parent = container;
-
-                using (new SKAutoCanvasRestore(canvas))
+                if (CollisionTool.Check(Util.FromRect(0, 0, container.Bounds.Width, container.Bounds.Height), c.Bounds))
                 {
-                    canvas.ClipRect(c.Bounds);
-                    canvas.Translate(c.Left, c.Top);
-                    c.FireDraw(canvas);
-                }
+                    if (c.FirstRender && c is GoControl c2)
+                        c2.Parent = container;
 
-                if (c.FirstRender && c is GoControl c3) c3.FirstRender = false;
+                    using (new SKAutoCanvasRestore(canvas))
+                    {
+                        canvas.ClipRect(c.Bounds);
+                        canvas.Translate(c.Left, c.Top);
+                        c.FireDraw(canvas);
+                    }
+
+                    if (c.FirstRender && c is GoControl c3) c3.FirstRender = false;
+                }
             }
         }
 
         public static void Update(IGoContainer container)
         {
-            foreach (var c in container.Childrens) c.FireUpdate();
+            foreach (var c in container.Childrens)
+                c.FireUpdate();
         }
 
         public static void MouseDown(IGoContainer container, float x, float y, GoMouseButton btn)
         {
             foreach (var c in container.Childrens.Where(x => x.Enabled))
-                c.FireMouseDown(x - c.Left, y - c.Top, btn);
-        }
+                if (CollisionTool.Check(Util.FromRect(0, 0, container.Bounds.Width, container.Bounds.Height), c.Bounds))
+                    c.FireMouseDown(x - c.Left, y - c.Top, btn);
+        }   
 
         public static void MouseUp(IGoContainer container, float x, float y, GoMouseButton btn)
         {
             foreach (var c in container.Childrens.Where(x => x.Enabled))
-                c.FireMouseUp(x - c.Left, y - c.Top, btn);
+                if (CollisionTool.Check(Util.FromRect(0, 0, container.Bounds.Width, container.Bounds.Height), c.Bounds) || (c is GoControl c2 && c2._MouseDown_))
+                    c.FireMouseUp(x - c.Left, y - c.Top, btn);
         }
 
         public static void MouseDoubleClick(IGoContainer container, float x, float y, GoMouseButton btn)
         {
             foreach (var c in container.Childrens.Where(x => x.Enabled))
-                c.FireMouseDoubleClick(x - c.Left, y - c.Top, btn);
+                if (CollisionTool.Check(Util.FromRect(0, 0, container.Bounds.Width, container.Bounds.Height), c.Bounds))
+                    c.FireMouseDoubleClick(x - c.Left, y - c.Top, btn);
         }
 
         public static void MouseMove(IGoContainer container, float x, float y)
         {
             foreach (var c in container.Childrens.Where(x => x.Enabled))
-                c.FireMouseMove(x - c.Left, y - c.Top);
+                if (CollisionTool.Check(Util.FromRect(0, 0, container.Bounds.Width, container.Bounds.Height), c.Bounds) || (c is GoControl c2 && c2._MouseDown_))
+                    c.FireMouseMove(x - c.Left, y - c.Top);
         }
 
         public static void MouseWheel(IGoContainer container, float x, float y, float delta)
         {
             foreach (var c in container.Childrens.Where(x => x.Enabled))
-                c.FireMouseWheel(x - c.Left, y - c.Top, delta);
+                if (CollisionTool.Check(Util.FromRect(0, 0, container.Bounds.Width, container.Bounds.Height), c.Bounds))
+                    c.FireMouseWheel(x - c.Left, y - c.Top, delta);
         }
 
         public static void KeyDown(IGoContainer container, bool Shift, bool Control, bool Alt, GoKeys key)

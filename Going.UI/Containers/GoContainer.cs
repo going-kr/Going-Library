@@ -1,5 +1,6 @@
 ﻿using Going.UI.Controls;
 using Going.UI.Datas;
+using Going.UI.Design;
 using Going.UI.Enums;
 using Going.UI.Utils;
 using SkiaSharp;
@@ -17,8 +18,14 @@ namespace Going.UI.Containers
         public List<IGoControl> Childrens { get; } = [];
         #endregion
 
-
         #region Override
+        protected override void OnInit(GoDesign? design)
+        {
+            base.OnInit(design);
+
+            GUI.Init(design, this);
+        }
+
         protected override void OnDraw(SKCanvas canvas)
         {
             base.OnDraw(canvas);
@@ -31,44 +38,44 @@ namespace Going.UI.Containers
 
         protected override void OnMouseDown(float x, float y, GoMouseButton button)
         {
-            base.OnMouseDown(x, y, button);
             GUI.MouseDown(this, x, y, button);
+            base.OnMouseDown(x, y, button);
         }
 
         protected override void OnMouseUp(float x, float y, GoMouseButton button)
         {
-            base.OnMouseUp(x, y, button);
             GUI.MouseUp(this, x, y, button);
+            base.OnMouseUp(x, y, button);
         }
 
         protected override void OnMouseDoubleClick(float x, float y, GoMouseButton button)
         {
-            base.OnMouseDoubleClick(x, y, button);
             GUI.MouseDoubleClick(this, x, y, button);
+            base.OnMouseDoubleClick(x, y, button);
         }
 
         protected override void OnMouseMove(float x, float y)
         {
-            base.OnMouseMove(x, y);
             GUI.MouseMove(this, x, y);
+            base.OnMouseMove(x, y);
         }
 
         protected override void OnMouseWheel(float x, float y, float delta)
         {
-            base.OnMouseWheel(x, y, delta);
             GUI.MouseWheel(this, x, y, delta);
+            base.OnMouseWheel(x, y, delta);
         }
 
         protected override void OnKeyDown(bool Shift, bool Control, bool Alt, GoKeys key)
         {
-            base.OnKeyDown(Shift, Control, Alt, key);
             GUI.KeyDown(this, Shift, Control, Alt, key);
+            base.OnKeyDown(Shift, Control, Alt, key);
         }
 
         protected override void OnKeyUp(bool Shift, bool Control, bool Alt, GoKeys key)
         {
-            base.OnKeyUp(Shift, Control, Alt, key);
             GUI.KeyUp(this, Shift, Control, Alt, key);
+            base.OnKeyUp(Shift, Control, Alt, key);
         }
         #endregion
 

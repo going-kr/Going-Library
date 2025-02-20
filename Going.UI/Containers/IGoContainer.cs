@@ -1,5 +1,6 @@
 ﻿using Going.UI.Controls;
 using Going.UI.Datas;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +13,7 @@ namespace Going.UI.Containers
     public interface IGoContainer 
     {
         List<IGoControl> Childrens { get; }
+        SKRect Bounds { get; set; }
     }
+
 }

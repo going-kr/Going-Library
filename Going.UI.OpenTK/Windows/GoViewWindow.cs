@@ -32,19 +32,22 @@ using OpenTK.Windowing.Common.Input;
 using Image = OpenTK.Windowing.Common.Input.Image;
 using Going.UI.OpenTK.Input;
 using Going.UI.Managers;
+using System.Security.Cryptography.X509Certificates;
+using Going.UI.Design;
 
 namespace Going.UI.OpenTK.Windows
 {
-    public class GoViewWindow : GameWindow, IGoContainer
+    public class GoViewWindow : GameWindow
     {
         #region Properties
-        public int Width => Size.X;
-        public int Height => Size.Y;
+        public int Width => ClientRectangle.Size.X;
+        public int Height => ClientRectangle.Size.Y;
+
         public string? TItleIconString { get; set; }
 
         public bool Debug { get; set; } = false;
 
-        public List<IGoControl> Childrens { get; } = [];
+        public GoDesign Design { get; private set; } = new GoDesign();
         #endregion
 
         #region Member Variable
@@ -52,9 +55,9 @@ namespace Going.UI.OpenTK.Windows
         private GRContext? ctx;
         private GRBackendRenderTarget? target;
         private SKSurface? surface;
-        private DateTime dcTime = DateTime.Now;
         private bool IsFirstRender = true;
         private nint Handle;
+        private DateTime dcTime = DateTime.Now;
         #endregion
 
         #region Constructor
@@ -113,11 +116,14 @@ namespace Going.UI.OpenTK.Windows
         #region OnRenderFrame
         protected override void OnRenderFrame(FrameEventArgs e)
         {
+            Design.SetSize(Width, Height);
             base.OnRenderFrame(e);
 
             if (ctx != null && target != null && surface != null)
             {
                 var canvas = surface.Canvas;
+
+                if (IsFirstRender) Design.Init();
 
                 #region Draw
                 canvas.Clear(GoTheme.Current.Back);
@@ -141,12 +147,12 @@ namespace Going.UI.OpenTK.Windows
                     #endregion
 
                     #region Draw
-                    OpenTKInputManager.Current.ScreenSize = new SKSize(Width - borderWidth, Height - topMargin);
+                    OpenTKInputManager.Current.ScreenSize = new SKSize(Width, Height);
 
                     using (new SKAutoCanvasRestore(canvas))
                     {
                         canvas.Translate(0, OpenTKInputManager.Current.TranslateY);
-                        GUI.Draw(canvas, this);
+                        Design.Draw(canvas);
                     }
 
                     OpenTKInputManager.Current.Draw(canvas);
@@ -157,7 +163,7 @@ namespace Going.UI.OpenTK.Windows
                     {
                         using (var p = new SKPaint { IsAntialias = true })
                         {
-                            var rt = Util.FromRect(0, Height - topMargin - 20, Width - borderWidth, 20);
+                            var rt = Util.FromRect(0, Height - 20, Width, 20);
                             p.Color = SKColors.Black;
                             p.IsStroke = false;
                             canvas.DrawRect(rt, p);
@@ -188,7 +194,7 @@ namespace Going.UI.OpenTK.Windows
 
             if (ctx != null && target != null)
             {
-                GUI.Update(this);
+                Design.Update();
             }
         }
         #endregion
@@ -200,7 +206,7 @@ namespace Going.UI.OpenTK.Windows
             GoMouseButton mb = ToGoMouseButton(e.Button);
 
             if (OpenTKInputManager.Current.IsInput) OpenTKInputManager.Current.MouseDown(x, y, mb);
-            else GUI.MouseDown(this, x, y, mb);
+            else Design.MouseDown(x, y, mb);
 
             base.OnMouseDown(e);
         }
@@ -213,13 +219,11 @@ namespace Going.UI.OpenTK.Windows
             GoMouseButton mb = ToGoMouseButton(e.Button);
 
             if (OpenTKInputManager.Current.IsInput) OpenTKInputManager.Current.MouseUp(x, y, mb);
-            else
-            {
-                GUI.MouseUp(this, x, y, mb);
-                if ((DateTime.Now - dcTime).TotalMilliseconds < 300) GUI.MouseDoubleClick(this, x, y, mb);
-            }
+            else Design.MouseUp(x, y, mb);
 
+            if ((DateTime.Now - dcTime).TotalMilliseconds < 300) Design.MouseDoubleClick(x, y, mb);
             dcTime = DateTime.Now;
+
             base.OnMouseUp(e);
         }
         #endregion
@@ -230,7 +234,7 @@ namespace Going.UI.OpenTK.Windows
             float y = MousePosition.Y;
 
             if (OpenTKInputManager.Current.IsInput) OpenTKInputManager.Current.MouseMove(x, y);
-            else GUI.MouseMove(this, x, y);
+            else Design.MouseMove(x, y);
 
             base.OnMouseMove(e);
         }
@@ -241,7 +245,7 @@ namespace Going.UI.OpenTK.Windows
             float x = MousePosition.X;
             float y = MousePosition.Y;
 
-            GUI.MouseWheel(this, x, y, e.OffsetY);
+            Design.MouseWheel(x, y, e.OffsetY);
 
             base.OnMouseWheel(e);
         }
@@ -264,14 +268,14 @@ namespace Going.UI.OpenTK.Windows
         #region OnKeyDown
         protected override void OnKeyDown(KeyboardKeyEventArgs e)
         {
-            GUI.KeyDown(this, e.Shift, e.Control, e.Alt, (GoKeys)e.Key);
+            Design.KeyDown(e.Shift, e.Control, e.Alt, (GoKeys)e.Key);
             base.OnKeyDown(e);
         }
         #endregion
         #region OnKeyUp
         protected override void OnKeyUp(KeyboardKeyEventArgs e)
         {
-            GUI.KeyUp(this, e.Shift, e.Control, e.Alt, (GoKeys)e.Key);
+            Design.KeyUp(e.Shift, e.Control, e.Alt, (GoKeys)e.Key);
             base.OnKeyDown(e);
         }
         #endregion
@@ -301,7 +305,8 @@ namespace Going.UI.OpenTK.Windows
                 GL.GetRenderbufferParameter(RenderbufferTarget.Renderbuffer, RenderbufferParameterName.RenderbufferHeight, out int bufferHeight);
 
             }
-            return new GRBackendRenderTarget(Width, Height, 0, stencil, new GRGlFramebufferInfo(0, SKColorType.Rgba8888.ToGlSizedFormat()));
+            
+            return new GRBackendRenderTarget(Size.X, Size.Y, 0, stencil, new GRGlFramebufferInfo(0, SKColorType.Rgba8888.ToGlSizedFormat()));
         }
         #endregion
         #region ToGoMouseButton

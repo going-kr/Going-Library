@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Going.UI.Enums
+namespace Going.UI.Containers
 {
-    public enum GoItemSelectionMode { None, SIngle, Multi, MultiPC }
+    public class GoWindow : GoContainer
+    {
+    }
 }

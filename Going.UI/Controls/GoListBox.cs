@@ -238,6 +238,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Method
+        #region itemLoop
         void itemLoop(Action<int, SKRect, GoListItem> loop)
         {
             var rts = Areas();
@@ -251,115 +252,106 @@ namespace Going.UI.Controls
             for (int i = si; i <= ei; i++)
                 loop(i, Util.FromRect(0, i * ItemHeight, rtBox.Width, ItemHeight), Items[i]);
         }
+        #endregion
 
         #region select
         private void select(GoListItem item, int i)
         {
-            if (!GoTheme.Current.TouchMode)
+            #region Single
+            if (SelectionMode == GoItemSelectionMode.SIngle)
             {
-                #region Single Selection
-                if (SelectionMode == GoItemSelectionMode.SIngle)
+                SelectedItems.Clear();
+                SelectedItems.Add(item);
+                SelectedChanged?.Invoke(this, EventArgs.Empty);
+                first = item;
+            }
+            #endregion
+            #region Multi
+            else if (SelectionMode == GoItemSelectionMode.Multi)
+            {
+                if (SelectedItems.Contains(item))
                 {
-                    SelectedItems.Clear();
+                    SelectedItems.Remove(item);
+                    if (SelectedChanged != null) SelectedChanged.Invoke(this, new EventArgs());
+                }
+                else
+                {
                     SelectedItems.Add(item);
                     if (SelectedChanged != null) SelectedChanged.Invoke(this, new EventArgs());
                 }
-                #endregion
-                #region Multi Selection
-                else if (SelectionMode == GoItemSelectionMode.Multi)
-                {
-                    if (SelectedItems.Contains(item))
-                    {
-                        SelectedItems.Remove(item);
-                        if (SelectedChanged != null) SelectedChanged.Invoke(this, new EventArgs());
-                    }
-                    else
-                    {
-                        SelectedItems.Add(item);
-                        if (SelectedChanged != null) SelectedChanged.Invoke(this, new EventArgs());
-                    }
-                }
-                #endregion
             }
-            else
+            #endregion
+            #region MultiPC
+            else if (SelectionMode == GoItemSelectionMode.MultiPC)
             {
-                #region Single Selection
-                if (SelectionMode == GoItemSelectionMode.SIngle)
+                if (SelectedItems.Contains(item))
                 {
-                    SelectedItems.Clear();
-                    SelectedItems.Add(item);
+                    SelectedItems.Remove(item);
                     SelectedChanged?.Invoke(this, EventArgs.Empty);
-                    first = item;
                 }
-                #endregion
-                #region Multi Selection
-                else if (SelectionMode == GoItemSelectionMode.Multi)
+                else
                 {
-                    if (SelectedItems.Contains(item))
+                    if (bControl)
                     {
-                        SelectedItems.Remove(item);
-                        SelectedChanged?.Invoke(this, EventArgs.Empty);
-                    }
-                    else
-                    {
-                        if (bControl)
+                        #region Control
+                        if (SelectedItems.Contains(item))
                         {
-                            #region Control
-                            if (SelectedItems.Contains(item))
-                            {
-                                SelectedItems.Remove(item);
-                                SelectedChanged?.Invoke(this, EventArgs.Empty);
-                            }
-                            else
-                            {
-                                SelectedItems.Add(item);
-                                SelectedChanged?.Invoke(this, EventArgs.Empty);
-                                first = item;
-                            }
-                            #endregion
-                        }
-                        else if (bShift)
-                        {
-                            #region Shift
-                            if (first == null)
-                            {
-                                SelectedItems.Add(item);
-                                SelectedChanged?.Invoke(this, EventArgs.Empty);
-                            }
-                            else
-                            {
-                                int idx1 = Items.IndexOf(first);
-                                int idx2 = i;
-                                int min = Math.Min(idx1, idx2);
-                                int max = Math.Max(idx1, idx2);
-
-                                bool b = false;
-                                for (int ii = min; ii <= max; ii++)
-                                {
-                                    if (!SelectedItems.Contains(Items[ii]))
-                                    {
-                                        SelectedItems.Add(Items[ii]);
-                                        b = true;
-                                    }
-                                }
-                                if (b) SelectedChanged?.Invoke(this, EventArgs.Empty);
-                            }
-                            #endregion
+                            SelectedItems.Remove(item);
+                            SelectedChanged?.Invoke(this, EventArgs.Empty);
                         }
                         else
                         {
-                            #region Select
-                            SelectedItems.Clear();
                             SelectedItems.Add(item);
                             SelectedChanged?.Invoke(this, EventArgs.Empty);
                             first = item;
-                            #endregion
                         }
+                        #endregion
+                    }
+                    else if (bShift)
+                    {
+                        #region Shift
+                        if (first == null)
+                        {
+                            SelectedItems.Add(item);
+                            SelectedChanged?.Invoke(this, EventArgs.Empty);
+                        }
+                        else
+                        {
+                            int idx1 = Items.IndexOf(first);
+                            int idx2 = i;
+                            int min = Math.Min(idx1, idx2);
+                            int max = Math.Max(idx1, idx2);
+
+                            bool b = false;
+                            for (int ii = min; ii <= max; ii++)
+                            {
+                                if (!SelectedItems.Contains(Items[ii]))
+                                {
+                                    SelectedItems.Add(Items[ii]);
+                                    b = true;
+                                }
+                            }
+                            if (b) SelectedChanged?.Invoke(this, EventArgs.Empty);
+                        }
+                        #endregion
+                    }
+                    else
+                    {
+                        #region Select
+                        SelectedItems.Clear();
+                        SelectedItems.Add(item);
+                        SelectedChanged?.Invoke(this, EventArgs.Empty);
+                        first = item;
+                        #endregion
                     }
                 }
-                #endregion
             }
+            #endregion
         }
+        #endregion
+
+        #region SetInvalidate
+        public void SetInvalidate(Action? method) => scroll.Refresh = method;
         #endregion
         #endregion
     }

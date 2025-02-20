@@ -1,5 +1,6 @@
 ﻿using Going.UI.Datas;
 using Going.UI.Enums;
+using Going.UI.Managers;
 using Going.UI.Utils;
 using System;
 using System.Collections.Generic;
@@ -9,16 +10,11 @@ using System.Drawing.Design;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
-using Going.UI.Themes;
 using Going.UI.Forms.Input;
-using Going.UI.Managers;
-using Going.UI.Controls;
-using System.Windows.Forms;
 
 namespace Going.UI.Forms.Controls
 {
-    public class GoInputString : GoControl
+    public class GoValueString : GoControl
     {
         #region Properties
         public string? IconString { get => control.IconString; set { if (control.IconString != value) { control.IconString = value; Invalidate(); } } }
@@ -29,7 +25,6 @@ namespace Going.UI.Forms.Controls
         public float FontSize { get => control.FontSize; set { if (control.FontSize != value) { control.FontSize = value; Invalidate(); } } }
 
         public GoDirectionHV Direction { get => control.Direction; set { if (control.Direction != value) { control.Direction = value; Invalidate(); } } }
-
         public string TextColor { get => control.TextColor; set { if (control.TextColor != value) { control.TextColor = value; Invalidate(); } } }
         public string BorderColor { get => control.BorderColor; set { if (control.BorderColor != value) { control.BorderColor = value; Invalidate(); } } }
         public string FillColor { get => control.FillColor; set { if (control.FillColor != value) { control.FillColor = value; Invalidate(); } } }
@@ -41,28 +36,23 @@ namespace Going.UI.Forms.Controls
 
         [Editor(typeof(CollectionEditor), typeof(UITypeEditor))]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
-        public List<GoButtonInfo> Buttons { get => control.Buttons; set { if (control.Buttons != value) { control.Buttons = value; Invalidate(); } } } 
+        public List<GoButtonInfo> Buttons { get => control.Buttons; set { if (control.Buttons != value) { control.Buttons = value; Invalidate(); } } }
         public float? ButtonSize { get => control.ButtonSize; set { if (control.ButtonSize != value) { control.ButtonSize = value; Invalidate(); } } }
 
         public string Value { get => control.Value; set { if (control.Value != value) { control.Value = value; Invalidate(); } } }
         #endregion
 
-        #region Member Variable
-        Going.UI.Controls.GoInputString control = new Going.UI.Controls.GoInputString();
+        #region Event
+        public event EventHandler ValueClicked { add => control.ValueClicked += value; remove => control.ValueClicked -= value; }
         #endregion
 
-        #region Event
-        public event EventHandler ValueChanged { add => control.ValueChanged += value; remove => control.ValueChanged -= value; }
+        #region Member Variable
+        Going.UI.Controls.GoValueString control = new Going.UI.Controls.GoValueString();
         #endregion
 
         #region Constructor
-        public GoInputString()
+        public GoValueString()
         {
-            GoInputEventer.Current.InputString += (c, bounds, callback, value) =>
-            {
-                if (c == control)
-                    FormsInputManager.Current.InputString(this, control, bounds, FontName, FontSize, ValueColor, TextColor, callback, value);
-            };
         }
         #endregion
 
@@ -150,7 +140,7 @@ namespace Going.UI.Forms.Controls
         #endregion
     }
 
-    public class GoInputNumber<T> : GoControl where T : struct
+    public class GoValueNumber<T> : GoControl where T : struct
     {
         #region Properties
         public string? IconString { get => control.IconString; set { if (control.IconString != value) { control.IconString = value; Invalidate(); } } }
@@ -177,22 +167,20 @@ namespace Going.UI.Forms.Controls
         public float? ButtonSize { get => control.ButtonSize; set { if (control.ButtonSize != value) { control.ButtonSize = value; Invalidate(); } } }
 
         public T Value { get => control.Value; set { if (!control.Value.Equals(value)) { control.Value = value; Invalidate(); } } }
-        public T? Minimum { get => control.Minimum; set => control.Minimum = value; }
-        public T? Maximum { get => control.Maximum; set => control.Maximum = value; }
         public string? FormatString { get => control.FormatString; set { if (control.FormatString != value) { control.FormatString = value; Invalidate(); } } }
         public string? Unit { get => control.Unit; set { if (control.Unit != value) { control.Unit = value; Invalidate(); } } }
         public float? UnitSize { get => control.UnitSize; set { if (control.UnitSize != value) { control.UnitSize = value; Invalidate(); } } }
         #endregion
         #region Member Variable
-        Going.UI.Controls.GoInputNumber<T> control = new Going.UI.Controls.GoInputNumber<T>();
+        Going.UI.Controls.GoValueNumber<T> control = new Going.UI.Controls.GoValueNumber<T>();
         #endregion
 
         #region Event
-        public event EventHandler ValueChanged { add => control.ValueChanged += value; remove => control.ValueChanged -= value; }
+        public event EventHandler ValueClicked { add => control.ValueClicked += value; remove => control.ValueClicked -= value; }
         #endregion
 
         #region Constructor
-        public GoInputNumber()
+        public GoValueNumber()
         {
             GoInputEventer.Current.InputNumber += (c, bounds, callback, type, value, min, max) =>
             {
@@ -288,10 +276,10 @@ namespace Going.UI.Forms.Controls
         #endregion
     }
 
-    public class GoInputInteger : GoInputNumber<int> { }
-    public class GoInputFloat: GoInputNumber<double> { }
+    public class GoValueInteger : GoValueNumber<int> { }
+    public class GoValueFloat : GoValueNumber<double> { }
 
-    public class GoInputBoolean : GoControl
+    public class GoValueBoolean : GoControl
     {
         #region Properties
         public string? IconString { get => control.IconString; set { if (control.IconString != value) { control.IconString = value; Invalidate(); } } }
@@ -321,17 +309,17 @@ namespace Going.UI.Forms.Controls
         #endregion
 
         #region Member Variable
-        Going.UI.Controls.GoInputBoolean control = new Going.UI.Controls.GoInputBoolean();
+        Going.UI.Controls.GoValueBoolean control = new Going.UI.Controls.GoValueBoolean();
         #endregion
 
         #region Event
-        public event EventHandler ValueChanged { add => control.ValueChanged += value; remove => control.ValueChanged -= value; }
+        public event EventHandler ValueClicked { add => control.ValueClicked += value; remove => control.ValueClicked -= value; }
         #endregion
 
         #region Constructor
-        public GoInputBoolean()
+        public GoValueBoolean()
         {
-           
+
         }
         #endregion
 
@@ -418,6 +406,4 @@ namespace Going.UI.Forms.Controls
         #endregion
         #endregion
     }
-
-    
 }

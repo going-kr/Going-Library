@@ -124,6 +124,8 @@ namespace Going.UI.Utils
 
 
         public bool ScrollVisible => ScrollTotal > ScrollView;
+
+        public Action? Refresh;
         #endregion
 
         #region Member Variable
@@ -344,6 +346,8 @@ namespace Going.UI.Utils
                                 if (oldV != newV) { ScrollPosition = (newV); try { ScrollChanged?.Invoke(); } catch { } }
 
                                 await Task.Delay(TaskInterval);
+
+                                Refresh?.Invoke();
                             }
 
                             IsTouchStart = false;
@@ -523,6 +527,8 @@ namespace Going.UI.Utils
                                 if (oldV != newV) { ScrollPosition = (newV); try { ScrollChanged?.Invoke(); } catch { } }
 
                                 await Task.Delay(TaskInterval);
+
+                                Refresh?.Invoke();
                             }
 
                             IsTouchStart = false;
