@@ -518,14 +518,19 @@ namespace Going.UI.Controls
                 }
             }
         }
+
+        public int MaximumViewCount { get; set; } = 8;
+        public int ItemHeight { get; set; } = 30;
         #endregion
 
         #region Event
         public event EventHandler? SelectedIndexChanged;
+
+        public event EventHandler<GoCancelableEventArgs>? DropDownOpening;
         #endregion
 
         #region Member Variable
-        GoDropDownWindow dwnd = new GoDropDownWindow ();
+        GoComboBoxDropDownWindow dwnd = new GoComboBoxDropDownWindow();
         #endregion
 
         #region OnDrawValue
@@ -568,8 +573,19 @@ namespace Going.UI.Controls
 
             if (CollisionTool.Check(rtValue, x, y))
             {
-                dwnd.Bounds = Util.FromRect(ScreenX + rtValue.Left, ScreenY + rtValue.Bottom, rtValue.Width, 150);
-                Design?.ShowDropDownWindow(dwnd);
+                var args = new GoCancelableEventArgs();
+                DropDownOpening?.Invoke(this, args);
+
+                if (!args.Cancel)
+                {
+                    var rt = rtValue; rt.Offset(ScreenX, ScreenY);
+                    var sel = SelectedIndex >= 0 && SelectedIndex < Items.Count ? Items[SelectedIndex] : null;
+                    dwnd.Show(rt, FontName, FontSize, ItemHeight, MaximumViewCount, Items, sel, (item) =>
+                    {
+                        if (item != null)
+                            SelectedIndex = Items.IndexOf(item);
+                    });
+                }
             }
         }
         #endregion
@@ -583,4 +599,5 @@ namespace Going.UI.Controls
         #endregion
     }
 
+    
 }

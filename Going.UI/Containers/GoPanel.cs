@@ -115,7 +115,7 @@ namespace Going.UI.Containers
                 }
             }
 
-            base.OnLayout();
+            //base.OnLayout();
         }
         #endregion
         #region OnMouseDown

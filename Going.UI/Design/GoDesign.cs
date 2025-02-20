@@ -18,6 +18,7 @@ namespace Going.UI.Design
     public class GoDesign
     {
         #region Properties
+        public static GoDesign? ActiveDesign { get; set; } 
         public Dictionary<string, GoPage> Pages { get; private set; } = [];
 
         [JsonIgnore] public int Width { get; private set; }
@@ -32,6 +33,14 @@ namespace Going.UI.Design
         private Stack<GoWindow> stkWindow = new Stack<GoWindow>();
         private GoDropDownWindow? dropdownWindow;
         #endregion
+
+        #region Constructor
+        public GoDesign()
+        {
+            ActiveDesign = this;
+        }
+        #endregion
+
 
         #region Method
         #region Select
@@ -50,6 +59,7 @@ namespace Going.UI.Design
         {
             if (dropdownWindow == null)
             {
+                wnd.Design = this;
                 dropdownWindow = wnd;
                 dropdownWindow.Visible = true;
             }
@@ -67,6 +77,7 @@ namespace Going.UI.Design
         #region Window
         public void ShowWindow(GoWindow wnd)
         {
+            wnd.Design = this;
             wnd.Visible = true;
             stkWindow.Push(wnd);
         }
@@ -164,22 +175,24 @@ namespace Going.UI.Design
         #region Mouse
         public void MouseDown(float x, float y, GoMouseButton button)
         {
+            ActiveDesign = this;
             if (dropdownWindow != null)
             {
                 if (CollisionTool.Check(dropdownWindow.Bounds, x, y))
-                    GUI.MouseDown(dropdownWindow, x, y, button);
+                    dropdownWindow.FireMouseDown(x - dropdownWindow.Left, y - dropdownWindow.Top, button);
                 else
-                    HideDropDownWindow(dropdownWindow);
+                    dropdownWindow.Hide();
             }
             else if (stkWindow.Count > 0)
             {
-                if (CollisionTool.Check(stkWindow.Peek().Bounds, x, y))
-                    GUI.MouseDown(stkWindow.Peek(), x, y, button);
+                var w = stkWindow.Peek();
+                if (CollisionTool.Check(w.Bounds, x, y))
+                    w.FireMouseDown(x - w.Left, y - w.Top, button);
             }
             else
             {
                 if (CurrentPage != null)
-                    GUI.MouseDown(CurrentPage, x, y, button);
+                    CurrentPage.FireMouseDown(x, y, button);
             }
         }
 
@@ -187,18 +200,19 @@ namespace Going.UI.Design
         {
             if (dropdownWindow != null)
             {
-                if (CollisionTool.Check(dropdownWindow.Bounds, x, y))
-                    GUI.MouseUp(dropdownWindow, x, y, button);
+                if (CollisionTool.Check(dropdownWindow.Bounds, x, y) || dropdownWindow._MouseDown_)
+                    dropdownWindow.FireMouseUp(x - dropdownWindow.Left, y - dropdownWindow.Top, button);
             }
             else if (stkWindow.Count > 0)
             {
-                if (CollisionTool.Check(stkWindow.Peek().Bounds, x, y))
-                    GUI.MouseUp(stkWindow.Peek(), x, y, button);
+                var w = stkWindow.Peek();
+                if (CollisionTool.Check(w.Bounds, x, y) || w._MouseDown_)
+                    w.FireMouseUp(x - w.Left, y - w.Top, button);
             }
             else
             {
                 if (CurrentPage != null)
-                    GUI.MouseUp(CurrentPage, x, y, button);
+                    CurrentPage.FireMouseUp(x, y, button);
             }
 
             SelectedControl = null;
@@ -209,17 +223,18 @@ namespace Going.UI.Design
             if (dropdownWindow != null)
             {
                 if (CollisionTool.Check(dropdownWindow.Bounds, x, y))
-                    GUI.MouseDoubleClick(dropdownWindow, x, y, button);
+                    dropdownWindow.FireMouseDoubleClick(x - dropdownWindow.Left, y - dropdownWindow.Top, button);
             }
             else if (stkWindow.Count > 0)
             {
-                if (CollisionTool.Check(stkWindow.Peek().Bounds, x, y))
-                    GUI.MouseDoubleClick(stkWindow.Peek(), x, y, button);
+                var w = stkWindow.Peek();
+                if (CollisionTool.Check(w.Bounds, x, y))
+                    w.FireMouseDoubleClick(x - w.Left, y - w.Top, button);
             }
             else
             {
                 if (CurrentPage != null)
-                    GUI.MouseDoubleClick(CurrentPage, x, y, button);
+                    CurrentPage.FireMouseDoubleClick(x, y, button);
             }
         }
 
@@ -227,18 +242,19 @@ namespace Going.UI.Design
         {
             if (dropdownWindow != null)
             {
-                if (CollisionTool.Check(dropdownWindow.Bounds, x, y))
-                    GUI.MouseMove(dropdownWindow, x, y);
+                if (CollisionTool.Check(dropdownWindow.Bounds, x, y) || dropdownWindow._MouseDown_)
+                    dropdownWindow.FireMouseMove(x - dropdownWindow.Left, y - dropdownWindow.Top);
             }
             else if (stkWindow.Count > 0)
             {
-                if (CollisionTool.Check(stkWindow.Peek().Bounds, x, y))
-                    GUI.MouseMove(stkWindow.Peek(), x, y);
+                var w = stkWindow.Peek();
+                if (CollisionTool.Check(w.Bounds, x, y) || w._MouseDown_)
+                    w.FireMouseMove(x - w.Left, y - w.Top);
             }
             else
             {
                 if (CurrentPage != null)
-                    GUI.MouseMove(CurrentPage, x, y);
+                    CurrentPage.FireMouseMove(x, y);
             }
 
             MousePosition = new SKPoint(x, y);
@@ -249,17 +265,18 @@ namespace Going.UI.Design
             if (dropdownWindow != null)
             {
                 if (CollisionTool.Check(dropdownWindow.Bounds, x, y))
-                    GUI.MouseWheel(dropdownWindow, x, y, delta);
+                    dropdownWindow.FireMouseWheel(x - dropdownWindow.Left, y - dropdownWindow.Top, delta);
             }
             else if (stkWindow.Count > 0)
             {
-                if (CollisionTool.Check(stkWindow.Peek().Bounds, x, y))
-                    GUI.MouseWheel(stkWindow.Peek(), x, y, delta);
+                var w = stkWindow.Peek();
+                if (CollisionTool.Check(w.Bounds, x, y))
+                    w.FireMouseWheel(x - w.Left, y - w.Top, delta);
             }
             else
             {
                 if (CurrentPage != null)
-                    GUI.MouseWheel(CurrentPage, x, y, delta);
+                    CurrentPage.FireMouseWheel(x, y, delta);
             }
         }
         #endregion

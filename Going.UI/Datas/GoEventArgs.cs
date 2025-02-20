@@ -22,4 +22,10 @@ namespace Going.UI.Datas
     {
         public float Delta { get; private set; }
     }
+
+    public class GoCancelableEventArgs : EventArgs
+    {
+        public bool Cancel { get; set; }
+    }
+
 }

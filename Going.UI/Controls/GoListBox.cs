@@ -37,6 +37,8 @@ namespace Going.UI.Controls
         public List<GoListItem> Items { get; set; } = [];
         public List<GoListItem> SelectedItems { get; } = new List<GoListItem>();
         public GoItemSelectionMode SelectionMode { get; set; } = GoItemSelectionMode.SIngle;
+
+        public double ScrollPosition { get => scroll.ScrollPosition; set => scroll.ScrollPosition = value; }
         #endregion
 
         #region Member Variable

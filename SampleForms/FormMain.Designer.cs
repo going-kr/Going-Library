@@ -57,6 +57,7 @@
             goInputString1 = new Going.UI.Forms.Controls.GoInputString();
             goButton2 = new Going.UI.Forms.Controls.GoButton();
             goListBox1 = new Going.UI.Forms.Controls.GoListBox();
+            goInputCombo1 = new Going.UI.Forms.Controls.GoInputCombo();
             goPanel2.SuspendLayout();
             SuspendLayout();
             // 
@@ -488,12 +489,41 @@
             goListBox1.Text = "goListBox1";
             goListBox1.TextColor = "Fore";
             // 
+            // goInputCombo1
+            // 
+            goInputCombo1.BackColor = Color.FromArgb(50, 50, 50);
+            goInputCombo1.BackgroundColor = "Back";
+            goInputCombo1.BorderColor = "Base3";
+            goInputCombo1.ButtonSize = null;
+            goInputCombo1.Direction = Going.UI.Enums.GoDirectionHV.Horizon;
+            goInputCombo1.FillColor = "Base3";
+            goInputCombo1.FontName = "나눔고딕";
+            goInputCombo1.FontSize = 12F;
+            goInputCombo1.IconGap = 5F;
+            goInputCombo1.IconSize = 12F;
+            goInputCombo1.IconString = null;
+            goInputCombo1.ItemHeight = 30;
+            goInputCombo1.Location = new Point(527, 276);
+            goInputCombo1.MaximumViewCount = 8;
+            goInputCombo1.Name = "goInputCombo1";
+            goInputCombo1.Round = Going.UI.Enums.GoRoundType.All;
+            goInputCombo1.SelectedIndex = -1;
+            goInputCombo1.Size = new Size(277, 40);
+            goInputCombo1.TabIndex = 4;
+            goInputCombo1.TabStop = false;
+            goInputCombo1.Text = "goInputCombo1";
+            goInputCombo1.TextColor = "Fore";
+            goInputCombo1.Title = null;
+            goInputCombo1.TitleSize = null;
+            goInputCombo1.ValueColor = "Base1";
+            // 
             // FormMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(50, 50, 50);
             ClientSize = new Size(1051, 555);
+            Controls.Add(goInputCombo1);
             Controls.Add(goListBox1);
             Controls.Add(goPanel2);
             Name = "FormMain";
@@ -520,5 +550,6 @@
         private Going.UI.Forms.Controls.GoValueString goValueString1;
         private Going.UI.Forms.Controls.GoValueInteger goValueInteger1;
         private Going.UI.Forms.Controls.GoValueBoolean goValueBoolean1;
+        private Going.UI.Forms.Controls.GoInputCombo goInputCombo1;
     }
 }

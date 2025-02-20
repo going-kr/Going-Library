@@ -81,7 +81,18 @@ namespace Going.UI.Containers
 
         #region Virtual
         protected virtual void OnContainerDraw(SKCanvas canvas) { }
-        protected virtual void OnLayout() { }
+        protected virtual void OnLayout()
+        {
+            var rts = Areas();
+            var rtPanel = rts["Content"];
+            foreach (var c in Childrens)
+            {
+                if (c.Fill)
+                {
+                    c.Bounds = Util.FromRect(rtPanel, c.Margin);
+                }
+            }
+        }
         #endregion
     }
 }
