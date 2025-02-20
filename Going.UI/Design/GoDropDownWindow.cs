@@ -1,6 +1,6 @@
-﻿using Going.UI.Controls;
+﻿using Going.UI.Containers;
+using Going.UI.Controls;
 using Going.UI.Datas;
-using Going.UI.Design;
 using Going.UI.Enums;
 using Going.UI.Themes;
 using Going.UI.Tools;
@@ -11,9 +11,10 @@ using System.Collections.Generic;
 using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace Going.UI.Containers
+namespace Going.UI.Design
 {
     #region GoDropDownWindow
     public class GoDropDownWindow : GoContainer
@@ -22,14 +23,20 @@ namespace Going.UI.Containers
         public string BorderColor { get; set; } = "WindowBorder";
         public GoRoundType Round { get; set; } = GoRoundType.All;
 
+        [JsonInclude]
+        public override List<IGoControl> Childrens { get; } = [];
+
+        [JsonConstructor]
+        public GoDropDownWindow(List<IGoControl> childrens) : this() => Childrens = childrens;
         public GoDropDownWindow() { Visible = false; }
+
 
         protected override void OnDraw(SKCanvas canvas)
         {
             var thm = GoTheme.Current;
             var rts = Areas();
             var rtWnd = rts["Content"];
-            rtWnd= Util.Int(rtWnd);
+            rtWnd = Util.Int(rtWnd);
             rtWnd.Offset(0.5F, 0.5F);
             var rtrWnd = new SKRoundRect(rtWnd, thm.Corner);
             Util.SetRound(rtrWnd, Round, thm.Corner);
@@ -37,7 +44,7 @@ namespace Going.UI.Containers
             var cBorder = thm.ToColor(BorderColor);
 
             using var p = new SKPaint { IsAntialias = true };
-            
+
             if (cBack != SKColors.Transparent)
             {
                 using var imgf = SKImageFilter.CreateDropShadow(3, 3, 3, 3, SKColors.Black);
@@ -86,7 +93,7 @@ namespace Going.UI.Containers
         }
 
         public void Show(SKRect screenBounds, string fontName, float fontSize, float itemHeight, int maximumViewCount,
-                         List<GoListItem> items, GoListItem? selectedItem, 
+                         List<GoListItem> items, GoListItem? selectedItem,
                          Action<GoListItem?> result)
         {
             feedback = result;

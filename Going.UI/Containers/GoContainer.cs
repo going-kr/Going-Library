@@ -15,7 +15,7 @@ namespace Going.UI.Containers
     public class GoContainer : GoControl, IGoContainer
     {
         #region Properties
-        public List<IGoControl> Childrens { get; } = [];
+        public virtual IEnumerable<IGoControl> Childrens { get; } = [];
         #endregion
 
         #region Override

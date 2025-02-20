@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Going.UI.Datas
@@ -9,7 +10,7 @@ namespace Going.UI.Datas
     public class GoListItem
     {
         public string? IconString { get; set; }
-        public string? Text { get; set; } 
+        public string? Text { get; set; }
         public object? Tag { get; set; }
     }
 

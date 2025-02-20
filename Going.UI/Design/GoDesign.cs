@@ -1,6 +1,6 @@
-﻿using Going.UI.Containers;
-using Going.UI.Controls;
+﻿using Going.UI.Controls;
 using Going.UI.Enums;
+using Going.UI.Json;
 using Going.UI.Tools;
 using Going.UI.Utils;
 using SkiaSharp;
@@ -10,6 +10,7 @@ using System.Formats.Tar;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
@@ -18,7 +19,9 @@ namespace Going.UI.Design
     public class GoDesign
     {
         #region Properties
-        public static GoDesign? ActiveDesign { get; set; } 
+        public static GoDesign? ActiveDesign { get; set; }
+
+        [JsonInclude]
         public Dictionary<string, GoPage> Pages { get; private set; } = [];
 
         [JsonIgnore] public int Width { get; private set; }
@@ -35,12 +38,10 @@ namespace Going.UI.Design
         #endregion
 
         #region Constructor
-        public GoDesign()
-        {
-            ActiveDesign = this;
-        }
+        [JsonConstructor]
+        public GoDesign(Dictionary<string, GoPage> pages) : this() => Pages = pages;
+        public GoDesign() => ActiveDesign = this;
         #endregion
-
 
         #region Method
         #region Select
@@ -96,6 +97,19 @@ namespace Going.UI.Design
         {
             this.Width = width;
             this.Height = height;
+        }
+        #endregion
+
+        #region Json
+        public string JsonSerialize() => JsonSerializer.Serialize(this, GoJsonConverter.Options);
+        public static GoDesign? JsonDeserialize(string? json)
+        {
+            if (json != null)
+            {
+                try { return JsonSerializer.Deserialize<GoDesign>(json, GoJsonConverter.Options); }
+                catch (Exception ex) { return null; }
+            }
+            else return null;
         }
         #endregion
 

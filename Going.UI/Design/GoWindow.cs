@@ -1,6 +1,5 @@
 ﻿using Going.UI.Containers;
 using Going.UI.Controls;
-using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,13 +9,13 @@ using System.Threading.Tasks;
 
 namespace Going.UI.Design
 {
-    public class GoPage : GoContainer
+    public class GoWindow : GoContainer
     {
         [JsonInclude]
         public override List<IGoControl> Childrens { get; } = [];
 
         [JsonConstructor]
-        public GoPage(List<IGoControl> childrens) : this() => Childrens = childrens;
-        public GoPage() { }
+        public GoWindow(List<IGoControl> childrens) : this() => Childrens = childrens;
+        public GoWindow() { }
     }
 }

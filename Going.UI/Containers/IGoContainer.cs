@@ -12,7 +12,7 @@ namespace Going.UI.Containers
 {
     public interface IGoContainer 
     {
-        List<IGoControl> Childrens { get; }
+        IEnumerable<IGoControl> Childrens { get; }
         SKRect Bounds { get; set; }
     }
 

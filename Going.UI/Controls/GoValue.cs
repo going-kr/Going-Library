@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Going.UI.Controls
@@ -37,8 +38,8 @@ namespace Going.UI.Controls
         public float? ButtonSize { get; set; }
         public List<GoButtonInfo> Buttons { get; set; } = [];
 
-        private bool UseTitle => TitleSize.HasValue && TitleSize.Value > 0;
-        private bool UseButton => ButtonSize.HasValue && ButtonSize.Value > 0 && Buttons.Count > 0;
+        [JsonIgnore] private bool UseTitle => TitleSize.HasValue && TitleSize.Value > 0;
+        [JsonIgnore] private bool UseButton => ButtonSize.HasValue && ButtonSize.Value > 0 && Buttons.Count > 0;
         #endregion
 
         #region Member Variable

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Going.UI.Datas
@@ -13,8 +14,8 @@ namespace Going.UI.Datas
         public string? IconString { get; set; }
         public string Size { get; set; } = "100%";
 
-        internal bool Hover { get; set; } = false;
-        internal bool Down { get; set; } = false;
+        [JsonIgnore] internal bool Hover { get; set; } = false;
+        [JsonIgnore] internal bool Down { get; set; } = false;
     }
 
     
