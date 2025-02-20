@@ -35,7 +35,7 @@ namespace SampleOpenTK
             Childrens.Add(new GoInputString { Left = 20, Top = 380, Width = 300, Height = 40, TitleSize = 90, Title = "입력 2", });
             Childrens.Add(new GoInputString { Left = 20, Top = 430, Width = 300, Height = 40, TitleSize = 90, Title = "입력 3", });
             Childrens.Add(new GoInputString { Left = 20, Top = 480, Width = 300, Height = 40, TitleSize = 90, Title = "입력 4", });
-            Childrens.Add(new GoSlider {Left = 20, Top = 530, Width = 300, Height = 40, Text = "슬라이더", Minimum = 0, Maximum = 100, Value = 50 });
+            Childrens.Add(new GoSliderBasic {Left = 20, Top = 530, Width = 620, Height = 40, Text = "슬라이더", Minimum = 0, Maximum = 100});
 
             Childrens.Add(new GoInputInteger { Left = 330, Top = 330, Width = 300, Height = 40, TitleSize = 90, Title = "정수", });
             Childrens.Add(new GoInputInteger { Left = 330, Top = 380, Width = 300, Height = 40, TitleSize = 90, Title = "정수\r\n( 0 ~ 100)", Minimum = 0, Maximum = 100 });

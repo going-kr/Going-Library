@@ -1,4 +1,5 @@
-﻿using Going.UI.Enums;
+﻿using Going.UI.Datas;
+using Going.UI.Enums;
 using Going.UI.Extensions;
 using Going.UI.Themes;
 using Going.UI.Tools;
@@ -7,7 +8,7 @@ using SkiaSharp;
 
 namespace Going.UI.Controls
 {
-    public class GoSlider : GoControl
+    public abstract class GoSlider : GoControl
     {
         #region Properties
         // 아이콘 설정
@@ -15,11 +16,20 @@ namespace Going.UI.Controls
         public float IconSize { get; set; } = 12;
         public float IconGap { get; set; } = 5;
         public GoDirectionHV IconDirection { get; set; }
-        // 라벨 설정
+        // 타이틀 설정
+        public float? TitleSize { get; set; }
+        public string? Title { get; set; }
+        // 입력 설정
+        public float? InputSize { get; set; }
+        public string? InputValue { get; set; }
+        // 버튼 설정
+        public float? ButtonSize { get; set; }
+        public string? ButtonText { get; set; }
+        // 슬라이더 라벨 설정
         public string Text { get; set; } = "label";
         public string FontName { get; set; } = "나눔고딕";
         public float FontSize { get; set; } = 12;
-        // 배경 설정
+        // 슬라이더 배경 설정
         public bool BackgroundDraw { get; set; } = true;
         public bool BorderOnly { get; set; }
         // 슬라이더 설정
@@ -38,6 +48,11 @@ namespace Going.UI.Controls
         private SKRect handleRect;
         private const float HandleRadius = 10f;
         private const float TrackHeight = 4f;
+        // 슬라이더 상태값 설정
+        private List<GoButtonInfo> Buttons { get; set; } = [];
+        private bool UseTitle => TitleSize is > 0;
+        private bool UseInput => InputSize is > 0;
+        private bool UseButton => ButtonSize is > 0;
         #endregion
 
         #region Event
@@ -46,7 +61,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Constructor
-        public GoSlider()
+        protected GoSlider()
         {
             Selectable = true;
         }
@@ -71,7 +86,12 @@ namespace Going.UI.Controls
             var rts = Areas();
             var rtBox = rts["Content"];
 
-            if (CollisionTool.Check(handleRect, x, y)) sDown = true;
+            if (CollisionTool.Check(handleRect, x, y))
+            {
+                sDown = true;
+                isDragging = true;
+                SliderDragStarted?.Invoke(this, EventArgs.Empty);
+            }
 
             base.OnMouseDown(x, y, button);
         }
@@ -83,6 +103,18 @@ namespace Going.UI.Controls
             var rtBox = rts["Content"];
 
             sHover = CollisionTool.Check(handleRect, x, y);
+
+            if (isDragging)
+            {
+                // 이전 값 저장
+                var oldValue = Value;
+                UpdateValueFromPosition(x);
+                // 값이 실제로 변경되었을 때만 이벤트 발생
+                if (Math.Abs(oldValue - Value) > 0.00001f)
+                {
+                    ValueChanged?.Invoke(this, EventArgs.Empty);
+                }
+            }
 
             base.OnMouseMove(x, y);
         }
@@ -98,19 +130,30 @@ namespace Going.UI.Controls
                 sDown = false;
                 if (CollisionTool.Check(handleRect, x, y)) SliderDragStarted?.Invoke(this, EventArgs.Empty);
             }
+            isDragging = false;
 
             base.OnMouseUp(x, y, button);
         }
         #endregion
+        #region Areas
+        public override Dictionary<string, SKRect> Areas()
+        {
+            var dic = base.Areas();
+
+            var rts = Direction == GoDirectionHV.Vertical ? Util.Rows(dic["Content"], [$"{TitleSize ?? 0}px", "100%", $"{InputSize ?? 0}px", $"{ButtonSize ?? 0}px"])
+                                                          : Util.Columns(dic["Content"], [$"{TitleSize ?? 0}px", "100%", $"{InputSize ?? 0}px", $"{ButtonSize ?? 0}px"]);
+            dic["Title"] = rts[0];
+            dic["Value"] = rts[1];
+            dic["Input"] = rts[2];
+            dic["Button"] = rts[3];
+
+            return dic;
+        }
+        #endregion
         #endregion
 
-        #region Areas
-        // public override Dictionary<string, SKRect> Areas()
-        // {
-        //     var dic = base.Areas();
-        //     // todo : GoInput에 있는 Areas의 Row와 Colums는 grid처럼 구역을 나눈 것을 의미한다.(여기서는 따로 적용해야함)
-        //     return dic;
-        // }
+        #region Abstract
+        protected abstract void OnDrawValue(SKCanvas canvas, SKRect rect);
         #endregion
 
         #region Method
@@ -123,7 +166,18 @@ namespace Going.UI.Controls
             var areas = Areas();
             var contentBox = areas["Content"];
 
-            DrawSliderBackground(canvas, thm, contentBox);
+            var useT = UseTitle;
+            var useI = UseInput;
+            var useB = UseButton;
+            var rnds = Util.Rounds(Direction, Round, (TitleSize.HasValue ? 1 : 0) + 1 + + (InputSize.HasValue ? 1 : 0) + (ButtonSize.HasValue ? 1 : 0));
+            var rndTitle = TitleSize.HasValue ? rnds[0] : GoRoundType.Rect;
+            var rndValue = TitleSize.HasValue ? rnds[1] : rnds[0];
+            var rndInput = InputSize.HasValue ? rnds[2] : GoRoundType.Rect;
+            var rndButton = ButtonSize.HasValue ? rnds[^1] : GoRoundType.Rect;
+            var rndButtons = Util.Rounds(GoDirectionHV.Horizon, rndButton, ButtonSize.HasValue ? Buttons.Count : 0);
+
+
+            DrawSliderBackground(canvas, thm, contentBox, colors.background);
             UpdateLayout(contentBox);   // 슬라이더 트랙과 핸들 값 업데이트
             DrawSliderTrack(canvas, handleRect, colors.slider);
             DrawSliderProgress(canvas, thm, contentBox, colors.slider);
@@ -131,12 +185,12 @@ namespace Going.UI.Controls
         }
         #endregion
         #region DrawSliderBackground
-        private void DrawSliderBackground(SKCanvas canvas, GoTheme thm, SKRect rect)
+        private void DrawSliderBackground(SKCanvas canvas, GoTheme thm, SKRect rect, SKColor color)
         {
             // 배경 그리기
             if (BackgroundDraw)
             {
-                Util.DrawBox(canvas, rect, BorderOnly ? SKColors.Transparent : SKColors.Gray, Round, thm.Corner);
+                Util.DrawBox(canvas, rect, BorderOnly ? SKColors.Transparent : color, Round, thm.Corner);
             }
         }
         #endregion
@@ -183,7 +237,7 @@ namespace Going.UI.Controls
             var brightness = sDown ? theme.DownBrightness : 0;
             return (
                 theme.ToColor(TextColor).BrightnessTransmit(brightness),
-                theme.ToColor(BgColor).BrightnessTransmit(brightness),
+                theme.ToColor(BgColor),
                 theme.ToColor(SliderColor).BrightnessTransmit(brightness)
             );
         }
@@ -238,7 +292,57 @@ namespace Going.UI.Controls
             );
         }
         #endregion
+        #region UpdateValueFromPosition
+        private void UpdateValueFromPosition(float position)
+        {
+            float t;
+            if (Direction == GoDirectionHV.Horizon)
+            {
+                t = (position - trackRect.Left) / trackRect.Width;
+            }
+            else
+            {
+                t = 1 - (position - trackRect.Top) / trackRect.Height;
+            }
+
+            t = Math.Max(0, Math.Min(1, t));
+            Value = (float)(Minimum + t * (Maximum - Minimum));
+        }
         #endregion
+        #endregion
+        #endregion
+    }
+
+    public class GoSliderBasic : GoSlider
+    {
+        #region Properties
+        private string sVal = "";
+        public string Value
+        {
+            get => sVal;
+            set
+            {
+                if (sVal != value)
+                {
+                    sVal = value;
+                    ValueChanged?.Invoke(this, EventArgs.Empty);
+                }
+            }
+        }
+        #endregion
+
+        #region Event
+        public event EventHandler? ValueChanged;
+        #endregion
+
+        #region OnDrawValue
+        protected override void OnDrawValue(SKCanvas canvas, SKRect rtValue)
+        {
+            var thm = GoTheme.Current;
+            var cText = thm.ToColor(TextColor);
+
+            Util.DrawText(canvas, Value, FontName, FontSize, rtValue, cText);
+        }
         #endregion
     }
 }
