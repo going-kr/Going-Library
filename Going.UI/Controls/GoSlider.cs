@@ -29,18 +29,20 @@ namespace Going.UI.Controls
         public GoRoundType Round { get; set; } = GoRoundType.All;
         public GoDirectionHV Direction { get; set; } = GoDirectionHV.Horizon;
         // 슬라이더 값 설정(외부)
-        public float Value { get; set; } = 0f;
-        public double Minimum { get; set; } = 0D;
+        public float Value { get; set; }
+        public double Minimum { get; set; }
         public double Maximum { get; set; } = 100D;
         // 슬라이더 값 설정(내부)
         private bool isDragging;
         private SKRect trackRect;
         private SKRect handleRect;
         private const float HandleRadius = 10f;
+        private const float TrackHeight = 4f;
         #endregion
 
         #region Event
         public event EventHandler? SliderDragStarted;
+        public event EventHandler? ValueChanged;
         #endregion
 
         #region Constructor
@@ -58,29 +60,6 @@ namespace Going.UI.Controls
         #region Override
         protected override void OnDraw(SKCanvas canvas)
         {
-            // var thm = GoTheme.Current;
-            // var cText = thm.ToColor(TextColor).BrightnessTransmit(sDown ? thm.DownBrightness : 0);
-            // var cBg = thm.ToColor(BgColor).BrightnessTransmit(sDown ? thm.DownBrightness : 0);
-            // var cSlider = thm.ToColor(SliderColor).BrightnessTransmit(sDown ? thm.DownBrightness : 0);
-            // var rts = Areas();
-            // var rtBox = rts["Content"];
-            //
-            // if (BackgroundDraw) Util.DrawBox(canvas, rtBox, BorderOnly ? SKColors.Transparent : cBg, Round, thm.Corner);
-            // if (sDown) rtBox.Offset(0, 1);
-            // // Util.DrawTextIcon(canvas, Text, FontName, FontSize, IconString, IconSize, IconDirection, IconGap, rtBox, cText);
-            //
-            // // using var trackPaint = new SKPaint();
-            // // trackPaint.IsAntialias = true;
-            // // trackPaint.Color = cSlider;
-            // // trackPaint.Style = SKPaintStyle.Fill;
-            // //
-            // // canvas.DrawRect(trackRect, trackPaint);
-            //
-            // var rtc = Areas();
-            // var rtcBox = rtc["Content"];
-            // Util.DrawCircle(canvas, rtcBox, BorderOnly ? SKColors.Transparent : cSlider);
-            // // Util.DrawCircle(canvas, handleRect.MidX, handleRect.MidY, HandleRadius, cSlider);
-
             DrawSlider(canvas);
             base.OnDraw(canvas);
         }
@@ -135,17 +114,48 @@ namespace Going.UI.Controls
             var areas = Areas();
             var contentBox = areas["Content"];
 
-            DrawSliderBackground(canvas, contentBox, colors.background);
-            DrawSliderContent(canvas, contentBox, colors);
+            DrawSliderBackground(canvas, thm, contentBox, colors.background);
+            UpdateLayout(contentBox);   // 슬라이더 트랙과 핸들 업데이트
+            // DrawSliderContent(canvas, contentBox, colors);
+            DrawSliderTrack(canvas, handleRect, colors.slider);
+            DrawSliderProgress(canvas, thm, contentBox, colors.slider);
+            DrawSliderHandle(canvas, handleRect, colors.slider);
         }
-        private void DrawSliderBackground(SKCanvas canvas, SKRect rect, SKColor color)
+        private void DrawSliderBackground(SKCanvas canvas, GoTheme thm, SKRect rect, SKColor color)
         {
-            using var paint = new SKPaint();
-            paint.IsAntialias = true;
-            paint.Color = color;
-            paint.Style = SKPaintStyle.Fill;
-
-            canvas.DrawRect(rect, paint);
+            // 배경 그리기
+            if (BackgroundDraw)
+            {
+                Util.DrawBox(canvas, rect, BorderOnly ? SKColors.Transparent : color.BrightnessTransmit(sHover ? thm.HoverFillBrightness : 0), color.BrightnessTransmit(sHover ? thm.HoverBorderBrightness : 0), Round, thm.Corner);
+            }
+        }
+        private void DrawSliderTrack(SKCanvas canvas, SKRect rect, SKColor color)
+        {
+            using var trackPaint = new SKPaint();
+            trackPaint.IsAntialias = true;
+            trackPaint.Color = color;
+            trackPaint.Style = SKPaintStyle.Fill;
+            canvas.DrawRoundRect(trackRect, TrackHeight / 2, TrackHeight / 2, trackPaint);
+        }
+        private void DrawSliderProgress(SKCanvas canvas, GoTheme thm, SKRect contentBox, SKColor color)
+        {
+            // 슬라이더 진행 트랙 그리기
+            using var progressPaint = new SKPaint();
+            progressPaint.IsAntialias = true;
+            progressPaint.Color = color;
+            progressPaint.Style = SKPaintStyle.Fill;
+            var progressRect = trackRect;
+            progressRect.Right = handleRect.MidX;
+            canvas.DrawRoundRect(progressRect, TrackHeight / 2, TrackHeight / 2, progressPaint);
+        }
+        private void DrawSliderHandle(SKCanvas canvask, SKRect rect, SKColor color)
+        {
+            // 핸들 그리기
+            using var handlePaint = new SKPaint();
+            handlePaint.IsAntialias = true;
+            handlePaint.Color = color;
+            handlePaint.Style = SKPaintStyle.Fill;
+            canvask.DrawCircle(handleRect.MidX, handleRect.MidY, HandleRadius, handlePaint);
         }
         private void DrawSliderContent(SKCanvas canvas, SKRect box, (SKColor text, SKColor bg, SKColor slider) colors)
         {
@@ -168,26 +178,55 @@ namespace Going.UI.Controls
         }
         #endregion
 
-        // private void UpdateLayout()
-        // {
-        //     // 트랙 높이와 위치
-        //     const float trackHeight = 4;
-        //     var trackY = Bounds.MidY - trackHeight / 2;
-        //     trackRect = new SKRect(Bounds.Left + HandleRadius, trackY, Bounds.Right - HandleRadius, trackY + trackHeight);
-        //
-        //     // 핸들의 위치는 Value에 따라 결정됨 (선형 보간)
-        //     var t = (Value - Minimum) / (Maximum - Minimum);
-        //     var handleCenterX = trackRect.Left + t * trackRect.Width;
-        //     var handleCenterY = Bounds.MidY;
-        //     handleRect = new SKRect((float)(handleCenterX - HandleRadius), handleCenterY - HandleRadius, (float)(handleCenterX + HandleRadius), handleCenterY + HandleRadius);
-        // }
-        //
-        // private void UpdateValueFromPosition(float x)
-        // {
-        //     var t = (x - trackRect.Left) / trackRect.Width;
-        //     Value = (float)(Minimum + t * (Maximum - Minimum));
-        //     UpdateLayout();
-        // }
+        private void UpdateLayout(SKRect contentBox)
+        {
+            if (Direction == GoDirectionHV.Horizon)
+            {
+                // 수평 슬라이더
+                var trackY = contentBox.MidY - TrackHeight / 2;
+                trackRect = new SKRect(
+                    contentBox.Left + HandleRadius,
+                    trackY,
+                    contentBox.Right - HandleRadius,
+                    trackY + TrackHeight
+                );
+            }
+            else
+            {
+                // 수직 슬라이더
+                var trackX = contentBox.MidX - TrackHeight / 2;
+                trackRect = new SKRect(
+                    trackX,
+                    contentBox.Top + HandleRadius,
+                    trackX + TrackHeight,
+                    contentBox.Bottom - HandleRadius
+                );
+            }
+
+            // 핸들 위치 계산
+            var t = (float)((Value - Minimum) / (Maximum - Minimum));
+            t = Math.Max(0, Math.Min(1, t));
+
+            float handleX, handleY;
+            if (Direction == GoDirectionHV.Horizon)
+            {
+                handleX = trackRect.Left + t * trackRect.Width;
+                handleY = trackRect.MidY;
+            }
+            else
+            {
+                handleX = trackRect.MidX;
+                handleY = trackRect.Bottom - t * trackRect.Height;
+            }
+
+            handleRect = new SKRect(
+                handleX - HandleRadius,
+                handleY - HandleRadius,
+                handleX + HandleRadius,
+                handleY + HandleRadius
+            );
+        }
+
         #endregion
     }
 }
