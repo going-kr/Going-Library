@@ -1,9 +1,6 @@
-using Going.UI.Containers;
-using Going.UI.Controls;
-using Going.UI.Datas;
-using Going.UI.Enums;
 using Going.UI.OpenTK.Windows;
 using OpenTK.Windowing.Common;
+using SampleOpenTK;
 
 using var view = new GoViewWindow(1024, 768, WindowBorder.Resizable);
 view.Debug = false;
