@@ -2,7 +2,6 @@ using Going.UI.Design;
 using Going.UI.OpenTK.Windows;
 using OpenTK.Windowing.Common;
 using SampleOpenTK;
-using System.Runtime.CompilerServices;
 
 using var view = new GoViewWindow(1024, 768, WindowBorder.Resizable);
 view.Debug = false;
