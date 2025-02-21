@@ -30,14 +30,21 @@ namespace Going.UI.Controls
         public GoRoundType Round { get; set; } = GoRoundType.All;
         public GoDirectionHV Direction { get; set; } = GoDirectionHV.Horizon;
         // 슬라이더 값 설정(외부)
-        public float Value { get; set; }
+        public float Value { get => _value;
+            set {
+            if (!(Math.Abs(_value - value) > 0.00001f)) return;
+            _value = value; ValueChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+        public string ValueString => Value.ToString("F1");
         public double Minimum { get; set; }
         public double Maximum { get; set; } = 100D;
         // 슬라이더 값 설정(내부)
+        private float _value;
         private bool isDragging;
         private SKRect trackRect;
         private SKRect handleRect;
-        private const float HandleRadius = 10f;
+        private const float HandleRadius = 15f;
         private const float TrackHeight = 4f;
         // 슬라이더 상태값 설정
         private List<GoButtonInfo> Buttons { get; set; } = [];
@@ -94,14 +101,7 @@ namespace Going.UI.Controls
 
             if (isDragging)
             {
-                // 이전 값 저장
-                var oldValue = Value;
                 UpdateValueFromPosition(x);
-                // 값이 실제로 변경되었을 때만 이벤트 발생
-                if (Math.Abs(oldValue - Value) > 0.00001f)
-                {
-                    ValueChanged?.Invoke(this, EventArgs.Empty);
-                }
             }
 
             base.OnMouseMove(x, y);
@@ -140,6 +140,7 @@ namespace Going.UI.Controls
             DrawSliderTrack(canvas, handleRect, colors.slider);
             DrawSliderProgress(canvas, thm, contentBox, colors.slider);
             DrawSliderHandle(canvas, handleRect, colors.slider);
+            Util.DrawText(canvas, ValueString, FontName, FontSize, handleRect, SKColors.Aqua);
         }
         #endregion
         #region DrawSliderBackground
