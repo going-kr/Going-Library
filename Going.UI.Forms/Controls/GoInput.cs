@@ -294,6 +294,7 @@ namespace Going.UI.Forms.Controls
         #endregion
 
         #region DropDown
+        // var, Method를 건드리지 말고 GoComboBoxDropDownWindow를 사용해서 드롭박스를 만들어 보라고 이렇게 따로 설정
         GoComboBoxDropDownWindow? dwnd;
 
         void Opened()

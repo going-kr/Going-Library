@@ -14,6 +14,14 @@ namespace Going.UI.Controls
 {
     public class GoControl : IGoControl
     {
+        /// <summary>
+        /// Selectable은 컨트롤이 선택될 수 있는지 여부를 나타냅니다.
+        /// 예를 들어,
+        /// 드래그를 할 수 있는 것들을 선택할 수 없게 하기 위해 사용됩니다.
+        /// Selectable은 이미 선택되었을 때 다른 이벤트를 발생시키지 않습니다.
+        /// Drawn은 컨트롤 안에 특정 컨트롤을 추가로 조금 그릴 때 사용됩니다.
+        /// Areas는 컨트롤의 영역을 정의하는 객체입니다.
+        /// </summary>
         #region Properties
         public static int LongClickTime { get; set; } = 2000;
         
@@ -79,9 +87,10 @@ namespace Going.UI.Controls
         #endregion
 
         #region Fire
+        // 여기서 Parent에서 Design객체를 처음 만들어서 여기서 다른 객체에서 사용됨
         public void FireInit(GoDesign? design)
         {
-            this.Design = design;
+            Design = design;
             OnInit(design);
         }
 
@@ -132,6 +141,8 @@ namespace Going.UI.Controls
                 bDown = false;
 
                 var dist = Math.Abs(MathTool.GetDistance(new SKPoint(dx, dy), new SKPoint(x, y)));
+                // 3픽셀 이내에 있을 때만 클릭으로 인정(터치가)
+                // 그래서 감압식은 찍은 압력에 따라 좌표가 바뀌기 때문에 3픽셀을 늘이면 동작한다.
                 if (CollisionTool.Check(Util.FromRect(0, 0, Width, Height), x, y) && dist < 3) OnMouseClick(x, y, button);
             }
         }

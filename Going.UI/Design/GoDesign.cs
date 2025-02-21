@@ -113,6 +113,10 @@ namespace Going.UI.Design
         }
         #endregion
 
+        /// <summary>
+        /// 윈도우에서 발생하는 일반적인 기능들을 이쪽으로 bypass
+        /// CurrentPage를 봐서 현 페이지에 전달하는 기능을 함
+        /// </summary>
         #region Fire
         public void Init()
         {
@@ -125,6 +129,9 @@ namespace Going.UI.Design
 
         public void Draw(SKCanvas canvas)
         {
+            // Drawing : Page > Window > DropDownWindow 순으로 처리
+            // 화면은 다 띄워야해서 else 처리 안함
+            // MouseEvent : DropDownWindow > Window > Page 순으로 처리
             #region Page
             if (CurrentPage != null)
             {
@@ -189,6 +196,7 @@ namespace Going.UI.Design
         #region Mouse
         public void MouseDown(float x, float y, GoMouseButton button)
         {
+            // MouseEvent : DropDownWindow > Window > Page 순으로 처리
             ActiveDesign = this;
             if (dropdownWindow != null)
             {

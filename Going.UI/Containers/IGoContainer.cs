@@ -1,13 +1,8 @@
 ﻿using Going.UI.Controls;
-using Going.UI.Datas;
 using SkiaSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
+// 컨테이너는 자식을 가질 수 있는 UI 요소입니다.
+// 영역을 지정할 수 있는 Bounds 속성을 가지고 있습니다.(영역)
 namespace Going.UI.Containers
 {
     public interface IGoContainer 

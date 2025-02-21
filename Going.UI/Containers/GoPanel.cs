@@ -187,7 +187,7 @@ namespace Going.UI.Containers
         public override Dictionary<string, SKRect> Areas()
         {
             var dic = base.Areas();
-
+            // Grid, Rows(세로), Columns(가로)
             var rts =  Util.Rows(dic["Content"], [$"{TitleHeight}px", "100%"]);
             dic["Title"] = rts[0];
             dic["Panel"] = rts[1];

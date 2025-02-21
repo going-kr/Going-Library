@@ -13,6 +13,13 @@ using System.Threading.Tasks;
 
 namespace Going.UI.Utils
 {
+    /// <summary>
+    /// 부모에서 자식을 그려주기 위한 GUI 클래스입니다.
+    /// 이를 따로 뺀 이유는 컨테이너가 복잡해지지 않게끔 하기 위함입니다.
+    /// FirstRender는 컨트롤이 처음 그려졌는지를 나타냅니다.
+    /// 그래서 처음 각 객체를 Init을 더 이상을 호출하지 않게끔 하기 위함입니다.
+    /// 게다가 Collection을 Json처리에 불편해서, Design이나 Parents가 자동으로 세팅되었으면 좋겠다 싶어서 밑에 using new SKAutoCanvasRestore(canvas)를 사용했습니다.
+    /// </summary>
     public class GUI
     {
         public static void Init(GoDesign? design, IGoContainer container )

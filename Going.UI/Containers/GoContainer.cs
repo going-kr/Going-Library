@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace Going.UI.Containers
 {
+    // 컨테이너지만 컨트롤 중 하나라서 GoControl을 상속합니다.
     public class GoContainer : GoControl, IGoContainer
     {
         #region Properties
@@ -19,6 +20,11 @@ namespace Going.UI.Containers
         #endregion
 
         #region Override
+        /// <summary>
+        /// 컨테이너에서 재정의를 해주는 이유는 컨트롤과 컨테이너의 차이를 구분하기 위함입니다.
+        /// GUI는 부모에서 자식을 그려주기 위한 클래스입니다.
+        /// </summary>
+        /// <param name="design"></param>
         protected override void OnInit(GoDesign? design)
         {
             base.OnInit(design);
