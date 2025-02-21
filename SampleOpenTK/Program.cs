@@ -1,3 +1,4 @@
+using Going.UI.Design;
 using Going.UI.OpenTK.Windows;
 using OpenTK.Windowing.Common;
 using SampleOpenTK;
