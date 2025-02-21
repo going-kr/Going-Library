@@ -30,17 +30,17 @@ namespace Going.UI.Controls
         public GoRoundType Round { get; set; } = GoRoundType.All;
         public GoDirectionHV Direction { get; set; } = GoDirectionHV.Horizon;
         // 슬라이더 값 설정(외부)
-        public float Value { get => _value;
+        public float Value { get => value;
             set {
-            if (!(Math.Abs(_value - value) > 0.00001f)) return;
-            _value = value; ValueChanged?.Invoke(this, EventArgs.Empty);
+            if (!(Math.Abs(this.value - value) > 0.00001f)) return;
+            this.value = value; ValueChanged?.Invoke(this, EventArgs.Empty);
             }
         }
         public string ValueString => Value.ToString("F1");
         public double Minimum { get; set; }
         public double Maximum { get; set; } = 100D;
         // 슬라이더 값 설정(내부)
-        private float _value;
+        private float value;
         private bool isDragging;
         private SKRect trackRect;
         private SKRect handleRect;
