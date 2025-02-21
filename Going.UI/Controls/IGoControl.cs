@@ -15,7 +15,8 @@ namespace Going.UI.Controls
 {
     public interface IGoControl
     {
-        string Name { get; set; }
+        Guid Id { get; init; }
+        string? Name { get; set; }
         SKRect Bounds { get; set; }
         GoPadding Margin { get; set; }
         bool Fill { get; set; }

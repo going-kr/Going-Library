@@ -1,5 +1,5 @@
-﻿using Going.UI.Containers;
-using Going.UI.Datas;
+﻿using Going.UI.Datas;
+using Going.UI.Design;
 using Going.UI.Enums;
 using Going.UI.Extensions;
 using Going.UI.Managers;
@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -39,10 +40,10 @@ namespace Going.UI.Controls
 
         public float? ButtonSize { get; set; }
         public List<GoButtonInfo> Buttons { get; set; } = [];
-        public virtual bool Valid => true;
+        [JsonIgnore] public virtual bool Valid => true;
 
-        private bool UseTitle => TitleSize.HasValue && TitleSize.Value > 0;
-        private bool UseButton => ButtonSize.HasValue && ButtonSize.Value > 0 && Buttons.Count > 0;
+        [JsonIgnore] private bool UseTitle => TitleSize.HasValue && TitleSize.Value > 0;
+        [JsonIgnore] private bool UseButton => ButtonSize.HasValue && ButtonSize.Value > 0 && Buttons.Count > 0;
         #endregion
 
         #region Member Variable
@@ -326,7 +327,7 @@ namespace Going.UI.Controls
 
         public string? FormatString { get; set; } = null;
 
-        public override bool Valid => bValid;
+        [JsonIgnore] public override bool Valid => bValid;
 
         public string? Unit { get; set; }
         public float? UnitSize { get; set; } = null;
@@ -518,14 +519,19 @@ namespace Going.UI.Controls
                 }
             }
         }
+
+        public int MaximumViewCount { get; set; } = 8;
+        public int ItemHeight { get; set; } = 30;
         #endregion
 
         #region Event
         public event EventHandler? SelectedIndexChanged;
+
+        public event EventHandler<GoCancelableEventArgs>? DropDownOpening;
         #endregion
 
         #region Member Variable
-        GoDropDownWindow dwnd = new GoDropDownWindow ();
+        GoComboBoxDropDownWindow dwnd = new GoComboBoxDropDownWindow();
         #endregion
 
         #region OnDrawValue
@@ -568,8 +574,19 @@ namespace Going.UI.Controls
 
             if (CollisionTool.Check(rtValue, x, y))
             {
-                dwnd.Bounds = Util.FromRect(ScreenX + rtValue.Left, ScreenY + rtValue.Bottom, rtValue.Width, 150);
-                Design?.ShowDropDownWindow(dwnd);
+                var args = new GoCancelableEventArgs();
+                DropDownOpening?.Invoke(this, args);
+
+                if (!args.Cancel)
+                {
+                    var rt = rtValue; rt.Offset(ScreenX, ScreenY);
+                    var sel = SelectedIndex >= 0 && SelectedIndex < Items.Count ? Items[SelectedIndex] : null;
+                    dwnd.Show(rt, FontName, FontSize, ItemHeight, MaximumViewCount, Items, sel, (item) =>
+                    {
+                        if (item != null)
+                            SelectedIndex = Items.IndexOf(item);
+                    });
+                }
             }
         }
         #endregion
@@ -583,4 +600,5 @@ namespace Going.UI.Controls
         #endregion
     }
 
+    
 }

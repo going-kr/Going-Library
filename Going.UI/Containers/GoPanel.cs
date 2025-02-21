@@ -12,6 +12,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Going.UI.Containers
@@ -39,6 +40,9 @@ namespace Going.UI.Containers
 
         public List<GoButtonInfo> Buttons { get; set; } = [];
         public float? ButtonWidth { get; set; }
+
+        [JsonInclude]
+        public override List<IGoControl> Childrens { get; } = [];
         #endregion
 
         #region Event
@@ -46,10 +50,9 @@ namespace Going.UI.Containers
         #endregion
 
         #region Constructor
-        public GoPanel ()
-        {
-            Selectable = true;
-        }
+        [JsonConstructor]
+        public GoPanel(List<IGoControl> childrens) : this() => Childrens = childrens;
+        public GoPanel() { Selectable = true; }
         #endregion
 
         #region Override
@@ -115,7 +118,7 @@ namespace Going.UI.Containers
                 }
             }
 
-            base.OnLayout();
+            //base.OnLayout();
         }
         #endregion
         #region OnMouseDown

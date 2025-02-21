@@ -26,6 +26,7 @@ namespace Going.UI.Themes
         public SKColor Fore { get; set; }
         public SKColor Back { get; set; }
         public SKColor Window { get; set; }
+        public SKColor WindowBorder { get; set; }
         public SKColor Point { get; set; }
         public SKColor Title { get; set; }
 
@@ -79,6 +80,7 @@ namespace Going.UI.Themes
                         case "fore": ret = Fore; break;
                         case "back": ret = Back; break;
                         case "window": ret = Window; break;
+                        case "windowborder": ret = WindowBorder; break;
                         case "point": ret = Point; break;
                         case "title": ret = Title; break;
 
@@ -151,6 +153,7 @@ namespace Going.UI.Themes
             Fore = SKColors.White;
             Back = Util.FromArgb(50, 50, 50);
             Window = Util.FromArgb(32, 32, 32);
+            WindowBorder = Util.FromArgb(90, 90, 90);
             Point = SKColors.DarkRed;
             Title = Util.FromArgb(70, 70, 70);
 

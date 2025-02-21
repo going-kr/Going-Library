@@ -16,8 +16,9 @@ namespace Going.UI.Controls
     {
         #region Properties
         public static int LongClickTime { get; set; } = 2000;
-
-        public string Name { get; set; }
+        
+        public Guid Id { get; init; } = Guid.NewGuid();
+        public string? Name { get; set; }
         public SKRect Bounds { get => bounds; set => bounds = value; }
         public GoPadding Margin { get; set; } = new(3, 3, 3, 3);
         public bool Fill { get; set; } = false;
@@ -40,7 +41,7 @@ namespace Going.UI.Controls
         [JsonIgnore] public IGoContainer? Parent { get; internal set; }
         [JsonIgnore] public GoDesign? Design { get; internal set; }
 
-        internal bool _MouseDown_ => bDown;
+        [JsonIgnore] internal bool _MouseDown_ => bDown;
         #endregion
 
         #region Event

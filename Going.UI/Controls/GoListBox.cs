@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Sources;
 using System.Xml.Linq;
@@ -35,8 +36,10 @@ namespace Going.UI.Controls
         public float ItemHeight { get; set; } = 30;
         public GoContentAlignment ItemAlignment { get; set; } = GoContentAlignment.MiddleCenter;
         public List<GoListItem> Items { get; set; } = [];
-        public List<GoListItem> SelectedItems { get; } = new List<GoListItem>();
+        [JsonIgnore] public List<GoListItem> SelectedItems { get; } = new List<GoListItem>();
         public GoItemSelectionMode SelectionMode { get; set; } = GoItemSelectionMode.SIngle;
+
+        [JsonIgnore] public double ScrollPosition { get => scroll.ScrollPosition; set => scroll.ScrollPosition = value; }
         #endregion
 
         #region Member Variable

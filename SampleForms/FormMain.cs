@@ -14,6 +14,8 @@ namespace SampleForms
                 goListBox1.Items.Add(new Going.UI.Datas.GoListItem { Text = $"¾ÆÀÌÅÛ {i}" });
 
             goInputBoolean1.ValueChanged += (o, s) => goValueBoolean1.Value = goInputBoolean1.Value;
+
+            goInputCombo1.Items.AddRange(goListBox1.Items);
         }
     }
 }
