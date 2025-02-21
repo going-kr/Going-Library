@@ -1,0 +1,63 @@
+﻿AniMate						그림 또는 움직이는 Gif 표시	
+BarGraph					막대 그래프	
+Button						버튼													O
+Buttons						여러 개의 버튼을 한 개의 컨트롤로러 나누어 사용가능	
+Calendar					달력	
+CheckBox					체크 박스	
+CircleButton				원형 버튼	
+CircleGraph					원형 그래프	
+ColorPicker					색상 선택(조명제어, RGB)	
+ComboBox					콤보 박스												O
+DataGrid					데이터 그리드											종현님
+Gauge						반원형 프로그래스(계량기)	
+InputText					텍스트 입력기											O
+InputText(형식별)			형식별 텍스트 입력기									O
+InputBool					On/Off 입력												O
+InputSelector				입력 선택기												O
+Knob						노브 입력	
+Label						라벨													O
+Lamp						램프	
+LampButton					라벨 + 버튼	
+LineGraph					(꺾은선 그래프)	
+ListBox						리스트 박스												O
+Meter						반원형 프로그래스(메터)	
+NavBar						네비바	
+Numberbox					숫자 차감 입력	
+OnOff						On/Off 스위치	
+PictureBox					그림 출력	
+Progress					일자형 프로그레스										상무님(v)
+RadioBox					라디오박스	
+RangeSlider					범위 설정 컨트롤러										지준(v)
+Selector		
+Slider						슬라이드 형식의 입력기									지준(v)
+StepGauge					(< ㅁ ㅁ ㅁ ㅁ >)										지준
+Switch						On/Off 스위치	
+TimeGraph					타임 그래프												종현님
+ToggleButton				토글 버튼	
+ToolBox		
+TreeView																			X
+TrendGraph					트랜드 그래프											지준
+TriangleButton				화살표 버튼	
+ValueInputText				텍스트 입력기											O
+ValueLabelNumber(형식별)	형식별 텍스트 입력기									O
+ValueInputBool				On/Off 입력												O
+ValueInputSelector																	O
+ValueInputCombo																		O
+ValueLabelText																		O
+ValueLabelNumber(형식별)															O
+ValueLabelBool																		O
+WheelPicker					가챠...?												X
+
+BorderPanel																			X(중복)
+BoxPanel																			X(중복)
+GridLayoutPanel																		X(중복)
+GroupBox	
+Panel																				O
+ScrollablePanel	
+SlidePanel																			X(중복)
+SwitchPanel	
+TabControl	
+TableLayoutPanel																	O
+CategoryPanel				트리뷰 대체
+	
+ImageCanvas					Button, Label, Toggle, Progress, Slide, SwitchPanel
