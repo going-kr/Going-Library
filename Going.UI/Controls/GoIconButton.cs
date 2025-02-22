@@ -1,5 +1,4 @@
-﻿using Going.UI.Datas;
-using Going.UI.Enums;
+﻿using Going.UI.Enums;
 using Going.UI.Extensions;
 using Going.UI.Themes;
 using Going.UI.Tools;
@@ -13,23 +12,12 @@ using System.Threading.Tasks;
 
 namespace Going.UI.Controls
 {
-    public class GoButton : GoControl
+    public class GoIconButton : GoControl
     {
         #region Properties
         public string? IconString { get; set; }
-        public float IconSize { get; set; } = 12;
-        public GoDirectionHV IconDirection { get; set; }
-        public float IconGap { get; set; } = 5;
-        public string Text { get; set; } = "label";
-        public string FontName { get; set; } = "나눔고딕";
-        public float FontSize { get; set; } = 12;
-
-        public string TextColor { get; set; } = "Fore";
+        public float Rotate { get; set; } = 0;
         public string ButtonColor { get; set; } = "Base3";
-        public GoRoundType Round { get; set; } = GoRoundType.All;
-
-        public bool BackgroundDraw { get; set; } = true;
-        public bool BorderOnly { get; set; } = false;
         #endregion
 
         #region Event
@@ -37,7 +25,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Constructor
-        public GoButton()
+        public GoIconButton()
         {
             Selectable = true;
         }
@@ -52,15 +40,13 @@ namespace Going.UI.Controls
         protected override void OnDraw(SKCanvas canvas)
         {
             var thm = GoTheme.Current;
-            var cText = thm.ToColor(TextColor).BrightnessTransmit(bDown ? thm.DownBrightness : 0);
             var cBtn = thm.ToColor(ButtonColor).BrightnessTransmit(bDown ? thm.DownBrightness : 0);
             var rts = Areas();
             var rtBox = rts["Content"];
 
-            if (BackgroundDraw) Util.DrawBox(canvas, rtBox, (BorderOnly ? SKColors.Transparent : cBtn.BrightnessTransmit(bHover ? thm.HoverFillBrightness : 0)), cBtn.BrightnessTransmit(bHover ? thm.HoverBorderBrightness : 0), Round, thm.Corner);
-
+            var icosz = Math.Min(rtBox.Width, rtBox.Height) - 2;
             if (bDown) rtBox.Offset(0, 1);
-            Util.DrawTextIcon(canvas, Text, FontName, FontSize, IconString, IconSize, IconDirection, IconGap, rtBox, cText, GoContentAlignment.MiddleCenter);
+            Util.DrawIcon(canvas, IconString, icosz, Rotate, rtBox, cBtn.BrightnessTransmit(bHover ? thm.HoverFillBrightness : 0), cBtn.BrightnessTransmit(bHover ? thm.HoverBorderBrightness : 0));
 
             base.OnDraw(canvas);
         }
@@ -95,7 +81,7 @@ namespace Going.UI.Controls
             var rtBox = rts["Content"];
 
             bHover = CollisionTool.Check(rtBox, x, y);
-        
+
             base.OnMouseMove(x, y);
         }
         #endregion

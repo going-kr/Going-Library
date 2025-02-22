@@ -42,7 +42,7 @@ namespace Going.UI.Forms.Containers
 
         [Editor(typeof(CollectionEditor), typeof(UITypeEditor))]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
-        public List<GoButtonInfo> Buttons { get => control.Buttons; set { if (control.Buttons != value) { control.Buttons = value; Invalidate(); } } }
+        public List<GoButtonItem> Buttons { get => control.Buttons; set { if (control.Buttons != value) { control.Buttons = value; Invalidate(); } } }
         public float? ButtonWidth { get => control.ButtonWidth; set { if (control.ButtonWidth != value) { control.ButtonWidth = value; Invalidate(); } } }
         #endregion
 

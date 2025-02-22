@@ -36,14 +36,21 @@ namespace Going.UI.Forms.Controls
 
         [Editor(typeof(CollectionEditor), typeof(UITypeEditor))]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
-        public List<GoButtonInfo> Buttons { get => Control.Buttons; set { if (Control.Buttons != value) { Control.Buttons = value; Invalidate(); } } }
+        public List<GoButtonItem> Buttons { get => Control.Buttons; set { if (Control.Buttons != value) { Control.Buttons = value; Invalidate(); } } }
         public float? ButtonSize { get => Control.ButtonSize; set { if (Control.ButtonSize != value) { Control.ButtonSize = value; Invalidate(); } } }
 
-        public string? Value { get => Control.Value; set { if (Control.Value != value) { Control.Value = value; Invalidate(); } } }
+        public string Value { get => Control.Value; set { if (Control.Value != value) { Control.Value = value; Invalidate(); } } }
         #endregion
 
         #region Event
         public event EventHandler ValueClicked { add => Control.ValueClicked += value; remove => Control.ValueClicked -= value; }
+        #endregion
+
+        #region Constructor
+        public GoValueString()
+        {
+            SetStyle(ControlStyles.Selectable, true);
+        }
         #endregion
     }
 
@@ -70,7 +77,7 @@ namespace Going.UI.Forms.Controls
 
         [Editor(typeof(CollectionEditor), typeof(UITypeEditor))]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
-        public List<GoButtonInfo> Buttons { get => Control.Buttons; set { if (Control.Buttons != value) { Control.Buttons = value; Invalidate(); } } }
+        public List<GoButtonItem> Buttons { get => Control.Buttons; set { if (Control.Buttons != value) { Control.Buttons = value; Invalidate(); } } }
         public float? ButtonSize { get => Control.ButtonSize; set { if (Control.ButtonSize != value) { Control.ButtonSize = value; Invalidate(); } } }
 
         public T Value { get => Control.Value; set { if (!Control.Value.Equals(value)) { Control.Value = value; Invalidate(); } } }
@@ -81,6 +88,13 @@ namespace Going.UI.Forms.Controls
 
         #region Event
         public event EventHandler ValueClicked { add => Control.ValueClicked += value; remove => Control.ValueClicked -= value; }
+        #endregion
+
+        #region Constructor
+        public GoValueNumber()
+        {
+            SetStyle(ControlStyles.Selectable, true);
+        }
         #endregion
     }
 
@@ -110,7 +124,7 @@ namespace Going.UI.Forms.Controls
 
         [Editor(typeof(CollectionEditor), typeof(UITypeEditor))]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
-        public List<GoButtonInfo> Buttons { get => Control.Buttons; set { if (Control.Buttons != value) { Control.Buttons = value; Invalidate(); } } }
+        public List<GoButtonItem> Buttons { get => Control.Buttons; set { if (Control.Buttons != value) { Control.Buttons = value; Invalidate(); } } }
         public float? ButtonSize { get => Control.ButtonSize; set { if (Control.ButtonSize != value) { Control.ButtonSize = value; Invalidate(); } } }
 
         public bool Value { get => Control.Value; set { if (Control.Value != value) { Control.Value = value; Invalidate(); } } }
@@ -118,6 +132,13 @@ namespace Going.UI.Forms.Controls
 
         #region Event
         public event EventHandler ValueClicked { add => Control.ValueClicked += value; remove => Control.ValueClicked -= value; }
+        #endregion
+
+        #region Constructor
+        public GoValueBoolean()
+        {
+            SetStyle(ControlStyles.Selectable, true);
+        }
         #endregion
     }
 }

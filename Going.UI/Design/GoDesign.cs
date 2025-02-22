@@ -169,7 +169,9 @@ namespace Going.UI.Design
         {
             #region Page
             if (CurrentPage != null)
-                GUI.Update(CurrentPage);
+            {
+                CurrentPage.FireUpdate();
+            }
             #endregion
 
             #region Window

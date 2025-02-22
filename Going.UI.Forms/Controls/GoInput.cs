@@ -44,7 +44,7 @@ namespace Going.UI.Forms.Controls
 
         [Editor(typeof(CollectionEditor), typeof(UITypeEditor))]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
-        public List<GoButtonInfo> Buttons { get => Control.Buttons; set { if (Control.Buttons != value) { Control.Buttons = value; Invalidate(); } } } 
+        public List<GoButtonItem> Buttons { get => Control.Buttons; set { if (Control.Buttons != value) { Control.Buttons = value; Invalidate(); } } } 
         public float? ButtonSize { get => Control.ButtonSize; set { if (Control.ButtonSize != value) { Control.ButtonSize = value; Invalidate(); } } }
 
         public string Value { get => Control.Value; set { if (Control.Value != value) { Control.Value = value; Invalidate(); } } }
@@ -89,7 +89,7 @@ namespace Going.UI.Forms.Controls
 
         [Editor(typeof(CollectionEditor), typeof(UITypeEditor))]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
-        public List<GoButtonInfo> Buttons { get => Control.Buttons; set { if (Control.Buttons != value) { Control.Buttons = value; Invalidate(); } } }
+        public List<GoButtonItem> Buttons { get => Control.Buttons; set { if (Control.Buttons != value) { Control.Buttons = value; Invalidate(); } } }
         public float? ButtonSize { get => Control.ButtonSize; set { if (Control.ButtonSize != value) { Control.ButtonSize = value; Invalidate(); } } }
 
         public T Value { get => Control.Value; set { if (!Control.Value.Equals(value)) { Control.Value = value; Invalidate(); } } }
@@ -144,7 +144,7 @@ namespace Going.UI.Forms.Controls
 
         [Editor(typeof(CollectionEditor), typeof(UITypeEditor))]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
-        public List<GoButtonInfo> Buttons { get => Control.Buttons; set { if (Control.Buttons != value) { Control.Buttons = value; Invalidate(); } } }
+        public List<GoButtonItem> Buttons { get => Control.Buttons; set { if (Control.Buttons != value) { Control.Buttons = value; Invalidate(); } } }
         public float? ButtonSize { get => Control.ButtonSize; set { if (Control.ButtonSize != value) { Control.ButtonSize = value; Invalidate(); } } }
 
         public bool Value { get => Control.Value; set { if (Control.Value != value) { Control.Value = value; Invalidate(); } } }
@@ -185,7 +185,7 @@ namespace Going.UI.Forms.Controls
 
         [Editor(typeof(CollectionEditor), typeof(UITypeEditor))]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
-        public List<GoButtonInfo> Buttons { get => Control.Buttons; set { if (Control.Buttons != value) { Control.Buttons = value; Invalidate(); } } }
+        public List<GoButtonItem> Buttons { get => Control.Buttons; set { if (Control.Buttons != value) { Control.Buttons = value; Invalidate(); } } }
         public float? ButtonSize { get => Control.ButtonSize; set { if (Control.ButtonSize != value) { Control.ButtonSize = value; Invalidate(); } } }
 
         public List<GoListItem> Items { get => Control.Items; set { if (Control.Items != value) { Control.Items = value; Invalidate(); } } }
@@ -208,89 +208,6 @@ namespace Going.UI.Forms.Controls
                 OpenDropDown(Control.Areas()["Value"]);
             };
         }
-        #endregion
-
-        #region Override
-        #region OnContentDraw
-        protected override void OnContentDraw(ContentDrawEventArgs e)
-        {
-            Control.Bounds = Util.FromRect(0, 0, Width, Height);
-            Control.FireDraw(e.Canvas);
-            base.OnContentDraw(e);
-        }
-        #endregion
-
-        #region OnMouseDown
-        protected override void OnMouseDown(MouseEventArgs e)
-        {
-            Control.FireMouseDown(e.X, e.Y, ToGoMouseButton(e.Button));
-            Invalidate();
-            base.OnMouseDown(e);
-        }
-        #endregion
-        #region OnMouseUp
-        protected override void OnMouseUp(MouseEventArgs e)
-        {
-            Control.FireMouseUp(e.X, e.Y, ToGoMouseButton(e.Button));
-            Invalidate();
-            base.OnMouseUp(e);
-        }
-        #endregion
-        #region OnMouseMove
-        protected override void OnMouseMove(MouseEventArgs e)
-        {
-            Control.FireMouseMove(e.X, e.Y);
-            Invalidate();
-            base.OnMouseMove(e);
-        }
-        #endregion
-        #region OnMouseDown
-        protected override void OnMouseDoubleClick(MouseEventArgs e)
-        {
-            Control.FireMouseDoubleClick(e.X, e.Y, ToGoMouseButton(e.Button));
-            base.OnMouseDoubleClick(e);
-        }
-        #endregion
-        #region OnMouseWheel
-        protected override void OnMouseWheel(MouseEventArgs e)
-        {
-            Control.FireMouseWheel(e.X, e.Y, e.Delta / 120F);
-            base.OnMouseWheel(e);
-        }
-        #endregion
-        #region OnMouseEnter
-        protected override void OnMouseEnter(EventArgs e)
-        {
-            Control.FireMouseMove(0, 0);
-            Invalidate();
-            base.OnMouseEnter(e);
-        }
-        #endregion
-        #region OnMouseLeave
-        protected override void OnMouseLeave(EventArgs e)
-        {
-            Control.FireMouseMove(-1, -1);
-            Invalidate();
-            base.OnMouseLeave(e);
-        }
-        #endregion
-
-        #region OnEnabledChanged
-        protected override void OnEnabledChanged(EventArgs e)
-        {
-            Control.Enabled = Enabled;
-            Invalidate();
-            base.OnEnabledChanged(e);
-        }
-        #endregion
-        #region OnVisibleChanged
-        protected override void OnVisibleChanged(EventArgs e)
-        {
-            Control.Visible = Visible;
-            Invalidate();
-            base.OnVisibleChanged(e);
-        }
-        #endregion
         #endregion
 
         #region DropDown

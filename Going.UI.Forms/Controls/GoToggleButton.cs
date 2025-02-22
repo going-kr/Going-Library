@@ -1,6 +1,4 @@
-﻿using Going.UI.Controls;
-using Going.UI.Enums;
-using Going.UI.Utils;
+﻿using Going.UI.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Going.UI.Forms.Controls
 {
-    public class GoButton : GoWrapperControl<Going.UI.Controls.GoButton>
+    public class GoToggleButton : GoWrapperControl<Going.UI.Controls.GoToggleButton>
     {
         #region Properties
         public string? IconString { get => Control.IconString; set { if (Control.IconString != value) { Control.IconString = value; Invalidate(); } } }
@@ -22,18 +20,21 @@ namespace Going.UI.Forms.Controls
 
         public string TextColor { get => Control.TextColor; set { if (Control.TextColor != value) { Control.TextColor = value; Invalidate(); } } }
         public string ButtonColor { get => Control.ButtonColor; set { if (Control.ButtonColor != value) { Control.ButtonColor = value; Invalidate(); } } }
+        public string CheckedButtonColor { get => Control.CheckedButtonColor; set { if (Control.CheckedButtonColor != value) { Control.CheckedButtonColor = value; Invalidate(); } } }
         public GoRoundType Round { get => Control.Round; set { if (Control.Round != value) { Control.Round = value; Invalidate(); } } }
 
-        public bool BackgroundDraw { get => Control.BackgroundDraw; set { if (Control.BackgroundDraw != value) { Control.BackgroundDraw = value; Invalidate(); } } }
-        public bool BorderOnly { get => Control.BorderOnly; set { if (Control.BorderOnly != value) { Control.BorderOnly = value; Invalidate(); } } }
+        public bool Checked { get => Control.Checked; set { if (Control.Checked != value) { Control.Checked = value; Invalidate(); } } }
+        public bool AllowToggle { get => Control.AllowToggle; set { if (Control.AllowToggle != value) { Control.AllowToggle = value; Invalidate(); } } }
+
         #endregion
 
         #region Event
         public event EventHandler? ButtonClicked { add => Control.ButtonClicked += value; remove => Control.ButtonClicked -= value; }
+        public event EventHandler? CheckedChanged { add => Control.CheckedChanged += value; remove => Control.CheckedChanged -= value; }
         #endregion
 
         #region Constructor
-        public GoButton()
+        public GoToggleButton()
         {
             SetStyle(ControlStyles.Selectable, true);
         }

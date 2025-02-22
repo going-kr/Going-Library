@@ -39,7 +39,7 @@ namespace Going.UI.Controls
         public string? Title { get; set; }
 
         public float? ButtonSize { get; set; }
-        public List<GoButtonInfo> Buttons { get; set; } = [];
+        public List<GoButtonItem> Buttons { get; set; } = [];
         [JsonIgnore] public virtual bool Valid => true;
 
         [JsonIgnore] private bool UseTitle => TitleSize.HasValue && TitleSize.Value > 0;
@@ -247,10 +247,9 @@ namespace Going.UI.Controls
         #endregion
 
         #region Method
-        void buttonLoop(Action<int, GoButtonInfo, SKRect> act)
+        void buttonLoop(Action<int, GoButtonItem, SKRect> act)
         {
             var rtButton = Areas()["Button"];
-            var rnds = Util.Rounds(Direction, Round, (TitleSize.HasValue ? 1 : 0) + 1 + (ButtonSize.HasValue ? 1 : 0));
             var rtsBtn = Util.Columns(rtButton, Buttons.Select(x => x.Size).ToArray());
 
             for (int i = 0; i < Buttons.Count; i++)

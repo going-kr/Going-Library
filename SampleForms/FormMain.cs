@@ -16,6 +16,8 @@ namespace SampleForms
             goInputBoolean1.ValueChanged += (o, s) => goValueBoolean1.Value = goInputBoolean1.Value;
 
             goInputCombo1.Items.AddRange(goListBox1.Items);
+
+            goLampButton1.ButtonClicked += (o, s) => goLampButton1.OnOff = !goLampButton1.OnOff;
         }
     }
 }

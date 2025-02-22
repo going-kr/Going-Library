@@ -47,7 +47,7 @@ namespace Going.UI.Design
 
             if (cBack != SKColors.Transparent)
             {
-                using var imgf = SKImageFilter.CreateDropShadow(3, 3, 3, 3, SKColors.Black);
+                using var imgf = SKImageFilter.CreateDropShadow(3, 3, 3, 3, Util.FromArgb(thm.ShadowAlpha, SKColors.Black));
                 p.ImageFilter = imgf;
                 p.IsStroke = false;
                 p.Color = cBack;

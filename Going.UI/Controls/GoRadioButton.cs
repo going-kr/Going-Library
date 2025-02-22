@@ -1,5 +1,4 @@
-﻿using Going.UI.Datas;
-using Going.UI.Enums;
+﻿using Going.UI.Enums;
 using Going.UI.Extensions;
 using Going.UI.Themes;
 using Going.UI.Tools;
@@ -13,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Going.UI.Controls
 {
-    public class GoButton : GoControl
+    public class GoRadioButton : GoControl
     {
         #region Properties
         public string? IconString { get; set; }
@@ -26,18 +25,38 @@ namespace Going.UI.Controls
 
         public string TextColor { get; set; } = "Fore";
         public string ButtonColor { get; set; } = "Base3";
+        public string CheckedButtonColor { get; set; } = "Select";
         public GoRoundType Round { get; set; } = GoRoundType.All;
 
-        public bool BackgroundDraw { get; set; } = true;
-        public bool BorderOnly { get; set; } = false;
+        private bool bCheck = false;
+        public bool Checked
+        {
+            get => bCheck; set
+            {
+                if (bCheck != value)
+                {
+                    bCheck = value;
+
+                    if (Parent != null && bCheck)
+                    {
+                        var ls = Parent.Childrens.Where(x => x is GoRadioButton && x != this).Select(x => x as GoRadioButton);
+                        foreach (var c in ls)
+                            if (c != null) c.Checked = false;
+                    }
+
+                    CheckedChanged?.Invoke(this, EventArgs.Empty);
+                }
+            }
+        }
         #endregion
 
         #region Event
         public event EventHandler? ButtonClicked;
+        public event EventHandler? CheckedChanged;
         #endregion
 
         #region Constructor
-        public GoButton()
+        public GoRadioButton()
         {
             Selectable = true;
         }
@@ -53,11 +72,11 @@ namespace Going.UI.Controls
         {
             var thm = GoTheme.Current;
             var cText = thm.ToColor(TextColor).BrightnessTransmit(bDown ? thm.DownBrightness : 0);
-            var cBtn = thm.ToColor(ButtonColor).BrightnessTransmit(bDown ? thm.DownBrightness : 0);
+            var cBtn = thm.ToColor(Checked ? CheckedButtonColor : ButtonColor).BrightnessTransmit(bDown ? thm.DownBrightness : 0);
             var rts = Areas();
             var rtBox = rts["Content"];
 
-            if (BackgroundDraw) Util.DrawBox(canvas, rtBox, (BorderOnly ? SKColors.Transparent : cBtn.BrightnessTransmit(bHover ? thm.HoverFillBrightness : 0)), cBtn.BrightnessTransmit(bHover ? thm.HoverBorderBrightness : 0), Round, thm.Corner);
+            Util.DrawBox(canvas, rtBox, cBtn.BrightnessTransmit(bHover ? thm.HoverFillBrightness : 0), cBtn.BrightnessTransmit(bHover ? thm.HoverBorderBrightness : 0), Round, thm.Corner);
 
             if (bDown) rtBox.Offset(0, 1);
             Util.DrawTextIcon(canvas, Text, FontName, FontSize, IconString, IconSize, IconDirection, IconGap, rtBox, cText, GoContentAlignment.MiddleCenter);
@@ -83,7 +102,11 @@ namespace Going.UI.Controls
             if (bDown)
             {
                 bDown = false;
-                if (CollisionTool.Check(rtBox, x, y)) ButtonClicked?.Invoke(this, EventArgs.Empty);
+                if (CollisionTool.Check(rtBox, x, y))
+                {
+                    Checked = true;
+                    ButtonClicked?.Invoke(this, EventArgs.Empty);
+                }
             }
 
             base.OnMouseUp(x, y, button);
@@ -95,7 +118,7 @@ namespace Going.UI.Controls
             var rtBox = rts["Content"];
 
             bHover = CollisionTool.Check(rtBox, x, y);
-        
+
             base.OnMouseMove(x, y);
         }
         #endregion

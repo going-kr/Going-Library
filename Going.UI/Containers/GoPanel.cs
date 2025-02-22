@@ -38,7 +38,7 @@ namespace Going.UI.Containers
  
         public float TitleHeight { get; set; } = 40;
 
-        public List<GoButtonInfo> Buttons { get; set; } = [];
+        public List<GoButtonItem> Buttons { get; set; } = [];
         public float? ButtonWidth { get; set; }
 
         [JsonInclude]

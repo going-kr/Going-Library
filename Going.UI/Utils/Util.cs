@@ -1,5 +1,6 @@
 ﻿using Going.UI.Datas;
 using Going.UI.Enums;
+using Going.UI.Extensions;
 using Going.UI.Managers;
 using Going.UI.Themes;
 using Going.UI.Tools;
@@ -148,6 +149,38 @@ namespace Going.UI.Utils
                 p.IsStroke = false;
                 p.Color = color;
                 canvas.DrawText(fi.IconText, x, y, font, p);
+            }
+        }
+
+        public static void DrawIcon(SKCanvas canvas, string? iconString, float iconSize, float rotate, SKRect bounds, SKColor fill, SKColor border)
+        {
+            var fi = iconString != null ? GoIconManager.GetIcon(iconString) : null;
+
+            if (fi != null && iconSize > 0)
+            {
+                using (new SKAutoCanvasRestore(canvas))
+                {
+                    canvas.Translate(bounds.MidX, bounds.MidY);
+                    canvas.RotateDegrees(rotate);
+                    using var p = new SKPaint { IsAntialias = true };
+                    using var font = new SKFont(fi.FontFamily, iconSize);
+
+                    var lineHeight = font.Spacing;
+                    float totalTextHeight = lineHeight;
+
+                    float textWidth = font.MeasureText(fi.IconText);
+
+                    float y = -totalTextHeight / 2F - font.Metrics.Ascent;
+                    float x = -textWidth / 2;
+
+                    p.IsStroke = false;
+                    p.Color = fill;
+                    canvas.DrawText(fi.IconText, x, y, font, p);
+
+                    p.IsStroke = true;
+                    p.Color = border;
+                    canvas.DrawText(fi.IconText, x, y, font, p);
+                }
             }
         }
         #endregion
@@ -537,6 +570,68 @@ namespace Going.UI.Utils
         public static SKPoint Int(SKPoint v) => new SKPoint((int)v.X, (int)v.Y);
         public static SKSize Int(SKSize v) => new SKSize((int)v.Width, (int)v.Height);
         public static SKRect Int(SKRect v) => new SKRect((int)v.Left, (int)v.Top, (int)v.Right, (int)v.Bottom);
+        #endregion
+
+        #region Lamp
+        public static void DrawLamp(SKCanvas canvas, SKRect bounds, SKColor OnLampColor, SKColor OffLampColor, bool OnOff, bool Shadow = true)
+        {
+            #region Brightness
+            var vS = 0.2F;
+            var vE = -0.2F;
+
+            if (GoTheme.Current.Dark)
+            {
+                vS = 0.2F;
+                vE = -0.2F;
+
+                if (OnOff)
+                {
+                    vS = 0.5F;
+                    vE = -0.2F;
+                }
+            }
+            else
+            {
+                vS = 0.3F;
+                vE = 0F;
+
+                if (OnOff)
+                {
+                    vS = 0.6F;
+                    vE = 0F;
+                }
+            }
+            #endregion
+
+            var cM = OnOff ? OnLampColor : OffLampColor;
+            var cS = cM.BrightnessTransmit(vS);
+            var cE = cM.BrightnessTransmit(vE);
+            var cB = cE.BrightnessTransmit(GoTheme.Current.BorderBrightness);
+
+            using var p = new SKPaint { IsAntialias = true };
+            p.IsStroke = false;
+            p.Color = cB;
+
+            var rt = Util.Int(bounds);
+            rt.Inflate(0.5F, 0.5F);
+
+            var cx = Convert.ToSingle(MathTool.Map(0.25, 0, 1, rt.Left, rt.Right));
+            var cy = Convert.ToSingle(MathTool.Map(0.25, 0, 1, rt.Top, rt.Bottom));
+            using var imgf = SKImageFilter.CreateDropShadow(1, 1, 2, 2, Util.FromArgb(Convert.ToByte(GoTheme.Current.ShadowAlpha / (OnOff ? 1 : 5)), SKColors.Black));
+            using var sh = SKShader.CreateRadialGradient(new SKPoint(cx, cy), rt.Width / 2F, [cS, cE], SKShaderTileMode.Clamp);
+
+            p.Shader = sh;
+            if (Shadow) p.ImageFilter = imgf;
+            canvas.DrawOval(bounds, p);
+            p.Shader = null;
+            p.ImageFilter = null;
+
+            p.Color = cB;
+            p.IsStroke = true;
+            p.StrokeWidth = 1;
+            canvas.DrawOval(bounds, p);
+
+        }
         #endregion
         #endregion
     }
