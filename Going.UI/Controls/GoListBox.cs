@@ -64,6 +64,7 @@ namespace Going.UI.Controls
             scroll.GetScrollTotal = () => ItemHeight * Items.Count;
             scroll.GetScrollTick = () => ItemHeight;
             scroll.GetScrollView = () => Height;
+            scroll.Refresh = () => Invalidate?.Invoke();
         }
         #endregion
 
@@ -351,10 +352,6 @@ namespace Going.UI.Controls
             }
             #endregion
         }
-        #endregion
-
-        #region SetInvalidate
-        public void SetInvalidate(Action? method) => scroll.Refresh = method;
         #endregion
         #endregion
     }

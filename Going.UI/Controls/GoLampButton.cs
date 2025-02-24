@@ -39,7 +39,7 @@ namespace Going.UI.Controls
                 }
             }
         }
-        
+
         public int LampSize { get; set; } = 24;
         public int Gap { get; set; } = 10;
         #endregion
@@ -80,18 +80,47 @@ namespace Going.UI.Controls
             if (bDown) { rtBox.Offset(0, 1); rtText.Offset(0, 1); }
 
 #if true
-            var rtb = rtBox; rtb.Inflate(1.5F, 1.5F);
+            /*
+            var rtb = rtBox;
+            var rtl = rtBox; rtl.Inflate(-1.5F, -1.5F);
             using var p = new SKPaint { IsAntialias = true };
             using var sh = SKShader.CreateLinearGradient(new SKPoint(rtb.Left, rtb.Top), new SKPoint(rtb.Left, rtb.Bottom), [cOff.BrightnessTransmit(-0.5F), cBtn.BrightnessTransmit(0.3F)], SKShaderTileMode.Clamp);
+            p.IsStroke = false;
+            p.Shader = sh;
+            canvas.DrawOval(rtb, p);
+            Util.DrawLamp(canvas, rtl, cOn, cOff, OnOff, false);
+            p.Shader = null;
+            */
+
+            var rtb = rtBox;
+            var rtl = rtBox; rtl.Inflate(-1.5F, -1.5F);
+            using var p = new SKPaint { IsAntialias = true };
+            p.IsStroke = false;
+            p.Color = cBtn.BrightnessTransmit(-0.5F);
+            canvas.DrawOval(rtb, p);
+            Util.DrawLamp(canvas, rtl, cOn, cOff, OnOff, false);
+#else
+            var rtb = rtBox; rtb.Inflate(1.5F, 1.5F);
+            var cLT = cLmp.BrightnessTransmit(0.1F);
+            var cRB = cLmp.BrightnessTransmit(-0.1F);
+            using var p = new SKPaint { IsAntialias = true };
+            using var sh = SKShader.CreateLinearGradient(new SKPoint(rtb.Left, rtb.Top), new SKPoint(rtb.Right, rtb.Bottom), [cLT, cLT, cRB, cRB], [0, 0.5F, 0.5F, 1], SKShaderTileMode.Clamp);
             p.IsStroke = false;
             p.Color = cOff.BrightnessTransmit(-0.5F);
             p.Shader = sh;
             canvas.DrawOval(rtb, p);
-            Util.DrawLamp(canvas, rtBox, cOn, cOff, OnOff, false);
-            p.Shader = null;
-#else
-            Util.DrawBox(canvas, rtBox, cLmp, cLmp.BrightnessTransmit(thm.BorderBrightness), GoRoundType.Ellipse, thm.Corner);
-#endif       
+
+            rtb.Inflate(-1.5F, -1.5F);
+            var cLT2 = cLmp.BrightnessTransmit(-0.3F);
+            var cRB2 = cLmp.BrightnessTransmit(0.3F);
+            using var sh2 = SKShader.CreateLinearGradient(new SKPoint(rtb.Left, rtb.Top), new SKPoint(rtb.Right, rtb.Bottom), [cLT2, cRB2], SKShaderTileMode.Clamp);
+            p.IsStroke = true;
+            p.StrokeWidth = 3;
+            p.Shader = sh2;
+            canvas.DrawOval(rtb, p);
+
+
+#endif
             Util.DrawText(canvas, Text, FontName, FontSize, rtText, cText, GoContentAlignment.MiddleCenter);
 
 
@@ -143,6 +172,6 @@ namespace Going.UI.Controls
 
             return rts;
         }
-#endregion
+        #endregion
     }
 }

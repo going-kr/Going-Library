@@ -10,15 +10,11 @@ LineGraph					꺾은선 그래프
 TimeGraph					타임 그래프												종현님
 TrendGraph					트랜드 그래프											지준
 
-Gauge						반원형 프로그래스(계량기)	
-Meter						반원형 프로그래스(메터)	
 Progress					일자형 프로그레스										상무님(v)
 Slider						슬라이드 형식의 입력기									지준(v)
 RangeSlider					범위 설정 컨트롤러										지준(v)
-Knob						노브 입력	
-Switch						On/Off 스위치	
-OnOff						On/Off 스위치	
 StepGauge					(< ㅁ ㅁ ㅁ ㅁ >)										지준
+Switch						On/Off 스위치	
 Numberbox					숫자 차감 입력	
 Selector		
 
@@ -68,6 +64,10 @@ ToggleButton				토글 버튼												O
 RadioButton					라디오 버튼												O
 LampButton					램프 + 버튼 / 플랫한 느낌에서 모양이 별로임 	        O
 IconButton																			O
+Gauge						반원형 프로그래스(계량기)								O
+Meter						반원형 프로그래스(메터)									O
+Knob						노브 입력												O
+OnOff						On/Off 스위치											O
 
 Panel																				O
 TableLayoutPanel																	O

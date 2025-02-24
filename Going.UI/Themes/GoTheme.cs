@@ -58,6 +58,7 @@ namespace Going.UI.Themes
         public float StageLineBrightness { get; set; }
 
         public bool TouchMode { get; set; } = true;
+        public bool Animation { get; set; } = true;
         #endregion
 
         #region Static

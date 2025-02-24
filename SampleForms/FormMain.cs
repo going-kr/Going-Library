@@ -5,6 +5,8 @@ namespace SampleForms
 {
     public partial class FormMain : GoForm
     {
+        DateTime prev = DateTime.Now;
+        System.Windows.Forms.Timer tmr;
         public FormMain()
         {
             InitializeComponent();
@@ -17,7 +19,11 @@ namespace SampleForms
 
             goInputCombo1.Items.AddRange(goListBox1.Items);
 
-            goLampButton1.ButtonClicked += (o, s) => goLampButton1.OnOff = !goLampButton1.OnOff;
+            tmr = new System.Windows.Forms.Timer { Interval = 10, Enabled = true };
+            tmr.Tick += (o, s) =>
+            {
+                goMeter1.Value = goGauge1.Value = (DateTime.Now - prev).TotalMilliseconds / 100 % 100;
+            };
         }
     }
 }

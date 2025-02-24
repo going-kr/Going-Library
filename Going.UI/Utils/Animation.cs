@@ -1,4 +1,5 @@
-﻿using Going.UI.Tools;
+﻿using Going.UI.Themes;
+using Going.UI.Tools;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -18,11 +19,11 @@ namespace Going.UI.Utils
         #endregion
 
         #region Properties
-        public static bool Use { get; set; } = true;
         public double TotalMillls { get; private set; }
         public double PlayMillis => tmStart.HasValue ? (DateTime.Now - tmStart.Value).TotalMilliseconds : 0;
         public bool IsPlaying { get; private set; }
         public string? Variable { get; private set; }
+        public Action? Refresh;
         #endregion
 
         #region Member Variable
@@ -33,7 +34,7 @@ namespace Going.UI.Utils
         #region Start
         public void Start(double totalMillis, string? variable = null, Action? act = null)
         {
-            if (Use)
+            if (GoTheme.Current.Animation)
             {
                 if (!IsPlaying)
                 {
@@ -44,11 +45,21 @@ namespace Going.UI.Utils
                     Task.Run(async () =>
                     {
                         IsPlaying = true;
-                        await Task.Delay(TimeSpan.FromMilliseconds(totalMillis));
+                        //await Task.Delay(TimeSpan.FromMilliseconds(totalMillis));
+                        while ((tmStart.HasValue && (DateTime.Now - tmStart.Value).TotalMilliseconds < TotalMillls))
+                        {
+                            Refresh?.Invoke();
+                            await Task.Delay(10);
+                        }
                         act?.Invoke();
                         Stop();
+                        Refresh?.Invoke();
                     });
                 }
+            }
+            else
+            {
+                act?.Invoke();
             }
         }
         #endregion
@@ -58,6 +69,7 @@ namespace Going.UI.Utils
             this.tmStart = null;
             this.IsPlaying = false;
             this.TotalMillls = 0;
+            Refresh?.Invoke();
         }
         #endregion
         #region Linear / Accel / Decel

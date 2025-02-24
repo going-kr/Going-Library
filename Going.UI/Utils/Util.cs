@@ -12,6 +12,7 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Numerics;
 using System.Reflection;
+using System.Reflection.Metadata;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -178,10 +179,37 @@ namespace Going.UI.Utils
                     canvas.DrawText(fi.IconText, x, y, font, p);
 
                     p.IsStroke = true;
+                    p.StrokeWidth = 1.5F;
                     p.Color = border;
                     canvas.DrawText(fi.IconText, x, y, font, p);
                 }
             }
+        }
+
+        public static SKPath? GetIconPath(string? iconString, float iconSize, float rotate, SKRect bounds)
+        {
+            SKPath? ret = null;
+            var fi = iconString != null ? GoIconManager.GetIcon(iconString) : null;
+            if (fi != null && iconSize > 0)
+            {
+                using var p = new SKPaint { IsAntialias = true };
+                using var font = new SKFont(fi.FontFamily, iconSize);
+
+                var lineHeight = font.Spacing;
+                float totalTextHeight = lineHeight;
+
+                float textWidth = font.MeasureText(fi.IconText);
+
+                float y = -totalTextHeight / 2F - font.Metrics.Ascent;
+                float x = -textWidth / 2;
+
+                ret = font.GetTextPath(fi.IconText, new SKPoint(x, y));
+
+                var rotationMatrix = SKMatrix.CreateRotationDegrees(rotate, 0, 0); ret.Transform(rotationMatrix);
+                var translateMatrix = SKMatrix.CreateTranslation(bounds.MidX, bounds.MidY); ret.Transform(translateMatrix);
+                //var scaleMatrix = SKMatrix.CreateScale(1.25F,1.25F); ret.Transform(scaleMatrix);
+            }
+            return ret;
         }
         #endregion
 

@@ -19,6 +19,8 @@ namespace SampleOpenTK
     public class PageMain : GoPage
     {
         GoLamp lmp;
+        GoGauge gauge;
+        GoMeter meter;
         public PageMain()
         {
             Name = "PageMain";
@@ -65,11 +67,29 @@ namespace SampleOpenTK
 
             var btns = pnl_tbl.Childrens.FirstOrDefault(x => x is GoButtons btns ) as GoButtons;
 
+
+
+            var pnl_tbl2 = new GoTableLayoutPanel { Fill = true, Margin = new GoPadding(5) };
+            pnl_tbl2.Columns = ["33.33%", "33.34%", "33.33%"];
+            pnl_tbl2.Rows = ["100%"];
+            tbl.Childrens.Add(pnl_tbl2, 0, 1, 2, 1);
+
+            gauge = new GoGauge { Fill = true, Format = "0 '%'", Title = "Speed", FontSize = 24, TitleFontSize = 12 };
+            pnl_tbl2.Childrens.Add(gauge, 0, 0);
+
+            meter = new GoMeter { Fill = true, Format = "0 '%'", Title = "Speed", FontSize = 24, TitleFontSize = 12 };
+            pnl_tbl2.Childrens.Add(meter, 1, 0);
+
+            var knob = new GoKnob { Fill = true, Format = "0 '%'" };
+            pnl_tbl2.Childrens.Add(knob, 2, 0);
         }
 
+        DateTime dt = DateTime.Now;
         protected override void OnUpdate()
         {
             lmp.OnOff = DateTime.Now.Second % 2 == 0;
+            meter.Value = gauge.Value = ((DateTime.Now - dt).TotalMilliseconds / 100) % 100;
+
             base.OnUpdate();
         }
 

@@ -56,7 +56,10 @@ namespace Going.UI.Controls
             var rts = Areas();
             var rtBox = rts["Content"];
 
-            if (CollisionTool.Check(rtBox, x, y)) bDown = true;
+            var icosz = Math.Min(rtBox.Width, rtBox.Height) - 2;
+            var pth = Util.GetIconPath(IconString, icosz, Rotate, rtBox);
+            if (pth != null && pth.Contains(x, y)) bDown = true;
+            pth?.Dispose();
 
             base.OnMouseDown(x, y, button);
         }
@@ -69,7 +72,11 @@ namespace Going.UI.Controls
             if (bDown)
             {
                 bDown = false;
-                if (CollisionTool.Check(rtBox, x, y)) ButtonClicked?.Invoke(this, EventArgs.Empty);
+
+                var icosz = Math.Min(rtBox.Width, rtBox.Height) - 2;
+                var pth = Util.GetIconPath(IconString, icosz, Rotate, rtBox);
+                if (pth != null && pth.Contains(x, y)) ButtonClicked?.Invoke(this, EventArgs.Empty);
+                pth?.Dispose();
             }
 
             base.OnMouseUp(x, y, button);
@@ -80,7 +87,10 @@ namespace Going.UI.Controls
             var rts = Areas();
             var rtBox = rts["Content"];
 
-            bHover = CollisionTool.Check(rtBox, x, y);
+            var icosz = Math.Min(rtBox.Width, rtBox.Height) - 2;
+            var pth = Util.GetIconPath(IconString, icosz, Rotate, rtBox);
+            bHover = pth != null && pth.Contains(x, y);
+            pth?.Dispose();
 
             base.OnMouseMove(x, y);
         }
