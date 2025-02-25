@@ -229,6 +229,22 @@ namespace Going.UI.Utils
             }
             else DrawText(canvas, text, fontName, fontSize, bounds, color, align, wordWrap);
         }
+
+        public static void DrawTextIcon(SKCanvas canvas, string? text, string fontName, float fontSize, string? iconString, float iconSize, GoDirectionHV direction, float gap, SKRect bounds, SKColor textcolor, SKColor iconcolor, GoContentAlignment align = GoContentAlignment.MiddleCenter, bool wordWrap = true)
+        {
+            var fi = iconString != null ? GoIconManager.GetIcon(iconString) : null;
+            if (fi != null && iconSize > 0)
+            {
+                using var font = new SKFont(fi.FontFamily, iconSize);
+                font.MeasureText(fi.IconText, out var vrtico);
+
+                var (rtIco, rtText) = TextIconBounds(text, fontName, fontSize, vrtico.Size, direction, gap, bounds, align);
+                DrawIcon(canvas, iconString, iconSize, rtIco, iconcolor, align);
+                if (!string.IsNullOrEmpty(text)) DrawText(canvas, text, fontName, fontSize, rtText, textcolor, align, wordWrap);
+
+            }
+            else DrawText(canvas, text, fontName, fontSize, bounds, textcolor, align, wordWrap);
+        }
         #endregion
 
         #region MeasureText
@@ -277,7 +293,7 @@ namespace Going.UI.Utils
 
                 if (direction == GoDirectionHV.Horizon)
                 {
-                    var rtFA = FromRect(rtb.Left, rtb.MidY - iconSize.Height / 2F, iconSize.Width, iconSize.Height);
+                    var rtFA = FromRect(rtb.Left, rtb.MidY - iconSize.Height / 2F + 0.5F, iconSize.Width, iconSize.Height);
                     var rtTX = FromRect(rtb.Right - TW, rtb.MidY - TH / 2F, TW, TH);
                     return (rtFA, rtTX);
                 }

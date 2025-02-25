@@ -49,10 +49,17 @@ namespace Going.UI.Design
         #endregion
 
         #region Page
-        public void AddPage(GoPage page) => Pages.TryAdd(page.Name, page);
+        public void AddPage(GoPage page) { if (page.Name != null) Pages.TryAdd(page.Name, page); }
 
-        public void SetPage(string pageName) { if (Pages.TryGetValue(pageName, out var page)) { CurrentPage = page; CurrentPage.FireMouseMove(MousePosition.X, MousePosition.Y); } }
-        public void SetPage(GoPage page) => SetPage(page.Name);
+        public void SetPage(string pageName)
+        {
+            if (Pages.TryGetValue(pageName, out var page))
+            {
+                CurrentPage = page; 
+                CurrentPage.FireMouseMove(-1, -1);
+            }
+        }
+        public void SetPage(GoPage page) { if (page.Name != null) SetPage(page.Name); }
         #endregion
 
         #region DropDownWindow

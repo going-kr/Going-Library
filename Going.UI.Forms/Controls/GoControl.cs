@@ -115,6 +115,8 @@ namespace Going.UI.Forms.Controls
         public GoWrapperControl()
         {
             Control = Activator.CreateInstance<T>();
+
+            Control.SetInvalidate(Invalidate);
         }
         #endregion
 

@@ -52,6 +52,7 @@ namespace SampleOpenTK
             pnl_tbl.Childrens.Add(new GoInputCombo { Fill = true, Margin = new GoPadding(3), TitleSize = 90, Title = "콤보", SelectedIndex = 0, ButtonSize = 80, Buttons = [new() { IconString = "fa-download", Size = "50%" }, new() { IconString = "fa-upload", Size = "50%" }] }, 1, 5, 2, 1);
             pnl_tbl.Childrens.Add(new GoButtons { Fill = true, Margin = new GoPadding(3), Mode = GoButtonsMode.Radio, Buttons = [new() { Text = "A", Size = "25%" }, new() { Text = "B", Size = "25%" }, new() { Text = "C", Size = "25%" }, new() { Text = "None", Size = "25%" }] }, 1, 6, 2, 1);
             pnl_tbl.Childrens.Add(lmp, 1, 7, 2, 1);
+            pnl_tbl.Childrens.Add(new GoInputSelector { Fill = true, Margin = new GoPadding(3) , Items = [new GoListItem { Text = "Sun" }, new GoListItem { Text = "Mon" }, new GoListItem { Text = "Tue" }, new GoListItem { Text = "Wed" }, new GoListItem { Text = "Thu" }, new GoListItem { Text = "Fri" }, new GoListItem { Text = "Sat" },] }, 1, 8, 2, 1);
 
             var lb = new GoListBox { Fill = true, SelectionMode = GoItemSelectionMode.Multi };
             var cmb = pnl_tbl.Childrens.FirstOrDefault(x => x is GoInputCombo) as GoInputCombo;

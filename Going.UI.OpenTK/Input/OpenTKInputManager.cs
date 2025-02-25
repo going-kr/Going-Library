@@ -99,7 +99,7 @@ namespace Going.UI.OpenTK.Input
                 if (InputControl != null && InputCallback != null)
                 {
                     InputCallback(keyboard.Text ?? "");
-                    ani.Start(Animation.Time1, "clear", GoInputEventer.Current.ClearInputControl);
+                    ani.Start(Animation.Time200, "clear", GoInputEventer.Current.ClearInputControl);
                 }
             };
 
@@ -108,7 +108,7 @@ namespace Going.UI.OpenTK.Input
                 if (InputControl != null && InputCallback != null)
                 {
                     InputCallback(keypad.Text ?? "");
-                    ani.Start(Animation.Time1, "clear", GoInputEventer.Current.ClearInputControl);
+                    ani.Start(Animation.Time200, "clear", GoInputEventer.Current.ClearInputControl);
                 }
             };
         }
@@ -120,7 +120,7 @@ namespace Going.UI.OpenTK.Input
             if (InputControl == null)
             {
                 GoInputEventer.Current.SetInputControl(control);
-                ani.Start(Animation.Time1, "set");
+                ani.Start(Animation.Time200, "set");
 
                 InputBounds = bounds;
                 InputCallback = callback;
@@ -134,7 +134,7 @@ namespace Going.UI.OpenTK.Input
             if (InputControl == null)
             {
                 GoInputEventer.Current.SetInputControl(control);
-                ani.Start(Animation.Time1, "set");
+                ani.Start(Animation.Time200, "set");
 
                 InputBounds = bounds;
                 InputCallback = callback;
@@ -193,13 +193,13 @@ namespace Going.UI.OpenTK.Input
                     case InputType.String:
                         if (!keyboard.MouseDown(x, y, button))
                             if (InputControl != null)
-                                ani.Start(Animation.Time1, "clear", GoInputEventer.Current.ClearInputControl);
+                                ani.Start(Animation.Time200, "clear", GoInputEventer.Current.ClearInputControl);
                         break;
 
                     case InputType.Number:
                         if (!keypad.MouseDown(x, y, button))
                             if (InputControl != null)
-                                ani.Start(Animation.Time1, "clear", GoInputEventer.Current.ClearInputControl);
+                                ani.Start(Animation.Time200, "clear", GoInputEventer.Current.ClearInputControl);
                         break;
                 }
             }

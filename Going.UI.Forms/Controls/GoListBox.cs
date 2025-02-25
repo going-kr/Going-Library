@@ -49,8 +49,6 @@ namespace Going.UI.Forms.Controls
         public GoListBox()
         {
             SetStyle(ControlStyles.Selectable, true);
-
-            Control.SetInvalidate(Invalidate);
         }
         #endregion
     }

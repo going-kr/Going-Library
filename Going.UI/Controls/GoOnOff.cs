@@ -18,6 +18,7 @@ namespace Going.UI.Controls
         #region Properties
         public string OnText { get; set; } = "On";
         public string OffText { get; set; } = "Off";
+        public string CursorIconString { get; set; } = "fa-power-off";
         public string FontName { get; set; } = "나눔고딕";
         public float FontSize { get; set; } = 12;
 
@@ -37,7 +38,7 @@ namespace Going.UI.Controls
                 if (bOnOff != value)
                 {
                     ani.Stop();
-                    ani.Start(Animation.Time1, value ? "ON" : "OFF", () =>
+                    ani.Start(Animation.Time200, value ? "ON" : "OFF", () =>
                     {
                         bOnOff = value;
                         OnOffChanged?.Invoke(this, EventArgs.Empty);
@@ -45,6 +46,16 @@ namespace Going.UI.Controls
                 }
             }
         }
+        #endregion
+
+        #region Member Variable
+        private bool bHover = false;
+        private bool bDown = false;
+
+        private Animation ani = new Animation();
+        private bool downOnOff = false;
+        private SKPoint? ptDown = null;
+        private SKPoint? ptMove = null;
         #endregion
 
         #region Event
@@ -57,16 +68,6 @@ namespace Going.UI.Controls
             Selectable = true;
             ani.Refresh = () => Invalidate?.Invoke();
         }
-        #endregion
-
-        #region Member Variable
-        private bool bHover = false;
-        private bool bDown = false;
-
-        private Animation ani = new Animation();
-        private bool downOnOff = false;
-        private SKPoint? ptDown = null;
-        private SKPoint? ptMove = null;
         #endregion
 
         #region Override
@@ -98,7 +99,7 @@ namespace Going.UI.Controls
                 Util.DrawText(canvas, OnText, FontName, FontSize, rtOn, cText);
                 Util.DrawText(canvas, OffText, FontName, FontSize, rtOff, cText);
 
-                Util.DrawIcon(canvas, "fa-power-off", rtCursor.Height / 2, rtCursor, OnOff ? cOn : cOff);
+                Util.DrawIcon(canvas, CursorIconString, rtCursor.Height / 2, rtCursor, OnOff ? cOn : cOff);
             }
             base.OnDraw(canvas);
         }

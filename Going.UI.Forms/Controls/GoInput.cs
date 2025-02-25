@@ -18,6 +18,7 @@ using System.Windows.Forms;
 using Going.UI.Forms.Dialogs;
 using Going.UI.Tools;
 using SkiaSharp;
+using System.Text.Json.Serialization;
 
 namespace Going.UI.Forms.Controls
 {
@@ -188,8 +189,12 @@ namespace Going.UI.Forms.Controls
         public List<GoButtonItem> Buttons { get => Control.Buttons; set { if (Control.Buttons != value) { Control.Buttons = value; Invalidate(); } } }
         public float? ButtonSize { get => Control.ButtonSize; set { if (Control.ButtonSize != value) { Control.ButtonSize = value; Invalidate(); } } }
 
+        [Editor(typeof(CollectionEditor), typeof(UITypeEditor))]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public List<GoListItem> Items { get => Control.Items; set { if (Control.Items != value) { Control.Items = value; Invalidate(); } } }
         public int SelectedIndex { get => Control.SelectedIndex; set { if (Control.SelectedIndex != value) { Control.SelectedIndex = value; Invalidate(); } } }
+        public GoListItem? SelectedItem => Control.SelectedItem;
+
         public int MaximumViewCount { get => Control.MaximumViewCount; set { if (Control.MaximumViewCount != value) { Control.MaximumViewCount = value; Invalidate(); } } }
         public int ItemHeight { get => Control.ItemHeight; set { if (Control.ItemHeight != value) { Control.ItemHeight = value; Invalidate(); } } }
         #endregion
@@ -320,6 +325,51 @@ namespace Going.UI.Forms.Controls
         }
         #endregion
         #endregion
+        #endregion
+    }
+
+    public class GoInputSelector : GoWrapperControl<Going.UI.Controls.GoInputSelector>
+    {
+        #region Properties
+        public string? IconString { get => Control.IconString; set { if (Control.IconString != value) { Control.IconString = value; Invalidate(); } } }
+        public float IconSize { get => Control.IconSize; set { if (Control.IconSize != value) { Control.IconSize = value; Invalidate(); } } }
+        public float IconGap { get => Control.IconGap; set { if (Control.IconGap != value) { Control.IconGap = value; Invalidate(); } } }
+
+        public string FontName { get => Control.FontName; set { if (Control.FontName != value) { Control.FontName = value; Invalidate(); } } }
+        public float FontSize { get => Control.FontSize; set { if (Control.FontSize != value) { Control.FontSize = value; Invalidate(); } } }
+
+        public GoDirectionHV Direction { get => Control.Direction; set { if (Control.Direction != value) { Control.Direction = value; Invalidate(); } } }
+
+        public string TextColor { get => Control.TextColor; set { if (Control.TextColor != value) { Control.TextColor = value; Invalidate(); } } }
+        public string BorderColor { get => Control.BorderColor; set { if (Control.BorderColor != value) { Control.BorderColor = value; Invalidate(); } } }
+        public string FillColor { get => Control.FillColor; set { if (Control.FillColor != value) { Control.FillColor = value; Invalidate(); } } }
+        public string ValueColor { get => Control.ValueColor; set { if (Control.ValueColor != value) { Control.ValueColor = value; Invalidate(); } } }
+        public GoRoundType Round { get => Control.Round; set { if (Control.Round != value) { Control.Round = value; Invalidate(); } } }
+
+        public float? TitleSize { get => Control.TitleSize; set { if (Control.TitleSize != value) { Control.TitleSize = value; Invalidate(); } } }
+        public string? Title { get => Control.Title; set { if (Control.Title != value) { Control.Title = value; Invalidate(); } } }
+
+        [Editor(typeof(CollectionEditor), typeof(UITypeEditor))]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+        public List<GoButtonItem> Buttons { get => Control.Buttons; set { if (Control.Buttons != value) { Control.Buttons = value; Invalidate(); } } }
+        public float? ButtonSize { get => Control.ButtonSize; set { if (Control.ButtonSize != value) { Control.ButtonSize = value; Invalidate(); } } }
+
+        [Editor(typeof(CollectionEditor), typeof(UITypeEditor))]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+        public List<GoListItem> Items { get => Control.Items; set { if (Control.Items != value) { Control.Items = value; Invalidate(); } } }
+        public int SelectedIndex { get => Control.SelectedIndex; set { if (Control.SelectedIndex != value) { Control.SelectedIndex = value; Invalidate(); } } }
+        public GoListItem? SelectedItem => Control.SelectedItem;
+        #endregion
+
+        #region Event
+        public event EventHandler SelectedIndexChanged { add => Control.SelectedIndexChanged += value; remove => Control.SelectedIndexChanged -= value; }
+        #endregion
+
+        #region Constructor
+        public GoInputSelector()
+        {
+            
+        }
         #endregion
     }
 }

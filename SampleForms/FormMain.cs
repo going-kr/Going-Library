@@ -1,5 +1,6 @@
 using Going.UI.Forms.Dialogs;
 using Going.UI.Forms.Input;
+using Going.UI.Themes;
 
 namespace SampleForms
 {
@@ -24,6 +25,7 @@ namespace SampleForms
             {
                 goMeter1.Value = goGauge1.Value = (DateTime.Now - prev).TotalMilliseconds / 100 % 100;
             };
+
         }
     }
 }

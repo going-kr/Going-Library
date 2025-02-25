@@ -33,7 +33,6 @@ namespace Going.UI.Forms.Controls
         public GoOnOff()
         {
             SetStyle(ControlStyles.Selectable, true);
-            Control.SetInvalidate(Invalidate);
         }
         #endregion
     }
