@@ -51,6 +51,8 @@
             Going.UI.Datas.GoListItem goListItem5 = new Going.UI.Datas.GoListItem();
             Going.UI.Datas.GoListItem goListItem6 = new Going.UI.Datas.GoListItem();
             Going.UI.Datas.GoListItem goListItem7 = new Going.UI.Datas.GoListItem();
+            Going.UI.Datas.GoButtonItem goButtonItem16 = new Going.UI.Datas.GoButtonItem();
+            Going.UI.Datas.GoButtonItem goButtonItem17 = new Going.UI.Datas.GoButtonItem();
             goButton1 = new Going.UI.Forms.Controls.GoButton();
             goLabel1 = new Going.UI.Forms.Controls.GoLabel();
             goPanel2 = new Going.UI.Forms.Containers.GoPanel();
@@ -72,6 +74,7 @@
             goSwitch1 = new Going.UI.Forms.Controls.GoSwitch();
             goInputSelector1 = new Going.UI.Forms.Controls.GoInputSelector();
             goNumberBox1 = new Going.UI.Forms.Controls.GoNumberBox();
+            goGroupBox1 = new Going.UI.Forms.Containers.GoGroupBox();
             goPanel2.SuspendLayout();
             SuspendLayout();
             // 
@@ -154,7 +157,6 @@
             goPanel2.Controls.Add(goButton1);
             goPanel2.FontName = "나눔고딕";
             goPanel2.FontSize = 12F;
-            goPanel2.IconDirection = Going.UI.Enums.GoDirectionHV.Horizon;
             goPanel2.IconGap = 5F;
             goPanel2.IconSize = 12F;
             goPanel2.IconString = "fa-check";
@@ -736,12 +738,43 @@
             goNumberBox1.Value = 0D;
             goNumberBox1.ValueColor = "Base1";
             // 
+            // goGroupBox1
+            // 
+            goGroupBox1.BackColor = Color.FromArgb(50, 50, 50);
+            goGroupBox1.BackgroundColor = "Back";
+            goGroupBox1.BorderColor = "Base3";
+            goButtonItem16.IconString = "fa-plus";
+            goButtonItem16.Name = "add";
+            goButtonItem16.Size = "50%";
+            goButtonItem16.Text = null;
+            goButtonItem17.IconString = "fa-minus";
+            goButtonItem17.Name = "del";
+            goButtonItem17.Size = "50%";
+            goButtonItem17.Text = null;
+            goGroupBox1.Buttons.Add(goButtonItem16);
+            goGroupBox1.Buttons.Add(goButtonItem17);
+            goGroupBox1.ButtonWidth = 60F;
+            goGroupBox1.FontName = "나눔고딕";
+            goGroupBox1.FontSize = 12F;
+            goGroupBox1.IconGap = 5F;
+            goGroupBox1.IconSize = 12F;
+            goGroupBox1.IconString = "fa-check";
+            goGroupBox1.Location = new Point(810, 421);
+            goGroupBox1.Name = "goGroupBox1";
+            goGroupBox1.Round = Going.UI.Enums.GoRoundType.All;
+            goGroupBox1.Size = new Size(205, 262);
+            goGroupBox1.TabIndex = 12;
+            goGroupBox1.TabStop = false;
+            goGroupBox1.Text = "GroupBox";
+            goGroupBox1.TextColor = "Fore";
+            // 
             // FormMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(50, 50, 50);
             ClientSize = new Size(1051, 780);
+            Controls.Add(goGroupBox1);
             Controls.Add(goNumberBox1);
             Controls.Add(goInputSelector1);
             Controls.Add(goSwitch1);
@@ -784,5 +817,6 @@
         private Going.UI.Forms.Controls.GoSwitch goSwitch1;
         private Going.UI.Forms.Controls.GoInputSelector goInputSelector1;
         private Going.UI.Forms.Controls.GoNumberBox goNumberBox1;
+        private Going.UI.Forms.Containers.GoGroupBox goGroupBox1;
     }
 }

@@ -1,4 +1,5 @@
-﻿using Going.UI.Datas;
+﻿#define MeasureA
+using Going.UI.Datas;
 using Going.UI.Enums;
 using Going.UI.Extensions;
 using Going.UI.Managers;
@@ -110,8 +111,11 @@ namespace Going.UI.Utils
                 for (int i = 0; i < lines.Count; i++)
                 {
                     float y = startY + (i * lineHeight) - font.Metrics.Ascent;
-                    float textWidth = font.MeasureText(lines[i]);
-
+#if MeasureA
+                    float textWidth = font.MeasureText(lines[i]) + 1;
+#else
+                    font.MeasureText(lines[i], out var vszrt); var textWidth = vszrt.Width;
+#endif
                     float x = bounds.Left;
                     if (align == GoContentAlignment.TopCenter || align == GoContentAlignment.MiddleCenter || align == GoContentAlignment.BottomCenter) x = bounds.MidX - textWidth / 2;
                     else if (align == GoContentAlignment.TopRight || align == GoContentAlignment.MiddleRight || align == GoContentAlignment.BottomRight) x = bounds.Right - textWidth;
@@ -142,7 +146,12 @@ namespace Going.UI.Utils
                 else if (align == GoContentAlignment.BottomLeft || align == GoContentAlignment.BottomCenter || align == GoContentAlignment.BottomRight) startY = bounds.Bottom - totalTextHeight;
 
                 float y = startY - font.Metrics.Ascent;
+#if MeasureA
                 float textWidth = font.MeasureText(fi.IconText);
+#else
+                font.MeasureText(fi.IconText, out var vszrt); var textWidth = vszrt.Width;
+#endif
+
                 float x = bounds.Left;
                 if (align == GoContentAlignment.TopCenter || align == GoContentAlignment.MiddleCenter || align == GoContentAlignment.BottomCenter) x = bounds.MidX - textWidth / 2;
                 else if (align == GoContentAlignment.TopRight || align == GoContentAlignment.MiddleRight || align == GoContentAlignment.BottomRight) x = bounds.Right - textWidth;
@@ -168,9 +177,11 @@ namespace Going.UI.Utils
 
                     var lineHeight = font.Spacing;
                     float totalTextHeight = lineHeight;
-
+#if MeasureA
                     float textWidth = font.MeasureText(fi.IconText);
-
+#else
+                    font.MeasureText(fi.IconText, out var vszrt); var textWidth = vszrt.Width;
+#endif
                     float y = -totalTextHeight / 2F - font.Metrics.Ascent;
                     float x = -textWidth / 2;
 
@@ -198,7 +209,11 @@ namespace Going.UI.Utils
                 var lineHeight = font.Spacing;
                 float totalTextHeight = lineHeight;
 
+#if MeasureA
                 float textWidth = font.MeasureText(fi.IconText);
+#else
+                font.MeasureText(fi.IconText, out var vszrt); var textWidth = vszrt.Width;
+#endif
 
                 float y = -totalTextHeight / 2F - font.Metrics.Ascent;
                 float x = -textWidth / 2;
@@ -207,7 +222,6 @@ namespace Going.UI.Utils
 
                 var rotationMatrix = SKMatrix.CreateRotationDegrees(rotate, 0, 0); ret.Transform(rotationMatrix);
                 var translateMatrix = SKMatrix.CreateTranslation(bounds.MidX, bounds.MidY); ret.Transform(translateMatrix);
-                //var scaleMatrix = SKMatrix.CreateScale(1.25F,1.25F); ret.Transform(scaleMatrix);
             }
             return ret;
         }
@@ -220,7 +234,11 @@ namespace Going.UI.Utils
             if (fi != null && iconSize > 0)
             {
                 using var font = new SKFont(fi.FontFamily, iconSize);
-                font.MeasureText(fi.IconText, out var vrtico);
+#if MeasureA
+                var w = font.MeasureText(fi.IconText, out var vrtico); var vrtsz = new SKSize(w, font.Spacing);
+#else
+                font.MeasureText(fi.IconText, out var vrtico); var vrtsz = vrtico.Size;
+#endif
 
                 var (rtIco, rtText) = TextIconBounds(text, fontName, fontSize, vrtico.Size, direction, gap, bounds, align);
                 DrawIcon(canvas, iconString, iconSize, rtIco, color, align);
@@ -236,8 +254,11 @@ namespace Going.UI.Utils
             if (fi != null && iconSize > 0)
             {
                 using var font = new SKFont(fi.FontFamily, iconSize);
-                font.MeasureText(fi.IconText, out var vrtico);
-
+#if MeasureA
+                var w = font.MeasureText(fi.IconText, out var vrtico); var vrtsz = new SKSize(w, font.Spacing);
+#else
+                font.MeasureText(fi.IconText, out var vrtico); var vrtsz = vrtico.Size;
+#endif
                 var (rtIco, rtText) = TextIconBounds(text, fontName, fontSize, vrtico.Size, direction, gap, bounds, align);
                 DrawIcon(canvas, iconString, iconSize, rtIco, iconcolor, align);
                 if (!string.IsNullOrEmpty(text)) DrawText(canvas, text, fontName, fontSize, rtText, textcolor, align, wordWrap);
@@ -248,27 +269,76 @@ namespace Going.UI.Utils
         #endregion
 
         #region MeasureText
-        public static float MeasureText(string text, string fontName, float fontSize)
+        public static SKSize MeasureText(string text, string fontName, float fontSize)
         {
             var tf = GetTypeface(fontName);
             using var font = new SKFont(tf, fontSize);
-            var w = font.MeasureText(text, out var rtText);
-
-            return w;
+            var lines = LineText(text);
+            var lineHeight = font.Spacing;
+            var TH = lineHeight * lines.Count;
+#if MeasureA
+            var TW = lines.Max(x => font.MeasureText(x)) + 1;
+#else
+            var TW = lines.Max(x => { font.MeasureText(x, out var vszrt); return vszrt.Width; });
+#endif
+            return new SKSize(TW, TH);
         }
         #endregion
 
         #region MeasureTextIcon
-        public static SKSize MeasureTextIcon(string? text, string fontName, float fontSize, SKSize iconSize, GoDirectionHV direction, float gap, SKRect bounds, GoContentAlignment align)
+        public static SKSize MeasureTextIcon(string? text, string fontName, float fontSize, string? iconString, float iconSize, GoDirectionHV direction, float gap)
         {
-            var (rtIcon, rtText) = TextIconBounds(text, fontName, fontSize, iconSize, direction, gap, bounds, align);
+            var ico = GoIconManager.GetIcon(iconString);
+            if (ico != null)
+            {
+                using var ft = new SKFont(ico.FontFamily, iconSize);
+#if MeasureA
+                var w = ft.MeasureText(ico.IconText);
+#else
+                ft.MeasureText(ico.IconText, out var vszrt); var w = vszrt.Width;
+#endif
+                var iconSz = new SKSize(w, ft.Spacing);
 
-            var l = rtText.IsEmpty ? rtIcon.Left : Math.Min(rtIcon.Left, rtText.Left);
-            var t = rtText.IsEmpty ? rtIcon.Top : Math.Min(rtIcon.Top, rtText.Top);
-            var r = rtText.IsEmpty ? rtIcon.Right : Math.Max(rtIcon.Right, rtText.Right);
-            var b = rtText.IsEmpty ? rtIcon.Bottom : Math.Max(rtIcon.Bottom, rtText.Bottom);
+                if (string.IsNullOrEmpty(text))
+                {
+                    return iconSz;
+                }
+                else
+                {
+                    var tf = GetTypeface(fontName);
+                    using var font = new SKFont(tf, fontSize);
 
-            return new SKSize(r - l, b - t);
+                    var lines = LineText(text);
+                    var lineHeight = font.Spacing;
+                    var TH = lineHeight * lines.Count;
+#if MeasureA
+                    var TW = lines.Max(x => font.MeasureText(x)) + 1;
+#else
+                    var TW = lines.Max(x => { font.MeasureText(x, out var vszrt); return vszrt.Width; });
+#endif
+                    var szv = direction == GoDirectionHV.Horizon ?
+                        new SKSize(iconSz.Width + gap + TW, Math.Max(TH, iconSz.Height)) :
+                        new SKSize(Math.Max(TW, iconSz.Width), iconSz.Height + gap + TH);
+
+                    return szv;
+                }
+
+            }
+            else
+            {
+                var tf = GetTypeface(fontName);
+                using var font = new SKFont(tf, fontSize);
+
+                var lines = LineText(text);
+                var lineHeight = font.Spacing;
+                var TH = lineHeight * lines.Count;
+#if MeasureA
+                var TW = lines.Max(x => font.MeasureText(x)) + 1;
+#else
+                var TW = lines.Max(x => { font.MeasureText(x, out var vszrt); return vszrt.Width; });
+#endif
+                return new SKSize(TW, font.Spacing);
+            }
         }
         #endregion
 
@@ -287,7 +357,11 @@ namespace Going.UI.Utils
                 var lines = LineText(text);
                 var lineHeight = font.Spacing;
                 var TH = lineHeight * lines.Count;
-                var TW = lines.Max(x => font.MeasureText(x));
+#if MeasureA
+                var TW = lines.Max(x => font.MeasureText(x)) + 1;
+#else
+                var TW = lines.Max(x => { font.MeasureText(x, out var vszrt); return vszrt.Width; });
+#endif
                 var szv = direction == GoDirectionHV.Horizon ? new SKSize(iconSize.Width + gap + TW, Math.Max(TH, iconSize.Height)) : new SKSize(Math.Max(TW, iconSize.Width), iconSize.Height + gap + TH);
                 var rtb = MathTool.MakeRectangle(bounds, szv, align);
 
@@ -322,8 +396,11 @@ namespace Going.UI.Utils
                 foreach (string word in words)
                 {
                     string testLine = (currentLine == "") ? word : currentLine + " " + word;
+#if MeasureA
                     float testWidth = font.MeasureText(testLine);
-
+#else
+                    font.MeasureText(testLine, out var vszrt); float testWidth = vszrt.Width;
+#endif
                     if (testWidth > maxWidth && currentLine != "")
                     {
                         lines.Add(currentLine);
@@ -367,7 +444,7 @@ namespace Going.UI.Utils
         {
             using var p = new SKPaint { IsAntialias = true };
 
-            if(clean)
+            if (clean)
             {
                 bounds = Int(bounds);
                 bounds.Offset(0.5F, 0.5F);

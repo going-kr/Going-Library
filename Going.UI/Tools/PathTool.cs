@@ -4,6 +4,7 @@ using Going.UI.Utils;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
@@ -233,6 +234,51 @@ namespace Going.UI.Tools
             path.ArcTo(SKRect.Create(rt2.Left, rt2.Top, rt2.Width, rt2.Height), vang + 90, 180, false);
             path.Close();
 
+            return path;
+        }
+        #endregion
+
+        #region Tab
+        public static SKPath Tab(SKRect rtTab,  GoDirection tabPosition, float corner)
+        {
+            SKPath path = new SKPath();
+
+            var corner2 = corner * 2F;
+            switch (tabPosition)
+            {
+                case GoDirection.Up:
+                    {
+                        path.ArcTo(Util.FromRect(rtTab.Left - corner2, rtTab.Bottom - corner2, corner2, corner2), 90, -90, true);
+                        path.ArcTo(Util.FromRect(rtTab.Left, rtTab.Top, corner2, corner2), 180, 90, false);
+                        path.ArcTo(Util.FromRect(rtTab.Right - corner2, rtTab.Top, corner2, corner2), -90, 90, false);
+                        path.ArcTo(Util.FromRect(rtTab.Right, rtTab.Bottom - corner2, corner2, corner2), 180, -90, false);
+                    }
+                    break;
+                case GoDirection.Down:
+                    {
+                        path.ArcTo(Util.FromRect(rtTab.Left - corner2, rtTab.Top, corner2, corner2), -90, 90, true);
+                        path.ArcTo(Util.FromRect(rtTab.Left, rtTab.Bottom - corner2, corner2, corner2), 180, -90, false);
+                        path.ArcTo(Util.FromRect(rtTab.Right - corner2, rtTab.Bottom - corner2, corner2, corner2), 90, -90, false);
+                        path.ArcTo(Util.FromRect(rtTab.Right, rtTab.Top, corner2, corner2), 180, 90, false);
+                    }
+                    break;
+                case GoDirection.Left:
+                    {
+                        path.ArcTo(Util.FromRect(rtTab.Right - corner2, rtTab.Top - corner2, corner2, corner2), 0, 90, true);
+                        path.ArcTo(Util.FromRect(rtTab.Left, rtTab.Top, corner2, corner2), -90, -90, false);
+                        path.ArcTo(Util.FromRect(rtTab.Left, rtTab.Bottom - corner2, corner2, corner2), 180, -90, false);
+                        path.ArcTo(Util.FromRect(rtTab.Right - corner2, rtTab.Bottom, corner2, corner2), -90, 90, false);
+                    }
+                    break;
+                case GoDirection.Right:
+                    {
+                        path.ArcTo(Util.FromRect(rtTab.Left, rtTab.Top - corner2, corner2, corner2), 180, -90, true);
+                        path.ArcTo(Util.FromRect(rtTab.Right - corner2, rtTab.Top, corner2, corner2), -90, 90, false);
+                        path.ArcTo(Util.FromRect(rtTab.Right - corner2, rtTab.Bottom - corner2, corner2, corner2), 0, 90, false);
+                        path.ArcTo(Util.FromRect(rtTab.Left, rtTab.Bottom, corner2, corner2), -90, -90, false);
+                    }
+                    break;
+            }
             return path;
         }
         #endregion

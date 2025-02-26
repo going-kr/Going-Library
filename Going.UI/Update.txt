@@ -22,8 +22,6 @@ NavBar						네비바
 ToolBox		
 TreeView
 
-GroupBox	
-ScrollablePanel	
 SwitchPanel	
 TabControl	
 	
@@ -35,7 +33,7 @@ IcProgress                        ''        프로그래스
 IcSlide                           ''        슬라이더
 IcSwitchPanel                     ''        스위치 패널
 
-= 완료 작업 ===================================================================================
+= 완료 작업 ======================== ===========================================================
 
 Button						버튼													O
 Buttons						여러 개의 버튼을 한 개의 컨트롤로러 나누어 사용가능		O
@@ -70,7 +68,9 @@ Selector					=> GoInputSelector										O
 Numberbox					숫자 차감 입력											O
 
 Panel																				O
+GroupBox																			O
 TableLayoutPanel																	O
+ScrollablePanel																		O
 
 = 제외 작업 ===================================================================================
 

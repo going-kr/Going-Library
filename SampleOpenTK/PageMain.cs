@@ -63,8 +63,10 @@ namespace SampleOpenTK
                 cmb?.Items.Add(new() { Text = $"테스트 {i}" });
             }
 
-            var btn = pnl_tbl.Childrens.FirstOrDefault(x => x is GoButton btn && btn.Text == "테스트 1") as GoButton;
-            if (btn != null) btn.ButtonClicked += (o, s) => Design?.SetPage("PageTest");
+            var btn1 = pnl_tbl.Childrens.FirstOrDefault(x => x is GoButton btn && btn.Text == "테스트 1") as GoButton;
+            var btn2 = pnl_tbl.Childrens.FirstOrDefault(x => x is GoButton btn && btn.Text == "테스트 2") as GoButton;
+            if (btn1 != null) btn1.ButtonClicked += (o, s) => Design?.SetPage("PageTest");
+            if (btn2 != null) btn2.ButtonClicked += (o, s) => Design?.SetPage("PageTab");
 
             var btns = pnl_tbl.Childrens.FirstOrDefault(x => x is GoButtons btns ) as GoButtons;
 

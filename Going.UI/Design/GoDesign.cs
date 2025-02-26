@@ -45,7 +45,10 @@ namespace Going.UI.Design
 
         #region Method
         #region Select
-        public void Select(IGoControl? control) => SelectedControl = control;
+        public void Select(IGoControl? control)
+        {
+            if (SelectedControl == null) SelectedControl = control;
+        }
         #endregion
 
         #region Page

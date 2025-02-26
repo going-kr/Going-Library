@@ -10,14 +10,10 @@ using System.Drawing.Design;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Going.UI.Themes;
-using SkiaSharp.Views.Desktop;
-using System.Windows.Forms.Design;
-using Going.UI.Containers;
-using System.Collections.ObjectModel;
+
 namespace Going.UI.Forms.Containers
 {
-    public class GoPanel : Going.UI.Forms.Containers.GoContainer
+    public class GoGroupBox : GoContainer
     {
         #region Properties
         public string? IconString { get => control.IconString; set { if (control.IconString != value) { control.IconString = value; Invalidate(); } } }
@@ -30,13 +26,8 @@ namespace Going.UI.Forms.Containers
         public float FontSize { get => control.FontSize; set { if (control.FontSize != value) { control.FontSize = value; Invalidate(); } } }
 
         public string TextColor { get => control.TextColor; set { if (control.TextColor != value) { control.TextColor = value; Invalidate(); } } }
-        public string PanelColor { get => control.PanelColor; set { if (control.PanelColor != value) { control.PanelColor = value; Invalidate(); } } }
+        public string BorderColor { get => control.BorderColor; set { if (control.BorderColor != value) { control.BorderColor = value; Invalidate(); } } }
         public GoRoundType Round { get => control.Round; set { if (control.Round != value) { control.Round = value; Invalidate(); } } }
-
-        public bool BackgroundDraw { get => control.BackgroundDraw; set { if (control.BackgroundDraw != value) { control.BackgroundDraw = value; Invalidate(); } } }
-        public bool BorderOnly { get => control.BorderOnly; set { if (control.BorderOnly != value) { control.BorderOnly = value; Invalidate(); } } }
-
-        public float TitleHeight { get => control.TitleHeight; set { if (control.TitleHeight != value) { control.TitleHeight = value; Invalidate(); } } }
 
         [Editor(typeof(CollectionEditor), typeof(UITypeEditor))]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
@@ -49,7 +40,7 @@ namespace Going.UI.Forms.Containers
         #endregion
 
         #region Member Variable
-        Going.UI.Containers.GoPanel control = new Going.UI.Containers.GoPanel();
+        Going.UI.Containers.GoGroupBox control = new Going.UI.Containers.GoGroupBox();
         #endregion
 
         #region Override

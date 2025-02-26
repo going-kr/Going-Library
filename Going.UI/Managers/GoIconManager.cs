@@ -38,14 +38,17 @@ namespace Going.UI.Managers
         }
         #endregion
         #region GetIcon
-        public static GoIcon? GetIcon(string IconString)
+        public static GoIcon? GetIcon(string? IconString)
         {
             GoIcon? ret = null;
-            foreach (var item in dic.Values)
+            if (IconString != null)
             {
-                var v = item.GetIcon(IconString);
-                ret = v;
-                if (v != null) break;
+                foreach (var item in dic.Values)
+                {
+                    var v = item.GetIcon(IconString);
+                    ret = v;
+                    if (v != null) break;
+                }
             }
             return ret;
         }

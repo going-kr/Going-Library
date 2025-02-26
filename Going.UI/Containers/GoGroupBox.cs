@@ -8,16 +8,16 @@ using Going.UI.Utils;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reflection.Emit;
+using System.Runtime.Versioning;
 using System.Text;
 using System.Text.Json.Serialization;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 
 namespace Going.UI.Containers
 {
-    public class GoPanel : GoContainer
+    public class GoGroupBox : GoContainer
     {
         #region Properties
         public string? IconString { get; set; }
@@ -29,13 +29,8 @@ namespace Going.UI.Containers
         public float FontSize { get; set; } = 12;
 
         public string TextColor { get; set; } = "Fore";
-        public string PanelColor { get; set; } = "Base2";
+        public string BorderColor { get; set; } = "Base3";
         public GoRoundType Round { get; set; } = GoRoundType.All;
-
-        public bool BackgroundDraw { get; set; } = true;
-        public bool BorderOnly { get; set; } = false;
- 
-        public float TitleHeight { get; set; } = 40;
 
         public List<GoButtonItem> Buttons { get; set; } = [];
         public float? ButtonWidth { get; set; }
@@ -50,8 +45,8 @@ namespace Going.UI.Containers
 
         #region Constructor
         [JsonConstructor]
-        public GoPanel(List<IGoControl> childrens) : this() => Childrens = childrens;
-        public GoPanel() { Selectable = true; }
+        public GoGroupBox(List<IGoControl> childrens) : this() => Childrens = childrens;
+        public GoGroupBox() { Selectable = true; }
         #endregion
 
         #region Override
@@ -60,25 +55,22 @@ namespace Going.UI.Containers
         {
             var thm = GoTheme.Current;
             var cText = thm.ToColor(TextColor);
-            var cPanel = thm.ToColor(PanelColor);
-            var cBorder = cPanel.BrightnessTransmit(thm.BorderBrightness); 
+            var cBorder = thm.ToColor(BorderColor);
             var rts = Areas();
             var rtBox = rts["Content"];
             var rtTitle = rts["Title"];
             var rtButtons = rts["Buttons"];
-            var rtTitleText = Util.FromRect(rtTitle, new GoPadding(10, 0, 0, 0));
+            var rtBorder = rts["Border"];
+            var sz = Util.MeasureTextIcon(Text, FontName, FontSize, IconString, IconSize, GoDirectionHV.Horizon, IconGap);
+            var rtTitleText = Util.FromRect(rtTitle.Left + 10, rtTitle.Top, sz.Width + 20, rtTitle.Height);
 
-            if (BackgroundDraw)
+            Util.DrawTextIcon(canvas, Text, FontName, FontSize, IconString, IconSize, GoDirectionHV.Horizon, IconGap, rtTitleText, cText, GoContentAlignment.MiddleCenter);
+            using (new SKAutoCanvasRestore(canvas))
             {
-                Util.DrawBox(canvas, rtBox, BorderOnly ? SKColors.Transparent : cPanel, cPanel, Round, thm.Corner);
-
-                using var p = new SKPaint { IsAntialias = false };
-                using var pe = SKPathEffect.CreateDash([3, 3], 2);
-                p.PathEffect = pe;
-                p.Color = cBorder;
-                canvas.DrawLine(rtTitle.Left + 10, rtTitle.Bottom, rtTitle.Right - 10, rtTitle.Bottom, p);
+                canvas.ClipRect(rtTitleText, SKClipOperation.Difference);
+                canvas.ClipRect(rtButtons, SKClipOperation.Difference);
+                Util.DrawBox(canvas, rtBorder, SKColors.Transparent, cBorder, Round, thm.Corner);
             }
-            Util.DrawTextIcon(canvas, Text, FontName, FontSize, IconString, IconSize, GoDirectionHV.Horizon, IconGap, rtTitleText, cText, GoContentAlignment.MiddleLeft);
 
             if (Buttons.Count > 0 && ButtonWidth.HasValue)
             {
@@ -132,7 +124,7 @@ namespace Going.UI.Containers
                 {
                     var btn = Buttons[i];
                     var rt = rtsBtn[i];
-                    
+
                     if (!string.IsNullOrWhiteSpace(btn.Name))
                     {
                         if (CollisionTool.Check(rt, x, y)) btn.Down = true;
@@ -176,7 +168,7 @@ namespace Going.UI.Containers
                 {
                     var btn = Buttons[i];
                     var rt = rtsBtn[i];
-                    
+
                     if (!string.IsNullOrWhiteSpace(btn.Name))
                     {
                         btn.Hover = CollisionTool.Check(rt, x, y);
@@ -190,9 +182,11 @@ namespace Going.UI.Containers
         {
             var dic = base.Areas();
 
-            var rts =  Util.Rows(dic["Content"], [$"{TitleHeight}px", "100%"]);
+            var th = FontSize + 10;
+            var rts = Util.Rows(dic["Content"], [$"{th}px", "100%"]);
             dic["Title"] = rts[0];
             dic["Panel"] = rts[1];
+            dic["Border"] = Util.FromRect(rts[1].Left, rts[1].Top - th / 2, rts[1].Width, rts[1].Height + th / 2);
             dic["Buttons"] = new SKRect(rts[0].Right - 10 - (ButtonWidth ?? 0), rts[0].Top, rts[0].Right - 10, rts[0].Bottom);
 
             return dic;
@@ -200,5 +194,4 @@ namespace Going.UI.Containers
         #endregion
         #endregion
     }
-
 }
