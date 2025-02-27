@@ -60,7 +60,8 @@ namespace Going.UI.Controls
 
         #region 슬라이더 값 설정(외부)
         private double sValue;
-        public double Value { get => sValue;
+        public double Value {
+            get => sValue;
             set {
                 var clampedValue = MathClamp(value, Minimum, Maximum);
                 if (!(Math.Abs(sValue - value) > 0.00001f)) return;
@@ -112,6 +113,7 @@ namespace Going.UI.Controls
         private SKRect trackRect;
         private SKRect handleRect;
         private const float TrackHeight = 4f;
+        private int MinHeightForLabelBelow { get; set; } = 80;  // 라벨을 아래에 표시하기 위한 최소 높이
         #endregion
 
         #region 슬라이더 상태값 설정
@@ -231,10 +233,12 @@ namespace Going.UI.Controls
             base.OnMouseUp(x, y, button);
         }
         #endregion
+
         #endregion
 
         #region Method
         #region Draw
+
         #region DrawSlider
         private void DrawSlider(SKCanvas canvas)
         {
@@ -396,15 +400,46 @@ namespace Going.UI.Controls
             textFont.Size = FontSize;
             textFont.Typeface = SKTypeface.FromFamilyName(FontName);
 
+            // 텍스트 측정하여 공간 계산
+            var textBounds = new SKRect();
+            textFont.MeasureText(ValueString);
+            var isHeightEnough = Bounds.Height >= MinHeightForLabelBelow;
+
             SKPoint labelPosition;
             if (Direction == GoDirectionHV.Horizon)
             {
-                labelPosition = new SKPoint(handleRect.MidX, handleRect.MidY + HandleRadius + FontSize + 5);
+                if (isHeightEnough)
+                {
+                    // 충분한 공간이 있을 때 - 핸들 아래에 표시
+                    labelPosition = new SKPoint(handleRect.MidX, handleRect.MidY + HandleRadius + FontSize + 5);
+                }
+                else
+                {
+                    // 공간이 좁을 때 - 핸들과 겹치게 표시 (중앙에)
+                    labelPosition = new SKPoint(handleRect.MidX, handleRect.MidY - textBounds.Height / 4);
+
+                    // 핸들과 겹치므로 대비를 위해 흰색으로 표시
+                    textPaint.Color = SKColors.White;
+                }
             }
             else
             {
-                labelPosition = new SKPoint(handleRect.MidX + HandleRadius + 10, handleRect.MidY);
-                textAlign = SKTextAlign.Left;
+                if (isHeightEnough)
+                {
+                    // 수직 슬라이더의 경우 - 핸들 오른쪽에 표시
+                    labelPosition = new SKPoint(handleRect.MidX + HandleRadius + 10, handleRect.MidY);
+                    textAlign = SKTextAlign.Left;
+                    textPaint.Color = color;
+                }
+                else
+                {
+                    // 공간이 좁을 때 - 핸들 위에 표시
+                    labelPosition = new SKPoint(handleRect.MidX + HandleRadius + 10, handleRect.MidY);
+                    textAlign = SKTextAlign.Center;
+
+                    // 핸들과 겹치므로 대비를 위해 흰색으로 표시
+                    textPaint.Color = SKColors.White;
+                }
             }
 
             canvas.DrawText(ValueString, labelPosition, textAlign, textFont, textPaint);
@@ -421,6 +456,7 @@ namespace Going.UI.Controls
             sMinimum = 0D;
             sMaximum = 100D;
             sValue = 0D;
+            sValueString = "0";
 
             UpdateValueString();
         }
@@ -457,10 +493,20 @@ namespace Going.UI.Controls
             normalizedValue = MathClamp(normalizedValue, 0, 1);
 
             // 트랙 위치 업데이트
+            var availableSpace = Direction == GoDirectionHV.Horizon ? contentBox.Height : contentBox.Width;
+            var isHeightEnough = Bounds.Height >= MinHeightForLabelBelow;
+
+            // 값 레이블을 위한 여분 공간 계산
+            var extraSpace = isHeightEnough && ShowValueLabel ? FontSize + 10 : 0;
+
             if (Direction == GoDirectionHV.Horizon)
             {
                 // 수평 슬라이더
                 var trackY = contentBox.MidY;
+
+                // 화면이 작을 경우 라벨이 위로 가므로 슬라이더를 약간 아래로 조정
+                if (!isHeightEnough && ShowValueLabel) trackY += extraSpace / 2;
+
                 trackRect = new SKRect(
                     contentBox.Left + HandleRadius,
                     trackY - (float)BarSize / 2,
@@ -474,9 +520,9 @@ namespace Going.UI.Controls
                 var trackX = contentBox.MidX;
                 trackRect = new SKRect(
                     trackX + (float)BarSize / 2,
-                    contentBox.Top + HandleRadius,
+                    contentBox.Top + HandleRadius + (isHeightEnough ? extraSpace / 2 : 0),
                     trackX + (float)BarSize / 2,
-                    contentBox.Bottom - HandleRadius
+                    contentBox.Bottom - HandleRadius - (isHeightEnough ? 0 : extraSpace / 2)
                 );
             }
 
