@@ -11,7 +11,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Going.UI.Themes;
-using UIPanel = Going.UI.Containers.GoPanel;
 using SkiaSharp.Views.Desktop;
 using System.Windows.Forms.Design;
 using Going.UI.Containers;
@@ -23,7 +22,6 @@ namespace Going.UI.Forms.Containers
         #region Properties
         public string? IconString { get => control.IconString; set { if (control.IconString != value) { control.IconString = value; Invalidate(); } } }
         public float IconSize { get => control.IconSize; set { if (control.IconSize != value) { control.IconSize = value; Invalidate(); } } }
-        public GoDirectionHV IconDirection { get => control.IconDirection; set { if (control.IconDirection != value) { control.IconDirection = value; Invalidate(); } } }
         public float IconGap { get => control.IconGap; set { if (control.IconGap != value) { control.IconGap = value; Invalidate(); } } }
 
         [Editor(typeof(MultilineStringEditor), typeof(UITypeEditor))]
@@ -42,12 +40,16 @@ namespace Going.UI.Forms.Containers
 
         [Editor(typeof(CollectionEditor), typeof(UITypeEditor))]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
-        public List<GoButtonInfo> Buttons { get => control.Buttons; set { if (control.Buttons != value) { control.Buttons = value; Invalidate(); } } }
+        public List<GoButtonItem> Buttons { get => control.Buttons; set { if (control.Buttons != value) { control.Buttons = value; Invalidate(); } } }
         public float? ButtonWidth { get => control.ButtonWidth; set { if (control.ButtonWidth != value) { control.ButtonWidth = value; Invalidate(); } } }
         #endregion
 
+        #region Event
+        public event EventHandler<ButtonClickEventArgs>? ButtonClicked { add => control.ButtonClicked += value; remove => control.ButtonClicked -= value; }
+        #endregion
+
         #region Member Variable
-        UIPanel control = new UIPanel();
+        Going.UI.Containers.GoPanel control = new Going.UI.Containers.GoPanel();
         #endregion
 
         #region Override

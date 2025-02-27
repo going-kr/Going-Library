@@ -50,6 +50,8 @@ namespace Going.UI.Controls
         [JsonIgnore] public GoDesign? Design { get; internal set; }
 
         [JsonIgnore] internal bool _MouseDown_ => bDown;
+
+        protected Action? Invalidate;
         #endregion
 
         #region Event
@@ -157,6 +159,8 @@ namespace Going.UI.Controls
         #region Areas
         public virtual Dictionary<string, SKRect> Areas() => new() { { "Content", Util.FromRect(0, 0, Width - 1, Height - 1) } };
         #endregion
+
+        public void SetInvalidate(Action? method) => Invalidate = method;
         #endregion
     }
 }

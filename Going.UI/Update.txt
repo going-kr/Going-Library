@@ -1,0 +1,89 @@
+﻿
+= 미완료 작업 =================================================================================
+
+AniMate						그림 또는 움직이는 Gif 표시	
+PictureBox					그림 출력	
+
+BarGraph					막대 그래프	
+CircleGraph					원형 그래프	
+LineGraph					꺾은선 그래프
+TimeGraph					타임 그래프												종현님
+TrendGraph					트랜드 그래프											지준
+
+Progress					일자형 프로그레스										상무님(v)
+Slider						슬라이드 형식의 입력기									지준(v)
+RangeSlider					범위 설정 컨트롤러										지준(v)
+StepGauge					(< ㅁ ㅁ ㅁ ㅁ >)										지준
+
+Calendar					달력	
+ColorPicker					색상 선택(조명제어, RGB)	
+DataGrid					데이터 그리드											종현님
+NavBar						네비바	
+ToolBox		
+TreeView
+
+SwitchPanel	
+TabControl	
+	
+ImageCanvas					이미지 캔바스
+IcButton                    이미지 캔바스용 버튼
+IcLabel                           ''        라벨  
+IcToggle                          ''        토글
+IcProgress                        ''        프로그래스
+IcSlide                           ''        슬라이더
+IcSwitchPanel                     ''        스위치 패널
+
+= 완료 작업 ======================== ===========================================================
+
+Button						버튼													O
+Buttons						여러 개의 버튼을 한 개의 컨트롤로러 나누어 사용가능		O
+ComboBox					콤보 박스	=> GoInputCombo								O
+InputText					텍스트 입력기											O
+InputText(형식별)			형식별 텍스트 입력기									O
+InputBool					On/Off 입력												O
+InputSelector				입력 선택기												O
+Label						라벨													O
+ListBox						리스트 박스												O
+ValueInputText				텍스트 입력기											O
+ValueLabelNumber(형식별)	형식별 텍스트 입력기									O
+ValueInputBool				On/Off 입력												O
+ValueInputSelector		    => GoInputSelectro										O
+ValueInputCombo				=> GoInputCombo											O
+ValueLabelText				=> GoValue												O
+ValueLabelNumber(형식별)		''													O
+ValueLabelBool					''													O
+CheckBox					체크 박스												O
+RadioBox					라디오박스												O
+Lamp						램프													O
+ToggleButton				토글 버튼												O
+RadioButton					라디오 버튼												O
+LampButton					램프 + 버튼 / 플랫한 느낌에서 모양이 별로임 	        O
+IconButton																			O
+Gauge						반원형 프로그래스(계량기)								O
+Meter						반원형 프로그래스(메터)									O
+Knob						노브 입력												O
+OnOff						On/Off 스위치											O
+Switch						On/Off 스위치											O
+Selector					=> GoInputSelector										O
+Numberbox					숫자 차감 입력											O
+
+Panel																				O
+GroupBox																			O
+TableLayoutPanel																	O
+ScrollablePanel																		O
+
+= 제외 작업 ===================================================================================
+
+TreeView																			X
+WheelPicker					가챠...?												X
+
+SlidePanel																			X(중복)
+BorderPanel																			X(중복)
+BoxPanel																			X(중복)
+GridLayoutPanel																		X(중복)
+CircleButton				원형 버튼	 => 그라데이션 없이는 밋밋함				X(버튼의 Round Ellipse로 대체)
+TriangleButton				화살표 버튼	 =>			  ''							X(아이콘 버튼으로 대체)
+CategoryPanel				트리뷰 대체  => depth 별 컨테이너 시 표현 자유 낮음		X
+                                         => 개체 별 컨테이너 시 보유 컨테이너 많음  
+
+===============================================================================================

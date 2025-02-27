@@ -1,10 +1,13 @@
 using Going.UI.Forms.Dialogs;
 using Going.UI.Forms.Input;
+using Going.UI.Themes;
 
 namespace SampleForms
 {
     public partial class FormMain : GoForm
     {
+        DateTime prev = DateTime.Now;
+        System.Windows.Forms.Timer tmr;
         public FormMain()
         {
             InitializeComponent();
@@ -16,6 +19,13 @@ namespace SampleForms
             goInputBoolean1.ValueChanged += (o, s) => goValueBoolean1.Value = goInputBoolean1.Value;
 
             goInputCombo1.Items.AddRange(goListBox1.Items);
+
+            tmr = new System.Windows.Forms.Timer { Interval = 10, Enabled = true };
+            tmr.Tick += (o, s) =>
+            {
+                goMeter1.Value = goGauge1.Value = (DateTime.Now - prev).TotalMilliseconds / 100 % 100;
+            };
+
         }
     }
 }

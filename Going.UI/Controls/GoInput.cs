@@ -15,6 +15,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Going.UI.Controls
 {
@@ -39,7 +40,7 @@ namespace Going.UI.Controls
         public string? Title { get; set; }
 
         public float? ButtonSize { get; set; }
-        public List<GoButtonInfo> Buttons { get; set; } = [];
+        public List<GoButtonItem> Buttons { get; set; } = [];
         [JsonIgnore] public virtual bool Valid => true;
 
         [JsonIgnore] private bool UseTitle => TitleSize.HasValue && TitleSize.Value > 0;
@@ -247,10 +248,9 @@ namespace Going.UI.Controls
         #endregion
 
         #region Method
-        void buttonLoop(Action<int, GoButtonInfo, SKRect> act)
+        void buttonLoop(Action<int, GoButtonItem, SKRect> act)
         {
             var rtButton = Areas()["Button"];
-            var rnds = Util.Rounds(Direction, Round, (TitleSize.HasValue ? 1 : 0) + 1 + (ButtonSize.HasValue ? 1 : 0));
             var rtsBtn = Util.Columns(rtButton, Buttons.Select(x => x.Size).ToArray());
 
             for (int i = 0; i < Buttons.Count; i++)
@@ -440,8 +440,12 @@ namespace Going.UI.Controls
             {
                 if (sVal != value)
                 {
-                    sVal = value;
-                    ValueChanged?.Invoke(this, System.EventArgs.Empty);
+                    ani.Stop();
+                    ani.Start(Animation.Time200, value ? "ON" : "OFF", () =>
+                    {
+                        sVal = value;
+                        ValueChanged?.Invoke(this, System.EventArgs.Empty);
+                    });
                 }
             }
         }
@@ -451,9 +455,20 @@ namespace Going.UI.Controls
         public string? OnIconString { get; set; }
         public string? OffIconString { get; set; }
         #endregion
-
+        
         #region Event
         public event EventHandler? ValueChanged;
+        #endregion
+
+        #region Member Variable
+        private Animation ani = new Animation();
+        #endregion
+
+        #region Constructor
+        public GoInputBoolean()
+        {
+            ani.Refresh = () => Invalidate?.Invoke();
+        }
         #endregion
 
         #region OnDrawValue
@@ -467,9 +482,20 @@ namespace Going.UI.Controls
             var cTextD = Util.FromArgb(80, cTextL);
             var (rtOn, rtOff) = bounds(rtValue);
 
+            if (thm.Animation && ani.IsPlaying)
+            {
+                var cOn = ani.Variable == "ON" ? ani.Value(AnimationAccel.Linear, cTextD, cTextL) : ani.Value(AnimationAccel.Linear, cTextL, cTextD);
+                var cOff = ani.Variable == "ON" ? ani.Value(AnimationAccel.Linear, cTextL, cTextD) : ani.Value(AnimationAccel.Linear, cTextD, cTextL);
 
-            Util.DrawTextIcon(canvas, OnText, FontName, FontSize, OnIconString, IconSize, GoDirectionHV.Horizon, IconGap, rtOn, Value ? cTextL : cTextD);
-            Util.DrawTextIcon(canvas, OffText, FontName, FontSize, OffIconString, IconSize, GoDirectionHV.Horizon, IconGap, rtOff, Value ? cTextD : cTextL);
+                Util.DrawTextIcon(canvas, OnText, FontName, FontSize, OnIconString, IconSize, GoDirectionHV.Horizon, IconGap, rtOn, cOn);
+                Util.DrawTextIcon(canvas, OffText, FontName, FontSize, OffIconString, IconSize, GoDirectionHV.Horizon, IconGap, rtOff, cOff);
+
+            }
+            else
+            {
+                Util.DrawTextIcon(canvas, OnText, FontName, FontSize, OnIconString, IconSize, GoDirectionHV.Horizon, IconGap, rtOn, Value ? cTextL : cTextD);
+                Util.DrawTextIcon(canvas, OffText, FontName, FontSize, OffIconString, IconSize, GoDirectionHV.Horizon, IconGap, rtOff, Value ? cTextD : cTextL);
+            }
 
             using var pe = SKPathEffect.CreateDash([2, 2], 2);
             p.StrokeWidth = 1;
@@ -520,6 +546,8 @@ namespace Going.UI.Controls
                 }
             }
         }
+
+        [JsonIgnore] public GoListItem? SelectedItem => SelectedIndex >= 0 && SelectedIndex < Items.Count ? Items[SelectedIndex] : null;
 
         public int MaximumViewCount { get; set; } = 8;
         public int ItemHeight { get; set; } = 30;
@@ -601,5 +629,209 @@ namespace Going.UI.Controls
         #endregion
     }
 
-    
+    public class GoInputSelector : GoInput
+    {
+        #region Properties
+        public List<GoListItem> Items { get; set; } = [];
+
+        private int nSelIndex = -1;
+        public int SelectedIndex
+        {
+            get => nSelIndex;
+            set
+            {
+                if (nSelIndex != value)
+                {
+                    nSelIndex = value;
+                    SelectedIndexChanged?.Invoke(this, EventArgs.Empty);
+                }
+            }
+        }
+
+        [JsonIgnore] public GoListItem? SelectedItem => SelectedIndex >= 0 && SelectedIndex < Items.Count ? Items[SelectedIndex] : null;
+        #endregion
+
+        #region Event
+        public event EventHandler? SelectedIndexChanged;
+        #endregion
+
+        #region Member Variable
+        bool bDownL = false, bHoverL = false;
+        bool bDownR = false, bHoverR = false;
+
+        Animation ani = new Animation();
+        #endregion
+
+        #region Constructor
+        public GoInputSelector()
+        {
+            ani.Refresh = () => Invalidate?.Invoke();
+        }
+        #endregion
+
+        #region Override
+        #region OnDrawValue
+        protected override void OnDrawValue(SKCanvas canvas, SKRect rtValue)
+        {
+            var thm = GoTheme.Current;
+            using var p = new SKPaint { IsAntialias = false };
+
+            var cBorder = thm.ToColor(BorderColor);
+            var cText = thm.ToColor(TextColor);
+            var (rtText, rtArrowL, rtArrowR) = bounds(rtValue);
+
+            #region item
+            using (new SKAutoCanvasRestore(canvas))
+            {
+                canvas.ClipRect(rtText);
+                if (thm.Animation && ani.IsPlaying)
+                {
+                    var sp = ani.Variable?.Split(':');
+                    if (sp != null && sp.Length == 2 && int.TryParse(sp[1], out var selidx))
+                    {
+                        var dir = sp[0];
+
+                        if(dir == "Next")
+                        {
+                            if (selidx - 1 >= 0)
+                            {
+                                var itmP = Items[selidx - 1];
+                                var rtP = Util.FromRect(rtText.Left + ani.Value(AnimationAccel.DCL, 0, -rtText.Width), rtText.Top, rtText.Width, rtText.Height);
+                                var cP = cText.WithAlpha(Convert.ToByte(ani.Value(AnimationAccel.DCL, 255, 0)));
+                                Util.DrawTextIcon(canvas, itmP.Text, FontName, FontSize, itmP.IconString, IconSize, GoDirectionHV.Horizon, IconGap, rtP, cP);
+                            }
+
+                            var rtN = Util.FromRect(rtText.Left + ani.Value(AnimationAccel.DCL, rtText.Width, 0), rtText.Top, rtText.Width, rtText.Height);
+                            var itmN = Items[selidx];
+                            var cN = cText.WithAlpha(Convert.ToByte(ani.Value(AnimationAccel.DCL, 0, 255)));
+                            Util.DrawTextIcon(canvas, itmN.Text, FontName, FontSize, itmN.IconString, IconSize, GoDirectionHV.Horizon, IconGap, rtN, cN);
+                        }
+                        else if(dir == "Prev")
+                        {
+                            if (selidx + 1 < Items.Count)
+                            {
+                                var itmP = Items[selidx + 1];
+                                var rtP = Util.FromRect(rtText.Left + ani.Value(AnimationAccel.DCL, 0, rtText.Width), rtText.Top, rtText.Width, rtText.Height);
+                                var cP = cText.WithAlpha(Convert.ToByte(ani.Value(AnimationAccel.DCL, 255, 0)));
+                                Util.DrawTextIcon(canvas, itmP.Text, FontName, FontSize, itmP.IconString, IconSize, GoDirectionHV.Horizon, IconGap, rtP, cP);
+                            }
+
+                            var itmN = Items[selidx];
+                            var rtN = Util.FromRect(rtText.Left + ani.Value(AnimationAccel.DCL, -rtText.Width, 0), rtText.Top, rtText.Width, rtText.Height);
+                            var cN = cText.WithAlpha(Convert.ToByte(ani.Value(AnimationAccel.DCL, 0, 255)));
+                            Util.DrawTextIcon(canvas, itmN.Text, FontName, FontSize, itmN.IconString, IconSize, GoDirectionHV.Horizon, IconGap, rtN, cN);
+                        }
+
+                    }
+                }
+                else
+                {
+                    if (SelectedIndex >= 0 && SelectedIndex < Items.Count)
+                    {
+                        var item = Items[SelectedIndex];
+                        Util.DrawTextIcon(canvas, item.Text, FontName, FontSize, item.IconString, IconSize, GoDirectionHV.Horizon, IconGap, rtText, cText);
+                    }
+                }
+            }
+            #endregion
+
+            #region sep
+            using var pe = SKPathEffect.CreateDash([2, 2], 2);
+            p.StrokeWidth = 1;
+            p.IsStroke = false;
+            p.Color = Util.FromArgb(128, cBorder);
+            p.PathEffect = pe;
+            canvas.DrawLine(rtArrowL.Right, rtValue.Top + 10, rtArrowL.Right, rtValue.Bottom - 10, p);
+            canvas.DrawLine(rtArrowR.Left, rtValue.Top + 10, rtArrowR.Left, rtValue.Bottom - 10, p);
+            #endregion
+
+            #region arrow
+            if (bDownL) rtArrowL.Offset(0, 1);
+            if (bDownR) rtArrowR.Offset(0, 1);
+            Util.DrawIcon(canvas, "fa-angle-left", 14, rtArrowL, cText.BrightnessTransmit(bDownL ? thm.DownBrightness : 0));
+            Util.DrawIcon(canvas, "fa-angle-right", 14, rtArrowR, cText.BrightnessTransmit(bDownR ? thm.DownBrightness : 0));
+            #endregion
+        }
+        #endregion
+
+        #region OnMouseDown
+        protected override void OnMouseDown(float x, float y, GoMouseButton button)
+        {
+            base.OnMouseDown(x, y, button);
+            var (rtText, rtArrowL, rtArrowR) = bounds(Areas()["Value"]);
+
+
+            if (CollisionTool.Check(rtArrowL, x, y)) bDownL = true;
+            if (CollisionTool.Check(rtArrowR, x, y)) bDownR = true;
+        }
+        #endregion
+        #region OnMouseUp
+        protected override void OnMouseUp(float x, float y, GoMouseButton button)
+        {
+            base.OnMouseUp(x, y, button);
+            var (rtText, rtArrowL, rtArrowR) = bounds(Areas()["Value"]);
+
+            if (bDownL)
+            {
+                if (Items.Count > 0)
+                {
+                    if (CollisionTool.Check(rtArrowL, x, y))
+                    {
+                        var n = MathTool.Constrain(SelectedIndex - 1, 0, Items.Count - 1);
+                        if (n != SelectedIndex)
+                        {
+                            ani.Stop();
+                            ani.Start(Animation.Time150, $"Prev:{n}", () => SelectedIndex = n);
+                        }
+                    }
+                }
+                else SelectedIndex = -1;
+                bDownL = false;
+            }
+
+            if (bDownR)
+            {
+                if (Items.Count > 0)
+                {
+                    if (CollisionTool.Check(rtArrowR, x, y))
+                    {
+                        var n = MathTool.Constrain(SelectedIndex + 1, 0, Items.Count - 1);
+                        if (n != SelectedIndex)
+                        {
+                            ani.Stop();
+                            ani.Start(Animation.Time150, $"Next:{n}", () => SelectedIndex = n);
+                        }
+                    }
+                }
+                else SelectedIndex = -1;
+                bDownR = false;
+            }
+        }
+        #endregion
+        #region OnMouseMove
+        protected override void OnMouseMove(float x, float y)
+        {
+            base.OnMouseMove(x, y);
+            var (rtText, rtArrowL, rtArrowR) = bounds(Areas()["Value"]);
+            bHoverL = CollisionTool.Check(rtArrowL, x, y);
+            bHoverR = CollisionTool.Check(rtArrowR, x, y);
+        }
+        #endregion
+        #region OnValueClick
+        protected override void OnValueClick(float x, float y, GoMouseButton button)
+        {
+        }
+        #endregion
+        #endregion
+
+        #region bounds
+        (SKRect rtText, SKRect rtArrowL, SKRect rtArrowR) bounds(SKRect rtValue)
+        {
+            var rts = Util.Columns(rtValue, ["40px", "100%", "40px"]);
+            return (rts[1], rts[0], rts[2]);
+        }
+        #endregion
+    }
+
+
 }

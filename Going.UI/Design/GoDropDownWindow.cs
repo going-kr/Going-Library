@@ -47,7 +47,7 @@ namespace Going.UI.Design
 
             if (cBack != SKColors.Transparent)
             {
-                using var imgf = SKImageFilter.CreateDropShadow(3, 3, 3, 3, SKColors.Black);
+                using var imgf = SKImageFilter.CreateDropShadow(3, 3, 3, 3, Util.FromArgb(thm.ShadowAlpha, SKColors.Black));
                 p.ImageFilter = imgf;
                 p.IsStroke = false;
                 p.Color = cBack;
@@ -105,8 +105,7 @@ namespace Going.UI.Design
             lb.ItemHeight = itemHeight;
 
             var designH = GoDesign.ActiveDesign?.Height ?? 0;
-            var iw = items.Count > 0 ? items.Select(x => Util.MeasureTextIcon(x.Text, lb.FontName, lb.FontSize, new SKSize(lb.IconSize, lb.IconSize), lb.IconDirection, lb.IconGap,
-                                                        new SKRect(0, 0, 100, 40), GoContentAlignment.MiddleCenter)).Max(x => x.Width) : 0F;
+            var iw = items.Count > 0 ? items.Select(x => Util.MeasureTextIcon(x.Text, lb.FontName, lb.FontSize, x.IconString, lb.IconSize, lb.IconDirection, lb.IconGap)).Max(x => x.Width) : 0F;
 
             var ih = itemHeight * Math.Min(maximumViewCount, items.Count) + 1;
             var rtValue = screenBounds;

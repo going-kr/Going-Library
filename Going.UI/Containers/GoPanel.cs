@@ -22,7 +22,6 @@ namespace Going.UI.Containers
         #region Properties
         public string? IconString { get; set; }
         public float IconSize { get; set; } = 12;
-        public GoDirectionHV IconDirection { get; set; }
         public float IconGap { get; set; } = 5;
 
         public string Text { get; set; } = "Panel";
@@ -38,7 +37,7 @@ namespace Going.UI.Containers
  
         public float TitleHeight { get; set; } = 40;
 
-        public List<GoButtonInfo> Buttons { get; set; } = [];
+        public List<GoButtonItem> Buttons { get; set; } = [];
         public float? ButtonWidth { get; set; }
 
         [JsonInclude]
@@ -79,7 +78,7 @@ namespace Going.UI.Containers
                 p.Color = cBorder;
                 canvas.DrawLine(rtTitle.Left + 10, rtTitle.Bottom, rtTitle.Right - 10, rtTitle.Bottom, p);
             }
-            Util.DrawTextIcon(canvas, Text, FontName, FontSize, IconString, IconSize, IconDirection, IconGap, rtTitleText, cText, GoContentAlignment.MiddleLeft);
+            Util.DrawTextIcon(canvas, Text, FontName, FontSize, IconString, IconSize, GoDirectionHV.Horizon, IconGap, rtTitleText, cText, GoContentAlignment.MiddleLeft);
 
             if (Buttons.Count > 0 && ButtonWidth.HasValue)
             {
@@ -124,6 +123,8 @@ namespace Going.UI.Containers
         #region OnMouseDown
         protected override void OnMouseDown(float x, float y, GoMouseButton button)
         {
+            base.OnMouseDown(x, y, button);
+
             if (Buttons.Count > 0 && ButtonWidth.HasValue)
             {
                 var rtsBtn = Util.Columns(Areas()["Buttons"], Buttons.Select(x => x.Size).ToArray());
@@ -138,12 +139,13 @@ namespace Going.UI.Containers
                     }
                 }
             }
-            base.OnMouseDown(x, y, button);
         }
         #endregion
         #region OnMouseUp
         protected override void OnMouseUp(float x, float y, GoMouseButton button)
         {
+            base.OnMouseUp(x, y, button);
+
             if (Buttons.Count > 0 && ButtonWidth.HasValue)
             {
                 var rtsBtn = Util.Columns(Areas()["Buttons"], Buttons.Select(x => x.Size).ToArray());
@@ -160,12 +162,13 @@ namespace Going.UI.Containers
                     btn.Down = false;
                 }
             }
-            base.OnMouseUp(x, y, button);
         }
         #endregion
         #region OnMouseMove
         protected override void OnMouseMove(float x, float y)
         {
+            base.OnMouseMove(x, y);
+
             if (Buttons.Count > 0 && ButtonWidth.HasValue)
             {
                 var rtsBtn = Util.Columns(Areas()["Buttons"], Buttons.Select(x => x.Size).ToArray());
@@ -180,7 +183,6 @@ namespace Going.UI.Containers
                     }
                 }
             }
-            base.OnMouseMove(x, y);
         }
         #endregion
         #region Areas

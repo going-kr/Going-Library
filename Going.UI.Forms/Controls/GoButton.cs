@@ -29,7 +29,7 @@ namespace Going.UI.Forms.Controls
         #endregion
 
         #region Event
-        public event EventHandler ButtonClicked { add => Control.ButtonClicked += value; remove => Control.ButtonClicked -= value; }
+        public event EventHandler? ButtonClicked { add => Control.ButtonClicked += value; remove => Control.ButtonClicked -= value; }
         #endregion
 
         #region Constructor

@@ -1,8 +1,10 @@
-﻿using Going.UI.Enums;
+﻿using Going.UI.Controls;
+using Going.UI.Enums;
 using Going.UI.Utils;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
@@ -148,6 +150,136 @@ namespace Going.UI.Tools
             }
             retval.Close();
             return retval;
+        }
+        #endregion
+
+        #region Gauge
+        public static SKPath Gauge(SKRect rtGauge, float startAngle, float sweepAngle, float barSize)
+        {
+            var path = new SKPath();
+
+            #region var
+            var cp = MathTool.CenterPoint(rtGauge);
+            var rtGaugeIn = Util.FromRect(rtGauge); rtGaugeIn.Inflate(-barSize, -barSize);
+
+            var rtOut = rtGauge;
+            var rtIn = rtGaugeIn;
+
+            var pl1_1 = MathTool.GetPointWithAngle(rtOut, startAngle);
+            var pl1_2 = MathTool.GetPointWithAngle(rtIn, startAngle);
+            var pl1_C = MathTool.CenterPoint(pl1_1, pl1_2);
+            var pl2_1 = MathTool.GetPointWithAngle(rtOut, startAngle + sweepAngle);
+            var pl2_2 = MathTool.GetPointWithAngle(rtIn, startAngle + sweepAngle);
+            var pl2_C = MathTool.CenterPoint(pl2_1, pl2_2);
+            #endregion
+
+            #region Path
+            path.ArcTo(MathTool.MakeRectangle(pl1_C, barSize), startAngle, -180, false);
+            path.ArcTo(rtIn, startAngle, sweepAngle, false);
+            path.ArcTo(MathTool.MakeRectangle(pl2_C, barSize), startAngle + sweepAngle + 180, -180, false);
+            path.ArcTo(rtOut, startAngle + sweepAngle, -sweepAngle, false);
+            path.Close();
+            #endregion
+
+            return path;
+        }
+        #endregion
+        #region Needle
+        public static SKPath Needle(SKRect rtContent, SKRect rtGauge,
+            double value, double minimum, double maximum, float startAngle, float sweepAngle, float remarkFontSize)
+        {
+            var path = new SKPath();
+
+            #region var
+            var rwh = rtGauge.Width / 2F;
+            var distN = rwh - remarkFontSize - (GoMeter.GIN - 5);
+            var cp = new SKPoint(rtContent.MidX, rtContent.MidY);
+            #endregion
+
+            #region Path
+            var vang = Convert.ToSingle(MathTool.Map(MathTool.Constrain(value, minimum, maximum), minimum, maximum, 0, sweepAngle));
+            var pt = MathTool.GetPointWithAngle(cp, vang + startAngle, distN);
+
+            var rtS = MathTool.MakeRectangle(pt, 3);
+            var rtL = MathTool.MakeRectangle(cp, MathTool.Constrain(distN / 5F, 10, 30));
+
+            path.AddArc(rtL, vang + startAngle + 90, 180);
+            path.ArcTo(rtS, vang + startAngle + 90 + 180, 180, false);
+            path.Close();
+            #endregion
+
+            return path;
+        }
+        #endregion
+        #region Knob
+        public static SKPath Knob(SKRect rtContent, SKRect rtKnob)
+        {
+            var path = new SKPath();
+
+            var cp = new SKPoint(rtContent.MidX, rtContent.MidY);
+            path.AddCircle(cp.X, cp.Y, rtKnob.Width / 2F);
+
+            return path;
+        }
+        #endregion
+        #region KnobCursor
+        public static SKPath KnobCursor(SKPoint pt1, SKPoint pt2, float vang, int width)
+        {
+            var path = new SKPath();
+            var sz = width;
+            var rt1 = MathTool.MakeRectangle(pt1, sz);
+            var rt2 = MathTool.MakeRectangle(pt2, sz);
+
+            path.AddArc(SKRect.Create(rt1.Left, rt1.Top, rt1.Width, rt1.Height), vang - 90, 180);
+            path.ArcTo(SKRect.Create(rt2.Left, rt2.Top, rt2.Width, rt2.Height), vang + 90, 180, false);
+            path.Close();
+
+            return path;
+        }
+        #endregion
+
+        #region Tab
+        public static SKPath Tab(SKRect rtTab,  GoDirection tabPosition, float corner)
+        {
+            SKPath path = new SKPath();
+
+            var corner2 = corner * 2F;
+            switch (tabPosition)
+            {
+                case GoDirection.Up:
+                    {
+                        path.ArcTo(Util.FromRect(rtTab.Left - corner2, rtTab.Bottom - corner2, corner2, corner2), 90, -90, true);
+                        path.ArcTo(Util.FromRect(rtTab.Left, rtTab.Top, corner2, corner2), 180, 90, false);
+                        path.ArcTo(Util.FromRect(rtTab.Right - corner2, rtTab.Top, corner2, corner2), -90, 90, false);
+                        path.ArcTo(Util.FromRect(rtTab.Right, rtTab.Bottom - corner2, corner2, corner2), 180, -90, false);
+                    }
+                    break;
+                case GoDirection.Down:
+                    {
+                        path.ArcTo(Util.FromRect(rtTab.Left - corner2, rtTab.Top, corner2, corner2), -90, 90, true);
+                        path.ArcTo(Util.FromRect(rtTab.Left, rtTab.Bottom - corner2, corner2, corner2), 180, -90, false);
+                        path.ArcTo(Util.FromRect(rtTab.Right - corner2, rtTab.Bottom - corner2, corner2, corner2), 90, -90, false);
+                        path.ArcTo(Util.FromRect(rtTab.Right, rtTab.Top, corner2, corner2), 180, 90, false);
+                    }
+                    break;
+                case GoDirection.Left:
+                    {
+                        path.ArcTo(Util.FromRect(rtTab.Right - corner2, rtTab.Top - corner2, corner2, corner2), 0, 90, true);
+                        path.ArcTo(Util.FromRect(rtTab.Left, rtTab.Top, corner2, corner2), -90, -90, false);
+                        path.ArcTo(Util.FromRect(rtTab.Left, rtTab.Bottom - corner2, corner2, corner2), 180, -90, false);
+                        path.ArcTo(Util.FromRect(rtTab.Right - corner2, rtTab.Bottom, corner2, corner2), -90, 90, false);
+                    }
+                    break;
+                case GoDirection.Right:
+                    {
+                        path.ArcTo(Util.FromRect(rtTab.Left, rtTab.Top - corner2, corner2, corner2), 180, -90, true);
+                        path.ArcTo(Util.FromRect(rtTab.Right - corner2, rtTab.Top, corner2, corner2), -90, 90, false);
+                        path.ArcTo(Util.FromRect(rtTab.Right - corner2, rtTab.Bottom - corner2, corner2, corner2), 0, 90, false);
+                        path.ArcTo(Util.FromRect(rtTab.Left, rtTab.Bottom, corner2, corner2), -90, -90, false);
+                    }
+                    break;
+            }
+            return path;
         }
         #endregion
     }

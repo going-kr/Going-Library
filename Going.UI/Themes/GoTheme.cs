@@ -50,6 +50,7 @@ namespace Going.UI.Themes
 
         public int Corner { get; set; } = 5;
         public int Alpha { get; set; }
+        public byte ShadowAlpha { get; set; }
         public float DownBrightness { get; set; }
         public float BorderBrightness { get; set; }
         public float HoverBorderBrightness { get; set; }
@@ -57,6 +58,7 @@ namespace Going.UI.Themes
         public float StageLineBrightness { get; set; }
 
         public bool TouchMode { get; set; } = true;
+        public bool Animation { get; set; } = true;
         #endregion
 
         #region Static
@@ -180,6 +182,7 @@ namespace Going.UI.Themes
             BorderBrightness = -0.3F;
             HoverBorderBrightness = 0.5F;
             HoverFillBrightness = 0.15F;
+            ShadowAlpha = 180;
         }
     }
 }

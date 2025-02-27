@@ -1,4 +1,5 @@
-﻿using Going.UI.Tools;
+﻿using Going.UI.Themes;
+using Going.UI.Tools;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -12,28 +13,32 @@ namespace Going.UI.Utils
     public class Animation
     {
         #region Const
-        public const int Time1 = 200;
+        public const int Time150 = 150;
+        public const int Time200 = 200;
 
         private const double EffectLevel = -5.0;
         #endregion
 
         #region Properties
-        public static bool Use { get; set; } = true;
         public double TotalMillls { get; private set; }
         public double PlayMillis => tmStart.HasValue ? (DateTime.Now - tmStart.Value).TotalMilliseconds : 0;
         public bool IsPlaying { get; private set; }
         public string? Variable { get; private set; }
+        public Action? Refresh;
         #endregion
 
         #region Member Variable
         DateTime? tmStart = null;
+        Action? complete = null;
+        Task? task;
+        CancellationTokenSource? cancel;
         #endregion
 
         #region Method
         #region Start
         public void Start(double totalMillis, string? variable = null, Action? act = null)
         {
-            if (Use)
+            if (GoTheme.Current.Animation)
             {
                 if (!IsPlaying)
                 {
@@ -41,23 +46,47 @@ namespace Going.UI.Utils
                     this.TotalMillls = totalMillis;
                     this.Variable = variable;
 
-                    Task.Run(async () =>
+                    cancel = new CancellationTokenSource();
+                    task = Task.Run(async () =>
                     {
-                        IsPlaying = true;
-                        await Task.Delay(TimeSpan.FromMilliseconds(totalMillis));
+                        var token = cancel.Token;
+
+                        this.IsPlaying = true;
+                        while (!token.IsCancellationRequested && this.IsPlaying && (tmStart.HasValue && (DateTime.Now - tmStart.Value).TotalMilliseconds < TotalMillls))
+                        {
+                            Refresh?.Invoke();
+                            await Task.Delay(10);
+                        }
                         act?.Invoke();
-                        Stop();
-                    });
+                        this.tmStart = null;
+                        this.IsPlaying = false;
+                        this.TotalMillls = 0;
+                        Refresh?.Invoke();
+
+                    }, cancel.Token);
                 }
+            }
+            else
+            {
+                act?.Invoke();
             }
         }
         #endregion
         #region Stop
         public void Stop()
         {
-            this.tmStart = null;
-            this.IsPlaying = false;
-            this.TotalMillls = 0;
+            try { cancel?.Cancel(false); }
+            finally
+            {
+                cancel?.Dispose();
+                cancel = null;
+            }
+
+            if (task != null)
+            {
+                Task.WhenAny(task);
+                task = null;
+            }
         }
         #endregion
         #region Linear / Accel / Decel

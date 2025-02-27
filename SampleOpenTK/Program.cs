@@ -12,6 +12,7 @@ view.CenterWindow();
 
 view.Design.AddPage(new PageMain());
 view.Design.AddPage(new PageTest());
+view.Design.AddPage(new PageTab());
 view.Design.SetPage("PageMain");
 
 var s = view.Design.JsonSerialize();

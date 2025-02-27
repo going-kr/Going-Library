@@ -1,0 +1,181 @@
+﻿using Going.UI.Controls;
+using Going.UI.Enums;
+using Going.UI.Themes;
+using Going.UI.Tools;
+using Going.UI.Utils;
+using SkiaSharp;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.Json.Serialization;
+using System.Threading.Tasks;
+
+namespace Going.UI.Containers
+{
+    public class GoScrollablePanel : GoContainer
+    {
+        #region Properties
+        public float? PanelWidth { get; set; }
+        public float? PanelHeight { get; set; }
+
+        [JsonIgnore] public override float ViewX => -Convert.ToSingle(hscroll.ScrollPositionWithOffset);
+        [JsonIgnore] public override float ViewY => -Convert.ToSingle(vscroll.ScrollPositionWithOffset);
+
+        [JsonInclude]
+        public override List<IGoControl> Childrens { get; } = [];
+        #endregion
+
+        #region Member Variable
+        Scroll vscroll = new Scroll() { Direction = ScrollDirection.Vertical };
+        Scroll hscroll = new Scroll() { Direction = ScrollDirection.Horizon };
+        #endregion
+
+        #region Constructor
+        [JsonConstructor]
+        public GoScrollablePanel(List<IGoControl> childrens) : this() => Childrens = childrens;
+        public GoScrollablePanel()
+        {
+            hscroll.GetScrollTotal = () => PanelWidth.HasValue ? PanelWidth.Value : (Childrens.Count() > 0 ? Childrens.Max(x => x.Right) : 0);
+            hscroll.GetScrollTick = () => 10;
+            hscroll.GetScrollView = () =>
+            {
+                var t = PanelWidth.HasValue ? PanelWidth.Value : (Childrens.Count() > 0 ? Childrens.Max(x => x.Right) : 0);
+                return Width - 1 - (t > Width ? Scroll.SC_WH : 0);
+            };
+
+            vscroll.GetScrollTotal = () => PanelHeight.HasValue ? PanelHeight.Value : (Childrens.Count() > 0 ? Childrens.Max(x => x.Bottom) : 0);
+            vscroll.GetScrollTick = () => 10;
+            vscroll.GetScrollView = () =>
+            {
+                var t = PanelHeight.HasValue ? PanelHeight.Value : (Childrens.Count() > 0 ? Childrens.Max(x => x.Bottom) : 0);
+                return Height - 1 - (t > Height ? Scroll.SC_WH : 0);
+            };
+        }
+        #endregion
+
+        #region Override
+        #region Draw
+        protected override void OnDraw(SKCanvas canvas)
+        {
+            var thm = GoTheme.Current;
+            var rts = Areas();
+            var rtPanel = rts["Panel"];
+            var rtScrollV = rts["ScrollV"];
+            var rtScrollH = rts["ScrollH"];
+            var vspos = Convert.ToSingle(vscroll.ScrollPositionWithOffset);
+            var hspos = Convert.ToSingle(hscroll.ScrollPositionWithOffset);
+
+            vscroll.Draw(canvas, rtScrollV);
+            hscroll.Draw(canvas, rtScrollH);
+
+            using (new SKAutoCanvasRestore(canvas))
+            {
+                canvas.Translate(hspos, vspos);
+                canvas.ClipRect(Util.FromRect(ViewX, ViewY, rtPanel.Width, rtPanel.Height));
+                base.OnDraw(canvas);
+            }
+        }
+        #endregion
+
+        #region Mouse
+        protected override void OnMouseDown(float x, float y, GoMouseButton button)
+        {
+            base.OnMouseDown(x + ViewX, y + ViewY, button);
+
+            var rts = Areas();
+            var rtPanel = rts["Panel"];
+            var rtScrollV = rts["ScrollV"];
+            var rtScrollH = rts["ScrollH"];
+
+            if (Design?.SelectedControl == null)
+            {
+                #region Scroll
+                vscroll.MouseDown(x, y, rtScrollV);
+                if (vscroll.TouchMode && CollisionTool.Check(rtPanel, x, y)) vscroll.TouchDown(x, y);
+
+                hscroll.MouseDown(x, y, rtScrollH);
+                if (hscroll.TouchMode && CollisionTool.Check(rtPanel, x, y)) hscroll.TouchDown(x, y);
+                #endregion
+            }
+        }
+
+        protected override void OnMouseMove(float x, float y)
+        {
+            base.OnMouseMove(x + ViewX, y + ViewY);
+
+            var rts = Areas();
+            var rtPanel = rts["Panel"];
+            var rtScrollV = rts["ScrollV"];
+            var rtScrollH = rts["ScrollH"];
+
+            #region Scroll
+            vscroll.MouseMove(x, y, rtScrollV);
+            if (vscroll.TouchMode) vscroll.TouchMove(x, y);
+
+            hscroll.MouseMove(x, y, rtScrollH);
+            if (hscroll.TouchMode) hscroll.TouchMove(x, y);
+            #endregion
+        }
+
+        protected override void OnMouseUp(float x, float y, GoMouseButton button)
+        {
+            base.OnMouseUp(x + ViewX, y + ViewY, button);
+
+            var rts = Areas();
+
+            #region Scroll
+            vscroll.MouseUp(x, y);
+            if (vscroll.TouchMode) vscroll.TouchUp(x, y);
+
+            hscroll.MouseUp(x, y);
+            if (hscroll.TouchMode) hscroll.TouchUp(x, y);
+            #endregion
+        }
+
+        protected override void OnMouseWheel(float x, float y, float delta)
+        {
+            base.OnMouseWheel(x + ViewX, y + ViewY, delta);
+
+            vscroll.MouseWheel(x, y, delta);
+        }
+
+        protected override void OnMouseClick(float x, float y, GoMouseButton button)
+        {
+            base.OnMouseClick(x + ViewX, y + ViewY, button);
+        }
+
+        protected override void OnMouseDoubleClick(float x, float y, GoMouseButton button)
+        {
+            base.OnMouseDoubleClick(x + ViewX, y + ViewY, button);
+        }
+
+        protected override void OnMouseLongClick(float x, float y, GoMouseButton button)
+        {
+            base.OnMouseLongClick(x + ViewX, y + ViewY, button);
+        }
+        #endregion
+
+        #region Areas
+        public override Dictionary<string, SKRect> Areas()
+        {
+            var scv = vscroll.ScrollVisible ? Scroll.SC_WH : 0;
+            var sch = hscroll.ScrollVisible ? Scroll.SC_WH : 0;
+
+            var dic = base.Areas();
+            var rtContent = dic["Content"];
+
+            var rtPanel = Util.FromRect(rtContent.Left, rtContent.Top, rtContent.Width - scv, rtContent.Height - sch);
+            var rtScrollV = Util.FromRect(rtPanel.Right, rtPanel.Top, scv, rtPanel.Height);
+            var rtScrollH = Util.FromRect(rtPanel.Left, rtPanel.Bottom, rtPanel.Width, sch);
+
+            dic["Panel"] = rtPanel;
+            dic["ScrollV"] = rtScrollV;
+            dic["ScrollH"] = rtScrollH;
+
+            return dic;
+        }
+        #endregion
+        #endregion
+    }
+}

@@ -45,14 +45,24 @@ namespace Going.UI.Design
 
         #region Method
         #region Select
-        public void Select(IGoControl? control) => SelectedControl = control;
+        public void Select(IGoControl? control)
+        {
+            if (SelectedControl == null) SelectedControl = control;
+        }
         #endregion
 
         #region Page
-        public void AddPage(GoPage page) => Pages.TryAdd(page.Name, page);
+        public void AddPage(GoPage page) { if (page.Name != null) Pages.TryAdd(page.Name, page); }
 
-        public void SetPage(string pageName) { if (Pages.TryGetValue(pageName, out var page)) { CurrentPage = page; CurrentPage.FireMouseMove(MousePosition.X, MousePosition.Y); } }
-        public void SetPage(GoPage page) => SetPage(page.Name);
+        public void SetPage(string pageName)
+        {
+            if (Pages.TryGetValue(pageName, out var page))
+            {
+                CurrentPage = page; 
+                CurrentPage.FireMouseMove(-1, -1);
+            }
+        }
+        public void SetPage(GoPage page) { if (page.Name != null) SetPage(page.Name); }
         #endregion
 
         #region DropDownWindow
@@ -176,7 +186,9 @@ namespace Going.UI.Design
         {
             #region Page
             if (CurrentPage != null)
-                GUI.Update(CurrentPage);
+            {
+                CurrentPage.FireUpdate();
+            }
             #endregion
 
             #region Window
