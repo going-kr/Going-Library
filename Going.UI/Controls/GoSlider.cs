@@ -354,7 +354,9 @@ namespace Going.UI.Controls
             }
             else
             {
-                progressRect.Top = handleRect.MidY;
+                // 수직 방향에서는 아래에서 위로 채워짐
+                // progressRect = new SKRect(trackRect.Left, trackRect.Top, trackRect.Right, handleRect.MidY);
+                progressRect.Bottom = handleRect.MidY;
             }
 
             if (EnableShadow)
@@ -519,9 +521,9 @@ namespace Going.UI.Controls
                 // 수직 슬라이더
                 var trackX = contentBox.MidX;
                 trackRect = new SKRect(
-                    trackX + (float)BarSize / 2,
+                    trackX - (float)BarSize / 2,    // 오류 : 여기가 문제 > 수정 = 기호를 +에서 -로 변경
                     contentBox.Top + HandleRadius + (isHeightEnough ? extraSpace / 2 : 0),
-                    trackX + (float)BarSize / 2,
+                    trackX + (float)BarSize / 2,    // 오류 : 여기도 동일한 값
                     contentBox.Bottom - HandleRadius - (isHeightEnough ? 0 : extraSpace / 2)
                 );
             }
