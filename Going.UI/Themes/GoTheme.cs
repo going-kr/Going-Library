@@ -17,7 +17,7 @@ namespace Going.UI.Themes
     public abstract class GoTheme
     {
         #region Const
-        internal const int DisableAlpha = 180;
+        public const int DisableAlpha = 180;
         #endregion
 
         #region Properties

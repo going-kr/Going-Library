@@ -23,8 +23,8 @@ namespace SampleOpenTK
             btn.ButtonClicked += (o, s) => Design?.SetPage("PageMain");
 
             var tab = new GoTabControl { Fill = true, Margin = new GoPadding(10, 60, 10, 10),  };
-            tab.IconDirection = GoDirectionHV.Vertical; tab.IconSize = 24; tab.IconGap = 10;
-            tab.TabPosition = GoDirection.Right; tab.NavSize = 120;
+            //tab.IconDirection = GoDirectionHV.Vertical; tab.IconSize = 24; tab.IconGap = 10;
+            tab.TabPosition = GoDirection.Down;// tab.NavSize = 120;
 
             var tp1 = new GoTabPage { Text = "Tab 1", IconString = "fa-check" };
             var tp2 = new GoTabPage { Text = "Tab 2", IconString = "fa-check" };
@@ -36,9 +36,9 @@ namespace SampleOpenTK
 
             Childrens.Add(tab);
 
-            tp1.Childrens.Add(new GoButton { Text = "페이지 1", Left = 10, Top = 10 });
-            tp2.Childrens.Add(new GoButton { Text = "페이지 2", Left = 10, Top = 10 });
-            tp3.Childrens.Add(new GoButton { Text = "페이지 3", Left = 10, Top = 10 });
+            tp1.Childrens.Add(new GoButton { Text = "페이지 1", Left = 0, Top = 0 });
+            tp2.Childrens.Add(new GoButton { Text = "페이지 2", Left = 0, Top = 0 });
+            tp3.Childrens.Add(new GoButton { Text = "페이지 3", Left = 0, Top = 0 });
 
         }
 

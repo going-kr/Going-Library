@@ -28,795 +28,226 @@
         /// </summary>
         private void InitializeComponent()
         {
-            Going.UI.Datas.GoButtonItem goButtonItem1 = new Going.UI.Datas.GoButtonItem();
-            Going.UI.Datas.GoButtonItem goButtonItem2 = new Going.UI.Datas.GoButtonItem();
-            Going.UI.Datas.GoButtonItem goButtonItem3 = new Going.UI.Datas.GoButtonItem();
-            Going.UI.Datas.GoButtonItem goButtonItem4 = new Going.UI.Datas.GoButtonItem();
-            Going.UI.Datas.GoButtonItem goButtonItem5 = new Going.UI.Datas.GoButtonItem();
-            Going.UI.Datas.GoButtonItem goButtonItem6 = new Going.UI.Datas.GoButtonItem();
-            Going.UI.Datas.GoButtonItem goButtonItem7 = new Going.UI.Datas.GoButtonItem();
-            Going.UI.Datas.GoButtonItem goButtonItem8 = new Going.UI.Datas.GoButtonItem();
-            Going.UI.Datas.GoButtonItem goButtonItem9 = new Going.UI.Datas.GoButtonItem();
-            Going.UI.Datas.GoButtonItem goButtonItem10 = new Going.UI.Datas.GoButtonItem();
-            Going.UI.Datas.GoButtonItem goButtonItem11 = new Going.UI.Datas.GoButtonItem();
-            Going.UI.Datas.GoButtonItem goButtonItem12 = new Going.UI.Datas.GoButtonItem();
-            Going.UI.Datas.GoButtonItem goButtonItem13 = new Going.UI.Datas.GoButtonItem();
-            Going.UI.Datas.GoButtonItem goButtonItem14 = new Going.UI.Datas.GoButtonItem();
-            Going.UI.Datas.GoButtonItem goButtonItem15 = new Going.UI.Datas.GoButtonItem();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
-            Going.UI.Datas.GoListItem goListItem1 = new Going.UI.Datas.GoListItem();
-            Going.UI.Datas.GoListItem goListItem2 = new Going.UI.Datas.GoListItem();
-            Going.UI.Datas.GoListItem goListItem3 = new Going.UI.Datas.GoListItem();
-            Going.UI.Datas.GoListItem goListItem4 = new Going.UI.Datas.GoListItem();
-            Going.UI.Datas.GoListItem goListItem5 = new Going.UI.Datas.GoListItem();
-            Going.UI.Datas.GoListItem goListItem6 = new Going.UI.Datas.GoListItem();
-            Going.UI.Datas.GoListItem goListItem7 = new Going.UI.Datas.GoListItem();
-            Going.UI.Datas.GoButtonItem goButtonItem16 = new Going.UI.Datas.GoButtonItem();
-            Going.UI.Datas.GoButtonItem goButtonItem17 = new Going.UI.Datas.GoButtonItem();
-            goButton1 = new Going.UI.Forms.Controls.GoButton();
-            goLabel1 = new Going.UI.Forms.Controls.GoLabel();
-            goPanel2 = new Going.UI.Forms.Containers.GoPanel();
-            goValueBoolean1 = new Going.UI.Forms.Controls.GoValueBoolean();
-            goValueInteger1 = new Going.UI.Forms.Controls.GoValueInteger();
-            goValueString1 = new Going.UI.Forms.Controls.GoValueString();
-            goInputBoolean1 = new Going.UI.Forms.Controls.GoInputBoolean();
-            goInputInt1 = new Going.UI.Forms.Controls.GoInputInteger();
-            goInputDouble1 = new Going.UI.Forms.Controls.GoInputFloat();
-            goInputString2 = new Going.UI.Forms.Controls.GoInputString();
-            goInputString1 = new Going.UI.Forms.Controls.GoInputString();
-            goButton2 = new Going.UI.Forms.Controls.GoButton();
-            goListBox1 = new Going.UI.Forms.Controls.GoListBox();
-            goInputCombo1 = new Going.UI.Forms.Controls.GoInputCombo();
-            goGauge1 = new Going.UI.Forms.Controls.GoGauge();
-            goMeter1 = new Going.UI.Forms.Controls.GoMeter();
-            goKnob1 = new Going.UI.Forms.Controls.GoKnob();
-            goOnOff1 = new Going.UI.Forms.Controls.GoOnOff();
-            goSwitch1 = new Going.UI.Forms.Controls.GoSwitch();
-            goInputSelector1 = new Going.UI.Forms.Controls.GoInputSelector();
-            goNumberBox1 = new Going.UI.Forms.Controls.GoNumberBox();
-            goGroupBox1 = new Going.UI.Forms.Containers.GoGroupBox();
-            goPanel2.SuspendLayout();
+            icCanvas1 = new Going.UI.Forms.ImageCanvas.IcCanvas();
+            icButton8 = new Going.UI.Forms.ImageCanvas.IcButton();
+            icButton7 = new Going.UI.Forms.ImageCanvas.IcButton();
+            icButton6 = new Going.UI.Forms.ImageCanvas.IcButton();
+            icButton5 = new Going.UI.Forms.ImageCanvas.IcButton();
+            icButton4 = new Going.UI.Forms.ImageCanvas.IcButton();
+            icButton3 = new Going.UI.Forms.ImageCanvas.IcButton();
+            icButton2 = new Going.UI.Forms.ImageCanvas.IcButton();
+            icButton1 = new Going.UI.Forms.ImageCanvas.IcButton();
+            icOnOff1 = new Going.UI.Forms.ImageCanvas.IcOnOff();
+            icOnOff2 = new Going.UI.Forms.ImageCanvas.IcOnOff();
+            icOnOff3 = new Going.UI.Forms.ImageCanvas.IcOnOff();
+            icOnOff4 = new Going.UI.Forms.ImageCanvas.IcOnOff();
+            icOnOff5 = new Going.UI.Forms.ImageCanvas.IcOnOff();
+            icOnOff6 = new Going.UI.Forms.ImageCanvas.IcOnOff();
+            icOnOff7 = new Going.UI.Forms.ImageCanvas.IcOnOff();
+            icOnOff8 = new Going.UI.Forms.ImageCanvas.IcOnOff();
+            icCanvas1.SuspendLayout();
             SuspendLayout();
             // 
-            // goButton1
+            // icCanvas1
             // 
-            goButton1.BackColor = Color.FromArgb(60, 60, 60);
-            goButton1.BackgroundColor = "Base2";
-            goButton1.BackgroundDraw = true;
-            goButton1.BorderOnly = false;
-            goButton1.ButtonColor = "Base3";
-            goButton1.FontName = "나눔고딕";
-            goButton1.FontSize = 12F;
-            goButton1.IconDirection = Going.UI.Enums.GoDirectionHV.Horizon;
-            goButton1.IconGap = 5F;
-            goButton1.IconSize = 12F;
-            goButton1.IconString = "fa-check";
-            goButton1.Location = new Point(166, 53);
-            goButton1.Name = "goButton1";
-            goButton1.Round = Going.UI.Enums.GoRoundType.All;
-            goButton1.Size = new Size(160, 40);
-            goButton1.TabIndex = 0;
-            goButton1.TabStop = false;
-            goButton1.Text = "확인";
-            goButton1.TextColor = "Fore";
+            icCanvas1.BackColor = Color.FromArgb(50, 50, 50);
+            icCanvas1.BackgroundColor = "Back";
+            icCanvas1.Controls.Add(icOnOff8);
+            icCanvas1.Controls.Add(icOnOff7);
+            icCanvas1.Controls.Add(icOnOff6);
+            icCanvas1.Controls.Add(icOnOff5);
+            icCanvas1.Controls.Add(icOnOff4);
+            icCanvas1.Controls.Add(icOnOff3);
+            icCanvas1.Controls.Add(icOnOff2);
+            icCanvas1.Controls.Add(icOnOff1);
+            icCanvas1.Controls.Add(icButton8);
+            icCanvas1.Controls.Add(icButton7);
+            icCanvas1.Controls.Add(icButton6);
+            icCanvas1.Controls.Add(icButton5);
+            icCanvas1.Controls.Add(icButton4);
+            icCanvas1.Controls.Add(icButton3);
+            icCanvas1.Controls.Add(icButton2);
+            icCanvas1.Controls.Add(icButton1);
+            icCanvas1.Dock = DockStyle.Fill;
+            icCanvas1.ImageFolder = "D:\\ImageCanvasSample";
+            icCanvas1.Location = new Point(0, 0);
+            icCanvas1.Name = "icCanvas1";
+            icCanvas1.OffImage = "PageMain_Off.png";
+            icCanvas1.OnImage = "PageMain_On.png";
+            icCanvas1.Size = new Size(800, 480);
+            icCanvas1.TabIndex = 0;
+            icCanvas1.TabStop = false;
+            icCanvas1.Text = "icCanvas1";
             // 
-            // goLabel1
+            // icButton8
             // 
-            goLabel1.BackColor = Color.FromArgb(60, 60, 60);
-            goLabel1.BackgroundColor = "Base2";
-            goLabel1.BackgroundDraw = true;
-            goLabel1.BorderOnly = true;
-            goLabel1.ContentAlignment = Going.UI.Enums.GoContentAlignment.TopLeft;
-            goLabel1.FontName = "나눔고딕";
-            goLabel1.FontSize = 12F;
-            goLabel1.IconDirection = Going.UI.Enums.GoDirectionHV.Horizon;
-            goLabel1.IconGap = 5F;
-            goLabel1.IconSize = 12F;
-            goLabel1.IconString = null;
-            goLabel1.LabelColor = "Base3";
-            goLabel1.Location = new Point(13, 53);
-            goLabel1.Name = "goLabel1";
-            goLabel1.Round = Going.UI.Enums.GoRoundType.All;
-            goLabel1.Size = new Size(147, 188);
-            goLabel1.TabIndex = 1;
-            goLabel1.TabStop = false;
-            goLabel1.Text = "동해물과 백두산이 마르고 닳도록 \r\n하나님이 보우하사 우리 나라 만세\r\n무궁화 삼천리 화려강산 \r\n대한 사람 대한으로 길이 보전 하세";
-            goLabel1.TextColor = "Fore";
-            goLabel1.TextPadding.Bottom = 10F;
-            goLabel1.TextPadding.Left = 10F;
-            goLabel1.TextPadding.Right = 10F;
-            goLabel1.TextPadding.Top = 10F;
+            icButton8.Location = new Point(721, 253);
+            icButton8.Name = "icButton8";
+            icButton8.Size = new Size(44, 31);
+            icButton8.TabIndex = 7;
+            icButton8.Text = "icButton8";
             // 
-            // goPanel2
+            // icButton7
             // 
-            goPanel2.BackColor = Color.FromArgb(50, 50, 50);
-            goPanel2.BackgroundColor = "Back";
-            goPanel2.BackgroundDraw = true;
-            goPanel2.BorderOnly = false;
-            goButtonItem1.IconString = "fa-plus";
-            goButtonItem1.Name = "add";
-            goButtonItem1.Size = "50%";
-            goButtonItem1.Text = null;
-            goButtonItem2.IconString = "fa-minus";
-            goButtonItem2.Name = "del";
-            goButtonItem2.Size = "50%";
-            goButtonItem2.Text = null;
-            goPanel2.Buttons.Add(goButtonItem1);
-            goPanel2.Buttons.Add(goButtonItem2);
-            goPanel2.ButtonWidth = 60F;
-            goPanel2.Controls.Add(goValueBoolean1);
-            goPanel2.Controls.Add(goValueInteger1);
-            goPanel2.Controls.Add(goValueString1);
-            goPanel2.Controls.Add(goInputBoolean1);
-            goPanel2.Controls.Add(goInputInt1);
-            goPanel2.Controls.Add(goInputDouble1);
-            goPanel2.Controls.Add(goInputString2);
-            goPanel2.Controls.Add(goInputString1);
-            goPanel2.Controls.Add(goButton2);
-            goPanel2.Controls.Add(goLabel1);
-            goPanel2.Controls.Add(goButton1);
-            goPanel2.FontName = "나눔고딕";
-            goPanel2.FontSize = 12F;
-            goPanel2.IconGap = 5F;
-            goPanel2.IconSize = 12F;
-            goPanel2.IconString = "fa-check";
-            goPanel2.Location = new Point(12, 12);
-            goPanel2.Name = "goPanel2";
-            goPanel2.Padding = new Padding(10, 50, 10, 10);
-            goPanel2.PanelColor = "Base2";
-            goPanel2.Round = Going.UI.Enums.GoRoundType.All;
-            goPanel2.Size = new Size(509, 530);
-            goPanel2.TabIndex = 2;
-            goPanel2.TabStop = false;
-            goPanel2.Text = "Panel";
-            goPanel2.TextColor = "Fore";
-            goPanel2.TitleHeight = 40F;
+            icButton7.Location = new Point(531, 253);
+            icButton7.Name = "icButton7";
+            icButton7.Size = new Size(44, 31);
+            icButton7.TabIndex = 6;
+            icButton7.Text = "icButton7";
             // 
-            // goValueBoolean1
+            // icButton6
             // 
-            goValueBoolean1.BackColor = Color.FromArgb(50, 50, 50);
-            goValueBoolean1.BackgroundColor = "Back";
-            goValueBoolean1.BorderColor = "Base3";
-            goButtonItem3.IconString = "fa-check";
-            goButtonItem3.Name = "chk";
-            goButtonItem3.Size = "100%";
-            goButtonItem3.Text = null;
-            goValueBoolean1.Buttons.Add(goButtonItem3);
-            goValueBoolean1.ButtonSize = 40F;
-            goValueBoolean1.Direction = Going.UI.Enums.GoDirectionHV.Horizon;
-            goValueBoolean1.FillColor = "Base3";
-            goValueBoolean1.FontName = "나눔고딕";
-            goValueBoolean1.FontSize = 12F;
-            goValueBoolean1.IconGap = 5F;
-            goValueBoolean1.IconSize = 12F;
-            goValueBoolean1.IconString = null;
-            goValueBoolean1.Location = new Point(166, 477);
-            goValueBoolean1.Name = "goValueBoolean1";
-            goValueBoolean1.Round = Going.UI.Enums.GoRoundType.All;
-            goValueBoolean1.Size = new Size(330, 40);
-            goValueBoolean1.TabIndex = 9;
-            goValueBoolean1.TabStop = false;
-            goValueBoolean1.Text = "goValueBoolean1";
-            goValueBoolean1.TextColor = "Fore";
-            goValueBoolean1.Title = "상태";
-            goValueBoolean1.TitleSize = 100F;
-            goValueBoolean1.Value = false;
-            goValueBoolean1.ValueColor = "Base2";
+            icButton6.Location = new Point(341, 253);
+            icButton6.Name = "icButton6";
+            icButton6.Size = new Size(44, 31);
+            icButton6.TabIndex = 5;
+            icButton6.Text = "icButton6";
             // 
-            // goValueInteger1
+            // icButton5
             // 
-            goValueInteger1.BackColor = Color.FromArgb(50, 50, 50);
-            goValueInteger1.BackgroundColor = "Back";
-            goValueInteger1.BorderColor = "Base3";
-            goButtonItem4.IconString = "fa-check";
-            goButtonItem4.Name = "chk";
-            goButtonItem4.Size = "100%";
-            goButtonItem4.Text = null;
-            goValueInteger1.Buttons.Add(goButtonItem4);
-            goValueInteger1.ButtonSize = 40F;
-            goValueInteger1.Direction = Going.UI.Enums.GoDirectionHV.Horizon;
-            goValueInteger1.FillColor = "Base3";
-            goValueInteger1.FontName = "나눔고딕";
-            goValueInteger1.FontSize = 12F;
-            goValueInteger1.FormatString = null;
-            goValueInteger1.IconGap = 5F;
-            goValueInteger1.IconSize = 12F;
-            goValueInteger1.IconString = null;
-            goValueInteger1.Location = new Point(166, 431);
-            goValueInteger1.Name = "goValueInteger1";
-            goValueInteger1.Round = Going.UI.Enums.GoRoundType.All;
-            goValueInteger1.Size = new Size(330, 40);
-            goValueInteger1.TabIndex = 4;
-            goValueInteger1.TabStop = false;
-            goValueInteger1.Text = "goValueInteger1";
-            goValueInteger1.TextColor = "Fore";
-            goValueInteger1.Title = "정수";
-            goValueInteger1.TitleSize = 100F;
-            goValueInteger1.Unit = null;
-            goValueInteger1.UnitSize = null;
-            goValueInteger1.Value = 0;
-            goValueInteger1.ValueColor = "Base2";
+            icButton5.Location = new Point(151, 253);
+            icButton5.Name = "icButton5";
+            icButton5.Size = new Size(44, 31);
+            icButton5.TabIndex = 4;
+            icButton5.Text = "icButton5";
             // 
-            // goValueString1
+            // icButton4
             // 
-            goValueString1.BackColor = Color.FromArgb(50, 50, 50);
-            goValueString1.BackgroundColor = "Back";
-            goValueString1.BorderColor = "Base3";
-            goButtonItem5.IconString = "fa-check";
-            goButtonItem5.Name = "chk";
-            goButtonItem5.Size = "100%";
-            goButtonItem5.Text = null;
-            goValueString1.Buttons.Add(goButtonItem5);
-            goValueString1.ButtonSize = 40F;
-            goValueString1.Direction = Going.UI.Enums.GoDirectionHV.Horizon;
-            goValueString1.FillColor = "Base3";
-            goValueString1.FontName = "나눔고딕";
-            goValueString1.FontSize = 12F;
-            goValueString1.IconGap = 5F;
-            goValueString1.IconSize = 12F;
-            goValueString1.IconString = null;
-            goValueString1.Location = new Point(166, 385);
-            goValueString1.Name = "goValueString1";
-            goValueString1.Round = Going.UI.Enums.GoRoundType.All;
-            goValueString1.Size = new Size(330, 40);
-            goValueString1.TabIndex = 8;
-            goValueString1.TabStop = false;
-            goValueString1.Text = "goValueString1";
-            goValueString1.TextColor = "Fore";
-            goValueString1.Title = "문자열";
-            goValueString1.TitleSize = 100F;
-            goValueString1.Value = null;
-            goValueString1.ValueColor = "Base2";
+            icButton4.Location = new Point(721, 73);
+            icButton4.Name = "icButton4";
+            icButton4.Size = new Size(44, 31);
+            icButton4.TabIndex = 3;
+            icButton4.Text = "icButton4";
             // 
-            // goInputBoolean1
+            // icButton3
             // 
-            goInputBoolean1.BackColor = Color.FromArgb(50, 50, 50);
-            goInputBoolean1.BackgroundColor = "Back";
-            goInputBoolean1.BorderColor = "Base3";
-            goButtonItem6.IconString = "fa-upload";
-            goButtonItem6.Name = "up";
-            goButtonItem6.Size = "50%";
-            goButtonItem6.Text = null;
-            goButtonItem7.IconString = "fa-download";
-            goButtonItem7.Name = "down";
-            goButtonItem7.Size = "50%";
-            goButtonItem7.Text = null;
-            goInputBoolean1.Buttons.Add(goButtonItem6);
-            goInputBoolean1.Buttons.Add(goButtonItem7);
-            goInputBoolean1.ButtonSize = 80F;
-            goInputBoolean1.Direction = Going.UI.Enums.GoDirectionHV.Horizon;
-            goInputBoolean1.FillColor = "Base3";
-            goInputBoolean1.FontName = "나눔고딕";
-            goInputBoolean1.FontSize = 12F;
-            goInputBoolean1.IconGap = 5F;
-            goInputBoolean1.IconSize = 12F;
-            goInputBoolean1.IconString = null;
-            goInputBoolean1.Location = new Point(166, 339);
-            goInputBoolean1.Name = "goInputBoolean1";
-            goInputBoolean1.Round = Going.UI.Enums.GoRoundType.All;
-            goInputBoolean1.Size = new Size(330, 40);
-            goInputBoolean1.TabIndex = 7;
-            goInputBoolean1.TabStop = false;
-            goInputBoolean1.Text = "goInputBoolean1";
-            goInputBoolean1.TextColor = "Fore";
-            goInputBoolean1.Title = "스위치";
-            goInputBoolean1.TitleSize = 100F;
-            goInputBoolean1.Value = false;
-            goInputBoolean1.ValueColor = "Base1";
+            icButton3.Location = new Point(531, 73);
+            icButton3.Name = "icButton3";
+            icButton3.Size = new Size(44, 31);
+            icButton3.TabIndex = 2;
+            icButton3.Text = "icButton3";
             // 
-            // goInputInt1
+            // icButton2
             // 
-            goInputInt1.BackColor = Color.FromArgb(50, 50, 50);
-            goInputInt1.BackgroundColor = "Back";
-            goInputInt1.BorderColor = "Base3";
-            goButtonItem8.IconString = "fa-upload";
-            goButtonItem8.Name = "up";
-            goButtonItem8.Size = "50%";
-            goButtonItem8.Text = null;
-            goButtonItem9.IconString = "fa-download";
-            goButtonItem9.Name = "down";
-            goButtonItem9.Size = "50%";
-            goButtonItem9.Text = null;
-            goInputInt1.Buttons.Add(goButtonItem8);
-            goInputInt1.Buttons.Add(goButtonItem9);
-            goInputInt1.ButtonSize = 80F;
-            goInputInt1.Direction = Going.UI.Enums.GoDirectionHV.Horizon;
-            goInputInt1.FillColor = "Base3";
-            goInputInt1.FontName = "나눔고딕";
-            goInputInt1.FontSize = 12F;
-            goInputInt1.FormatString = null;
-            goInputInt1.IconGap = 5F;
-            goInputInt1.IconSize = 12F;
-            goInputInt1.IconString = null;
-            goInputInt1.Location = new Point(166, 293);
-            goInputInt1.Maximum = 100;
-            goInputInt1.Minimum = 0;
-            goInputInt1.Name = "goInputInt1";
-            goInputInt1.Round = Going.UI.Enums.GoRoundType.All;
-            goInputInt1.Size = new Size(330, 40);
-            goInputInt1.TabIndex = 6;
-            goInputInt1.TabStop = false;
-            goInputInt1.Text = "정수";
-            goInputInt1.TextColor = "Fore";
-            goInputInt1.Title = "정수";
-            goInputInt1.TitleSize = 100F;
-            goInputInt1.Unit = "mm";
-            goInputInt1.UnitSize = 40F;
-            goInputInt1.Value = 0;
-            goInputInt1.ValueColor = "Base1";
+            icButton2.Location = new Point(341, 73);
+            icButton2.Name = "icButton2";
+            icButton2.Size = new Size(44, 31);
+            icButton2.TabIndex = 1;
+            icButton2.Text = "icButton2";
             // 
-            // goInputDouble1
+            // icButton1
             // 
-            goInputDouble1.BackColor = Color.FromArgb(50, 50, 50);
-            goInputDouble1.BackgroundColor = "Back";
-            goInputDouble1.BorderColor = "Base3";
-            goButtonItem10.IconString = "fa-upload";
-            goButtonItem10.Name = "up";
-            goButtonItem10.Size = "50%";
-            goButtonItem10.Text = null;
-            goButtonItem11.IconString = "fa-download";
-            goButtonItem11.Name = "down";
-            goButtonItem11.Size = "50%";
-            goButtonItem11.Text = null;
-            goInputDouble1.Buttons.Add(goButtonItem10);
-            goInputDouble1.Buttons.Add(goButtonItem11);
-            goInputDouble1.ButtonSize = 80F;
-            goInputDouble1.Direction = Going.UI.Enums.GoDirectionHV.Horizon;
-            goInputDouble1.FillColor = "Base3";
-            goInputDouble1.FontName = "나눔고딕";
-            goInputDouble1.FontSize = 12F;
-            goInputDouble1.FormatString = null;
-            goInputDouble1.IconGap = 5F;
-            goInputDouble1.IconSize = 12F;
-            goInputDouble1.IconString = null;
-            goInputDouble1.Location = new Point(166, 247);
-            goInputDouble1.Maximum = 500D;
-            goInputDouble1.Minimum = -20D;
-            goInputDouble1.Name = "goInputDouble1";
-            goInputDouble1.Round = Going.UI.Enums.GoRoundType.All;
-            goInputDouble1.Size = new Size(330, 40);
-            goInputDouble1.TabIndex = 5;
-            goInputDouble1.TabStop = false;
-            goInputDouble1.Text = "goInputDouble1";
-            goInputDouble1.TextColor = "Fore";
-            goInputDouble1.Title = "실수";
-            goInputDouble1.TitleSize = 100F;
-            goInputDouble1.Unit = null;
-            goInputDouble1.UnitSize = null;
-            goInputDouble1.Value = 0D;
-            goInputDouble1.ValueColor = "Base1";
+            icButton1.Location = new Point(152, 73);
+            icButton1.Name = "icButton1";
+            icButton1.Size = new Size(44, 31);
+            icButton1.TabIndex = 0;
+            icButton1.Text = "icButton1";
             // 
-            // goInputString2
+            // icOnOff1
             // 
-            goInputString2.BackColor = Color.FromArgb(60, 60, 60);
-            goInputString2.BackgroundColor = "Base2";
-            goInputString2.BorderColor = "Base3";
-            goButtonItem12.IconString = "fa-upload";
-            goButtonItem12.Name = "up";
-            goButtonItem12.Size = "50%";
-            goButtonItem12.Text = null;
-            goButtonItem13.IconString = "fa-download";
-            goButtonItem13.Name = "down";
-            goButtonItem13.Size = "50%";
-            goButtonItem13.Text = null;
-            goInputString2.Buttons.Add(goButtonItem12);
-            goInputString2.Buttons.Add(goButtonItem13);
-            goInputString2.ButtonSize = 80F;
-            goInputString2.Direction = Going.UI.Enums.GoDirectionHV.Horizon;
-            goInputString2.FillColor = "Base3";
-            goInputString2.FontName = "나눔고딕";
-            goInputString2.FontSize = 12F;
-            goInputString2.IconGap = 5F;
-            goInputString2.IconSize = 12F;
-            goInputString2.IconString = null;
-            goInputString2.Location = new Point(166, 201);
-            goInputString2.Name = "goInputString2";
-            goInputString2.Round = Going.UI.Enums.GoRoundType.All;
-            goInputString2.Size = new Size(330, 40);
-            goInputString2.TabIndex = 4;
-            goInputString2.TabStop = false;
-            goInputString2.Text = "goInputString2";
-            goInputString2.TextColor = "Fore";
-            goInputString2.Title = "테스트 2";
-            goInputString2.TitleSize = 100F;
-            goInputString2.Value = "";
-            goInputString2.ValueColor = "Base1";
+            icOnOff1.Location = new Point(35, 118);
+            icOnOff1.Name = "icOnOff1";
+            icOnOff1.OnOff = false;
+            icOnOff1.Size = new Size(79, 53);
+            icOnOff1.TabIndex = 8;
+            icOnOff1.Text = "icOnOff1";
             // 
-            // goInputString1
+            // icOnOff2
             // 
-            goInputString1.BackColor = Color.FromArgb(60, 60, 60);
-            goInputString1.BackgroundColor = "Base2";
-            goInputString1.BorderColor = "Base3";
-            goButtonItem14.IconString = "fa-upload";
-            goButtonItem14.Name = "up";
-            goButtonItem14.Size = "50%";
-            goButtonItem14.Text = null;
-            goButtonItem15.IconString = "fa-download";
-            goButtonItem15.Name = "down";
-            goButtonItem15.Size = "50%";
-            goButtonItem15.Text = null;
-            goInputString1.Buttons.Add(goButtonItem14);
-            goInputString1.Buttons.Add(goButtonItem15);
-            goInputString1.ButtonSize = 80F;
-            goInputString1.Direction = Going.UI.Enums.GoDirectionHV.Horizon;
-            goInputString1.FillColor = "Base3";
-            goInputString1.FontName = "나눔고딕";
-            goInputString1.FontSize = 12F;
-            goInputString1.IconGap = 5F;
-            goInputString1.IconSize = 12F;
-            goInputString1.IconString = null;
-            goInputString1.Location = new Point(166, 155);
-            goInputString1.Name = "goInputString1";
-            goInputString1.Round = Going.UI.Enums.GoRoundType.All;
-            goInputString1.Size = new Size(330, 40);
-            goInputString1.TabIndex = 3;
-            goInputString1.TabStop = false;
-            goInputString1.Text = "goInputString1";
-            goInputString1.TextColor = "Fore";
-            goInputString1.Title = "테스트 1";
-            goInputString1.TitleSize = 100F;
-            goInputString1.Value = "";
-            goInputString1.ValueColor = "Base1";
+            icOnOff2.Location = new Point(224, 118);
+            icOnOff2.Name = "icOnOff2";
+            icOnOff2.OnOff = false;
+            icOnOff2.Size = new Size(79, 53);
+            icOnOff2.TabIndex = 9;
+            icOnOff2.Text = "icOnOff2";
             // 
-            // goButton2
+            // icOnOff3
             // 
-            goButton2.BackColor = Color.FromArgb(60, 60, 60);
-            goButton2.BackgroundColor = "Base2";
-            goButton2.BackgroundDraw = true;
-            goButton2.BorderOnly = false;
-            goButton2.ButtonColor = "danger";
-            goButton2.FontName = "나눔고딕";
-            goButton2.FontSize = 12F;
-            goButton2.IconDirection = Going.UI.Enums.GoDirectionHV.Horizon;
-            goButton2.IconGap = 5F;
-            goButton2.IconSize = 12F;
-            goButton2.IconString = "fa-ban";
-            goButton2.Location = new Point(166, 99);
-            goButton2.Name = "goButton2";
-            goButton2.Round = Going.UI.Enums.GoRoundType.All;
-            goButton2.Size = new Size(160, 40);
-            goButton2.TabIndex = 2;
-            goButton2.TabStop = false;
-            goButton2.Text = "취소";
-            goButton2.TextColor = "Fore";
+            icOnOff3.Location = new Point(414, 118);
+            icOnOff3.Name = "icOnOff3";
+            icOnOff3.OnOff = false;
+            icOnOff3.Size = new Size(79, 53);
+            icOnOff3.TabIndex = 10;
+            icOnOff3.Text = "icOnOff3";
             // 
-            // goListBox1
+            // icOnOff4
             // 
-            goListBox1.BackColor = Color.FromArgb(50, 50, 50);
-            goListBox1.BackgroundColor = "Back";
-            goListBox1.BackgroundDraw = true;
-            goListBox1.BorderColor = "Base3";
-            goListBox1.BoxColor = "Base1";
-            goListBox1.FontName = "나눔고딕";
-            goListBox1.FontSize = 12F;
-            goListBox1.IconDirection = Going.UI.Enums.GoDirectionHV.Horizon;
-            goListBox1.IconGap = 5F;
-            goListBox1.IconSize = 12F;
-            goListBox1.ItemAlignment = Going.UI.Enums.GoContentAlignment.MiddleCenter;
-            goListBox1.ItemHeight = 30F;
-            goListBox1.Location = new Point(527, 12);
-            goListBox1.Name = "goListBox1";
-            goListBox1.Round = Going.UI.Enums.GoRoundType.All;
-            goListBox1.SelectedColor = "Select";
-            goListBox1.SelectionMode = Going.UI.Enums.GoItemSelectionMode.SIngle;
-            goListBox1.Size = new Size(277, 258);
-            goListBox1.TabIndex = 3;
-            goListBox1.TabStop = false;
-            goListBox1.Text = "goListBox1";
-            goListBox1.TextColor = "Fore";
+            icOnOff4.Location = new Point(606, 118);
+            icOnOff4.Name = "icOnOff4";
+            icOnOff4.OnOff = false;
+            icOnOff4.Size = new Size(79, 53);
+            icOnOff4.TabIndex = 11;
+            icOnOff4.Text = "icOnOff4";
             // 
-            // goInputCombo1
+            // icOnOff5
             // 
-            goInputCombo1.BackColor = Color.FromArgb(50, 50, 50);
-            goInputCombo1.BackgroundColor = "Back";
-            goInputCombo1.BorderColor = "Base3";
-            goInputCombo1.ButtonSize = null;
-            goInputCombo1.Direction = Going.UI.Enums.GoDirectionHV.Horizon;
-            goInputCombo1.FillColor = "Base3";
-            goInputCombo1.FontName = "나눔고딕";
-            goInputCombo1.FontSize = 12F;
-            goInputCombo1.IconGap = 5F;
-            goInputCombo1.IconSize = 12F;
-            goInputCombo1.IconString = null;
-            goInputCombo1.ItemHeight = 30;
-            goInputCombo1.Location = new Point(527, 276);
-            goInputCombo1.MaximumViewCount = 8;
-            goInputCombo1.Name = "goInputCombo1";
-            goInputCombo1.Round = Going.UI.Enums.GoRoundType.All;
-            goInputCombo1.SelectedIndex = -1;
-            goInputCombo1.Size = new Size(277, 40);
-            goInputCombo1.TabIndex = 4;
-            goInputCombo1.TabStop = false;
-            goInputCombo1.Text = "goInputCombo1";
-            goInputCombo1.TextColor = "Fore";
-            goInputCombo1.Title = null;
-            goInputCombo1.TitleSize = null;
-            goInputCombo1.ValueColor = "Base1";
+            icOnOff5.Location = new Point(35, 298);
+            icOnOff5.Name = "icOnOff5";
+            icOnOff5.OnOff = false;
+            icOnOff5.Size = new Size(79, 53);
+            icOnOff5.TabIndex = 12;
+            icOnOff5.Text = "icOnOff5";
             // 
-            // goGauge1
+            // icOnOff6
             // 
-            goGauge1.BackColor = Color.FromArgb(50, 50, 50);
-            goGauge1.BackgroundColor = "Back";
-            goGauge1.BarSize = 24;
-            goGauge1.BorderColor = "Base3";
-            goGauge1.EmptyColor = "Base1";
-            goGauge1.FillColor = "Good";
-            goGauge1.FontName = "나눔고딕";
-            goGauge1.FontSize = 18F;
-            goGauge1.Format = "0 '%'";
-            goGauge1.Gap = 0;
-            goGauge1.Location = new Point(12, 548);
-            goGauge1.Maximum = 100D;
-            goGauge1.Minimum = 0D;
-            goGauge1.Name = "goGauge1";
-            goGauge1.Size = new Size(245, 220);
-            goGauge1.StartAngle = 135;
-            goGauge1.SweepAngle = 270;
-            goGauge1.TabIndex = 5;
-            goGauge1.TabStop = false;
-            goGauge1.Text = "goGauge1";
-            goGauge1.TextColor = "Fore";
-            goGauge1.Title = "Speed";
-            goGauge1.TitleFontSize = 12F;
-            goGauge1.Value = 0D;
+            icOnOff6.Location = new Point(224, 298);
+            icOnOff6.Name = "icOnOff6";
+            icOnOff6.OnOff = false;
+            icOnOff6.Size = new Size(79, 53);
+            icOnOff6.TabIndex = 13;
+            icOnOff6.Text = "icOnOff6";
             // 
-            // goMeter1
+            // icOnOff7
             // 
-            goMeter1.BackColor = Color.FromArgb(50, 50, 50);
-            goMeter1.BackgroundColor = "Back";
-            goMeter1.FontName = "나눔고딕";
-            goMeter1.FontSize = 18F;
-            goMeter1.Format = "0 '%'";
-            goMeter1.Gap = 0;
-            goMeter1.GraduationLarge = 10;
-            goMeter1.GraduationSmall = 2;
-            goMeter1.Location = new Point(276, 548);
-            goMeter1.Maximum = 100D;
-            goMeter1.Minimum = 0D;
-            goMeter1.Name = "goMeter1";
-            goMeter1.NeedleColor = "Fore";
-            goMeter1.NeedlePointColor = "Red";
-            goMeter1.RemarkColor = "Base5";
-            goMeter1.RemarkFontSize = 10F;
-            goMeter1.Size = new Size(245, 220);
-            goMeter1.TabIndex = 6;
-            goMeter1.TabStop = false;
-            goMeter1.Text = "goMeter1";
-            goMeter1.TextColor = "Fore";
-            goMeter1.Title = "Speed";
-            goMeter1.TitleFontSize = 12F;
-            goMeter1.Value = 0D;
+            icOnOff7.Location = new Point(414, 298);
+            icOnOff7.Name = "icOnOff7";
+            icOnOff7.OnOff = false;
+            icOnOff7.Size = new Size(79, 53);
+            icOnOff7.TabIndex = 14;
+            icOnOff7.Text = "icOnOff7";
             // 
-            // goKnob1
+            // icOnOff8
             // 
-            goKnob1.BackColor = Color.FromArgb(50, 50, 50);
-            goKnob1.BackgroundColor = "Back";
-            goKnob1.ButtonColor = "Fore";
-            goKnob1.DrawText = true;
-            goKnob1.FontName = "나눔고딕";
-            goKnob1.FontSize = 18F;
-            goKnob1.Format = "0'%'";
-            goKnob1.KnobColor = "Base3";
-            goKnob1.Location = new Point(527, 548);
-            goKnob1.Maximum = 100D;
-            goKnob1.Minimum = 0D;
-            goKnob1.Name = "goKnob1";
-            goKnob1.Size = new Size(245, 220);
-            goKnob1.SweepAngle = 270;
-            goKnob1.TabIndex = 7;
-            goKnob1.TabStop = false;
-            goKnob1.Text = "goKnob1";
-            goKnob1.TextColor = "Fore";
-            goKnob1.Tick = 5D;
-            goKnob1.Value = 0D;
-            // 
-            // goOnOff1
-            // 
-            goOnOff1.BackColor = Color.FromArgb(50, 50, 50);
-            goOnOff1.BackgroundColor = "Back";
-            goOnOff1.BorderColor = "Base3";
-            goOnOff1.BoxColor = "Base1";
-            goOnOff1.CursorColor = "Base3";
-            goOnOff1.FontName = "나눔고딕";
-            goOnOff1.FontSize = 12F;
-            goOnOff1.Location = new Point(585, 417);
-            goOnOff1.Name = "goOnOff1";
-            goOnOff1.OffColor = "gray";
-            goOnOff1.OffText = "Off";
-            goOnOff1.OnColor = "lime";
-            goOnOff1.OnOff = false;
-            goOnOff1.OnText = "On";
-            goOnOff1.Size = new Size(148, 40);
-            goOnOff1.TabIndex = 8;
-            goOnOff1.TabStop = false;
-            goOnOff1.Text = "goOnOff1";
-            goOnOff1.TextColor = "Fore";
-            // 
-            // goSwitch1
-            // 
-            goSwitch1.BackColor = Color.FromArgb(50, 50, 50);
-            goSwitch1.BackgroundColor = "Back";
-            goSwitch1.BorderColor = "Base3";
-            goSwitch1.BoxColor = "Base1";
-            goSwitch1.FontName = "나눔고딕";
-            goSwitch1.FontSize = 12F;
-            goSwitch1.IconDirection = Going.UI.Enums.GoDirectionHV.Horizon;
-            goSwitch1.IconGap = 5F;
-            goSwitch1.IconSize = 12F;
-            goSwitch1.Location = new Point(585, 463);
-            goSwitch1.Name = "goSwitch1";
-            goSwitch1.OffIconColor = "gray";
-            goSwitch1.OffIconString = null;
-            goSwitch1.OffText = "Off";
-            goSwitch1.OffTextColor = "Base5";
-            goSwitch1.OnIconColor = "lime";
-            goSwitch1.OnIconString = null;
-            goSwitch1.OnOff = false;
-            goSwitch1.OnText = "On";
-            goSwitch1.OnTextColor = "Fore";
-            goSwitch1.Size = new Size(148, 40);
-            goSwitch1.SwitchColor = "Base3";
-            goSwitch1.TabIndex = 9;
-            goSwitch1.TabStop = false;
-            goSwitch1.Text = "goSwitch1";
-            // 
-            // goInputSelector1
-            // 
-            goInputSelector1.BackColor = Color.FromArgb(50, 50, 50);
-            goInputSelector1.BackgroundColor = "Back";
-            goInputSelector1.BorderColor = "Base3";
-            goInputSelector1.ButtonSize = null;
-            goInputSelector1.Direction = Going.UI.Enums.GoDirectionHV.Horizon;
-            goInputSelector1.FillColor = "Base3";
-            goInputSelector1.FontName = "나눔고딕";
-            goInputSelector1.FontSize = 12F;
-            goInputSelector1.IconGap = 5F;
-            goInputSelector1.IconSize = 12F;
-            goInputSelector1.IconString = null;
-            goListItem1.IconString = null;
-            goListItem1.Tag = null;
-            goListItem1.Text = "SUN";
-            goListItem2.IconString = null;
-            goListItem2.Tag = null;
-            goListItem2.Text = "MON";
-            goListItem3.IconString = null;
-            goListItem3.Tag = null;
-            goListItem3.Text = "TUE";
-            goListItem4.IconString = null;
-            goListItem4.Tag = null;
-            goListItem4.Text = "WED";
-            goListItem5.IconString = null;
-            goListItem5.Tag = null;
-            goListItem5.Text = "THU";
-            goListItem6.IconString = null;
-            goListItem6.Tag = null;
-            goListItem6.Text = "FRI";
-            goListItem7.IconString = null;
-            goListItem7.Tag = null;
-            goListItem7.Text = "SAT";
-            goInputSelector1.Items.Add(goListItem1);
-            goInputSelector1.Items.Add(goListItem2);
-            goInputSelector1.Items.Add(goListItem3);
-            goInputSelector1.Items.Add(goListItem4);
-            goInputSelector1.Items.Add(goListItem5);
-            goInputSelector1.Items.Add(goListItem6);
-            goInputSelector1.Items.Add(goListItem7);
-            goInputSelector1.Location = new Point(527, 322);
-            goInputSelector1.Name = "goInputSelector1";
-            goInputSelector1.Round = Going.UI.Enums.GoRoundType.All;
-            goInputSelector1.SelectedIndex = -1;
-            goInputSelector1.Size = new Size(277, 40);
-            goInputSelector1.TabIndex = 10;
-            goInputSelector1.TabStop = false;
-            goInputSelector1.Text = "goInputSelector1";
-            goInputSelector1.TextColor = "Fore";
-            goInputSelector1.Title = null;
-            goInputSelector1.TitleSize = null;
-            goInputSelector1.ValueColor = "Base1";
-            // 
-            // goNumberBox1
-            // 
-            goNumberBox1.BackColor = Color.FromArgb(50, 50, 50);
-            goNumberBox1.BackgroundColor = "Back";
-            goNumberBox1.BorderColor = "Base3";
-            goNumberBox1.ButtonColor = "Base3";
-            goNumberBox1.ButtonSize = 40F;
-            goNumberBox1.FontName = "나눔고딕";
-            goNumberBox1.FontSize = 12F;
-            goNumberBox1.Format = null;
-            goNumberBox1.Location = new Point(585, 368);
-            goNumberBox1.Maximum = 100D;
-            goNumberBox1.Minimum = 0D;
-            goNumberBox1.Name = "goNumberBox1";
-            goNumberBox1.Round = Going.UI.Enums.GoRoundType.All;
-            goNumberBox1.Size = new Size(148, 40);
-            goNumberBox1.TabIndex = 11;
-            goNumberBox1.TabStop = false;
-            goNumberBox1.Text = "goNumberBox1";
-            goNumberBox1.TextColor = "Fore";
-            goNumberBox1.Tick = 1D;
-            goNumberBox1.Value = 0D;
-            goNumberBox1.ValueColor = "Base1";
-            // 
-            // goGroupBox1
-            // 
-            goGroupBox1.BackColor = Color.FromArgb(50, 50, 50);
-            goGroupBox1.BackgroundColor = "Back";
-            goGroupBox1.BorderColor = "Base3";
-            goButtonItem16.IconString = "fa-plus";
-            goButtonItem16.Name = "add";
-            goButtonItem16.Size = "50%";
-            goButtonItem16.Text = null;
-            goButtonItem17.IconString = "fa-minus";
-            goButtonItem17.Name = "del";
-            goButtonItem17.Size = "50%";
-            goButtonItem17.Text = null;
-            goGroupBox1.Buttons.Add(goButtonItem16);
-            goGroupBox1.Buttons.Add(goButtonItem17);
-            goGroupBox1.ButtonWidth = 60F;
-            goGroupBox1.FontName = "나눔고딕";
-            goGroupBox1.FontSize = 12F;
-            goGroupBox1.IconGap = 5F;
-            goGroupBox1.IconSize = 12F;
-            goGroupBox1.IconString = "fa-check";
-            goGroupBox1.Location = new Point(810, 421);
-            goGroupBox1.Name = "goGroupBox1";
-            goGroupBox1.Round = Going.UI.Enums.GoRoundType.All;
-            goGroupBox1.Size = new Size(205, 262);
-            goGroupBox1.TabIndex = 12;
-            goGroupBox1.TabStop = false;
-            goGroupBox1.Text = "GroupBox";
-            goGroupBox1.TextColor = "Fore";
+            icOnOff8.Location = new Point(606, 298);
+            icOnOff8.Name = "icOnOff8";
+            icOnOff8.OnOff = false;
+            icOnOff8.Size = new Size(79, 53);
+            icOnOff8.TabIndex = 15;
+            icOnOff8.Text = "icOnOff8";
             // 
             // FormMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(50, 50, 50);
-            ClientSize = new Size(1051, 780);
-            Controls.Add(goGroupBox1);
-            Controls.Add(goNumberBox1);
-            Controls.Add(goInputSelector1);
-            Controls.Add(goSwitch1);
-            Controls.Add(goOnOff1);
-            Controls.Add(goKnob1);
-            Controls.Add(goMeter1);
-            Controls.Add(goGauge1);
-            Controls.Add(goInputCombo1);
-            Controls.Add(goListBox1);
-            Controls.Add(goPanel2);
+            ClientSize = new Size(800, 480);
+            Controls.Add(icCanvas1);
             Name = "FormMain";
             Text = "Sample Window";
             Title = "Sample Window";
             TitleIconString = "fa-check";
-            goPanel2.ResumeLayout(false);
+            icCanvas1.ResumeLayout(false);
             ResumeLayout(false);
         }
 
         #endregion
-
-        private Going.UI.Forms.Controls.GoButton goButton1;
-        private Going.UI.Forms.Controls.GoLabel goLabel1;
         private Going.UI.Forms.Containers.GoPanel goPanel1;
-        private Going.UI.Forms.Containers.GoPanel goPanel2;
-        private Going.UI.Forms.Controls.GoButton goButton2;
-        private Going.UI.Forms.Controls.GoInputString goInputString1;
-        private Going.UI.Forms.Controls.GoInputString goInputString2;
-        private Going.UI.Forms.Controls.GoInputFloat goInputDouble1;
-        private Going.UI.Forms.Controls.GoInputInteger goInputInt1;
-        private Going.UI.Forms.Controls.GoListBox goListBox1;
-        private Going.UI.Forms.Controls.GoInputBoolean goInputBoolean1;
-        private Going.UI.Forms.Controls.GoValueString goValueString1;
-        private Going.UI.Forms.Controls.GoValueInteger goValueInteger1;
-        private Going.UI.Forms.Controls.GoValueBoolean goValueBoolean1;
-        private Going.UI.Forms.Controls.GoInputCombo goInputCombo1;
-        private Going.UI.Forms.Controls.GoGauge goGauge1;
-        private Going.UI.Forms.Controls.GoMeter goMeter1;
-        private Going.UI.Forms.Controls.GoKnob goKnob1;
-        private Going.UI.Forms.Controls.GoOnOff goOnOff1;
-        private Going.UI.Forms.Controls.GoSwitch goSwitch1;
-        private Going.UI.Forms.Controls.GoInputSelector goInputSelector1;
-        private Going.UI.Forms.Controls.GoNumberBox goNumberBox1;
-        private Going.UI.Forms.Containers.GoGroupBox goGroupBox1;
+        private Going.UI.Forms.ImageCanvas.IcCanvas icCanvas1;
+        private Going.UI.Forms.ImageCanvas.IcButton icButton1;
+        private Going.UI.Forms.ImageCanvas.IcButton icButton8;
+        private Going.UI.Forms.ImageCanvas.IcButton icButton7;
+        private Going.UI.Forms.ImageCanvas.IcButton icButton6;
+        private Going.UI.Forms.ImageCanvas.IcButton icButton5;
+        private Going.UI.Forms.ImageCanvas.IcButton icButton4;
+        private Going.UI.Forms.ImageCanvas.IcButton icButton3;
+        private Going.UI.Forms.ImageCanvas.IcButton icButton2;
+        private Going.UI.Forms.ImageCanvas.IcOnOff icOnOff1;
+        private Going.UI.Forms.ImageCanvas.IcOnOff icOnOff8;
+        private Going.UI.Forms.ImageCanvas.IcOnOff icOnOff7;
+        private Going.UI.Forms.ImageCanvas.IcOnOff icOnOff6;
+        private Going.UI.Forms.ImageCanvas.IcOnOff icOnOff5;
+        private Going.UI.Forms.ImageCanvas.IcOnOff icOnOff4;
+        private Going.UI.Forms.ImageCanvas.IcOnOff icOnOff3;
+        private Going.UI.Forms.ImageCanvas.IcOnOff icOnOff2;
     }
 }

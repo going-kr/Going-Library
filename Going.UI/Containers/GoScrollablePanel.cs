@@ -19,11 +19,8 @@ namespace Going.UI.Containers
         public float? PanelWidth { get; set; }
         public float? PanelHeight { get; set; }
 
-        [JsonIgnore] public override float ViewX => -Convert.ToSingle(hscroll.ScrollPositionWithOffset);
-        [JsonIgnore] public override float ViewY => -Convert.ToSingle(vscroll.ScrollPositionWithOffset);
-
-        [JsonInclude]
-        public override List<IGoControl> Childrens { get; } = [];
+        [JsonIgnore] public override SKPoint ViewPosition => new SKPoint(-Convert.ToSingle(hscroll.ScrollPositionWithOffset), -Convert.ToSingle(vscroll.ScrollPositionWithOffset));
+        [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
         #endregion
 
         #region Member Variable
@@ -72,7 +69,7 @@ namespace Going.UI.Containers
             using (new SKAutoCanvasRestore(canvas))
             {
                 canvas.Translate(hspos, vspos);
-                canvas.ClipRect(Util.FromRect(ViewX, ViewY, rtPanel.Width, rtPanel.Height));
+                canvas.ClipRect(Util.FromRect(ViewPosition.X, ViewPosition.Y, rtPanel.Width, rtPanel.Height));
                 base.OnDraw(canvas);
             }
         }
@@ -81,7 +78,7 @@ namespace Going.UI.Containers
         #region Mouse
         protected override void OnMouseDown(float x, float y, GoMouseButton button)
         {
-            base.OnMouseDown(x + ViewX, y + ViewY, button);
+            base.OnMouseDown(x + ViewPosition.X, y + ViewPosition.Y, button);
 
             var rts = Areas();
             var rtPanel = rts["Panel"];
@@ -102,7 +99,7 @@ namespace Going.UI.Containers
 
         protected override void OnMouseMove(float x, float y)
         {
-            base.OnMouseMove(x + ViewX, y + ViewY);
+            base.OnMouseMove(x + ViewPosition.X, y + ViewPosition.Y);
 
             var rts = Areas();
             var rtPanel = rts["Panel"];
@@ -120,7 +117,7 @@ namespace Going.UI.Containers
 
         protected override void OnMouseUp(float x, float y, GoMouseButton button)
         {
-            base.OnMouseUp(x + ViewX, y + ViewY, button);
+            base.OnMouseUp(x + ViewPosition.X, y + ViewPosition.Y, button);
 
             var rts = Areas();
 
@@ -135,24 +132,24 @@ namespace Going.UI.Containers
 
         protected override void OnMouseWheel(float x, float y, float delta)
         {
-            base.OnMouseWheel(x + ViewX, y + ViewY, delta);
+            base.OnMouseWheel(x + ViewPosition.X, y + ViewPosition.Y, delta);
 
             vscroll.MouseWheel(x, y, delta);
         }
 
         protected override void OnMouseClick(float x, float y, GoMouseButton button)
         {
-            base.OnMouseClick(x + ViewX, y + ViewY, button);
+            base.OnMouseClick(x + ViewPosition.X, y + ViewPosition.Y, button);
         }
 
         protected override void OnMouseDoubleClick(float x, float y, GoMouseButton button)
         {
-            base.OnMouseDoubleClick(x + ViewX, y + ViewY, button);
+            base.OnMouseDoubleClick(x + ViewPosition.X, y + ViewPosition.Y, button);
         }
 
         protected override void OnMouseLongClick(float x, float y, GoMouseButton button)
         {
-            base.OnMouseLongClick(x + ViewX, y + ViewY, button);
+            base.OnMouseLongClick(x + ViewPosition.X, y + ViewPosition.Y, button);
         }
         #endregion
 

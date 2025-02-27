@@ -35,8 +35,9 @@ namespace Going.UI.Containers
         public List<GoButtonItem> Buttons { get; set; } = [];
         public float? ButtonWidth { get; set; }
 
-        [JsonInclude]
-        public override List<IGoControl> Childrens { get; } = [];
+        [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
+
+        [JsonIgnore] public override SKRect PanelBounds => Areas()["Panel"];
         #endregion
 
         #region Event
@@ -50,8 +51,8 @@ namespace Going.UI.Containers
         #endregion
 
         #region Override
-        #region OnContainerDraw
-        protected override void OnContainerDraw(SKCanvas canvas)
+        #region OnDraw
+        protected override void OnDraw(SKCanvas canvas)
         {
             var thm = GoTheme.Current;
             var cText = thm.ToColor(TextColor);
@@ -93,7 +94,7 @@ namespace Going.UI.Containers
                 }
             }
 
-            base.OnContainerDraw(canvas);
+            base.OnDraw(canvas);
         }
         #endregion
         #region OnLayout
@@ -105,7 +106,7 @@ namespace Going.UI.Containers
             {
                 if (c.Fill)
                 {
-                    c.Bounds = Util.FromRect(rtPanel, c.Margin);
+                    c.Bounds = Util.FromRect(Util.FromRect(0, 0, rtPanel.Width, rtPanel.Height), c.Margin);
                 }
             }
 

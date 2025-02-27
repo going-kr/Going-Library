@@ -277,7 +277,7 @@ namespace Going.UI.Utils
             var lineHeight = font.Spacing;
             var TH = lineHeight * lines.Count;
 #if MeasureA
-            var TW = lines.Max(x => font.MeasureText(x)) + 1;
+            var TW = lines.Count > 0 ? lines.Max(x => font.MeasureText(x)) + 1 : 0;
 #else
             var TW = lines.Max(x => { font.MeasureText(x, out var vszrt); return vszrt.Width; });
 #endif
@@ -312,7 +312,7 @@ namespace Going.UI.Utils
                     var lineHeight = font.Spacing;
                     var TH = lineHeight * lines.Count;
 #if MeasureA
-                    var TW = lines.Max(x => font.MeasureText(x)) + 1;
+                    var TW = lines.Count > 0 ? lines.Max(x => font.MeasureText(x)) + 1 : 0;
 #else
                     var TW = lines.Max(x => { font.MeasureText(x, out var vszrt); return vszrt.Width; });
 #endif
@@ -333,7 +333,7 @@ namespace Going.UI.Utils
                 var lineHeight = font.Spacing;
                 var TH = lineHeight * lines.Count;
 #if MeasureA
-                var TW = lines.Max(x => font.MeasureText(x)) + 1;
+                var TW = lines.Count > 0 ? lines.Max(x => font.MeasureText(x)) + 1 : 0;
 #else
                 var TW = lines.Max(x => { font.MeasureText(x, out var vszrt); return vszrt.Width; });
 #endif
@@ -358,7 +358,7 @@ namespace Going.UI.Utils
                 var lineHeight = font.Spacing;
                 var TH = lineHeight * lines.Count;
 #if MeasureA
-                var TW = lines.Max(x => font.MeasureText(x)) + 1;
+                var TW = lines.Count > 0 ? lines.Max(x => font.MeasureText(x)) + 1 : 0;
 #else
                 var TW = lines.Max(x => { font.MeasureText(x, out var vszrt); return vszrt.Width; });
 #endif
@@ -386,34 +386,37 @@ namespace Going.UI.Utils
         {
             List<string> lines = [];
 
-            string[] rawLines = text.Replace("\r\n", "\n").Split('\n');
-
-            foreach (string rawLine in rawLines)
+            if (text != null)
             {
-                string[] words = rawLine.Split(' '); // 공백 기준 단어 분리
-                string currentLine = "";
+                string[] rawLines = text.Replace("\r\n", "\n").Split('\n');
 
-                foreach (string word in words)
+                foreach (string rawLine in rawLines)
                 {
-                    string testLine = (currentLine == "") ? word : currentLine + " " + word;
+                    string[] words = rawLine.Split(' '); // 공백 기준 단어 분리
+                    string currentLine = "";
+
+                    foreach (string word in words)
+                    {
+                        string testLine = (currentLine == "") ? word : currentLine + " " + word;
 #if MeasureA
-                    float testWidth = font.MeasureText(testLine);
+                        float testWidth = font.MeasureText(testLine);
 #else
                     font.MeasureText(testLine, out var vszrt); float testWidth = vszrt.Width;
 #endif
-                    if (testWidth > maxWidth && currentLine != "")
-                    {
-                        lines.Add(currentLine);
-                        currentLine = word;
+                        if (testWidth > maxWidth && currentLine != "")
+                        {
+                            lines.Add(currentLine);
+                            currentLine = word;
+                        }
+                        else
+                        {
+                            currentLine = testLine;
+                        }
                     }
-                    else
-                    {
-                        currentLine = testLine;
-                    }
-                }
 
-                if (!string.IsNullOrEmpty(currentLine))
-                    lines.Add(currentLine);
+                    if (!string.IsNullOrEmpty(currentLine))
+                        lines.Add(currentLine);
+                }
             }
 
             return lines;
@@ -425,12 +428,15 @@ namespace Going.UI.Utils
         {
             List<string> lines = [];
 
-            string[] rawLines = text.Replace("\r\n", "\n").Split('\n');
-
-            foreach (string rawLine in rawLines)
+            if (text != null)
             {
-                if (!string.IsNullOrEmpty(rawLine))
-                    lines.Add(rawLine);
+                string[] rawLines = text.Replace("\r\n", "\n").Split('\n');
+
+                foreach (string rawLine in rawLines)
+                {
+                    if (!string.IsNullOrEmpty(rawLine))
+                        lines.Add(rawLine);
+                }
             }
 
             return lines;
@@ -466,6 +472,27 @@ namespace Going.UI.Utils
                 p.StrokeWidth = 1F;
                 p.Color = borderColor;
                 canvas.DrawPath(path, p);
+            }
+        }
+
+        public static void DrawBox(SKCanvas canvas, SKRoundRect bounds, SKColor fillcolor, SKColor borderColor)
+        {
+            using var p = new SKPaint { IsAntialias = true };
+
+            if (fillcolor != SKColors.Transparent)
+            {
+                p.IsStroke = false;
+                p.Color = fillcolor;
+                canvas.DrawRoundRect(bounds, p);
+
+            }
+
+            if (borderColor != SKColors.Transparent)
+            {
+                p.IsStroke = true;
+                p.StrokeWidth = 1F;
+                p.Color = borderColor;
+                canvas.DrawRoundRect(bounds, p);
             }
         }
         #endregion

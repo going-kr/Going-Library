@@ -22,9 +22,6 @@ NavBar						네비바
 ToolBox		
 TreeView
 
-SwitchPanel	
-TabControl	
-	
 ImageCanvas					이미지 캔바스
 IcButton                    이미지 캔바스용 버튼
 IcLabel                           ''        라벨  
@@ -71,6 +68,9 @@ Panel																				O
 GroupBox																			O
 TableLayoutPanel																	O
 ScrollablePanel																		O
+SwitchPanel																			O
+TabControl																			O
+	
 
 = 제외 작업 ===================================================================================
 
