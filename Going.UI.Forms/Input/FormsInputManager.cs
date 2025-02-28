@@ -1,4 +1,5 @@
 ﻿using Going.UI.Controls;
+using Going.UI.Enums;
 using Going.UI.Managers;
 using Going.UI.Themes;
 using Going.UI.Tools;
@@ -128,7 +129,7 @@ namespace Going.UI.Forms.Input
         #endregion
 
         #region InputString
-        public void InputString(Control control, IGoControl baseControl, SKRect bounds, string fontName, float fontSize, string backColor, string textColor, Action<string> callback, string? value = null)
+        public void InputString(Control control, IGoControl baseControl, SKRect bounds, string fontName, GoFontStyle fontStyle, float fontSize, string backColor, string textColor, Action<string> callback, string? value = null)
         {
             if (InputControl == null)
             {
@@ -138,10 +139,19 @@ namespace Going.UI.Forms.Input
                 InputType = InputType.String;
                 GoInputEventer.Current.SetInputControl(baseControl);
 
-                if (txt.Font.Name != fontName || txt.Font.Size != fontSize / 0.75F)
+                FontStyle r = FontStyle.Regular;
+                switch (fontStyle)
+                {
+                    case GoFontStyle.Normal: r = FontStyle.Regular; break;
+                    case GoFontStyle.Bold: r = FontStyle.Bold; break;
+                    case GoFontStyle.Italic: r = FontStyle.Italic; break;
+                    case GoFontStyle.BoldItalic: r = FontStyle.Bold | FontStyle.Italic; break;
+                }
+
+                if (txt.Font.Name != fontName || txt.Font.Size != fontSize / 0.75F || txt.Font.Style != r)
                 {
                     var old = txt.Font;
-                    txt.Font = new Font(fontName, fontSize * 0.75F);
+                    txt.Font = new Font(fontName, fontSize * 0.75F, r);
                     old.Dispose();
                 }
 
@@ -162,7 +172,7 @@ namespace Going.UI.Forms.Input
         #endregion
 
         #region InputNumber
-        public void InputNumber<T>(Control control, IGoControl baseControl, SKRect bounds, string fontName, float fontSize, string backColor, string textColor, Action<string> callback, Type type, object value, object? min, object? max)
+        public void InputNumber<T>(Control control, IGoControl baseControl, SKRect bounds, string fontName, GoFontStyle fontStyle, float fontSize, string backColor, string textColor, Action<string> callback, Type type, object value, object? min, object? max)
         {
             if (InputControl == null)
             {
@@ -190,10 +200,19 @@ namespace Going.UI.Forms.Input
 
                 GoInputEventer.Current.SetInputControl(baseControl);
 
-                if (txt.Font.Name != fontName || txt.Font.Size != fontSize / 0.75F)
+                FontStyle r = FontStyle.Regular;
+                switch (fontStyle)
+                {
+                    case GoFontStyle.Normal: r = FontStyle.Regular; break;
+                    case GoFontStyle.Bold: r = FontStyle.Bold; break;
+                    case GoFontStyle.Italic: r = FontStyle.Italic; break;
+                    case GoFontStyle.BoldItalic: r = FontStyle.Bold | FontStyle.Italic; break;
+                }
+
+                if (txt.Font.Name != fontName || txt.Font.Size != fontSize / 0.75F || txt.Font.Style != r)
                 {
                     var old = txt.Font;
-                    txt.Font = new Font(fontName, fontSize * 0.75F);
+                    txt.Font = new Font(fontName, fontSize * 0.75F, r);
                     old.Dispose();
                 }
 

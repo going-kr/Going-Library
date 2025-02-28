@@ -23,6 +23,7 @@ namespace Going.UI.Controls
 
         #region Properties
         public string FontName { get; set; } = "나눔고딕";
+        public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         public float FontSize { get; set; } = 12;
 
         public GoDirectionHV Direction { get; set; } = GoDirectionHV.Horizon;
@@ -136,7 +137,7 @@ namespace Going.UI.Controls
             #endregion
             #region Value
             var txt = ValueTool.ToString<double>(Value, Format);
-            Util.DrawText(canvas, txt, FontName, FontSize, rtValue, cText);
+            Util.DrawText(canvas, txt, FontName, FontStyle, FontSize, rtValue, cText);
             #endregion
             #region Border
             Util.DrawBox(canvas, rtContent, SKColors.Transparent, cBorder, Round, thm.Corner);

@@ -71,6 +71,10 @@ namespace Going.UI.Forms.Dialogs
                 if (cBackColor != value)
                 {
                     cBackColor = value;
+
+                    var thm = GoTheme.Current;
+                    BackColor = Util.FromArgb(thm.ToColor(this.BackgroundColor));
+
                     Invalidate();
                 }
             }
@@ -128,7 +132,7 @@ namespace Going.UI.Forms.Dialogs
         }
         #endregion
 
-        #region GoForm
+        #region Constructor
         public GoForm()
         {
             InitializeComponent();
@@ -151,8 +155,8 @@ namespace Going.UI.Forms.Dialogs
             ResizeRedraw = true;
             #endregion
 
-            var v = FormsInputManager.Current;
-
+            var thm = GoTheme.Current;
+            BackColor = Util.FromArgb(thm.ToColor(this.BackgroundColor));
         }
         #endregion
 
@@ -173,7 +177,6 @@ namespace Going.UI.Forms.Dialogs
         protected override void OnShown(EventArgs e)
         {
             if (!DesignMode) DarkMode(this.Handle, GoTheme.Current.Dark);
-
             base.OnShown(e);
         }
         #endregion

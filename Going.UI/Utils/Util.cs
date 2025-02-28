@@ -24,7 +24,7 @@ namespace Going.UI.Utils
     public class Util
     {
         #region Member Variable
-        static Dictionary<string, SKTypeface> fontCache = [];
+        static Dictionary<string, Dictionary<GoFontStyle, SKTypeface>> fontCache = [];
         #endregion
 
         #region Method
@@ -75,21 +75,32 @@ namespace Going.UI.Utils
 
         #region Text
         #region GetTypeface
-        public static SKTypeface? GetTypeface(string fontName)
+        public static SKTypeface? GetTypeface(string fontName, GoFontStyle fontStyle)
         {
-            if (!fontCache.TryGetValue(fontName, out var typeface))
+            SKTypeface? typeface = null;
+            if (!fontCache.TryGetValue(fontName, out var typefaces)) fontCache[fontName] = [];
+            if (!fontCache[fontName].TryGetValue(fontStyle, out typeface)) 
             {
-                typeface = SKFontManager.Default.MatchFamily(fontName);
-                fontCache[fontName] = typeface;
+                var r = SKFontStyle.Normal;
+                switch(fontStyle)
+                {
+                    case GoFontStyle.Normal: r = SKFontStyle.Normal; break;
+                    case GoFontStyle.Bold: r = SKFontStyle.Bold; break;
+                    case GoFontStyle.Italic: r = SKFontStyle.Italic; break;
+                    case GoFontStyle.BoldItalic: r = SKFontStyle.BoldItalic; break;
+                }
+
+                typeface = SKFontManager.Default.MatchFamily(fontName, r);
+                fontCache[fontName][fontStyle] = typeface;
             }
             return typeface;
         }
         #endregion
 
         #region DrawText
-        public static void DrawText(SKCanvas canvas, string? text, string fontName, float fontSize, SKRect bounds, SKColor color, GoContentAlignment align = GoContentAlignment.MiddleCenter, bool wordWrap = true)
+        public static void DrawText(SKCanvas canvas, string? text, string fontName, GoFontStyle fontStyle, float fontSize, SKRect bounds, SKColor color, GoContentAlignment align = GoContentAlignment.MiddleCenter, bool wordWrap = true)
         {
-            var tf = GetTypeface(fontName);
+            var tf = GetTypeface(fontName, fontStyle);
 
             var sp = canvas.Save();
             canvas.ClipRect(bounds);
@@ -228,7 +239,7 @@ namespace Going.UI.Utils
         #endregion
 
         #region DrawTextIcon
-        public static void DrawTextIcon(SKCanvas canvas, string? text, string fontName, float fontSize, string? iconString, float iconSize, GoDirectionHV direction, float gap, SKRect bounds, SKColor color, GoContentAlignment align = GoContentAlignment.MiddleCenter, bool wordWrap = true)
+        public static void DrawTextIcon(SKCanvas canvas, string? text, string fontName, GoFontStyle fontStyle, float fontSize, string? iconString, float iconSize, GoDirectionHV direction, float gap, SKRect bounds, SKColor color, GoContentAlignment align = GoContentAlignment.MiddleCenter, bool wordWrap = true)
         {
             var fi = iconString != null ? GoIconManager.GetIcon(iconString) : null;
             if (fi != null && iconSize > 0)
@@ -240,15 +251,15 @@ namespace Going.UI.Utils
                 font.MeasureText(fi.IconText, out var vrtico); var vrtsz = vrtico.Size;
 #endif
 
-                var (rtIco, rtText) = TextIconBounds(text, fontName, fontSize, vrtico.Size, direction, gap, bounds, align);
+                var (rtIco, rtText) = TextIconBounds(text, fontName, fontStyle, fontSize, vrtico.Size, direction, gap, bounds, align);
                 DrawIcon(canvas, iconString, iconSize, rtIco, color, align);
-                if (!string.IsNullOrEmpty(text)) DrawText(canvas, text, fontName, fontSize, rtText, color, align, wordWrap);
+                if (!string.IsNullOrEmpty(text)) DrawText(canvas, text, fontName, fontStyle, fontSize, rtText, color, align, wordWrap);
 
             }
-            else DrawText(canvas, text, fontName, fontSize, bounds, color, align, wordWrap);
+            else DrawText(canvas, text, fontName, fontStyle, fontSize, bounds, color, align, wordWrap);
         }
 
-        public static void DrawTextIcon(SKCanvas canvas, string? text, string fontName, float fontSize, string? iconString, float iconSize, GoDirectionHV direction, float gap, SKRect bounds, SKColor textcolor, SKColor iconcolor, GoContentAlignment align = GoContentAlignment.MiddleCenter, bool wordWrap = true)
+        public static void DrawTextIcon(SKCanvas canvas, string? text, string fontName, GoFontStyle fontStyle, float fontSize, string? iconString, float iconSize, GoDirectionHV direction, float gap, SKRect bounds, SKColor textcolor, SKColor iconcolor, GoContentAlignment align = GoContentAlignment.MiddleCenter, bool wordWrap = true)
         {
             var fi = iconString != null ? GoIconManager.GetIcon(iconString) : null;
             if (fi != null && iconSize > 0)
@@ -259,19 +270,19 @@ namespace Going.UI.Utils
 #else
                 font.MeasureText(fi.IconText, out var vrtico); var vrtsz = vrtico.Size;
 #endif
-                var (rtIco, rtText) = TextIconBounds(text, fontName, fontSize, vrtico.Size, direction, gap, bounds, align);
+                var (rtIco, rtText) = TextIconBounds(text, fontName, fontStyle, fontSize, vrtico.Size, direction, gap, bounds, align);
                 DrawIcon(canvas, iconString, iconSize, rtIco, iconcolor, align);
-                if (!string.IsNullOrEmpty(text)) DrawText(canvas, text, fontName, fontSize, rtText, textcolor, align, wordWrap);
+                if (!string.IsNullOrEmpty(text)) DrawText(canvas, text, fontName, fontStyle, fontSize, rtText, textcolor, align, wordWrap);
 
             }
-            else DrawText(canvas, text, fontName, fontSize, bounds, textcolor, align, wordWrap);
+            else DrawText(canvas, text, fontName, fontStyle, fontSize, bounds, textcolor, align, wordWrap);
         }
         #endregion
 
         #region MeasureText
-        public static SKSize MeasureText(string text, string fontName, float fontSize)
+        public static SKSize MeasureText(string text, string fontName, GoFontStyle fontStyle, float fontSize)
         {
-            var tf = GetTypeface(fontName);
+            var tf = GetTypeface(fontName, fontStyle);
             using var font = new SKFont(tf, fontSize);
             var lines = LineText(text);
             var lineHeight = font.Spacing;
@@ -286,7 +297,7 @@ namespace Going.UI.Utils
         #endregion
 
         #region MeasureTextIcon
-        public static SKSize MeasureTextIcon(string? text, string fontName, float fontSize, string? iconString, float iconSize, GoDirectionHV direction, float gap)
+        public static SKSize MeasureTextIcon(string? text, string fontName, GoFontStyle fontStyle, float fontSize, string? iconString, float iconSize, GoDirectionHV direction, float gap)
         {
             var ico = GoIconManager.GetIcon(iconString);
             if (ico != null)
@@ -305,7 +316,7 @@ namespace Going.UI.Utils
                 }
                 else
                 {
-                    var tf = GetTypeface(fontName);
+                    var tf = GetTypeface(fontName, fontStyle);
                     using var font = new SKFont(tf, fontSize);
 
                     var lines = LineText(text);
@@ -326,7 +337,7 @@ namespace Going.UI.Utils
             }
             else
             {
-                var tf = GetTypeface(fontName);
+                var tf = GetTypeface(fontName, fontStyle);
                 using var font = new SKFont(tf, fontSize);
 
                 var lines = LineText(text);
@@ -343,7 +354,7 @@ namespace Going.UI.Utils
         #endregion
 
         #region TextIconBounds
-        public static (SKRect rtIcon, SKRect rtText) TextIconBounds(string? text, string fontName, float fontSize, SKSize iconSize, GoDirectionHV direction, float gap, SKRect bounds, GoContentAlignment align)
+        public static (SKRect rtIcon, SKRect rtText) TextIconBounds(string? text, string fontName, GoFontStyle fontStyle, float fontSize, SKSize iconSize, GoDirectionHV direction, float gap, SKRect bounds, GoContentAlignment align)
         {
             if (string.IsNullOrEmpty(text))
             {
@@ -351,7 +362,7 @@ namespace Going.UI.Utils
             }
             else
             {
-                var tf = GetTypeface(fontName);
+                var tf = GetTypeface(fontName, fontStyle);
                 using var font = new SKFont(tf, fontSize);
 
                 var lines = LineText(text);

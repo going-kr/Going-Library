@@ -21,6 +21,7 @@ namespace Going.UI.Controls
         public float IconGap { get; set; } = 5;
         public string Text { get; set; } = "label";
         public string FontName { get; set; } = "나눔고딕";
+        public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         public float FontSize { get; set; } = 12;
 
         public string TextColor { get; set; } = "Fore";
@@ -73,7 +74,7 @@ namespace Going.UI.Controls
             Util.DrawBox(canvas, rtBox, cBtn.BrightnessTransmit(bHover ? thm.HoverFillBrightness : 0), cBtn.BrightnessTransmit(bHover ? thm.HoverBorderBrightness : 0), Round, thm.Corner);
 
             if (bDown) rtBox.Offset(0, 1);
-            Util.DrawTextIcon(canvas, Text, FontName, FontSize, IconString, IconSize, IconDirection, IconGap, rtBox, cText, GoContentAlignment.MiddleCenter);
+            Util.DrawTextIcon(canvas, Text, FontName, FontStyle, FontSize, IconString, IconSize, IconDirection, IconGap, rtBox, cText, GoContentAlignment.MiddleCenter);
 
             base.OnDraw(canvas);
         }

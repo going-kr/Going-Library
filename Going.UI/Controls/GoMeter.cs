@@ -24,6 +24,7 @@ namespace Going.UI.Controls
 
         #region Properties
         public string FontName { get; set; } = "나눔고딕";
+        public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         public float FontSize { get; set; } = 18;
 
         public string Title { get; set; } = "Title";
@@ -112,7 +113,7 @@ namespace Going.UI.Controls
                         canvas.RotateDegrees(gsang + 90);
                         var rt = MathTool.MakeRectangle(new SKPoint(0, RemarkFontSize / 2F), 60);
 
-                        Util.DrawText(canvas, i.ToString(), FontName, RemarkFontSize, rt, cRmk);
+                        Util.DrawText(canvas, i.ToString(), FontName, FontStyle, RemarkFontSize, rt, cRmk);
                     }
                 }
 
@@ -148,8 +149,8 @@ namespace Going.UI.Controls
 
             #region Text
             var txt = string.IsNullOrWhiteSpace(Format) ? Value.ToString() : Value.ToString(Format);
-            Util.DrawText(canvas, txt, FontName, FontSize, rtText, cText);
-            Util.DrawText(canvas, Title, FontName, TitleFontSize, rtTitle, cText);
+            Util.DrawText(canvas, txt, FontName, FontStyle, FontSize, rtText, cText);
+            Util.DrawText(canvas, Title, FontName, FontStyle, TitleFontSize, rtTitle, cText);
             #endregion
             base.OnDraw(canvas);
         }

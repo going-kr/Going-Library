@@ -92,7 +92,7 @@ namespace Going.UI.Design
             };
         }
 
-        public void Show(SKRect screenBounds, string fontName, float fontSize, float itemHeight, int maximumViewCount,
+        public void Show(SKRect screenBounds, string fontName, GoFontStyle fontStyle, float fontSize, float itemHeight, int maximumViewCount,
                          List<GoListItem> items, GoListItem? selectedItem,
                          Action<GoListItem?> result)
         {
@@ -100,12 +100,13 @@ namespace Going.UI.Design
 
             lb.FontName = fontName;
             lb.FontSize = fontSize;
+            lb.FontStyle = fontStyle;
             lb.IconSize = fontSize + 2;
             lb.IconGap = 3;
             lb.ItemHeight = itemHeight;
 
             var designH = GoDesign.ActiveDesign?.Height ?? 0;
-            var iw = items.Count > 0 ? items.Select(x => Util.MeasureTextIcon(x.Text, lb.FontName, lb.FontSize, x.IconString, lb.IconSize, lb.IconDirection, lb.IconGap)).Max(x => x.Width) : 0F;
+            var iw = items.Count > 0 ? items.Select(x => Util.MeasureTextIcon(x.Text, lb.FontName, lb.FontStyle, lb.FontSize, x.IconString, lb.IconSize, lb.IconDirection, lb.IconGap)).Max(x => x.Width) : 0F;
 
             var ih = itemHeight * Math.Min(maximumViewCount, items.Count) + 1;
             var rtValue = screenBounds;

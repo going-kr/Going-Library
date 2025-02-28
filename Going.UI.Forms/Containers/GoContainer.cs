@@ -61,7 +61,7 @@ namespace Going.UI.Forms.Containers
         #region OnEnabledChanged
         protected override void OnEnabledChanged(EventArgs e) { Invalidate(); base.OnEnabledChanged(e); }
         #endregion
-        #region OnPaintSurface
+        #region OnPaint
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
@@ -73,7 +73,12 @@ namespace Going.UI.Forms.Containers
                 var cBack = GoTheme.Current.ToColor(BackgroundColor);
                 canvas.Clear(cBack);
 
+                using var p = new SKPaint { IsAntialias = true, Color = SKColors.Black.WithAlpha(Convert.ToByte(Enabled ? 255 : 255 - GoTheme.DisableAlpha)) };
+                var sp = canvas.SaveLayer(p);
+
                 OnContentDraw(new ContentDrawEventArgs(canvas));
+
+                canvas.RestoreToCount(sp);
 
                 using (var bmp = bitmap.ToBitmap())
                     e.Graphics.DrawImage(bmp, new Rectangle(0, 0, bmp.Width, bmp.Height));

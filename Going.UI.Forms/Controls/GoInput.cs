@@ -30,6 +30,7 @@ namespace Going.UI.Forms.Controls
         public float IconGap { get => Control.IconGap; set { if (Control.IconGap != value) { Control.IconGap = value; Invalidate(); } } }
 
         public string FontName { get => Control.FontName; set { if (Control.FontName != value) { Control.FontName = value; Invalidate(); } } }
+        public GoFontStyle FontStyle { get => Control.FontStyle; set { if (Control.FontStyle != value) { Control.FontStyle = value; Invalidate(); } } }
         public float FontSize { get => Control.FontSize; set { if (Control.FontSize != value) { Control.FontSize = value; Invalidate(); } } }
 
         public GoDirectionHV Direction { get => Control.Direction; set { if (Control.Direction != value) { Control.Direction = value; Invalidate(); } } }
@@ -61,7 +62,7 @@ namespace Going.UI.Forms.Controls
             GoInputEventer.Current.InputString += (c, bounds, callback, value) =>
             {
                 if (c == Control)
-                    FormsInputManager.Current.InputString(this, Control, bounds, FontName, FontSize, ValueColor, TextColor, callback, value);
+                    FormsInputManager.Current.InputString(this, Control, bounds, FontName, FontStyle, FontSize, ValueColor, TextColor, callback, value);
             };
         }
         #endregion
@@ -75,6 +76,7 @@ namespace Going.UI.Forms.Controls
         public float IconGap { get => Control.IconGap; set { if (Control.IconGap != value) { Control.IconGap = value; Invalidate(); } } }
 
         public string FontName { get => Control.FontName; set { if (Control.FontName != value) { Control.FontName = value; Invalidate(); } } }
+        public GoFontStyle FontStyle { get => Control.FontStyle; set { if (Control.FontStyle != value) { Control.FontStyle = value; Invalidate(); } } }
         public float FontSize { get => Control.FontSize; set { if (Control.FontSize != value) { Control.FontSize = value; Invalidate(); } } }
 
         public GoDirectionHV Direction { get => Control.Direction; set { if (Control.Direction != value) { Control.Direction = value; Invalidate(); } } }
@@ -112,7 +114,7 @@ namespace Going.UI.Forms.Controls
             {
                 if (c == Control)
                 {
-                    FormsInputManager.Current.InputNumber<T>(this, Control, bounds, FontName, FontSize, ValueColor, TextColor, (v) => { callback(v); Invalidate(); }, type, value, min, max);
+                    FormsInputManager.Current.InputNumber<T>(this, Control, bounds, FontName, FontStyle, FontSize, ValueColor, TextColor, (v) => { callback(v); Invalidate(); }, type, value, min, max);
                 }
             };
         }
@@ -130,6 +132,7 @@ namespace Going.UI.Forms.Controls
         public float IconGap { get => Control.IconGap; set { if (Control.IconGap != value) { Control.IconGap = value; Invalidate(); } } }
 
         public string FontName { get => Control.FontName; set { if (Control.FontName != value) { Control.FontName = value; Invalidate(); } } }
+        public GoFontStyle FontStyle { get => Control.FontStyle; set { if (Control.FontStyle != value) { Control.FontStyle = value; Invalidate(); } } }
         public float FontSize { get => Control.FontSize; set { if (Control.FontSize != value) { Control.FontSize = value; Invalidate(); } } }
 
         public GoDirectionHV Direction { get => Control.Direction; set { if (Control.Direction != value) { Control.Direction = value; Invalidate(); } } }
@@ -171,6 +174,7 @@ namespace Going.UI.Forms.Controls
         public float IconGap { get => Control.IconGap; set { if (Control.IconGap != value) { Control.IconGap = value; Invalidate(); } } }
 
         public string FontName { get => Control.FontName; set { if (Control.FontName != value) { Control.FontName = value; Invalidate(); } } }
+        public GoFontStyle FontStyle { get => Control.FontStyle; set { if (Control.FontStyle != value) { Control.FontStyle = value; Invalidate(); } } }
         public float FontSize { get => Control.FontSize; set { if (Control.FontSize != value) { Control.FontSize = value; Invalidate(); } } }
 
         public GoDirectionHV Direction { get => Control.Direction; set { if (Control.Direction != value) { Control.Direction = value; Invalidate(); } } }
@@ -223,7 +227,7 @@ namespace Going.UI.Forms.Controls
             if(dwnd != null)
             {
                 var sel = SelectedIndex >= 0 && SelectedIndex < Items.Count ? Items[SelectedIndex] : null;
-                dwnd.Set(FontName, FontSize, ItemHeight, MaximumViewCount, Items, sel, (item) =>
+                dwnd.Set(FontName, FontStyle, FontSize, ItemHeight, MaximumViewCount, Items, sel, (item) =>
                 {
                     if (item != null)
                         SelectedIndex = Items.IndexOf(item);
@@ -336,6 +340,7 @@ namespace Going.UI.Forms.Controls
         public float IconGap { get => Control.IconGap; set { if (Control.IconGap != value) { Control.IconGap = value; Invalidate(); } } }
 
         public string FontName { get => Control.FontName; set { if (Control.FontName != value) { Control.FontName = value; Invalidate(); } } }
+        public GoFontStyle FontStyle { get => Control.FontStyle; set { if (Control.FontStyle != value) { Control.FontStyle = value; Invalidate(); } } }
         public float FontSize { get => Control.FontSize; set { if (Control.FontSize != value) { Control.FontSize = value; Invalidate(); } } }
 
         public GoDirectionHV Direction { get => Control.Direction; set { if (Control.Direction != value) { Control.Direction = value; Invalidate(); } } }

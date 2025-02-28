@@ -71,7 +71,12 @@ namespace Going.UI.Forms.Dialogs
                 p.Color = cBorder;
                 canvas.DrawRect(Util.FromRect(0, 0, Width - 1, Height - 1), p);
 
+                using var p2 = new SKPaint { IsAntialias = true, Color = SKColors.Black.WithAlpha(Convert.ToByte(Enabled ? 255 : 255 - GoTheme.DisableAlpha)) };
+                var sp = canvas.SaveLayer(p2);
+
                 OnContentDraw(new ContentDrawEventArgs(canvas));
+
+                canvas.RestoreToCount(sp);
 
                 using (var bmp = bitmap.ToBitmap())
                     e.Graphics.DrawImage(bmp, new Rectangle(0, 0, bmp.Width, bmp.Height));
@@ -217,7 +222,6 @@ namespace Going.UI.Forms.Dialogs
         #region OnEnabledChanged
         protected override void OnEnabledChanged(EventArgs e)
         {
-            control.Enabled = Enabled;
             Invalidate();
             base.OnEnabledChanged(e);
         }
@@ -225,7 +229,6 @@ namespace Going.UI.Forms.Dialogs
         #region OnVisibleChanged
         protected override void OnVisibleChanged(EventArgs e)
         {
-            control.Visible = Visible;
             Invalidate();
             base.OnVisibleChanged(e);
         }
@@ -233,13 +236,14 @@ namespace Going.UI.Forms.Dialogs
         #endregion
 
         #region Set
-        public void Set(string fontName, float fontSize, float itemHeight, int maximumViewCount,
+        public void Set(string fontName, GoFontStyle fontStyle, float fontSize, float itemHeight, int maximumViewCount,
                       List<GoListItem> items, GoListItem? selectedItem,
                       Action<GoListItem?> result)
         {
             feedback = result;
 
             control.FontName = fontName;
+            control.FontStyle = fontStyle;
             control.FontSize = fontSize;
             control.IconSize = fontSize + 2;
             control.IconGap = 3;

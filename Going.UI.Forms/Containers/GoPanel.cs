@@ -120,7 +120,6 @@ namespace Going.UI.Forms.Containers
         #region OnEnabledChanged
         protected override void OnEnabledChanged(EventArgs e)
         {
-            control.Enabled = Enabled;
             Invalidate();
             base.OnEnabledChanged(e);
         }
@@ -128,7 +127,6 @@ namespace Going.UI.Forms.Containers
         #region OnVisibleChanged
         protected override void OnVisibleChanged(EventArgs e)
         {
-            control.Visible = Visible;
             Invalidate();
             base.OnVisibleChanged(e);
         }

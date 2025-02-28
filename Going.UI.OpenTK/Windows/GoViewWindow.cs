@@ -167,7 +167,7 @@ namespace Going.UI.OpenTK.Windows
                             p.Color = SKColors.Black;
                             p.IsStroke = false;
                             canvas.DrawRect(rt, p);
-                            Util.DrawText(canvas, $"UpdateTime : {UpdateTime * 1000:0 ms} ", "나눔고딕", 12, rt, SKColors.White, GoContentAlignment.MiddleRight);
+                            Util.DrawText(canvas, $"UpdateTime : {UpdateTime * 1000:0 ms} ", "나눔고딕", GoFontStyle.Normal, 12, rt, SKColors.White, GoContentAlignment.MiddleRight);
                         }
                     }
                     #endregion

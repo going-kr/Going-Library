@@ -23,6 +23,7 @@ namespace Going.UI.Controls
         public GoDirectionHV IconDirection { get; set; } = GoDirectionHV.Horizon;
         public float IconGap { get; set; } = 5;
         public string FontName { get; set; } = "나눔고딕";
+        public GoFontStyle FontStyle { get; set; }= GoFontStyle.Normal;
         public float FontSize { get; set; } = 12;
 
         public string TextColor { get; set; } = "Fore";
@@ -105,7 +106,7 @@ namespace Going.UI.Controls
                     if(SelectedItems.Contains(item))
                         Util.DrawBox(canvas, rt, cSel, GoRoundType.Rect, thm.Corner);
 
-                    Util.DrawTextIcon(canvas, item.Text, FontName, FontSize, item.IconString, IconSize, IconDirection, IconGap, rt, cText, ItemAlignment);
+                    Util.DrawTextIcon(canvas, item.Text, FontName, FontStyle, FontSize, item.IconString, IconSize, IconDirection, IconGap, rt, cText, ItemAlignment);
                 });
             }
 

@@ -20,6 +20,7 @@ namespace Going.UI.Controls
         public string OffText { get; set; } = "Off";
         public string CursorIconString { get; set; } = "fa-power-off";
         public string FontName { get; set; } = "나눔고딕";
+        public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         public float FontSize { get; set; } = 12;
 
         public string TextColor { get; set; } = "Fore";
@@ -96,8 +97,8 @@ namespace Going.UI.Controls
                 Util.DrawBox(canvas, rtCursor, cCursor.BrightnessTransmit(bHover ? thm.HoverFillBrightness : 0),
                                                cCursor.BrightnessTransmit(bHover ? thm.HoverBorderBrightness : 0), GoRoundType.All, rtContent.Height);
 
-                Util.DrawText(canvas, OnText, FontName, FontSize, rtOn, cText);
-                Util.DrawText(canvas, OffText, FontName, FontSize, rtOff, cText);
+                Util.DrawText(canvas, OnText, FontName, FontStyle, FontSize, rtOn, cText);
+                Util.DrawText(canvas, OffText, FontName, FontStyle, FontSize, rtOff, cText);
 
                 Util.DrawIcon(canvas, CursorIconString, rtCursor.Height / 2, rtCursor, OnOff ? cOn : cOff);
             }

@@ -23,6 +23,7 @@ namespace Going.UI.Controls
 
         #region Properties
         public string FontName { get; set; } = "나눔고딕";
+        public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         public float FontSize { get; set; } = 12;
 
         public string TextColor { get; set; } = "Fore";
@@ -135,7 +136,7 @@ namespace Going.UI.Controls
             if (DrawText)
             {
                 var txt = string.IsNullOrWhiteSpace(Format) ? Value.ToString() : Value.ToString(Format);
-                Util.DrawText(canvas, txt, FontName, FontSize, rtBox, cText);
+                Util.DrawText(canvas, txt, FontName, FontStyle, FontSize, rtBox, cText);
             }
             #endregion
 

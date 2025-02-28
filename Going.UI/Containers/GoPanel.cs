@@ -26,6 +26,7 @@ namespace Going.UI.Containers
 
         public string Text { get; set; } = "Panel";
         public string FontName { get; set; } = "나눔고딕";
+        public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         public float FontSize { get; set; } = 12;
 
         public string TextColor { get; set; } = "Fore";
@@ -79,7 +80,7 @@ namespace Going.UI.Containers
                 p.Color = cBorder;
                 canvas.DrawLine(rtTitle.Left + 10, rtTitle.Bottom, rtTitle.Right - 10, rtTitle.Bottom, p);
             }
-            Util.DrawTextIcon(canvas, Text, FontName, FontSize, IconString, IconSize, GoDirectionHV.Horizon, IconGap, rtTitleText, cText, GoContentAlignment.MiddleLeft);
+            Util.DrawTextIcon(canvas, Text, FontName, FontStyle, FontSize, IconString, IconSize, GoDirectionHV.Horizon, IconGap, rtTitleText, cText, GoContentAlignment.MiddleLeft);
 
             if (Buttons.Count > 0 && ButtonWidth.HasValue)
             {
