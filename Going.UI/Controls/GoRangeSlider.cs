@@ -66,7 +66,7 @@ namespace Going.UI.Controls
             set
             {
                 var clampedValue = MathClamp(value, Minimum, UpperValue);
-                if (!(Math.Abs(sLowerValue - clampedValue) > 0.00001f)) return;
+                if (Math.Abs(sLowerValue - clampedValue) < 0.00001f) return;
 
                 sLowerValue = clampedValue;
                 LowerValueChanged?.Invoke(this, EventArgs.Empty);
@@ -81,8 +81,8 @@ namespace Going.UI.Controls
             get => sUpperValue;
             set
             {
-                var clampedValue = MathClamp(value, Minimum, Maximum);
-                if (Math.Abs(sUpperValue - value) > 0.00001f) return;
+                var clampedValue = MathClamp(value, LowerValue, Maximum);
+                if (Math.Abs(sUpperValue - value) < 0.00001f) return;
                 sUpperValue = clampedValue;
                 UpperValueChanged?.Invoke(this, EventArgs.Empty);
                 RangeChanged?.Invoke(this, EventArgs.Empty);
@@ -649,9 +649,9 @@ namespace Going.UI.Controls
                 var trackX = contentBox.MidX;
 
                 trackRect = new SKRect(
-                    trackX - (float)BarSize / 2,    // 오류 : 여기가 문제 > 수정 = 기호를 +에서 -로 변경
+                    trackX - (float)BarSize / 2,
                     contentBox.Top + HandleRadius + (isHeightEnough ? extraSpace / 2 : 0),
-                    trackX + (float)BarSize / 2,    // 오류 : 여기도 동일한 값
+                    trackX + (float)BarSize / 2,
                     contentBox.Bottom - HandleRadius - (isHeightEnough ? 0 : extraSpace / 2)
                 );
 
