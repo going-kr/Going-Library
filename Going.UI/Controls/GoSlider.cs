@@ -451,6 +451,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Functions
+
         #region InitializeDefaults
         private void InitializeDefaults()
         {
@@ -463,19 +464,6 @@ namespace Going.UI.Controls
             UpdateValueString();
         }
         #endregion
-        #region UpdateValueString
-        private void UpdateValueString()
-        {
-            ValueString = string.IsNullOrWhiteSpace(ValueFormat) ? Value.ToString(CultureInfo.InvariantCulture) : Value.ToString(ValueFormat);
-        }
-        #endregion
-        #region OnValueStringChanged
-        private void OnValueStringChanged()
-        {
-            UpdateValueString();
-        }
-        #endregion
-
         #region GetThemeColors
         private (SKColor text, SKColor background, SKColor slider) GetThemeColors(GoTheme theme)
         {
@@ -485,6 +473,19 @@ namespace Going.UI.Controls
                 theme.ToColor(BgColor),
                 theme.ToColor(SliderColor).BrightnessTransmit(brightness)
             );
+        }
+        #endregion
+        #region OnValueStringChanged
+        private void OnValueStringChanged()
+        {
+            UpdateValueString();
+        }
+        #endregion
+
+        #region UpdateValueString
+        private void UpdateValueString()
+        {
+            ValueString = string.IsNullOrWhiteSpace(ValueFormat) ? Value.ToString(CultureInfo.InvariantCulture) : Value.ToString(ValueFormat);
         }
         #endregion
         #region UpdateLayout
