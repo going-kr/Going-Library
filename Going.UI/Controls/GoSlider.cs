@@ -11,7 +11,7 @@ namespace Going.UI.Controls
     /// <summary>
     /// 제네릭 슬라이더 컨트롤 - 성능 최적화, 바인딩 지원, 시각적 개선 및 사용자 경험 향상 기능 포함
     /// </summary>
-    public class GoSlider : GoControl
+    public class GoSlider : GoControl, IDisposable
     {
         #region Properties
 
@@ -623,6 +623,19 @@ namespace Going.UI.Controls
         }
         #endregion
         #endregion
+        #endregion
+
+        #region Dispose
+        public void Dispose()
+        {
+            trackPaint.Dispose();
+            progressPaint.Dispose();
+            handlePaint.Dispose();
+            tickPaint.Dispose();
+            borderPaint.Dispose();
+            textPaint.Dispose();
+            textFont.Dispose();
+        }
         #endregion
     }
 }
