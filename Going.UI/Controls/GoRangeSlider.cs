@@ -8,6 +8,7 @@ using System.Globalization;
 
 namespace Going.UI.Controls
 {
+    // todo : 화면에서 이상하게 출력되는 이유를 알았다. : Event가 발생을 했을 때, 해당 이벤트 동작이 일어나면서 다시 그려지는데, 그 때, 이벤트가 발생한 위치를 기준으로 다시 그리기 때문에, 이상하게 출력되는 것이다.
     /// <summary>
     /// 범위 선택 슬라이더 컨트롤 - 두 개의 핸들을 사용하여 최소값과 최대값을 선택할 수 있는 컴포넌트
     /// </summary>

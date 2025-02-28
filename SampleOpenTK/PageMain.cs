@@ -74,7 +74,8 @@ namespace SampleOpenTK
             meter = new GoMeter { Fill = true, Format = "0 '%'", Title = "Speed", FontSize = 24, TitleFontSize = 12 };
             pnl_tbl2.Childrens.Add(meter, 1, 0);
 
-            var knob = new GoKnob { Fill = true, Format = "0 '%'" };
+            // var knob = new GoKnob { Fill = true, Format = "0 '%'" };
+            var knob = new GoTrendGraph { Fill = true };
             pnl_tbl2.Childrens.Add(knob, 2, 0);
         }
 
