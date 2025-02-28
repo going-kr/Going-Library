@@ -145,7 +145,6 @@ namespace Going.UI.Controls
         private SKRect upperHandleRect;
         private const float TrackHeight = 4f;
         private int MinHeightForLabelBelow { get; set; } = 80;  // 라벨을 아래에 표시하기 위한 최소 높이
-        public float Padding { get; set; } = 5f; // 패딩
         public float MinHandleSeparation { get; set; } = 0.05f; // 핸들 간 최소 간격 (정규화된 값 0-1)
         #endregion
 
