@@ -308,12 +308,12 @@ namespace Going.UI.Controls
 
             if (ShowTicks)
             {
-                DrawTicks(canvas, thm, colors.slider);
+                DrawTicks(canvas, colors.slider);
             }
 
             DrawSliderBackground(canvas, thm, contentBox, colors.background);
             DrawSliderTrack(canvas, colors.empty);
-            DrawSliderProgress(canvas, thm, contentBox, colors.slider);
+            DrawSliderProgress(canvas, colors.slider);
 
             // 두 핸들 그리기
             DrawsSliderHandle(canvas, lowerHandleRect, colors.slider, sLowerDown, sLowerHover);
@@ -326,7 +326,7 @@ namespace Going.UI.Controls
         }
         #endregion
         #region DrawTicks
-        private void DrawTicks(SKCanvas canvas, GoTheme thm, SKColor color)
+        private void DrawTicks(SKCanvas canvas, SKColor color)
         {
             tickPaint.Color = color.WithAlpha(150);
             tickPaint.StrokeWidth = 1;
@@ -394,7 +394,7 @@ namespace Going.UI.Controls
         }
         #endregion
         #region DrawSliderProgress
-        private void DrawSliderProgress(SKCanvas canvas, GoTheme thm, SKRect contentBox, SKColor color)
+        private void DrawSliderProgress(SKCanvas canvas, SKColor color)
         {
             // 슬라이더 진행 트랙 그리기 (두 핸들 사이)
             progressPaint.Color = color;
