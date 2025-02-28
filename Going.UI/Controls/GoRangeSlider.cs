@@ -575,11 +575,10 @@ namespace Going.UI.Controls
         }
         #endregion
 
-
-
         #endregion
 
         #region Functions
+
         #region InitializeDefaults
         private void InitializeDefaults()
         {
@@ -765,8 +764,8 @@ namespace Going.UI.Controls
             return Math.Max(min, Math.Min(max, valueData));
         }
         #endregion
-        #endregion
 
+        #endregion
 
         #region User Interaction Methods
 
