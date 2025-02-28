@@ -71,8 +71,8 @@ namespace Going.UI.Controls
                 needsLayoutUpdate = true;
             }
         }
-        private string sValueString;
-        public string ValueString
+        private string? sValueString;
+        public string? ValueString
         {
             get => sValueString;
             private set

@@ -486,7 +486,7 @@ namespace Going.UI.Utils
             p.IsStroke = false;
             p.Color = color;
             canvas.DrawOval(bounds, p);
-    }
+        }
         public static void DrawCircle(SKCanvas canvas, float x, float y, float radius, SKColor color, bool clean = true)
         {
             using var p = new SKPaint();
