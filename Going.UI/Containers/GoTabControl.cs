@@ -31,7 +31,6 @@ namespace Going.UI.Containers
         public string TextColor { get; set; } = "Fore";
         public string TabColor { get; set; } = "Base2";
         public string TabBorderColor { get; set; } = "Base3";
-        public GoRoundType Round { get; set; } = GoRoundType.All;
         public GoDirection TabPosition { get; set; } = GoDirection.Up;
 
         public float NavSize { get; set; } = 40;
@@ -39,10 +38,10 @@ namespace Going.UI.Containers
         [JsonIgnore]
         public GoTabPage? SelectedTab
         {
-            get => selTab; 
+            get => selTab;
             set
             {
-                if(selTab != value)
+                if ((value == null || (value != null && TabPages.Contains(value))) && selTab != value)
                 {
                     var args = new CancelEventArgs { Cancel = false };
                     TabChanging?.Invoke(this, args);
@@ -56,26 +55,26 @@ namespace Going.UI.Containers
             }
         }
 
-        [JsonIgnore]
-        public override IEnumerable<IGoControl> Childrens => SelectedTab?.Childrens ?? [];
+        [JsonIgnore] public override IEnumerable<IGoControl> Childrens => SelectedTab?.Childrens ?? [];
 
-        [JsonInclude]
-        public List<GoTabPage> TabPages { get; } = [];
-        #endregion
+        [JsonIgnore] public override SKRect PanelBounds => Areas()["Panel"];
 
-        #region Constructor
-        [JsonConstructor]
-        public GoTabControl(List<GoTabPage> tabPages) : this() => this.TabPages = tabPages;
-        public GoTabControl() { }
+        [JsonInclude] public List<GoTabPage> TabPages { get; } = [];
         #endregion
 
         #region Event
         public event EventHandler? TabCnanged;
         public event EventHandler<CancelEventArgs>? TabChanging;
         #endregion
-        
+
         #region Member Variable
         GoTabPage? selTab;
+        #endregion
+
+        #region Constructor
+        [JsonConstructor]
+        public GoTabControl(List<GoTabPage> tabPages) : this() => this.TabPages = tabPages;
+        public GoTabControl() { }
         #endregion
 
         #region Override
@@ -90,6 +89,7 @@ namespace Going.UI.Containers
             var rtContent = rts["Content"];
             var rtNav = rts["Nav"];
             var rtPage = rts["Page"];
+            var rtPanel = rts["Panel"];
             using var p = new SKPaint { IsAntialias = true };
             if (FirstRender && SelectedTab == null) SelectedTab = TabPages.FirstOrDefault();
 
@@ -100,16 +100,19 @@ namespace Going.UI.Containers
                 var bSel = tab == SelectedTab;
                 if (bSel)
                 {
+                    #region retouch 1
                     p.IsStroke = false;
                     p.Color = cTab;
                     switch (TabPosition)
                     {
-                        case GoDirection.Up: canvas.DrawRect(Util.FromRect(rt.Left - thm.Corner, rt.Bottom - 1, rt.Width + thm.Corner * 2, 3), p); break;
-                        case GoDirection.Down: canvas.DrawRect(Util.FromRect(rt.Left - thm.Corner, rt.Top - 1, rt.Width + thm.Corner * 2, 3), p); break;
-                        case GoDirection.Left: canvas.DrawRect(Util.FromRect(rt.Right - 1, rt.Top - thm.Corner, 3, rt.Height + thm.Corner * 2), p); break;
-                        case GoDirection.Right: canvas.DrawRect(Util.FromRect(rt.Left - 1, rt.Top - thm.Corner, 3, rt.Height + thm.Corner * 2), p); break;
+                        case GoDirection.Up: canvas.DrawRect(Util.FromRect(rt.Left - thm.Corner, rt.Bottom - 1, rt.Width + thm.Corner * 2, 2), p); break;
+                        case GoDirection.Down: canvas.DrawRect(Util.FromRect(rt.Left - thm.Corner, rt.Top - 1, rt.Width + thm.Corner * 2, 2), p); break;
+                        case GoDirection.Left: canvas.DrawRect(Util.FromRect(rt.Right - 1, rt.Top - thm.Corner, 2, rt.Height + thm.Corner * 2), p); break;
+                        case GoDirection.Right: canvas.DrawRect(Util.FromRect(rt.Left - 1, rt.Top - thm.Corner, 2, rt.Height + thm.Corner * 2), p); break;
                     }
-                  
+                    #endregion
+
+                    #region tab
                     using var pth = PathTool.Tab(rt, TabPosition, thm.Corner);
 
                     p.IsStroke = false;
@@ -120,79 +123,90 @@ namespace Going.UI.Containers
                     p.Color = cBorder;
                     p.StrokeWidth = 1F;
                     canvas.DrawPath(pth, p);
+                    #endregion
+
+                    #region retouch 2
+                    if (tab == TabPages.FirstOrDefault())
+                    {
+                        var c2 = thm.Corner * 2;
+                        switch (TabPosition)
+                        {
+                            case GoDirection.Up:
+                                {
+                                    p.IsStroke = false; p.Color = cTab;
+                                    canvas.DrawRect(Util.FromRect(rtPage.Left, rt.Bottom, c2, c2), p);
+
+                                    var n = (int)rtPage.Left + 0.5F;
+                                    p.IsStroke = true; p.StrokeWidth = 1; p.Color = cBorder;
+                                    canvas.DrawLine(n, rt.Bottom - c2, n, rt.Bottom + c2, p);
+                                }
+                                break;
+                            case GoDirection.Down:
+                                {
+                                    p.IsStroke = false; p.Color = cTab;
+                                    canvas.DrawRect(Util.FromRect(rtPage.Left, rt.Top - c2, c2, c2), p);
+
+                                    var n = (int)rtPage.Left + 0.5F;
+                                    p.IsStroke = true; p.StrokeWidth = 1; p.Color = cBorder;
+                                    canvas.DrawLine(n, rt.Top + c2, n, rt.Top - c2, p);
+                                }
+                                break;
+                            case GoDirection.Left:
+                                {
+                                    p.IsStroke = false; p.Color = cTab;
+                                    canvas.DrawRect(Util.FromRect(rt.Right, rtPage.Top, c2, c2), p);
+
+                                    var n = (int)rtPage.Top + 0.5F;
+                                    p.IsStroke = true; p.StrokeWidth = 1; p.Color = cBorder;
+                                    canvas.DrawLine(rt.Right - c2, n, rt.Right + c2, n, p);
+                                }
+                                break;
+                            case GoDirection.Right:
+                                {
+                                    p.IsStroke = false; p.Color = cTab;
+                                    canvas.DrawRect(Util.FromRect(rt.Left - c2, rtPage.Top, c2, c2), p);
+
+                                    var n = (int)rtPage.Top + 0.5F;
+                                    p.IsStroke = true; p.StrokeWidth = 1; p.Color = cBorder;
+                                    canvas.DrawLine(rt.Left + c2, n, rt.Left - c2, n, p);
+                                }
+                                break;
+                        }
+                    }
+                    #endregion
 
                 }
 
-                using (new SKAutoCanvasRestore(canvas))
-                {
-                    canvas.ClipRect(rt);
-                    Util.DrawTextIcon(canvas, tab.Text, FontName, FontSize, tab.IconString, IconSize, IconDirection, IconGap, rt, Util.FromArgb(Convert.ToByte(bSel ? 255 : 60), cText));
-                }
+                Util.DrawTextIcon(canvas, tab.Text, FontName, FontSize, tab.IconString, IconSize, IconDirection, IconGap, rt, Util.FromArgb(Convert.ToByte(bSel ? 255 : (tab.Hover ? 150 : 60)), cText));
             });
 
-            using (new SKAutoCanvasRestore(canvas))
-            {
-                canvas.ClipRect(rtPage);
-                canvas.Translate(rtPage.Left, rtPage.Top);
-                base.OnDraw(canvas);
-            }
+            base.OnDraw(canvas);
         }
         #endregion
 
         #region Mouse
-        protected override void OnMouseDown(float x, float y, GoMouseButton button)
-        {
-            var rts = Areas();
-            var rtPage = rts["Page"];
-            base.OnMouseDown(x - rtPage.Left, y - rtPage.Top, button);
-        }
-        
-        protected override void OnMouseUp(float x, float y, GoMouseButton button)
-        {
-            var rts = Areas();
-            var rtPage = rts["Page"];
-            base.OnMouseUp(x - rtPage.Left, y - rtPage.Top, button);
-        }
-        
         protected override void OnMouseMove(float x, float y)
         {
             var rts = Areas();
-            var rtPage = rts["Page"];
-            base.OnMouseMove(x - rtPage.Left, y - rtPage.Top);
+            base.OnMouseMove(x, y);
+
+            var rtNav = rts["Nav"];
+            tabLoop(rtNav, (i, tab, rt) =>
+            {
+                tab.Hover = CollisionTool.Check(rt, x, y);
+            });
         }
 
         protected override void OnMouseClick(float x, float y, GoMouseButton button)
         {
             var rts = Areas();
-            var rtPage = rts["Page"];
-            base.OnMouseClick(x - rtPage.Left, y - rtPage.Top, button);
+            base.OnMouseClick(x, y, button);
 
             var rtNav = rts["Nav"];
             tabLoop(rtNav, (i, tab, rt) =>
             {
                 if (CollisionTool.Check(rt, x, y)) SelectedTab = tab;
             });
-        }
-
-        protected override void OnMouseDoubleClick(float x, float y, GoMouseButton button)
-        {
-            var rts = Areas();
-            var rtPage = rts["Page"];
-            base.OnMouseDoubleClick(x - rtPage.Left, y - rtPage.Top, button);
-        }
-
-        protected override void OnMouseLongClick(float x, float y, GoMouseButton button)
-        {
-            var rts = Areas();
-            var rtPage = rts["Page"];
-            base.OnMouseLongClick(x - rtPage.Left, y - rtPage.Top, button);
-        }
-
-        protected override void OnMouseWheel(float x, float y, float delta)
-        {
-            var rts = Areas();
-            var rtPage = rts["Page"];
-            base.OnMouseWheel(x - rtPage.Left, y - rtPage.Top, delta);
         }
         #endregion
 
@@ -210,6 +224,7 @@ namespace Going.UI.Containers
                         var rts = Util.Rows(rtContent, [$"{NavSize}px", "100%"]);
                         dic["Nav"] = rts[0];
                         dic["Page"] = rts[1];
+                        dic["Panel"] = Util.FromRect(rts[1], new GoPadding(10));
                     }
                     break;
                 case GoDirection.Down:
@@ -217,6 +232,7 @@ namespace Going.UI.Containers
                         var rts = Util.Rows(rtContent, ["100%", $"{NavSize}px"]);
                         dic["Nav"] = rts[1];
                         dic["Page"] = rts[0];
+                        dic["Panel"] = Util.FromRect(rts[0], new GoPadding(10));
                     }
                     break;
                 case GoDirection.Left:
@@ -224,6 +240,7 @@ namespace Going.UI.Containers
                         var rts = Util.Columns(rtContent, [$"{NavSize}px", "100%"]);
                         dic["Nav"] = rts[0];
                         dic["Page"] = rts[1];
+                        dic["Panel"] = Util.FromRect(rts[1], new GoPadding(10));
                     }
                     break;
                 case GoDirection.Right:
@@ -231,6 +248,7 @@ namespace Going.UI.Containers
                         var rts = Util.Columns(rtContent, ["100%", $"{NavSize}px"]);
                         dic["Nav"] = rts[1];
                         dic["Page"] = rts[0];
+                        dic["Panel"] = Util.FromRect(rts[0], new GoPadding(10));
                     }
                     break;
             }
@@ -241,9 +259,10 @@ namespace Going.UI.Containers
         #endregion
 
         #region Method
+        #region tabLoop
         void tabLoop(SKRect rtNav, Action<int, GoTabPage, SKRect> loop)
         {
-            var n = 15F; //Indent : 10px
+            var n = 0F; //Indent : 10px
             for (int i = 0; i < TabPages.Count; i++)
             {
                 var tab = TabPages[i];
@@ -273,13 +292,27 @@ namespace Going.UI.Containers
             }
         }
         #endregion
+
+        #region SetTab
+        public void SetTab(string name)
+        {
+            if(name != null)
+            {
+                var page = TabPages.FirstOrDefault(x => x.Name == name);
+                if (page != null) SelectedTab = page;
+            }
+        }
+        #endregion
+        #endregion
     }
 
     #region class : GoTabPage
     public class GoTabPage 
     {
+        public string Name { get; set; }
         public string? IconString { get; set; }
         public string? Text { get; set; }
+        internal bool Hover { get; set; }
 
         [JsonInclude]
         public List<IGoControl> Childrens { get; } = [];

@@ -1,4 +1,5 @@
 using Going.UI.Forms.Dialogs;
+using Going.UI.Forms.ImageCanvas;
 using Going.UI.Forms.Input;
 using Going.UI.Themes;
 
@@ -8,24 +9,27 @@ namespace SampleForms
     {
         DateTime prev = DateTime.Now;
         System.Windows.Forms.Timer tmr;
+        int sec;
+
+        IcOnOff[] onoffs;
         public FormMain()
         {
             InitializeComponent();
+            ClientSize = new Size(800, 480);
 
-            goListBox1.SelectionMode = Going.UI.Enums.GoItemSelectionMode.MultiPC;
-            for (int i = 1; i <= 100; i++)
-                goListBox1.Items.Add(new Going.UI.Datas.GoListItem { Text = $"¾ÆÀÌÅÛ {i}" });
-
-            goInputBoolean1.ValueChanged += (o, s) => goValueBoolean1.Value = goInputBoolean1.Value;
-
-            goInputCombo1.Items.AddRange(goListBox1.Items);
+            onoffs = [icOnOff1, icOnOff2, icOnOff3, icOnOff4, icOnOff5, icOnOff6, icOnOff7, icOnOff8];
 
             tmr = new System.Windows.Forms.Timer { Interval = 10, Enabled = true };
             tmr.Tick += (o, s) =>
             {
-                goMeter1.Value = goGauge1.Value = (DateTime.Now - prev).TotalMilliseconds / 100 % 100;
+                var now = DateTime.Now;
+                if (now.Second != sec)
+                {
+                    var idx = Convert.ToInt32((now - prev).TotalSeconds) % 8;
+                    onoffs[idx].OnOff = !onoffs[idx].OnOff;
+                    sec = now.Second;
+                }
             };
-
         }
     }
 }

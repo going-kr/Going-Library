@@ -12,38 +12,71 @@ namespace SampleOpenTK
 {
     public class PageTest:GoPage
     {
+        GoButton btnMain, btn;
+        GoOnOff onoff;
+        GoSwitch sw;
+        GoNumberBox nb;
+        GoTableLayoutPanel tpnl;
+        GoSwitchPanel mpnl;
+        GoScrollablePanel spnl;
+
         public PageTest()
         {
             Name = "PageTest";
 
-            var btn = new GoButton { Name = "btn", Left = 10, Top = 10, Width = 80, Height = 40, Text = "메인 페이지" };
+            #region Constrols
+            btnMain = new GoButton { Name = "btn", Left = 10, Top = 10, Width = 80, Height = 40, Text = "메인 페이지" };
+            btn = new GoButton { Left = 10, Top = 60, Width = 80, Height = 40, Text = "테스트" };
+            onoff = new GoOnOff { Left = 10, Top = 110, Width = 150, Height = 40 };
+            sw = new GoSwitch { Left = 10, Top = 160, Width = 150, Height = 40 };
+            nb = new GoNumberBox { Left = 10, Top = 210, Width = 150, Height = 40 };
+
+            Childrens.Add(btnMain);
             Childrens.Add(btn);
-            Childrens.Add(new GoButton { Left = 10, Top = 60, Width = 80, Height = 40, Text = "테스트" });
-            Childrens.Add(new GoOnOff { Left = 10, Top = 110, Width = 150, Height = 40 });
-            Childrens.Add(new GoSwitch { Left = 10, Top = 160, Width = 150, Height = 40 });
-            Childrens.Add(new GoNumberBox { Left = 10, Top = 210, Width = 200, Height = 40 });
-            //Childrens.Add(new GoNumberBox { Left = 10, Top = 210, Width = 200, Height = 80, Direction = GoDirectionHV.Vertical, ButtonSize = 30 });
+            Childrens.Add(onoff);
+            Childrens.Add(sw);
+            Childrens.Add(nb);
+            #endregion
 
-            var tbl = new GoTableLayoutPanel { Left = 150, Top = 10, Width = 200, Height = 150 };
-            tbl.Columns = ["50%", "50%"];
-            tbl.Rows = ["33.3%", "33.4%", "33.3%"];
-            Childrens.Add(tbl);
+            #region TableLayout / IconButton
+            tpnl = new GoTableLayoutPanel { Left = 170, Top = 10, Width = 240, Height = 240 };
+            tpnl.Columns = ["33.3%", "33.4%", "33.3%"];
+            tpnl.Rows = ["33.3%", "33.4%", "33.3%"];
+            Childrens.Add(tpnl);
 
-            tbl.Childrens.Add(new GoIconButton { Fill = true, IconString = "fa-play", Rotate = 270 }, 0, 0, 2, 1);
-            tbl.Childrens.Add(new GoIconButton { Fill = true, IconString = "fa-play", Rotate = 180 }, 0, 1, 1, 1);
-            tbl.Childrens.Add(new GoIconButton { Fill = true, IconString = "fa-play", Rotate = 0 }, 1, 1, 1, 1);
-            tbl.Childrens.Add(new GoIconButton { Fill = true, IconString = "fa-play", Rotate = 90 }, 0, 2, 2, 1);
+            tpnl.Childrens.Add(new GoIconButton { Fill = true, IconString = "fa-play", Rotate = 270 }, 1, 0);
+            tpnl.Childrens.Add(new GoIconButton { Fill = true, IconString = "fa-play", Rotate = 180 }, 0, 1);
+            tpnl.Childrens.Add(new GoIconButton { Fill = true, IconString = "fa-stop", Rotate = 0 }, 1, 1);
+            tpnl.Childrens.Add(new GoIconButton { Fill = true, IconString = "fa-play", Rotate = 0 }, 2, 1);
+            tpnl.Childrens.Add(new GoIconButton { Fill = true, IconString = "fa-play", Rotate = 90 }, 1, 2);
+            #endregion
 
-            btn.ButtonClicked += (o, s) => Design?.SetPage("PageMain");
+            #region SwitchPanel
+            mpnl = new GoSwitchPanel { Left = 510, Top = 10, Width = 400, Height = 240 };
+            for (int i = 0; i < 5; i++)
+            {
+                var vp = new GoSubPage() { Name = $"P{i + 1}" };
+                vp.Childrens.Add(new GoLabel { Left = 0, Top = 0, Width = 100, Height = 40, Text = $"페이지 {i + 1}", BorderOnly = true, LabelColor = "base3" });
+                mpnl.Pages.Add(vp);
+            }
+            Childrens.Add(mpnl);
 
-            var spnl = new GoScrollablePanel { Fill = true, Margin = new Going.UI.Datas.GoPadding(10, 260, 10, 10) };
-            //spnl.PanelHeight = 700;
+            for (int i = 0; i < 5; i++)
+            {
+                var vb = new GoButton { Left = 420, Top = 10 + (i * 50), Width = 80, Height = 40, Text = $"페이지 {i + 1}" };
+                vb.ButtonClicked += (o, s) => mpnl.SetPage($"P{((GoButton)o!).Text.Substring(4)}");
+                Childrens.Add(vb);
+            }
+            #endregion
 
-            for (int i = 0; i < 30; i++)
-                spnl.Childrens.Add(new GoButton { Left = 0, Top = 0 + (i * 50), Width = 100, Height = 40, Text = $"버튼{i + 1}" });
-            
-
+            #region ScrollablePanel
+            spnl = new GoScrollablePanel { Fill = true, Margin = new Going.UI.Datas.GoPadding(10, 260, 10, 10) };
+            for (int i = 0; i < 30; i++) spnl.Childrens.Add(new GoButton { Left = 0, Top = 0 + (i * 50), Width = 100, Height = 40, Text = $"버튼{i + 1}" });
             Childrens.Add(spnl);
+            #endregion
+
+            btnMain.ButtonClicked += (o, s) => Design?.SetPage("PageMain");
+
         }
     }
 }

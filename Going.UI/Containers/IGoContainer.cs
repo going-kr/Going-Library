@@ -11,10 +11,8 @@ namespace Going.UI.Containers
         IEnumerable<IGoControl> Childrens { get; }
         SKRect Bounds { get; set; }
 
-        [JsonIgnore] float ViewX { get; }
-        [JsonIgnore] float ViewY { get; }
-        [JsonIgnore] float ViewWidth { get; }
-        [JsonIgnore] float ViewHeight { get; }
+        [JsonIgnore] SKRect PanelBounds { get; }
+        [JsonIgnore] SKPoint ViewPosition { get; }
     }
 
 }

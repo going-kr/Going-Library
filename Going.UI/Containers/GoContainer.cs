@@ -19,10 +19,8 @@ namespace Going.UI.Containers
         #region Properties
         public virtual IEnumerable<IGoControl> Childrens { get; } = [];
 
-        [JsonIgnore] public virtual float ViewX => 0;
-        [JsonIgnore] public virtual float ViewY => 0;
-        [JsonIgnore] public virtual float ViewWidth => Width;
-        [JsonIgnore] public virtual float ViewHeight => Height;
+        [JsonIgnore] public virtual SKRect PanelBounds => Util.FromRect(0, 0, Width, Height);
+        [JsonIgnore] public virtual SKPoint ViewPosition => new SKPoint(0, 0);
         #endregion
 
         #region Override
@@ -42,45 +40,48 @@ namespace Going.UI.Containers
         {
             base.OnDraw(canvas);
 
-            OnContainerDraw(canvas);
-
             OnLayout();
-            GUI.Draw(canvas, this);
+         
+            using (new SKAutoCanvasRestore(canvas))
+            {
+                canvas.Translate(PanelBounds.Left, PanelBounds.Top);
+                GUI.Draw(canvas, this);
+            }
         }
 
         protected override void OnMouseDown(float x, float y, GoMouseButton button)
         {
             base.OnMouseDown(x, y, button);
 
-            GUI.MouseDown(this, x, y, button);
+            GUI.MouseDown(this, x - PanelBounds.Left, y - PanelBounds.Top, button);
         }
 
         protected override void OnMouseUp(float x, float y, GoMouseButton button)
         {
             base.OnMouseUp(x, y, button);
 
-            GUI.MouseUp(this, x, y, button);
+            GUI.MouseUp(this, x - PanelBounds.Left, y - PanelBounds.Top, button);
         }
 
         protected override void OnMouseDoubleClick(float x, float y, GoMouseButton button)
         {
             base.OnMouseDoubleClick(x, y, button);
 
-            GUI.MouseDoubleClick(this, x, y, button);
+            GUI.MouseDoubleClick(this, x - PanelBounds.Left, y - PanelBounds.Top, button);
         }
 
         protected override void OnMouseMove(float x, float y)
         {
             base.OnMouseMove(x, y);
 
-            GUI.MouseMove(this, x, y);
+            GUI.MouseMove(this, x - PanelBounds.Left, y - PanelBounds.Top);
         }
 
         protected override void OnMouseWheel(float x, float y, float delta)
         {
             base.OnMouseWheel(x, y, delta);
 
-            GUI.MouseWheel(this, x, y, delta);
+            GUI.MouseWheel(this, x - PanelBounds.Left, y - PanelBounds.Top, delta);
         }
 
         protected override void OnKeyDown(bool Shift, bool Control, bool Alt, GoKeys key)
@@ -99,7 +100,6 @@ namespace Going.UI.Containers
         #endregion
 
         #region Virtual
-        protected virtual void OnContainerDraw(SKCanvas canvas) { }
         protected virtual void OnLayout()
         {
             var rts = Areas();

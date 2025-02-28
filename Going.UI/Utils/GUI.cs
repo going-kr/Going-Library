@@ -32,7 +32,7 @@ namespace Going.UI.Utils
         {
             foreach (var c in container.Childrens)
             {
-                if (CollisionTool.Check(Util.FromRect(container.ViewX, container.ViewY, container.ViewWidth, container.ViewHeight), c.Bounds))
+                if (CollisionTool.Check(Util.FromRect(container.ViewPosition.X, container.ViewPosition.Y, container.PanelBounds.Width, container.PanelBounds.Height), c.Bounds))
                 {
                     if (c.FirstRender && c is GoControl c2)
                         c2.Parent = container;
@@ -58,35 +58,35 @@ namespace Going.UI.Utils
         public static void MouseDown(IGoContainer container, float x, float y, GoMouseButton btn)
         {
             foreach (var c in container.Childrens.Where(x => x.Enabled))
-                if (CollisionTool.Check(Util.FromRect(container.ViewX, container.ViewY, container.ViewWidth, container.ViewHeight), c.Bounds))
+                if (CollisionTool.Check(Util.FromRect(container.ViewPosition.X, container.ViewPosition.Y, container.PanelBounds.Width, container.PanelBounds.Height), c.Bounds))
                     c.FireMouseDown(x - c.Left, y - c.Top, btn);
         }   
 
         public static void MouseUp(IGoContainer container, float x, float y, GoMouseButton btn)
         {
             foreach (var c in container.Childrens.Where(x => x.Enabled))
-                if (CollisionTool.Check(Util.FromRect(container.ViewX, container.ViewY, container.ViewWidth, container.ViewHeight), c.Bounds) || (c is GoControl c2 && c2._MouseDown_))
+                if (CollisionTool.Check(Util.FromRect(container.ViewPosition.X, container.ViewPosition.Y, container.PanelBounds.Width, container.PanelBounds.Height), c.Bounds) || (c is GoControl c2 && c2._MouseDown_))
                     c.FireMouseUp(x - c.Left, y - c.Top, btn);
         }
 
         public static void MouseDoubleClick(IGoContainer container, float x, float y, GoMouseButton btn)
         {
             foreach (var c in container.Childrens.Where(x => x.Enabled))
-                if (CollisionTool.Check(Util.FromRect(container.ViewX, container.ViewY, container.ViewWidth, container.ViewHeight), c.Bounds))
+                if (CollisionTool.Check(Util.FromRect(container.ViewPosition.X, container.ViewPosition.Y, container.PanelBounds.Width, container.PanelBounds.Height), c.Bounds))
                     c.FireMouseDoubleClick(x - c.Left, y - c.Top, btn);
         }
 
         public static void MouseMove(IGoContainer container, float x, float y)
         {
             foreach (var c in container.Childrens.Where(x => x.Enabled))
-                if (CollisionTool.Check(Util.FromRect(container.ViewX, container.ViewY, container.ViewWidth, container.ViewHeight), c.Bounds) || (c is GoControl c2 && c2._MouseDown_))
+                if (CollisionTool.Check(Util.FromRect(container.ViewPosition.X, container.ViewPosition.Y, container.PanelBounds.Width, container.PanelBounds.Height), c.Bounds) || (c is GoControl c2 && c2._MouseDown_))
                     c.FireMouseMove(x - c.Left, y - c.Top);
         }
 
         public static void MouseWheel(IGoContainer container, float x, float y, float delta)
         {
             foreach (var c in container.Childrens.Where(x => x.Enabled))
-                if (CollisionTool.Check(Util.FromRect(container.ViewX, container.ViewY, container.ViewWidth, container.ViewHeight), c.Bounds))
+                if (CollisionTool.Check(Util.FromRect(container.ViewPosition.X, container.ViewPosition.Y, container.PanelBounds.Width, container.PanelBounds.Height), c.Bounds))
                     c.FireMouseWheel(x - c.Left, y - c.Top, delta);
         }
 
