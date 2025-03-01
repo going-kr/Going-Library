@@ -35,6 +35,9 @@
             goTabControl1 = new Going.UI.Forms.Containers.GoTabControl();
             tabPage1 = new TabPage();
             tabPage2 = new TabPage();
+            rm = new Going.UI.Forms.Components.GoResourceManager();
+            goPictureBox1 = new Going.UI.Forms.Controls.GoPictureBox();
+            goAnimate1 = new Going.UI.Forms.Controls.GoAnimate();
             goPanel1.SuspendLayout();
             goTabControl1.SuspendLayout();
             SuspendLayout();
@@ -144,6 +147,7 @@
             goTabControl1.Controls.Add(tabPage2);
             goTabControl1.FontName = "나눔고딕";
             goTabControl1.FontSize = 12F;
+            goTabControl1.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
             goTabControl1.IconDirection = Going.UI.Enums.GoDirectionHV.Horizon;
             goTabControl1.IconGap = 5F;
             goTabControl1.IconSize = 12F;
@@ -178,11 +182,50 @@
             tabPage2.TabIndex = 1;
             tabPage2.Text = "tabPage2";
             // 
+            // rm
+            // 
+            rm.ImageFolder = "D:\\Project\\Going\\library\\src\\Going\\ImageSample";
+            // 
+            // goPictureBox1
+            // 
+            goPictureBox1.BackColor = Color.FromArgb(50, 50, 50);
+            goPictureBox1.BackgroundColor = "Back";
+            goPictureBox1.Image = "nature";
+            goPictureBox1.Location = new Point(12, 444);
+            goPictureBox1.Name = "goPictureBox1";
+            goPictureBox1.Resources = rm;
+            goPictureBox1.Round = Going.UI.Enums.GoRoundType.Rect;
+            goPictureBox1.ScaleMode = Going.UI.Enums.GoImageScaleMode.Strech;
+            goPictureBox1.Size = new Size(331, 209);
+            goPictureBox1.TabIndex = 2;
+            goPictureBox1.TabStop = false;
+            goPictureBox1.Text = "goPictureBox1";
+            // 
+            // goAnimate1
+            // 
+            goAnimate1.BackColor = Color.FromArgb(50, 50, 50);
+            goAnimate1.BackgroundColor = "Back";
+            goAnimate1.Location = new Point(349, 444);
+            goAnimate1.Name = "goAnimate1";
+            goAnimate1.OffImage = "ani_off";
+            goAnimate1.OnImage = "ani";
+            goAnimate1.OnOff = false;
+            goAnimate1.Resources = rm;
+            goAnimate1.Round = Going.UI.Enums.GoRoundType.Rect;
+            goAnimate1.ScaleMode = Going.UI.Enums.GoImageScaleMode.Zoom;
+            goAnimate1.Size = new Size(209, 209);
+            goAnimate1.TabIndex = 3;
+            goAnimate1.TabStop = false;
+            goAnimate1.Text = "goAnimate1";
+            goAnimate1.Time = 30;
+            // 
             // FormMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(993, 665);
+            Controls.Add(goAnimate1);
+            Controls.Add(goPictureBox1);
             Controls.Add(goTabControl1);
             Controls.Add(goPanel1);
             Name = "FormMain";
@@ -202,5 +245,8 @@
         private Going.UI.Forms.Containers.GoTabControl goTabControl1;
         private TabPage tabPage1;
         private TabPage tabPage2;
+        private Going.UI.Forms.Components.GoResourceManager rm;
+        private Going.UI.Forms.Controls.GoPictureBox goPictureBox1;
+        private Going.UI.Forms.Controls.GoAnimate goAnimate1;
     }
 }

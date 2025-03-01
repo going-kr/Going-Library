@@ -54,9 +54,11 @@ namespace SampleForms
             {
                 var box = main.Controls[$"box{i}"] as Box;
                 if (box != null) box.SettingButtonClick += (o, s) => ic.SelectedTab = setting;
-                
+
+                box.Enabled = false;
             }
 
+          
         }
     }
 }

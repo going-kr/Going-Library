@@ -37,17 +37,13 @@ namespace Going.UI.Forms.ImageCanvas
                 if (sImageFolder != value)
                 {
                     sImageFolder = value;
-                    load();
+                    IcResources.Load(sImageFolder);
                     Invalidate();
                 }
             }
         }
 
         public string BackgroundColor { get; set; } = "Back";
-
-        public Dictionary<string, IcOnOffImage> PageImages { get; } = [];
-        public Dictionary<string, Dictionary<int, SKBitmap?>> StateImages { get; } = [];
-        public Dictionary<string, IcOnOffImage> Images { get; } = [];
 
         [Browsable(true)]
         [EditorBrowsable(EditorBrowsableState.Always)]
@@ -95,11 +91,15 @@ namespace Going.UI.Forms.ImageCanvas
                         var cBack = GoTheme.Current.ToColor(BackgroundColor);
                         canvas.Clear(cBack);
 
-                        using var p = new SKPaint { IsAntialias = true, Color = SKColors.Black.WithAlpha(Convert.ToByte(Enabled ? 255 : 255 - GoTheme.DisableAlpha)) };
-                        var sp = canvas.SaveLayer(p);
-                        if (name != null && PageImages.TryGetValue(name, out var vp) && vp.On != null && vp.Off != null)
-                            canvas.DrawBitmap(vp.Off, Util.FromRect(0, 0, Width, Height));
-                        canvas.RestoreToCount(sp);
+                        var ip = IcResources.Get(ImageFolder);
+                        if (ip != null)
+                        {
+                            using var p = new SKPaint { IsAntialias = true, Color = SKColors.Black.WithAlpha(Convert.ToByte(Enabled ? 255 : 255 - GoTheme.DisableAlpha)) };
+                            var sp = canvas.SaveLayer(p);
+                            if (name != null && ip.Pages.TryGetValue(name, out var vp) && vp.On != null && vp.Off != null)
+                                canvas.DrawBitmap(vp.Off, Util.FromRect(0, 0, Width, Height));
+                            canvas.RestoreToCount(sp);
+                        }
 
                         using (var bmp = bitmap.ToBitmap()) s.Graphics.DrawImage(bmp, new Rectangle(0, 0, bmp.Width, bmp.Height));
                     }
@@ -119,113 +119,5 @@ namespace Going.UI.Forms.ImageCanvas
         }
         #endregion
         #endregion
-
-        #region Method
-        #region load
-        void load()
-        {
-            try
-            {
-                if (Directory.Exists(ImageFolder))
-                {
-                    var pages = new Dictionary<string, Dictionary<string, string>>();
-                    var states = new Dictionary<string, Dictionary<int, string>>();
-                    var anis = new Dictionary<string, Dictionary<int, string>>();
-                    var imgs = new Dictionary<string, Dictionary<string, string>>();
-
-                    #region group
-                    var pageRegex = new Regex(pagePattern);
-                    var stateRegex = new Regex(statePattern);
-                    var aniRegex = new Regex(aniPattern);
-                    var imgRegex = new Regex(imagePattern);
-
-                    foreach (var path in Directory.GetFiles(ImageFolder))
-                    {
-                        string fileName = Path.GetFileName(path.ToLower());
-
-                        if (pageRegex.IsMatch(fileName))
-                        {
-                            var vs = fileName.Split('.');
-                            if (vs.Length == 4)
-                            {
-                                pages.TryAdd(vs[0], []);
-                                pages[vs[0]].TryAdd(vs[2], path);
-                            }
-                        }
-
-                        if (stateRegex.IsMatch(fileName))
-                        {
-                            var vs = fileName.Split('.');
-                            if (vs.Length == 4)
-                            {
-                                states.TryAdd(vs[0], []);
-                                if (int.TryParse(vs[2], out var n)) states[vs[0]].TryAdd(n, path);
-                            }
-                        }
-
-                        if (imgRegex.IsMatch(fileName))
-                        {
-                            var vs = fileName.Split('.');
-                            if (vs.Length == 4)
-                            {
-                                imgs.TryAdd(vs[0], []);
-                                imgs[vs[0]].TryAdd(vs[2], path);
-                            }
-                        }
-
-                        if (aniRegex.IsMatch(fileName))
-                        {
-                            var vs = fileName.Split('.');
-                            if (vs.Length == 4)
-                            {
-                                anis.TryAdd(vs[0], []);
-                                if (int.TryParse(vs[2], out var n)) anis[vs[0]].TryAdd(n, path);
-                            }
-                        }
-                    }
-                    #endregion
-
-                    #region load
-                    PageImages.Clear();
-                    foreach (var pageName in pages.Keys)
-                    {
-                        if (pages[pageName].TryGetValue("on", out var pOn) && pages[pageName].TryGetValue("off", out var pOff))
-                        {
-                            PageImages.Add(pageName, new IcOnOffImage(Util.FromBitmap(pOn), Util.FromBitmap(pOff)));
-                        }
-                    }
-
-                    StateImages.Clear();
-                    foreach (var stateName in states.Keys)
-                    {
-                        StateImages.TryAdd(stateName, []);
-                        foreach (var state in states[stateName].Keys)
-                        {
-                            var path = states[stateName][state];
-                            StateImages[stateName].TryAdd(state, Util.FromBitmap(path));
-                        }
-                    }
-
-                    Images.Clear();
-                    foreach (var imgName in imgs.Keys)
-                    {
-                        if (imgs[imgName].TryGetValue("on", out var pOn) && imgs[imgName].TryGetValue("off", out var pOff))
-                        {
-                            Images.Add(imgName, new IcOnOffImage(Util.FromBitmap(pOn), Util.FromBitmap(pOff)));
-                        }
-                    }
-                    #endregion
-                }
-            }
-            catch { }
-        }
-        #endregion
-        #endregion
-    }
-
-    public class IcOnOffImage(SKBitmap? on, SKBitmap? off)
-    {
-        public SKBitmap? On => on;
-        public SKBitmap? Off => off;
     }
 }

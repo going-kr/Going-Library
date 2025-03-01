@@ -74,39 +74,35 @@ namespace Going.UI.Forms.ImageCanvas
         {
             var canvas = e.Surface.Canvas;
             var thm = GoTheme.Current;
-            var cText = thm.ToColor(TextColor);
             var rtBox = Util.FromRect(0, 0, Width, Height);
+            var cText = thm.ToColor(TextColor);
 
-            var ic = GetCanvas();
-            if (ic != null && Parent is TabPage tab && ic.PageImages.TryGetValue(tab.Name, out var img) && img.On != null && img.Off != null)
+            var (ip, img, cBack) = vars();
+            if (ip != null && img != null && Parent != null && img.On != null && img.Off != null)
             {
                 var sx = (double)img.On.Width / Parent.Width;
                 var sy = (double)img.On.Height / Parent.Height;
                 canvas.DrawBitmap(img.Off, Util.FromRect(Convert.ToInt32(Left * sx), Convert.ToInt32(Top * sy), Convert.ToInt32(Width * sx), Convert.ToInt32(Height * sy)), rtBox);
             }
-            else if (Parent is IcContainer con && con.On != null && con.Off != null)
-            {
-                var sx = (double)con.On.Width / con.Width;
-                var sy = (double)con.On.Height / con.Height;
-                canvas.DrawBitmap(con.Off, Util.FromRect(Convert.ToInt32(Left * sx), Convert.ToInt32(Top * sy), Convert.ToInt32(Width * sx), Convert.ToInt32(Height * sy)), rtBox);
-            }
 
-            bounds(ic, (_, rtBar, rtFill, bmBar) =>
+            bounds(ip, (_, rtBar, rtFill, bmBar) =>
             {
                 canvas.DrawBitmap(bmBar.Off, rtBar);
                 if (Value > Minimum) canvas.DrawBitmap(bmBar.On, Util.FromRect(0, 0, rtFill.Width, rtFill.Height), rtFill);
                 if (DrawText) Util.DrawText(canvas, Value.ToString(FormatString ?? "0"), FontName, FontStyle, FontSize, rtBar, cText);
             });
 
+            #region Enabled
             if (!Enabled)
             {
                 using var p = new SKPaint { IsAntialias = true };
 
                 p.IsStroke = false;
-                p.Color = thm.ToColor(ic.BackgroundColor).WithAlpha(180);
+                p.Color = cBack.WithAlpha(180);
                 canvas.DrawRect(rtBox, p);
             }
-
+            #endregion
+            #region DesignMode
             if (DesignMode)
             {
                 using var p = new SkiaSharp.SKPaint { IsAntialias = false };
@@ -117,15 +113,17 @@ namespace Going.UI.Forms.ImageCanvas
                 canvas.DrawRect(Util.FromRect(0, 0, Width - 1, Height - 1), p);
                 p.PathEffect = null;
             }
+            #endregion
 
             base.OnPaintSurface(e);
         }
         #endregion
 
         #region Method
-        void bounds(IcCanvas? ic, Action<SKRect, SKRect, SKRect, IcOnOffImage> act)
+        #region bounds
+        void bounds(IcImageFolder? ip, Action<SKRect, SKRect, SKRect, IcOnOffImage> act)
         {
-            if (ic != null && sBarName != null && ic.Images.TryGetValue(sBarName, out var bmBar) && bmBar.On != null && bmBar.Off != null)
+            if (ip != null && sBarName != null && ip.Miscs.TryGetValue(sBarName, out var bmBar) && bmBar.On != null && bmBar.Off != null)
             {
                 var rtBox = Util.FromRect(0, 0, Width, Height);
                 var rtBar = MathTool.MakeRectangle(rtBox, new SKSize(bmBar.Off.Width, bmBar.Off.Height));
@@ -136,13 +134,31 @@ namespace Going.UI.Forms.ImageCanvas
                 act(rtBox, rtBar, rtFill, bmBar);
             }
         }
-
-        IcCanvas? GetCanvas()
+        #endregion
+        #region vars
+        (IcImageFolder? ip, IcOnOffImage? img, SKColor cBack) vars()
         {
-            var p = Parent;
-            while (p is not IcCanvas && p != null) p = p.Parent;
-            return p as IcCanvas;
+            var thm = GoTheme.Current;
+            SKColor cBack = thm.Back;
+            IcImageFolder? ip = null;
+            IcOnOffImage? img = null;
+
+            if (Parent is IcContainer con)
+            {
+                ip = IcResources.Get(con.ImageFolder);
+                cBack = thm.ToColor(con.BackgroundColor);
+                img = ip != null && con.ContainerName != null && ip.Containers.TryGetValue(con.ContainerName, out var v) ? v : null;
+            }
+            else if (Parent is TabPage tab && tab.Parent is IcCanvas ic)
+            {
+                ip = IcResources.Get(ic.ImageFolder);
+                cBack = thm.ToColor(ic.BackgroundColor);
+                img = ip != null && tab.Name != null && ip.Pages.TryGetValue(tab.Name, out var v) ? v : null;
+            }
+
+            return (ip, img, cBack);
         }
+        #endregion
         #endregion
     }
 }

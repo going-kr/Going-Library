@@ -43,6 +43,13 @@ namespace Going.UI.Containers
             }
         }
 
+        protected override void OnUpdate()
+        {
+            base.OnUpdate();
+
+            GUI.Update(this);
+        }
+
         protected override void OnMouseDown(float x, float y, GoMouseButton button)
         {
             base.OnMouseDown(x, y, button);

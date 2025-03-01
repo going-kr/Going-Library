@@ -18,6 +18,7 @@ namespace Going.UI.Json
         {
             Options.PropertyNameCaseInsensitive = true;
             Options.Converters.Add(new SKRectConverter());
+            Options.Converters.Add(new SKBitmapConverter());
             Options.Converters.Add(new GoControlConverter());
             Options.Converters.Add(new GoTableLayoutControlCollectionConverter());
         }
@@ -37,6 +38,31 @@ namespace Going.UI.Json
         public override void Write(Utf8JsonWriter writer, SKRect value, JsonSerializerOptions options)
         {
             writer.WriteStringValue($"{value.Left},{value.Top},{value.Right},{value.Bottom}");
+        }
+    }
+    #endregion
+    #region SKBitmapConverter 
+    public class SKBitmapConverter : JsonConverter<SKBitmap>
+    {
+        public override SKBitmap Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            if (reader.TokenType == JsonTokenType.String)
+            {
+                string base64String = reader.GetString();
+                byte[] imageBytes = Convert.FromBase64String(base64String);
+                using var stream = new SKMemoryStream(imageBytes);
+                return SKBitmap.Decode(stream);
+            }
+            throw new JsonException("Invalid format for SKBitmap");
+        }
+
+        public override void Write(Utf8JsonWriter writer, SKBitmap value, JsonSerializerOptions options)
+        {
+            using var stream = new SKDynamicMemoryWStream();
+            value.Encode(stream, SKEncodedImageFormat.Png, 100);
+            byte[] imageBytes = stream.DetachAsData().ToArray();
+            string base64String = Convert.ToBase64String(imageBytes);
+            writer.WriteStringValue(base64String);
         }
     }
     #endregion
@@ -116,4 +142,5 @@ namespace Going.UI.Json
         }
     }
     #endregion
+
 }

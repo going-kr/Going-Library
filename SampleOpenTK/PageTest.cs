@@ -73,6 +73,13 @@ namespace SampleOpenTK
             spnl = new GoScrollablePanel { Fill = true, Margin = new Going.UI.Datas.GoPadding(10, 260, 10, 10) };
             for (int i = 0; i < 30; i++) spnl.Childrens.Add(new GoButton { Left = 0, Top = 0 + (i * 50), Width = 100, Height = 40, Text = $"버튼{i + 1}" });
             Childrens.Add(spnl);
+
+            var pic = new GoPicture { Left = 110, Top = 0, Width = 300, Height = 150, Image = "nature", ScaleMode = GoImageScaleMode.Zoom };
+            var ani = new GoAnimate { Left = 110, Top = 160, Width = 300, Height = 300, OffImage = "ani_off", OnImage = "ani", ScaleMode = GoImageScaleMode.Zoom };
+            spnl.Childrens.Add(pic);
+            spnl.Childrens.Add(ani);
+
+            ani.MouseClicked += (o, s) => ani.OnOff = !ani.OnOff;
             #endregion
 
             btnMain.ButtonClicked += (o, s) => Design?.SetPage("PageMain");

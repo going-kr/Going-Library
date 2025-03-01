@@ -1,4 +1,5 @@
-﻿using Going.UI.Forms.Controls;
+﻿using Going.UI.Controls;
+using Going.UI.Forms.Controls;
 using Going.UI.Themes;
 using Going.UI.Tools;
 using Going.UI.Utils;
@@ -27,7 +28,6 @@ namespace Going.UI.Forms.ImageCanvas
                 if (sContainerName != value)
                 {
                     sContainerName = value;
-                    load();
                     Invalidate();
                 }
             }
@@ -42,7 +42,7 @@ namespace Going.UI.Forms.ImageCanvas
                 if (sImageFolder != value)
                 {
                     sImageFolder = value;
-                    load();
+                    IcResources.Load(sImageFolder);
                     Invalidate();
                 }
             }
@@ -60,16 +60,12 @@ namespace Going.UI.Forms.ImageCanvas
                 }
             }
         }
-
-        public SKBitmap? On => imgOn;
-        public SKBitmap? Off => imgOff;
         #endregion
 
         #region Member Variable
         private string? sImageFolder;
         private string? sContainerName;
         private string sBackgroundColor = "Back";
-        private SKBitmap? imgOn, imgOff;
         #endregion
 
         #region Constructor
@@ -82,9 +78,6 @@ namespace Going.UI.Forms.ImageCanvas
             DoubleBuffered = true;
             ResizeRedraw = true;
         }
-        #endregion
-
-        #region Event
         #endregion
 
         #region Override
@@ -119,61 +112,19 @@ namespace Going.UI.Forms.ImageCanvas
             var thm = GoTheme.Current;
             var rtBox = Util.FromRect(0, 0, Width, Height);
 
-            if (On != null && Off != null)
-                canvas.DrawBitmap(Off, rtBox);
-
-            if (!Enabled)
-            {
-                using var p = new SKPaint { IsAntialias = true };
-
-                p.IsStroke = false;
-                p.Color = thm.ToColor(BackgroundColor).WithAlpha(180);
-                canvas.DrawRect(rtBox, p);
-            }
+            var ip = IcResources.Get(ImageFolder);
+            if (ip != null && ContainerName != null&& ip.Containers.TryGetValue(ContainerName, out var img) && img.Off != null && img.On != null)
+                canvas.DrawBitmap(img.Off, rtBox);
         }
         #endregion
-        #endregion
 
-        #region Method
-        void load()
+        #region OnEnabledChanged
+        protected override void OnEnabledChanged(EventArgs e)
         {
-            try
-            {
-                if (ImageFolder != null && ContainerName != null && Directory.Exists(ImageFolder) )
-                {
-                    var pattern = @"^(?i)(.+)\.Container\.(On|Off)\.(bmp|png|gif)$";
-                    var regex = new Regex(pattern);
-                    var imgs = new Dictionary<string, Dictionary<string, string>>();
-
-                    #region group
-                    foreach (var path in Directory.GetFiles(ImageFolder))
-                    {
-                        string fileName = Path.GetFileName(path.ToLower());
-
-                        if (regex.IsMatch(fileName))
-                        {
-                            var vs = fileName.Split('.');
-                            if (vs.Length == 4)
-                            {
-                                imgs.TryAdd(vs[0], []);
-                                imgs[vs[0]].TryAdd(vs[2], path);
-                            }
-                        }
-                    }
-                    #endregion
-
-                    foreach (var imgName in imgs.Keys)
-                    {
-                        if (imgs[imgName].TryGetValue("on", out var pOn) && imgs[imgName].TryGetValue("off", out var pOff))
-                        {
-                            imgOn = Util.FromBitmap(pOn);
-                            imgOff = Util.FromBitmap(pOff);
-                        }
-                    }
-                }
-            }
-            catch { }
+            Invalidate();
+            base.OnEnabledChanged(e);
         }
+        #endregion
         #endregion
     }
 }

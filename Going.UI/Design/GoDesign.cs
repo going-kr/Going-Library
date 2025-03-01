@@ -1,6 +1,7 @@
 ﻿using Going.UI.Controls;
 using Going.UI.Enums;
 using Going.UI.Json;
+using Going.UI.Managers;
 using Going.UI.Tools;
 using Going.UI.Utils;
 using SkiaSharp;
@@ -24,6 +25,9 @@ namespace Going.UI.Design
         [JsonInclude]
         public Dictionary<string, GoPage> Pages { get; private set; } = [];
 
+        [JsonInclude]
+        private Dictionary<string, List<SKBitmap>> Images { get; } = [];
+
         [JsonIgnore] public int Width { get; private set; }
         [JsonIgnore] public int Height { get; private set; }
         [JsonIgnore] public IGoControl? SelectedControl { get; private set; }
@@ -38,9 +42,14 @@ namespace Going.UI.Design
         #endregion
 
         #region Constructor
-        [JsonConstructor]
-        public GoDesign(Dictionary<string, GoPage> pages) : this() => Pages = pages;
         public GoDesign() => ActiveDesign = this;
+
+        [JsonConstructor]
+        public GoDesign(Dictionary<string, GoPage> pages, Dictionary<string, List<SKBitmap>> images) : this()
+        {
+            Pages = pages;
+            Images = images;
+        }
         #endregion
 
         #region Method
@@ -343,6 +352,39 @@ namespace Going.UI.Design
             }
         }
         #endregion
+        #endregion
+
+        #region Image
+        public void AddImage(string name, string path)
+        {
+            if (!Images.ContainsKey(name) && File.Exists(path))
+            {
+                var data = File.ReadAllBytes(path);
+                var ls = ImageExtractor.ProcessImageFromMemory(data);
+                if (ls != null && ls.Count > 0) Images.Add(name, ls);
+            }
+        }
+
+        public void AddImageFolder(string directory)
+        {
+            if (Directory.Exists(directory))
+            {
+                foreach (var path in Directory.GetFiles(directory))
+                {
+                    var name = Path.GetFileNameWithoutExtension(path);
+                    if (Images.ContainsKey(name))
+                    {
+                        var ls = Images.Keys.Where(x => x.StartsWith(name));
+                        var ls2 = ls.Where(x => x.Split('_').Length == 2);
+                        var max = ls2.Count() > 0 ? ls2.Max(x => int.TryParse(x.Split('_')[1], out var n) ? n : 0) : 0;
+                        AddImage($"{name}_{max + 1}", path);
+                    }
+                    else AddImage(name, path);
+                }
+            }
+        }
+
+        public List<SKBitmap> GetImage(string name) => Images.TryGetValue(name, out var ls) ? ls : [];
         #endregion
         #endregion
     }

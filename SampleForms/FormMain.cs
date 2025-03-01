@@ -17,8 +17,10 @@ namespace SampleForms
         {
             InitializeComponent();
 
-            goPanel1.Enabled = false;
-            goTabControl1.Enabled = false;
+            //goPanel1.Enabled = false;
+            //goTabControl1.Enabled = false;
+
+            goAnimate1.MouseDown += (o, s) => goAnimate1.OnOff = !goAnimate1.OnOff;
         }
     }
 }

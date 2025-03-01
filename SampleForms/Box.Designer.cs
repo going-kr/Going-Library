@@ -167,7 +167,7 @@
             // 
             // Box
             // 
-            BackgroundColor = "#f2f2f2";
+            BackgroundColor = "white";
             ContainerName = "box";
             Controls.Add(lblTitle);
             Controls.Add(lblValue2);
