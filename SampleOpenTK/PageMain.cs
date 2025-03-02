@@ -71,7 +71,7 @@ namespace SampleOpenTK
             var btn3 = pnl_tbl.Childrens.FirstOrDefault(x => x is GoButton btn && btn.Text == "이미지 캔바스") as GoButton;
             if (btn1 != null) btn1.ButtonClicked += (o, s) => Design?.SetPage("PageTest");
             if (btn2 != null) btn2.ButtonClicked += (o, s) => Design?.SetPage("PageTab");
-            if (btn3 != null) btn3.ButtonClicked += (o, s) => Design?.SetPage("PageIC");
+            if (btn3 != null) btn3.ButtonClicked += (o, s) => Design?.SetPage("main");
 
             var btns = pnl_tbl.Childrens.FirstOrDefault(x => x is GoButtons btns ) as GoButtons;
 

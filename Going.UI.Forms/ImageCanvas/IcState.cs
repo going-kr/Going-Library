@@ -1,4 +1,5 @@
 ﻿using Going.UI.Enums;
+using Going.UI.ImageCanvas;
 using Going.UI.Themes;
 using Going.UI.Tools;
 using Going.UI.Utils;
@@ -29,10 +30,6 @@ namespace Going.UI.Forms.ImageCanvas
         {
  
         }
-        #endregion
-
-        #region Event
-        public event EventHandler? ButtonClicked;
         #endregion
 
         #region Override

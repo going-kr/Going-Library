@@ -1,4 +1,5 @@
 ﻿using Going.UI.Enums;
+using Going.UI.ImageCanvas;
 using Going.UI.Themes;
 using Going.UI.Tools;
 using Going.UI.Utils;
@@ -34,11 +35,14 @@ namespace Going.UI.Forms.ImageCanvas
                 if (nValue != value)
                 {
                     nValue = MathTool.Constrain(value, nMin, nMax);
+                    if (Tick.HasValue) nValue = Math.Round(nValue / Tick.Value) * Tick.Value;
                     ValueChanged?.Invoke(this, EventArgs.Empty);
                     Invalidate();
                 }
             }
         }
+
+        public double? Tick { get; set; }
 
         public bool DrawText { get => bDrawText; set { if (bDrawText != value) { bDrawText = value; Invalidate(); } } }
         #endregion

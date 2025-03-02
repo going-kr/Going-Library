@@ -1,4 +1,5 @@
 ﻿using Going.UI.Enums;
+using Going.UI.ImageCanvas;
 using Going.UI.Themes;
 using Going.UI.Utils;
 using SkiaSharp;

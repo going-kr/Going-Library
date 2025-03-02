@@ -15,8 +15,30 @@ namespace Going.UI.Design
         [JsonInclude]
         public override List<IGoControl> Childrens { get; } = [];
 
+        public string? BackgroundImage { get; set; }
+
         [JsonConstructor]
         public GoPage(List<IGoControl> childrens) : this() => Childrens = childrens;
         public GoPage() { }
+
+
+        protected override void OnDraw(SKCanvas canvas)
+        {
+            OnBackgroundDraw(canvas);
+
+            base.OnDraw(canvas);
+        }
+
+        protected virtual void OnBackgroundDraw(SKCanvas canvas)
+        {
+            var rts = Areas();
+            var rtContent = rts["Content"];
+
+            if (Design != null && BackgroundImage != null)
+            {
+                var bg = Design.GetImage(BackgroundImage);
+                if (bg != null && bg.Count > 0) canvas.DrawBitmap(bg[0], rtContent);
+            }
+        }
     }
 }

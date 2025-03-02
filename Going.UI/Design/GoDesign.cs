@@ -1,5 +1,6 @@
 ﻿using Going.UI.Controls;
 using Going.UI.Enums;
+using Going.UI.ImageCanvas;
 using Going.UI.Json;
 using Going.UI.Managers;
 using Going.UI.Tools;
@@ -8,6 +9,7 @@ using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Formats.Tar;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -27,6 +29,9 @@ namespace Going.UI.Design
 
         [JsonInclude]
         private Dictionary<string, List<SKBitmap>> Images { get; } = [];
+
+        [JsonInclude]
+        private IcImageFolder? IcFolder { get; set; }
 
         [JsonIgnore] public int Width { get; private set; }
         [JsonIgnore] public int Height { get; private set; }
@@ -385,6 +390,18 @@ namespace Going.UI.Design
         }
 
         public List<SKBitmap> GetImage(string name) => Images.TryGetValue(name, out var ls) ? ls : [];
+        #endregion
+
+        #region ImageCnavas
+        public void LoadIC(string path)
+        {
+            if (path != null && Directory.Exists(path))
+            {
+                IcFolder = new IcImageFolder(path);
+            }
+        }
+
+        public IcImageFolder? GetIC() => IcFolder;
         #endregion
         #endregion
     }

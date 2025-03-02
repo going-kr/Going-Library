@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 using Windows.ApplicationModel;
 using Going.UI.Tools;
+using Going.UI.ImageCanvas;
 
 namespace Going.UI.Forms.ImageCanvas
 {
