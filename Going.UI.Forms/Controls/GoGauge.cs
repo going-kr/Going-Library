@@ -11,6 +11,7 @@ namespace Going.UI.Forms.Controls
     {
         #region Properties
         public string FontName { get => Control.FontName; set { if (Control.FontName != value) { Control.FontName = value; Invalidate(); } } }
+        public GoFontStyle FontStyle { get => Control.FontStyle; set { if (Control.FontStyle != value) { Control.FontStyle = value; Invalidate(); } } }
         public float FontSize { get => Control.FontSize; set { if (Control.FontSize != value) { Control.FontSize = value; Invalidate(); } } }
 
         public string Title { get => Control.Title; set { if (Control.Title != value) { Control.Title = value; Invalidate(); } } }

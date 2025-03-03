@@ -23,6 +23,7 @@ namespace Going.UI.Forms.Containers
         [Editor(typeof(MultilineStringEditor), typeof(UITypeEditor))]
         public override string Text { get => control.Text; set { if (control.Text != value) { control.Text = value; Invalidate(); } } }
         public string FontName { get => control.FontName; set { if (control.FontName != value) { control.FontName = value; Invalidate(); } } }
+        public GoFontStyle FontStyle { get => control.FontStyle; set { if (control.FontStyle != value) { control.FontStyle = value; Invalidate(); } } }
         public float FontSize { get => control.FontSize; set { if (control.FontSize != value) { control.FontSize = value; Invalidate(); } } }
 
         public string TextColor { get => control.TextColor; set { if (control.TextColor != value) { control.TextColor = value; Invalidate(); } } }

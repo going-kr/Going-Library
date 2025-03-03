@@ -75,8 +75,6 @@ namespace SampleOpenTK
 
             var btns = pnl_tbl.Childrens.FirstOrDefault(x => x is GoButtons btns ) as GoButtons;
 
-
-
             var pnl_tbl2 = new GoTableLayoutPanel { Fill = true, Margin = new GoPadding(5) };
             pnl_tbl2.Columns = ["33.33%", "33.34%", "33.33%"];
             pnl_tbl2.Rows = ["100%"];

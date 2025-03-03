@@ -79,6 +79,17 @@ namespace Going.UI.Containers
         #endregion
 
         #region Override
+        #region Init
+        protected override void OnInit(GoDesign? design)
+        {
+            base.OnInit(design);
+
+            foreach (var tab in TabPages)
+                foreach (var c in tab.Childrens)
+                    c.FireInit(design);
+        }
+        #endregion
+
         #region Draw
         protected override void OnDraw(SKCanvas canvas)
         {

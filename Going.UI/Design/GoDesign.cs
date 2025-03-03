@@ -1,8 +1,11 @@
-﻿using Going.UI.Controls;
+﻿using Going.UI.Containers;
+using Going.UI.Controls;
+using Going.UI.Datas;
 using Going.UI.Enums;
 using Going.UI.ImageCanvas;
 using Going.UI.Json;
 using Going.UI.Managers;
+using Going.UI.Themes;
 using Going.UI.Tools;
 using Going.UI.Utils;
 using SkiaSharp;
@@ -15,7 +18,9 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace Going.UI.Design
 {
@@ -39,11 +44,14 @@ namespace Going.UI.Design
         [JsonIgnore] public GoPage? CurrentPage { get; private set; }
 
         [JsonIgnore] public SKPoint MousePosition { get; private set; }
+
+        [JsonIgnore] public bool IsDrag => dragItem != null;
         #endregion
 
         #region Member Variable
         private Stack<GoWindow> stkWindow = new Stack<GoWindow>();
         private GoDropDownWindow? dropdownWindow;
+        private object? dragItem = null;
         #endregion
 
         #region Constructor
@@ -138,6 +146,7 @@ namespace Going.UI.Design
         #endregion
 
         #region Fire
+        #region Init
         public void Init()
         {
             foreach (var page in Pages.Values)
@@ -146,7 +155,9 @@ namespace Going.UI.Design
                 GUI.Init(this, page);
             }
         }
+        #endregion
 
+        #region Draw / Update
         public void Draw(SKCanvas canvas)
         {
             #region Page
@@ -187,6 +198,15 @@ namespace Going.UI.Design
                 }
             }
             #endregion
+
+            #region DragDrop
+            if (dragItem != null)
+            {
+                var rt = Util.FromRect(MousePosition.X - 12, MousePosition.Y - 12, 24, 24);
+                rt.Offset(5, 10);
+                Util.DrawIcon(canvas, "fa-hand-pointer", 24, rt, GoTheme.Current.Fore);
+            }
+            #endregion
         }
 
         public void Update()
@@ -211,6 +231,7 @@ namespace Going.UI.Design
                 dropdownWindow.FireUpdate();
             #endregion
         }
+        #endregion
 
         #region Mouse
         public void MouseDown(float x, float y, GoMouseButton button)
@@ -238,6 +259,7 @@ namespace Going.UI.Design
 
         public void MouseUp(float x, float y, GoMouseButton button)
         {
+
             if (dropdownWindow != null)
             {
                 if (CollisionTool.Check(dropdownWindow.Bounds, x, y) || dropdownWindow._MouseDown_)
@@ -255,6 +277,12 @@ namespace Going.UI.Design
                     CurrentPage.FireMouseUp(x, y, button);
             }
 
+            if (dragItem != null && CurrentPage != null)
+            {
+                var ls = ControlStack(CurrentPage, x - CurrentPage.Left - CurrentPage.PanelBounds.Left, y - CurrentPage.Top - CurrentPage.PanelBounds.Top);
+                if (ls.LastOrDefault() is GoControl c) c.InvokeDragDrop(x, y, dragItem);
+                dragItem = null;
+            }
             SelectedControl = null;
         }
 
@@ -402,6 +430,33 @@ namespace Going.UI.Design
         }
 
         public IcImageFolder? GetIC() => IcFolder;
+        #endregion
+
+        #region Drag
+        public void Drag(object? item) => dragItem = item;
+        public object? GetDragItem() => dragItem;
+        #endregion
+
+        #region ControlStack
+        public List<IGoControl> ControlStack(IGoContainer container, float x, float y)
+        {
+            List<IGoControl> ret = [];
+
+            if(container != null)
+            {
+                if (container is IGoControl vc) ret.Add(vc);
+                foreach (var c in container.Childrens)
+                    if (CollisionTool.Check(c.Bounds, x, y))
+                    {
+                        if (c is IGoContainer con)
+                            ret.AddRange(ControlStack(con, x - c.Left - con.PanelBounds.Left, y - c.Top - con.PanelBounds.Top));
+                        else
+                            ret.Add(c);
+                    }
+            }
+
+            return ret;
+        }
         #endregion
         #endregion
     }

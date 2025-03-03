@@ -23,7 +23,6 @@ namespace SampleOpenTK
         public PageTest()
         {
             Name = "PageTest";
-            BackgroundImage = "nature";
 
             #region Constrols
             btnMain = new GoButton { Name = "btn", Left = 10, Top = 10, Width = 80, Height = 40, Text = "메인 페이지" };

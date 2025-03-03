@@ -114,7 +114,7 @@ namespace Going.UI.Json
         }
     }
     #endregion
-    #region ScControlCollectionConverter
+    #region GoTableLayoutControlCollectionConverter
     public class GoTableLayoutControlCollectionConverter : JsonConverter<GoTableLayoutControlCollection>
     {
         public override GoTableLayoutControlCollection Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)

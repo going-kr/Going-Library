@@ -792,6 +792,53 @@ namespace Going.UI.Utils
 
         }
         #endregion
+
+        #region FindRect
+        public static (int StartIndex, int EndIndex) FindRect(List<SKRect> rects, SKRect targetRect)
+        {
+            int start = BinarySearch(rects, targetRect.Top, true);
+            int end = BinarySearch(rects, targetRect.Bottom, false);
+
+            return (start, end);
+        }
+
+        private static int BinarySearch(List<SKRect> rects, float value, bool findStart)
+        {
+            int left = 0, right = rects.Count - 1, result = -1;
+
+            while (left <= right)
+            {
+                int mid = (left + right) / 2;
+
+                if (findStart)
+                {
+                    if (rects[mid].Bottom >= value)
+                    {
+                        result = mid;
+                        right = mid - 1;  
+                    }
+                    else
+                    {
+                        left = mid + 1;
+                    }
+                }
+                else
+                {
+                    if (rects[mid].Top <= value)
+                    {
+                        result = mid;
+                        left = mid + 1;  
+                    }
+                    else
+                    {
+                        right = mid - 1;
+                    }
+                }
+            }
+
+            return result;
+        }
+        #endregion
         #endregion
     }
 }

@@ -28,4 +28,10 @@ namespace Going.UI.Datas
         public bool Cancel { get; set; }
     }
 
+    public class GoDragEventArgs(float x, float y, object dragItem) : EventArgs
+    {
+        public float X { get; private set; } = x;
+        public float Y { get; private set; } = y;
+        public object DragItem { get; private set; } = dragItem;
+    }
 }

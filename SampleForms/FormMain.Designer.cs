@@ -28,18 +28,23 @@
         /// </summary>
         private void InitializeComponent()
         {
+            Going.UI.Collections.ObservableList<Going.UI.Datas.GoToolCategory> observableList_11 = new Going.UI.Collections.ObservableList<Going.UI.Datas.GoToolCategory>();
             goPanel1 = new Going.UI.Forms.Containers.GoPanel();
             goButton2 = new Going.UI.Forms.Controls.GoButton();
             goButton1 = new Going.UI.Forms.Controls.GoButton();
             goLabel1 = new Going.UI.Forms.Controls.GoLabel();
             goTabControl1 = new Going.UI.Forms.Containers.GoTabControl();
             tabPage1 = new TabPage();
+            goCalendar1 = new Going.UI.Forms.Controls.GoCalendar();
             tabPage2 = new TabPage();
+            goToolBox1 = new Going.UI.Forms.Controls.GoToolBox();
             rm = new Going.UI.Forms.Components.GoResourceManager();
             goPictureBox1 = new Going.UI.Forms.Controls.GoPictureBox();
             goAnimate1 = new Going.UI.Forms.Controls.GoAnimate();
             goPanel1.SuspendLayout();
             goTabControl1.SuspendLayout();
+            tabPage1.SuspendLayout();
+            tabPage2.SuspendLayout();
             SuspendLayout();
             // 
             // goPanel1
@@ -54,6 +59,7 @@
             goPanel1.Controls.Add(goLabel1);
             goPanel1.FontName = "나눔고딕";
             goPanel1.FontSize = 12F;
+            goPanel1.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
             goPanel1.IconGap = 5F;
             goPanel1.IconSize = 12F;
             goPanel1.IconString = null;
@@ -78,6 +84,7 @@
             goButton2.ButtonColor = "danger";
             goButton2.FontName = "나눔고딕";
             goButton2.FontSize = 12F;
+            goButton2.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
             goButton2.IconDirection = Going.UI.Enums.GoDirectionHV.Horizon;
             goButton2.IconGap = 5F;
             goButton2.IconSize = 12F;
@@ -100,6 +107,7 @@
             goButton1.ButtonColor = "Base3";
             goButton1.FontName = "나눔고딕";
             goButton1.FontSize = 12F;
+            goButton1.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
             goButton1.IconDirection = Going.UI.Enums.GoDirectionHV.Horizon;
             goButton1.IconGap = 5F;
             goButton1.IconSize = 12F;
@@ -122,6 +130,7 @@
             goLabel1.ContentAlignment = Going.UI.Enums.GoContentAlignment.TopLeft;
             goLabel1.FontName = "나눔고딕";
             goLabel1.FontSize = 12F;
+            goLabel1.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
             goLabel1.IconDirection = Going.UI.Enums.GoDirectionHV.Horizon;
             goLabel1.IconGap = 5F;
             goLabel1.IconSize = 12F;
@@ -165,22 +174,71 @@
             // tabPage1
             // 
             tabPage1.BackColor = Color.FromArgb(60, 60, 60);
+            tabPage1.Controls.Add(goCalendar1);
             tabPage1.Location = new Point(4, 44);
             tabPage1.Name = "tabPage1";
-            tabPage1.Padding = new Padding(3);
+            tabPage1.Padding = new Padding(10);
             tabPage1.Size = new Size(552, 378);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "tabPage1";
             // 
+            // goCalendar1
+            // 
+            goCalendar1.BackColor = Color.FromArgb(50, 50, 50);
+            goCalendar1.BackgroundColor = "Back";
+            goCalendar1.BackgroundDraw = true;
+            goCalendar1.BoxColor = "Base3";
+            goCalendar1.FontName = "나눔고딕";
+            goCalendar1.FontSize = 12F;
+            goCalendar1.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
+            goCalendar1.Location = new Point(13, 13);
+            goCalendar1.MultiSelect = true;
+            goCalendar1.Name = "goCalendar1";
+            goCalendar1.NoneSelect = false;
+            goCalendar1.Round = Going.UI.Enums.GoRoundType.All;
+            goCalendar1.SelectColor = "Select";
+            goCalendar1.Size = new Size(288, 243);
+            goCalendar1.TabIndex = 0;
+            goCalendar1.TabStop = false;
+            goCalendar1.Text = "goCalendar1";
+            goCalendar1.TextColor = "Fore";
+            // 
             // tabPage2
             // 
             tabPage2.BackColor = Color.FromArgb(60, 60, 60);
+            tabPage2.Controls.Add(goToolBox1);
             tabPage2.Location = new Point(4, 44);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
             tabPage2.Size = new Size(552, 378);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "tabPage2";
+            // 
+            // goToolBox1
+            // 
+            goToolBox1.BackColor = Color.FromArgb(50, 50, 50);
+            goToolBox1.BackgroundColor = "Back";
+            goToolBox1.BackgroundDraw = true;
+            goToolBox1.BorderColor = "Base3";
+            goToolBox1.BoxColor = "Base1";
+            observableList_11.Changed = false;
+            goToolBox1.Categories = observableList_11;
+            goToolBox1.CategoryColor = "Base2";
+            goToolBox1.FontName = "나눔고딕";
+            goToolBox1.FontSize = 12F;
+            goToolBox1.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
+            goToolBox1.IconGap = 5F;
+            goToolBox1.IconSize = 12F;
+            goToolBox1.ItemHeight = 30F;
+            goToolBox1.Location = new Point(18, 21);
+            goToolBox1.Name = "goToolBox1";
+            goToolBox1.Round = Going.UI.Enums.GoRoundType.All;
+            goToolBox1.SelectColor = "Select";
+            goToolBox1.Size = new Size(287, 317);
+            goToolBox1.TabIndex = 0;
+            goToolBox1.TabStop = false;
+            goToolBox1.Text = "goToolBox1";
+            goToolBox1.TextColor = "Fore";
             // 
             // rm
             // 
@@ -233,6 +291,8 @@
             Title = "FormMain2";
             goPanel1.ResumeLayout(false);
             goTabControl1.ResumeLayout(false);
+            tabPage1.ResumeLayout(false);
+            tabPage2.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -248,5 +308,7 @@
         private Going.UI.Forms.Components.GoResourceManager rm;
         private Going.UI.Forms.Controls.GoPictureBox goPictureBox1;
         private Going.UI.Forms.Controls.GoAnimate goAnimate1;
+        private Going.UI.Forms.Controls.GoCalendar goCalendar1;
+        private Going.UI.Forms.Controls.GoToolBox goToolBox1;
     }
 }
