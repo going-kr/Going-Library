@@ -15,10 +15,10 @@ namespace Going.UI.Controls
     {
         #region Private Fields
 
-        private readonly TrendRenderer _renderer = new();
-        private readonly TrendScrollManager _scrollManager = new();
-        private readonly TrendGraphSettings _settings = new();
-        private readonly List<TrendSeries> _series = new();
+        private readonly TrendRenderer _renderer;
+        private readonly TrendScrollManager _scrollManager;
+        private readonly TrendGraphSettings _settings;
+        private readonly List<TrendSeries> _series;
 
         private bool _isHovering;
         private TrendDataPoint? _hoveredPoint;
@@ -28,6 +28,7 @@ namespace Going.UI.Controls
         private DateTime _animationStartTime;
         private float _animationProgress = 1.0f;
         private bool _needsLayoutUpdate = true;
+        private bool _disposed;
 
         #endregion
 
@@ -688,6 +689,11 @@ namespace Going.UI.Controls
         {
             Selectable = true;
 
+            _settings = new TrendGraphSettings();
+            _renderer = new TrendRenderer();
+            _scrollManager = new TrendScrollManager();
+            _series = new List<TrendSeries>();
+
             // 스크롤 이벤트 연결
             _scrollManager.VisibleRangeChanged += (s, e) =>
             {
@@ -706,116 +712,138 @@ namespace Going.UI.Controls
         #region OnDraw
         protected override void OnDraw(SKCanvas canvas)
         {
-            _settings.Bounds = Bounds;
-            UpdateAnimation();
-
-            // 영역 계산
-            if (_needsLayoutUpdate)
+            try
             {
-                CalculateAreas();
-                _needsLayoutUpdate = false;
+                if (canvas == null)
+                    return;
+
+                _settings.Bounds = Bounds;
+                UpdateAnimation();
+
+                // 영역 계산
+                if (_needsLayoutUpdate)
+                {
+                    CalculateAreas();
+                    _needsLayoutUpdate = false;
+                }
+
+                // 렌더러에 필요한 속성 업데이트
+                UpdateRendererProperties();
+
+                // 그래프 그리기
+                _renderer.DrawGraph(canvas, GoTheme.Current);
+
+                base.OnDraw(canvas);
             }
-
-            // 렌더러에 필요한 속성 업데이트
-            UpdateRendererProperties();
-
-            // 그래프 그리기
-            _renderer.DrawGraph(canvas, GoTheme.Current);
-
-            base.OnDraw(canvas);
+            catch (Exception)
+            {
+                // 예외 발생 시 그리기 중단
+                // 실제 애플리케이션에서는 로깅 추가
+            }
         }
         #endregion
 
         #region OnMouseMove
         protected override void OnMouseMove(float x, float y)
         {
-            _mx = x;
-            _my = y;
-
-            if (_isDraggingScrollHandle)
+            try
             {
-                _scrollManager.HandleScrollDrag(x);
-                return;
-            }
+                _mx = x;
+                _my = y;
 
-            if (_isDraggingGraph)
+                if (_isDraggingScrollHandle)
+                {
+                    _scrollManager.HandleScrollDrag(x);
+                    return;
+                }
+
+                if (_isDraggingGraph)
+                {
+                    _scrollManager.HandleGraphDrag(x);
+                    return;
+                }
+
+                // 스크롤바 영역에 있는지 확인
+                SKRect scrollBarArea = _renderer.ScrollBarArea;
+                if (ShowScrollBar && EnableScrolling && scrollBarArea.Contains(x, y))
+                {
+                    // 커서 변경 로직 (플랫폼에 따라 다를 수 있음)
+                    return;
+                }
+
+                // 데이터 포인트 위에 마우스가 있는지 확인
+                var prevHoveredPoint = _hoveredPoint;
+                _hoveredPoint = FindNearestDataPoint(x, y);
+                _isHovering = _hoveredPoint != null;
+
+                if (_hoveredPoint != prevHoveredPoint)
+                {
+                    _renderer.HoveredPoint = _hoveredPoint;
+                    Invalidate?.Invoke(); // 다시 그리기 요청
+                }
+
+                base.OnMouseMove(x, y);
+            }
+            catch (Exception)
             {
-                _scrollManager.HandleGraphDrag(x);
-                return;
+                // 예외 처리 - 마우스 이동 무시
             }
-
-            // 스크롤바 영역에 있는지 확인
-            SKRect scrollBarArea = _renderer.ScrollBarArea;
-            if (ShowScrollBar && EnableScrolling && scrollBarArea.Contains(x, y))
-            {
-                // 커서 변경 로직 (플랫폼에 따라 다를 수 있음)
-                return;
-            }
-
-            // 데이터 포인트 위에 마우스가 있는지 확인
-            var prevHoveredPoint = _hoveredPoint;
-            _hoveredPoint = FindNearestDataPoint(x, y);
-            _isHovering = _hoveredPoint != null;
-
-            if (_hoveredPoint != prevHoveredPoint)
-            {
-                _renderer.HoveredPoint = _hoveredPoint;
-                Invalidate?.Invoke(); // 다시 그리기 요청
-            }
-
-            base.OnMouseMove(x, y);
         }
         #endregion
 
         #region OnMouseDown
         protected override void OnMouseDown(float x, float y, GoMouseButton button)
         {
-            if (button == GoMouseButton.Left)
+            try
             {
-                // 스크롤 핸들 드래그 시작
-                SKRect scrollBarArea = _renderer.ScrollBarArea;
-                float scrollHandleX = _renderer.ScrollHandleX;
-                float scrollHandleWidth = _renderer.ScrollHandleWidth;
-
-                if (ShowScrollBar && EnableScrolling && scrollBarArea.Contains(x, y))
+                if (button == GoMouseButton.Left)
                 {
-                    if (scrollHandleX <= x && x <= scrollHandleX + scrollHandleWidth)
+                    // 스크롤 핸들 드래그 시작
+                    SKRect scrollBarArea = _renderer.ScrollBarArea;
+                    float scrollHandleX = _renderer.ScrollHandleX;
+                    float scrollHandleWidth = _renderer.ScrollHandleWidth;
+
+                    if (ShowScrollBar && EnableScrolling && scrollBarArea.Contains(x, y))
                     {
-                        _isDraggingScrollHandle = true;
+                        if (scrollHandleX <= x && x <= scrollHandleX + scrollHandleWidth)
+                        {
+                            _isDraggingScrollHandle = true;
+                            _scrollManager.DragStartX = x;
+                            return;
+                        }
+                        else
+                        {
+                            // 스크롤바 클릭 시 핸들 이동
+                            _scrollManager.ScrollToPosition(x);
+                            return;
+                        }
+                    }
+
+                    // 그래프 영역 드래그 시작
+                    SKRect graphArea = _renderer.GraphArea;
+                    if (EnableScrolling && graphArea.Contains(x, y))
+                    {
+                        _isDraggingGraph = true;
                         _scrollManager.DragStartX = x;
-                        return;
-                    }
-                    else
-                    {
-                        // 스크롤바 클릭 시 핸들 이동
-                        _scrollManager.ScrollToPosition(x);
+                        _scrollManager.DragStartMin = _scrollManager.VisibleMinimum;
+                        _scrollManager.DragStartMax = _scrollManager.VisibleMaximum;
                         return;
                     }
                 }
 
-                // 그래프 영역 드래그 시작
-                SKRect graphArea = _renderer.GraphArea;
-                if (EnableScrolling && graphArea.Contains(x, y))
+                if (_hoveredPoint != null)
                 {
-                    _isDraggingGraph = true;
-                    _scrollManager.DragStartX = x;
-                    _scrollManager.DragStartMin = _scrollManager.VisibleMinimum;
-                    _scrollManager.DragStartMax = _scrollManager.VisibleMaximum;
-                    return;
+                    // 데이터 포인트 클릭 이벤트 발생
+                    var series = FindSeriesForDataPoint(_hoveredPoint.Value);
+                    DataPointSelected?.Invoke(this, new DataPointEventArgs(series, _hoveredPoint));
                 }
-            }
 
-            if (_hoveredPoint != null)
+                base.OnMouseDown(x, y, button);
+            }
+            catch (Exception)
             {
-                // 데이터 포인트 클릭 이벤트 발생
-                DataPointSelected?.Invoke(this, new DataPointEventArgs
-                {
-                    Series = FindSeriesForDataPoint(_hoveredPoint),
-                    DataPoint = _hoveredPoint
-                });
+                // 예외 처리 - 마우스 다운 무시
             }
-
-            base.OnMouseDown(x, y, button);
         }
         #endregion
 
@@ -831,13 +859,20 @@ namespace Going.UI.Controls
         #region OnMouseWheel
         protected override void OnMouseWheel(float x, float y, float delta)
         {
-            if (EnableMouseWheelZoom && _renderer.GraphArea.Contains(x, y))
+            try
             {
-                // 마우스 위치를 중심으로 줌
-                _scrollManager.ZoomAtPoint(x, delta);
-            }
+                if (EnableMouseWheelZoom && _renderer.GraphArea.Contains(x, y))
+                {
+                    // 마우스 위치를 중심으로 줌
+                    _scrollManager.ZoomAtPoint(x, delta);
+                }
 
-            base.OnMouseWheel(x, y, delta);
+                base.OnMouseWheel(x, y, delta);
+            }
+            catch (Exception)
+            {
+                // 예외 처리 - 마우스 휠 무시
+            }
         }
         #endregion
 
@@ -853,40 +888,48 @@ namespace Going.UI.Controls
             if (series == null) throw new ArgumentNullException(nameof(series));
             if (string.IsNullOrEmpty(series.Name)) throw new ArgumentException("Series name cannot be empty", nameof(series));
 
-            // 기존 시리즈가 있는지 확인
-            var existingSeries = _series.FirstOrDefault(s => s.Name == series.Name);
-            if (existingSeries != null)
+            try
             {
-                // 기존 시리즈 업데이트
-                existingSeries.DataPoints = series.DataPoints;
-                existingSeries.Color = series.Color;
-            }
-            else
-            {
-                // 새 시리즈 추가
-                _series.Add(series);
-
-                // 색상이 지정되지 않은 경우 자동 할당
-                if (string.IsNullOrEmpty(series.Color))
+                // 기존 시리즈가 있는지 확인
+                var existingSeries = _series.FirstOrDefault(s => s.Name == series.Name);
+                if (existingSeries != null)
                 {
-                    series.Color = GetNextColor();
+                    // 기존 시리즈 업데이트
+                    existingSeries.DataPoints = series.DataPoints;
+                    existingSeries.Color = series.Color;
                 }
+                else
+                {
+                    // 새 시리즈 추가
+                    _series.Add(series);
+
+                    // 색상이 지정되지 않은 경우 자동 할당
+                    if (string.IsNullOrEmpty(series.Color))
+                    {
+                        series.Color = GetNextColor();
+                    }
+                }
+
+                // 데이터 범위 업데이트
+                UpdateDataRange();
+
+                // 애니메이션 시작
+                if (EnableAnimation)
+                {
+                    _animationProgress = 0f;
+                    _animationStartTime = DateTime.Now;
+                }
+
+                // 이벤트 발생 및 다시 그리기
+                DataChanged?.Invoke(this, EventArgs.Empty);
+                _needsLayoutUpdate = true;
+                Invalidate?.Invoke();
             }
-
-            // 데이터 범위 업데이트
-            UpdateDataRange();
-
-            // 애니메이션 시작
-            if (EnableAnimation)
+            catch (Exception)
             {
-                _animationProgress = 0f;
-                _animationStartTime = DateTime.Now;
+                // 예외 처리
+                throw; // 심각한 오류이므로 다시 던짐
             }
-
-            // 이벤트 발생 및 다시 그리기
-            DataChanged?.Invoke(this, EventArgs.Empty);
-            _needsLayoutUpdate = true;
-            Invalidate?.Invoke();
         }
 
         /// <summary>
@@ -894,6 +937,9 @@ namespace Going.UI.Controls
         /// </summary>
         public bool RemoveSeries(string seriesName)
         {
+            if (string.IsNullOrEmpty(seriesName))
+                return false;
+
             var series = _series.FirstOrDefault(s => s.Name == seriesName);
             if (series != null)
             {
@@ -912,6 +958,7 @@ namespace Going.UI.Controls
         public void ClearSeries()
         {
             _series.Clear();
+            UpdateDataRange();
             DataChanged?.Invoke(this, EventArgs.Empty);
             Invalidate?.Invoke();
         }
@@ -921,6 +968,9 @@ namespace Going.UI.Controls
         /// </summary>
         public bool UpdateSeriesData(string seriesName, List<TrendDataPoint> newData)
         {
+            if (string.IsNullOrEmpty(seriesName) || newData == null)
+                return false;
+
             var series = _series.FirstOrDefault(s => s.Name == seriesName);
             if (series != null)
             {
@@ -947,6 +997,7 @@ namespace Going.UI.Controls
         public void SetDataXRange(DateTime min, DateTime max)
         {
             if (min >= max) throw new ArgumentException("Min must be less than max");
+
             _scrollManager.DataMinimum = min;
             _scrollManager.DataMaximum = max;
 
@@ -962,19 +1013,27 @@ namespace Going.UI.Controls
         {
             if (min >= max) throw new ArgumentException("Min must be less than max");
 
-            // 시간 범위가 최소/최대 범위 내에 있는지 확인
-            TimeSpan range = max - min;
-            if (range.TotalSeconds < MinTimeRange)
+            try
             {
-                max = min.AddSeconds(MinTimeRange);
-            }
-            else if (range.TotalSeconds > MaxTimeRange)
-            {
-                max = min.AddSeconds(MaxTimeRange);
-            }
+                // 시간 범위가 최소/최대 범위 내에 있는지 확인
+                TimeSpan range = max - min;
+                if (range.TotalSeconds < MinTimeRange)
+                {
+                    max = min.AddSeconds(MinTimeRange);
+                }
+                else if (range.TotalSeconds > MaxTimeRange)
+                {
+                    max = min.AddSeconds(MaxTimeRange);
+                }
 
-            _scrollManager.UpdateVisibleRange(min, max);
-            Invalidate?.Invoke();
+                _scrollManager.UpdateVisibleRange(min, max);
+                Invalidate?.Invoke();
+            }
+            catch (Exception)
+            {
+                // 예외 처리
+                throw; // 심각한 오류이므로 다시 던짐
+            }
         }
 
         /// <summary>
@@ -983,6 +1042,7 @@ namespace Going.UI.Controls
         public void SetYRange(double min, double max)
         {
             if (min >= max) throw new ArgumentException("Min must be less than max");
+
             YAxisMin = min;
             YAxisMax = max;
             AutoScale = false;
@@ -1022,6 +1082,8 @@ namespace Going.UI.Controls
         /// </summary>
         public void Zoom(float factor)
         {
+            if (factor <= 0) throw new ArgumentException("Factor must be positive", nameof(factor));
+
             _scrollManager.Zoom(factor);
             Invalidate?.Invoke();
         }
@@ -1038,8 +1100,7 @@ namespace Going.UI.Controls
 
             _scrollManager.DataMinimum = min;
             _scrollManager.DataMaximum = max;
-            _scrollManager.VisibleMinimum = now.AddDays(-7);
-            _scrollManager.VisibleMaximum = now;
+            _scrollManager.UpdateVisibleRange(now.AddDays(-7), now);
 
             // 테스트 데이터 생성
             GenerateSampleData();
@@ -1047,111 +1108,125 @@ namespace Going.UI.Controls
 
         private void GenerateSampleData()
         {
-            // 예시 데이터 생성
-            var now = DateTime.Now;
-            var series1 = new TrendSeries
+            try
             {
-                Name = "Temperature",
-                Color = "danger",
-                DataPoints = []
-            };
+                // 예시 데이터 생성
+                var now = DateTime.Now;
+                var series1 = new TrendSeries
+                {
+                    Name = "Temperature",
+                    Color = "danger",
+                    DataPoints = new List<TrendDataPoint>()
+                };
 
-            var series2 = new TrendSeries
-            {
-                Name = "Humidity",
-                Color = "primary",
-                DataPoints = []
-            };
+                var series2 = new TrendSeries
+                {
+                    Name = "Humidity",
+                    Color = "primary",
+                    DataPoints = new List<TrendDataPoint>()
+                };
 
-            var random = new Random(42);
-            double value1 = 25;
-            double value2 = 50;
+                var random = new Random(42);
+                double value1 = 25;
+                double value2 = 50;
 
-            for (int i = 0; i < 100; i++) // 더 많은 데이터 포인트 생성
-            {
-                var time = now.AddHours(-i * 8);
+                for (int i = 0; i < 100; i++)
+                {
+                    var time = now.AddHours(-i * 8);
 
-                // 랜덤 변동 추가
-                value1 += (random.NextDouble() - 0.5) * 3;
-                value2 += (random.NextDouble() - 0.5) * 5;
+                    // 랜덤 변동 추가
+                    value1 += (random.NextDouble() - 0.5) * 3;
+                    value2 += (random.NextDouble() - 0.5) * 5;
 
-                // 범위 제한
-                value1 = Math.Max(15, Math.Min(35, value1));
-                value2 = Math.Max(30, Math.Min(70, value2));
+                    // 범위 제한
+                    value1 = Math.Max(15, Math.Min(35, value1));
+                    value2 = Math.Max(30, Math.Min(70, value2));
 
-                series1.DataPoints.Add(new TrendDataPoint { Timestamp = time, Value = value1 });
-                series2.DataPoints.Add(new TrendDataPoint { Timestamp = time, Value = value2 });
+                    series1.DataPoints.Add(new TrendDataPoint(time, value1));
+                    series2.DataPoints.Add(new TrendDataPoint(time, value2));
+                }
+
+                // 시간별로 정렬
+                series1.SortData();
+                series2.SortData();
+
+                _series.Add(series1);
+                _series.Add(series2);
+
+                UpdateDataRange();
             }
-
-            // 역순으로 정렬
-            series1.DataPoints = [.. series1.DataPoints.OrderBy(p => p.Timestamp)];
-            series2.DataPoints = [.. series2.DataPoints.OrderBy(p => p.Timestamp)];
-
-            _series.Add(series1);
-            _series.Add(series2);
-
-            UpdateDataRange();
+            catch (Exception)
+            {
+                // 샘플 데이터 생성 오류 - 무시하고 계속 진행
+            }
         }
 
         private void CalculateAreas()
         {
-            float xAxisHeight = FontSize * 2 + 15;  // X축 레이블 및 제목 공간
-            float yAxisWidth = 60;  // Y축 레이블 및 제목 공간
-            float legendWidth = 120;  // 레전드 영역 너비
-            float legendHeight = _series.Count * (FontSize + 10) + 20;  // 레전드 영역 높이
-            float scrollBarBottom = Bounds.Bottom - Padding;
-            float scrollBarTop = scrollBarBottom - ScrollBarHeight;
-
-            // 스크롤바 영역 계산
-            SKRect scrollBarArea;
-            if (ShowScrollBar && EnableScrolling)
+            try
             {
-                scrollBarArea = new SKRect(
+                float xAxisHeight = FontSize * 2 + 15;  // X축 레이블 및 제목 공간
+                float yAxisWidth = 60;  // Y축 레이블 및 제목 공간
+                float legendWidth = 120;  // 레전드 영역 너비
+                float legendHeight = _series.Count * (FontSize + 10) + 20;  // 레전드 영역 높이
+                float scrollBarBottom = Bounds.Bottom - Padding;
+                float scrollBarTop = scrollBarBottom - ScrollBarHeight;
+
+                // 스크롤바 영역 계산
+                SKRect scrollBarArea;
+                if (ShowScrollBar && EnableScrolling)
+                {
+                    scrollBarArea = new SKRect(
+                        Bounds.Left + yAxisWidth + Padding,
+                        scrollBarTop,
+                        Bounds.Right - Padding - (ShowLegend ? legendWidth + Padding : 0),
+                        scrollBarBottom
+                    );
+                }
+                else
+                {
+                    scrollBarArea = SKRect.Empty;
+                }
+
+                // 그래프 영역 계산
+                SKRect graphArea = new(
                     Bounds.Left + yAxisWidth + Padding,
-                    scrollBarTop,
-                    Bounds.Right - Padding - (ShowLegend ? legendWidth + Padding : 0),
-                    scrollBarBottom
-                );
-            }
-            else
-            {
-                scrollBarArea = SKRect.Empty;
-            }
-
-            // 그래프 영역 계산
-            SKRect graphArea = new(
-                Bounds.Left + yAxisWidth + Padding,
-                Bounds.Top + Padding,
-                Bounds.Right - Padding - (ShowLegend ? legendWidth + Padding : 0),
-                scrollBarTop - xAxisHeight - (ShowScrollBar ? Padding : 0)
-            );
-
-            // 레전드 영역 계산
-            SKRect legendArea;
-            if (ShowLegend)
-            {
-                legendArea = new SKRect(
-                    Bounds.Right - legendWidth - Padding / 2,
                     Bounds.Top + Padding,
-                    Bounds.Right - Padding / 2,
-                    Bounds.Top + Padding + legendHeight
+                    Bounds.Right - Padding - (ShowLegend ? legendWidth + Padding : 0),
+                    scrollBarTop - xAxisHeight - (ShowScrollBar ? Padding : 0)
                 );
+
+                // 레전드 영역 계산
+                SKRect legendArea;
+                if (ShowLegend)
+                {
+                    legendArea = new SKRect(
+                        Bounds.Right - legendWidth - Padding / 2,
+                        Bounds.Top + Padding,
+                        Bounds.Right - Padding / 2,
+                        Bounds.Top + Padding + legendHeight
+                    );
+                }
+                else
+                {
+                    legendArea = SKRect.Empty;
+                }
+
+                // 영역 설정
+                _renderer.GraphArea = graphArea;
+                _renderer.LegendArea = legendArea;
+                _renderer.ScrollBarArea = scrollBarArea;
+
+                _scrollManager.GraphArea = graphArea;
+                _scrollManager.ScrollBarArea = scrollBarArea;
+
+                // 스크롤 핸들 메트릭 업데이트
+                _scrollManager.UpdateScrollHandleMetrics();
             }
-            else
+            catch (Exception)
             {
-                legendArea = SKRect.Empty;
+                // 영역 계산 오류 - 무시하고 계속 진행
             }
-
-            // 영역 설정
-            _renderer.GraphArea = graphArea;
-            _renderer.LegendArea = legendArea;
-            _renderer.ScrollBarArea = scrollBarArea;
-
-            _scrollManager.GraphArea = graphArea;
-            _scrollManager.ScrollBarArea = scrollBarArea;
-
-            // 스크롤 핸들 메트릭 업데이트
-            _scrollManager.UpdateScrollHandleMetrics();
         }
 
         private void UpdateRendererProperties()
@@ -1171,80 +1246,88 @@ namespace Going.UI.Controls
 
         private void UpdateDataRange()
         {
-            if (_series.Count == 0 || _series.All(s => s.DataPoints == null || s.DataPoints.Count == 0))
+            try
             {
-                _settings.YAxisMin = 0;
-                _settings.YAxisMax = 100;
-                _scrollManager.DataMinimum = DateTime.Now.AddDays(-7);
-                _scrollManager.DataMaximum = DateTime.Now;
-                return;
-            }
-
-            // 데이터 X 범위 계산
-            DateTime minDate = DateTime.MaxValue;
-            DateTime maxDate = DateTime.MinValue;
-
-            // 데이터 Y 최소/최대값 계산
-            double minValue = double.MaxValue;
-            double maxValue = double.MinValue;
-
-            foreach (var series in _series)
-            {
-                if (series.DataPoints == null || series.DataPoints.Count == 0)
-                    continue;
-
-                var timestamps = series.DataPoints.Select(p => p.Timestamp);
-                minDate = timestamps.Min() < minDate ? timestamps.Min() : minDate;
-                maxDate = timestamps.Max() > maxDate ? timestamps.Max() : maxDate;
-
-                minValue = Math.Min(minValue, series.DataPoints.Min(p => p.Value));
-                maxValue = Math.Max(maxValue, series.DataPoints.Max(p => p.Value));
-            }
-
-            _scrollManager.DataMinimum = minDate;
-            _scrollManager.DataMaximum = maxDate;
-
-            // 초기 보이는 범위 설정 (전체 데이터 중에서 마지막 7일)
-            if (_scrollManager.VisibleMinimum == DateTime.MinValue || _scrollManager.VisibleMaximum == DateTime.MaxValue)
-            {
-                // 전체 데이터 범위가 7일보다 작으면 전체 표시
-                if ((maxDate - minDate).TotalDays <= 7)
+                if (_series.Count == 0 || _series.All(s => s.DataPoints == null || s.DataPoints.Count == 0))
                 {
-                    _scrollManager.VisibleMinimum = minDate;
-                    _scrollManager.VisibleMaximum = maxDate;
+                    _settings.YAxisMin = 0;
+                    _settings.YAxisMax = 100;
+                    _scrollManager.DataMinimum = DateTime.Now.AddDays(-7);
+                    _scrollManager.DataMaximum = DateTime.Now;
+                    return;
+                }
+
+                // 데이터 X 범위 계산
+                DateTime minDate = DateTime.MaxValue;
+                DateTime maxDate = DateTime.MinValue;
+
+                // 데이터 Y 최소/최대값 계산
+                double minValue = double.MaxValue;
+                double maxValue = double.MinValue;
+
+                foreach (var series in _series)
+                {
+                    if (series.DataPoints == null || series.DataPoints.Count == 0)
+                        continue;
+
+                    var timeRange = series.GetTimeRange();
+                    minDate = timeRange.Min < minDate ? timeRange.Min : minDate;
+                    maxDate = timeRange.Max > maxDate ? timeRange.Max : maxDate;
+
+                    var valueRange = series.GetValueRange();
+                    minValue = Math.Min(minValue, valueRange.Min);
+                    maxValue = Math.Max(maxValue, valueRange.Max);
+                }
+
+                _scrollManager.DataMinimum = minDate;
+                _scrollManager.DataMaximum = maxDate;
+
+                // 초기 보이는 범위 설정 (전체 데이터 중에서 마지막 7일)
+                if (_scrollManager.VisibleMinimum == DateTime.MinValue || _scrollManager.VisibleMaximum == DateTime.MaxValue)
+                {
+                    // 전체 데이터 범위가 7일보다 작으면 전체 표시
+                    if ((maxDate - minDate).TotalDays <= 7)
+                    {
+                        _scrollManager.UpdateVisibleRange(minDate, maxDate);
+                    }
+                    else
+                    {
+                        // 마지막 7일 표시
+                        _scrollManager.UpdateVisibleRange(maxDate.AddDays(-7), maxDate);
+                    }
                 }
                 else
                 {
-                    // 마지막 7일 표시
-                    _scrollManager.VisibleMaximum = maxDate;
-                    _scrollManager.VisibleMinimum = maxDate.AddDays(-7);
+                    // 보이는 범위가 데이터 범위를 벗어나지 않도록 조정
+                    _scrollManager.AdjustVisibleRange();
                 }
-            }
-            else
-            {
-                // 보이는 범위가 데이터 범위를 벗어나지 않도록 조정
-                _scrollManager.AdjustVisibleRange();
-            }
 
-            // 자동 스케일링인 경우 Y 최소/최대값에 여유 공간 추가
-            if (AutoScale)
-            {
-                double range = maxValue - minValue;
-
-                // 범위가 너무 작으면 기본값 사용
-                if (range < 0.001)
+                // 자동 스케일링인 경우 Y 최소/최대값에 여유 공간 추가
+                if (AutoScale)
                 {
-                    range = 100;
-                    minValue = Math.Max(0, minValue - 50);
+                    double range = maxValue - minValue;
+
+                    // 범위가 너무 작으면 기본값 사용
+                    if (range < 0.001)
+                    {
+                        range = 100;
+                        minValue = Math.Max(0, minValue - 50);
+                    }
+
+                    // 10% 여유 공간 추가
+                    double padding = range * 0.1;
+                    _settings.YAxisMin = Math.Max(minValue - padding, 0); // 음수 방지
+                    _settings.YAxisMax = maxValue + padding;
+
+                    // 눈금 값을 깔끔하게 조정
+                    AdjustYAxisRange();
                 }
-
-                // 10% 여유 공간 추가
-                double padding = range * 0.1;
-                _settings.YAxisMin = Math.Max(minValue - padding, 0); // 음수 방지
-                _settings.YAxisMax = maxValue + padding;
-
-                // 눈금 값을 깔끔하게 조정
-                AdjustYAxisRange();
+            }
+            catch (Exception)
+            {
+                // 데이터 범위 업데이트 오류 - 기본값 설정
+                _settings.YAxisMin = 0;
+                _settings.YAxisMax = 100;
             }
         }
 
@@ -1299,34 +1382,40 @@ namespace Going.UI.Controls
 
         private TrendDataPoint? FindNearestDataPoint(float x, float y)
         {
-            const float HitDistance = 20f; // 픽셀 단위 검색 거리
-
-            TrendDataPoint? closestPoint = null;
-            float minDistance = float.MaxValue;
-
-            foreach (var series in _series)
+            try
             {
-                if (series.DataPoints == null) continue;
+                const float HitDistance = 20f; // 픽셀 단위 검색 거리
 
-                // 보이는 범위 내의 포인트만 검사
-                foreach (var point in series.DataPoints.Where(p =>
-                    p.Timestamp >= _scrollManager.VisibleMinimum &&
-                    p.Timestamp <= _scrollManager.VisibleMaximum))
+                TrendDataPoint? closestPoint = null;
+                float minDistance = float.MaxValue;
+
+                foreach (var series in _series)
                 {
-                    float px = MapXToCanvas(point.Timestamp);
-                    float py = MapYToCanvas(point.Value);
+                    if (series.DataPoints == null) continue;
 
-                    float distance = (float)Math.Sqrt(Math.Pow(px - x, 2) + Math.Pow(py - y, 2));
-
-                    if (distance < HitDistance && distance < minDistance)
+                    // 보이는 범위 내의 포인트만 검사
+                    foreach (var point in series.GetVisiblePoints(_scrollManager.VisibleMinimum, _scrollManager.VisibleMaximum))
                     {
-                        minDistance = distance;
-                        closestPoint = point;
+                        float px = _renderer.MapXToCanvas(point.Timestamp);
+                        float py = _renderer.MapYToCanvas(point.Value);
+
+                        float distance = (float)Math.Sqrt(Math.Pow(px - x, 2) + Math.Pow(py - y, 2));
+
+                        if (distance < HitDistance && distance < minDistance)
+                        {
+                            minDistance = distance;
+                            closestPoint = point;
+                        }
                     }
                 }
-            }
 
-            return closestPoint;
+                return closestPoint;
+            }
+            catch (Exception)
+            {
+                // 예외 발생 시 null 반환
+                return null;
+            }
         }
 
         private TrendSeries? FindSeriesForDataPoint(TrendDataPoint point)
@@ -1348,30 +1437,6 @@ namespace Going.UI.Controls
             return null;
         }
 
-        private float MapXToCanvas(DateTime time)
-        {
-            DateTime min = _scrollManager.VisibleMinimum;
-            DateTime max = _scrollManager.VisibleMaximum;
-
-            if (max == min)
-                return _renderer.GraphArea.Left;
-
-            double normalizedX = (time - min).TotalMilliseconds / (max - min).TotalMilliseconds;
-            return (float)(_renderer.GraphArea.Left + normalizedX * _renderer.GraphArea.Width);
-        }
-
-        private float MapYToCanvas(double value)
-        {
-            double min = _settings.YAxisMin;
-            double max = _settings.YAxisMax;
-
-            if (max == min)
-                return _renderer.GraphArea.Bottom;
-
-            double normalizedY = (value - min) / (max - min);
-            return (float)(_renderer.GraphArea.Bottom - normalizedY * _renderer.GraphArea.Height);
-        }
-
         private string GetNextColor()
         {
             string[] defaultColors = ["primary", "success", "warning", "danger", "info"];
@@ -1381,15 +1446,48 @@ namespace Going.UI.Controls
 
         #endregion
 
-        #region IDisposable
+        #region IDisposable 구현
 
         /// <summary>
         /// 리소스를 해제합니다.
         /// </summary>
         public void Dispose()
         {
-            _renderer.Dispose();
+            Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// 리소스 해제 구현
+        /// </summary>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    // 관리되는 리소스 해제
+                    _renderer.Dispose();
+                    _scrollManager.Dispose();
+
+                    // 이벤트 핸들러 해제
+                    DataChanged = null;
+                    DataPointSelected = null;
+                    VisibleRangeChanged = null;
+                }
+
+                // 관리되지 않는 리소스 해제 (현재 없음)
+
+                _disposed = true;
+            }
+        }
+
+        /// <summary>
+        /// 소멸자
+        /// </summary>
+        ~GoTrendGraph()
+        {
+            Dispose(false);
         }
 
         #endregion
