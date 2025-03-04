@@ -22,6 +22,7 @@ namespace Going.UI.Controls
         public GoDirectionHV IconDirection { get; set; }
         public float IconGap { get; set; } = 5;
         public string FontName { get; set; } = "나눔고딕";
+        public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         public float FontSize { get; set; } = 12;
 
         public string TextColor { get; set; } = "Fore";
@@ -88,7 +89,7 @@ namespace Going.UI.Controls
                     }
 
                     if (btn.Down) rt.Offset(0, 1);
-                    Util.DrawTextIcon(canvas, btn.Text, FontName, FontSize, btn.IconString, IconSize, GoDirectionHV.Horizon, IconGap, rt, cTxt, GoContentAlignment.MiddleCenter);
+                    Util.DrawTextIcon(canvas, btn.Text, FontName, FontStyle, FontSize, btn.IconString, IconSize, GoDirectionHV.Horizon, IconGap, rt, cTxt, GoContentAlignment.MiddleCenter);
                 });
                 #endregion
                 #region Border

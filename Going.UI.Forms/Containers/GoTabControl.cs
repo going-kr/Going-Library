@@ -31,6 +31,7 @@ namespace Going.UI.Forms.Containers
         public float IconGap { get => nIconGap; set { if (nIconGap != value) { nIconGap = value; Invalidate(); } } }
 
         public string FontName { get => sFontName; set { if (sFontName != value) { sFontName = value; Invalidate(); } } }
+        public GoFontStyle FontStyle {get=> eFontStyle; set { if (eFontStyle != value) { eFontStyle = value; Invalidate(); } } }
         public float FontSize { get => nFontSize; set { if (nFontSize != value) { nFontSize = value; Invalidate(); } } }
 
         public string TextColor { get => sTextColor; set { if (sTextColor != value) { sTextColor = value; Invalidate(); } } }
@@ -59,6 +60,7 @@ namespace Going.UI.Forms.Containers
 
         #region Member Variable
         GoDirectionHV eIconDirection = GoDirectionHV.Horizon;
+        GoFontStyle eFontStyle = GoFontStyle.Normal;
         float nIconSize = 12;
         float nIconGap = 5;
 
@@ -220,7 +222,7 @@ namespace Going.UI.Forms.Containers
                         #endregion
                     }
 
-                    Util.DrawTextIcon(canvas, tab.Text, FontName, FontSize, iconString, IconSize, IconDirection, IconGap, rt, Util.FromArgb(Convert.ToByte(bSel ? 255 : (hover ? 150 : 60)), cText));
+                    Util.DrawTextIcon(canvas, tab.Text, FontName, FontStyle, FontSize, iconString, IconSize, IconDirection, IconGap, rt, Util.FromArgb(Convert.ToByte(bSel ? 255 : (hover ? 150 : 60)), cText));
 
                 });
             }

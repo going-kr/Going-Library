@@ -53,62 +53,16 @@ namespace Going.UI.Forms.Containers
             this.ItemSize = new Size(0, 1);
             this.SizeMode = TabSizeMode.Fixed;
 
-            if (!this.DesignMode) this.Multiline = true;
+            this.Multiline = false;
         }
         #endregion
 
         #region Override
         #region WndProc
-        [StructLayout(LayoutKind.Sequential)]
-        private struct RECT
-        {
-            public int Left;
-            public int Top;
-            public int Right;
-            public int Bottom;
-        }
-
         protected override void WndProc(ref Message m)
         {
-            if (m.Msg == 0x1328 && !this.DesignMode)
-            {
-                m.Result = new IntPtr(1);
-                var rect = (RECT)Marshal.PtrToStructure(m.LParam, typeof(RECT));
-
-                // 패딩을 제거하여 TabPage가 전체 영역을 차지하도록 함
-                if (this.Alignment == TabAlignment.Top)
-                {
-                    rect.Left -= 3;
-                    rect.Top -= 3;
-                    rect.Right += 3;
-                    rect.Bottom += 3;
-                }
-                else if (this.Alignment == TabAlignment.Bottom)
-                {
-                    rect.Left -= 3;
-                    rect.Top -= 3;
-                    rect.Right += 3;
-                    rect.Bottom += 3;
-                }
-                else if (this.Alignment == TabAlignment.Left)
-                {
-                    rect.Left -= 3;
-                    rect.Top -= 3;
-                    rect.Right += 3;
-                    rect.Bottom += 3;
-                }
-                else if (this.Alignment == TabAlignment.Right)
-                {
-                    rect.Left -= 3;
-                    rect.Top -= 3;
-                    rect.Right += 3;
-                    rect.Bottom += 3;
-                }
-
-                Marshal.StructureToPtr(rect, m.LParam, true);
-            }
-            else
-                base.WndProc(ref m);
+            if (m.Msg == 0x1328) return;
+            base.WndProc(ref m);
         }
         #endregion
         #region OnPaint
@@ -133,18 +87,9 @@ namespace Going.UI.Forms.Containers
         #endregion
         #endregion
 
-        #region MixColorAlpha
-        Color MixColorAlpha(Color dest, Color src, int srcAlpha)
-        {
-            byte red = Convert.ToByte(MathTool.Constrain(MathTool.Map(srcAlpha, 0, 255, (int)dest.R, (int)src.R), 0.0, 255.0));
-            byte green = Convert.ToByte(MathTool.Constrain(MathTool.Map(srcAlpha, 0, 255, (int)dest.G, (int)src.G), 0.0, 255.0));
-            byte blue = Convert.ToByte(MathTool.Constrain(MathTool.Map(srcAlpha, 0, 255, (int)dest.B, (int)src.B), 0.0, 255.0));
-            return Color.FromArgb(red, green, blue);
-        }
-        #endregion
-
         #region Method
-        public void RefreshPages()
+        #region RefreshPages
+        void RefreshPages()
         {
             var vc = GetBackColor();
 
@@ -154,7 +99,9 @@ namespace Going.UI.Forms.Containers
                 if (v.BorderStyle != BorderStyle.None) v.BorderStyle = BorderStyle.None;
             }
         }
+        #endregion
 
+        #region GetBackColor
         Color GetBackColor()
         {
             var thm = GoTheme.Current;
@@ -182,6 +129,17 @@ namespace Going.UI.Forms.Containers
 
             return vc;
         }
+        #endregion
+
+        #region MixColorAlpha
+        Color MixColorAlpha(Color dest, Color src, int srcAlpha)
+        {
+            byte red = Convert.ToByte(MathTool.Constrain(MathTool.Map(srcAlpha, 0, 255, (int)dest.R, (int)src.R), 0.0, 255.0));
+            byte green = Convert.ToByte(MathTool.Constrain(MathTool.Map(srcAlpha, 0, 255, (int)dest.G, (int)src.G), 0.0, 255.0));
+            byte blue = Convert.ToByte(MathTool.Constrain(MathTool.Map(srcAlpha, 0, 255, (int)dest.B, (int)src.B), 0.0, 255.0));
+            return Color.FromArgb(red, green, blue);
+        }
+        #endregion
         #endregion
     }
 }

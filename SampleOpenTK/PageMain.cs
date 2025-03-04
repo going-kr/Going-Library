@@ -11,6 +11,7 @@ namespace SampleOpenTK
         GoLamp lmp;
         GoGauge gauge;
         GoMeter meter;
+
         public PageMain()
         {
             Name = "PageMain";
@@ -34,8 +35,9 @@ namespace SampleOpenTK
             lmp = new GoLamp { Fill = true, Margin = new GoPadding(3), Text = "램프" };
 
             pnl_tbl.Childrens.Add(new GoLabel { Fill = true, Margin = new GoPadding(3), LabelColor = "Base3", Text = "동해물과 백두산이 마르고 닳도록 \r\n하나님이 보우하사 우리 나라 만세\r\n무궁화 삼천리 화려강산 \r\n대한 사람 대한으로 길이 보전 하세", BorderOnly = true, ContentAlignment = GoContentAlignment.TopLeft, TextPadding = new GoPadding(10) }, 0, 0, 1, 10);
-            pnl_tbl.Childrens.Add(new GoButton { Fill = true, Margin = new GoPadding(3), IconString = "fa-check", Text = "테스트 1" }, 1, 0);
-            pnl_tbl.Childrens.Add(new GoButton { Fill = true, Margin = new GoPadding(3), IconString = "fa-ban", Text = "테스트 2", ButtonColor = "danger" }, 1, 1);
+            pnl_tbl.Childrens.Add(new GoButton { Fill = true, Margin = new GoPadding(3), Text = "테스트" }, 1, 0);
+            pnl_tbl.Childrens.Add(new GoButton { Fill = true, Margin = new GoPadding(3), Text = "탭", }, 1, 1);
+            pnl_tbl.Childrens.Add(new GoButton { Fill = true, Margin = new GoPadding(3), Text = "이미지 캔바스", }, 2, 0);
             pnl_tbl.Childrens.Add(new GoInputString { Fill = true, Margin = new GoPadding(3), TitleSize = 90, Title = "문자열 1", Value = "Test1", ButtonSize = 80, Buttons = [new() { IconString = "fa-download", Size = "50%" }, new() { IconString = "fa-upload", Size = "50%" }] }, 1, 2, 2, 1);
             pnl_tbl.Childrens.Add(new GoInputString { Fill = true, Margin = new GoPadding(3), TitleSize = 90, Title = "문자열 2", Value = "Test2", ButtonSize = 80, Buttons = [new() { IconString = "fa-download", Size = "50%" }, new() { IconString = "fa-upload", Size = "50%" }] }, 1, 3, 2, 1);
             pnl_tbl.Childrens.Add(new GoInputBoolean { Fill = true, Margin = new GoPadding(3), TitleSize = 90, Title = "스위치", Value = false, ButtonSize = 80, Buttons = [new() { IconString = "fa-download", Size = "50%" }, new() { IconString = "fa-upload", Size = "50%" }] }, 1, 4, 2, 1);
@@ -54,14 +56,14 @@ namespace SampleOpenTK
                 cmb?.Items.Add(new() { Text = $"테스트 {i}" });
             }
 
-            var btn1 = pnl_tbl.Childrens.FirstOrDefault(x => x is GoButton btn && btn.Text == "테스트 1") as GoButton;
-            var btn2 = pnl_tbl.Childrens.FirstOrDefault(x => x is GoButton btn && btn.Text == "테스트 2") as GoButton;
+            var btn1 = pnl_tbl.Childrens.FirstOrDefault(x => x is GoButton btn && btn.Text == "테스트") as GoButton;
+            var btn2 = pnl_tbl.Childrens.FirstOrDefault(x => x is GoButton btn && btn.Text == "탭") as GoButton;
+            var btn3 = pnl_tbl.Childrens.FirstOrDefault(x => x is GoButton btn && btn.Text == "이미지 캔바스") as GoButton;
             if (btn1 != null) btn1.ButtonClicked += (o, s) => Design?.SetPage("PageTest");
             if (btn2 != null) btn2.ButtonClicked += (o, s) => Design?.SetPage("PageTab");
+            if (btn3 != null) btn3.ButtonClicked += (o, s) => Design?.SetPage("main");
 
             var btns = pnl_tbl.Childrens.FirstOrDefault(x => x is GoButtons btns ) as GoButtons;
-
-
 
             var pnl_tbl2 = new GoTableLayoutPanel { Fill = true, Margin = new GoPadding(5) };
             pnl_tbl2.Columns = ["33.33%", "33.34%", "33.33%"];

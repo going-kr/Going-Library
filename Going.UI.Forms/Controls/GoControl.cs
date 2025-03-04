@@ -64,10 +64,16 @@ namespace Going.UI.Forms.Controls
         #region OnPaintSurface
         protected override void OnPaintSurface(SKPaintSurfaceEventArgs e)
         {
+            var canvas = e.Surface.Canvas;
             var cBack = GoTheme.Current.ToColor(BackgroundColor);
-            e.Surface.Canvas.Clear(cBack);
+            canvas.Clear(cBack);
 
-            OnContentDraw(new ContentDrawEventArgs(e.Surface.Canvas));
+            using var p = new SKPaint { IsAntialias = true, Color = SKColors.Black.WithAlpha(Convert.ToByte(Enabled ? 255 : 255 - GoTheme.DisableAlpha)) };
+            var sp = canvas.SaveLayer(p);
+            
+            OnContentDraw(new ContentDrawEventArgs(canvas));
+
+            canvas.RestoreToCount(sp);
 
             base.OnPaintSurface(e);
         }
@@ -124,8 +130,8 @@ namespace Going.UI.Forms.Controls
         #region OnContentDraw
         protected override void OnContentDraw(ContentDrawEventArgs e)
         {
-                Control.Bounds = Util.FromRect(0, 0, Width, Height);
-                Control.FireDraw(e.Canvas);
+            Control.Bounds = Util.FromRect(0, 0, Width, Height);
+            Control.FireDraw(e.Canvas);
             base.OnContentDraw(e);
         }
         #endregion
@@ -205,7 +211,6 @@ namespace Going.UI.Forms.Controls
         #region OnEnabledChanged
         protected override void OnEnabledChanged(EventArgs e)
         {
-            Control.Enabled = Enabled;
             Invalidate();
             base.OnEnabledChanged(e);
         }
@@ -213,7 +218,6 @@ namespace Going.UI.Forms.Controls
         #region OnVisibleChanged
         protected override void OnVisibleChanged(EventArgs e)
         {
-            Control.Visible = Visible;
             Invalidate();
             base.OnVisibleChanged(e);
         }

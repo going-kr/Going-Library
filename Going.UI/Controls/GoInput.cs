@@ -27,6 +27,7 @@ namespace Going.UI.Controls
         public float IconGap { get; set; } = 5;
 
         public string FontName { get; set; } = "나눔고딕";
+        public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         public float FontSize { get; set; } = 12;
 
         public GoDirectionHV Direction { get; set; } = GoDirectionHV.Horizon;
@@ -98,7 +99,7 @@ namespace Going.UI.Controls
             if (useT)
             {
                 Util.DrawBox(canvas, rtTitle, cFill, rndTitle, thm.Corner);
-                Util.DrawTextIcon(canvas, Title, FontName, FontSize, IconString, IconSize, GoDirectionHV.Horizon, IconGap, rtTitle, cText);
+                Util.DrawTextIcon(canvas, Title, FontName, FontStyle, FontSize, IconString, IconSize, GoDirectionHV.Horizon, IconGap, rtTitle, cText);
             }
             #endregion
 
@@ -128,7 +129,7 @@ namespace Going.UI.Controls
                     }
 
                     if (btn.Down) rt.Offset(0, 1);
-                    Util.DrawTextIcon(canvas, btn.Text, FontName, FontSize, btn.IconString, IconSize, GoDirectionHV.Horizon, IconGap, rt, cTxt, GoContentAlignment.MiddleCenter);
+                    Util.DrawTextIcon(canvas, btn.Text, FontName, FontStyle, FontSize, btn.IconString, IconSize, GoDirectionHV.Horizon, IconGap, rt, cTxt, GoContentAlignment.MiddleCenter);
                 });
             }
             #endregion
@@ -292,7 +293,7 @@ namespace Going.UI.Controls
             var thm = GoTheme.Current;
             var cText = thm.ToColor(TextColor);
 
-            Util.DrawText(canvas, Value, FontName, FontSize, rtValue, cText);
+            Util.DrawText(canvas, Value, FontName, FontStyle, FontSize, rtValue, cText);
 
         }
         #endregion
@@ -371,11 +372,11 @@ namespace Going.UI.Controls
             var (rtText, rtUnit) = bounds(rtValue);
 
             var text = ValueTool.ToString(Value, FormatString) ?? "";
-            Util.DrawText(canvas, text, FontName, FontSize, rtText, cText);
+            Util.DrawText(canvas, text, FontName, FontStyle, FontSize, rtText, cText);
 
             if(UnitSize.HasValue)
             {
-                Util.DrawText(canvas, Unit, FontName, FontSize, rtUnit, cText);
+                Util.DrawText(canvas, Unit, FontName, FontStyle, FontSize, rtUnit, cText);
 
                 using var pe = SKPathEffect.CreateDash([2, 2], 2);
                 p.StrokeWidth = 1;
@@ -487,14 +488,14 @@ namespace Going.UI.Controls
                 var cOn = ani.Variable == "ON" ? ani.Value(AnimationAccel.Linear, cTextD, cTextL) : ani.Value(AnimationAccel.Linear, cTextL, cTextD);
                 var cOff = ani.Variable == "ON" ? ani.Value(AnimationAccel.Linear, cTextL, cTextD) : ani.Value(AnimationAccel.Linear, cTextD, cTextL);
 
-                Util.DrawTextIcon(canvas, OnText, FontName, FontSize, OnIconString, IconSize, GoDirectionHV.Horizon, IconGap, rtOn, cOn);
-                Util.DrawTextIcon(canvas, OffText, FontName, FontSize, OffIconString, IconSize, GoDirectionHV.Horizon, IconGap, rtOff, cOff);
+                Util.DrawTextIcon(canvas, OnText, FontName, FontStyle, FontSize, OnIconString, IconSize, GoDirectionHV.Horizon, IconGap, rtOn, cOn);
+                Util.DrawTextIcon(canvas, OffText, FontName, FontStyle, FontSize, OffIconString, IconSize, GoDirectionHV.Horizon, IconGap, rtOff, cOff);
 
             }
             else
             {
-                Util.DrawTextIcon(canvas, OnText, FontName, FontSize, OnIconString, IconSize, GoDirectionHV.Horizon, IconGap, rtOn, Value ? cTextL : cTextD);
-                Util.DrawTextIcon(canvas, OffText, FontName, FontSize, OffIconString, IconSize, GoDirectionHV.Horizon, IconGap, rtOff, Value ? cTextD : cTextL);
+                Util.DrawTextIcon(canvas, OnText, FontName, FontStyle, FontSize, OnIconString, IconSize, GoDirectionHV.Horizon, IconGap, rtOn, Value ? cTextL : cTextD);
+                Util.DrawTextIcon(canvas, OffText, FontName, FontStyle, FontSize, OffIconString, IconSize, GoDirectionHV.Horizon, IconGap, rtOff, Value ? cTextD : cTextL);
             }
 
             using var pe = SKPathEffect.CreateDash([2, 2], 2);
@@ -577,7 +578,7 @@ namespace Going.UI.Controls
             if (SelectedIndex >= 0 && SelectedIndex < Items.Count)
             {
                 var item = Items[SelectedIndex];
-                Util.DrawTextIcon(canvas, item.Text, FontName, FontSize, item.IconString, IconSize, GoDirectionHV.Horizon, IconGap, rtText, cText);
+                Util.DrawTextIcon(canvas, item.Text, FontName, FontStyle, FontSize, item.IconString, IconSize, GoDirectionHV.Horizon, IconGap, rtText, cText);
             }
             #endregion
 
@@ -610,7 +611,7 @@ namespace Going.UI.Controls
                 {   // false이면 내장된 이벤트를 실행
                     var rt = rtValue; rt.Offset(ScreenX, ScreenY);
                     var sel = SelectedIndex >= 0 && SelectedIndex < Items.Count ? Items[SelectedIndex] : null;
-                    dwnd.Show(rt, FontName, FontSize, ItemHeight, MaximumViewCount, Items, sel, (item) =>
+                    dwnd.Show(rt, FontName, FontStyle, FontSize, ItemHeight, MaximumViewCount, Items, sel, (item) =>
                     {
                         if (item != null)
                             SelectedIndex = Items.IndexOf(item);
@@ -698,13 +699,13 @@ namespace Going.UI.Controls
                                 var itmP = Items[selidx - 1];
                                 var rtP = Util.FromRect(rtText.Left + ani.Value(AnimationAccel.DCL, 0, -rtText.Width), rtText.Top, rtText.Width, rtText.Height);
                                 var cP = cText.WithAlpha(Convert.ToByte(ani.Value(AnimationAccel.DCL, 255, 0)));
-                                Util.DrawTextIcon(canvas, itmP.Text, FontName, FontSize, itmP.IconString, IconSize, GoDirectionHV.Horizon, IconGap, rtP, cP);
+                                Util.DrawTextIcon(canvas, itmP.Text, FontName, FontStyle, FontSize, itmP.IconString, IconSize, GoDirectionHV.Horizon, IconGap, rtP, cP);
                             }
 
                             var rtN = Util.FromRect(rtText.Left + ani.Value(AnimationAccel.DCL, rtText.Width, 0), rtText.Top, rtText.Width, rtText.Height);
                             var itmN = Items[selidx];
                             var cN = cText.WithAlpha(Convert.ToByte(ani.Value(AnimationAccel.DCL, 0, 255)));
-                            Util.DrawTextIcon(canvas, itmN.Text, FontName, FontSize, itmN.IconString, IconSize, GoDirectionHV.Horizon, IconGap, rtN, cN);
+                            Util.DrawTextIcon(canvas, itmN.Text, FontName, FontStyle, FontSize, itmN.IconString, IconSize, GoDirectionHV.Horizon, IconGap, rtN, cN);
                         }
                         else if(dir == "Prev")
                         {
@@ -713,13 +714,13 @@ namespace Going.UI.Controls
                                 var itmP = Items[selidx + 1];
                                 var rtP = Util.FromRect(rtText.Left + ani.Value(AnimationAccel.DCL, 0, rtText.Width), rtText.Top, rtText.Width, rtText.Height);
                                 var cP = cText.WithAlpha(Convert.ToByte(ani.Value(AnimationAccel.DCL, 255, 0)));
-                                Util.DrawTextIcon(canvas, itmP.Text, FontName, FontSize, itmP.IconString, IconSize, GoDirectionHV.Horizon, IconGap, rtP, cP);
+                                Util.DrawTextIcon(canvas, itmP.Text, FontName, FontStyle, FontSize, itmP.IconString, IconSize, GoDirectionHV.Horizon, IconGap, rtP, cP);
                             }
 
                             var itmN = Items[selidx];
                             var rtN = Util.FromRect(rtText.Left + ani.Value(AnimationAccel.DCL, -rtText.Width, 0), rtText.Top, rtText.Width, rtText.Height);
                             var cN = cText.WithAlpha(Convert.ToByte(ani.Value(AnimationAccel.DCL, 0, 255)));
-                            Util.DrawTextIcon(canvas, itmN.Text, FontName, FontSize, itmN.IconString, IconSize, GoDirectionHV.Horizon, IconGap, rtN, cN);
+                            Util.DrawTextIcon(canvas, itmN.Text, FontName, FontStyle, FontSize, itmN.IconString, IconSize, GoDirectionHV.Horizon, IconGap, rtN, cN);
                         }
 
                     }
@@ -729,7 +730,7 @@ namespace Going.UI.Controls
                     if (SelectedIndex >= 0 && SelectedIndex < Items.Count)
                     {
                         var item = Items[SelectedIndex];
-                        Util.DrawTextIcon(canvas, item.Text, FontName, FontSize, item.IconString, IconSize, GoDirectionHV.Horizon, IconGap, rtText, cText);
+                        Util.DrawTextIcon(canvas, item.Text, FontName, FontStyle, FontSize, item.IconString, IconSize, GoDirectionHV.Horizon, IconGap, rtText, cText);
                     }
                 }
             }

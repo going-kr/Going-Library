@@ -26,6 +26,7 @@ namespace Going.UI.Containers
 
         public string Text { get; set; } = "Panel";
         public string FontName { get; set; } = "나눔고딕";
+        public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         public float FontSize { get; set; } = 12;
 
         public string TextColor { get; set; } = "Fore";
@@ -62,10 +63,10 @@ namespace Going.UI.Containers
             var rtTitle = rts["Title"];
             var rtButtons = rts["Buttons"];
             var rtBorder = rts["Border"];
-            var sz = Util.MeasureTextIcon(Text, FontName, FontSize, IconString, IconSize, GoDirectionHV.Horizon, IconGap);
+            var sz = Util.MeasureTextIcon(Text, FontName, FontStyle, FontSize, IconString, IconSize, GoDirectionHV.Horizon, IconGap);
             var rtTitleText = Util.FromRect(rtTitle.Left + 10, rtTitle.Top, sz.Width + 20, rtTitle.Height);
 
-            Util.DrawTextIcon(canvas, Text, FontName, FontSize, IconString, IconSize, GoDirectionHV.Horizon, IconGap, rtTitleText, cText, GoContentAlignment.MiddleCenter);
+            Util.DrawTextIcon(canvas, Text, FontName, FontStyle, FontSize, IconString, IconSize, GoDirectionHV.Horizon, IconGap, rtTitleText, cText, GoContentAlignment.MiddleCenter);
             using (new SKAutoCanvasRestore(canvas))
             {
                 canvas.ClipRect(rtTitleText, SKClipOperation.Difference);

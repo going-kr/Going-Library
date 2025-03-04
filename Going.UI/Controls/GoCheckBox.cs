@@ -18,6 +18,7 @@ namespace Going.UI.Controls
         #region Properties
         public string Text { get; set; } = "label";
         public string FontName { get; set; } = "나눔고딕";
+        public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         public float FontSize { get; set; } = 12;
 
         public string TextColor { get; set; } = "Fore";
@@ -71,7 +72,7 @@ namespace Going.UI.Controls
             Util.DrawBox(canvas, rtBox, cBox.BrightnessTransmit(bHover ? thm.HoverFillBrightness : 0), cBox.BrightnessTransmit(bHover ? thm.HoverBorderBrightness : 0), GoRoundType.All, thm.Corner);
 
             if (Checked) Util.DrawIcon(canvas, "fa-check", BoxSize * 0.65F, rtBox, cChk);
-            Util.DrawText(canvas, Text, FontName, FontSize, rtText, cText, GoContentAlignment.MiddleCenter);
+            Util.DrawText(canvas, Text, FontName, FontStyle, FontSize, rtText, cText, GoContentAlignment.MiddleCenter);
 
             base.OnDraw(canvas);
         }
@@ -119,7 +120,7 @@ namespace Going.UI.Controls
         {
             var rts = base.Areas();
             var rtContent = rts["Content"];
-            var (rtBox, rtText) = Util.TextIconBounds(Text, FontName, FontSize, new SKSize(BoxSize, BoxSize), GoDirectionHV.Horizon, Gap, rtContent, ContentAlignment);
+            var (rtBox, rtText) = Util.TextIconBounds(Text, FontName, FontStyle, FontSize, new SKSize(BoxSize, BoxSize), GoDirectionHV.Horizon, Gap, rtContent, ContentAlignment);
 
             rts["Box"] = rtBox;
             rts["Text"] = rtText;

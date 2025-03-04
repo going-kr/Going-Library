@@ -269,7 +269,7 @@ namespace Going.UI.Controls
                 DrawValueLabel(canvas, colors.text);
             }
 
-            // Util.DrawText(canvas, ValueString, FontName, FontSize, handleRect, SKColors.Aqua);
+            // Util.DrawText(canvas, ValueString, FontName, FontStyle, FontSize, handleRect, SKColors.Aqua);
         }
         #endregion
         #region DrawTicks

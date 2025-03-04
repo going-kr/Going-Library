@@ -15,6 +15,7 @@ namespace Going.UI.Forms.Controls
         public string? OnIconString { get => Control.OnIconString; set { if (Control.OnIconString != value) { Control.OnIconString = value; Invalidate(); } } }
         public string? OffIconString { get => Control.OffIconString; set { if (Control.OffIconString != value) { Control.OffIconString = value; Invalidate(); } } }
         public string FontName { get => Control.FontName; set { if (Control.FontName != value) { Control.FontName = value; Invalidate(); } } }
+        public GoFontStyle FontStyle { get => Control.FontStyle; set { if (Control.FontStyle != value) { Control.FontStyle = value; Invalidate(); } } }
         public float FontSize { get => Control.FontSize; set { if (Control.FontSize != value) { Control.FontSize = value; Invalidate(); } } }
         public float IconSize { get => Control.FontSize; set { if (Control.FontSize != value) { Control.FontSize = value; Invalidate(); } } }
         public GoDirectionHV IconDirection { get => Control.IconDirection; set { if (Control.IconDirection != value) { Control.IconDirection = value; Invalidate(); } } }

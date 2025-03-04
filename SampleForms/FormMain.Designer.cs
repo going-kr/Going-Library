@@ -3,12 +3,12 @@
     partial class FormMain
     {
         /// <summary>
-        ///  Required designer variable.
+        /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
         /// <summary>
-        ///  Clean up any resources being used.
+        /// Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
@@ -23,231 +23,292 @@
         #region Windows Form Designer generated code
 
         /// <summary>
-        ///  Required method for Designer support - do not modify
-        ///  the contents of this method with the code editor.
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
         {
-            icCanvas1 = new Going.UI.Forms.ImageCanvas.IcCanvas();
-            icButton8 = new Going.UI.Forms.ImageCanvas.IcButton();
-            icButton7 = new Going.UI.Forms.ImageCanvas.IcButton();
-            icButton6 = new Going.UI.Forms.ImageCanvas.IcButton();
-            icButton5 = new Going.UI.Forms.ImageCanvas.IcButton();
-            icButton4 = new Going.UI.Forms.ImageCanvas.IcButton();
-            icButton3 = new Going.UI.Forms.ImageCanvas.IcButton();
-            icButton2 = new Going.UI.Forms.ImageCanvas.IcButton();
-            icButton1 = new Going.UI.Forms.ImageCanvas.IcButton();
-            icOnOff1 = new Going.UI.Forms.ImageCanvas.IcOnOff();
-            icOnOff2 = new Going.UI.Forms.ImageCanvas.IcOnOff();
-            icOnOff3 = new Going.UI.Forms.ImageCanvas.IcOnOff();
-            icOnOff4 = new Going.UI.Forms.ImageCanvas.IcOnOff();
-            icOnOff5 = new Going.UI.Forms.ImageCanvas.IcOnOff();
-            icOnOff6 = new Going.UI.Forms.ImageCanvas.IcOnOff();
-            icOnOff7 = new Going.UI.Forms.ImageCanvas.IcOnOff();
-            icOnOff8 = new Going.UI.Forms.ImageCanvas.IcOnOff();
-            icCanvas1.SuspendLayout();
+            Going.UI.Collections.ObservableList<Going.UI.Datas.GoToolCategory> observableList_11 = new Going.UI.Collections.ObservableList<Going.UI.Datas.GoToolCategory>();
+            goPanel1 = new Going.UI.Forms.Containers.GoPanel();
+            goButton2 = new Going.UI.Forms.Controls.GoButton();
+            goButton1 = new Going.UI.Forms.Controls.GoButton();
+            goLabel1 = new Going.UI.Forms.Controls.GoLabel();
+            goTabControl1 = new Going.UI.Forms.Containers.GoTabControl();
+            tabPage1 = new TabPage();
+            goCalendar1 = new Going.UI.Forms.Controls.GoCalendar();
+            tabPage2 = new TabPage();
+            goToolBox1 = new Going.UI.Forms.Controls.GoToolBox();
+            rm = new Going.UI.Forms.Components.GoResourceManager();
+            goPictureBox1 = new Going.UI.Forms.Controls.GoPictureBox();
+            goAnimate1 = new Going.UI.Forms.Controls.GoAnimate();
+            goPanel1.SuspendLayout();
+            goTabControl1.SuspendLayout();
+            tabPage1.SuspendLayout();
+            tabPage2.SuspendLayout();
             SuspendLayout();
             // 
-            // icCanvas1
+            // goPanel1
             // 
-            icCanvas1.BackColor = Color.FromArgb(50, 50, 50);
-            icCanvas1.BackgroundColor = "Back";
-            icCanvas1.Controls.Add(icOnOff8);
-            icCanvas1.Controls.Add(icOnOff7);
-            icCanvas1.Controls.Add(icOnOff6);
-            icCanvas1.Controls.Add(icOnOff5);
-            icCanvas1.Controls.Add(icOnOff4);
-            icCanvas1.Controls.Add(icOnOff3);
-            icCanvas1.Controls.Add(icOnOff2);
-            icCanvas1.Controls.Add(icOnOff1);
-            icCanvas1.Controls.Add(icButton8);
-            icCanvas1.Controls.Add(icButton7);
-            icCanvas1.Controls.Add(icButton6);
-            icCanvas1.Controls.Add(icButton5);
-            icCanvas1.Controls.Add(icButton4);
-            icCanvas1.Controls.Add(icButton3);
-            icCanvas1.Controls.Add(icButton2);
-            icCanvas1.Controls.Add(icButton1);
-            icCanvas1.Dock = DockStyle.Fill;
-            icCanvas1.ImageFolder = "D:\\ImageCanvasSample";
-            icCanvas1.Location = new Point(0, 0);
-            icCanvas1.Name = "icCanvas1";
-            icCanvas1.OffImage = "PageMain_Off.png";
-            icCanvas1.OnImage = "PageMain_On.png";
-            icCanvas1.Size = new Size(800, 480);
-            icCanvas1.TabIndex = 0;
-            icCanvas1.TabStop = false;
-            icCanvas1.Text = "icCanvas1";
+            goPanel1.BackColor = Color.FromArgb(50, 50, 50);
+            goPanel1.BackgroundColor = "Back";
+            goPanel1.BackgroundDraw = true;
+            goPanel1.BorderOnly = false;
+            goPanel1.ButtonWidth = null;
+            goPanel1.Controls.Add(goButton2);
+            goPanel1.Controls.Add(goButton1);
+            goPanel1.Controls.Add(goLabel1);
+            goPanel1.FontName = "나눔고딕";
+            goPanel1.FontSize = 12F;
+            goPanel1.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
+            goPanel1.IconGap = 5F;
+            goPanel1.IconSize = 12F;
+            goPanel1.IconString = null;
+            goPanel1.Location = new Point(12, 12);
+            goPanel1.Name = "goPanel1";
+            goPanel1.Padding = new Padding(10, 50, 10, 10);
+            goPanel1.PanelColor = "Base2";
+            goPanel1.Round = Going.UI.Enums.GoRoundType.All;
+            goPanel1.Size = new Size(403, 426);
+            goPanel1.TabIndex = 0;
+            goPanel1.TabStop = false;
+            goPanel1.Text = "goPanel1";
+            goPanel1.TextColor = "Fore";
+            goPanel1.TitleHeight = 40F;
             // 
-            // icButton8
+            // goButton2
             // 
-            icButton8.Location = new Point(721, 253);
-            icButton8.Name = "icButton8";
-            icButton8.Size = new Size(44, 31);
-            icButton8.TabIndex = 7;
-            icButton8.Text = "icButton8";
+            goButton2.BackColor = Color.FromArgb(50, 50, 50);
+            goButton2.BackgroundColor = "Back";
+            goButton2.BackgroundDraw = true;
+            goButton2.BorderOnly = false;
+            goButton2.ButtonColor = "danger";
+            goButton2.FontName = "나눔고딕";
+            goButton2.FontSize = 12F;
+            goButton2.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
+            goButton2.IconDirection = Going.UI.Enums.GoDirectionHV.Horizon;
+            goButton2.IconGap = 5F;
+            goButton2.IconSize = 12F;
+            goButton2.IconString = "fa-bell";
+            goButton2.Location = new Point(259, 53);
+            goButton2.Name = "goButton2";
+            goButton2.Round = Going.UI.Enums.GoRoundType.All;
+            goButton2.Size = new Size(100, 40);
+            goButton2.TabIndex = 2;
+            goButton2.TabStop = false;
+            goButton2.Text = "버튼 2";
+            goButton2.TextColor = "Fore";
             // 
-            // icButton7
+            // goButton1
             // 
-            icButton7.Location = new Point(531, 253);
-            icButton7.Name = "icButton7";
-            icButton7.Size = new Size(44, 31);
-            icButton7.TabIndex = 6;
-            icButton7.Text = "icButton7";
+            goButton1.BackColor = Color.FromArgb(50, 50, 50);
+            goButton1.BackgroundColor = "Back";
+            goButton1.BackgroundDraw = true;
+            goButton1.BorderOnly = false;
+            goButton1.ButtonColor = "Base3";
+            goButton1.FontName = "나눔고딕";
+            goButton1.FontSize = 12F;
+            goButton1.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
+            goButton1.IconDirection = Going.UI.Enums.GoDirectionHV.Horizon;
+            goButton1.IconGap = 5F;
+            goButton1.IconSize = 12F;
+            goButton1.IconString = "fa-check";
+            goButton1.Location = new Point(153, 53);
+            goButton1.Name = "goButton1";
+            goButton1.Round = Going.UI.Enums.GoRoundType.All;
+            goButton1.Size = new Size(100, 40);
+            goButton1.TabIndex = 1;
+            goButton1.TabStop = false;
+            goButton1.Text = "버튼 1";
+            goButton1.TextColor = "Fore";
             // 
-            // icButton6
+            // goLabel1
             // 
-            icButton6.Location = new Point(341, 253);
-            icButton6.Name = "icButton6";
-            icButton6.Size = new Size(44, 31);
-            icButton6.TabIndex = 5;
-            icButton6.Text = "icButton6";
+            goLabel1.BackColor = Color.FromArgb(60, 60, 60);
+            goLabel1.BackgroundColor = "Base2";
+            goLabel1.BackgroundDraw = true;
+            goLabel1.BorderOnly = true;
+            goLabel1.ContentAlignment = Going.UI.Enums.GoContentAlignment.TopLeft;
+            goLabel1.FontName = "나눔고딕";
+            goLabel1.FontSize = 12F;
+            goLabel1.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
+            goLabel1.IconDirection = Going.UI.Enums.GoDirectionHV.Horizon;
+            goLabel1.IconGap = 5F;
+            goLabel1.IconSize = 12F;
+            goLabel1.IconString = null;
+            goLabel1.LabelColor = "base3";
+            goLabel1.Location = new Point(13, 53);
+            goLabel1.Name = "goLabel1";
+            goLabel1.Round = Going.UI.Enums.GoRoundType.All;
+            goLabel1.Size = new Size(134, 145);
+            goLabel1.TabIndex = 0;
+            goLabel1.TabStop = false;
+            goLabel1.Text = "동해물과 백두산이 마르고 닳도록\r\n하느님이 보우하사 우리 나라 만세\r\n무궁화 삼천리 화려강산\r\n대한사람 대한으로 길이 보전하세";
+            goLabel1.TextColor = "Fore";
+            goLabel1.TextPadding.Bottom = 10F;
+            goLabel1.TextPadding.Left = 10F;
+            goLabel1.TextPadding.Right = 10F;
+            goLabel1.TextPadding.Top = 10F;
             // 
-            // icButton5
+            // goTabControl1
             // 
-            icButton5.Location = new Point(151, 253);
-            icButton5.Name = "icButton5";
-            icButton5.Size = new Size(44, 31);
-            icButton5.TabIndex = 4;
-            icButton5.Text = "icButton5";
+            goTabControl1.BackgroundColor = "Back";
+            goTabControl1.Controls.Add(tabPage1);
+            goTabControl1.Controls.Add(tabPage2);
+            goTabControl1.FontName = "나눔고딕";
+            goTabControl1.FontSize = 12F;
+            goTabControl1.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
+            goTabControl1.IconDirection = Going.UI.Enums.GoDirectionHV.Horizon;
+            goTabControl1.IconGap = 5F;
+            goTabControl1.IconSize = 12F;
+            goTabControl1.ItemSize = new Size(120, 40);
+            goTabControl1.Location = new Point(421, 12);
+            goTabControl1.Name = "goTabControl1";
+            goTabControl1.SelectedIndex = 0;
+            goTabControl1.Size = new Size(560, 426);
+            goTabControl1.SizeMode = TabSizeMode.Fixed;
+            goTabControl1.TabBorderColor = "Base3";
+            goTabControl1.TabColor = "Base2";
+            goTabControl1.TabIndex = 1;
+            goTabControl1.TextColor = "Fore";
             // 
-            // icButton4
+            // tabPage1
             // 
-            icButton4.Location = new Point(721, 73);
-            icButton4.Name = "icButton4";
-            icButton4.Size = new Size(44, 31);
-            icButton4.TabIndex = 3;
-            icButton4.Text = "icButton4";
+            tabPage1.BackColor = Color.FromArgb(60, 60, 60);
+            tabPage1.Controls.Add(goCalendar1);
+            tabPage1.Location = new Point(4, 44);
+            tabPage1.Name = "tabPage1";
+            tabPage1.Padding = new Padding(10);
+            tabPage1.Size = new Size(552, 378);
+            tabPage1.TabIndex = 0;
+            tabPage1.Text = "tabPage1";
             // 
-            // icButton3
+            // goCalendar1
             // 
-            icButton3.Location = new Point(531, 73);
-            icButton3.Name = "icButton3";
-            icButton3.Size = new Size(44, 31);
-            icButton3.TabIndex = 2;
-            icButton3.Text = "icButton3";
+            goCalendar1.BackColor = Color.FromArgb(50, 50, 50);
+            goCalendar1.BackgroundColor = "Back";
+            goCalendar1.BackgroundDraw = true;
+            goCalendar1.BoxColor = "Base3";
+            goCalendar1.FontName = "나눔고딕";
+            goCalendar1.FontSize = 12F;
+            goCalendar1.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
+            goCalendar1.Location = new Point(13, 13);
+            goCalendar1.MultiSelect = true;
+            goCalendar1.Name = "goCalendar1";
+            goCalendar1.NoneSelect = false;
+            goCalendar1.Round = Going.UI.Enums.GoRoundType.All;
+            goCalendar1.SelectColor = "Select";
+            goCalendar1.Size = new Size(288, 243);
+            goCalendar1.TabIndex = 0;
+            goCalendar1.TabStop = false;
+            goCalendar1.Text = "goCalendar1";
+            goCalendar1.TextColor = "Fore";
             // 
-            // icButton2
+            // tabPage2
             // 
-            icButton2.Location = new Point(341, 73);
-            icButton2.Name = "icButton2";
-            icButton2.Size = new Size(44, 31);
-            icButton2.TabIndex = 1;
-            icButton2.Text = "icButton2";
+            tabPage2.BackColor = Color.FromArgb(60, 60, 60);
+            tabPage2.Controls.Add(goToolBox1);
+            tabPage2.Location = new Point(4, 44);
+            tabPage2.Name = "tabPage2";
+            tabPage2.Padding = new Padding(3);
+            tabPage2.Size = new Size(552, 378);
+            tabPage2.TabIndex = 1;
+            tabPage2.Text = "tabPage2";
             // 
-            // icButton1
+            // goToolBox1
             // 
-            icButton1.Location = new Point(152, 73);
-            icButton1.Name = "icButton1";
-            icButton1.Size = new Size(44, 31);
-            icButton1.TabIndex = 0;
-            icButton1.Text = "icButton1";
+            goToolBox1.BackColor = Color.FromArgb(50, 50, 50);
+            goToolBox1.BackgroundColor = "Back";
+            goToolBox1.BackgroundDraw = true;
+            goToolBox1.BorderColor = "Base3";
+            goToolBox1.BoxColor = "Base1";
+            observableList_11.Changed = false;
+            goToolBox1.Categories = observableList_11;
+            goToolBox1.CategoryColor = "Base2";
+            goToolBox1.FontName = "나눔고딕";
+            goToolBox1.FontSize = 12F;
+            goToolBox1.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
+            goToolBox1.IconGap = 5F;
+            goToolBox1.IconSize = 12F;
+            goToolBox1.ItemHeight = 30F;
+            goToolBox1.Location = new Point(18, 21);
+            goToolBox1.Name = "goToolBox1";
+            goToolBox1.Round = Going.UI.Enums.GoRoundType.All;
+            goToolBox1.SelectColor = "Select";
+            goToolBox1.Size = new Size(287, 317);
+            goToolBox1.TabIndex = 0;
+            goToolBox1.TabStop = false;
+            goToolBox1.Text = "goToolBox1";
+            goToolBox1.TextColor = "Fore";
             // 
-            // icOnOff1
+            // rm
             // 
-            icOnOff1.Location = new Point(35, 118);
-            icOnOff1.Name = "icOnOff1";
-            icOnOff1.OnOff = false;
-            icOnOff1.Size = new Size(79, 53);
-            icOnOff1.TabIndex = 8;
-            icOnOff1.Text = "icOnOff1";
+            rm.ImageFolder = "D:\\Project\\Going\\library\\src\\Going\\ImageSample";
             // 
-            // icOnOff2
+            // goPictureBox1
             // 
-            icOnOff2.Location = new Point(224, 118);
-            icOnOff2.Name = "icOnOff2";
-            icOnOff2.OnOff = false;
-            icOnOff2.Size = new Size(79, 53);
-            icOnOff2.TabIndex = 9;
-            icOnOff2.Text = "icOnOff2";
+            goPictureBox1.BackColor = Color.FromArgb(50, 50, 50);
+            goPictureBox1.BackgroundColor = "Back";
+            goPictureBox1.Image = "nature";
+            goPictureBox1.Location = new Point(12, 444);
+            goPictureBox1.Name = "goPictureBox1";
+            goPictureBox1.Resources = rm;
+            goPictureBox1.Round = Going.UI.Enums.GoRoundType.Rect;
+            goPictureBox1.ScaleMode = Going.UI.Enums.GoImageScaleMode.Strech;
+            goPictureBox1.Size = new Size(331, 209);
+            goPictureBox1.TabIndex = 2;
+            goPictureBox1.TabStop = false;
+            goPictureBox1.Text = "goPictureBox1";
             // 
-            // icOnOff3
+            // goAnimate1
             // 
-            icOnOff3.Location = new Point(414, 118);
-            icOnOff3.Name = "icOnOff3";
-            icOnOff3.OnOff = false;
-            icOnOff3.Size = new Size(79, 53);
-            icOnOff3.TabIndex = 10;
-            icOnOff3.Text = "icOnOff3";
-            // 
-            // icOnOff4
-            // 
-            icOnOff4.Location = new Point(606, 118);
-            icOnOff4.Name = "icOnOff4";
-            icOnOff4.OnOff = false;
-            icOnOff4.Size = new Size(79, 53);
-            icOnOff4.TabIndex = 11;
-            icOnOff4.Text = "icOnOff4";
-            // 
-            // icOnOff5
-            // 
-            icOnOff5.Location = new Point(35, 298);
-            icOnOff5.Name = "icOnOff5";
-            icOnOff5.OnOff = false;
-            icOnOff5.Size = new Size(79, 53);
-            icOnOff5.TabIndex = 12;
-            icOnOff5.Text = "icOnOff5";
-            // 
-            // icOnOff6
-            // 
-            icOnOff6.Location = new Point(224, 298);
-            icOnOff6.Name = "icOnOff6";
-            icOnOff6.OnOff = false;
-            icOnOff6.Size = new Size(79, 53);
-            icOnOff6.TabIndex = 13;
-            icOnOff6.Text = "icOnOff6";
-            // 
-            // icOnOff7
-            // 
-            icOnOff7.Location = new Point(414, 298);
-            icOnOff7.Name = "icOnOff7";
-            icOnOff7.OnOff = false;
-            icOnOff7.Size = new Size(79, 53);
-            icOnOff7.TabIndex = 14;
-            icOnOff7.Text = "icOnOff7";
-            // 
-            // icOnOff8
-            // 
-            icOnOff8.Location = new Point(606, 298);
-            icOnOff8.Name = "icOnOff8";
-            icOnOff8.OnOff = false;
-            icOnOff8.Size = new Size(79, 53);
-            icOnOff8.TabIndex = 15;
-            icOnOff8.Text = "icOnOff8";
+            goAnimate1.BackColor = Color.FromArgb(50, 50, 50);
+            goAnimate1.BackgroundColor = "Back";
+            goAnimate1.Location = new Point(349, 444);
+            goAnimate1.Name = "goAnimate1";
+            goAnimate1.OffImage = "ani_off";
+            goAnimate1.OnImage = "ani";
+            goAnimate1.OnOff = false;
+            goAnimate1.Resources = rm;
+            goAnimate1.Round = Going.UI.Enums.GoRoundType.Rect;
+            goAnimate1.ScaleMode = Going.UI.Enums.GoImageScaleMode.Zoom;
+            goAnimate1.Size = new Size(209, 209);
+            goAnimate1.TabIndex = 3;
+            goAnimate1.TabStop = false;
+            goAnimate1.Text = "goAnimate1";
+            goAnimate1.Time = 30;
             // 
             // FormMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(50, 50, 50);
-            ClientSize = new Size(800, 480);
-            Controls.Add(icCanvas1);
+            ClientSize = new Size(993, 665);
+            Controls.Add(goAnimate1);
+            Controls.Add(goPictureBox1);
+            Controls.Add(goTabControl1);
+            Controls.Add(goPanel1);
             Name = "FormMain";
-            Text = "Sample Window";
-            Title = "Sample Window";
-            TitleIconString = "fa-check";
-            icCanvas1.ResumeLayout(false);
+            Text = "FormMain2";
+            Title = "FormMain2";
+            goPanel1.ResumeLayout(false);
+            goTabControl1.ResumeLayout(false);
+            tabPage1.ResumeLayout(false);
+            tabPage2.ResumeLayout(false);
             ResumeLayout(false);
         }
 
         #endregion
+
         private Going.UI.Forms.Containers.GoPanel goPanel1;
-        private Going.UI.Forms.ImageCanvas.IcCanvas icCanvas1;
-        private Going.UI.Forms.ImageCanvas.IcButton icButton1;
-        private Going.UI.Forms.ImageCanvas.IcButton icButton8;
-        private Going.UI.Forms.ImageCanvas.IcButton icButton7;
-        private Going.UI.Forms.ImageCanvas.IcButton icButton6;
-        private Going.UI.Forms.ImageCanvas.IcButton icButton5;
-        private Going.UI.Forms.ImageCanvas.IcButton icButton4;
-        private Going.UI.Forms.ImageCanvas.IcButton icButton3;
-        private Going.UI.Forms.ImageCanvas.IcButton icButton2;
-        private Going.UI.Forms.ImageCanvas.IcOnOff icOnOff1;
-        private Going.UI.Forms.ImageCanvas.IcOnOff icOnOff8;
-        private Going.UI.Forms.ImageCanvas.IcOnOff icOnOff7;
-        private Going.UI.Forms.ImageCanvas.IcOnOff icOnOff6;
-        private Going.UI.Forms.ImageCanvas.IcOnOff icOnOff5;
-        private Going.UI.Forms.ImageCanvas.IcOnOff icOnOff4;
-        private Going.UI.Forms.ImageCanvas.IcOnOff icOnOff3;
-        private Going.UI.Forms.ImageCanvas.IcOnOff icOnOff2;
+        private Going.UI.Forms.Controls.GoButton goButton2;
+        private Going.UI.Forms.Controls.GoButton goButton1;
+        private Going.UI.Forms.Controls.GoLabel goLabel1;
+        private Going.UI.Forms.Containers.GoTabControl goTabControl1;
+        private TabPage tabPage1;
+        private TabPage tabPage2;
+        private Going.UI.Forms.Components.GoResourceManager rm;
+        private Going.UI.Forms.Controls.GoPictureBox goPictureBox1;
+        private Going.UI.Forms.Controls.GoAnimate goAnimate1;
+        private Going.UI.Forms.Controls.GoCalendar goCalendar1;
+        private Going.UI.Forms.Controls.GoToolBox goToolBox1;
     }
 }

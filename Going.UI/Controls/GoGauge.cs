@@ -18,6 +18,7 @@ namespace Going.UI.Controls
     {
         #region Properties
         public string FontName { get; set; } = "나눔고딕";
+        public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         public float FontSize { get; set; } = 18;
 
         public string Title { get; set; } = "Title";
@@ -108,9 +109,9 @@ namespace Going.UI.Controls
             #endregion
 
             var txt = string.IsNullOrWhiteSpace(Format) ? Value.ToString() : Value.ToString(Format);
-            Util.DrawText(canvas, txt, FontName, FontSize, rtText, cText);
+            Util.DrawText(canvas, txt, FontName, FontStyle, FontSize, rtText, cText);
 
-            Util.DrawText(canvas, Title, FontName, TitleFontSize, rtTitle, cText);
+            Util.DrawText(canvas, Title, FontName, FontStyle, TitleFontSize, rtTitle, cText);
 
             base.OnDraw(canvas);
         }

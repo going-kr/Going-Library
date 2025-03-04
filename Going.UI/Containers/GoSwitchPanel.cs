@@ -1,4 +1,5 @@
 ﻿using Going.UI.Controls;
+using Going.UI.Design;
 using Going.UI.Enums;
 using Going.UI.Themes;
 using Going.UI.Utils;
@@ -56,11 +57,24 @@ namespace Going.UI.Containers
         #endregion
 
         #region Override
+        #region Init
+        protected override void OnInit(GoDesign? design)
+        {
+            base.OnInit(design);
+
+            foreach (var p in Pages)
+                foreach (var c in p.Childrens)
+                    c.FireInit(design);
+        }
+        #endregion
+
+        #region Draw
         protected override void OnDraw(SKCanvas canvas)
         {
             if (FirstRender && SelectedPage == null) SelectedPage = Pages.FirstOrDefault();
             base.OnDraw(canvas);
         }
+        #endregion
         #endregion
 
         #region Method

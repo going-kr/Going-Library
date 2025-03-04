@@ -26,6 +26,7 @@ namespace Going.UI.Containers
         public float IconGap { get; set; } = 5;
 
         public string FontName { get; set; } = "나눔고딕";
+        public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         public float FontSize { get; set; } = 12;
 
         public string TextColor { get; set; } = "Fore";
@@ -78,6 +79,17 @@ namespace Going.UI.Containers
         #endregion
 
         #region Override
+        #region Init
+        protected override void OnInit(GoDesign? design)
+        {
+            base.OnInit(design);
+
+            foreach (var tab in TabPages)
+                foreach (var c in tab.Childrens)
+                    c.FireInit(design);
+        }
+        #endregion
+
         #region Draw
         protected override void OnDraw(SKCanvas canvas)
         {
@@ -177,7 +189,7 @@ namespace Going.UI.Containers
 
                 }
 
-                Util.DrawTextIcon(canvas, tab.Text, FontName, FontSize, tab.IconString, IconSize, IconDirection, IconGap, rt, Util.FromArgb(Convert.ToByte(bSel ? 255 : (tab.Hover ? 150 : 60)), cText));
+                Util.DrawTextIcon(canvas, tab.Text, FontName, FontStyle, FontSize, tab.IconString, IconSize, IconDirection, IconGap, rt, Util.FromArgb(Convert.ToByte(bSel ? 255 : (tab.Hover ? 150 : 60)), cText));
             });
 
             base.OnDraw(canvas);
@@ -266,7 +278,7 @@ namespace Going.UI.Containers
             for (int i = 0; i < TabPages.Count; i++)
             {
                 var tab = TabPages[i];
-                var sz = Util.MeasureTextIcon(tab.Text, FontName, FontSize, tab.IconString, IconSize, IconDirection, IconGap);
+                var sz = Util.MeasureTextIcon(tab.Text, FontName, FontStyle, FontSize, tab.IconString, IconSize, IconDirection, IconGap);
                 SKRect rt = new SKRect();
 
                 switch (TabPosition)

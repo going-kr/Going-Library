@@ -28,6 +28,7 @@ namespace Going.UI.Controls
         public string? OnIconString { get; set; }
         public string? OffIconString { get; set; }
         public string FontName { get; set; } = "나눔고딕";
+        public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         public float FontSize { get; set; } = 12;
         public float IconSize { get; set; } = 12;
         public GoDirectionHV IconDirection { get; set; }
@@ -206,8 +207,8 @@ namespace Going.UI.Controls
                 var cion = ani.Variable == "ON" ? ani.Value(AnimationAccel.DCL, cTD, cOn) : ani.Value(AnimationAccel.DCL, cOn, cTD);
                 var cioff = ani.Variable == "ON" ? ani.Value(AnimationAccel.DCL, cOff, cTD) : ani.Value(AnimationAccel.DCL, cTD, cOff);
 
-                Util.DrawTextIcon(canvas, OnText, FontName, FontSize, OnIconString, IconSize, IconDirection, IconGap, rtOnText, cton, cion);
-                Util.DrawTextIcon(canvas, OffText, FontName, FontSize, OffIconString, IconSize, IconDirection, IconGap, rtOffText, ctoff, cioff);
+                Util.DrawTextIcon(canvas, OnText, FontName, FontStyle, FontSize, OnIconString, IconSize, IconDirection, IconGap, rtOnText, cton, cion);
+                Util.DrawTextIcon(canvas, OffText, FontName, FontStyle, FontSize, OffIconString, IconSize, IconDirection, IconGap, rtOffText, ctoff, cioff);
             }
             else
             {
@@ -216,8 +217,8 @@ namespace Going.UI.Controls
                 var cion = OnOff ? cOn : cTD;
                 var cioff = OnOff ? cTD : cOff;
 
-                Util.DrawTextIcon(canvas, OnText, FontName, FontSize, OnIconString, IconSize, IconDirection, IconGap, rtOnText, cton, cion);
-                Util.DrawTextIcon(canvas, OffText, FontName, FontSize, OffIconString, IconSize, IconDirection, IconGap, rtOffText, ctoff, cioff);
+                Util.DrawTextIcon(canvas, OnText, FontName, FontStyle, FontSize, OnIconString, IconSize, IconDirection, IconGap, rtOnText, cton, cion);
+                Util.DrawTextIcon(canvas, OffText, FontName, FontStyle, FontSize, OffIconString, IconSize, IconDirection, IconGap, rtOffText, ctoff, cioff);
 
             }
             #endregion

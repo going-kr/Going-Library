@@ -63,6 +63,8 @@ namespace Going.UI.Controls
         public event EventHandler<GoMouseEventArgs>? MouseMove;
         public event EventHandler<GoMouseEventArgs>? MouseWheel;
         public event EventHandler<SKCanvas>? Drawn;
+
+        public event EventHandler<GoDragEventArgs>? DragDrop;
         #endregion
 
         #region Member Variable
@@ -161,6 +163,8 @@ namespace Going.UI.Controls
         #endregion
 
         public void SetInvalidate(Action? method) => Invalidate = method;
+
+        internal void InvokeDragDrop(float x, float y, object item) => DragDrop?.Invoke(this, new GoDragEventArgs(x, y, item));
         #endregion
     }
 }

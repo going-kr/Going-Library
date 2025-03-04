@@ -22,6 +22,7 @@ namespace Going.UI.Controls
 
         public string Text { get; set; } = "label";
         public string FontName { get; set; } = "나눔고딕";
+        public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         public float FontSize { get; set; } = 12;
         public GoPadding TextPadding { get; set; } = new GoPadding(0, 0, 0, 0);
 
@@ -46,7 +47,7 @@ namespace Going.UI.Controls
             var rtText = rts["Text"];
 
             if (BackgroundDraw) Util.DrawBox(canvas, rtBox, BorderOnly ? SKColors.Transparent : cLabel, cLabel, Round, thm.Corner);
-            Util.DrawTextIcon(canvas, Text, FontName, FontSize, IconString, IconSize, IconDirection, IconGap, rtText, cText, ContentAlignment);
+            Util.DrawTextIcon(canvas, Text, FontName, FontStyle, FontSize, IconString, IconSize, IconDirection, IconGap, rtText, cText, ContentAlignment);
 
             base.OnDraw(canvas);
         }

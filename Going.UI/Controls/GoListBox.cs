@@ -1,4 +1,5 @@
-﻿using Going.UI.Datas;
+﻿using Going.UI.Collections;
+using Going.UI.Datas;
 using Going.UI.Enums;
 using Going.UI.Themes;
 using Going.UI.Tools;
@@ -20,26 +21,27 @@ namespace Going.UI.Controls
     {
         #region Properties
         public float IconSize { get; set; } = 12;
-        public GoDirectionHV IconDirection { get; set; } = GoDirectionHV.Horizon;
         public float IconGap { get; set; } = 5;
         public string FontName { get; set; } = "나눔고딕";
+        public GoFontStyle FontStyle { get; set; }= GoFontStyle.Normal;
         public float FontSize { get; set; } = 12;
 
         public string TextColor { get; set; } = "Fore";
         public string BoxColor { get; set; } = "Base1";
         public string BorderColor { get; set; } = "Base3";
-        public string SelectedColor { get; set; } = "Select";
+        public string SelectColor { get; set; } = "Select";
         public GoRoundType Round { get; set; } = GoRoundType.All;
 
         public bool BackgroundDraw { get; set; } = true;
 
         public float ItemHeight { get; set; } = 30;
         public GoContentAlignment ItemAlignment { get; set; } = GoContentAlignment.MiddleCenter;
-        public List<GoListItem> Items { get; set; } = [];
+        public ObservableList<GoListItem> Items { get; set; } = [];
         [JsonIgnore] public List<GoListItem> SelectedItems { get; } = new List<GoListItem>();
         public GoItemSelectionMode SelectionMode { get; set; } = GoItemSelectionMode.SIngle;
 
         [JsonIgnore] public double ScrollPosition { get => scroll.ScrollPosition; set => scroll.ScrollPosition = value; }
+        [JsonIgnore] internal double ScrollPositionWithOffset => scroll.ScrollPositionWithOffset;
         #endregion
 
         #region Member Variable
@@ -51,9 +53,9 @@ namespace Going.UI.Controls
 
         #region Event 
         public event EventHandler? SelectedChanged;
-        public event EventHandler<ListItemClickEventArgs>? ItemClicked;
-        public event EventHandler<ListItemClickEventArgs>? ItemLongClicked;
-        public event EventHandler<ListItemClickEventArgs>? ItemDoubleClicked;
+        public event EventHandler<ListItemEventArgs>? ItemClicked;
+        public event EventHandler<ListItemEventArgs>? ItemLongClicked;
+        public event EventHandler<ListItemEventArgs>? ItemDoubleClicked;
         #endregion
 
         #region Constructor
@@ -69,6 +71,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Override
+        #region Draw
         protected override void OnDraw(SKCanvas canvas)
         {
             #region var
@@ -77,7 +80,7 @@ namespace Going.UI.Controls
             var cText = thm.ToColor(TextColor);
             var cBorder = thm.ToColor(BorderColor);
             var cBox = thm.ToColor(BoxColor);
-            var cSel = thm.ToColor(SelectedColor);
+            var cSel = thm.ToColor(SelectColor);
             
             var rts = Areas();
             var rtContent = rts["Content"];
@@ -99,13 +102,13 @@ namespace Going.UI.Controls
             {
                 using var pth = PathTool.Box(rtContent, Round, thm.Corner);
                 canvas.ClipPath(pth, SKClipOperation.Intersect, true);
-                canvas.Translate(rtContent.Left, spos + rtContent.Top);     // 스크롤 위치만큼 이동(spos가 필요한 이유) - 여기서부터 위치변경 후 그리기 시작
-                itemLoop((i, rt, item) =>
+                canvas.Translate(rtContent.Left, spos + rtContent.Top); // 스크롤 위치만큼 이동(spos가 필요한 이유) - 여기서부터 위치변경 후 그리기 시작
+                itemLoop((i, item) =>
                 {
                     if(SelectedItems.Contains(item))
-                        Util.DrawBox(canvas, rt, cSel, GoRoundType.Rect, thm.Corner);   // 선택여부(초록색)
+                        Util.DrawBox(canvas, item.Bounds, cSel, GoRoundType.Rect, thm.Corner);  // 선택여부(초록색)
 
-                    Util.DrawTextIcon(canvas, item.Text, FontName, FontSize, item.IconString, IconSize, IconDirection, IconGap, rt, cText, ItemAlignment);
+                    Util.DrawTextIcon(canvas, item.Text, FontName, FontStyle, FontSize, item.IconString, IconSize, GoDirectionHV.Horizon, IconGap, item.Bounds, cText, ItemAlignment);
                 });
             }
 
@@ -122,7 +125,9 @@ namespace Going.UI.Controls
 
             base.OnDraw(canvas);
         }
+        #endregion
 
+        #region Mouse
         protected override void OnMouseDown(float x, float y, GoMouseButton button)
         {
             var rts = Areas();
@@ -167,12 +172,12 @@ namespace Going.UI.Controls
             var spos = Convert.ToSingle(scroll.ScrollPositionWithOffset);
             var ry = y - rtBox.Top - spos;
 
-            itemLoop((i, rt, item) =>
+            itemLoop((i, item) =>
             {
-                if (CollisionTool.Check(rt, x, ry))
+                if (CollisionTool.Check(item.Bounds, x, ry))
                 {
                     select(item, i);
-                    ItemClicked?.Invoke(this, new ListItemClickEventArgs(item));
+                    ItemClicked?.Invoke(this, new ListItemEventArgs(item));
                 }
             });
 
@@ -186,10 +191,10 @@ namespace Going.UI.Controls
             var spos = Convert.ToSingle(scroll.ScrollPositionWithOffset);
             var ry = y - rtBox.Top - spos;
 
-            itemLoop((i, rt, item) =>
+            itemLoop((i, item) =>
             {
-                if (CollisionTool.Check(rt, x, ry))
-                    ItemLongClicked?.Invoke(this, new ListItemClickEventArgs(item));
+                if (CollisionTool.Check(item.Bounds, x, ry))
+                    ItemLongClicked?.Invoke(this, new ListItemEventArgs(item));
             });
 
             base.OnMouseClick(x, y, button);
@@ -202,15 +207,17 @@ namespace Going.UI.Controls
             var spos = Convert.ToSingle(scroll.ScrollPositionWithOffset);
             var ry = y - rtBox.Top - spos;
 
-            itemLoop((i, rt, item) =>
+            itemLoop((i, item) =>
             {
-                if (CollisionTool.Check(rt, x, ry))
-                    ItemDoubleClicked?.Invoke(this, new ListItemClickEventArgs(item));
+                if (CollisionTool.Check(item.Bounds, x, ry))
+                    ItemDoubleClicked?.Invoke(this, new ListItemEventArgs(item));
             });
 
             base.OnMouseClick(x, y, button);
         }
+        #endregion
 
+        #region Key
         protected override void OnKeyDown(bool Shift, bool Control, bool Alt, GoKeys key)
         {
             bShift = Shift;
@@ -226,7 +233,9 @@ namespace Going.UI.Controls
             bAlt = Alt;
             base.OnKeyUp(Shift, Control, Alt, key);
         }
+        #endregion
 
+        #region Areas
         public override Dictionary<string, SKRect> Areas()
         {
             var dic = base.Areas();
@@ -240,21 +249,29 @@ namespace Going.UI.Controls
             return dic;
         }
         #endregion
+        #endregion
 
         #region Method
         #region itemLoop
-        void itemLoop(Action<int, SKRect, GoListItem> loop)
+        void itemLoop(Action<int, GoListItem> loop)
         {
             var rts = Areas();
             var rtBox = rts["Box"];
 
-            var spos = -Convert.ToSingle(scroll.ScrollPositionWithOffset);
+            #region calcbox
+            if (Items.Changed)
+            {
+                var y = 0F;
+                foreach (var item in Items) { item.Bounds = Util.FromRect(0, y, rtBox.Width, ItemHeight); y += ItemHeight; }
+                Items.Changed = false;
+            }
+            #endregion
 
-            var si = Math.Max(0, Convert.ToInt32(Math.Floor(spos / ItemHeight)));   // 시작 인덱스(1000만개가 있다고 해도, 30개만 보여주면 되니까, 속도도 빠름)
-            var ei = Math.Min(Items.Count - 1, Convert.ToInt32(Math.Ceiling((spos + rtBox.Height) / ItemHeight))); // 끝 인덱스
+            rtBox.Offset(0, -Convert.ToSingle(scroll.ScrollPositionWithOffset));       // 시작 인덱스(1000만개가 있다고 해도, 30개만 보여주면 되니까, 속도도 빠름)
+            var (si, ei) = Util.FindRect(Items.Select(x => x.Bounds).ToList(), rtBox); // 끝 인덱스
 
             for (int i = si; i <= ei; i++)
-                loop(i, Util.FromRect(0, i * ItemHeight, rtBox.Width, ItemHeight), Items[i]);
+                loop(i, Items[i]);
         }
         #endregion
 

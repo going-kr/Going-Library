@@ -596,7 +596,7 @@ namespace Going.UI.OpenTK.Input
                                          c.BrightnessTransmit(Hover ? thm.HoverBorderBrightness : 0), round, thm.Corner);
 
             if (Down) rt.Offset(0, 1);
-            Util.DrawTextIcon(canvas, Text, "나눔고딕", 14, IconString, 18, GoDirectionHV.Horizon, 5, rt, ct);
+            Util.DrawTextIcon(canvas, Text, "나눔고딕", GoFontStyle.Normal, 14, IconString, 18, GoDirectionHV.Horizon, 5, rt, ct);
         }
 
         public void MouseDown(float x, float y, GoMouseButton button)
@@ -648,7 +648,7 @@ namespace Going.UI.OpenTK.Input
                                          c.BrightnessTransmit(Hover ? thm.HoverBorderBrightness : 0), round, thm.Corner);
 
             if (Down) rt.Offset(0, 1);
-            Util.DrawTextIcon(canvas, Text, "나눔고딕", 14, IconString, 18, GoDirectionHV.Vertical, 3, rt, ct);
+            Util.DrawTextIcon(canvas, Text, "나눔고딕", GoFontStyle.Normal, 14, IconString, 18, GoDirectionHV.Vertical, 3, rt, ct);
         }
 
         public void MouseDown(float x, float y, GoMouseButton button)
@@ -686,7 +686,7 @@ namespace Going.UI.OpenTK.Input
         public void Draw(SKCanvas canvas, GoTheme thm, SKColor border, SKColor fill)
         {
             Util.DrawBox(canvas, Bounds, fill, border, GoRoundType.All, thm.Corner);
-            Util.DrawText(canvas, Value, "나눔고딕", 14, Bounds, thm.Fore);
+            Util.DrawText(canvas, Value, "나눔고딕", GoFontStyle.Normal, 14, Bounds, thm.Fore);
         }
     }
     #endregion

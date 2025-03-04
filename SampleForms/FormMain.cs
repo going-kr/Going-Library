@@ -1,35 +1,37 @@
+﻿using Going.UI.Datas;
 using Going.UI.Forms.Dialogs;
-using Going.UI.Forms.ImageCanvas;
-using Going.UI.Forms.Input;
-using Going.UI.Themes;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace SampleForms
 {
     public partial class FormMain : GoForm
     {
-        DateTime prev = DateTime.Now;
-        System.Windows.Forms.Timer tmr;
-        int sec;
-
-        IcOnOff[] onoffs;
         public FormMain()
         {
             InitializeComponent();
-            ClientSize = new Size(800, 480);
 
-            onoffs = [icOnOff1, icOnOff2, icOnOff3, icOnOff4, icOnOff5, icOnOff6, icOnOff7, icOnOff8];
+            //goPanel1.Enabled = false;
+            //goTabControl1.Enabled = false;
 
-            tmr = new System.Windows.Forms.Timer { Interval = 10, Enabled = true };
-            tmr.Tick += (o, s) =>
+            goAnimate1.MouseDown += (o, s) => goAnimate1.OnOff = !goAnimate1.OnOff;
+
+
+            for (int i = 1; i <= 7; i++)
             {
-                var now = DateTime.Now;
-                if (now.Second != sec)
-                {
-                    var idx = Convert.ToInt32((now - prev).TotalSeconds) % 8;
-                    onoffs[idx].OnOff = !onoffs[idx].OnOff;
-                    sec = now.Second;
-                }
-            };
+                var cat = new GoToolCategory { Text = $"Category {i}" };
+                goToolBox1.Categories.Add(cat);
+
+                for (int j = 1; j <= 10; j++)
+                    cat.Items.Add(new GoToolItem { Text = $"Item {i}.{j}" });
+            }
         }
     }
 }
