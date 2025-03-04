@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             Going.UI.Collections.ObservableList<Going.UI.Datas.GoToolCategory> observableList_11 = new Going.UI.Collections.ObservableList<Going.UI.Datas.GoToolCategory>();
+            Going.UI.Collections.ObservableList<Going.UI.Datas.GoTreeNode> observableList_12 = new Going.UI.Collections.ObservableList<Going.UI.Datas.GoTreeNode>();
             goPanel1 = new Going.UI.Forms.Containers.GoPanel();
             goButton2 = new Going.UI.Forms.Controls.GoButton();
             goButton1 = new Going.UI.Forms.Controls.GoButton();
@@ -37,14 +38,18 @@
             tabPage1 = new TabPage();
             goCalendar1 = new Going.UI.Forms.Controls.GoCalendar();
             tabPage2 = new TabPage();
+            goLabel2 = new Going.UI.Forms.Controls.GoLabel();
             goToolBox1 = new Going.UI.Forms.Controls.GoToolBox();
             rm = new Going.UI.Forms.Components.GoResourceManager();
             goPictureBox1 = new Going.UI.Forms.Controls.GoPictureBox();
             goAnimate1 = new Going.UI.Forms.Controls.GoAnimate();
+            tabPage3 = new TabPage();
+            goTreeView1 = new Going.UI.Forms.Controls.GoTreeView();
             goPanel1.SuspendLayout();
             goTabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             tabPage2.SuspendLayout();
+            tabPage3.SuspendLayout();
             SuspendLayout();
             // 
             // goPanel1
@@ -154,6 +159,7 @@
             goTabControl1.BackgroundColor = "Back";
             goTabControl1.Controls.Add(tabPage1);
             goTabControl1.Controls.Add(tabPage2);
+            goTabControl1.Controls.Add(tabPage3);
             goTabControl1.FontName = "나눔고딕";
             goTabControl1.FontSize = 12F;
             goTabControl1.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
@@ -206,18 +212,47 @@
             // tabPage2
             // 
             tabPage2.BackColor = Color.FromArgb(60, 60, 60);
+            tabPage2.Controls.Add(goLabel2);
             tabPage2.Controls.Add(goToolBox1);
             tabPage2.Location = new Point(4, 44);
             tabPage2.Name = "tabPage2";
-            tabPage2.Padding = new Padding(3);
+            tabPage2.Padding = new Padding(10);
             tabPage2.Size = new Size(552, 378);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "tabPage2";
             // 
+            // goLabel2
+            // 
+            goLabel2.BackColor = Color.FromArgb(60, 60, 60);
+            goLabel2.BackgroundColor = "base2";
+            goLabel2.BackgroundDraw = true;
+            goLabel2.BorderOnly = true;
+            goLabel2.ContentAlignment = Going.UI.Enums.GoContentAlignment.MiddleCenter;
+            goLabel2.FontName = "나눔고딕";
+            goLabel2.FontSize = 12F;
+            goLabel2.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
+            goLabel2.IconDirection = Going.UI.Enums.GoDirectionHV.Horizon;
+            goLabel2.IconGap = 5F;
+            goLabel2.IconSize = 12F;
+            goLabel2.IconString = null;
+            goLabel2.LabelColor = "Base3";
+            goLabel2.Location = new Point(13, 304);
+            goLabel2.Name = "goLabel2";
+            goLabel2.Round = Going.UI.Enums.GoRoundType.All;
+            goLabel2.Size = new Size(283, 40);
+            goLabel2.TabIndex = 1;
+            goLabel2.TabStop = false;
+            goLabel2.Text = "goLabel2";
+            goLabel2.TextColor = "Fore";
+            goLabel2.TextPadding.Bottom = 0F;
+            goLabel2.TextPadding.Left = 0F;
+            goLabel2.TextPadding.Right = 0F;
+            goLabel2.TextPadding.Top = 0F;
+            // 
             // goToolBox1
             // 
-            goToolBox1.BackColor = Color.FromArgb(50, 50, 50);
-            goToolBox1.BackgroundColor = "Back";
+            goToolBox1.BackColor = Color.FromArgb(60, 60, 60);
+            goToolBox1.BackgroundColor = "Base2";
             goToolBox1.BackgroundDraw = true;
             goToolBox1.BorderColor = "Base3";
             goToolBox1.BoxColor = "Base1";
@@ -230,11 +265,11 @@
             goToolBox1.IconGap = 5F;
             goToolBox1.IconSize = 12F;
             goToolBox1.ItemHeight = 30F;
-            goToolBox1.Location = new Point(18, 21);
+            goToolBox1.Location = new Point(13, 13);
             goToolBox1.Name = "goToolBox1";
             goToolBox1.Round = Going.UI.Enums.GoRoundType.All;
             goToolBox1.SelectColor = "Select";
-            goToolBox1.Size = new Size(287, 317);
+            goToolBox1.Size = new Size(287, 285);
             goToolBox1.TabIndex = 0;
             goToolBox1.TabStop = false;
             goToolBox1.Text = "goToolBox1";
@@ -277,6 +312,44 @@
             goAnimate1.Text = "goAnimate1";
             goAnimate1.Time = 30;
             // 
+            // tabPage3
+            // 
+            tabPage3.BackColor = Color.FromArgb(60, 60, 60);
+            tabPage3.Controls.Add(goTreeView1);
+            tabPage3.Location = new Point(4, 44);
+            tabPage3.Name = "tabPage3";
+            tabPage3.Padding = new Padding(10);
+            tabPage3.Size = new Size(552, 378);
+            tabPage3.TabIndex = 2;
+            tabPage3.Text = "tabPage3";
+            // 
+            // goTreeView1
+            // 
+            goTreeView1.BackColor = Color.FromArgb(60, 60, 60);
+            goTreeView1.BackgroundColor = "base2";
+            goTreeView1.BackgroundDraw = true;
+            goTreeView1.BorderColor = "Base3";
+            goTreeView1.BoxColor = "Base1";
+            goTreeView1.DragMode = false;
+            goTreeView1.FontName = "나눔고딕";
+            goTreeView1.FontSize = 12F;
+            goTreeView1.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
+            goTreeView1.IconGap = 5F;
+            goTreeView1.IconSize = 12F;
+            goTreeView1.ItemHeight = 30F;
+            goTreeView1.Location = new Point(13, 13);
+            goTreeView1.Name = "goTreeView1";
+            observableList_12.Changed = false;
+            goTreeView1.Nodes = observableList_12;
+            goTreeView1.Round = Going.UI.Enums.GoRoundType.All;
+            goTreeView1.SelectColor = "Select";
+            goTreeView1.SelectionMode = Going.UI.Enums.GoItemSelectionMode.SIngle;
+            goTreeView1.Size = new Size(292, 283);
+            goTreeView1.TabIndex = 0;
+            goTreeView1.TabStop = false;
+            goTreeView1.Text = "goTreeView1";
+            goTreeView1.TextColor = "Fore";
+            // 
             // FormMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -293,6 +366,7 @@
             goTabControl1.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
             tabPage2.ResumeLayout(false);
+            tabPage3.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -310,5 +384,8 @@
         private Going.UI.Forms.Controls.GoAnimate goAnimate1;
         private Going.UI.Forms.Controls.GoCalendar goCalendar1;
         private Going.UI.Forms.Controls.GoToolBox goToolBox1;
+        private Going.UI.Forms.Controls.GoLabel goLabel2;
+        private TabPage tabPage3;
+        private Going.UI.Forms.Controls.GoTreeView goTreeView1;
     }
 }

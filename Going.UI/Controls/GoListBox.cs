@@ -37,8 +37,8 @@ namespace Going.UI.Controls
         public float ItemHeight { get; set; } = 30;
         public GoContentAlignment ItemAlignment { get; set; } = GoContentAlignment.MiddleCenter;
         public ObservableList<GoListItem> Items { get; set; } = [];
-        [JsonIgnore] public List<GoListItem> SelectedItems { get; } = new List<GoListItem>();
         public GoItemSelectionMode SelectionMode { get; set; } = GoItemSelectionMode.SIngle;
+        [JsonIgnore] public List<GoListItem> SelectedItems { get; } = [];
 
         [JsonIgnore] public double ScrollPosition { get => scroll.ScrollPosition; set => scroll.ScrollPosition = value; }
         [JsonIgnore] internal double ScrollPositionWithOffset => scroll.ScrollPositionWithOffset;
@@ -47,8 +47,8 @@ namespace Going.UI.Controls
         #region Member Variable
         private Scroll scroll = new Scroll() { Direction = ScrollDirection.Vertical };
 
-        bool bShift, bControl, bAlt;
-        GoListItem? first = null;
+        bool bShift, bControl;
+        private GoListItem? first = null;
         #endregion
 
         #region Event 
@@ -176,7 +176,7 @@ namespace Going.UI.Controls
             {
                 if (CollisionTool.Check(item.Bounds, x, ry))
                 {
-                    select(item, i);
+                    select(item);
                     ItemClicked?.Invoke(this, new ListItemEventArgs(item));
                 }
             });
@@ -222,7 +222,6 @@ namespace Going.UI.Controls
         {
             bShift = Shift;
             bControl = Control;
-            bAlt = Alt;
             base.OnKeyDown(Shift, Control, Alt, key);
         }
 
@@ -230,7 +229,6 @@ namespace Going.UI.Controls
         {
             bShift = Shift;
             bControl = Control;
-            bAlt = Alt;
             base.OnKeyUp(Shift, Control, Alt, key);
         }
         #endregion
@@ -276,7 +274,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region select
-        private void select(GoListItem item, int i)
+        private void select(GoListItem item)
         {
             #region Single
             if (SelectionMode == GoItemSelectionMode.SIngle)
@@ -305,66 +303,58 @@ namespace Going.UI.Controls
             #region MultiPC
             else if (SelectionMode == GoItemSelectionMode.MultiPC)
             {
-                if (SelectedItems.Contains(item))
+                if (bControl)
                 {
-                    SelectedItems.Remove(item);
-                    SelectedChanged?.Invoke(this, EventArgs.Empty);
-                }
-                else
-                {
-                    if (bControl)
+                    #region Control
+                    if (SelectedItems.Contains(item))
                     {
-                        #region Control
-                        if (SelectedItems.Contains(item))
-                        {
-                            SelectedItems.Remove(item);
-                            SelectedChanged?.Invoke(this, EventArgs.Empty);
-                        }
-                        else
-                        {
-                            SelectedItems.Add(item);
-                            SelectedChanged?.Invoke(this, EventArgs.Empty);
-                            first = item;
-                        }
-                        #endregion
-                    }
-                    else if (bShift)
-                    {
-                        #region Shift
-                        if (first == null)
-                        {
-                            SelectedItems.Add(item);
-                            SelectedChanged?.Invoke(this, EventArgs.Empty);
-                        }
-                        else
-                        {
-                            int idx1 = Items.IndexOf(first);
-                            int idx2 = i;
-                            int min = Math.Min(idx1, idx2);
-                            int max = Math.Max(idx1, idx2);
-
-                            bool b = false;
-                            for (int ii = min; ii <= max; ii++)
-                            {
-                                if (!SelectedItems.Contains(Items[ii]))
-                                {
-                                    SelectedItems.Add(Items[ii]);
-                                    b = true;
-                                }
-                            }
-                            if (b) SelectedChanged?.Invoke(this, EventArgs.Empty);
-                        }
-                        #endregion
+                        SelectedItems.Remove(item);
+                        SelectedChanged?.Invoke(this, EventArgs.Empty);
                     }
                     else
                     {
-                        #region Select
-                        SelectedItems.Clear();
                         SelectedItems.Add(item);
                         SelectedChanged?.Invoke(this, EventArgs.Empty);
                         first = item;
-                        #endregion
                     }
+                    #endregion
+                }
+                else if (bShift)
+                {
+                    #region Shift
+                    if (first == null)
+                    {
+                        SelectedItems.Add(item);
+                        SelectedChanged?.Invoke(this, EventArgs.Empty);
+                    }
+                    else
+                    {
+                        int idx1 = Items.IndexOf(first);
+                        int idx2 = Items.IndexOf(item);
+                        int min = Math.Min(idx1, idx2);
+                        int max = Math.Max(idx1, idx2);
+
+                        bool b = false;
+                        for (int ii = min; ii <= max; ii++)
+                        {
+                            if (!SelectedItems.Contains(Items[ii]))
+                            {
+                                SelectedItems.Add(Items[ii]);
+                                b = true;
+                            }
+                        }
+                        if (b) SelectedChanged?.Invoke(this, EventArgs.Empty);
+                    }
+                    #endregion
+                }
+                else
+                {
+                    #region Select
+                    SelectedItems.Clear();
+                    SelectedItems.Add(item);
+                    SelectedChanged?.Invoke(this, EventArgs.Empty);
+                    first = item;
+                    #endregion
                 }
             }
             #endregion

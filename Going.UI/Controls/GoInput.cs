@@ -534,6 +534,7 @@ namespace Going.UI.Controls
         public List<GoListItem> Items { get; set; } = [];
 
         private int nSelIndex = -1;
+        [JsonIgnore]
         public int SelectedIndex
         {
             get => nSelIndex;
@@ -635,6 +636,7 @@ namespace Going.UI.Controls
         public List<GoListItem> Items { get; set; } = [];
 
         private int nSelIndex = -1;
+        [JsonIgnore]
         public int SelectedIndex
         {
             get => nSelIndex;

@@ -241,6 +241,8 @@ namespace Going.UI.Utils
                     }
                 }
             }
+
+            if (!ScrollVisible) _ScrollPosition = 0;
         }
         #endregion
         #region MouseUp
@@ -576,6 +578,8 @@ namespace Going.UI.Utils
                 if (rtcur.HasValue) Util.DrawBox(canvas, rtcur.Value, cCur, round, thm.Corner);
                 canvas.RestoreToCount(sp);
             }
+
+            if (!ScrollVisible) _ScrollPosition = 0;
         }
 
         public void DrawR(SKCanvas canvas, SKRect rtScroll, GoRoundType round = GoRoundType.All)
@@ -590,6 +594,8 @@ namespace Going.UI.Utils
                 if (rtcur.HasValue) Util.DrawBox(canvas, rtcur.Value, cCur, round, thm.Corner);
                 canvas.RestoreToCount(sp);
             }
+
+            if (!ScrollVisible) _ScrollPosition = 0;
         }
         #endregion
         #endregion

@@ -1,6 +1,5 @@
 ﻿using Going.UI.Collections;
 using Going.UI.Datas;
-using Going.UI.Design;
 using Going.UI.Enums;
 using Going.UI.Themes;
 using Going.UI.Tools;
@@ -8,16 +7,14 @@ using Going.UI.Utils;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace Going.UI.Controls
 {
-    public class GoToolBox : GoControl
+    public class GoTreeView : GoControl
     {
         #region Properties
         public float IconSize { get; set; } = 12;
@@ -30,15 +27,16 @@ namespace Going.UI.Controls
         public string BoxColor { get; set; } = "Base1";
         public string BorderColor { get; set; } = "Base3";
         public string SelectColor { get; set; } = "Select";
-        public string CategoryColor { get; set; } = "Base2";
         public GoRoundType Round { get; set; } = GoRoundType.All;
 
         public bool BackgroundDraw { get; set; } = true;
+        public bool DragMode { get; set; } = false;
 
         public float ItemHeight { get; set; } = 30;
-        public ObservableList<GoToolCategory> Categories { get; set; } = [];
+        public ObservableList<GoTreeNode> Nodes { get; set; } = [];
 
-        public bool DragMode { get; set; } = true;
+        public GoItemSelectionMode SelectionMode { get; set; } = GoItemSelectionMode.SIngle;
+        [JsonIgnore] public List<GoTreeNode> SelectedNodes { get; } = [];
 
         [JsonIgnore] public double ScrollPosition { get => scroll.ScrollPosition; set => scroll.ScrollPosition = value; }
         [JsonIgnore] internal double ScrollPositionWithOffset => scroll.ScrollPositionWithOffset;
@@ -49,21 +47,26 @@ namespace Going.UI.Controls
 
         #region Member Variable
         private Scroll scroll = new Scroll() { Direction = ScrollDirection.Vertical };
+
+        private bool bShift, bControl;
+        private GoTreeNode ? first = null;
         #endregion
 
         #region Event 
-        public event EventHandler<ToolItemEventArgs>? DragStart;
-        public event EventHandler<ToolItemEventArgs>? ItemClicked;
-        public event EventHandler<ToolItemEventArgs>? ItemLongClicked;
-        public event EventHandler<ToolItemEventArgs>? ItemDoubleClicked;
+        public event EventHandler? SelectedChanged;
+
+        public event EventHandler<TreeNodeEventArgs>? DragStart;
+        public event EventHandler<TreeNodeEventArgs>? ItemClicked;
+        public event EventHandler<TreeNodeEventArgs>? ItemLongClicked;
+        public event EventHandler<TreeNodeEventArgs>? ItemDoubleClicked;
         #endregion
 
         #region Constructor
-        public GoToolBox()
+        public GoTreeView()
         {
             Selectable = true;
 
-            scroll.GetScrollTotal = () => Categories.LastOrDefault()?.Bounds.Bottom ?? 0;
+            scroll.GetScrollTotal = () => Nodes.LastOrDefault()?.Bounds.Bottom ?? 0;
             scroll.GetScrollTick = () => ItemHeight;
             scroll.GetScrollView = () => Height;
             scroll.Refresh = () => Invalidate?.Invoke();
@@ -81,7 +84,6 @@ namespace Going.UI.Controls
             var cBorder = thm.ToColor(BorderColor);
             var cBox = thm.ToColor(BoxColor);
             var cSel = thm.ToColor(SelectColor);
-            var cCat = thm.ToColor(CategoryColor);
 
             var rts = Areas();
             var rtContent = rts["Content"];
@@ -104,10 +106,12 @@ namespace Going.UI.Controls
                 using var pth = PathTool.Box(rtContent, Round, thm.Corner);
                 canvas.ClipPath(pth, SKClipOperation.Intersect, true);
                 canvas.Translate(rtContent.Left, spos + rtContent.Top);
-                itemLoop((i, category) =>
+                
+                itemLoop((i, node) =>
                 {
-                    category.Draw(canvas);
+                    node.Draw(canvas);
                 });
+                
             }
 
             scroll.Draw(canvas, rtScroll);
@@ -129,15 +133,15 @@ namespace Going.UI.Controls
         protected override void OnMouseDown(float x, float y, GoMouseButton button)
         {
             var rts = Areas();
-            
-            GoToolItem? sel = null;
+
+            GoTreeNode? sel = null;
             itemLoop((i, category) => { category.MouseDown(x, y - rts["Box"].Top - Convert.ToSingle(scroll.ScrollPositionWithOffset), button, (v) => sel ??= v); });
 
             if (sel != null)
             {
                 if (DragMode)
                 {
-                    DragStart?.Invoke(this, new ToolItemEventArgs(sel));
+                    DragStart?.Invoke(this, new TreeNodeEventArgs(sel));
                     Design?.Drag(sel);
                 }
             }
@@ -157,7 +161,7 @@ namespace Going.UI.Controls
         protected override void OnMouseMove(float x, float y)
         {
             var rts = Areas();
-         
+
             ItemMouseX = x;
             ItemMouseY = y - rts["Box"].Top - Convert.ToSingle(scroll.ScrollPositionWithOffset);
 
@@ -193,9 +197,13 @@ namespace Going.UI.Controls
         protected override void OnMouseClick(float x, float y, GoMouseButton button)
         {
             var rts = Areas();
-            GoToolItem? sel = null;
+            GoTreeNode? sel = null;
             itemLoop((i, category) => { category.MouseClick(x, y - rts["Box"].Top - Convert.ToSingle(scroll.ScrollPositionWithOffset), button, (v) => sel ??= v); });
-            if (sel != null) ItemClicked?.Invoke(this, new ToolItemEventArgs(sel));
+            if (sel != null)
+            {
+                ItemClicked?.Invoke(this, new TreeNodeEventArgs(sel));
+                select(sel);
+            }
 
             base.OnMouseClick(x, y, button);
         }
@@ -203,20 +211,36 @@ namespace Going.UI.Controls
         protected override void OnMouseDoubleClick(float x, float y, GoMouseButton button)
         {
             var rts = Areas();
-            GoToolItem? sel = null;
+            GoTreeNode? sel = null;
             itemLoop((i, category) => { category.MouseDoubleClick(x, y - rts["Box"].Top - Convert.ToSingle(scroll.ScrollPositionWithOffset), button, (v) => sel ??= v); });
-            if (sel != null) ItemDoubleClicked?.Invoke(this, new ToolItemEventArgs(sel));
+            if (sel != null) ItemDoubleClicked?.Invoke(this, new TreeNodeEventArgs(sel));
             base.OnMouseDoubleClick(x, y, button);
         }
 
         protected override void OnMouseLongClick(float x, float y, GoMouseButton button)
         {
             var rts = Areas();
-            GoToolItem? sel = null;
+            GoTreeNode? sel = null;
             itemLoop((i, category) => { category.MouseLongClick(x, y - rts["Box"].Top - Convert.ToSingle(scroll.ScrollPositionWithOffset), button, (v) => sel ??= v); });
-            if (sel != null) ItemLongClicked?.Invoke(this, new ToolItemEventArgs(sel));
+            if (sel != null) ItemLongClicked?.Invoke(this, new TreeNodeEventArgs(sel));
 
             base.OnMouseLongClick(x, y, button);
+        }
+        #endregion
+
+        #region Key
+        protected override void OnKeyDown(bool Shift, bool Control, bool Alt, GoKeys key)
+        {
+            bShift = Shift;
+            bControl = Control;
+            base.OnKeyDown(Shift, Control, Alt, key);
+        }
+
+        protected override void OnKeyUp(bool Shift, bool Control, bool Alt, GoKeys key)
+        {
+            bShift = Shift;
+            bControl = Control;
+            base.OnKeyUp(Shift, Control, Alt, key);
         }
         #endregion
 
@@ -239,34 +263,135 @@ namespace Going.UI.Controls
 
         #region Method
         #region itemLoop
-        void itemLoop(Action<int, GoToolCategory> loop)
+        void itemLoop(Action<int, GoTreeNode> loop)
         {
             var rts = Areas();
             var rtBox = rts["Box"];
 
             #region calcbox
-            if (Categories.Changed || Categories.Any(x => x.Changed))
+            if (Nodes.Changed || Nodes.Any(x => x.Changed))
             {
                 var y = 0F;
-                foreach (var item in Categories)
+                foreach (var item in Nodes)
                 {
-                    item.ToolBox = this;
+                    item.TreeView = this;
 
-                    var ih = item.Expand ? ItemHeight + (item.Items.Count * ItemHeight) : ItemHeight;
+                    var ih = item.GetHeight();
                     item.Bounds = Util.FromRect(0, y, rtBox.Width, ih);
                     y += ih;
 
                     item.Changed = false;
                 }
 
-                Categories.Changed = false;
+                Nodes.Changed = false;
             }
             #endregion
 
             rtBox.Offset(0, -Convert.ToSingle(scroll.ScrollPositionWithOffset));
-            var (si, ei) = Util.FindRect(Categories.Select(x => x.Bounds).ToList(), rtBox);
-            if (si >= 0 && si < Categories.Count && ei >= 0 && ei < Categories.Count)
-                for (var i = si; i <= ei; i++) loop(i, Categories[i]);
+            var (si, ei) = Util.FindRect(Nodes.Select(x => x.Bounds).ToList(), rtBox);
+            if (si >= 0 && si < Nodes.Count && ei >= 0 && ei < Nodes.Count)
+                for (var i = si; i <= ei; i++) loop(i, Nodes[i]);
+        }
+        #endregion
+
+        #region select
+        private void select(GoTreeNode item)
+        {
+            #region Single
+            if (SelectionMode == GoItemSelectionMode.SIngle)
+            {
+                SelectedNodes.Clear();
+                SelectedNodes.Add(item);
+                SelectedChanged?.Invoke(this, EventArgs.Empty);
+                first = item;
+            }
+            #endregion
+            #region Multi
+            else if (SelectionMode == GoItemSelectionMode.Multi)
+            {
+                if (SelectedNodes.Contains(item))
+                {
+                    SelectedNodes.Remove(item);
+                    if (SelectedChanged != null) SelectedChanged.Invoke(this, new EventArgs());
+                }
+                else
+                {
+                    SelectedNodes.Add(item);
+                    if (SelectedChanged != null) SelectedChanged.Invoke(this, new EventArgs());
+                }
+            }
+            #endregion
+            #region MultiPC
+            else if (SelectionMode == GoItemSelectionMode.MultiPC)
+            {
+                if (bControl)
+                {
+                    #region Control
+                    if (SelectedNodes.Contains(item))
+                    {
+                        SelectedNodes.Remove(item);
+                        SelectedChanged?.Invoke(this, EventArgs.Empty);
+                    }
+                    else
+                    {
+                        SelectedNodes.Add(item);
+                        SelectedChanged?.Invoke(this, EventArgs.Empty);
+                        first = item;
+                    }
+                    #endregion
+                }
+                else if (bShift)
+                {
+                    #region Shift
+                    if (first == null)
+                    {
+                        SelectedNodes.Add(item);
+                        SelectedChanged?.Invoke(this, EventArgs.Empty);
+                    }
+                    else
+                    {
+                        var Items = mk(Nodes);
+
+                        int idx1 = Items.IndexOf(first);
+                        int idx2 = Items.IndexOf(item);
+                        int min = Math.Min(idx1, idx2);
+                        int max = Math.Max(idx1, idx2);
+
+                        bool b = false;
+                        for (int ii = min; ii <= max; ii++)
+                        {
+                            if (!SelectedNodes.Contains(Items[ii]))
+                            {
+                                SelectedNodes.Add(Items[ii]);
+                                b = true;
+                            }
+                        }
+                        if (b) SelectedChanged?.Invoke(this, EventArgs.Empty);
+                    }
+                    #endregion
+                }
+                else
+                {
+                    #region Select
+                    SelectedNodes.Clear();
+                    SelectedNodes.Add(item);
+                    SelectedChanged?.Invoke(this, EventArgs.Empty);
+                    first = item;
+                    #endregion
+                }
+            }
+            #endregion
+        }
+
+        List<GoTreeNode> mk(IEnumerable<GoTreeNode> nodes)
+        {
+            List<GoTreeNode> ret = [];
+            foreach(var nd in nodes)
+            {
+                ret.Add(nd);
+                if (nd.Expand) ret.AddRange(mk(nd.Nodes));
+            }
+            return ret;
         }
         #endregion
         #endregion
