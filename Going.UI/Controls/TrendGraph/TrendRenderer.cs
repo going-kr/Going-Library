@@ -2,19 +2,18 @@
 using Going.UI.Themes;
 using Going.UI.Utils;
 using SkiaSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics;
 
 namespace Going.UI.Controls.TrendGraph
 {
     /// <summary>
-    /// 트렌드 그래프 렌더링 관리자
+    /// 트렌드 그래프 렌더링 관리자 (매 프레임 렌더링에 최적화)
     /// </summary>
     public class TrendRenderer : IDisposable
     {
         #region Fields
 
+        // 재사용 가능한 SKPaint 객체들 - 메모리 사용 최적화
         private readonly SKPaint _backgroundPaint;
         private readonly SKPaint _borderPaint;
         private readonly SKPaint _axisPaint;
@@ -28,8 +27,21 @@ namespace Going.UI.Controls.TrendGraph
         private readonly SKPaint _scrollBarPaint;
         private readonly SKPaint _scrollHandlePaint;
 
+        // 포인트 캐시 (매 프레임 새로 할당 방지)
         private readonly List<(float X, float Y)> _cachedPoints = new();
+
+        // 그리기 최적화 임시 객체
+        private readonly SKPath _tempPath = new();
+        private SKPoint[] _tempPointArray = new SKPoint[1000]; // 초기 크기, 필요시 확장
+
         private bool _disposed;
+
+        // 다운샘플링 설정
+        private const int MaxVisiblePoints = 1000; // 최대 점 개수 (성능 최적화)
+
+        // Y축 매핑 최적화용 캐시
+        private double _yRangeInverse;
+        private bool _yMappingInvalid = true;
 
         #endregion
 
@@ -109,7 +121,7 @@ namespace Going.UI.Controls.TrendGraph
         /// </summary>
         public TrendRenderer()
         {
-            // 페인트 객체 초기화
+            // 페인트 객체 초기화 (한 번만 생성하고 재사용)
             _backgroundPaint = new SKPaint { IsAntialias = true, Style = SKPaintStyle.Fill };
             _borderPaint = new SKPaint { IsAntialias = true, Style = SKPaintStyle.Stroke, StrokeWidth = 1 };
             _axisPaint = new SKPaint { IsAntialias = true, Style = SKPaintStyle.Stroke, StrokeWidth = 1 };
@@ -134,7 +146,25 @@ namespace Going.UI.Controls.TrendGraph
         #region Public Methods
 
         /// <summary>
-        /// 그래프 렌더링
+        /// Y 매핑 캐시 무효화
+        /// </summary>
+        public void InvalidateYMappingCache()
+        {
+            _yMappingInvalid = true;
+        }
+
+        /// <summary>
+        /// Y 매핑 캐시 업데이트
+        /// </summary>
+        public void UpdateYMappingCache()
+        {
+            double range = DisplayYMax - DisplayYMin;
+            _yRangeInverse = range > 0 ? 1.0 / range : 0;
+            _yMappingInvalid = false;
+        }
+
+        /// <summary>
+        /// 그래프 렌더링 - 매 프레임 최적화
         /// </summary>
         public void DrawGraph(SKCanvas canvas, GoTheme thm)
         {
@@ -143,29 +173,52 @@ namespace Going.UI.Controls.TrendGraph
 
             try
             {
-                // 배경 그리기
+                // 매번 변경될 수 있는 Y축 매핑 캐시 업데이트
+                if (_yMappingInvalid)
+                {
+                    UpdateYMappingCache();
+                }
+
+                // 클리핑 적용 - 그래프 영역만 렌더링
+                canvas.Save();
+
+                // 배경 그리기 (클리핑 영역 외부)
                 DrawBackground(canvas, thm);
+
+                // 그래프 영역 클리핑 (성능 최적화)
+                canvas.ClipRect(GraphArea);
 
                 // 그리드 및 축 그리기
                 if (Settings.ShowGrid)
                 {
                     DrawGrid(canvas, thm);
                 }
-                DrawAxes(canvas, thm);
 
                 // 모든 시리즈 그리기
                 foreach (var series in Series)
                 {
-                    DrawSeries(canvas, series, thm);
+                    // 각 시리즈는 보이는 영역의 데이터만 선택하고 필요시 다운샘플링
+                    DrawSeriesOptimized(canvas, series, thm);
                 }
 
-                // 데이터 포인트 그리기
+                // 클리핑 복원
+                canvas.Restore();
+
+                // 클리핑 외부 요소 그리기
+                DrawAxes(canvas, thm);
+
+                // 데이터 포인트 그리기 - 필요한 경우만
                 if (Settings.ShowDataPoints)
                 {
+                    canvas.Save();
+                    canvas.ClipRect(GraphArea);
+
                     foreach (var series in Series)
                     {
-                        DrawDataPoints(canvas, series, thm);
+                        DrawDataPointsOptimized(canvas, series, thm);
                     }
+
+                    canvas.Restore();
                 }
 
                 // 레이블 그리기
@@ -186,22 +239,61 @@ namespace Going.UI.Controls.TrendGraph
                     DrawScrollBar(canvas, thm);
                 }
 
-                // 호버링된 데이터 포인트 그리기
+                // 호버링된 데이터 포인트 그리기 (항상 최상단)
                 if (HoveredPoint != null)
                 {
                     DrawHoveredPoint(canvas, HoveredPoint.Value, thm);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 // 예외 발생 시 그리기 중단
-                // 실제 애플리케이션에서는 로깅 추가
+                Debug.WriteLine($"그래프 렌더링 오류: {ex.Message}");
             }
+        }
+
+        /// <summary>
+        /// Y 좌표 매핑 함수 (최적화 버전)
+        /// </summary>
+        public float MapYToCanvas(double value)
+        {
+            if (double.IsNaN(value) || double.IsInfinity(value))
+                return GraphArea.Bottom;
+
+            if (_yMappingInvalid)
+            {
+                UpdateYMappingCache();
+            }
+
+            // 범위 제한
+            value = Math.Max(DisplayYMin, Math.Min(DisplayYMax, value));
+
+            // 정규화 및 매핑
+            double normalizedY = (value - DisplayYMin) * _yRangeInverse;
+            return (float)(GraphArea.Bottom - normalizedY * GraphArea.Height);
+        }
+
+        /// <summary>
+        /// X 좌표를 시간에서 캔버스 좌표로 변환
+        /// </summary>
+        public float MapXToCanvas(DateTime time)
+        {
+            // 최적화: 범위 바깥의 시간 처리
+            if (time <= VisibleXMin) return GraphArea.Left;
+            if (time >= VisibleXMax) return GraphArea.Right;
+
+            // 정규화된 X 위치 계산 (0.0 ~ 1.0)
+            TimeSpan visibleRange = VisibleXMax - VisibleXMin;
+            if (visibleRange.Ticks <= 0)
+                return GraphArea.Left;
+
+            double normalizedX = (time - VisibleXMin).TotalMilliseconds / visibleRange.TotalMilliseconds;
+            return (float)(GraphArea.Left + normalizedX * GraphArea.Width);
         }
 
         #endregion
 
-        #region Drawing Methods
+        #region Drawing Methods (Optimized)
 
         private void DrawBackground(SKCanvas canvas, GoTheme thm)
         {
@@ -209,12 +301,21 @@ namespace Going.UI.Controls.TrendGraph
             {
                 // 배경 그리기
                 _backgroundPaint.Color = thm.ToColor(Settings.BgColor);
-                Util.DrawBox(canvas, Settings.Bounds, Settings.BorderOnly ? SKColors.Transparent : _backgroundPaint.Color, Settings.Round, thm.Corner);
+
+                if (!Settings.BorderOnly)
+                {
+                    Util.DrawBox(canvas, Settings.Bounds, _backgroundPaint.Color, Settings.Round, thm.Corner);
+                }
+                else
+                {
+                    Util.DrawBox(canvas, Settings.Bounds, SKColors.Transparent, Settings.Round, thm.Corner);
+                }
 
                 // 테두리 그리기
                 if (!Settings.BorderOnly)
                 {
                     _borderPaint.Color = thm.ToColor(Settings.BorderColor);
+                    // 필요시 테두리 추가
                 }
             }
         }
@@ -252,16 +353,28 @@ namespace Going.UI.Controls.TrendGraph
             canvas.DrawLine(GraphArea.Left, GraphArea.Top, GraphArea.Left, GraphArea.Bottom, _axisPaint);
         }
 
-        private void DrawSeries(SKCanvas canvas, TrendSeries series, GoTheme thm)
+        private void DrawSeriesOptimized(SKCanvas canvas, TrendSeries series, GoTheme thm)
         {
             if (series.DataPoints == null || series.DataPoints.Count < 2)
                 return;
 
+            // 1. 보이는 영역 데이터 준비
+            var visiblePoints = series.GetVisiblePoints(VisibleXMin, VisibleXMax).ToList();
+            if (visiblePoints.Count < 2)
+                return;
+
+            // 2. 필요시 다운샘플링 (성능 최적화)
+            if (visiblePoints.Count > MaxVisiblePoints)
+            {
+                visiblePoints = series.GetDownsampledPoints(VisibleXMin, VisibleXMax, MaxVisiblePoints);
+            }
+
+            // 3. 스타일 설정
             var seriesColor = GetSeriesColor(series.Name, thm);
             _linePaint.Color = seriesColor;
             _linePaint.StrokeWidth = Settings.LineThickness;
 
-            // 그라디언트 채우기 색상
+            // 4. 그라디언트 채우기 준비
             if (Settings.FillArea)
             {
                 var fillColor = seriesColor.WithAlpha((byte)Settings.FillOpacity);
@@ -274,66 +387,32 @@ namespace Going.UI.Controls.TrendGraph
                 );
             }
 
-            // 캐시 초기화
+            // 5. 캐시 초기화 및 경로 준비
             _cachedPoints.Clear();
+            _tempPath.Reset();
 
-            // 보이는 범위에 있는 데이터 포인트 필터링
-            var visiblePoints = series.DataPoints
-                .Where(p => p.Timestamp >= VisibleXMin && p.Timestamp <= VisibleXMax)
-                .OrderBy(p => p.Timestamp)
-                .ToList();
-
-            // 보이는 범위 바로 바깥의 포인트를 추가하여 부드러운 라인 보장
-            var firstVisible = visiblePoints.FirstOrDefault();
-            var lastVisible = visiblePoints.LastOrDefault();
-
-            if (firstVisible.Timestamp > DateTime.MinValue)
+            // 필요시 점 배열 크기 조정
+            if (_tempPointArray.Length < visiblePoints.Count)
             {
-                var outsideLeft = series.DataPoints
-                    .Where(p => p.Timestamp < VisibleXMin)
-                    .OrderByDescending(p => p.Timestamp)
-                    .FirstOrDefault();
-
-                if (outsideLeft.Timestamp > DateTime.MinValue)
-                {
-                    visiblePoints.Insert(0, outsideLeft);
-                }
+                _tempPointArray = new SKPoint[visiblePoints.Count];
             }
 
-            if (lastVisible.Timestamp > DateTime.MinValue)
-            {
-                var outsideRight = series.DataPoints
-                    .Where(p => p.Timestamp > VisibleXMax)
-                    .OrderBy(p => p.Timestamp)
-                    .FirstOrDefault();
-
-                if (outsideRight.Timestamp > DateTime.MinValue)
-                {
-                    visiblePoints.Add(outsideRight);
-                }
-            }
-
-            if (visiblePoints.Count < 2) return;
-
-            // 라인 경로 생성
-            using SKPath linePath = new();
-            using SKPath? fillPath = Settings.FillArea ? new SKPath() : null;
-
-            if (Settings.FillArea)
-            {
-                fillPath!.MoveTo(GraphArea.Left, GraphArea.Bottom); // 시작점은 X축 위
-            }
-
+            // 6. 경로 생성
             bool first = true;
+            int pointCount = 0;
             float prevX = 0, prevY = 0;
+
+            // 애니메이션 관련 계산
+            bool useAnimation = Settings.EnableAnimation && AnimationProgress < 1.0f;
 
             foreach (var point in visiblePoints)
             {
+                // 좌표 계산
                 float x = MapXToCanvas(point.Timestamp);
                 float y = MapYToCanvas(point.Value);
 
                 // 애니메이션 적용
-                if (Settings.EnableAnimation && AnimationProgress < 1.0f)
+                if (useAnimation)
                 {
                     if (first)
                     {
@@ -350,46 +429,44 @@ namespace Going.UI.Controls.TrendGraph
 
                 // 점 캐싱
                 _cachedPoints.Add((x, y));
+                _tempPointArray[pointCount++] = new SKPoint(x, y);
 
                 if (first)
                 {
-                    linePath.MoveTo(x, y);
-                    if (Settings.FillArea)
-                    {
-                        fillPath!.LineTo(x, y);
-                    }
+                    _tempPath.MoveTo(x, y);
                     first = false;
                 }
                 else
                 {
-                    linePath.LineTo(x, y);
-                    if (Settings.FillArea)
-                    {
-                        fillPath!.LineTo(x, y);
-                    }
+                    _tempPath.LineTo(x, y);
                 }
 
                 prevX = x;
                 prevY = y;
             }
 
-            // 채우기 경로 완성
+            // 7. 채우기 그리기
             if (Settings.FillArea && !first)
             {
-                fillPath!.LineTo(prevX, GraphArea.Bottom);
+                // 채우기 경로 생성
+                using var fillPath = new SKPath(_tempPath); // 경로 복사
+                fillPath.LineTo(prevX, GraphArea.Bottom);
+                fillPath.LineTo(_tempPointArray[0].X, GraphArea.Bottom);
                 fillPath.Close();
 
+                // 그림자 효과 (선택적)
                 if (Settings.EnableShadow)
                 {
                     using var shadow = SKImageFilter.CreateDropShadow(2, 2, 5, 5, new SKColor(0, 0, 0, 50));
                     _fillPaint.ImageFilter = shadow;
                 }
 
+                // 채우기 그리기
                 canvas.DrawPath(fillPath, _fillPaint);
                 _fillPaint.ImageFilter = null;
             }
 
-            // 선 그리기
+            // 8. 선 그리기 - 최적화: 경로 사용
             if (!first)
             {
                 if (Settings.EnableShadow)
@@ -398,45 +475,78 @@ namespace Going.UI.Controls.TrendGraph
                     _linePaint.ImageFilter = shadow;
                 }
 
-                canvas.DrawPath(linePath, _linePaint);
+                canvas.DrawPath(_tempPath, _linePaint);
                 _linePaint.ImageFilter = null;
             }
         }
 
-        private void DrawDataPoints(SKCanvas canvas, TrendSeries series, GoTheme thm)
+        private void DrawDataPointsOptimized(SKCanvas canvas, TrendSeries series, GoTheme thm)
         {
-            if (series.DataPoints == null)
+            if (series.DataPoints == null || !Settings.ShowDataPoints)
                 return;
 
+            // 시리즈 색상
             var seriesColor = GetSeriesColor(series.Name, thm);
             _pointPaint.Color = seriesColor;
 
-            // 보이는 범위에 있는 데이터 포인트만 그리기
-            foreach (var point in series.DataPoints)
-            {
-                if (point.Timestamp < VisibleXMin || point.Timestamp > VisibleXMax)
-                    continue;
+            // 보이는 영역 데이터 준비 및 필요시 다운샘플링
+            var visiblePoints = series.GetVisiblePoints(VisibleXMin, VisibleXMax).ToList();
+            if (visiblePoints.Count == 0)
+                return;
 
+            // 포인트가 많을 경우 점을 줄임 (성능 최적화)
+            if (visiblePoints.Count > MaxVisiblePoints / 2)
+            {
+                visiblePoints = series.GetDownsampledPoints(VisibleXMin, VisibleXMax, MaxVisiblePoints / 2);
+            }
+
+            // 필요시 포인트 배열 크기 조정
+            if (_tempPointArray.Length < visiblePoints.Count)
+            {
+                _tempPointArray = new SKPoint[visiblePoints.Count];
+            }
+
+            // 모든 점 좌표 계산 (배치 처리 준비)
+            int pointCount = 0;
+            foreach (var point in visiblePoints)
+            {
+                // 좌표 계산
                 float x = MapXToCanvas(point.Timestamp);
                 float y = MapYToCanvas(point.Value);
 
                 // 뷰포트 밖에 있으면 그리지 않음
-                if (x < GraphArea.Left || x > GraphArea.Right)
+                if (x < GraphArea.Left || x > GraphArea.Right || y < GraphArea.Top || y > GraphArea.Bottom)
                     continue;
 
-                // 점 그리기
-                canvas.DrawCircle(x, y, Settings.DataPointRadius, _pointPaint);
-
-                // 테두리 그리기
-                _pointPaint.Style = SKPaintStyle.Stroke;
-                _pointPaint.StrokeWidth = 1;
-                _pointPaint.Color = SKColors.White;
-                canvas.DrawCircle(x, y, Settings.DataPointRadius, _pointPaint);
-
-                // 스타일 복원
-                _pointPaint.Style = SKPaintStyle.Fill;
-                _pointPaint.Color = seriesColor;
+                _tempPointArray[pointCount++] = new SKPoint(x, y);
             }
+
+            if (pointCount == 0)
+                return;
+
+            // 점 그리기 (채우기)
+            _pointPaint.Style = SKPaintStyle.Fill;
+            _pointPaint.Color = seriesColor;
+            float radius = Settings.DataPointRadius;
+
+            // 개별 점 그리기 - 배치 처리 불가능 (크기 다름)
+            for (int i = 0; i < pointCount; i++)
+            {
+                canvas.DrawCircle(_tempPointArray[i].X, _tempPointArray[i].Y, radius, _pointPaint);
+            }
+
+            // 테두리 그리기
+            _pointPaint.Style = SKPaintStyle.Stroke;
+            _pointPaint.StrokeWidth = 1;
+            _pointPaint.Color = SKColors.White;
+
+            for (int i = 0; i < pointCount; i++)
+            {
+                canvas.DrawCircle(_tempPointArray[i].X, _tempPointArray[i].Y, radius, _pointPaint);
+            }
+
+            // 스타일 복원
+            _pointPaint.Style = SKPaintStyle.Fill;
         }
 
         private void DrawLabels(SKCanvas canvas, GoTheme thm)
@@ -449,14 +559,18 @@ namespace Going.UI.Controls.TrendGraph
             float stepY = GraphArea.Height / Settings.GridLineCount;
             double valueStep = (DisplayYMax - DisplayYMin) / Settings.GridLineCount;
 
+            _textPaint.TextAlign = SKTextAlign.Right;
             for (int i = 0; i <= Settings.GridLineCount; i++)
             {
                 float y = GraphArea.Bottom - i * stepY;
                 double value = DisplayYMin + i * valueStep;
-                string label = value.ToString(Settings.ValueFormat);
+
+                // 값 포맷팅 (NaN/Infinity 방지)
+                string label = double.IsNaN(value) || double.IsInfinity(value)
+                    ? "---"
+                    : value.ToString(Settings.ValueFormat);
 
                 // Y축 값 레이블
-                _textPaint.TextAlign = SKTextAlign.Right;
                 canvas.DrawText(label, GraphArea.Left - 5, y + Settings.FontSize / 3, _textPaint);
             }
 
@@ -466,6 +580,11 @@ namespace Going.UI.Controls.TrendGraph
             int xDivisions = 5;
             float stepX = GraphArea.Width / xDivisions;
             TimeSpan timeRange = VisibleXMax - VisibleXMin;
+
+            // 0으로 나누기 방지
+            if (timeRange.Ticks <= 0)
+                return;
+
             TimeSpan timeStep = new(timeRange.Ticks / xDivisions);
 
             for (int i = 0; i <= xDivisions; i++)
@@ -537,7 +656,17 @@ namespace Going.UI.Controls.TrendGraph
 
             // 스크롤 핸들 그리기
             _scrollHandlePaint.Color = thm.ToColor(Settings.ScrollHandleColor);
-            canvas.DrawRoundRect(ScrollHandleX, ScrollBarArea.Top, ScrollHandleWidth, ScrollBarArea.Height, 4, 4, _scrollHandlePaint);
+
+            // 핸들이 유효한 영역 내에 있는지 확인
+            if (ScrollHandleX >= ScrollBarArea.Left &&
+                ScrollHandleX + ScrollHandleWidth <= ScrollBarArea.Right)
+            {
+                canvas.DrawRoundRect(
+                    ScrollHandleX, ScrollBarArea.Top,
+                    ScrollHandleWidth, ScrollBarArea.Height,
+                    4, 4, _scrollHandlePaint
+                );
+            }
         }
 
         private void DrawHoveredPoint(SKCanvas canvas, TrendDataPoint point, GoTheme thm)
@@ -617,35 +746,11 @@ namespace Going.UI.Controls.TrendGraph
         #region Helper Methods
 
         /// <summary>
-        /// X 좌표를 시간에서 캔버스 좌표로 변환
-        /// </summary>
-        public float MapXToCanvas(DateTime time)
-        {
-            if (VisibleXMax == VisibleXMin)
-                return GraphArea.Left;
-
-            double normalizedX = (time - VisibleXMin).TotalMilliseconds / (VisibleXMax - VisibleXMin).TotalMilliseconds;
-            return (float)(GraphArea.Left + normalizedX * GraphArea.Width);
-        }
-
-        /// <summary>
-        /// Y 값을 캔버스 좌표로 변환
-        /// </summary>
-        public float MapYToCanvas(double value)
-        {
-            if (DisplayYMax == DisplayYMin)
-                return GraphArea.Bottom;
-
-            double normalizedY = (value - DisplayYMin) / (DisplayYMax - DisplayYMin);
-            return (float)(GraphArea.Bottom - normalizedY * GraphArea.Height);
-        }
-
-        /// <summary>
-        /// 시간 형식 포맷
+        /// 시간 형식 포맷 (성능 최적화)
         /// </summary>
         private string FormatDateTime(DateTime time)
         {
-            // 적절한 날짜/시간 포맷 선택
+            // 적절한 날짜/시간 포맷 선택 (스레드 안전)
             TimeSpan range = VisibleXMax - VisibleXMin;
 
             if (range.TotalDays > 365)
@@ -663,6 +768,7 @@ namespace Going.UI.Controls.TrendGraph
         /// </summary>
         private SKColor GetSeriesColor(string seriesName, GoTheme thm)
         {
+            // 시리즈 이름으로 검색
             var series = Series.FirstOrDefault(s => s.Name == seriesName);
             if (series == null || string.IsNullOrEmpty(series.Color))
                 return thm.ToColor("Text");
@@ -671,21 +777,19 @@ namespace Going.UI.Controls.TrendGraph
         }
 
         /// <summary>
-        /// 데이터 포인트에 해당하는 시리즈 찾기
+        /// 데이터 포인트에 해당하는 시리즈 찾기 (최적화)
         /// </summary>
         private TrendSeries? FindSeriesForDataPoint(TrendDataPoint point)
         {
             foreach (var series in Series)
             {
-                if (series.DataPoints == null) continue;
+                if (series.DataPoints == null || series.DataPoints.Count == 0)
+                    continue;
 
-                foreach (var p in series.DataPoints)
+                // 점 존재 확인 - Equals 메서드 사용
+                if (series.DataPoints.Any(p => p.Equals(point)))
                 {
-                    // 타임스탬프와 값이 정확히 일치하는지 확인
-                    if (p.Timestamp == point.Timestamp && Math.Abs(p.Value - point.Value) < 0.00001)
-                    {
-                        return series;
-                    }
+                    return series;
                 }
             }
 
@@ -715,21 +819,20 @@ namespace Going.UI.Controls.TrendGraph
                 if (disposing)
                 {
                     // 관리되는 리소스 해제
-                    _backgroundPaint.Dispose();
-                    _borderPaint.Dispose();
-                    _axisPaint.Dispose();
-                    _gridPaint.Dispose();
-                    _linePaint.Dispose();
-                    _fillPaint.Dispose();
-                    _pointPaint.Dispose();
-                    _textPaint.Dispose();
-                    _legendPaint.Dispose();
-                    _legendTextPaint.Dispose();
-                    _scrollBarPaint.Dispose();
-                    _scrollHandlePaint.Dispose();
+                    _backgroundPaint?.Dispose();
+                    _borderPaint?.Dispose();
+                    _axisPaint?.Dispose();
+                    _gridPaint?.Dispose();
+                    _linePaint?.Dispose();
+                    _fillPaint?.Dispose();
+                    _pointPaint?.Dispose();
+                    _textPaint?.Dispose();
+                    _legendPaint?.Dispose();
+                    _legendTextPaint?.Dispose();
+                    _scrollBarPaint?.Dispose();
+                    _scrollHandlePaint?.Dispose();
+                    _tempPath?.Dispose();
                 }
-
-                // 관리되지 않는 리소스 해제 (현재 없음)
 
                 _disposed = true;
             }
@@ -742,7 +845,7 @@ namespace Going.UI.Controls.TrendGraph
         {
             Dispose(false);
         }
-        
+
         #endregion
     }
 
