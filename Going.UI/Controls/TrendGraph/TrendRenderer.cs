@@ -880,6 +880,10 @@ namespace Going.UI.Controls.TrendGraph
         public GoRoundType Round { get; set; } = GoRoundType.All;
         #endregion
 
+        #region 그래프 리마크 설정
+        public string RemarkColor { get; set; } = "Base3";
+        #endregion
+
         #region 그래프 설정
         public string AxisColor { get; set; } = "Text";
         public string GridColor { get; set; } = "Base2";
@@ -902,6 +906,7 @@ namespace Going.UI.Controls.TrendGraph
         public float FontSize { get; set; } = 12;
         public string TextColor { get; set; } = "Text";
         public string ValueFormat { get; set; } = "F1";
+        public string TimeFormat { get; set; } = "HH:mm";
         public string? XAxisTitle { get; set; }
         public string? YAxisTitle { get; set; }
         public bool AutoScale { get; set; } = true;

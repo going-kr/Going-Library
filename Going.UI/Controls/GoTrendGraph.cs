@@ -16,73 +16,42 @@ namespace Going.UI.Controls
     {
         #region Private Fields
 
-        private readonly TrendRenderer _renderer;
-        private readonly TrendScrollManager _scrollManager;
-        private readonly TrendGraphSettings _settings;
-        private readonly List<TrendSeries> _series;
+        private readonly TrendRenderer renderer;
+        private readonly TrendScrollManager scrollManager;
+        private readonly TrendGraphSettings settings;
+        private readonly List<TrendSeries> series;
 
-        private bool _isHovering;
-        private TrendDataPoint? _hoveredPoint;
-        private float _mx, _my;   // 마우스 위치 추적
-        private bool _isDraggingGraph;
-        private bool _isDraggingScrollHandle;
-        private DateTime _animationStartTime;
-        private float _animationProgress = 1.0f;
-        private bool _needsLayoutUpdate = true;
-        private bool _disposed;
+        private bool isHovering;
+        private TrendDataPoint? hoveredPoint;
+        private float mx, my;   // 마우스 위치 추적
+        private bool isDraggingGraph;
+        private bool isDraggingScrollHandle;
+        private DateTime animationStartTime;
+        private float animationProgress = 1.0f;
+        private bool needsLayoutUpdate = true;
+        private bool disposed;
 
         // 애니메이션 최적화
-        private long _lastFrameTimeTicks;
-        private float _targetAnimationProgress = 1.0f;
+        private long lastFrameTimeTicks;
+        private float targetAnimationProgress = 1.0f;
 
         #endregion
 
         #region Properties
 
         #region 아이콘 설정
-        /// <summary>
-        /// 아이콘 문자열
-        /// </summary>
-        public string? IconString
-        {
-            get => _settings.IconString;
-            set
-            {
-                if (_settings.IconString != value)
-                {
-                    _settings.IconString = value;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
-
-        /// <summary>
-        /// 아이콘 크기
-        /// </summary>
-        public float IconSize
-        {
-            get => _settings.IconSize;
-            set
-            {
-                if (_settings.IconSize != value)
-                {
-                    _settings.IconSize = value;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
 
         /// <summary>
         /// 아이콘과 텍스트 사이 간격
         /// </summary>
         public float IconGap
         {
-            get => _settings.IconGap;
+            get => settings.IconGap;
             set
             {
-                if (_settings.IconGap != value)
+                if (settings.IconGap != value)
                 {
-                    _settings.IconGap = value;
+                    settings.IconGap = value;
                     Invalidate?.Invoke();
                 }
             }
@@ -93,12 +62,12 @@ namespace Going.UI.Controls
         /// </summary>
         public GoDirectionHV IconDirection
         {
-            get => _settings.IconDirection;
+            get => settings.IconDirection;
             set
             {
-                if (_settings.IconDirection != value)
+                if (settings.IconDirection != value)
                 {
-                    _settings.IconDirection = value;
+                    settings.IconDirection = value;
                     Invalidate?.Invoke();
                 }
             }
@@ -111,12 +80,12 @@ namespace Going.UI.Controls
         /// </summary>
         public string Text
         {
-            get => _settings.Text;
+            get => settings.Text;
             set
             {
-                if (_settings.Text != value)
+                if (settings.Text != value)
                 {
-                    _settings.Text = value;
+                    settings.Text = value;
                     Invalidate?.Invoke();
                 }
             }
@@ -127,12 +96,12 @@ namespace Going.UI.Controls
         /// </summary>
         public string TextFontName
         {
-            get => _settings.TextFontName;
+            get => settings.TextFontName;
             set
             {
-                if (_settings.TextFontName != value)
+                if (settings.TextFontName != value)
                 {
-                    _settings.TextFontName = value;
+                    settings.TextFontName = value;
                     Invalidate?.Invoke();
                 }
             }
@@ -143,12 +112,12 @@ namespace Going.UI.Controls
         /// </summary>
         public float TextFontSize
         {
-            get => _settings.TextFontSize;
+            get => settings.TextFontSize;
             set
             {
-                if (_settings.TextFontSize != value)
+                if (settings.TextFontSize != value)
                 {
-                    _settings.TextFontSize = value;
+                    settings.TextFontSize = value;
                     Invalidate?.Invoke();
                 }
             }
@@ -161,12 +130,12 @@ namespace Going.UI.Controls
         /// </summary>
         public bool BackgroundDraw
         {
-            get => _settings.BackgroundDraw;
+            get => settings.BackgroundDraw;
             set
             {
-                if (_settings.BackgroundDraw != value)
+                if (settings.BackgroundDraw != value)
                 {
-                    _settings.BackgroundDraw = value;
+                    settings.BackgroundDraw = value;
                     Invalidate?.Invoke();
                 }
             }
@@ -177,12 +146,12 @@ namespace Going.UI.Controls
         /// </summary>
         public bool BorderOnly
         {
-            get => _settings.BorderOnly;
+            get => settings.BorderOnly;
             set
             {
-                if (_settings.BorderOnly != value)
+                if (settings.BorderOnly != value)
                 {
-                    _settings.BorderOnly = value;
+                    settings.BorderOnly = value;
                     Invalidate?.Invoke();
                 }
             }
@@ -193,12 +162,12 @@ namespace Going.UI.Controls
         /// </summary>
         public string BgColor
         {
-            get => _settings.BgColor;
+            get => settings.BgColor;
             set
             {
-                if (_settings.BgColor != value)
+                if (settings.BgColor != value)
                 {
-                    _settings.BgColor = value;
+                    settings.BgColor = value;
                     Invalidate?.Invoke();
                 }
             }
@@ -209,12 +178,12 @@ namespace Going.UI.Controls
         /// </summary>
         public string BorderColor
         {
-            get => _settings.BorderColor;
+            get => settings.BorderColor;
             set
             {
-                if (_settings.BorderColor != value)
+                if (settings.BorderColor != value)
                 {
-                    _settings.BorderColor = value;
+                    settings.BorderColor = value;
                     Invalidate?.Invoke();
                 }
             }
@@ -225,12 +194,12 @@ namespace Going.UI.Controls
         /// </summary>
         public GoRoundType Round
         {
-            get => _settings.Round;
+            get => settings.Round;
             set
             {
-                if (_settings.Round != value)
+                if (settings.Round != value)
                 {
-                    _settings.Round = value;
+                    settings.Round = value;
                     Invalidate?.Invoke();
                 }
             }
@@ -243,12 +212,12 @@ namespace Going.UI.Controls
         /// </summary>
         public string AxisColor
         {
-            get => _settings.AxisColor;
+            get => settings.AxisColor;
             set
             {
-                if (_settings.AxisColor != value)
+                if (settings.AxisColor != value)
                 {
-                    _settings.AxisColor = value;
+                    settings.AxisColor = value;
                     Invalidate?.Invoke();
                 }
             }
@@ -259,12 +228,12 @@ namespace Going.UI.Controls
         /// </summary>
         public string GridColor
         {
-            get => _settings.GridColor;
+            get => settings.GridColor;
             set
             {
-                if (_settings.GridColor != value)
+                if (settings.GridColor != value)
                 {
-                    _settings.GridColor = value;
+                    settings.GridColor = value;
                     Invalidate?.Invoke();
                 }
             }
@@ -275,12 +244,12 @@ namespace Going.UI.Controls
         /// </summary>
         public bool ShowGrid
         {
-            get => _settings.ShowGrid;
+            get => settings.ShowGrid;
             set
             {
-                if (_settings.ShowGrid != value)
+                if (settings.ShowGrid != value)
                 {
-                    _settings.ShowGrid = value;
+                    settings.ShowGrid = value;
                     Invalidate?.Invoke();
                 }
             }
@@ -291,13 +260,13 @@ namespace Going.UI.Controls
         /// </summary>
         public bool ShowLegend
         {
-            get => _settings.ShowLegend;
+            get => settings.ShowLegend;
             set
             {
-                if (_settings.ShowLegend != value)
+                if (settings.ShowLegend != value)
                 {
-                    _settings.ShowLegend = value;
-                    _needsLayoutUpdate = true;
+                    settings.ShowLegend = value;
+                    needsLayoutUpdate = true;
                     Invalidate?.Invoke();
                 }
             }
@@ -308,12 +277,12 @@ namespace Going.UI.Controls
         /// </summary>
         public int GridLineCount
         {
-            get => _settings.GridLineCount;
+            get => settings.GridLineCount;
             set
             {
-                if (_settings.GridLineCount != value)
+                if (settings.GridLineCount != value)
                 {
-                    _settings.GridLineCount = value;
+                    settings.GridLineCount = value;
                     Invalidate?.Invoke();
                 }
             }
@@ -324,12 +293,12 @@ namespace Going.UI.Controls
         /// </summary>
         public bool EnableShadow
         {
-            get => _settings.EnableShadow;
+            get => settings.EnableShadow;
             set
             {
-                if (_settings.EnableShadow != value)
+                if (settings.EnableShadow != value)
                 {
-                    _settings.EnableShadow = value;
+                    settings.EnableShadow = value;
                     Invalidate?.Invoke();
                 }
             }
@@ -340,12 +309,12 @@ namespace Going.UI.Controls
         /// </summary>
         public bool EnableAnimation
         {
-            get => _settings.EnableAnimation;
+            get => settings.EnableAnimation;
             set
             {
-                if (_settings.EnableAnimation != value)
+                if (settings.EnableAnimation != value)
                 {
-                    _settings.EnableAnimation = value;
+                    settings.EnableAnimation = value;
                     Invalidate?.Invoke();
                 }
             }
@@ -356,12 +325,12 @@ namespace Going.UI.Controls
         /// </summary>
         public int AnimationDuration
         {
-            get => _settings.AnimationDuration;
+            get => settings.AnimationDuration;
             set
             {
-                if (_settings.AnimationDuration != value)
+                if (settings.AnimationDuration != value)
                 {
-                    _settings.AnimationDuration = value;
+                    settings.AnimationDuration = value;
                     Invalidate?.Invoke();
                 }
             }
@@ -372,12 +341,12 @@ namespace Going.UI.Controls
         /// </summary>
         public float LineThickness
         {
-            get => _settings.LineThickness;
+            get => settings.LineThickness;
             set
             {
-                if (_settings.LineThickness != value)
+                if (settings.LineThickness != value)
                 {
-                    _settings.LineThickness = value;
+                    settings.LineThickness = value;
                     Invalidate?.Invoke();
                 }
             }
@@ -388,12 +357,12 @@ namespace Going.UI.Controls
         /// </summary>
         public bool FillArea
         {
-            get => _settings.FillArea;
+            get => settings.FillArea;
             set
             {
-                if (_settings.FillArea != value)
+                if (settings.FillArea != value)
                 {
-                    _settings.FillArea = value;
+                    settings.FillArea = value;
                     Invalidate?.Invoke();
                 }
             }
@@ -404,13 +373,13 @@ namespace Going.UI.Controls
         /// </summary>
         public int FillOpacity
         {
-            get => _settings.FillOpacity;
+            get => settings.FillOpacity;
             set
             {
                 int clampedValue = Math.Clamp(value, 0, 255);
-                if (_settings.FillOpacity != clampedValue)
+                if (settings.FillOpacity != clampedValue)
                 {
-                    _settings.FillOpacity = clampedValue;
+                    settings.FillOpacity = clampedValue;
                     Invalidate?.Invoke();
                 }
             }
@@ -421,12 +390,12 @@ namespace Going.UI.Controls
         /// </summary>
         public bool ShowDataPoints
         {
-            get => _settings.ShowDataPoints;
+            get => settings.ShowDataPoints;
             set
             {
-                if (_settings.ShowDataPoints != value)
+                if (settings.ShowDataPoints != value)
                 {
-                    _settings.ShowDataPoints = value;
+                    settings.ShowDataPoints = value;
                     Invalidate?.Invoke();
                 }
             }
@@ -437,12 +406,12 @@ namespace Going.UI.Controls
         /// </summary>
         public float DataPointRadius
         {
-            get => _settings.DataPointRadius;
+            get => settings.DataPointRadius;
             set
             {
-                if (_settings.DataPointRadius != value)
+                if (settings.DataPointRadius != value)
                 {
-                    _settings.DataPointRadius = value;
+                    settings.DataPointRadius = value;
                     Invalidate?.Invoke();
                 }
             }
@@ -453,12 +422,12 @@ namespace Going.UI.Controls
         /// </summary>
         public bool ShowLabels
         {
-            get => _settings.ShowLabels;
+            get => settings.ShowLabels;
             set
             {
-                if (_settings.ShowLabels != value)
+                if (settings.ShowLabels != value)
                 {
-                    _settings.ShowLabels = value;
+                    settings.ShowLabels = value;
                     Invalidate?.Invoke();
                 }
             }
@@ -469,13 +438,13 @@ namespace Going.UI.Controls
         /// </summary>
         public float Padding
         {
-            get => _settings.Padding;
+            get => settings.Padding;
             set
             {
-                if (_settings.Padding != value)
+                if (settings.Padding != value)
                 {
-                    _settings.Padding = value;
-                    _needsLayoutUpdate = true;
+                    settings.Padding = value;
+                    needsLayoutUpdate = true;
                     Invalidate?.Invoke();
                 }
             }
@@ -488,12 +457,12 @@ namespace Going.UI.Controls
         /// </summary>
         public string FontName
         {
-            get => _settings.FontName;
+            get => settings.FontName;
             set
             {
-                if (_settings.FontName != value)
+                if (settings.FontName != value)
                 {
-                    _settings.FontName = value;
+                    settings.FontName = value;
                     Invalidate?.Invoke();
                 }
             }
@@ -504,13 +473,13 @@ namespace Going.UI.Controls
         /// </summary>
         public float FontSize
         {
-            get => _settings.FontSize;
+            get => settings.FontSize;
             set
             {
-                if (_settings.FontSize != value)
+                if (settings.FontSize != value)
                 {
-                    _settings.FontSize = value;
-                    _needsLayoutUpdate = true;
+                    settings.FontSize = value;
+                    needsLayoutUpdate = true;
                     Invalidate?.Invoke();
                 }
             }
@@ -521,12 +490,12 @@ namespace Going.UI.Controls
         /// </summary>
         public string TextColor
         {
-            get => _settings.TextColor;
+            get => settings.TextColor;
             set
             {
-                if (_settings.TextColor != value)
+                if (settings.TextColor != value)
                 {
-                    _settings.TextColor = value;
+                    settings.TextColor = value;
                     Invalidate?.Invoke();
                 }
             }
@@ -537,12 +506,12 @@ namespace Going.UI.Controls
         /// </summary>
         public string ValueFormat
         {
-            get => _settings.ValueFormat;
+            get => settings.ValueFormat;
             set
             {
-                if (_settings.ValueFormat != value)
+                if (settings.ValueFormat != value)
                 {
-                    _settings.ValueFormat = value;
+                    settings.ValueFormat = value;
                     Invalidate?.Invoke();
                 }
             }
@@ -553,13 +522,13 @@ namespace Going.UI.Controls
         /// </summary>
         public string? XAxisTitle
         {
-            get => _settings.XAxisTitle;
+            get => settings.XAxisTitle;
             set
             {
-                if (_settings.XAxisTitle != value)
+                if (settings.XAxisTitle != value)
                 {
-                    _settings.XAxisTitle = value;
-                    _needsLayoutUpdate = true;
+                    settings.XAxisTitle = value;
+                    needsLayoutUpdate = true;
                     Invalidate?.Invoke();
                 }
             }
@@ -570,13 +539,13 @@ namespace Going.UI.Controls
         /// </summary>
         public string? YAxisTitle
         {
-            get => _settings.YAxisTitle;
+            get => settings.YAxisTitle;
             set
             {
-                if (_settings.YAxisTitle != value)
+                if (settings.YAxisTitle != value)
                 {
-                    _settings.YAxisTitle = value;
-                    _needsLayoutUpdate = true;
+                    settings.YAxisTitle = value;
+                    needsLayoutUpdate = true;
                     Invalidate?.Invoke();
                 }
             }
@@ -587,12 +556,12 @@ namespace Going.UI.Controls
         /// </summary>
         public bool AutoScale
         {
-            get => _settings.AutoScale;
+            get => settings.AutoScale;
             set
             {
-                if (_settings.AutoScale != value)
+                if (settings.AutoScale != value)
                 {
-                    _settings.AutoScale = value;
+                    settings.AutoScale = value;
                     UpdateDataRange();
                     Invalidate?.Invoke();
                 }
@@ -604,12 +573,12 @@ namespace Going.UI.Controls
         /// </summary>
         public double YAxisMin
         {
-            get => _settings.YAxisMin;
+            get => settings.YAxisMin;
             set
             {
-                if (_settings.YAxisMin != value)
+                if (settings.YAxisMin != value)
                 {
-                    _settings.YAxisMin = value;
+                    settings.YAxisMin = value;
                     if (!AutoScale)
                     {
                         UpdateDataRange();
@@ -624,12 +593,12 @@ namespace Going.UI.Controls
         /// </summary>
         public double YAxisMax
         {
-            get => _settings.YAxisMax;
+            get => settings.YAxisMax;
             set
             {
-                if (_settings.YAxisMax != value)
+                if (settings.YAxisMax != value)
                 {
-                    _settings.YAxisMax = value;
+                    settings.YAxisMax = value;
                     if (!AutoScale)
                     {
                         UpdateDataRange();
@@ -646,13 +615,13 @@ namespace Going.UI.Controls
         /// </summary>
         public bool EnableScrolling
         {
-            get => _settings.EnableScrolling;
+            get => settings.EnableScrolling;
             set
             {
-                if (_settings.EnableScrolling != value)
+                if (settings.EnableScrolling != value)
                 {
-                    _settings.EnableScrolling = value;
-                    _needsLayoutUpdate = true;
+                    settings.EnableScrolling = value;
+                    needsLayoutUpdate = true;
                     Invalidate?.Invoke();
                 }
             }
@@ -663,12 +632,12 @@ namespace Going.UI.Controls
         /// </summary>
         public bool EnableMouseWheelZoom
         {
-            get => _settings.EnableMouseWheelZoom;
+            get => settings.EnableMouseWheelZoom;
             set
             {
-                if (_settings.EnableMouseWheelZoom != value)
+                if (settings.EnableMouseWheelZoom != value)
                 {
-                    _settings.EnableMouseWheelZoom = value;
+                    settings.EnableMouseWheelZoom = value;
                     Invalidate?.Invoke();
                 }
             }
@@ -679,13 +648,13 @@ namespace Going.UI.Controls
         /// </summary>
         public double VisibleTimeRange
         {
-            get => _settings.VisibleTimeRange;
+            get => settings.VisibleTimeRange;
             set
             {
-                double clampedValue = Math.Clamp(value, _settings.MinTimeRange, _settings.MaxTimeRange);
-                if (_settings.VisibleTimeRange != clampedValue)
+                double clampedValue = Math.Clamp(value, settings.MinTimeRange, settings.MaxTimeRange);
+                if (settings.VisibleTimeRange != clampedValue)
                 {
-                    _settings.VisibleTimeRange = clampedValue;
+                    settings.VisibleTimeRange = clampedValue;
                     Invalidate?.Invoke();
                 }
             }
@@ -696,13 +665,13 @@ namespace Going.UI.Controls
         /// </summary>
         public double MinTimeRange
         {
-            get => _settings.MinTimeRange;
+            get => settings.MinTimeRange;
             set
             {
-                if (_settings.MinTimeRange != value)
+                if (settings.MinTimeRange != value)
                 {
-                    _settings.MinTimeRange = value;
-                    _scrollManager.MinTimeRange = value;
+                    settings.MinTimeRange = value;
+                    scrollManager.MinTimeRange = value;
                     Invalidate?.Invoke();
                 }
             }
@@ -713,13 +682,13 @@ namespace Going.UI.Controls
         /// </summary>
         public double MaxTimeRange
         {
-            get => _settings.MaxTimeRange;
+            get => settings.MaxTimeRange;
             set
             {
-                if (_settings.MaxTimeRange != value)
+                if (settings.MaxTimeRange != value)
                 {
-                    _settings.MaxTimeRange = value;
-                    _scrollManager.MaxTimeRange = value;
+                    settings.MaxTimeRange = value;
+                    scrollManager.MaxTimeRange = value;
                     Invalidate?.Invoke();
                 }
             }
@@ -730,13 +699,13 @@ namespace Going.UI.Controls
         /// </summary>
         public float ScrollBarHeight
         {
-            get => _settings.ScrollBarHeight;
+            get => settings.ScrollBarHeight;
             set
             {
-                if (_settings.ScrollBarHeight != value)
+                if (settings.ScrollBarHeight != value)
                 {
-                    _settings.ScrollBarHeight = value;
-                    _needsLayoutUpdate = true;
+                    settings.ScrollBarHeight = value;
+                    needsLayoutUpdate = true;
                     Invalidate?.Invoke();
                 }
             }
@@ -747,12 +716,12 @@ namespace Going.UI.Controls
         /// </summary>
         public string ScrollBarColor
         {
-            get => _settings.ScrollBarColor;
+            get => settings.ScrollBarColor;
             set
             {
-                if (_settings.ScrollBarColor != value)
+                if (settings.ScrollBarColor != value)
                 {
-                    _settings.ScrollBarColor = value;
+                    settings.ScrollBarColor = value;
                     Invalidate?.Invoke();
                 }
             }
@@ -763,12 +732,12 @@ namespace Going.UI.Controls
         /// </summary>
         public string ScrollHandleColor
         {
-            get => _settings.ScrollHandleColor;
+            get => settings.ScrollHandleColor;
             set
             {
-                if (_settings.ScrollHandleColor != value)
+                if (settings.ScrollHandleColor != value)
                 {
-                    _settings.ScrollHandleColor = value;
+                    settings.ScrollHandleColor = value;
                     Invalidate?.Invoke();
                 }
             }
@@ -779,13 +748,13 @@ namespace Going.UI.Controls
         /// </summary>
         public bool ShowScrollBar
         {
-            get => _settings.ShowScrollBar;
+            get => settings.ShowScrollBar;
             set
             {
-                if (_settings.ShowScrollBar != value)
+                if (settings.ShowScrollBar != value)
                 {
-                    _settings.ShowScrollBar = value;
-                    _needsLayoutUpdate = true;
+                    settings.ShowScrollBar = value;
+                    needsLayoutUpdate = true;
                     Invalidate?.Invoke();
                 }
             }
@@ -797,27 +766,27 @@ namespace Going.UI.Controls
         /// <summary>
         /// 시리즈 데이터 목록
         /// </summary>
-        public IReadOnlyList<TrendSeries> Series => _series.AsReadOnly();
+        public IReadOnlyList<TrendSeries> Series => series.AsReadOnly();
 
         /// <summary>
         /// 현재 보이는 시간 범위의 최소값
         /// </summary>
-        public DateTime VisibleMinimum => _scrollManager.VisibleMinimum;
+        public DateTime VisibleMinimum => scrollManager.VisibleMinimum;
 
         /// <summary>
         /// 현재 보이는 시간 범위의 최대값
         /// </summary>
-        public DateTime VisibleMaximum => _scrollManager.VisibleMaximum;
+        public DateTime VisibleMaximum => scrollManager.VisibleMaximum;
 
         /// <summary>
         /// 전체 데이터 범위의 최소값
         /// </summary>
-        public DateTime DataMinimum => _scrollManager.DataMinimum;
+        public DateTime DataMinimum => scrollManager.DataMinimum;
 
         /// <summary>
         /// 전체 데이터 범위의 최대값
         /// </summary>
-        public DateTime DataMaximum => _scrollManager.DataMaximum;
+        public DateTime DataMaximum => scrollManager.DataMaximum;
 
         #endregion
 
@@ -851,16 +820,16 @@ namespace Going.UI.Controls
         {
             Selectable = true;
 
-            _settings = new TrendGraphSettings();
-            _renderer = new TrendRenderer();
-            _scrollManager = new TrendScrollManager();
-            _series = new List<TrendSeries>();
+            settings = new TrendGraphSettings();
+            renderer = new TrendRenderer();
+            scrollManager = new TrendScrollManager();
+            series = new List<TrendSeries>();
 
             // 스크롤 이벤트 연결
-            _scrollManager.VisibleRangeChanged += (s, e) =>
+            scrollManager.VisibleRangeChanged += (s, e) =>
             {
                 VisibleRangeChanged?.Invoke(this, e);
-                _needsLayoutUpdate = true;
+                needsLayoutUpdate = true;
                 Invalidate?.Invoke();
             };
 
@@ -879,21 +848,21 @@ namespace Going.UI.Controls
                 if (canvas == null)
                     return;
 
-                _settings.Bounds = Bounds;
+                settings.Bounds = Bounds;
                 UpdateAnimation();
 
                 // 영역 계산
-                if (_needsLayoutUpdate)
+                if (needsLayoutUpdate)
                 {
                     CalculateAreas();
-                    _needsLayoutUpdate = false;
+                    needsLayoutUpdate = false;
                 }
 
                 // 렌더러에 필요한 속성 업데이트
                 UpdateRendererProperties();
 
                 // 그래프 그리기
-                _renderer.DrawGraph(canvas, GoTheme.Current);
+                renderer.DrawGraph(canvas, GoTheme.Current);
 
                 base.OnDraw(canvas);
             }
@@ -908,25 +877,28 @@ namespace Going.UI.Controls
         #region OnMouseMove
         protected override void OnMouseMove(float x, float y)
         {
+            mx = x;
+            my = y;
+
             try
             {
-                _mx = x;
-                _my = y;
+                mx = x;
+                my = y;
 
-                if (_isDraggingScrollHandle)
+                if (isDraggingScrollHandle)
                 {
-                    _scrollManager.HandleScrollDrag(x);
+                    scrollManager.HandleScrollDrag(x);
                     return;
                 }
 
-                if (_isDraggingGraph)
+                if (isDraggingGraph)
                 {
-                    _scrollManager.HandleGraphDrag(x);
+                    scrollManager.HandleGraphDrag(x);
                     return;
                 }
 
                 // 스크롤바 영역에 있는지 확인
-                SKRect scrollBarArea = _renderer.ScrollBarArea;
+                SKRect scrollBarArea = renderer.ScrollBarArea;
                 if (ShowScrollBar && EnableScrolling && scrollBarArea.Contains(x, y))
                 {
                     // 커서 변경 로직 (플랫폼에 따라 다를 수 있음)
@@ -934,13 +906,13 @@ namespace Going.UI.Controls
                 }
 
                 // 데이터 포인트 위에 마우스가 있는지 확인
-                var prevHoveredPoint = _hoveredPoint;
-                _hoveredPoint = FindNearestDataPoint(x, y);
-                _isHovering = _hoveredPoint != null;
+                var prevHoveredPoint = hoveredPoint;
+                hoveredPoint = FindNearestDataPoint(x, y);
+                isHovering = hoveredPoint != null;
 
-                if (_hoveredPoint != prevHoveredPoint)
+                if (hoveredPoint != prevHoveredPoint)
                 {
-                    _renderer.HoveredPoint = _hoveredPoint;
+                    renderer.HoveredPoint = hoveredPoint;
                     Invalidate?.Invoke(); // 다시 그리기 요청
                 }
 
@@ -957,48 +929,51 @@ namespace Going.UI.Controls
         #region OnMouseDown
         protected override void OnMouseDown(float x, float y, GoMouseButton button)
         {
+            mx = x;
+            my = y;
+
             try
             {
                 if (button == GoMouseButton.Left)
                 {
                     // 스크롤 핸들 드래그 시작
-                    SKRect scrollBarArea = _renderer.ScrollBarArea;
-                    float scrollHandleX = _renderer.ScrollHandleX;
-                    float scrollHandleWidth = _renderer.ScrollHandleWidth;
+                    SKRect scrollBarArea = renderer.ScrollBarArea;
+                    float scrollHandleX = renderer.ScrollHandleX;
+                    float scrollHandleWidth = renderer.ScrollHandleWidth;
 
                     if (ShowScrollBar && EnableScrolling && scrollBarArea.Contains(x, y))
                     {
                         if (scrollHandleX <= x && x <= scrollHandleX + scrollHandleWidth)
                         {
-                            _isDraggingScrollHandle = true;
-                            _scrollManager.DragStartX = x;
+                            isDraggingScrollHandle = true;
+                            scrollManager.DragStartX = x;
                             return;
                         }
                         else
                         {
                             // 스크롤바 클릭 시 핸들 이동
-                            _scrollManager.ScrollToPosition(x);
+                            scrollManager.ScrollToPosition(x);
                             return;
                         }
                     }
 
                     // 그래프 영역 드래그 시작
-                    SKRect graphArea = _renderer.GraphArea;
+                    SKRect graphArea = renderer.GraphArea;
                     if (EnableScrolling && graphArea.Contains(x, y))
                     {
-                        _isDraggingGraph = true;
-                        _scrollManager.DragStartX = x;
-                        _scrollManager.DragStartMin = _scrollManager.VisibleMinimum;
-                        _scrollManager.DragStartMax = _scrollManager.VisibleMaximum;
+                        isDraggingGraph = true;
+                        scrollManager.DragStartX = x;
+                        scrollManager.DragStartMin = scrollManager.VisibleMinimum;
+                        scrollManager.DragStartMax = scrollManager.VisibleMaximum;
                         return;
                     }
                 }
 
-                if (_hoveredPoint != null)
+                if (hoveredPoint != null)
                 {
                     // 데이터 포인트 클릭 이벤트 발생
-                    var series = FindSeriesForDataPoint(_hoveredPoint.Value);
-                    DataPointSelected?.Invoke(this, new DataPointEventArgs(series, _hoveredPoint.Value));
+                    var series = FindSeriesForDataPoint(hoveredPoint.Value);
+                    DataPointSelected?.Invoke(this, new DataPointEventArgs(series, hoveredPoint.Value));
                 }
 
                 base.OnMouseDown(x, y, button);
@@ -1014,8 +989,10 @@ namespace Going.UI.Controls
         #region OnMouseUp
         protected override void OnMouseUp(float x, float y, GoMouseButton button)
         {
-            _isDraggingScrollHandle = false;
-            _isDraggingGraph = false;
+            mx = x;
+            my = y;
+            isDraggingScrollHandle = false;
+            isDraggingGraph = false;
             base.OnMouseUp(x, y, button);
         }
         #endregion
@@ -1025,10 +1002,10 @@ namespace Going.UI.Controls
         {
             try
             {
-                if (EnableMouseWheelZoom && _renderer.GraphArea.Contains(x, y))
+                if (EnableMouseWheelZoom && renderer.GraphArea.Contains(x, y))
                 {
                     // 마우스 위치를 중심으로 줌
-                    _scrollManager.ZoomAtPoint(x, delta);
+                    scrollManager.ZoomAtPoint(x, delta);
                 }
 
                 base.OnMouseWheel(x, y, delta);
@@ -1056,7 +1033,7 @@ namespace Going.UI.Controls
             try
             {
                 // 기존 시리즈가 있는지 확인
-                var existingSeries = _series.FirstOrDefault(s => s.Name == series.Name);
+                var existingSeries = this.series.FirstOrDefault(s => s.Name == series.Name);
                 if (existingSeries != null)
                 {
                     // 기존 시리즈 업데이트
@@ -1066,7 +1043,7 @@ namespace Going.UI.Controls
                 else
                 {
                     // 새 시리즈 추가
-                    _series.Add(series);
+                    this.series.Add(series);
 
                     // 색상이 지정되지 않은 경우 자동 할당
                     if (string.IsNullOrEmpty(series.Color))
@@ -1086,7 +1063,7 @@ namespace Going.UI.Controls
 
                 // 이벤트 발생 및 다시 그리기
                 DataChanged?.Invoke(this, EventArgs.Empty);
-                _needsLayoutUpdate = true;
+                needsLayoutUpdate = true;
                 Invalidate?.Invoke();
             }
             catch (Exception ex)
@@ -1105,10 +1082,10 @@ namespace Going.UI.Controls
             if (string.IsNullOrEmpty(seriesName))
                 return false;
 
-            var series = _series.FirstOrDefault(s => s.Name == seriesName);
+            var series = this.series.FirstOrDefault(s => s.Name == seriesName);
             if (series != null)
             {
-                _series.Remove(series);
+                this.series.Remove(series);
                 UpdateDataRange();
                 DataChanged?.Invoke(this, EventArgs.Empty);
                 Invalidate?.Invoke();
@@ -1122,7 +1099,7 @@ namespace Going.UI.Controls
         /// </summary>
         public void ClearSeries()
         {
-            _series.Clear();
+            series.Clear();
             UpdateDataRange();
             DataChanged?.Invoke(this, EventArgs.Empty);
             Invalidate?.Invoke();
@@ -1136,7 +1113,7 @@ namespace Going.UI.Controls
             if (string.IsNullOrEmpty(seriesName) || newData == null)
                 return false;
 
-            var series = _series.FirstOrDefault(s => s.Name == seriesName);
+            var series = this.series.FirstOrDefault(s => s.Name == seriesName);
             if (series != null)
             {
                 series.DataPoints = newData;
@@ -1162,11 +1139,11 @@ namespace Going.UI.Controls
         {
             if (min >= max) throw new ArgumentException("Min must be less than max");
 
-            _scrollManager.DataMinimum = min;
-            _scrollManager.DataMaximum = max;
+            scrollManager.DataMinimum = min;
+            scrollManager.DataMaximum = max;
 
             // 보이는 범위가 데이터 범위를 벗어나지 않도록 조정
-            _scrollManager.AdjustVisibleRange();
+            scrollManager.AdjustVisibleRange();
             Invalidate?.Invoke();
         }
 
@@ -1190,7 +1167,7 @@ namespace Going.UI.Controls
                     max = min.AddSeconds(MaxTimeRange);
                 }
 
-                _scrollManager.UpdateVisibleRange(min, max);
+                scrollManager.UpdateVisibleRange(min, max);
                 Invalidate?.Invoke();
             }
             catch (Exception ex)
@@ -1230,7 +1207,7 @@ namespace Going.UI.Controls
         /// </summary>
         public void ShowFullRange()
         {
-            SetVisibleXRange(_scrollManager.DataMinimum, _scrollManager.DataMaximum);
+            SetVisibleXRange(scrollManager.DataMinimum, scrollManager.DataMaximum);
         }
 
         /// <summary>
@@ -1238,7 +1215,7 @@ namespace Going.UI.Controls
         /// </summary>
         public void ScrollByTime(TimeSpan amount)
         {
-            _scrollManager.ScrollByTime(amount);
+            scrollManager.ScrollByTime(amount);
             Invalidate?.Invoke();
         }
 
@@ -1249,7 +1226,7 @@ namespace Going.UI.Controls
         {
             if (factor <= 0) throw new ArgumentException("Factor must be positive", nameof(factor));
 
-            _scrollManager.Zoom(factor);
+            scrollManager.Zoom(factor);
             Invalidate?.Invoke();
         }
 
@@ -1258,7 +1235,7 @@ namespace Going.UI.Controls
         /// </summary>
         public TimeSpan GetVisibleTimeSpan()
         {
-            return _scrollManager.VisibleMaximum - _scrollManager.VisibleMinimum;
+            return scrollManager.VisibleMaximum - scrollManager.VisibleMinimum;
         }
 
         /// <summary>
@@ -1269,10 +1246,10 @@ namespace Going.UI.Controls
             if (!EnableAnimation)
                 return;
 
-            _animationProgress = 0f;
-            _targetAnimationProgress = targetProgress;
-            _animationStartTime = DateTime.Now;
-            _lastFrameTimeTicks = _animationStartTime.Ticks;
+            animationProgress = 0f;
+            targetAnimationProgress = targetProgress;
+            animationStartTime = DateTime.Now;
+            lastFrameTimeTicks = animationStartTime.Ticks;
             Invalidate?.Invoke();
         }
 
@@ -1286,7 +1263,7 @@ namespace Going.UI.Controls
             int totalRemoved = 0;
             DateTime cutoffTime = DateTime.Now.Subtract(maxAge);
 
-            foreach (var series in _series)
+            foreach (var series in series)
             {
                 if (series.DataPoints == null)
                     continue;
@@ -1318,9 +1295,9 @@ namespace Going.UI.Controls
             DateTime min = now.AddDays(-30);
             DateTime max = now;
 
-            _scrollManager.DataMinimum = min;
-            _scrollManager.DataMaximum = max;
-            _scrollManager.UpdateVisibleRange(now.AddDays(-7), now);
+            scrollManager.DataMinimum = min;
+            scrollManager.DataMaximum = max;
+            scrollManager.UpdateVisibleRange(now.AddDays(-7), now);
 
             // 테스트 데이터 생성
             GenerateSampleData();
@@ -1370,8 +1347,8 @@ namespace Going.UI.Controls
                 series1.SortData();
                 series2.SortData();
 
-                _series.Add(series1);
-                _series.Add(series2);
+                series.Add(series1);
+                series.Add(series2);
 
                 UpdateDataRange();
             }
@@ -1389,7 +1366,7 @@ namespace Going.UI.Controls
                 float xAxisHeight = FontSize * 2 + 15;  // X축 레이블 및 제목 공간
                 float yAxisWidth = 60;  // Y축 레이블 및 제목 공간
                 float legendWidth = 120;  // 레전드 영역 너비
-                float legendHeight = _series.Count * (FontSize + 10) + 20;  // 레전드 영역 높이
+                float legendHeight = series.Count * (FontSize + 10) + 20;  // 레전드 영역 높이
 
                 // 경계 확인
                 float graphBottom = Math.Max(Bounds.Top + Padding, Bounds.Bottom - Padding);
@@ -1443,15 +1420,15 @@ namespace Going.UI.Controls
                 }
 
                 // 영역 설정
-                _renderer.GraphArea = graphArea;
-                _renderer.LegendArea = legendArea;
-                _renderer.ScrollBarArea = scrollBarArea;
+                renderer.GraphArea = graphArea;
+                renderer.LegendArea = legendArea;
+                renderer.ScrollBarArea = scrollBarArea;
 
-                _scrollManager.GraphArea = graphArea;
-                _scrollManager.ScrollBarArea = scrollBarArea;
+                scrollManager.GraphArea = graphArea;
+                scrollManager.ScrollBarArea = scrollBarArea;
 
                 // 스크롤 핸들 메트릭 업데이트
-                _scrollManager.UpdateScrollHandleMetrics();
+                scrollManager.UpdateScrollHandleMetrics();
             }
             catch (Exception ex)
             {
@@ -1463,19 +1440,19 @@ namespace Going.UI.Controls
         private void UpdateRendererProperties()
         {
             // 렌더러에 속성 업데이트
-            _renderer.Settings = _settings;
-            _renderer.Series = _series;
-            _renderer.AnimationProgress = _animationProgress;
-            _renderer.VisibleXMin = _scrollManager.VisibleMinimum;
-            _renderer.VisibleXMax = _scrollManager.VisibleMaximum;
-            _renderer.DisplayYMin = _settings.YAxisMin;
-            _renderer.DisplayYMax = _settings.YAxisMax;
-            _renderer.ScrollHandleX = _scrollManager.HandleX;
-            _renderer.ScrollHandleWidth = _scrollManager.HandleWidth;
-            _renderer.HoveredPoint = _hoveredPoint;
+            renderer.Settings = settings;
+            renderer.Series = series;
+            renderer.AnimationProgress = animationProgress;
+            renderer.VisibleXMin = scrollManager.VisibleMinimum;
+            renderer.VisibleXMax = scrollManager.VisibleMaximum;
+            renderer.DisplayYMin = settings.YAxisMin;
+            renderer.DisplayYMax = settings.YAxisMax;
+            renderer.ScrollHandleX = scrollManager.HandleX;
+            renderer.ScrollHandleWidth = scrollManager.HandleWidth;
+            renderer.HoveredPoint = hoveredPoint;
 
             // 매핑 캐시 무효화 (Y축 범위 변경 시)
-            _renderer.InvalidateYMappingCache();
+            renderer.InvalidateYMappingCache();
         }
 
         private void UpdateDataRange()
@@ -1483,12 +1460,12 @@ namespace Going.UI.Controls
             try
             {
                 // 아무 데이터도 없는 경우 기본값 사용
-                if (_series.Count == 0 || _series.All(s => s.DataPoints == null || s.DataPoints.Count == 0))
+                if (series.Count == 0 || series.All(s => s.DataPoints == null || s.DataPoints.Count == 0))
                 {
-                    _settings.YAxisMin = 0;
-                    _settings.YAxisMax = 100;
-                    _scrollManager.DataMinimum = DateTime.Now.AddDays(-7);
-                    _scrollManager.DataMaximum = DateTime.Now;
+                    settings.YAxisMin = 0;
+                    settings.YAxisMax = 100;
+                    scrollManager.DataMinimum = DateTime.Now.AddDays(-7);
+                    scrollManager.DataMaximum = DateTime.Now;
                     return;
                 }
 
@@ -1500,7 +1477,7 @@ namespace Going.UI.Controls
                 double minValue = double.MaxValue;
                 double maxValue = double.MinValue;
 
-                foreach (var series in _series)
+                foreach (var series in series)
                 {
                     if (series.DataPoints == null || series.DataPoints.Count == 0)
                         continue;
@@ -1527,27 +1504,27 @@ namespace Going.UI.Controls
                     maxValue = 100;
                 }
 
-                _scrollManager.DataMinimum = minDate;
-                _scrollManager.DataMaximum = maxDate;
+                scrollManager.DataMinimum = minDate;
+                scrollManager.DataMaximum = maxDate;
 
                 // 초기 보이는 범위 설정 (전체 데이터 중에서 마지막 7일)
-                if (_scrollManager.VisibleMinimum == DateTime.MinValue || _scrollManager.VisibleMaximum == DateTime.MaxValue)
+                if (scrollManager.VisibleMinimum == DateTime.MinValue || scrollManager.VisibleMaximum == DateTime.MaxValue)
                 {
                     // 전체 데이터 범위가 7일보다 작으면 전체 표시
                     if ((maxDate - minDate).TotalDays <= 7)
                     {
-                        _scrollManager.UpdateVisibleRange(minDate, maxDate);
+                        scrollManager.UpdateVisibleRange(minDate, maxDate);
                     }
                     else
                     {
                         // 마지막 7일 표시
-                        _scrollManager.UpdateVisibleRange(maxDate.AddDays(-7), maxDate);
+                        scrollManager.UpdateVisibleRange(maxDate.AddDays(-7), maxDate);
                     }
                 }
                 else
                 {
                     // 보이는 범위가 데이터 범위를 벗어나지 않도록 조정
-                    _scrollManager.AdjustVisibleRange();
+                    scrollManager.AdjustVisibleRange();
                 }
 
                 // 자동 스케일링인 경우 Y 최소/최대값에 여유 공간 추가
@@ -1564,8 +1541,8 @@ namespace Going.UI.Controls
 
                     // 10% 여유 공간 추가
                     double padding = range * 0.1;
-                    _settings.YAxisMin = Math.Max(minValue - padding, 0); // 음수 방지
-                    _settings.YAxisMax = maxValue + padding;
+                    settings.YAxisMin = Math.Max(minValue - padding, 0); // 음수 방지
+                    settings.YAxisMax = maxValue + padding;
 
                     // 눈금 값을 깔끔하게 조정
                     AdjustYAxisRange();
@@ -1574,8 +1551,8 @@ namespace Going.UI.Controls
             catch (Exception ex)
             {
                 // 데이터 범위 업데이트 오류 - 기본값 설정
-                _settings.YAxisMin = 0;
-                _settings.YAxisMax = 100;
+                settings.YAxisMin = 0;
+                settings.YAxisMax = 100;
                 System.Diagnostics.Debug.WriteLine($"데이터 범위 업데이트 오류: {ex.Message}");
             }
         }
@@ -1583,14 +1560,14 @@ namespace Going.UI.Controls
         private void AdjustYAxisRange()
         {
             // 눈금 간격 계산
-            double range = _settings.YAxisMax - _settings.YAxisMin;
+            double range = settings.YAxisMax - settings.YAxisMin;
             double step = CalculateNiceStep(range / Math.Max(1, GridLineCount));
 
             // 최소값을 내려서 눈금에 맞춤
-            _settings.YAxisMin = Math.Floor(_settings.YAxisMin / step) * step;
+            settings.YAxisMin = Math.Floor(settings.YAxisMin / step) * step;
 
             // 최대값을 올려서 눈금에 맞춤
-            _settings.YAxisMax = Math.Ceiling(_settings.YAxisMax / step) * step;
+            settings.YAxisMax = Math.Ceiling(settings.YAxisMax / step) * step;
         }
 
         private static double CalculateNiceStep(double roughStep)
@@ -1618,7 +1595,7 @@ namespace Going.UI.Controls
 
         private void UpdateAnimation()
         {
-            if (!EnableAnimation || _animationProgress >= _targetAnimationProgress)
+            if (!EnableAnimation || animationProgress >= targetAnimationProgress)
                 return;
 
             try
@@ -1628,27 +1605,27 @@ namespace Going.UI.Controls
                 long currentTimeTicks = now.Ticks;
 
                 // 애니메이션 정지된 경우 (창 최소화 등)
-                if (_lastFrameTimeTicks == 0)
+                if (lastFrameTimeTicks == 0)
                 {
-                    _lastFrameTimeTicks = currentTimeTicks;
+                    lastFrameTimeTicks = currentTimeTicks;
                     return;
                 }
 
                 // 마지막 프레임 이후 경과 시간 (밀리초)
-                double elapsed = (currentTimeTicks - _lastFrameTimeTicks) / TimeSpan.TicksPerMillisecond;
+                double elapsed = (currentTimeTicks - lastFrameTimeTicks) / TimeSpan.TicksPerMillisecond;
 
                 // 너무 큰 시간 간격 제한 (창 최소화 후 복원 등의 경우)
                 elapsed = Math.Min(elapsed, AnimationDuration / 2.0);
 
                 // 진행률 업데이트
                 float progressDelta = (float)(elapsed / AnimationDuration);
-                _animationProgress = Math.Min(_targetAnimationProgress, _animationProgress + progressDelta);
+                animationProgress = Math.Min(targetAnimationProgress, animationProgress + progressDelta);
 
                 // 마지막 프레임 시간 업데이트
-                _lastFrameTimeTicks = currentTimeTicks;
+                lastFrameTimeTicks = currentTimeTicks;
 
                 // 애니메이션이 완료되지 않았으면 다시 그리기 요청
-                if (_animationProgress < _targetAnimationProgress)
+                if (animationProgress < targetAnimationProgress)
                 {
                     Invalidate?.Invoke();
                 }
@@ -1656,7 +1633,7 @@ namespace Going.UI.Controls
             catch (Exception ex)
             {
                 // 애니메이션 오류 - 진행률을 최대로 설정하고 계속 진행
-                _animationProgress = _targetAnimationProgress;
+                animationProgress = targetAnimationProgress;
                 System.Diagnostics.Debug.WriteLine($"애니메이션 업데이트 오류: {ex.Message}");
             }
         }
@@ -1671,20 +1648,20 @@ namespace Going.UI.Controls
                 float minDistance = float.MaxValue;
 
                 // 마우스가 그래프 영역 밖이면 검색 안 함
-                if (!_renderer.GraphArea.Contains(x, y))
+                if (!renderer.GraphArea.Contains(x, y))
                     return null;
 
                 // 보이는 범위의 데이터만 검색
-                foreach (var series in _series)
+                foreach (var series in series)
                 {
                     if (series.DataPoints == null || series.DataPoints.Count == 0)
                         continue;
 
                     // 성능 최적화: 보이는 범위의 데이터만 검색
-                    foreach (var point in series.GetVisiblePoints(_scrollManager.VisibleMinimum, _scrollManager.VisibleMaximum))
+                    foreach (var point in series.GetVisiblePoints(scrollManager.VisibleMinimum, scrollManager.VisibleMaximum))
                     {
-                        float px = _scrollManager.TimeToCanvasX(point.Timestamp);
-                        float py = _renderer.MapYToCanvas(point.Value);
+                        float px = scrollManager.TimeToCanvasX(point.Timestamp);
+                        float py = renderer.MapYToCanvas(point.Value);
 
                         float distance = (float)Math.Sqrt(Math.Pow(px - x, 2) + Math.Pow(py - y, 2));
 
@@ -1708,7 +1685,7 @@ namespace Going.UI.Controls
 
         private TrendSeries? FindSeriesForDataPoint(TrendDataPoint point)
         {
-            foreach (var series in _series)
+            foreach (var series in series)
             {
                 if (series.DataPoints == null || series.DataPoints.Count == 0)
                     continue;
@@ -1729,7 +1706,7 @@ namespace Going.UI.Controls
         private string GetNextColor()
         {
             string[] defaultColors = { "primary", "success", "warning", "danger", "info" };
-            int index = _series.Count % defaultColors.Length;
+            int index = series.Count % defaultColors.Length;
             return defaultColors[index];
         }
 
@@ -1751,13 +1728,13 @@ namespace Going.UI.Controls
         /// </summary>
         protected virtual void Dispose(bool disposing)
         {
-            if (!_disposed)
+            if (!disposed)
             {
                 if (disposing)
                 {
                     // 관리되는 리소스 해제
-                    _renderer.Dispose();
-                    _scrollManager.Dispose();
+                    renderer.Dispose();
+                    scrollManager.Dispose();
 
                     // 이벤트 핸들러 해제
                     DataChanged = null;
@@ -1765,7 +1742,7 @@ namespace Going.UI.Controls
                     VisibleRangeChanged = null;
                 }
 
-                _disposed = true;
+                disposed = true;
             }
         }
 
