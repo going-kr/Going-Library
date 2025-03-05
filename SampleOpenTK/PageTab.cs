@@ -14,19 +14,21 @@ namespace SampleOpenTK
 {
     public class PageTab : GoPage
     {
+        GoButton btnMain, btnP1, btnP2, btnP3;
+        GoCalendar cal;
+        GoToolBox tb;
+        GoTreeView tv;
+
         public PageTab()
         {
             Name = "PageTab";
 
-
-            var btn = new GoButton { Name = "btn", Left = 10, Top = 10, Width = 80, Height = 40, Text = "메인 페이지" };
-            Childrens.Add(btn);
-            btn.ButtonClicked += (o, s) => Design?.SetPage("PageMain");
-
+            #region MainPage
+            btnMain = new GoButton { Name = "btn", Left = 10, Top = 10, Width = 80, Height = 40, Text = "메인 페이지" };
+            Childrens.Add(btnMain);
+            #endregion
+            #region Tab
             var tab = new GoTabControl { Fill = true, Margin = new GoPadding(10, 60, 10, 10),  };
-            //tab.IconDirection = GoDirectionHV.Vertical; tab.IconSize = 24; tab.IconGap = 10;
-            tab.TabPosition = GoDirection.Down;// tab.NavSize = 120;
-
             var tp1 = new GoTabPage { Text = "Tab 1", IconString = "fa-check" };
             var tp2 = new GoTabPage { Text = "Tab 2", IconString = "fa-check" };
             var tp3 = new GoTabPage { Text = "Tab 3", IconString = "fa-check" };
@@ -36,17 +38,20 @@ namespace SampleOpenTK
             tab.TabPages.Add(tp3);
 
             Childrens.Add(tab);
+            #endregion
 
-            var btnP1 = new GoButton { Text = "페이지 1", Left = 0, Top = 0 };
-            var btnP2 = new GoButton { Text = "페이지 2", Left = 0, Top = 0 };
-            var btnP3 = new GoButton { Text = "페이지 3", Left = 0, Top = 0 };
+            #region tp1
+            btnP1 = new GoButton { Text = "페이지 1", Left = 0, Top = 0 };
+            cal = new GoCalendar { Left = 0, Top = 40, Width = 300, Height = 240, MultiSelect = true };
             tp1.Childrens.Add(btnP1);
+            tp1.Childrens.Add(cal);
+            #endregion
+            #region tp2
+            btnP2 = new GoButton { Text = "페이지 2", Left = 0, Top = 0 };
+            tb = new GoToolBox { Left = 0, Top = 40, Width = 300, Height = 400 };
+            tp2.Childrens.Add(tb);
             tp2.Childrens.Add(btnP2);
-            tp3.Childrens.Add(btnP3);
 
-            tp1.Childrens.Add(new GoCalendar { Left = 0, Top = 40, Width = 300, Height = 240, MultiSelect = true });
-
-            var tb = new GoToolBox { Left = 0, Top = 40, Width = 300, Height = 400 };
             for (int i = 1; i <= 7; i++)
             {
                 var cat = new GoToolCategory { Text = $"Category {i}" };
@@ -55,10 +60,37 @@ namespace SampleOpenTK
                 for (int j = 1; j <= 10; j++)
                     cat.Items.Add(new GoToolItem { Text = $"Item {i}.{j}" });
             }
-            tp2.Childrens.Add(tb);
+            #endregion
+            #region tp3
+            btnP3 = new GoButton { Text = "페이지 3", Left = 0, Top = 0 };
+            tv = new GoTreeView { Left = 0, Top = 40, Width = 300, Height = 400, SelectionMode = GoItemSelectionMode.MultiPC, DragMode = false };
+            tp3.Childrens.Add(btnP3);
+            tp3.Childrens.Add(tv);
 
+            var rnd = new Random();
+
+            for (int i = 0; i <5; i++)
+            {
+                var nd0 = new GoTreeNode { Text = $"Node {i}" };
+                tv.Nodes.Add(nd0);
+
+                for(int j = 0; j < rnd.Next(0, 10); j++)
+                {
+                    var nd1 = new GoTreeNode { Text = $"Node {i}.{j}" };
+                    nd0.Nodes.Add(nd1);
+
+                    for (int k = 0; k < rnd.Next(0, 10); k++)
+                    {
+                        var nd2 = new GoTreeNode { Text = $"Node {i}.{j}.{k}" };
+                        nd1.Nodes.Add(nd2);
+                    }
+                }
+            }
+            #endregion
+
+            btnMain.ButtonClicked += (o, s) => Design?.SetPage("PageMain");
             btnP2.DragDrop += (o, s) => { if (s.DragItem is GoToolItem i) btnP2.Text = i.Text ?? ""; };
-
+            btnP3.DragDrop += (o, s) => { if (s.DragItem is GoTreeNode i) btnP3.Text = i.Text ?? ""; };
         }
 
     }

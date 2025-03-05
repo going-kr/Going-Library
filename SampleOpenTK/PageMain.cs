@@ -47,7 +47,7 @@ namespace SampleOpenTK
             pnl_tbl.Childrens.Add(new GoInputSelector { Fill = true, Margin = new GoPadding(3) , Items = [new GoListItem { Text = "Sun" }, new GoListItem { Text = "Mon" }, new GoListItem { Text = "Tue" }, new GoListItem { Text = "Wed" }, new GoListItem { Text = "Thu" }, new GoListItem { Text = "Fri" }, new GoListItem { Text = "Sat" },] }, 1, 8, 2, 1);
             pnl_tbl.Childrens.Add(new GoRangeSlider { Fill = true, Margin = new GoPadding(3), Text = "슬라이더", Direction = GoDirectionHV.Horizon, ValueFormat = "0.0" }, 1, 9, 2);
 
-            var lb = new GoListBox { Fill = true, SelectionMode = GoItemSelectionMode.Multi };
+            var lb = new GoListBox { Fill = true, SelectionMode = GoItemSelectionMode.MultiPC };
             var cmb = pnl_tbl.Childrens.FirstOrDefault(x => x is GoInputCombo) as GoInputCombo;
             tbl.Childrens.Add(lb, 1, 0);
             for (int i = 1; i <= 100; i++)
