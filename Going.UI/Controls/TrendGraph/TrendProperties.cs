@@ -106,68 +106,28 @@ namespace Going.UI.Controls.TrendGraph
 
         #region 축 설정
 
-        /// <summary>
-        /// X축 표시 여부
-        /// </summary>
-        /// <remarks>
-        /// 시간축(X축) 표시 여부
-        /// </remarks>
+        // X축 표시 여부 : 시간축(X축) 표시 여부
         public bool ShowXAxis { get; set; } = true;
 
-        /// <summary>
-        /// Y축 표시 여부
-        /// </summary>
-        /// <remarks>
-        /// 값축(Y축) 표시 여부
-        /// </remarks>
+        // Y축 표시 여부 : 값축(Y축) 표시 여부
         public bool ShowYAxis { get; set; } = true;
 
-        /// <summary>
-        /// X축 색상
-        /// </summary>
-        /// <remarks>
-        /// 시간축(X축)의 선 색상
-        /// </remarks>
+        // X축 색상 : 시간축(X축)의 선 색상
         public SKColor XAxisColor { get; set; } = SKColors.Black;
 
-        /// <summary>
-        /// Y축 색상
-        /// </summary>
-        /// <remarks>
-        /// 값축(Y축)의 선 색상
-        /// </remarks>
+        // Y축 색상 : 값축(Y축)의 선 색상
         public SKColor YAxisColor { get; set; } = SKColors.Black;
 
-        /// <summary>
-        /// 축 선 두께
-        /// </summary>
-        /// <remarks>
-        /// X축과 Y축 선의 두께(픽셀 단위)
-        /// </remarks>
+        // X축 선 두께 : 시간축(X축)의 선 두께
         public float AxisLineWidth { get; set; } = 1.0f;
 
-        /// <summary>
-        /// 축 라벨 글꼴 크기
-        /// </summary>
-        /// <remarks>
-        /// 축 눈금 라벨의 글꼴 크기(픽셀 단위)
-        /// </remarks>
+        // X축 라벨 글꼴 크기 : 시간축(X축) 라벨의 글꼴 크기
         public float AxisLabelFontSize { get; set; } = 12.0f;
 
-        /// <summary>
-        /// 축 라벨 색상
-        /// </summary>
-        /// <remarks>
-        /// 축 눈금 라벨의 텍스트 색상
-        /// </remarks>
+        // X축 라벨 색상 : 시간축(X축) 라벨의 텍스트 색상
         public SKColor AxisLabelColor { get; set; } = SKColors.Gray;
 
-        /// <summary>
-        /// X축 시간 형식
-        /// </summary>
-        /// <remarks>
-        /// 시간축(X축) 라벨의 날짜/시간 형식 문자열 (예: "HH:mm:ss", "yyyy-MM-dd")
-        /// </remarks>
+        // X축 시간 형식 : 시간축(X축) 라벨의 날짜/시간 형식 문자열 (예: "HH:mm:ss", "yyyy-MM-dd")
         public string TimeFormat { get; set; } = "HH:mm:ss";
 
         /// <summary>

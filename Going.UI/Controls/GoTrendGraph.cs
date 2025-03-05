@@ -1,6 +1,7 @@
 ﻿using Going.UI.Controls.TrendGraph;
 using Going.UI.Enums;
 using Going.UI.Themes;
+using Going.UI.Utils;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -14,789 +15,83 @@ namespace Going.UI.Controls
     /// </summary>
     public class GoTrendGraph : GoControl, IDisposable
     {
-        #region Private Fields
-
-        private readonly TrendRenderer renderer;
-        private readonly TrendScrollManager scrollManager;
-        private readonly TrendGraphSettings settings;
-        private readonly List<TrendSeries> series;
-
-        private bool isHovering;
-        private TrendDataPoint? hoveredPoint;
-        private float mx, my;   // 마우스 위치 추적
-        private bool isDraggingGraph;
-        private bool isDraggingScrollHandle;
-        private DateTime animationStartTime;
-        private float animationProgress = 1.0f;
-        private bool needsLayoutUpdate = true;
-        private bool disposed;
-
-        // 애니메이션 최적화
-        private long lastFrameTimeTicks;
-        private float targetAnimationProgress = 1.0f;
-
-        #endregion
-
         #region Properties
 
         #region 아이콘 설정
 
-        /// <summary>
-        /// 아이콘과 텍스트 사이 간격
-        /// </summary>
-        public float IconGap
-        {
-            get => settings.IconGap;
-            set
-            {
-                if (settings.IconGap != value)
-                {
-                    settings.IconGap = value;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
+        public string? IconString { get; set; }
+        public float IconSize { get; set; }
+        public float IconGap { get; set; }
+        public GoDirectionHV IconPosition { get; set; }
 
-        /// <summary>
-        /// 아이콘 방향
-        /// </summary>
-        public GoDirectionHV IconDirection
-        {
-            get => settings.IconDirection;
-            set
-            {
-                if (settings.IconDirection != value)
-                {
-                    settings.IconDirection = value;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
         #endregion
 
         #region 그래프 라벨 설정
-        /// <summary>
-        /// 그래프 라벨 텍스트
-        /// </summary>
-        public string Text
-        {
-            get => settings.Text;
-            set
-            {
-                if (settings.Text != value)
-                {
-                    settings.Text = value;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
 
-        /// <summary>
-        /// 텍스트 폰트 이름
-        /// </summary>
-        public string TextFontName
-        {
-            get => settings.TextFontName;
-            set
-            {
-                if (settings.TextFontName != value)
-                {
-                    settings.TextFontName = value;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
-
-        /// <summary>
-        /// 텍스트 폰트 크기
-        /// </summary>
-        public float TextFontSize
-        {
-            get => settings.TextFontSize;
-            set
-            {
-                if (settings.TextFontSize != value)
-                {
-                    settings.TextFontSize = value;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
-        #endregion
-
-        #region 그래프 배경 설정
-        /// <summary>
-        /// 배경 그리기 여부
-        /// </summary>
-        public bool BackgroundDraw
-        {
-            get => settings.BackgroundDraw;
-            set
-            {
-                if (settings.BackgroundDraw != value)
-                {
-                    settings.BackgroundDraw = value;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
-
-        /// <summary>
-        /// 테두리만 그리기 여부
-        /// </summary>
-        public bool BorderOnly
-        {
-            get => settings.BorderOnly;
-            set
-            {
-                if (settings.BorderOnly != value)
-                {
-                    settings.BorderOnly = value;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
-
-        /// <summary>
-        /// 배경 색상
-        /// </summary>
-        public string BgColor
-        {
-            get => settings.BgColor;
-            set
-            {
-                if (settings.BgColor != value)
-                {
-                    settings.BgColor = value;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
-
-        /// <summary>
-        /// 테두리 색상
-        /// </summary>
-        public string BorderColor
-        {
-            get => settings.BorderColor;
-            set
-            {
-                if (settings.BorderColor != value)
-                {
-                    settings.BorderColor = value;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
-
-        /// <summary>
-        /// 모서리 둥글기 타입
-        /// </summary>
-        public GoRoundType Round
-        {
-            get => settings.Round;
-            set
-            {
-                if (settings.Round != value)
-                {
-                    settings.Round = value;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
-        #endregion
-
-        #region 그래프 설정
-        /// <summary>
-        /// 축 색상
-        /// </summary>
-        public string AxisColor
-        {
-            get => settings.AxisColor;
-            set
-            {
-                if (settings.AxisColor != value)
-                {
-                    settings.AxisColor = value;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
-
-        /// <summary>
-        /// 그리드 색상
-        /// </summary>
-        public string GridColor
-        {
-            get => settings.GridColor;
-            set
-            {
-                if (settings.GridColor != value)
-                {
-                    settings.GridColor = value;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
-
-        /// <summary>
-        /// 그리드 표시 여부
-        /// </summary>
-        public bool ShowGrid
-        {
-            get => settings.ShowGrid;
-            set
-            {
-                if (settings.ShowGrid != value)
-                {
-                    settings.ShowGrid = value;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
-
-        /// <summary>
-        /// 레전드 표시 여부
-        /// </summary>
-        public bool ShowLegend
-        {
-            get => settings.ShowLegend;
-            set
-            {
-                if (settings.ShowLegend != value)
-                {
-                    settings.ShowLegend = value;
-                    needsLayoutUpdate = true;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
-
-        /// <summary>
-        /// 그리드 선 개수
-        /// </summary>
-        public int GridLineCount
-        {
-            get => settings.GridLineCount;
-            set
-            {
-                if (settings.GridLineCount != value)
-                {
-                    settings.GridLineCount = value;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
-
-        /// <summary>
-        /// 그림자 효과 활성화 여부
-        /// </summary>
-        public bool EnableShadow
-        {
-            get => settings.EnableShadow;
-            set
-            {
-                if (settings.EnableShadow != value)
-                {
-                    settings.EnableShadow = value;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
-
-        /// <summary>
-        /// 애니메이션 활성화 여부
-        /// </summary>
-        public bool EnableAnimation
-        {
-            get => settings.EnableAnimation;
-            set
-            {
-                if (settings.EnableAnimation != value)
-                {
-                    settings.EnableAnimation = value;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
-
-        /// <summary>
-        /// 애니메이션 지속 시간 (밀리초)
-        /// </summary>
-        public int AnimationDuration
-        {
-            get => settings.AnimationDuration;
-            set
-            {
-                if (settings.AnimationDuration != value)
-                {
-                    settings.AnimationDuration = value;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
-
-        /// <summary>
-        /// 선 두께
-        /// </summary>
-        public float LineThickness
-        {
-            get => settings.LineThickness;
-            set
-            {
-                if (settings.LineThickness != value)
-                {
-                    settings.LineThickness = value;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
-
-        /// <summary>
-        /// 영역 채우기 여부
-        /// </summary>
-        public bool FillArea
-        {
-            get => settings.FillArea;
-            set
-            {
-                if (settings.FillArea != value)
-                {
-                    settings.FillArea = value;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
-
-        /// <summary>
-        /// 채우기 투명도 (0-255)
-        /// </summary>
-        public int FillOpacity
-        {
-            get => settings.FillOpacity;
-            set
-            {
-                int clampedValue = Math.Clamp(value, 0, 255);
-                if (settings.FillOpacity != clampedValue)
-                {
-                    settings.FillOpacity = clampedValue;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
-
-        /// <summary>
-        /// 데이터 포인트 표시 여부
-        /// </summary>
-        public bool ShowDataPoints
-        {
-            get => settings.ShowDataPoints;
-            set
-            {
-                if (settings.ShowDataPoints != value)
-                {
-                    settings.ShowDataPoints = value;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
-
-        /// <summary>
-        /// 데이터 포인트 반지름
-        /// </summary>
-        public float DataPointRadius
-        {
-            get => settings.DataPointRadius;
-            set
-            {
-                if (settings.DataPointRadius != value)
-                {
-                    settings.DataPointRadius = value;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
-
-        /// <summary>
-        /// 레이블 표시 여부
-        /// </summary>
-        public bool ShowLabels
-        {
-            get => settings.ShowLabels;
-            set
-            {
-                if (settings.ShowLabels != value)
-                {
-                    settings.ShowLabels = value;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
-
-        /// <summary>
-        /// 패딩
-        /// </summary>
-        public float Padding
-        {
-            get => settings.Padding;
-            set
-            {
-                if (settings.Padding != value)
-                {
-                    settings.Padding = value;
-                    needsLayoutUpdate = true;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
-        #endregion
-
-        #region 축 레이블 설정
-        /// <summary>
-        /// 폰트 이름
-        /// </summary>
-        public string FontName
-        {
-            get => settings.FontName;
-            set
-            {
-                if (settings.FontName != value)
-                {
-                    settings.FontName = value;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
-
-        /// <summary>
-        /// 폰트 크기
-        /// </summary>
-        public float FontSize
-        {
-            get => settings.FontSize;
-            set
-            {
-                if (settings.FontSize != value)
-                {
-                    settings.FontSize = value;
-                    needsLayoutUpdate = true;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
-
-        /// <summary>
-        /// 텍스트 색상
-        /// </summary>
-        public string TextColor
-        {
-            get => settings.TextColor;
-            set
-            {
-                if (settings.TextColor != value)
-                {
-                    settings.TextColor = value;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
-
-        /// <summary>
-        /// 값 포맷 문자열
-        /// </summary>
-        public string ValueFormat
-        {
-            get => settings.ValueFormat;
-            set
-            {
-                if (settings.ValueFormat != value)
-                {
-                    settings.ValueFormat = value;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
-
-        /// <summary>
-        /// X축 제목
-        /// </summary>
-        public string? XAxisTitle
-        {
-            get => settings.XAxisTitle;
-            set
-            {
-                if (settings.XAxisTitle != value)
-                {
-                    settings.XAxisTitle = value;
-                    needsLayoutUpdate = true;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Y축 제목
-        /// </summary>
-        public string? YAxisTitle
-        {
-            get => settings.YAxisTitle;
-            set
-            {
-                if (settings.YAxisTitle != value)
-                {
-                    settings.YAxisTitle = value;
-                    needsLayoutUpdate = true;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
-
-        /// <summary>
-        /// 자동 스케일링 여부
-        /// </summary>
-        public bool AutoScale
-        {
-            get => settings.AutoScale;
-            set
-            {
-                if (settings.AutoScale != value)
-                {
-                    settings.AutoScale = value;
-                    UpdateDataRange();
-                    Invalidate?.Invoke();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Y축 최소값 (자동 스케일링이 꺼진 경우)
-        /// </summary>
-        public double YAxisMin
-        {
-            get => settings.YAxisMin;
-            set
-            {
-                if (settings.YAxisMin != value)
-                {
-                    settings.YAxisMin = value;
-                    if (!AutoScale)
-                    {
-                        UpdateDataRange();
-                        Invalidate?.Invoke();
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Y축 최대값 (자동 스케일링이 꺼진 경우)
-        /// </summary>
-        public double YAxisMax
-        {
-            get => settings.YAxisMax;
-            set
-            {
-                if (settings.YAxisMax != value)
-                {
-                    settings.YAxisMax = value;
-                    if (!AutoScale)
-                    {
-                        UpdateDataRange();
-                        Invalidate?.Invoke();
-                    }
-                }
-            }
-        }
-        #endregion
-
-        #region 스크롤 설정
-        /// <summary>
-        /// 스크롤 기능 활성화 여부
-        /// </summary>
-        public bool EnableScrolling
-        {
-            get => settings.EnableScrolling;
-            set
-            {
-                if (settings.EnableScrolling != value)
-                {
-                    settings.EnableScrolling = value;
-                    needsLayoutUpdate = true;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
-
-        /// <summary>
-        /// 마우스 휠로 줌 기능 활성화 여부
-        /// </summary>
-        public bool EnableMouseWheelZoom
-        {
-            get => settings.EnableMouseWheelZoom;
-            set
-            {
-                if (settings.EnableMouseWheelZoom != value)
-                {
-                    settings.EnableMouseWheelZoom = value;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
-
-        /// <summary>
-        /// 화면에 표시되는 시간 범위 (초 단위)
-        /// </summary>
-        public double VisibleTimeRange
-        {
-            get => settings.VisibleTimeRange;
-            set
-            {
-                double clampedValue = Math.Clamp(value, settings.MinTimeRange, settings.MaxTimeRange);
-                if (settings.VisibleTimeRange != clampedValue)
-                {
-                    settings.VisibleTimeRange = clampedValue;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
-
-        /// <summary>
-        /// 줌 최소 시간 범위 (초 단위)
-        /// </summary>
-        public double MinTimeRange
-        {
-            get => settings.MinTimeRange;
-            set
-            {
-                if (settings.MinTimeRange != value)
-                {
-                    settings.MinTimeRange = value;
-                    scrollManager.MinTimeRange = value;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
-
-        /// <summary>
-        /// 줌 최대 시간 범위 (초 단위)
-        /// </summary>
-        public double MaxTimeRange
-        {
-            get => settings.MaxTimeRange;
-            set
-            {
-                if (settings.MaxTimeRange != value)
-                {
-                    settings.MaxTimeRange = value;
-                    scrollManager.MaxTimeRange = value;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
-
-        /// <summary>
-        /// 스크롤바 높이
-        /// </summary>
-        public float ScrollBarHeight
-        {
-            get => settings.ScrollBarHeight;
-            set
-            {
-                if (settings.ScrollBarHeight != value)
-                {
-                    settings.ScrollBarHeight = value;
-                    needsLayoutUpdate = true;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
-
-        /// <summary>
-        /// 스크롤바 색상
-        /// </summary>
-        public string ScrollBarColor
-        {
-            get => settings.ScrollBarColor;
-            set
-            {
-                if (settings.ScrollBarColor != value)
-                {
-                    settings.ScrollBarColor = value;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
-
-        /// <summary>
-        /// 스크롤 핸들 색상
-        /// </summary>
-        public string ScrollHandleColor
-        {
-            get => settings.ScrollHandleColor;
-            set
-            {
-                if (settings.ScrollHandleColor != value)
-                {
-                    settings.ScrollHandleColor = value;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
-
-        /// <summary>
-        /// 스크롤바 표시 여부
-        /// </summary>
-        public bool ShowScrollBar
-        {
-            get => settings.ShowScrollBar;
-            set
-            {
-                if (settings.ShowScrollBar != value)
-                {
-                    settings.ShowScrollBar = value;
-                    needsLayoutUpdate = true;
-                    Invalidate?.Invoke();
-                }
-            }
-        }
-        #endregion
-
-        #region 데이터 속성
-
-        /// <summary>
-        /// 시리즈 데이터 목록
-        /// </summary>
-        public IReadOnlyList<TrendSeries> Series => series.AsReadOnly();
-
-        /// <summary>
-        /// 현재 보이는 시간 범위의 최소값
-        /// </summary>
-        public DateTime VisibleMinimum => scrollManager.VisibleMinimum;
-
-        /// <summary>
-        /// 현재 보이는 시간 범위의 최대값
-        /// </summary>
-        public DateTime VisibleMaximum => scrollManager.VisibleMaximum;
-
-        /// <summary>
-        /// 전체 데이터 범위의 최소값
-        /// </summary>
-        public DateTime DataMinimum => scrollManager.DataMinimum;
-
-        /// <summary>
-        /// 전체 데이터 범위의 최대값
-        /// </summary>
-        public DateTime DataMaximum => scrollManager.DataMaximum;
+        public string Text { get; set; } = "label";
+        public string FontName { get; set; } = "나눔고딕";
+        public float FontSize { get; set; } = 12;
 
         #endregion
+
+        #region 그래프 상태 설정
+
+        public bool BackgroundDraw { get; set; } = true;
+        public bool BorderOnly { get; set; }
+        public bool ShowGrid { get; set; }
+        public bool LegendDraw { get; set; }    // 범례 표시 : 일단 사용 안함
+        public bool ShadowDraw { get; set; }    // 그림자 효과 : 일단 사용 안함
+        public bool DataPointDraw { get; set; } // 데이터 포인트 표시 : 일단 사용 안함
+        public bool IsStart { get; set; }       // 실시간 데이터 시작 여부
+        public bool Pause { get; set; }         // 실시간 데이터 일시정지 여부
+
+        #endregion
+
+        #region 그래프 모양 설정
+
+        public string TextColor { get; set; } = "Fore";
+        public string BgColor { get; set; } = "Base3";
+        public string BorderColor { get; set; } = "Base2";
+        public string AxisColor { get; set; } = "Base2";
+        public string GridColor { get; set; } = "Base2";
+        public float Border { get; set; } = 1;
+        public float Radius { get; set; } = 3;
+        public GoRoundType Round { get; set; }
+        public int GridLineCount { get; set; } = 5;
+        public float DataPointRadius { get; set; } = 5; // 데이터 포인트 반지름 : 일단 사용 안함
+        public string ValueFormatString { get; set; } = "0.0"; // 데이터 포인트 값 포맷
+        public string TimeFormatString { get; set; } = "HH:mm"; // 데이터 포인트 시간 포맷
+        public TimeSpan XAxisGraduation { get; set; } = new TimeSpan(0, 1, 0);
+        public int YAxisGraduationCount { get; set; } = 10;
+        public TimeSpan XScale { get; set; } = new TimeSpan(0, 10, 0);
+        public TimeSpan MaximumXScale { get; set; } = new TimeSpan(1, 0, 0);
+        public int Interval { get; set; } = 1000;
+
+        #endregion
+
+        #endregion
+
+        #region Member Variable
+
+        private Scroll scroll = new Scroll { Direction = ScrollDirection.Horizon };
+        private DateTime vst;
+        private DateTime ved;
+        private DateTime vstarttime;
+        private float mx, my;
+        private bool bSettingDown;
+        private double? nGraphWidth;
+        private bool bDetail;
+        private bool bDetailDown;
+        private bool bGraphDown;
+        private bool bPauseDown;
+        private bool bPause;
+
+        private Task? taskData;
+        private CancellationTokenSource? cancelData;
 
         #endregion
 
         #region Events
-
-        /// <summary>
-        /// 시리즈 데이터가 변경되었을 때 발생합니다.
-        /// </summary>
         public event EventHandler? DataChanged;
 
         /// <summary>
@@ -813,12 +108,10 @@ namespace Going.UI.Controls
 
         #region Constructor
 
-        /// <summary>
-        /// 트렌드 그래프 컴포넌트를 초기화합니다.
-        /// </summary>
         public GoTrendGraph()
         {
             Selectable = true;
+
 
             settings = new TrendGraphSettings();
             renderer = new TrendRenderer();
