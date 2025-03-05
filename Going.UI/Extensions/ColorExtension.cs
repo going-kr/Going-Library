@@ -30,5 +30,7 @@ namespace Going.UI.Extensions
             return SKColor.FromHsl(h, s, l, color.Alpha);
         }
         #endregion
+
     }
+     
 }

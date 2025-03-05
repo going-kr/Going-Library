@@ -81,13 +81,21 @@ namespace Going.UI.Controls
             }
             #endregion
             #region Days
-            daysLoop(rts, (tm, rt, monthIn) =>
+            using (var path = PathTool.Box(rtContent, BackgroundDraw ? Round : GoRoundType.Rect, thm.Corner))
             {
-                if (SelectedDays.Contains(tm)) Util.DrawBox(canvas, rt, cSel, GoRoundType.Rect, thm.Corner);
+                using (new SKAutoCanvasRestore(canvas))
+                {
+                    canvas.ClipPath(path, SKClipOperation.Intersect, true);
 
-                var c = monthIn ? tm.DayOfWeek == DayOfWeek.Sunday ? cSun : (tm.DayOfWeek == DayOfWeek.Saturday ? cSat : cText) : Util.FromArgb(90, cText);
-                Util.DrawText(canvas, $"{tm.Day}", FontName, FontStyle, FontSize, rt, c);
-            });
+                    daysLoop(rts, (tm, rt, monthIn) =>
+                    {
+                        if (SelectedDays.Contains(tm)) Util.DrawBox(canvas, rt, cSel, GoRoundType.Rect, thm.Corner);
+
+                        var c = monthIn ? tm.DayOfWeek == DayOfWeek.Sunday ? cSun : (tm.DayOfWeek == DayOfWeek.Saturday ? cSat : cText) : Util.FromArgb(90, cText);
+                        Util.DrawText(canvas, $"{tm.Day}", FontName, FontStyle, FontSize, rt, c);
+                    });
+                }
+            }
             #endregion
              
             base.OnDraw(canvas);

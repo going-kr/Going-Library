@@ -9,6 +9,8 @@ using Going.UI.Utils;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -835,5 +837,211 @@ namespace Going.UI.Controls
         #endregion
     }
 
+    public class GoInputColor : GoInput
+    {
+        #region Properties
+        public SKColor Value
+        {
+            get => cValue; 
+            set
+            {
+                if(cValue != value)
+                {
+                    cValue = value;
+                    ValueChanged?.Invoke(this, EventArgs.Empty);
+                }
+            }
+        }
+        #endregion
 
+        #region Event
+        public event EventHandler? ValueChanged;
+
+        public event EventHandler<GoCancelableEventArgs>? DropDownOpening;
+        #endregion
+
+        #region Member Variable
+        SKColor cValue = SKColors.White;
+        GoColorDropDownWindow dwnd = new GoColorDropDownWindow();
+        #endregion
+
+        #region OnDrawValue
+        protected override void OnDrawValue(SKCanvas canvas, SKRect rtValue)
+        {
+            var thm = GoTheme.Current;
+            using var p = new SKPaint { IsAntialias = false };
+
+            var cBorder = thm.ToColor(BorderColor);
+            var cText = thm.ToColor(TextColor);
+            var (rtText, rtArrow) = bounds(rtValue);
+
+            #region item
+            var isz = FontSize;
+            var text = $"#{Value.Red:X2}{Value.Green:X2}{Value.Blue:X2}";
+            var (rtIco, rtVal) = Util.TextIconBounds(text, FontName, FontStyle, FontSize, new SKSize(isz, isz), GoDirectionHV.Horizon, IconGap, rtText, GoContentAlignment.MiddleCenter);
+
+            Util.DrawText(canvas, text, FontName, FontStyle, FontSize, rtVal, cText);
+            Util.DrawBox(canvas, rtIco, Value, GoRoundType.Rect, thm.Corner);
+            #endregion
+
+            #region sep
+            using var pe = SKPathEffect.CreateDash([2, 2], 2);
+            p.StrokeWidth = 1;
+            p.IsStroke = false;
+            p.Color = Util.FromArgb(128, cBorder);
+            p.PathEffect = pe;
+            canvas.DrawLine(rtArrow.Left, rtValue.Top + 10, rtArrow.Left, rtValue.Bottom - 10, p);
+            #endregion
+
+            #region arrow
+            if (dwnd.Visible) Util.DrawIcon(canvas, "fa-palette", 14, rtArrow, SKColors.Transparent, cText);
+            else Util.DrawIcon(canvas, "fa-palette", 14, rtArrow, cText);
+            #endregion
+        }
+        #endregion
+
+        #region OnValueClick
+        protected override void OnValueClick(float x, float y, GoMouseButton button)
+        {
+            var rtValue = Areas()["Value"];
+
+            if (CollisionTool.Check(rtValue, x, y))
+            {
+                var args = new GoCancelableEventArgs();
+                DropDownOpening?.Invoke(this, args);
+
+                if (!args.Cancel)
+                {
+                    var rt = rtValue; rt.Offset(ScreenX, ScreenY);
+
+                    dwnd.Show(rt, FontName, FontStyle, FontSize, Value, (color) =>
+                    {
+                        if (color.HasValue)
+                            Value = color.Value;
+                    });
+                }
+            }
+        }
+        #endregion
+
+        #region bounds
+        (SKRect rtText, SKRect rtArrow) bounds(SKRect rtValue)
+        {
+            var rts = Util.Columns(rtValue, ["100%", "40px"]);
+            return (rts[0], rts[1]);
+        }
+        #endregion
+    }
+
+    public class GoInputDateTime : GoInput
+    {
+        #region Properties
+        public DateTime Value
+        {
+            get => cValue;
+            set
+            {
+                if (cValue != value)
+                {
+                    cValue = value;
+                    ValueChanged?.Invoke(this, EventArgs.Empty);
+                }
+            }
+        }
+
+        public GoDateTimeKind DateTimeStyle { get; set; } = GoDateTimeKind.DateTime;
+        public string DateFormat { get; set; } = "yyyy-MM-dd";
+        public string TimeFormat { get; set; } = "HH:mm:ss";
+        #endregion
+
+        #region Event
+        public event EventHandler? ValueChanged;
+
+        public event EventHandler<GoCancelableEventArgs>? DropDownOpening;
+        #endregion
+
+        #region Member Variable
+        DateTime cValue = DateTime.Now;
+        GoDateTimeDropDownWindow dwnd = new GoDateTimeDropDownWindow();
+        #endregion
+
+        #region OnDrawValue
+        protected override void OnDrawValue(SKCanvas canvas, SKRect rtValue)
+        {
+            var thm = GoTheme.Current;
+            using var p = new SKPaint { IsAntialias = false };
+
+            var cBorder = thm.ToColor(BorderColor);
+            var cText = thm.ToColor(TextColor);
+            var (rtText, rtArrow) = bounds(rtValue);
+
+            #region item
+            var format = $"{DateFormat} {TimeFormat}";
+            switch (DateTimeStyle)
+            {
+                case GoDateTimeKind.DateTime: format = $"{DateFormat} {TimeFormat}"; break;
+                case GoDateTimeKind.Time: format = TimeFormat; break;
+                case GoDateTimeKind.Date: format = DateFormat; break;
+            }
+            var text = Value.ToString(format);
+
+            Util.DrawText(canvas, text, FontName, FontStyle, FontSize, rtText, cText);
+            #endregion
+
+            #region sep
+            using var pe = SKPathEffect.CreateDash([2, 2], 2);
+            p.StrokeWidth = 1;
+            p.IsStroke = false;
+            p.Color = Util.FromArgb(128, cBorder);
+            p.PathEffect = pe;
+            canvas.DrawLine(rtArrow.Left, rtValue.Top + 10, rtArrow.Left, rtValue.Bottom - 10, p);
+            #endregion
+
+            #region arrow
+            var ico = "fa-calendar";
+            switch (DateTimeStyle)
+            {
+                case GoDateTimeKind.DateTime: ico = "fa-calendar"; break;
+                case GoDateTimeKind.Time: ico = "fa-clock"; break;
+                case GoDateTimeKind.Date: ico = "fa-calendar"; break;
+            }
+
+            if (dwnd.Visible) Util.DrawIcon(canvas, ico, 14, rtArrow, SKColors.Transparent, cText);
+            else Util.DrawIcon(canvas, ico, 14, rtArrow, cText);
+            #endregion
+        }
+        #endregion
+
+        #region OnValueClick
+        protected override void OnValueClick(float x, float y, GoMouseButton button)
+        {
+            var rtValue = Areas()["Value"];
+
+            if (CollisionTool.Check(rtValue, x, y))
+            {
+                var args = new GoCancelableEventArgs();
+                DropDownOpening?.Invoke(this, args);
+
+                if (!args.Cancel)
+                {
+                    var rt = rtValue; rt.Offset(ScreenX, ScreenY);
+
+                    dwnd.Show(rt, FontName, FontStyle, FontSize, Value, DateTimeStyle, (datetime) =>
+                    {
+                        if (datetime.HasValue)
+                            Value = datetime.Value;
+                    });
+                }
+            }
+        }
+        #endregion
+
+        #region bounds
+        (SKRect rtText, SKRect rtArrow) bounds(SKRect rtValue)
+        {
+            var rts = Util.Columns(rtValue, ["100%", "40px"]);
+            return (rts[0], rts[1]);
+        }
+        #endregion
+    }
 }

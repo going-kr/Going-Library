@@ -17,6 +17,7 @@ namespace Going.UI.Json
         static GoJsonConverter()
         {
             Options.PropertyNameCaseInsensitive = true;
+            Options.Converters.Add(new SKColorConverter());
             Options.Converters.Add(new SKRectConverter());
             Options.Converters.Add(new SKBitmapConverter());
             Options.Converters.Add(new GoControlConverter());
@@ -24,6 +25,13 @@ namespace Going.UI.Json
         }
     }
 
+    #region SKColorConverter
+    public class SKColorConverter : JsonConverter<SKColor>
+    {
+        public override SKColor Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) => new SKColor(reader.GetUInt32());
+        public override void Write(Utf8JsonWriter writer, SKColor value, JsonSerializerOptions options) => writer.WriteNumberValue((uint)value);
+    }
+    #endregion
     #region SKRectConverter
     public class SKRectConverter : JsonConverter<SKRect>
     {

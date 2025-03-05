@@ -173,6 +173,51 @@ namespace Going.UI.Utils
             }
         }
 
+        public static void DrawIcon(SKCanvas canvas, string? iconString, float iconSize, SKRect bounds, SKColor color, SKColor colorborder, GoContentAlignment align = GoContentAlignment.MiddleCenter)
+        {
+            var fi = iconString != null ? GoIconManager.GetIcon(iconString) : null;
+
+            if (fi != null && iconSize > 0)
+            {
+                using var p = new SKPaint { IsAntialias = true };
+                using var font = new SKFont(fi.FontFamily, iconSize);
+
+                var lineHeight = font.Spacing;
+                float totalTextHeight = lineHeight;
+
+                float startY = bounds.Top;
+                if (align == GoContentAlignment.MiddleLeft || align == GoContentAlignment.MiddleCenter || align == GoContentAlignment.MiddleRight) startY = bounds.MidY - totalTextHeight / 2F;
+                else if (align == GoContentAlignment.BottomLeft || align == GoContentAlignment.BottomCenter || align == GoContentAlignment.BottomRight) startY = bounds.Bottom - totalTextHeight;
+
+                float y = startY - font.Metrics.Ascent;
+#if MeasureA
+                float textWidth = font.MeasureText(fi.IconText);
+#else
+                font.MeasureText(fi.IconText, out var vszrt); var textWidth = vszrt.Width;
+#endif
+
+                float x = bounds.Left;
+                if (align == GoContentAlignment.TopCenter || align == GoContentAlignment.MiddleCenter || align == GoContentAlignment.BottomCenter) x = bounds.MidX - textWidth / 2;
+                else if (align == GoContentAlignment.TopRight || align == GoContentAlignment.MiddleRight || align == GoContentAlignment.BottomRight) x = bounds.Right - textWidth;
+
+                if (color != SKColors.Transparent)
+                {
+                    p.IsStroke = false;
+                    p.Color = color;
+                    canvas.DrawText(fi.IconText, x, y, font, p);
+                }
+
+                if (colorborder != SKColors.Transparent)
+                {
+                    p.IsStroke = true;
+                    p.StrokeWidth = 1;
+                    p.Color = colorborder;
+                    canvas.DrawText(fi.IconText, x, y, font, p);
+                }
+
+            }
+        }
+
         public static void DrawIcon(SKCanvas canvas, string? iconString, float iconSize, float rotate, SKRect bounds, SKColor fill, SKColor border)
         {
             var fi = iconString != null ? GoIconManager.GetIcon(iconString) : null;
@@ -837,6 +882,113 @@ namespace Going.UI.Utils
             }
 
             return result;
+        }
+        #endregion
+
+        #region Color
+        public static void ToHsvDouble(SKColor color, out double h, out double s, out double v)
+        {
+            double EPSILON = 0.001;
+
+            var r = color.Red / 255.0;
+            var g = color.Green / 255.0;
+            var b = color.Blue / 255.0;
+
+            var min = Math.Min(Math.Min(r, g), b);
+            var max = Math.Max(Math.Max(r, g), b);
+            var delta = max - min;
+
+            h = 0;
+            s = 0;
+            v = max;
+
+            if (Math.Abs(delta) > EPSILON)
+            {
+                s = delta / max;
+
+                var deltaR = (((max - r) / 6f) + (delta / 2f)) / delta;
+                var deltaG = (((max - g) / 6f) + (delta / 2f)) / delta;
+                var deltaB = (((max - b) / 6f) + (delta / 2f)) / delta;
+
+                if (Math.Abs(r - max) < EPSILON)
+                    h = deltaB - deltaG;
+                else if (Math.Abs(g - max) < EPSILON)
+                    h = (1f / 3f) + deltaR - deltaB;
+                else // b == max
+                    h = (2f / 3f) + deltaG - deltaR;
+
+                if (h < 0f)
+                    h += 1f;
+                if (h > 1f)
+                    h -= 1f;
+            }
+
+            h = h * 360f;
+            s = s * 100f;
+            v = v * 100f;
+        }
+
+        public static SKColor FromHsvDouble(double h, double s, double v)
+        {
+            double EPSILON = 0.001;
+
+            h = h / 360.0;
+            s = s / 100.0;
+            v = v / 100.0;
+
+            var r = v;
+            var g = v;
+            var b = v;
+
+            if (Math.Abs(s) > EPSILON)
+            {
+                h = h * 6f;
+                if (Math.Abs(h - 6f) < EPSILON) h = 0f;
+
+                var hInt = (int)h;
+                var v1 = v * (1f - s);
+                var v2 = v * (1f - s * (h - hInt));
+                var v3 = v * (1f - s * (1f - (h - hInt)));
+
+                if (hInt == 0)
+                {
+                    r = v;
+                    g = v3;
+                    b = v1;
+                }
+                else if (hInt == 1)
+                {
+                    r = v2;
+                    g = v;
+                    b = v1;
+                }
+                else if (hInt == 2)
+                {
+                    r = v1;
+                    g = v;
+                    b = v3;
+                }
+                else if (hInt == 3)
+                {
+                    r = v1;
+                    g = v2;
+                    b = v;
+                }
+                else if (hInt == 4)
+                {
+                    r = v3;
+                    g = v1;
+                    b = v;
+                }
+                else
+                {
+                    r = v;
+                    g = v1;
+                    b = v2;
+                }
+            }
+
+            return new SKColor(Convert.ToByte(r * 255.0), Convert.ToByte(g * 255.0), Convert.ToByte(b * 255.0));
         }
         #endregion
         #endregion

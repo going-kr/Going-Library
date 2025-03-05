@@ -95,6 +95,12 @@ namespace Going.UI.Containers
             return false;
         }
 
+        public void Clear()
+        {
+            Controls.Clear();
+            Indexes.Clear();
+        }
+
         public bool Contains(IGoControl control) => control != null && Controls.Contains(control);
 
         public IEnumerator<IGoControl> GetEnumerator() => Controls.GetEnumerator();

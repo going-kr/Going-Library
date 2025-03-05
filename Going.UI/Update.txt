@@ -12,8 +12,6 @@ Progress					일자형 프로그레스										상무님(v)
 RangeSlider					범위 설정 컨트롤러										지준(v)
 StepGauge					(< ㅁ ㅁ ㅁ ㅁ >)										지준
 
-ColorPicker					색상 선택(조명제어, RGB)	
-DateTimePicker      
 DataGrid					데이터 그리드											종현님
 NavBar						네비바	
 
@@ -73,6 +71,9 @@ Slider						슬라이드 형식의 입력기									O 지준(v)
 Calendar					달력	                                                O
 ToolBox		                                                                        O
 TreeView                                                                            O
+ColorSelector                                                                       O
+ColorPicker					색상 선택(조명제어, RGB)	                            O
+DateTimePicker                                                                      O
 
 = 제외 작업 ===================================================================================
 
