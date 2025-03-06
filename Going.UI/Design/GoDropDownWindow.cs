@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Metrics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -123,6 +124,184 @@ namespace Going.UI.Design
                 lb.SelectedItems.Add(selectedItem);
                 lb.ScrollPosition = lb.Items.IndexOf(selectedItem) * itemHeight;
             }
+
+            Show();
+        }
+    }
+    #endregion
+
+    #region GoColorDropDownWindow
+    public class GoColorDropDownWindow : GoDropDownWindow
+    {
+        private GoColorSelector cs;
+        private GoTableLayoutPanel tbl;
+        private GoButton btnOK, btnCancel;
+        private Action<SKColor?>? feedback;
+
+        public GoColorDropDownWindow()
+        {
+            tbl = new GoTableLayoutPanel { Margin = new GoPadding(5), Fill = true, };
+            tbl.Columns = ["100%","80px", "80px"];
+            tbl.Rows = ["100%", "40px"];
+            Childrens.Add(tbl);
+
+            cs = new GoColorSelector { Fill = true, Margin = new GoPadding(5) };
+            tbl.Childrens.Add(cs, 0, 0, 3, 1);
+
+            btnOK = new GoButton { Fill = true, Margin = new GoPadding(5), Text = "선택" };
+            btnCancel = new GoButton { Fill = true, Margin = new GoPadding(5), Text = "취소" };
+            tbl.Childrens.Add(btnOK, 1, 1);
+            tbl.Childrens.Add(btnCancel, 2, 1);
+
+            btnOK.ButtonClicked += (o, s) =>
+            {
+                feedback?.Invoke(cs.Value);
+                Hide();
+            };
+
+            btnCancel.ButtonClicked += (o, s) =>
+            {
+                feedback?.Invoke(null);
+                Hide();
+            };
+        }
+
+        public void Show(SKRect screenBounds, string fontName, GoFontStyle fontStyle, float fontSize, SKColor value, Action<SKColor?> result)
+        {
+            feedback = result;
+
+            btnOK.FontName = btnCancel.FontName = cs.FontName = fontName;
+            btnOK.FontSize = btnCancel.FontSize = cs.FontSize = fontSize;
+            btnOK.FontStyle = btnCancel.FontStyle = cs.FontStyle = fontStyle;
+            cs.Value = value;
+
+            var designH = GoDesign.ActiveDesign?.Height ?? 0;
+            var rtValue = screenBounds;
+            var w = Math.Min(300, rtValue.Width);
+            var h = w + 40;
+            var bounds = Util.FromRect(rtValue.Left, rtValue.Bottom, Math.Min(w, rtValue.Width), h);
+            if (bounds.Bottom > designH) bounds = Util.FromRect(rtValue.Left, rtValue.Top - h, Math.Max(w, rtValue.Width), h);
+
+            Bounds = bounds;
+         
+            Show();
+        }
+    }
+    #endregion
+
+    #region GoDateTimeDropDownWindow
+    public class GoDateTimeDropDownWindow : GoDropDownWindow
+    {
+        private GoTableLayoutPanel tbl;
+        private GoCalendar cal;
+        private GoButton btnOK, btnCancel;
+        private GoInputNumber<int> inH, inM, inS;
+        private Action<DateTime?>? feedback;
+        private GoDateTimeKind style = GoDateTimeKind.DateTime;
+
+        public GoDateTimeDropDownWindow()
+        {
+            tbl = new GoTableLayoutPanel { Margin = new GoPadding(5), Fill = true, };
+            Childrens.Add(tbl);
+
+            cal = new GoCalendar { Fill = true, Margin = new GoPadding(5), BackgroundDraw = false, MultiSelect = false };
+            inH = new GoInputNumber<int> { Fill = true, Margin = new GoPadding(5), Minimum = 0, Maximum = 23, UnitSize = 30, Unit = "시" };
+            inM = new GoInputNumber<int> { Fill = true, Margin = new GoPadding(5), Minimum = 0, Maximum = 59, UnitSize = 30, Unit = "분" };
+            inS = new GoInputNumber<int> { Fill = true, Margin = new GoPadding(5), Minimum = 0, Maximum = 59, UnitSize = 30, Unit = "초" };
+            btnOK = new GoButton { Fill = true, Margin = new GoPadding(5), Text = "선택" };
+            btnCancel = new GoButton { Fill = true, Margin = new GoPadding(5), Text = "취소" };
+          
+            btnOK.ButtonClicked += (o, s) =>
+            {
+                if (cal.SelectedDays.Count > 0)
+                {
+                    var dt = cal.SelectedDays.First().Date + new TimeSpan(inH.Value, inM.Value, inS.Value);
+                    
+                    feedback?.Invoke(dt);
+                    Hide();
+                }
+            };
+
+            btnCancel.ButtonClicked += (o, s) =>
+            {
+                feedback?.Invoke(null);
+                Hide();
+            };
+        }
+
+        public void Show(SKRect screenBounds, string fontName, GoFontStyle fontStyle, float fontSize, DateTime value, GoDateTimeKind style, Action<DateTime?> result)
+        {
+            feedback = result;
+            this.style = style;
+
+            tbl.Childrens.Clear();
+
+            var designH = GoDesign.ActiveDesign?.Height ?? 0;
+            var rtValue = screenBounds;
+            var w = Math.Min(300, rtValue.Width);
+            var h = w + 40 + 40;
+            if (style == GoDateTimeKind.DateTime)
+            {
+                h = w + 40 + 40;
+
+                tbl.Columns = ["33.34%", "33.33%", "33.33%"];
+                tbl.Rows = ["100%", "40px", "40px"];
+
+                tbl.Childrens.Add(cal, 0, 0, 3, 1);
+                tbl.Childrens.Add(inH, 0, 1);
+                tbl.Childrens.Add(inM, 1, 1);
+                tbl.Childrens.Add(inS, 2, 1);
+                tbl.Childrens.Add(btnOK, 1, 2);
+                tbl.Childrens.Add(btnCancel, 2, 2);
+
+            }
+            else if (style == GoDateTimeKind.Date)
+            {
+                h = w + 40;
+
+                tbl.Columns = ["33.34%", "33.33%", "33.33%"];
+                tbl.Rows = ["100%", "40px"];
+
+                tbl.Childrens.Add(cal, 0, 0, 3, 1);
+                tbl.Childrens.Add(btnOK, 1, 1);
+                tbl.Childrens.Add(btnCancel, 2, 1);
+            }
+            else if (style == GoDateTimeKind.Time)
+            {
+                h = 80 + 10;
+
+                tbl.Columns = ["33.34%", "33.33%", "33.33%"];
+                tbl.Rows = ["40px", "40px"];
+
+                tbl.Childrens.Add(inH, 0, 0);
+                tbl.Childrens.Add(inM, 1, 0);
+                tbl.Childrens.Add(inS, 2, 0);
+                tbl.Childrens.Add(btnOK, 1, 1);
+                tbl.Childrens.Add(btnCancel, 2, 1);
+            }
+
+            #region bounds
+            var bounds = Util.FromRect(rtValue.Left, rtValue.Bottom, Math.Min(w, rtValue.Width), h);
+            if (bounds.Bottom > designH) bounds = Util.FromRect(rtValue.Left, rtValue.Top - h, Math.Max(w, rtValue.Width), h);
+            Bounds = bounds;
+            #endregion
+
+            #region set
+            IGoControl[] cls = [cal, inH, inM, inS, btnOK, btnCancel];
+            foreach (var v in cls)
+            {
+                if (v is GoLabel c1) { c1.FontName = fontName; c1.FontSize = fontSize; c1.FontStyle = fontStyle; }
+                else if (v is GoInputNumber<int> c2) { c2.FontName = fontName; c2.FontSize = fontSize; c2.FontStyle = fontStyle; }
+                else if (v is GoCalendar c3) { c3.FontName = fontName; c3.FontSize = fontSize; c3.FontStyle = fontStyle; }
+                else if (v is GoButton c4) { c4.FontName = fontName; c4.FontSize = fontSize; c4.FontStyle = fontStyle; }
+            }
+
+            cal.SelectedDays.Clear();
+            cal.SelectedDays.Add(value.Date);
+            inH.Value = style != GoDateTimeKind.Date ? value.Hour : 0;
+            inM.Value = style != GoDateTimeKind.Date ? value.Minute : 0;
+            inS.Value = style != GoDateTimeKind.Date ? value.Second : 0;
+            #endregion
 
             Show();
         }

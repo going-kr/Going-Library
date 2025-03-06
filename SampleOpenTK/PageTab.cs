@@ -3,6 +3,7 @@ using Going.UI.Controls;
 using Going.UI.Datas;
 using Going.UI.Design;
 using Going.UI.Enums;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,8 @@ namespace SampleOpenTK
         GoCalendar cal;
         GoToolBox tb;
         GoTreeView tv;
-
+        GoInputColor ic;
+        GoInputDateTime id;
         public PageTab()
         {
             Name = "PageTab";
@@ -42,9 +44,13 @@ namespace SampleOpenTK
 
             #region tp1
             btnP1 = new GoButton { Text = "페이지 1", Left = 0, Top = 0 };
-            cal = new GoCalendar { Left = 0, Top = 40, Width = 300, Height = 240, MultiSelect = true };
+            cal = new GoCalendar { Left = 0, Top = 40, Width = 300, Height = 280, MultiSelect = true };
+            ic = new GoInputColor { Left = 310, Top = 40, Width = 300, Height = 40 };
+            id = new GoInputDateTime { Left = 310, Top = 90, Width = 300, Height = 40, DateTimeStyle = GoDateTimeKind.DateTime };
             tp1.Childrens.Add(btnP1);
             tp1.Childrens.Add(cal);
+            tp1.Childrens.Add(ic);
+            tp1.Childrens.Add(id);
             #endregion
             #region tp2
             btnP2 = new GoButton { Text = "페이지 2", Left = 0, Top = 0 };
