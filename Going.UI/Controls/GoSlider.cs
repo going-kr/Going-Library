@@ -64,7 +64,8 @@ namespace Going.UI.Controls
             get => sValue;
             set {
                 var clampedValue = MathClamp(value, Minimum, Maximum);
-                if (!(Math.Abs(sValue - value) > 0.00001f)) return;
+                if (Math.Abs(sValue - value) < 0.00001f) return;
+
                 sValue = clampedValue;
                 ValueChanged?.Invoke(this, EventArgs.Empty);
                 UpdateValueString();

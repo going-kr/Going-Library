@@ -37,7 +37,7 @@ namespace Going.UI.Controls
         #region 슬라이더 설정
         public string TextColor { get; set; } = "Fore";
         public string BgColor { get; set; } = "Base3";
-        public string SliderColor { get; set; } = "danger";
+        public string SliderColor { get; set; } = "Base5";
         public string EmptyColor { get; set; } = "Base2";
         public string BorderColor { get; set; } = "danger";
         public GoRoundType Round { get; set; } = GoRoundType.All;
@@ -313,6 +313,7 @@ namespace Going.UI.Controls
             }
 
             DrawSliderBackground(canvas, thm, contentBox, colors.background);
+            UpdateLayout(contentBox);
             DrawSliderTrack(canvas, colors.empty);
             DrawSliderProgress(canvas, colors.slider);
 
@@ -450,11 +451,7 @@ namespace Going.UI.Controls
             }
 
             // 핸들 그리기
-            var radius = HandleRadius;
-            if (isDown) radius *= 1.1f;
-            else if (isHover) radius *= 1.05f;
-
-            canvas.DrawCircle(rect.MidX, rect.MidY, radius, handlePaint);
+            canvas.DrawCircle(rect.MidX, rect.MidY, MathHandleSizeClamp(isDown, isHover), handlePaint);
             handlePaint.ImageFilter = null;
 
             // 핸들 내부 하이라이트 효과
@@ -762,6 +759,20 @@ namespace Going.UI.Controls
         private double MathClamp(double valueData, double min, double max)
         {
             return Math.Max(min, Math.Min(max, valueData));
+        }
+        #endregion
+        #region MathHandleSizeClamp
+        private float MathHandleSizeClamp(bool isDown, bool isHover)
+        {
+            float radius;
+
+            if (HandleRadius * 2 < Height) radius = HandleRadius;
+            else radius = Height / 2 - 2;
+
+            if (isDown) radius *= 1.1f;
+            else if (isHover) radius *= 1.05f;
+
+            return radius;
         }
         #endregion
 
