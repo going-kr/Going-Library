@@ -106,7 +106,7 @@ namespace Going.UI.Controls
                 needsLayoutUpdate = true;
             }
         }
-        public float sHandleMaxHeight => Height;
+        public float SHandleMaxHeight => Height;
         #endregion
 
         #region 슬라이더 값 설정(내부)
@@ -388,9 +388,9 @@ namespace Going.UI.Controls
 
             // 핸들 그리기
             float radius;
-            if (HandleRadius * 2 > sHandleMaxHeight)
+            if (HandleRadius * 2 > SHandleMaxHeight)
             {
-                radius = sHandleMaxHeight / 2 - 2;
+                radius = SHandleMaxHeight / 2 - 2;
             }
             else
             {
