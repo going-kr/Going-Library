@@ -15,13 +15,15 @@ view.TItleIconString = "fa-check";
 view.VSync = VSyncMode.On;
 view.CenterWindow();
 
-view.Design.AddImageFolder("D:\\Project\\Going\\library\\src\\Going\\ImageSample");
-view.Design.LoadIC("D:\\Project\\Going\\library\\src\\Going\\ImageCanvasSample");
+view.Design.AddImageFolder("D:\\Project\\Going\\Library\\Git\\ImageSample");
+view.Design.LoadIC("D:\\Project\\Going\\Library\\Git\\ImageCanvasSample");
+
+view.Design.UseTitleBar = true;
+view.Design.UseLeftSideBar = true;
+view.Design.UseRightSideBar = true;
+view.Design.UseFooter = true;
 
 view.Design.AddPage(new PageMain());
-view.Design.AddPage(new PageTest());
-view.Design.AddPage(new PageTab());
-view.Design.AddPage(new PageIC());
 view.Design.SetPage("PageMain");
 
 var s = view.Design.JsonSerialize();

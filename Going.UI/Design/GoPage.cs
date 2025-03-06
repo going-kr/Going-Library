@@ -12,16 +12,20 @@ namespace Going.UI.Design
 {
     public class GoPage : GoContainer
     {
+        #region Properties
         [JsonInclude]
         public override List<IGoControl> Childrens { get; } = [];
-
         public string? BackgroundImage { get; set; }
+        #endregion
 
+        #region Constructor
         [JsonConstructor]
         public GoPage(List<IGoControl> childrens) : this() => Childrens = childrens;
         public GoPage() { }
+        #endregion
 
-
+        #region Override
+        #region Draw
         protected override void OnDraw(SKCanvas canvas)
         {
             OnBackgroundDraw(canvas);
@@ -40,5 +44,7 @@ namespace Going.UI.Design
                 if (bg != null && bg.Count > 0) canvas.DrawBitmap(bg[0], rtContent);
             }
         }
+        #endregion
+        #endregion
     }
 }

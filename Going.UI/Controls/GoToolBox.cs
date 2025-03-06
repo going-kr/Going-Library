@@ -49,6 +49,7 @@ namespace Going.UI.Controls
 
         #region Member Variable
         private Scroll scroll = new Scroll() { Direction = ScrollDirection.Vertical };
+        private SKRect rtBoxP = new SKRect();
         #endregion
 
         #region Event 
@@ -103,7 +104,7 @@ namespace Going.UI.Controls
             {
                 using var pth = PathTool.Box(rtContent, Round, thm.Corner);
                 canvas.ClipPath(pth, SKClipOperation.Intersect, true);
-                canvas.Translate(rtContent.Left, spos + rtContent.Top);
+                canvas.Translate(rtContent.Left, Convert.ToInt64(spos) + rtContent.Top);
                 itemLoop((i, category) =>
                 {
                     category.Draw(canvas);
@@ -245,8 +246,10 @@ namespace Going.UI.Controls
             var rtBox = rts["Box"];
 
             #region calcbox
-            if (Categories.Changed || Categories.Any(x => x.Changed))
+            if (Categories.Changed || Categories.Any(x => x.Changed) || !rtBoxP.Equals(rtBox))
             {
+                rtBoxP = rtBox;
+
                 var y = 0F;
                 foreach (var item in Categories)
                 {

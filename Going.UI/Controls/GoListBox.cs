@@ -49,6 +49,7 @@ namespace Going.UI.Controls
 
         bool bShift, bControl;
         private GoListItem? first = null;
+        private SKRect rtBoxP = new SKRect();
         #endregion
 
         #region Event 
@@ -102,7 +103,7 @@ namespace Going.UI.Controls
             {
                 using var pth = PathTool.Box(rtContent, Round, thm.Corner);
                 canvas.ClipPath(pth, SKClipOperation.Intersect, true);
-                canvas.Translate(rtContent.Left, spos + rtContent.Top);
+                canvas.Translate(rtContent.Left, Convert.ToInt64(spos) + rtContent.Top);
                 itemLoop((i, item) =>
                 {
                     if(SelectedItems.Contains(item))
@@ -257,8 +258,9 @@ namespace Going.UI.Controls
             var rtBox = rts["Box"];
 
             #region calcbox
-            if (Items.Changed)
+            if (Items.Changed || !rtBoxP.Equals(rtBox))
             {
+                rtBoxP = rtBox;
                 var y = 0F;
                 foreach (var item in Items) { item.Bounds = Util.FromRect(0, y, rtBox.Width, ItemHeight); y += ItemHeight; }
                 Items.Changed = false;
