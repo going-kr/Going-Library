@@ -458,8 +458,8 @@ namespace Going.UI.Controls
             handlePaint.ImageFilter = null;
 
             // 핸들 내부 하이라이트 효과
-            handlePaint.Color = SKColors.White.WithAlpha(80);
-            canvas.DrawCircle(rect.MidX - radius * 0.2f, rect.MidY - radius * 0.2f, radius * 0.6f, handlePaint);
+            // handlePaint.Color = SKColors.White.WithAlpha(80);
+            // canvas.DrawCircle(rect.MidX - radius * 0.2f, rect.MidY - radius * 0.2f, radius * 0.6f, handlePaint);
         }
         #endregion
         #region DrawValueLabels

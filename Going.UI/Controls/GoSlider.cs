@@ -36,7 +36,7 @@ namespace Going.UI.Controls
         #region 슬라이더 설정
         public string TextColor { get; set; } = "Fore";
         public string BgColor { get; set; } = "Base3";
-        public string SliderColor { get; set; } = "danger";
+        public string SliderColor { get; set; } = "Base5";
         public string EmptyColor { get; set; } = "Base2";
         public string BorderColor { get; set; } = "danger";
         public GoRoundType Round { get; set; } = GoRoundType.All;
@@ -106,6 +106,7 @@ namespace Going.UI.Controls
                 needsLayoutUpdate = true;
             }
         }
+        public float sHandleMaxHeight => Height;
         #endregion
 
         #region 슬라이더 값 설정(내부)
@@ -386,16 +387,24 @@ namespace Going.UI.Controls
             }
 
             // 핸들 그리기
-            var radius = HandleRadius;
+            float radius;
+            if (HandleRadius * 2 > sHandleMaxHeight)
+            {
+                radius = sHandleMaxHeight / 2 - 2;
+            }
+            else
+            {
+                radius = HandleRadius;
+            }
             if (isDragging) radius *= 1.1f;
             else if (sHover) radius *= 1.05f;
 
-            canvas.DrawCircle(handleRect.MidX, handleRect.MidY, HandleRadius, handlePaint);
+            canvas.DrawCircle(handleRect.MidX, handleRect.MidY, radius, handlePaint);
             handlePaint.ImageFilter = null;
 
             // 핸들 내부 하이라이트 효과
-            handlePaint.Color = SKColors.White.WithAlpha(80);
-            canvas.DrawCircle(handleRect.MidX - radius * 0.2f, handleRect.MidY - radius * 0.2f, radius * 0.6f, handlePaint);
+            // handlePaint.Color = SKColors.White.WithAlpha(80);
+            // canvas.DrawCircle(handleRect.MidX - radius * 0.2f, handleRect.MidY - radius * 0.2f, radius * 0.6f, handlePaint);
         }
         #endregion
         #region DrawValueLabel

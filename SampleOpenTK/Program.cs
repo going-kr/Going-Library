@@ -10,8 +10,8 @@ view.TItleIconString = "fa-check";
 view.VSync = VSyncMode.On;
 view.CenterWindow();
 
-view.Design.AddImageFolder("D:\\Project\\Going\\library\\src\\Going\\ImageSample");
-view.Design.LoadIC("D:\\Project\\Going\\library\\src\\Going\\ImageCanvasSample");
+view.Design.AddImageFolder("C:\\Users\\hello\\OneDrive\\Desktop\\RiderProjects\\Going-Library\\ImageSample");
+view.Design.LoadIC("C:\\Users\\hello\\OneDrive\\Desktop\\RiderProjects\\Going-Library\\ImageCanvasSample");
 
 view.Design.AddPage(new PageMain());
 view.Design.AddPage(new PageTest());
