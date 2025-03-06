@@ -147,17 +147,21 @@ namespace Going.UI.Controls
         #endregion
 
         #region Constructor
+
         public GoSlider()
         {
             Selectable = true;
             InitializeDefaults();
         }
+
         #endregion
 
         #region Member Variable
+
         private bool sDown;
         private bool sHover;
         private float mx, my;   // 마우스 위치 추적
+
         #endregion
 
         #region Override
