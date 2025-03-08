@@ -30,11 +30,12 @@ namespace Going.UI.Design
         #region Properties
         public static GoDesign? ActiveDesign { get; set; }
 
-        public bool UseTitleBar { get => pnlT.Visible; set => pnlT.Visible = value; }
-        public bool UseLeftSideBar { get => pnlL.Visible; set => pnlL.Visible = value; }
-        public bool UseRightSideBar { get => pnlR.Visible; set => pnlR.Visible = value; }
-        public bool UseFooter { get => pnlB.Visible; set => pnlB.Visible = value; }
+        public bool UseTitleBar { get => TitleBar.Visible; set => TitleBar.Visible = value; }
+        public bool UseLeftSideBar { get => LeftSideBar.Visible; set => LeftSideBar.Visible = value; }
+        public bool UseRightSideBar { get => RightSideBar.Visible; set => RightSideBar.Visible = value; }
+        public bool UseFooter { get => Footer.Visible; set => Footer.Visible = value; }
         public string BarColor { get; set; } = "Base2";
+        public bool OverlaySideBar { get; set; } = false;
 
         [JsonInclude]
         public Dictionary<string, GoPage> Pages { get; private set; } = [];
@@ -53,31 +54,32 @@ namespace Going.UI.Design
         [JsonIgnore] public SKPoint MousePosition { get; private set; }
 
         [JsonIgnore] public bool IsDrag => dragItem != null;
-        [JsonIgnore] public GoTitleBar TitleBar => pnlT;
-        [JsonIgnore] public GoLeftSideBar LeftSideBar => pnlL;
-        [JsonIgnore] public GoRightSideBar RightSideBar => pnlR;
-        [JsonIgnore] public GoFooter Footer => pnlB;
+        [JsonInclude] public GoTitleBar TitleBar { get; private set; } = new() { Visible = false };
+        [JsonInclude] public GoSideBar LeftSideBar { get; private set; } = new() { Visible = false };
+        [JsonInclude] public GoSideBar RightSideBar { get; private set; } = new() { Visible = false };
+        [JsonInclude] public GoFooter Footer { get; private set; } = new() { Visible = false };
         #endregion
 
         #region Member Variable
-        [JsonInclude] private GoTitleBar pnlT = new() { Visible = false };
-        [JsonInclude] private GoFooter pnlB = new() { Visible = false };
-        [JsonInclude] private GoLeftSideBar pnlL = new() { Visible = false };
-        [JsonInclude] private GoRightSideBar pnlR = new() { Visible = false };
-
         private Stack<GoWindow> stkWindow = new Stack<GoWindow>();
         private GoDropDownWindow? dropdownWindow;
         private object? dragItem = null;
+        private bool bPageDown = false;
         #endregion
 
         #region Constructor
         public GoDesign() => ActiveDesign = this;
 
         [JsonConstructor]
-        public GoDesign(Dictionary<string, GoPage> pages, Dictionary<string, List<SKBitmap>> images) : this()
+        public GoDesign(Dictionary<string, GoPage> pages, Dictionary<string, List<SKBitmap>> images, GoTitleBar titleBar, GoSideBar leftSideBar, GoSideBar rightSideBar, GoFooter footer) : this()
         {
             Pages = pages;
             Images = images;
+
+            TitleBar = titleBar;
+            LeftSideBar = leftSideBar;
+            RightSideBar = rightSideBar;
+            Footer = footer;
         }
         #endregion
 
@@ -170,6 +172,11 @@ namespace Going.UI.Design
                 page.Design = this;
                 GUI.Init(this, page);
             }
+
+            TitleBar.FireInit(this);
+            LeftSideBar.FireInit(this);
+            RightSideBar.FireInit(this);
+            Footer.FireInit(this);
         }
         #endregion
 
@@ -178,12 +185,12 @@ namespace Going.UI.Design
         {
             #region Page
             #region bounds
-            var (rtL, rtT, rtR, rtB, rtF) = bounds();
-            pnlL.Bounds = rtL;
-            pnlT.Bounds = rtT;
-            pnlR.Bounds = rtR;
-            pnlB.Bounds = rtB;
-            if (CurrentPage != null) CurrentPage.Bounds = rtF;
+            var (rtL, rtT, rtR, rtB, rtF, rtFR) = bounds();
+            LeftSideBar.Bounds = rtL;
+            TitleBar.Bounds = rtT;
+            RightSideBar.Bounds = rtR;
+            Footer.Bounds = rtB;
+            if (CurrentPage != null) CurrentPage.Bounds = rtFR;
             #endregion
 
             #region Background
@@ -198,14 +205,26 @@ namespace Going.UI.Design
             }
             #endregion
 
+            #region CurrentPage
+            if (CurrentPage != null)
+            {
+                using (new SKAutoCanvasRestore(canvas))
+                {
+                    canvas.ClipRect(rtF);
+                    canvas.Translate(CurrentPage.Bounds.Left, CurrentPage.Bounds.Top);
+                    CurrentPage.FireDraw(canvas);
+                }
+            }
+            #endregion
+
             #region TitleBar
             if (UseTitleBar)
             {
                 using (new SKAutoCanvasRestore(canvas))
                 {
-                    canvas.ClipRect(pnlT.Bounds);
-                    canvas.Translate(pnlT.Bounds.Left, pnlT.Bounds.Top);
-                    pnlT.FireDraw(canvas);
+                    canvas.ClipRect(TitleBar.Bounds);
+                    canvas.Translate(TitleBar.Bounds.Left, TitleBar.Bounds.Top);
+                    TitleBar.FireDraw(canvas);
                 }
             }
             #endregion
@@ -214,9 +233,9 @@ namespace Going.UI.Design
             {
                 using (new SKAutoCanvasRestore(canvas))
                 {
-                    canvas.ClipRect(pnlL.Bounds);
-                    canvas.Translate(pnlL.Bounds.Left, pnlL.Bounds.Top);
-                    pnlL.FireDraw(canvas);
+                    canvas.ClipRect(LeftSideBar.Bounds);
+                    canvas.Translate(LeftSideBar.Bounds.Left, LeftSideBar.Bounds.Top);
+                    LeftSideBar.FireDraw(canvas);
                 }
             }
             #endregion
@@ -225,9 +244,9 @@ namespace Going.UI.Design
             {
                 using (new SKAutoCanvasRestore(canvas))
                 {
-                    canvas.ClipRect(pnlR.Bounds);
-                    canvas.Translate(pnlR.Bounds.Left, pnlR.Bounds.Top);
-                    pnlR.FireDraw(canvas);
+                    canvas.ClipRect(RightSideBar.Bounds);
+                    canvas.Translate(RightSideBar.Bounds.Left, RightSideBar.Bounds.Top);
+                    RightSideBar.FireDraw(canvas);
                 }
             }
             #endregion
@@ -236,20 +255,9 @@ namespace Going.UI.Design
             {
                 using (new SKAutoCanvasRestore(canvas))
                 {
-                    canvas.ClipRect(pnlB.Bounds);
-                    canvas.Translate(pnlB.Bounds.Left, pnlB.Bounds.Top);
-                    pnlB.FireDraw(canvas);
-                }
-            }
-            #endregion
-            #region CurrentPage
-            if (CurrentPage != null)
-            {
-                using (new SKAutoCanvasRestore(canvas))
-                {
-                    canvas.ClipRect(CurrentPage.Bounds);
-                    canvas.Translate(CurrentPage.Bounds.Left, CurrentPage.Bounds.Top);
-                    CurrentPage.FireDraw(canvas);
+                    canvas.ClipRect(Footer.Bounds);
+                    canvas.Translate(Footer.Bounds.Left, Footer.Bounds.Top);
+                    Footer.FireDraw(canvas);
                 }
             }
             #endregion
@@ -295,10 +303,10 @@ namespace Going.UI.Design
         public void Update()
         {
             #region Page
-            if (UseTitleBar) pnlT.FireUpdate();
-            if (UseLeftSideBar) pnlL.FireUpdate();
-            if (UseRightSideBar) pnlR.FireUpdate();
-            if (UseFooter) pnlB.FireUpdate();
+            if (UseTitleBar) TitleBar.FireUpdate();
+            if (UseLeftSideBar) LeftSideBar.FireUpdate();
+            if (UseRightSideBar) RightSideBar.FireUpdate();
+            if (UseFooter) Footer.FireUpdate();
             if (CurrentPage != null) CurrentPage.FireUpdate();
             #endregion
 
@@ -342,12 +350,18 @@ namespace Going.UI.Design
             #region Page
             else
             {
-                if (UseTitleBar) pnlT.FireMouseDown(x - pnlT.Left, y - pnlT.Top, button);
-                if (UseLeftSideBar) pnlL.FireMouseDown(x - pnlL.Left, y - pnlL.Top, button);
-                if (UseRightSideBar) pnlR.FireMouseDown(x - pnlR.Left, y - pnlR.Top, button);
-                if (UseFooter) pnlB.FireMouseDown(x - pnlB.Left, y - pnlB.Top, button);
+                var (rtL, rtT, rtR, rtB, rtF, rtFR) = bounds();
 
-                CurrentPage?.FireMouseDown(x - CurrentPage.Left, y - CurrentPage.Top, button);
+                if (UseTitleBar) TitleBar.FireMouseDown(x - TitleBar.Left, y - TitleBar.Top, button);
+                if (UseLeftSideBar) LeftSideBar.FireMouseDown(x - LeftSideBar.Left, y - LeftSideBar.Top, button);
+                if (UseRightSideBar) RightSideBar.FireMouseDown(x - RightSideBar.Left, y - RightSideBar.Top, button);
+                if (UseFooter) Footer.FireMouseDown(x - Footer.Left, y - Footer.Top, button);
+
+                if (CollisionTool.Check(rtF, x, y))
+                {
+                    bPageDown = true;
+                    CurrentPage?.FireMouseDown(x - CurrentPage.Left, y - CurrentPage.Top, button);
+                }
             }
             #endregion
         }
@@ -372,10 +386,10 @@ namespace Going.UI.Design
             #region Page
             else
             {
-                if (UseTitleBar) pnlT.FireMouseUp(x - pnlT.Left, y - pnlT.Top, button);
-                if (UseLeftSideBar) pnlL.FireMouseUp(x - pnlL.Left, y - pnlL.Top, button);
-                if (UseRightSideBar) pnlR.FireMouseUp(x - pnlR.Left, y - pnlR.Top, button);
-                if (UseFooter) pnlB.FireMouseUp(x - pnlB.Left, y - pnlB.Top, button);
+                if (UseTitleBar) TitleBar.FireMouseUp(x - TitleBar.Left, y - TitleBar.Top, button);
+                if (UseLeftSideBar) LeftSideBar.FireMouseUp(x - LeftSideBar.Left, y - LeftSideBar.Top, button);
+                if (UseRightSideBar) RightSideBar.FireMouseUp(x - RightSideBar.Left, y - RightSideBar.Top, button);
+                if (UseFooter) Footer.FireMouseUp(x - Footer.Left, y - Footer.Top, button);
 
                 CurrentPage?.FireMouseUp(x - CurrentPage.Left, y - CurrentPage.Top, button);
             }
@@ -391,6 +405,8 @@ namespace Going.UI.Design
             #endregion
 
             SelectedControl = null;
+
+            bPageDown = false;
         }
 
         public void MouseDoubleClick(float x, float y, GoMouseButton button)
@@ -413,10 +429,10 @@ namespace Going.UI.Design
             #region Page
             else
             {
-                if (UseTitleBar) pnlT.FireMouseUp(x - pnlT.Left, y - pnlT.Top, button);
-                if (UseLeftSideBar) pnlL.FireMouseUp(x - pnlL.Left, y - pnlL.Top, button);
-                if (UseRightSideBar) pnlR.FireMouseUp(x - pnlR.Left, y - pnlR.Top, button);
-                if (UseFooter) pnlB.FireMouseUp(x - pnlB.Left, y - pnlB.Top, button);
+                if (UseTitleBar) TitleBar.FireMouseUp(x - TitleBar.Left, y - TitleBar.Top, button);
+                if (UseLeftSideBar) LeftSideBar.FireMouseUp(x - LeftSideBar.Left, y - LeftSideBar.Top, button);
+                if (UseRightSideBar) RightSideBar.FireMouseUp(x - RightSideBar.Left, y - RightSideBar.Top, button);
+                if (UseFooter) Footer.FireMouseUp(x - Footer.Left, y - Footer.Top, button);
 
                 CurrentPage?.FireMouseDoubleClick(x - CurrentPage.Left, y - CurrentPage.Top, button);
             }
@@ -443,12 +459,17 @@ namespace Going.UI.Design
             #region Page
             else
             {
-                if (UseTitleBar) pnlT.FireMouseMove(x - pnlT.Left, y - pnlT.Top);
-                if (UseLeftSideBar) pnlL.FireMouseMove(x - pnlL.Left, y - pnlL.Top);
-                if (UseRightSideBar) pnlR.FireMouseMove(x - pnlR.Left, y - pnlR.Top);
-                if (UseFooter) pnlB.FireMouseMove(x - pnlB.Left, y - pnlB.Top);
+                var (rtL, rtT, rtR, rtB, rtF, rtFR) = bounds();
 
-                CurrentPage?.FireMouseMove(x - CurrentPage.Left, y - CurrentPage.Top);
+                if (UseTitleBar) TitleBar.FireMouseMove(x - TitleBar.Left, y - TitleBar.Top);
+                if (UseLeftSideBar) LeftSideBar.FireMouseMove(x - LeftSideBar.Left, y - LeftSideBar.Top);
+                if (UseRightSideBar) RightSideBar.FireMouseMove(x - RightSideBar.Left, y - RightSideBar.Top);
+                if (UseFooter) Footer.FireMouseMove(x - Footer.Left, y - Footer.Top);
+
+                if (bPageDown || CollisionTool.Check(rtF, x, y))
+                    CurrentPage?.FireMouseMove(x - CurrentPage.Left, y - CurrentPage.Top);
+                else
+                    CurrentPage?.FireMouseMove(-1, -1);
             }
             #endregion
 
@@ -475,12 +496,15 @@ namespace Going.UI.Design
             #region Page
             else
             {
-                if (UseTitleBar) pnlT.FireMouseWheel(x - pnlT.Left, y - pnlT.Top, delta);
-                if (UseLeftSideBar) pnlL.FireMouseWheel(x - pnlL.Left, y - pnlL.Top, delta);
-                if (UseRightSideBar) pnlR.FireMouseWheel(x - pnlR.Left, y - pnlR.Top, delta);
-                if (UseFooter) pnlB.FireMouseWheel(x - pnlB.Left, y - pnlB.Top, delta);
+                var (rtL, rtT, rtR, rtB, rtF, rtFR) = bounds();
 
-                CurrentPage?.FireMouseWheel(x - CurrentPage.Left, y - CurrentPage.Top, delta);
+                if (UseTitleBar) TitleBar.FireMouseWheel(x - TitleBar.Left, y - TitleBar.Top, delta);
+                if (UseLeftSideBar) LeftSideBar.FireMouseWheel(x - LeftSideBar.Left, y - LeftSideBar.Top, delta);
+                if (UseRightSideBar) RightSideBar.FireMouseWheel(x - RightSideBar.Left, y - RightSideBar.Top, delta);
+                if (UseFooter) Footer.FireMouseWheel(x - Footer.Left, y - Footer.Top, delta);
+
+                if (CollisionTool.Check(rtF, x, y))
+                    CurrentPage?.FireMouseWheel(x - CurrentPage.Left, y - CurrentPage.Top, delta);
             }
             #endregion
         }
@@ -504,10 +528,10 @@ namespace Going.UI.Design
             #region Page
             else
             {
-                if (UseTitleBar) GUI.KeyDown(pnlT, Shift, Control, Alt, key);
-                if (UseLeftSideBar) GUI.KeyDown(pnlL, Shift, Control, Alt, key);
-                if (UseRightSideBar) GUI.KeyDown(pnlR, Shift, Control, Alt, key);
-                if (UseFooter) GUI.KeyDown(pnlB, Shift, Control, Alt, key);
+                if (UseTitleBar) GUI.KeyDown(TitleBar, Shift, Control, Alt, key);
+                if (UseLeftSideBar) GUI.KeyDown(LeftSideBar, Shift, Control, Alt, key);
+                if (UseRightSideBar) GUI.KeyDown(RightSideBar, Shift, Control, Alt, key);
+                if (UseFooter) GUI.KeyDown(Footer, Shift, Control, Alt, key);
                 
                 if (CurrentPage != null) GUI.KeyDown(CurrentPage, Shift, Control, Alt, key);
             }
@@ -531,10 +555,10 @@ namespace Going.UI.Design
             #region Page
             else
             {
-                if (UseTitleBar) GUI.KeyUp(pnlT, Shift, Control, Alt, key);
-                if (UseLeftSideBar) GUI.KeyUp(pnlL, Shift, Control, Alt, key);
-                if (UseRightSideBar) GUI.KeyUp(pnlR, Shift, Control, Alt, key);
-                if (UseFooter) GUI.KeyUp(pnlB, Shift, Control, Alt, key);
+                if (UseTitleBar) GUI.KeyUp(TitleBar, Shift, Control, Alt, key);
+                if (UseLeftSideBar) GUI.KeyUp(LeftSideBar, Shift, Control, Alt, key);
+                if (UseRightSideBar) GUI.KeyUp(RightSideBar, Shift, Control, Alt, key);
+                if (UseFooter) GUI.KeyUp(Footer, Shift, Control, Alt, key);
 
                 if (CurrentPage != null) GUI.KeyUp(CurrentPage, Shift, Control, Alt, key);
             }
@@ -573,7 +597,7 @@ namespace Going.UI.Design
             }
         }
 
-        public List<SKBitmap> GetImage(string name) => Images.TryGetValue(name, out var ls) ? ls : [];
+        public List<SKBitmap> GetImage(string? name) => name != null && Images.TryGetValue(name, out var ls) ? ls : [];
         #endregion
 
         #region ImageCnavas
@@ -616,20 +640,20 @@ namespace Going.UI.Design
         #endregion
 
         #region bounds
-        (SKRect rtL, SKRect rtT, SKRect rtR, SKRect rtB, SKRect rtF) bounds()
+        (SKRect rtL, SKRect rtT, SKRect rtR, SKRect rtB, SKRect rtF, SKRect rtFR) bounds()
         {
-            var hT = UseTitleBar ? pnlT.BarSize : 0;
-            var hB = UseFooter ? pnlB.BarSize : 0;
-            var wL = UseLeftSideBar ? pnlL.BarSize : 0;
-            var wR = UseRightSideBar ? pnlR.BarSize : 0;
+            var hT = UseTitleBar ? TitleBar.BarSize : 0;
+            var hB = UseFooter ? Footer.BarSize : 0;
+            var wL = UseLeftSideBar ? LeftSideBar.RealBarSize : 0;
+            var wR = UseRightSideBar ? RightSideBar.RealBarSize : 0;
 
             var rtT = Util.FromRect(0, 0, Width, hT);
             var rtB = Util.FromRect(0, Height - hB, Width, hB);
             var rtL = Util.FromRect(0, rtT.Bottom, wL, Height - hB - hT);
             var rtR = Util.FromRect(Width - wR, rtT.Bottom, wR, Height - hB - hT);
             var rtF = new SKRect(rtL.Right, rtT.Bottom, rtR.Left, rtB.Top);
-
-            return (rtL, rtT, rtR, rtB, rtF);
+            var rtFR = OverlaySideBar ? new SKRect(0, rtT.Bottom, Width, rtB.Top) : rtF;
+            return (rtL, rtT, rtR, rtB, rtF, rtFR);
         }
         #endregion
 

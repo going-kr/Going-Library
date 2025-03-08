@@ -44,6 +44,7 @@ namespace Going.UI.OpenTK.Windows
         public int Height => ClientRectangle.Size.Y;
 
         public string? TItleIconString { get; set; }
+        public string? TitleIconImage { get; set; }
 
         public bool Debug { get; set; } = false;
 
@@ -259,6 +260,13 @@ namespace Going.UI.OpenTK.Windows
             base.OnMouseWheel(e);
         }
         #endregion
+        #region OnMouseLeave
+        protected override void OnMouseLeave()
+        {
+            Design.MouseMove(-1, -1);
+            base.OnMouseLeave();
+        }
+        #endregion
         #region OnResize
         protected override void OnResize(ResizeEventArgs e)
         {
@@ -333,9 +341,17 @@ namespace Going.UI.OpenTK.Windows
         WindowIcon? CreateTitleIcon()
         {
             WindowIcon? ret = null;
-            if (GoIconManager.Contains(TItleIconString ?? ""))
+
+            var iconSize = 16;
+
+            if (TitleIconImage != null)
             {
-                var iconSize = 16;
+                var vimg = Design?.GetImage(TitleIconImage)?.FirstOrDefault();
+                if (vimg != null) ret = new WindowIcon(new Image(vimg.Width, vimg.Height, vimg.Bytes));
+            }
+
+            if (ret == null && GoIconManager.Contains(TItleIconString ?? ""))
+            {
                 var color = GoTheme.Current.Fore;
                 using var surface = SKSurface.Create(new SKImageInfo(iconSize, iconSize, SKColorType.Rgba8888));
                 var canvas = surface.Canvas;
@@ -347,7 +363,8 @@ namespace Going.UI.OpenTK.Windows
                 using var bmp = SKBitmap.FromImage(img);
                 byte[] pixels = new byte[bmp.Width * bmp.Height * 4];
                 Marshal.Copy(bmp.GetPixels(), pixels, 0, bmp.Width * bmp.Height * 4);
-                return new WindowIcon(new Image(iconSize, iconSize, pixels));
+                for (int i = 0; i < pixels.Length; i += 4) (pixels[i], pixels[i + 2]) = (pixels[i + 2], pixels[i]);
+                ret = new WindowIcon(new Image(iconSize, iconSize, pixels));
             }
             return ret;
         }

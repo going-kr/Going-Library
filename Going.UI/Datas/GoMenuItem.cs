@@ -12,6 +12,7 @@ namespace Going.UI.Datas
         public string? IconString { get; set; }
         public string? Text { get; set; }
         public object? Tag { get; set; }
+        public string? PageName { get; set; }
 
         internal SKRect Bounds { get; set; }
 

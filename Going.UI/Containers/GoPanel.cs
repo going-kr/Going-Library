@@ -114,21 +114,7 @@ namespace Going.UI.Containers
             foreach (var c in Childrens)
             {
                 if (c.Fill)
-                {
                     c.Bounds = Util.FromRect(Util.FromRect(0, 0, rtPanel.Width, rtPanel.Height), c.Margin);
-                }
-
-                if (c is GoNavBar nav)
-                {
-                    var rt = Util.FromRect(0, 0, rtPanel.Width, rtPanel.Height);
-                    switch (nav.Direction)
-                    {
-                        case GoDirection.Left: c.Bounds = MathTool.MakeRectangle(rt, new SKSize(rt.Width, nav.NavBarSize), GoContentAlignment.TopLeft); break;
-                        case GoDirection.Up: c.Bounds = MathTool.MakeRectangle(rt, new SKSize(nav.NavBarSize, rt.Height), GoContentAlignment.TopLeft); break;
-                        case GoDirection.Right: c.Bounds = MathTool.MakeRectangle(rt, new SKSize(rt.Width, nav.NavBarSize), GoContentAlignment.TopRight); break;
-                        case GoDirection.Down: c.Bounds = MathTool.MakeRectangle(rt, new SKSize(nav.NavBarSize, rt.Height), GoContentAlignment.BottomLeft); break;
-                    }
-                }
             }
 
             //base.OnLayout();

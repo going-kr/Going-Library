@@ -112,11 +112,23 @@ namespace Going.UI.Themes
                                     && byte.TryParse(main.Substring(5, 2), NumberStyles.HexNumber, CultureInfo.CurrentCulture, out var b1))
                                     ret = Util.FromArgb(r1, g1, b1);
                                 else if (main != null && main.StartsWith("#") && main.Length == 9
-                                    && byte.TryParse(main.Substring(1, 2), NumberStyles.HexNumber, CultureInfo.CurrentCulture, out var a2)
-                                    && byte.TryParse(main.Substring(3, 2), NumberStyles.HexNumber, CultureInfo.CurrentCulture, out var r2)
-                                    && byte.TryParse(main.Substring(5, 2), NumberStyles.HexNumber, CultureInfo.CurrentCulture, out var g2)
-                                    && byte.TryParse(main.Substring(7, 2), NumberStyles.HexNumber, CultureInfo.CurrentCulture, out var b2))
+                                    && byte.TryParse(main.Substring(1, 2), NumberStyles.HexNumber, CultureInfo.CurrentCulture, out var r2)
+                                    && byte.TryParse(main.Substring(3, 2), NumberStyles.HexNumber, CultureInfo.CurrentCulture, out var g2)
+                                    && byte.TryParse(main.Substring(5, 2), NumberStyles.HexNumber, CultureInfo.CurrentCulture, out var b2)
+                                    && byte.TryParse(main.Substring(7, 2), NumberStyles.HexNumber, CultureInfo.CurrentCulture, out var a2))
                                     ret = Util.FromArgb(a2, r2, g2, b2);
+                                else if (main != null && main.StartsWith("#") && main.Length == 4
+                                    && byte.TryParse(string.Concat(main[1], main[1]), NumberStyles.HexNumber, CultureInfo.CurrentCulture, out var r5)
+                                    && byte.TryParse(string.Concat(main[2], main[2]), NumberStyles.HexNumber, CultureInfo.CurrentCulture, out var g5)
+                                    && byte.TryParse(string.Concat(main[3], main[3]), NumberStyles.HexNumber, CultureInfo.CurrentCulture, out var b5))
+                                    ret = Util.FromArgb(r5, g5, b5);
+                                else if (main != null && main.StartsWith("#") && main.Length == 5
+                                    && byte.TryParse(string.Concat(main[1], main[1]), NumberStyles.HexNumber, CultureInfo.CurrentCulture, out var r6)
+                                    && byte.TryParse(string.Concat(main[2], main[2]), NumberStyles.HexNumber, CultureInfo.CurrentCulture, out var g6)
+                                    && byte.TryParse(string.Concat(main[3], main[3]), NumberStyles.HexNumber, CultureInfo.CurrentCulture, out var b6)
+                                    && byte.TryParse(string.Concat(main[4], main[4]), NumberStyles.HexNumber, CultureInfo.CurrentCulture, out var a6))
+
+                                    ret = Util.FromArgb(a6, r6, g6, b6);
                                 else if (vs?.Length == 4 && byte.TryParse(vs[0], out byte a3) && byte.TryParse(vs[1], out byte r3) && byte.TryParse(vs[2], out byte g3) && byte.TryParse(vs[3], out byte b3))
                                     ret = Util.FromArgb(a3, r3, g3, b3);
                                 else if (vs?.Length == 3 && byte.TryParse(vs[0], out byte r4) && byte.TryParse(vs[1], out byte g4) && byte.TryParse(vs[2], out byte b4))
