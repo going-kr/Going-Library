@@ -49,7 +49,7 @@ namespace SampleOpenTK.Windows
             tblTitle = new GoTableLayoutPanel { Fill = true, Columns = ["100%", "50px", "50px"], Rows = ["100%"] };
             nav = new GoNavigator { Fill = true };
 
-            string tp = "Left";
+            string tp = "Top";
             if (tp == "Top")
             {
                 nav.Direction = Going.UI.Enums.GoDirectionHV.Horizon;

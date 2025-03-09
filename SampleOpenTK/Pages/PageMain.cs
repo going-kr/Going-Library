@@ -18,16 +18,12 @@ namespace SampleOpenTK.Pages
 {
     public class PageMain : GoPage
     {
-        GoScrollablePanel spnl;
         public PageMain()
         {
             Name = "PageMain";
 
-            spnl = new GoScrollablePanel { Fill = true };
-            Childrens.Add(spnl);
+            Childrens.Add(new GoStep { Left = 10, Top = 10, Width = 300, Height = 40, IsCircle = true });
 
-            for (int i = 0; i < 50; i++)
-                spnl.Childrens.Add(new GoButton { Left = 10, Top = 10 + (i * 50), Width = 150, Height = 40, Text = $"테스트 {i + 1}" });
         }
     }
 }

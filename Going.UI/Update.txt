@@ -9,9 +9,11 @@ TrendGraph					트랜드 그래프											지준
 
 Progress					일자형 프로그레스										상무님(v)
 RangeSlider					범위 설정 컨트롤러										지준(v)
-StepGauge					(< ㅁ ㅁ ㅁ ㅁ >)									
 
 DataGrid					데이터 그리드											종현님
+
+MessageBox
+SelectorBox
 
 = 완료 작업 ======================== ===========================================================
 
@@ -73,6 +75,7 @@ ColorSelector                                                                   
 ColorPicker					색상 선택(조명제어, RGB)	                            O
 DateTimePicker                                                                      O
 NavBar						네비바	                                                O
+StepGauge					(< ㅁ ㅁ ㅁ ㅁ >)									    O
 
 = 제외 작업 ===================================================================================
 
