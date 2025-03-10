@@ -31,6 +31,7 @@
             Going.UI.Collections.ObservableList<Going.UI.Datas.GoToolCategory> observableList_11 = new Going.UI.Collections.ObservableList<Going.UI.Datas.GoToolCategory>();
             Going.UI.Collections.ObservableList<Going.UI.Datas.GoTreeNode> observableList_12 = new Going.UI.Collections.ObservableList<Going.UI.Datas.GoTreeNode>();
             goPanel1 = new Going.UI.Forms.Containers.GoPanel();
+            goStep1 = new Going.UI.Forms.Controls.GoStep();
             goButton2 = new Going.UI.Forms.Controls.GoButton();
             goButton1 = new Going.UI.Forms.Controls.GoButton();
             goLabel1 = new Going.UI.Forms.Controls.GoLabel();
@@ -64,6 +65,7 @@
             goPanel1.BackgroundDraw = true;
             goPanel1.BorderOnly = false;
             goPanel1.ButtonWidth = null;
+            goPanel1.Controls.Add(goStep1);
             goPanel1.Controls.Add(goButton2);
             goPanel1.Controls.Add(goButton1);
             goPanel1.Controls.Add(goLabel1);
@@ -84,6 +86,26 @@
             goPanel1.Text = "goPanel1";
             goPanel1.TextColor = "Fore";
             goPanel1.TitleHeight = 40F;
+            // 
+            // goStep1
+            // 
+            goStep1.BackColor = Color.FromArgb(60, 60, 60);
+            goStep1.BackgroundColor = "Base2";
+            goStep1.ButtonColor = "Base3";
+            goStep1.IsCircle = true;
+            goStep1.Location = new Point(153, 99);
+            goStep1.Name = "goStep1";
+            goStep1.NextIconString = "fa-chevron-right";
+            goStep1.PrevIconString = "fa-chevron-left";
+            goStep1.SelectColor = "Select";
+            goStep1.Size = new Size(206, 31);
+            goStep1.Step = 0;
+            goStep1.StepColor = "#444";
+            goStep1.StepCount = 5;
+            goStep1.TabIndex = 4;
+            goStep1.TabStop = false;
+            goStep1.Text = "goStep1";
+            goStep1.UseButton = true;
             // 
             // goButton2
             // 
@@ -485,5 +507,6 @@
         private Going.UI.Forms.Controls.GoColorSelector goColorSelector1;
         private Going.UI.Forms.Controls.GoInputColor goInputColor1;
         private Going.UI.Forms.Controls.GoInputDateTime goInputDateTime1;
+        private Going.UI.Forms.Controls.GoStep goStep1;
     }
 }

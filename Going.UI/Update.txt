@@ -8,12 +8,12 @@ TimeGraph					타임 그래프												종현님
 TrendGraph					트랜드 그래프											지준
 
 Progress					일자형 프로그레스										상무님(v)
-
-RangeSlider					범위 설정 컨트롤러										지준(v) - 배경없애고, 색상 Base1,2,3,4,5 사이 중 하나 - 커서 입체감 줄이고(플레이트)
-StepGauge					(< ㅁ ㅁ ㅁ ㅁ >)									    종현님
+RangeSlider					범위 설정 컨트롤러										지준(v)
 
 DataGrid					데이터 그리드											종현님
-NavBar						네비바	
+
+MessageBox
+SelectorBox
 
 = 완료 작업 ======================== ===========================================================
 
@@ -74,6 +74,8 @@ TreeView                                                                        
 ColorSelector                                                                       O
 ColorPicker					색상 선택(조명제어, RGB)	                            O
 DateTimePicker                                                                      O
+NavBar						네비바	                                                O
+StepGauge					(< ㅁ ㅁ ㅁ ㅁ >)									    O
 
 = 제외 작업 ===================================================================================
 

@@ -44,6 +44,7 @@ namespace Going.UI.OpenTK.Windows
         public int Height => ClientRectangle.Size.Y;
 
         public string? TItleIconString { get; set; }
+        public string? TitleIconImage { get; set; }
 
         public bool Debug { get; set; } = false;
 
@@ -58,6 +59,7 @@ namespace Going.UI.OpenTK.Windows
         private bool IsFirstRender = true;
         private nint Handle;
         private DateTime dcTime = DateTime.Now;
+        //private float DPI_H, DPI_V;
         #endregion
 
         #region Constructor
@@ -116,73 +118,79 @@ namespace Going.UI.OpenTK.Windows
         #region OnRenderFrame
         protected override void OnRenderFrame(FrameEventArgs e)
         {
+            //if (TryGetCurrentMonitorDpi(out var dpiH, out var dpiV)) { DPI_H = dpiH / 96F; DPI_V = dpiV / 96F; }
+
             Design.SetSize(Width, Height);
             base.OnRenderFrame(e);
 
             if (ctx != null && target != null && surface != null)
             {
                 var canvas = surface.Canvas;
-
-                if (IsFirstRender) Design.Init();
-
-                #region Draw
-                canvas.Clear(GoTheme.Current.Back);
-
-                var topMargin = 0;
-                var borderWidth = 0;
                 using (new SKAutoCanvasRestore(canvas))
                 {
-                    #region Translate
-                    if (Environment.OSVersion.Platform == PlatformID.Win32NT && WindowBorder != WindowBorder.Hidden)
-                    {
-                        GetWindowRect(Handle, out var windowRect);
-                        GetClientRect(Handle, out var clientRect);
+                    //canvas.Scale(DPI_H, DPI_V);
 
-                        var borderX = (windowRect.right - windowRect.left - clientRect.right) / 2;
-                        var titleH = windowRect.bottom - windowRect.top - clientRect.bottom - borderX;
-                        topMargin = titleH + borderX;
-                        borderWidth = borderX * 2;
-                        canvas.Translate(0, titleH + borderX);
-                    }
-                    #endregion
+                    if (IsFirstRender) Design.Init();
 
                     #region Draw
-                    OpenTKInputManager.Current.ScreenSize = new SKSize(Width, Height);
+                    canvas.Clear(GoTheme.Current.Back);
 
+                    var topMargin = 0;
+                    var borderWidth = 0;
                     using (new SKAutoCanvasRestore(canvas))
                     {
-                        canvas.Translate(0, OpenTKInputManager.Current.TranslateY);
-                        Design.Draw(canvas);
-                    }
-
-                    OpenTKInputManager.Current.Draw(canvas);
-                    #endregion
-
-                    #region Debug
-                    if (Debug)
-                    {
-                        using (var p = new SKPaint { IsAntialias = true })
+                        #region Translate
+                        if (Environment.OSVersion.Platform == PlatformID.Win32NT && WindowBorder != WindowBorder.Hidden)
                         {
-                            var rt = Util.FromRect(0, Height - 20, Width, 20);
-                            p.Color = SKColors.Black;
-                            p.IsStroke = false;
-                            canvas.DrawRect(rt, p);
-                            Util.DrawText(canvas, $"UpdateTime : {UpdateTime * 1000:0 ms} ", "나눔고딕", GoFontStyle.Normal, 12, rt, SKColors.White, GoContentAlignment.MiddleRight);
+                            GetWindowRect(Handle, out var windowRect);
+                            GetClientRect(Handle, out var clientRect);
+
+                            var borderX = (windowRect.right - windowRect.left - clientRect.right) / 2;
+                            var titleH = windowRect.bottom - windowRect.top - clientRect.bottom - borderX;
+                            topMargin = titleH + borderX;
+                            borderWidth = borderX * 2;
+                            canvas.Translate(0, titleH + borderX);
                         }
+                        #endregion
+
+                        #region Draw
+                        OpenTKInputManager.Current.ScreenSize = new SKSize(Width, Height);
+
+                        using (new SKAutoCanvasRestore(canvas))
+                        {
+                            canvas.Translate(0, OpenTKInputManager.Current.TranslateY);
+                            Design.Draw(canvas);
+                        }
+
+                        OpenTKInputManager.Current.Draw(canvas);
+                        #endregion
+
+                        #region Debug
+                        if (Debug)
+                        {
+                            using (var p = new SKPaint { IsAntialias = true })
+                            {
+                                var rt = Util.FromRect(0, Height - 20, Width, 20);
+                                p.Color = SKColors.Black;
+                                p.IsStroke = false;
+                                canvas.DrawRect(rt, p);
+                                Util.DrawText(canvas, $"UpdateTime : {UpdateTime * 1000:0 ms} ", "나눔고딕", GoFontStyle.Normal, 12, rt, SKColors.White, GoContentAlignment.MiddleRight);
+                            }
+                        }
+                        #endregion
                     }
                     #endregion
-                }
-                #endregion
 
-                ctx.Flush();
-                SwapBuffers();
+                    ctx.Flush();
+                    SwapBuffers();
 
-                if (IsFirstRender)
-                {
-                    var ico = CreateTitleIcon();
-                    if (ico != null) Icon = ico;
-                    IsFirstRender = false;
-                    IsVisible = true;
+                    if (IsFirstRender)
+                    {
+                        var ico = CreateTitleIcon();
+                        if (ico != null) Icon = ico;
+                        IsFirstRender = false;
+                        IsVisible = true;
+                    }
                 }
             }
         }
@@ -201,6 +209,8 @@ namespace Going.UI.OpenTK.Windows
         #region OnMouseDown
         protected override void OnMouseDown(MouseButtonEventArgs e)
         {
+            //float x = MousePosition.X / DPI_H;
+            //float y = MousePosition.Y / DPI_V;
             float x = MousePosition.X;
             float y = MousePosition.Y;
             GoMouseButton mb = ToGoMouseButton(e.Button);
@@ -248,6 +258,13 @@ namespace Going.UI.OpenTK.Windows
             Design.MouseWheel(x, y, e.OffsetY);
 
             base.OnMouseWheel(e);
+        }
+        #endregion
+        #region OnMouseLeave
+        protected override void OnMouseLeave()
+        {
+            Design.MouseMove(-1, -1);
+            base.OnMouseLeave();
         }
         #endregion
         #region OnResize
@@ -324,9 +341,17 @@ namespace Going.UI.OpenTK.Windows
         WindowIcon? CreateTitleIcon()
         {
             WindowIcon? ret = null;
-            if (GoIconManager.Contains(TItleIconString ?? ""))
+
+            var iconSize = 16;
+
+            if (TitleIconImage != null)
             {
-                var iconSize = 16;
+                var vimg = Design?.GetImage(TitleIconImage)?.FirstOrDefault();
+                if (vimg != null) ret = new WindowIcon(new Image(vimg.Width, vimg.Height, vimg.Bytes));
+            }
+
+            if (ret == null && GoIconManager.Contains(TItleIconString ?? ""))
+            {
                 var color = GoTheme.Current.Fore;
                 using var surface = SKSurface.Create(new SKImageInfo(iconSize, iconSize, SKColorType.Rgba8888));
                 var canvas = surface.Canvas;
@@ -338,7 +363,8 @@ namespace Going.UI.OpenTK.Windows
                 using var bmp = SKBitmap.FromImage(img);
                 byte[] pixels = new byte[bmp.Width * bmp.Height * 4];
                 Marshal.Copy(bmp.GetPixels(), pixels, 0, bmp.Width * bmp.Height * 4);
-                return new WindowIcon(new Image(iconSize, iconSize, pixels));
+                for (int i = 0; i < pixels.Length; i += 4) (pixels[i], pixels[i + 2]) = (pixels[i + 2], pixels[i]);
+                ret = new WindowIcon(new Image(iconSize, iconSize, pixels));
             }
             return ret;
         }

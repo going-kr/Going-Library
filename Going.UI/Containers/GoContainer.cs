@@ -2,6 +2,7 @@
 using Going.UI.Datas;
 using Going.UI.Design;
 using Going.UI.Enums;
+using Going.UI.Tools;
 using Going.UI.Utils;
 using SkiaSharp;
 using System;
@@ -115,7 +116,7 @@ namespace Going.UI.Containers
             {
                 if (c.Fill)
                 {
-                    c.Bounds = Util.FromRect(rtPanel, c.Margin);
+                    c.Bounds = Util.FromRect(Util.FromRect(0, 0, rtPanel.Width, rtPanel.Height), c.Margin);
                 }
             }
         }

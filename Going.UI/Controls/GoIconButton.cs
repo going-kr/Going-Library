@@ -18,6 +18,7 @@ namespace Going.UI.Controls
         public string? IconString { get; set; }
         public float Rotate { get; set; } = 0;
         public string ButtonColor { get; set; } = "Base3";
+        public bool ClickBoundsExtends { get; set; } = false;
         #endregion
 
         #region Event
@@ -58,7 +59,14 @@ namespace Going.UI.Controls
 
             var icosz = Math.Min(rtBox.Width, rtBox.Height) - 2;
             var pth = Util.GetIconPath(IconString, icosz, Rotate, rtBox);
-            if (pth != null && pth.Contains(x, y)) bDown = true;
+            if (ClickBoundsExtends)
+            {
+                if (CollisionTool.Check(rtBox, x, y)) bDown = true;
+            }
+            else
+            {
+                if (pth != null && pth.Contains(x, y)) bDown = true;
+            }
             pth?.Dispose();
 
             base.OnMouseDown(x, y, button);
@@ -89,7 +97,17 @@ namespace Going.UI.Controls
 
             var icosz = Math.Min(rtBox.Width, rtBox.Height) - 2;
             var pth = Util.GetIconPath(IconString, icosz, Rotate, rtBox);
-            bHover = pth != null && pth.Contains(x, y);
+
+            if (ClickBoundsExtends)
+            {
+                bHover = CollisionTool.Check(rtBox, x, y);
+            }
+            else
+            {
+                bHover = pth != null && pth.Contains(x, y);
+            }
+
+            
             pth?.Dispose();
 
             base.OnMouseMove(x, y);

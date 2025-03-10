@@ -47,7 +47,7 @@ namespace Going.UI.Controls
 
         #region Member Variable
         private Scroll scroll = new Scroll() { Direction = ScrollDirection.Vertical };
-
+        private SKRect rtBoxP = new SKRect();
         private bool bShift, bControl;
         private GoTreeNode ? first = null;
         #endregion
@@ -105,7 +105,7 @@ namespace Going.UI.Controls
             {
                 using var pth = PathTool.Box(rtContent, Round, thm.Corner);
                 canvas.ClipPath(pth, SKClipOperation.Intersect, true);
-                canvas.Translate(rtContent.Left, spos + rtContent.Top);
+                canvas.Translate(rtContent.Left, Convert.ToInt64(spos) + rtContent.Top);
                 
                 itemLoop((i, node) =>
                 {
@@ -269,8 +269,9 @@ namespace Going.UI.Controls
             var rtBox = rts["Box"];
 
             #region calcbox
-            if (Nodes.Changed || Nodes.Any(x => x.Changed))
+            if (Nodes.Changed || Nodes.Any(x => x.Changed) || !rtBoxP.Equals(rtBox))
             {
+                rtBoxP = rtBox;
                 var y = 0F;
                 foreach (var item in Nodes)
                 {

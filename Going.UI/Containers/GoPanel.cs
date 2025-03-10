@@ -114,9 +114,7 @@ namespace Going.UI.Containers
             foreach (var c in Childrens)
             {
                 if (c.Fill)
-                {
                     c.Bounds = Util.FromRect(Util.FromRect(0, 0, rtPanel.Width, rtPanel.Height), c.Margin);
-                }
             }
 
             //base.OnLayout();
