@@ -770,10 +770,10 @@ namespace Going.UI.Utils
         #endregion
 
         #region Int
-        public static int Int(float v) => (int)v;
-        public static SKPoint Int(SKPoint v) => new SKPoint((int)v.X, (int)v.Y);
-        public static SKSize Int(SKSize v) => new SKSize((int)v.Width, (int)v.Height);
-        public static SKRect Int(SKRect v) => new SKRect((int)v.Left, (int)v.Top, (int)v.Right, (int)v.Bottom);
+        public static int Int(float v) => Convert.ToInt32(v);
+        public static SKPoint Int(SKPoint v) => new SKPoint(Convert.ToInt32(v.X), Convert.ToInt32(v.Y));
+        public static SKSize Int(SKSize v) => new SKSize(Convert.ToInt32(v.Width), Convert.ToInt32(v.Height));
+        public static SKRect Int(SKRect v) => new SKRect(Convert.ToInt32(v.Left), Convert.ToInt32(v.Top), Convert.ToInt32(v.Right), Convert.ToInt32(v.Bottom));
         #endregion
 
         #region Lamp
