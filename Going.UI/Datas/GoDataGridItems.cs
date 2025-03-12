@@ -15,6 +15,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Going.UI.Datas
 {
@@ -101,10 +102,18 @@ namespace Going.UI.Datas
                 var cBack = thm.ToColor(CellBackColor ?? Grid.RowColor);
                 var cSel = thm.ToColor(SelectedCellBackColor ?? Grid.SelectedRowColor);
                 var cF = Row.Selected ? cSel : cBack;
-                var cB = cF.BrightnessTransmit(thm.Dark ? GoDataGrid.BorderBright : -GoDataGrid.BorderBright);
+                var cV = cF.BrightnessTransmit(RowIndex % 2 == 0 ? 0.05F : -0.05F);
+                var cB = cV.BrightnessTransmit(thm.Dark ? GoDataGrid.BorderBright : -GoDataGrid.BorderBright);
                 
-                Util.DrawBox(canvas, Bounds, cF, cB, GoRoundType.Rect, thm.Corner);
+                Util.DrawBox(canvas, Bounds, cV, GoRoundType.Rect, thm.Corner);
 
+                using var pe = SKPathEffect.CreateDash([2, 2,], 3);
+                using var p = new SKPaint { IsAntialias = true, IsStroke = true, StrokeWidth = 1, Color = cB, PathEffect = pe };
+                var l = Convert.ToInt32(Bounds.Left) + 0.5F;
+                var r = Convert.ToInt32(Bounds.Right) + 0.5F;
+                canvas.DrawLine(l, Bounds.Top, l, Bounds.Bottom, p);
+                canvas.DrawLine(r, Bounds.Top, r, Bounds.Bottom, p);
+                p.PathEffect = null;
                 OnDraw(canvas);
             }
         }
@@ -215,6 +224,7 @@ namespace Going.UI.Datas
                         else if (SortState == GoDataGridColumnSortState.Desc) Util.DrawIcon(canvas, "fa-sort-down", 12, rtSort, cText);
                     }
                 }
+
                 OnDraw(canvas);
             }
         }
@@ -327,7 +337,25 @@ namespace Going.UI.Datas
         public GoDataGridSummaryRow Row { get; private set; }
         public GoDataGridColumn Column { get; private set; }
 
-        internal SKRect Bounds => new SKRect(Column.Bounds.Left, Row.Bounds.Top, Column.Bounds.Right, Row.Bounds.Bottom);
+        internal SKRect Bounds
+        {
+            get
+            {
+                var ci = ColumnIndex;
+                var l = Grid.Columns[ci].Bounds.Left;
+                var r = Grid.Columns[ci + ColSpan - 1].Bounds.Right;
+
+                var ri = RowIndex;
+                var t = Grid.ViewRows[ri].Bounds.Top;
+                var b = Grid.ViewRows[ri + RowSpan - 1].Bounds.Bottom;
+
+                return new SKRect(l, t, r, b);
+            }
+        }
+        #endregion
+
+        #region Member Variable
+        private bool bDown = false;
         #endregion
 
         #region Constructor
@@ -342,12 +370,68 @@ namespace Going.UI.Datas
         }
         #endregion
 
-        public virtual void Draw(SKCanvas canvas) { }
-        public virtual void MouseDown(float x, float y, GoMouseButton button) { }
-        public virtual void MouseUp(float x, float y, GoMouseButton button) { }
-        public virtual void MouseMove(float x, float y) { }
+        #region Method
+        #region Fire
+        #region Draw
+        internal void Draw(SKCanvas canvas)
+        {
+            if (Grid != null)
+            {
+                var thm = GoTheme.Current;
+                var cText = thm.ToColor(CellTextColor ?? Grid.TextColor);
+                var cBack = thm.ToColor(CellBackColor ?? Grid.SummaryRowColor);
+                var cF = cBack;
+                var cV = cF;
+                var cB = cV.BrightnessTransmit(thm.Dark ? GoDataGrid.BorderBright : -GoDataGrid.BorderBright);
 
-        public virtual void Calculate() { }
+                Util.DrawBox(canvas, Bounds, cV, GoRoundType.Rect, thm.Corner);
+
+                using var p = new SKPaint { IsAntialias = true, IsStroke = true, StrokeWidth = 1, Color = cB };
+                var l = Convert.ToInt32(Bounds.Left) + 0.5F;
+                var r = Convert.ToInt32(Bounds.Right) + 0.5F;
+                canvas.DrawLine(l, Bounds.Top, l, Bounds.Bottom, p);
+                canvas.DrawLine(r, Bounds.Top, r, Bounds.Bottom, p);
+                OnDraw(canvas);
+            }
+        }
+        #endregion
+
+        #region Mouse
+        internal void MouseDown(float x, float y, GoMouseButton button)
+        {
+            if (CollisionTool.Check(Bounds, x, y))
+            {
+                bDown = true;
+                OnMouseDown(x, y, button);
+            }
+        }
+
+        internal void MouseUp(float x, float y, GoMouseButton button)
+        {
+            if (bDown)
+            {
+                bDown = false;
+                OnMouseUp(x, y, button);
+            }
+        }
+
+        internal void MouseMove(float x, float y)
+        {
+            if (bDown)
+            {
+                OnMouseMove(x, y);
+            }
+        }
+        #endregion
+        #endregion
+
+        #region Virtual
+        protected virtual void OnDraw(SKCanvas canvas) { }
+        protected virtual void OnMouseDown(float x, float y, GoMouseButton button) { }
+        protected virtual void OnMouseUp(float x, float y, GoMouseButton button) { }
+        protected virtual void OnMouseMove(float x, float y) { }
+        #endregion
+        #endregion
     }
     #endregion
     #region class : GoDataGridSummaryRow
@@ -358,6 +442,9 @@ namespace Going.UI.Datas
         public int RowHeight { get; set; }
         public List<GoDataGridSummaryCell> Cells { get; private set; } = [];
         public GoDataGrid? Grid { get; internal set; }
+        public int TitleColumnIndex { get; set; } = 0;
+        public int TitleColSpan { get; set; } = 1;
+        public string Title { get; set; } = "";
 
         internal SKRect Bounds { get; set; }
         #endregion
@@ -369,9 +456,95 @@ namespace Going.UI.Datas
     }
     #endregion
 
+    #region Summary 
+    #region Label
+    public class GoDataGridLabelSummaryCell : GoDataGridSummaryCell
+    {
+        #region Properties
+        public string Text { get; internal set; }
+        #endregion
 
+        #region Constructor
+        public GoDataGridLabelSummaryCell(GoDataGrid Grid, GoDataGridSummaryRow Row, GoDataGridColumn Column) : base(Grid, Row, Column)
+        {
+        }
+        #endregion
+
+        #region Draw
+        protected override void OnDraw(SKCanvas canvas)
+        {
+            base.OnDraw(canvas);
+
+            var thm = GoTheme.Current;
+            var cText = thm.ToColor(CellTextColor ?? Grid.TextColor);
+            Util.DrawText(canvas, Text, Grid.FontName, Grid.FontStyle, Grid.FontSize, Bounds, cText);
+        }
+        #endregion
+    }
+    #endregion
+    #region Sum
     public class GoDataGridSumSummaryRow : GoDataGridSummaryRow { }
+    public class GoDataGridSumSummaryCell : GoDataGridSummaryCell 
+    {
+        #region Properties
+        public string? FormatString { get; internal set; }
+        #endregion
 
+        #region Constructor
+        public GoDataGridSumSummaryCell(GoDataGrid Grid, GoDataGridSummaryRow Row, GoDataGridColumn Column) : base(Grid, Row, Column)
+        {
+        }
+        #endregion
+
+        #region Draw
+        protected override void OnDraw(SKCanvas canvas)
+        {
+            base.OnDraw(canvas);
+     
+            var ci = ColumnIndex;
+            var Value = Grid.ViewRows.Count == 0 ? 0 : Grid.ViewRows.Sum(x => Convert.ToDecimal(x.Cells[ci].Value));
+
+            var thm = GoTheme.Current;
+            var cText = thm.ToColor(CellTextColor ?? Grid.TextColor);
+            var text = ValueTool.ToString(Value, FormatString);
+            Util.DrawText(canvas, text, Grid.FontName, Grid.FontStyle, Grid.FontSize, Bounds, cText);
+        }
+        #endregion
+    }
+    #endregion
+    #region Average
+    public class GoDataGridAverageSummaryRow : GoDataGridSummaryRow { }
+    public class GoDataGridAverageSummaryCell : GoDataGridSummaryCell 
+    {
+        #region Properties
+        public string? FormatString { get; internal set; }
+        #endregion
+
+        #region Constructor
+        public GoDataGridAverageSummaryCell(GoDataGrid Grid, GoDataGridSummaryRow Row, GoDataGridColumn Column) : base(Grid, Row, Column)
+        {
+        }
+        #endregion
+         
+        #region Draw
+        protected override void OnDraw(SKCanvas canvas)
+        {
+            base.OnDraw(canvas);
+
+            var ci = ColumnIndex;
+            var Value = Grid.ViewRows.Count == 0 ? 0 : Grid.ViewRows.Average(x => Convert.ToDecimal(x.Cells[ci].Value));
+
+            var thm = GoTheme.Current;
+            var cText = thm.ToColor(CellTextColor ?? Grid.TextColor);
+            var text = ValueTool.ToString(Value, FormatString);
+            Util.DrawText(canvas, text, Grid.FontName, Grid.FontStyle, Grid.FontSize, Bounds, cText);
+        }
+        #endregion
+    }
+    #endregion
+    #endregion
+
+    #region Rows
     #region Label
     public class GoDataGridLabelCell : GoDataGridCell
     {
@@ -381,6 +554,7 @@ namespace Going.UI.Datas
         }
         #endregion
 
+        #region Draw
         protected override void OnDraw(SKCanvas canvas)
         {
             base.OnDraw(canvas);
@@ -390,6 +564,7 @@ namespace Going.UI.Datas
             var text = ValueTool.ToString(Value, null);
             Util.DrawText(canvas, text, Grid.FontName, Grid.FontStyle, Grid.FontSize, Bounds, cText);
         }
+        #endregion
     }
 
     public class GoDataGridLabelColumn : GoDataGridColumn
@@ -398,6 +573,39 @@ namespace Going.UI.Datas
         public GoDataGridLabelColumn()
         {
             CellType = typeof(GoDataGridLabelCell);
+        }
+        #endregion
+    }
+    #endregion
+    #region Number
+    public class GoDataGridNumberCell<T> : GoDataGridCell where T : struct
+    {
+        #region Constructor
+        public GoDataGridNumberCell(GoDataGrid Grid, GoDataGridRow Row, GoDataGridColumn Column) : base(Grid, Row, Column)
+        {
+        }
+        #endregion
+
+        #region Draw
+        protected override void OnDraw(SKCanvas canvas)
+        {
+            base.OnDraw(canvas);
+
+            var thm = GoTheme.Current;
+            var cText = thm.ToColor(CellTextColor ?? Grid.TextColor);
+            var text = ValueTool.ToString(Value, (Column is GoDataGridNumberColumn<T> col ? col.FormatString : null));
+            Util.DrawText(canvas, text, Grid.FontName, Grid.FontStyle, Grid.FontSize, Bounds, cText);
+        }
+        #endregion
+    }
+
+    public class GoDataGridNumberColumn<T> : GoDataGridColumn where T : struct
+    {
+        public string? FormatString { get; set; }
+        #region Constructor
+        public GoDataGridNumberColumn()
+        {
+            CellType = typeof(GoDataGridNumberCell<T>);
         }
         #endregion
     }
@@ -421,5 +629,6 @@ namespace Going.UI.Datas
         }
         #endregion
     }
+    #endregion
     #endregion
 }

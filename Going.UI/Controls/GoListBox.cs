@@ -37,7 +37,7 @@ namespace Going.UI.Controls
         public float ItemHeight { get; set; } = 30;
         public GoContentAlignment ItemAlignment { get; set; } = GoContentAlignment.MiddleCenter;
         public ObservableList<GoListItem> Items { get; set; } = [];
-        public GoItemSelectionMode SelectionMode { get; set; } = GoItemSelectionMode.SIngle;
+        public GoItemSelectionMode SelectionMode { get; set; } = GoItemSelectionMode.Single;
         [JsonIgnore] public List<GoListItem> SelectedItems { get; } = [];
 
         [JsonIgnore] public double ScrollPosition { get => scroll.ScrollPosition; set => scroll.ScrollPosition = value; }
@@ -279,7 +279,7 @@ namespace Going.UI.Controls
         private void select(GoListItem item)
         {
             #region Single
-            if (SelectionMode == GoItemSelectionMode.SIngle)
+            if (SelectionMode == GoItemSelectionMode.Single)
             {
                 SelectedItems.Clear();
                 SelectedItems.Add(item);

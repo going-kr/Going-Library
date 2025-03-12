@@ -7,6 +7,7 @@ using Going.UI.Tools;
 using Going.UI.Utils;
 using SkiaSharp;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Drawing;
@@ -61,7 +62,8 @@ namespace Going.UI.Controls
         private object? objs = null;
 
         private double hsV, vsV;
-        
+        private bool bShift, bControl;
+        private GoDataGridRow? first;
         #endregion
 
         #region Constructor
@@ -100,6 +102,9 @@ namespace Going.UI.Controls
         {
             #region var
             var thm = GoTheme.Current;
+            using var p = new SKPaint { IsAntialias = true, };
+            using var pe = SKPathEffect.CreateDash([2, 2,], 3);
+
             #region color
             var cText = thm.ToColor(TextColor);
             var cRow = thm.ToColor(RowColor);
@@ -121,7 +126,7 @@ namespace Going.UI.Controls
             var ush = ScrollMode == ScrollMode.Both || ScrollMode == ScrollMode.Horizon;
             var usv = ScrollMode == ScrollMode.Both || ScrollMode == ScrollMode.Vertical;
             #endregion
-
+            #region etc
             var hspos = Convert.ToSingle(hscroll.ScrollPositionWithOffset);
             var vspos = Convert.ToSingle(vscroll.ScrollPositionWithOffset);
             var cl = Columns.FirstOrDefault(x => !x.Fixed)?.Bounds.Left ?? 0;
@@ -129,6 +134,7 @@ namespace Going.UI.Controls
             var vsx = cl - hspos;
             var vex = vsx + (cr - cl);
             var br = thm.Dark ? 1F : -1F;
+            #endregion
             #endregion
 
             #region Column
@@ -170,14 +176,49 @@ namespace Going.UI.Controls
             if (SummaryRows.Count > 0)
             {
                 Util.DrawBox(canvas, rtSummary, cSum, GoRoundType.B, thm.Corner);
+
+                using (new SKAutoCanvasRestore(canvas))
+                {
+                    canvas.ClipRect(Util.FromRect(rtSummary.Left, rtSummary.Top, rtSummary.Width + 1, rtSummary.Height + 1));
+                    canvas.Translate(0, rtSummary.Top);
+
+                    using (new SKAutoCanvasRestore(canvas))
+                    {
+                        canvas.ClipRect(new SKRect(cl, 0, cr + 1, rtSummary.Height));
+                        canvas.Translate(rtSummary.Left + Convert.ToInt64(hspos), 0);
+
+                        foreach (var r in SummaryRows)
+                            foreach (var c in r.Cells.Where(x => !x.Column.Fixed && x.Bounds.Right > vsx && x.Bounds.Left < vex))
+                                if (c.Visible) c.Draw(canvas);
+                    }
+
+                    var bsel = SelectionMode == GoDataGridSelectionMode.Selector;
+                    p.IsStroke = true; p.StrokeWidth = 1;
+                    p.PathEffect = pe;
+                    foreach (var r in SummaryRows)
+                    {
+                        foreach (var c in r.Cells.Where(x => x.Column.Fixed))
+                            if (c.Visible) c.Draw(canvas);
+
+                        #region Selector
+                        if (bsel)
+                        {
+                            var rtSel = Util.FromRect(r.Bounds.Left, r.Bounds.Top, 30, r.Bounds.Height);
+
+                            var cF = cSum;
+                            var cV = cF.BrightnessTransmit(r.RowIndex % 2 == 0 ? 0.05F : -0.05F);
+                            var cB = cV.BrightnessTransmit(BorderBright * br);
+
+                            var rx = Convert.ToInt32(rtSel.Right) + 0.5F;
+                            p.Color = cB;
+                            canvas.DrawLine(rx, rtSel.Top, rx, rtSel.Bottom, p);
+                        }
+                        #endregion
+                    }
+                    p.PathEffect = null;
+                }
             }
             #endregion
-
-            #region Border
-            Util.DrawBox(canvas, rtColumn, SKColors.Transparent, cRow.BrightnessTransmit(BorderBright * br), GoRoundType.T, thm.Corner);
-            Util.DrawBox(canvas, rtSummary, SKColors.Transparent, cRow.BrightnessTransmit(BorderBright * br), GoRoundType.B, thm.Corner);
-            #endregion
-
             #region Rows
             {
                 Util.DrawBox(canvas, rtRow, SKColors.Transparent, cRow.BrightnessTransmit(BorderBright * br), SummaryRows.Count > 0 ? GoRoundType.Rect : GoRoundType.B, thm.Corner);
@@ -207,32 +248,46 @@ namespace Going.UI.Controls
                         }
 
                         var bsel = SelectionMode == GoDataGridSelectionMode.Selector;
+                        p.IsStroke = true; p.StrokeWidth = 1;
+                        p.PathEffect = pe;
                         for (int i = si; i <= ei; i++)
                         {
                             var r = mrows[i];
                             foreach (var c in r.Cells.Where(x => x.Column.Fixed))
                                 if (c.Visible) c.Draw(canvas);
 
+                            #region Selector
                             if (bsel)
                             {
-                                var c = r.Selected ? cSel : cRow;
                                 var rtSel = Util.FromRect(r.Bounds.Left, r.Bounds.Top, 30, r.Bounds.Height);
                                 var rtChk = MathTool.MakeRectangle(rtSel, new SKSize(20, 20));
 
-                                var cF = c.BrightnessTransmit(CheckBoxBright * br);
-                                var cB = c.BrightnessTransmit(BorderBright * br);
+                                var cF = r.Selected ? cSel : cRow;
+                                var cV = cF.BrightnessTransmit(r.RowIndex % 2 == 0 ? 0.05F : -0.05F);
+                                var cB = cV.BrightnessTransmit(BorderBright * br);
 
-                                Util.DrawBox(canvas, rtSel, c, cB, GoRoundType.Rect, thm.Corner);
-                                Util.DrawBox(canvas, rtChk, cF, cB, GoRoundType.Rect, thm.Corner);
+                                Util.DrawBox(canvas, rtSel, cV, GoRoundType.Rect, thm.Corner);
+                                Util.DrawBox(canvas, rtChk, cV.BrightnessTransmit(InputBright * br), cB, GoRoundType.Rect, thm.Corner);
                                 if (r.Selected) Util.DrawIcon(canvas, "fa-check", 12, rtChk, cText);
+
+                                var rx = Convert.ToInt32(rtSel.Right) + 0.5F;
+                                p.Color = cB;
+                                canvas.DrawLine(rx, rtSel.Top, rx, rtSel.Bottom, p);
                             }
+                            #endregion
                         }
+                        p.PathEffect = null;
                     }
                 }
 
             }
             #endregion
 
+            #region Border
+            Util.DrawBox(canvas, rtColumn, SKColors.Transparent, cCol, GoRoundType.T, thm.Corner);
+            if (SummaryRows.Count > 0) Util.DrawBox(canvas, rtSummary, SKColors.Transparent, cSum, GoRoundType.B, thm.Corner);
+            Util.DrawBox(canvas, rtRow, SKColors.Transparent, cRow, SummaryRows.Count > 0 ? GoRoundType.Rect : GoRoundType.B, thm.Corner);
+            #endregion
 
             hscroll.Draw(canvas, rtScrollH);
             vscroll.Draw(canvas, rtScrollV);
@@ -246,8 +301,19 @@ namespace Going.UI.Controls
         {
             #region var
             var rts = Areas();
+            var rtColumn = rts["Column"];
+            var rtRow = rts["Row"];
+
             var ush = ScrollMode == ScrollMode.Both || ScrollMode == ScrollMode.Horizon;
             var usv = ScrollMode == ScrollMode.Both || ScrollMode == ScrollMode.Vertical;
+
+            var hspos = Convert.ToSingle(hscroll.ScrollPositionWithOffset);
+            var vspos = Convert.ToSingle(vscroll.ScrollPositionWithOffset);
+
+            var rx = x - rtColumn.Left - hspos;
+            var ry = y - rtRow.Top - vspos;
+
+            var cl = Columns.FirstOrDefault(x => !x.Fixed)?.Bounds.Left ?? 0;
             #endregion
 
             if (CollisionTool.Check(rts["Content"], x, y))
@@ -270,11 +336,6 @@ namespace Going.UI.Controls
 
             #region Column
             {
-                var rtColumn = rts["Column"];
-                var hspos = Convert.ToSingle(hscroll.ScrollPositionWithOffset);
-                var rx = x - rtColumn.Left - hspos;
-                var cl = Columns.FirstOrDefault(x => !x.Fixed)?.Bounds.Left ?? 0;
-
                 if (x < cl)
                 {
                     foreach (var c in Columns.Where(x => x.Fixed)) c.MouseDown(x, y, button);
@@ -285,45 +346,21 @@ namespace Going.UI.Controls
                     foreach (var c in Columns.Where(x => !x.Fixed)) c.MouseDown(rx, y, button);
                     foreach (var c in ColumnGroups.Where(x => !x.Fixed)) c.MouseDown(rx, y, button);
                 }
-
-                if (SelectionMode == GoDataGridSelectionMode.Selector)
-                {
-                    var rtChk = MathTool.MakeRectangle(Util.FromRect(rtColumn.Left, rtColumn.Top, 30, rtColumn.Height), new SKSize(20, 20));
-                    if (CollisionTool.Check(rtChk, x, y))
-                    {
-                        bool val = mrows.Any(x => x.Selected);
-                        foreach (var v in mrows) v.Selected = !val;
-                    }
-                }
             }
             #endregion
             #region Rows
-            if (mrows.Count > 0)
             {
-                var rtRow = rts["Row"];
-                var vspos = Convert.ToSingle(vscroll.ScrollPositionWithOffset);
-                var ry = y - rtRow.Top - vspos;
-
-                var rt = Util.FromRect(0, 0, rtRow.Width, rtRow.Height);
-                rt.Offset(0, -Convert.ToSingle(vscroll.ScrollPositionWithOffset));
-                var (si, ei) = Util.FindRect(mrows.Select(x => x.Bounds).ToList(), rt);
-
-                if (si >= 0 && si < mrows.Count && ei > 0 && ei < mrows.Count)
+                rowsLoop(rtRow, (i, row) =>
                 {
-                    var bsel = SelectionMode == GoDataGridSelectionMode.Selector;
-                    for (int i = si; i <= ei; i++)
+                    if (x < cl)
                     {
-                        var r = mrows[i];
-
-                        if (bsel)
-                        {
-                            var rtSel = Util.FromRect(r.Bounds.Left, r.Bounds.Top, 30, r.Bounds.Height);
-                            var rtChk = MathTool.MakeRectangle(rtSel, new SKSize(20, 20));
-
-                            if (CollisionTool.Check(rtChk, x, ry)) r.Selected = !r.Selected;
-                        }
+                        foreach (var c in row.Cells.Where(x => x.Column.Fixed)) c.MouseDown(x, ry, button);
                     }
-                }
+                    else
+                    {
+                        foreach (var c in row.Cells.Where(x => !x.Column.Fixed)) c.MouseDown(rx, ry, button);
+                    }
+                });
             }
             #endregion
 
@@ -334,8 +371,19 @@ namespace Going.UI.Controls
         {
             #region var
             var rts = Areas();
+            var rtColumn = rts["Column"];
+            var rtRow = rts["Row"];
+
             var ush = ScrollMode == ScrollMode.Both || ScrollMode == ScrollMode.Horizon;
             var usv = ScrollMode == ScrollMode.Both || ScrollMode == ScrollMode.Vertical;
+
+            var hspos = Convert.ToSingle(hscroll.ScrollPositionWithOffset);
+            var vspos = Convert.ToSingle(vscroll.ScrollPositionWithOffset);
+
+            var rx = x - rtColumn.Left - hspos;
+            var ry = y - rtRow.Top - vspos;
+
+            var cl = Columns.FirstOrDefault(x => !x.Fixed)?.Bounds.Left ?? 0;
             #endregion
 
             #region ScrollH
@@ -353,6 +401,36 @@ namespace Going.UI.Controls
             }
             #endregion
 
+            #region Column
+            {
+                if (x < cl)
+                {
+                    foreach (var c in Columns.Where(x => x.Fixed)) c.MouseUp(x, y, button);
+                    foreach (var c in ColumnGroups.Where(x => x.Fixed)) c.MouseUp(x, y, button);
+                }
+                else
+                {
+                    foreach (var c in Columns.Where(x => !x.Fixed)) c.MouseUp(rx, y, button);
+                    foreach (var c in ColumnGroups.Where(x => !x.Fixed)) c.MouseUp(rx, y, button);
+                }
+            }
+            #endregion
+            #region Rows
+            {
+                rowsLoop(rtRow, (i, row) =>
+                {
+                    if (x < cl)
+                    {
+                        foreach (var c in row.Cells.Where(x => x.Column.Fixed)) c.MouseUp(x, ry, button);
+                    }
+                    else
+                    {
+                        foreach (var c in row.Cells.Where(x => !x.Column.Fixed)) c.MouseUp(rx, ry, button);
+                    }
+                });
+            }
+            #endregion
+
             base.OnMouseUp(x, y, button);
         }
 
@@ -360,8 +438,19 @@ namespace Going.UI.Controls
         {
             #region var
             var rts = Areas();
+            var rtColumn = rts["Column"];
+            var rtRow = rts["Row"];
+
             var ush = ScrollMode == ScrollMode.Both || ScrollMode == ScrollMode.Horizon;
             var usv = ScrollMode == ScrollMode.Both || ScrollMode == ScrollMode.Vertical;
+
+            var hspos = Convert.ToSingle(hscroll.ScrollPositionWithOffset);
+            var vspos = Convert.ToSingle(vscroll.ScrollPositionWithOffset);
+
+            var rx = x - rtColumn.Left - hspos;
+            var ry = y - rtRow.Top - vspos;
+
+            var cl = Columns.FirstOrDefault(x => !x.Fixed)?.Bounds.Left ?? 0;
             #endregion
 
             #region ScrollH
@@ -379,7 +468,107 @@ namespace Going.UI.Controls
             }
             #endregion
 
+            #region Column
+            {
+                if (x < cl)
+                {
+                    foreach (var c in Columns.Where(x => x.Fixed)) c.MouseMove(x, y);
+                    foreach (var c in ColumnGroups.Where(x => x.Fixed)) c.MouseMove(x, y);
+                }
+                else
+                {
+                    foreach (var c in Columns.Where(x => !x.Fixed)) c.MouseMove(rx, y);
+                    foreach (var c in ColumnGroups.Where(x => !x.Fixed)) c.MouseMove(rx, y);
+                }
+            }
+            #endregion
+            #region Rows
+            {
+                rowsLoop(rtRow, (i, row) =>
+                {
+                    if (x < cl)
+                    {
+                        foreach (var c in row.Cells.Where(x => x.Column.Fixed)) c.MouseMove(x, ry);
+                    }
+                    else
+                    {
+                        foreach (var c in row.Cells.Where(x => !x.Column.Fixed)) c.MouseMove(rx, ry);
+                    }
+                });
+            }
+            #endregion
+
             base.OnMouseMove(x, y);
+        }
+
+        protected override void OnMouseClick(float x, float y, GoMouseButton button)
+        {
+            #region var
+            var rts = Areas();
+            var rtColumn = rts["Column"];
+            var rtRow = rts["Row"];
+
+            var ush = ScrollMode == ScrollMode.Both || ScrollMode == ScrollMode.Horizon;
+            var usv = ScrollMode == ScrollMode.Both || ScrollMode == ScrollMode.Vertical;
+
+            var hspos = Convert.ToSingle(hscroll.ScrollPositionWithOffset);
+            var vspos = Convert.ToSingle(vscroll.ScrollPositionWithOffset);
+
+            var rx = x - rtColumn.Left - hspos;
+            var ry = y - rtRow.Top - vspos;
+
+            var cl = Columns.FirstOrDefault(x => !x.Fixed)?.Bounds.Left ?? 0;
+            #endregion
+
+            #region Column
+            {
+                if (SelectionMode == GoDataGridSelectionMode.Selector)
+                {
+                    var rtChk = MathTool.MakeRectangle(Util.FromRect(rtColumn.Left, rtColumn.Top, 30, rtColumn.Height), new SKSize(20, 20));
+                    if (CollisionTool.Check(rtChk, x, y))
+                    {
+                        bool val = mrows.Any(x => x.Selected);
+                        foreach (var v in mrows) v.Selected = !val;
+                    }
+                }
+            }
+            #endregion
+            #region Rows
+            {
+                rowsLoop(rtRow, (i, row) =>
+                {
+                    if (SelectionMode == GoDataGridSelectionMode.Selector)
+                    {
+                        var rtSel = Util.FromRect(row.Bounds.Left, row.Bounds.Top, 30, row.Bounds.Height);
+                        var rtChk = MathTool.MakeRectangle(rtSel, new SKSize(20, 20));
+
+                        if (CollisionTool.Check(rtChk, x, ry)) row.Selected = !row.Selected;
+                    }
+                    else if (CollisionTool.Check(row.Bounds, x, ry))
+                    {
+                        select(row);
+                    }
+                });
+            }
+            #endregion
+             
+            base.OnMouseClick(x, y, button);
+        }
+        #endregion
+
+        #region Key
+        protected override void OnKeyDown(bool Shift, bool Control, bool Alt, GoKeys key)
+        {
+            bShift = Shift;
+            bControl = Control;
+            base.OnKeyDown(Shift, Control, Alt, key);
+        }
+
+        protected override void OnKeyUp(bool Shift, bool Control, bool Alt, GoKeys key)
+        {
+            bShift = Shift;
+            bControl = Control;
+            base.OnKeyUp(Shift, Control, Alt, key);
         }
         #endregion
 
@@ -466,6 +655,8 @@ namespace Going.UI.Controls
 
                 Columns.Changed = ColumnGroups.Changed = false;
                 pBound = rtContent;
+
+                RefreshRows();
             }
             #endregion
 
@@ -553,37 +744,91 @@ namespace Going.UI.Controls
                 Rows.Clear();
                 if (values != null)
                 {
-                    float y = 0;
-                    int ri = 0;
-                    foreach (var src in values)
+                    #region Rows
                     {
-                        var row = new GoDataGridRow { Grid = this, Source = src, RowIndex = ri, RowHeight = RowHeight, Bounds = Util.FromRect(rtRow.Left, y, rtRow.Width, RowHeight) };
-
-                        for (int i = 0; i < Columns.Count; i++)
+                        float y = 0;
+                        int ri = 0;
+                        foreach (var src in values)
                         {
-                            var col = Columns[i];
+                            var row = new GoDataGridRow { Grid = this, Source = src, RowIndex = ri, RowHeight = RowHeight, Bounds = Util.FromRect(rtRow.Left, y, rtRow.Width, RowHeight) };
 
-                            if (col is GoDataGridButtonColumn colBtn)
+                            for (int i = 0; i < Columns.Count; i++)
                             {
-                                var cell = new GoDataGridButtonCell(this, row, (GoDataGridButtonColumn)col);
-                                row.Cells.Add(cell);
-                            }
-                            else
-                            {
-                                if (col.Name != null && col.CellType != null)
+                                var col = Columns[i];
+
+                                if (col is GoDataGridButtonColumn colBtn)
                                 {
-                                    var prop = dic[col.Name];
-                                    var cell = Activator.CreateInstance(col.CellType, this, row, col) as GoDataGridCell;
-                                    if (cell != null) row.Cells.Add(cell);
+                                    var cell = new GoDataGridButtonCell(this, row, (GoDataGridButtonColumn)col);
+                                    row.Cells.Add(cell);
+                                }
+                                else
+                                {
+                                    if (col.Name != null && col.CellType != null)
+                                    {
+                                        var prop = dic[col.Name];
+                                        var cell = Activator.CreateInstance(col.CellType, this, row, col) as GoDataGridCell;
+                                        if (cell != null) row.Cells.Add(cell);
+                                    }
                                 }
                             }
+
+                            Rows.Add(row);
+
+                            y += row.RowHeight;
+                            ri++;
                         }
-
-                        Rows.Add(row);
-
-                        y += row.RowHeight;
-                        ri++;
                     }
+                    #endregion
+                    #region Summary
+                    {
+                        var y = 0F;
+                        var ri = 0;
+                        foreach (var row in SummaryRows)
+                        {
+                            row.RowIndex = ri;
+                            row.Bounds = Util.FromRect(rtRow.Left, y, rtRow.Width, RowHeight);
+
+                            for (int i = 0; i < Columns.Count; i++)
+                            {
+                                var col = Columns[i];
+                                var tp = col.GetType();
+                                if (tp.IsGenericType && tp.GetGenericTypeDefinition() == typeof(GoDataGridNumberColumn<>))
+                                {
+                                    var p = tp.GetProperty("FormatString");
+                                    var frmt = p?.GetValue(col) as string;
+
+                                    if(row is GoDataGridSumSummaryRow)
+                                    {
+                                        var cell = new GoDataGridSumSummaryCell(this, row, col) { FormatString= frmt };
+                                        row.Cells.Add(cell);
+                                    }
+                                    else if (row is GoDataGridAverageSummaryRow)
+                                    {
+                                        var cell = new GoDataGridAverageSummaryCell(this, row, col) { FormatString = frmt };
+                                        row.Cells.Add(cell);
+                                    }
+                                    else
+                                    {
+                                        var cell = new GoDataGridLabelSummaryCell(this, row, col);
+                                        row.Cells.Add(cell);
+                                    }
+                                }
+                                else
+                                {
+                                    var cell = new GoDataGridLabelSummaryCell(this, row, col);
+                                    row.Cells.Add(cell);
+                                }
+                            }
+
+                            row.Cells[row.TitleColumnIndex].ColSpan = row.TitleColSpan;
+                            for (var i = row.TitleColumnIndex; i < row.TitleColumnIndex + row.TitleColSpan; i++) row.Cells[i].Visible = i == row.TitleColumnIndex;
+                            if (row.Cells[row.TitleColumnIndex] is GoDataGridLabelSummaryCell vc) vc.Text = row.Title;
+
+                            y += RowHeight;
+                            ri++;
+                        }
+                    }
+                    #endregion
                 }
 
                 RefreshRows();
@@ -682,15 +927,95 @@ namespace Going.UI.Controls
                     v.RowIndex = ri;
                     v.Bounds = Util.FromRect(rtRow.Left, y, rtRow.Width, RowHeight);
 
-                    foreach (var c in v.Cells.Where(x => x is GoDataGridSummaryCell))
-                        if (c is GoDataGridSummaryCell cell)
-                            cell.Calculate();
-
                     y += RowHeight;
                     ri++;
                 }
             }
             #endregion
+        }
+        #endregion
+
+        #region select
+        private void select(GoDataGridRow item)
+        {
+            #region Single
+            if (SelectionMode == GoDataGridSelectionMode.Single)
+            {
+                Parallel.ForEach(Rows, (v) => v.Selected = false);
+                item.Selected = true;
+                first = item;
+            }
+            #endregion
+            #region Multi
+            else if (SelectionMode == GoDataGridSelectionMode.Multi)
+            {
+                item.Selected = !item.Selected;
+            }
+            #endregion
+            #region MultiPC
+            else if (SelectionMode == GoDataGridSelectionMode.MultiPC)
+            {
+                if (bControl)
+                {
+                    #region Control
+                    item.Selected = !item.Selected;
+                    if(item.Selected) first = item;
+                    #endregion
+                }
+                else if (bShift)
+                {
+                    #region Shift
+                    if (first == null)
+                    {
+                        item.Selected = true;
+                    }
+                    else
+                    {
+                        int idx1 = mrows.IndexOf(first);
+                        int idx2 = mrows.IndexOf(item);
+                        int min = Math.Min(idx1, idx2);
+                        int max = Math.Max(idx1, idx2);
+
+                        bool b = false;
+                        for (int ii = min; ii <= max; ii++)
+                        {
+                            mrows[ii].Selected = true;
+                        }
+                    }
+                    #endregion
+                }
+                else
+                {
+                    Parallel.ForEach(Rows, (v) => v.Selected = false);
+                    item.Selected = true;
+                    first = item;
+                }
+            }
+            #endregion
+        }
+        #endregion
+
+        #region rowsLoop
+        void rowsLoop(SKRect rtRow, Action<int, GoDataGridRow> loop)
+        {
+            if (mrows.Count > 0)
+            {
+                var vspos = Convert.ToSingle(vscroll.ScrollPositionWithOffset);
+
+                var rt = Util.FromRect(0, 0, rtRow.Width, rtRow.Height);
+                rt.Offset(0, -Convert.ToSingle(vscroll.ScrollPositionWithOffset));
+                var (si, ei) = Util.FindRect(mrows.Select(x => x.Bounds).ToList(), rt);
+
+                if (si >= 0 && si < mrows.Count && ei > 0 && ei < mrows.Count)
+                {
+                    for (int i = si; i <= ei; i++)
+                    {
+                        var r = mrows[i];
+
+                        loop(i, r);
+                    }
+                }
+            }
         }
         #endregion
         #endregion

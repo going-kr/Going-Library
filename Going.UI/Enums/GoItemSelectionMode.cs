@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace Going.UI.Enums
 {
-    public enum GoItemSelectionMode { None, SIngle, Multi, MultiPC }
+    public enum GoItemSelectionMode { None, Single, Multi, MultiPC }
 }

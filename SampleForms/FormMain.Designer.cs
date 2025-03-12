@@ -392,7 +392,7 @@
             goTreeView1.Nodes = observableList_12;
             goTreeView1.Round = Going.UI.Enums.GoRoundType.All;
             goTreeView1.SelectColor = "Select";
-            goTreeView1.SelectionMode = Going.UI.Enums.GoItemSelectionMode.SIngle;
+            goTreeView1.SelectionMode = Going.UI.Enums.GoItemSelectionMode.Single;
             goTreeView1.Size = new Size(300, 280);
             goTreeView1.TabIndex = 0;
             goTreeView1.TabStop = false;

@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 namespace Going.UI.Enums
 {
     public enum GoDataGridColumnSortState { None, Asc, Desc }
-    public enum GoDataGridSelectionMode { None, Selector, Single, Multi }
+    public enum GoDataGridSelectionMode { None, Selector, Single, Multi, MultiPC }
 }
