@@ -171,6 +171,7 @@ namespace Going.UI.Controls
         #region OnDraw
         protected override void OnDraw(SKCanvas canvas)
         {
+
             DrawSlider(canvas);
             base.OnDraw(canvas);
         }

@@ -9,12 +9,14 @@ using System.Linq;
 
 namespace Going.UI.Controls
 {
+    /*
     /// <summary>
     /// 트렌드 그래프 컨트롤 - 시간에 따른 데이터 변화를 시각적으로 표현하고 좌우 스크롤이 가능한 컴포넌트
     /// 매 프레임 렌더링에 최적화됨
     /// </summary>
     public class GoTrendGraph : GoControl, IDisposable
     {
+        
         #region Properties
 
         #region 아이콘 설정
@@ -1043,5 +1045,7 @@ namespace Going.UI.Controls
         }
 
         #endregion
+        
     }
+    */
 }
