@@ -31,6 +31,7 @@
             Going.UI.Collections.ObservableList<Going.UI.Datas.GoToolCategory> observableList_11 = new Going.UI.Collections.ObservableList<Going.UI.Datas.GoToolCategory>();
             Going.UI.Collections.ObservableList<Going.UI.Datas.GoTreeNode> observableList_12 = new Going.UI.Collections.ObservableList<Going.UI.Datas.GoTreeNode>();
             goPanel1 = new Going.UI.Forms.Containers.GoPanel();
+            goInputBoolean1 = new Going.UI.Forms.Controls.GoInputBoolean();
             goStep1 = new Going.UI.Forms.Controls.GoStep();
             goButton2 = new Going.UI.Forms.Controls.GoButton();
             goButton1 = new Going.UI.Forms.Controls.GoButton();
@@ -65,6 +66,7 @@
             goPanel1.BackgroundDraw = true;
             goPanel1.BorderOnly = false;
             goPanel1.ButtonWidth = null;
+            goPanel1.Controls.Add(goInputBoolean1);
             goPanel1.Controls.Add(goStep1);
             goPanel1.Controls.Add(goButton2);
             goPanel1.Controls.Add(goButton1);
@@ -86,6 +88,33 @@
             goPanel1.Text = "goPanel1";
             goPanel1.TextColor = "Fore";
             goPanel1.TitleHeight = 40F;
+            // 
+            // goInputBoolean1
+            // 
+            goInputBoolean1.BackColor = Color.FromArgb(60, 60, 60);
+            goInputBoolean1.BackgroundColor = "Base2";
+            goInputBoolean1.BorderColor = "Base3";
+            goInputBoolean1.ButtonSize = null;
+            goInputBoolean1.Direction = Going.UI.Enums.GoDirectionHV.Horizon;
+            goInputBoolean1.FillColor = "Base3";
+            goInputBoolean1.FontName = "나눔고딕";
+            goInputBoolean1.FontSize = 12F;
+            goInputBoolean1.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
+            goInputBoolean1.IconGap = 5F;
+            goInputBoolean1.IconSize = 12F;
+            goInputBoolean1.IconString = null;
+            goInputBoolean1.Location = new Point(153, 136);
+            goInputBoolean1.Name = "goInputBoolean1";
+            goInputBoolean1.Round = Going.UI.Enums.GoRoundType.All;
+            goInputBoolean1.Size = new Size(206, 40);
+            goInputBoolean1.TabIndex = 5;
+            goInputBoolean1.TabStop = false;
+            goInputBoolean1.Text = "goInputBoolean1";
+            goInputBoolean1.TextColor = "Fore";
+            goInputBoolean1.Title = null;
+            goInputBoolean1.TitleSize = null;
+            goInputBoolean1.Value = false;
+            goInputBoolean1.ValueColor = "Base1";
             // 
             // goStep1
             // 
@@ -508,5 +537,6 @@
         private Going.UI.Forms.Controls.GoInputColor goInputColor1;
         private Going.UI.Forms.Controls.GoInputDateTime goInputDateTime1;
         private Going.UI.Forms.Controls.GoStep goStep1;
+        private Going.UI.Forms.Controls.GoInputBoolean goInputBoolean1;
     }
 }

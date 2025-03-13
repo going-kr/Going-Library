@@ -2,6 +2,7 @@
 using Going.UI.Datas;
 using Going.UI.Enums;
 using Going.UI.Extensions;
+using Going.UI.Managers;
 using Going.UI.Themes;
 using Going.UI.Tools;
 using Going.UI.Utils;
@@ -64,6 +65,19 @@ namespace Going.UI.Controls
         private double hsV, vsV;
         private bool bShift, bControl;
         private GoDataGridRow? first;
+        #endregion
+
+        #region Event
+        
+        public event EventHandler SelectedChanged;
+        public event EventHandler SortChanged;
+
+        public event EventHandler<GoDataGridColumnMouseEventArgs> ColumnMouseClick;
+        public event EventHandler<GoDataGridCellMouseEventArgs> CellMouseClick;
+        public event EventHandler<GoDataGridCellMouseEventArgs> CellMouseDoubleClick;
+        public event EventHandler<GoDataGridCellMouseEventArgs> CellMouseLongClick;
+        public event EventHandler<GoDataGridCellButtonClickEventArgs> CellButtonClick;
+        public event EventHandler<GoDataGridCellValueChangedEventArgs> ValueChanged;
         #endregion
 
         #region Constructor
@@ -219,9 +233,13 @@ namespace Going.UI.Controls
                 }
             }
             #endregion
+            #region Border
+            Util.DrawBox(canvas, rtColumn, SKColors.Transparent, cCol, GoRoundType.T, thm.Corner);
+            if (SummaryRows.Count > 0) Util.DrawBox(canvas, rtSummary, SKColors.Transparent, cSum, GoRoundType.B, thm.Corner);
+            #endregion
             #region Rows
             {
-                Util.DrawBox(canvas, rtRow, SKColors.Transparent, cRow.BrightnessTransmit(BorderBright * br), SummaryRows.Count > 0 ? GoRoundType.Rect : GoRoundType.B, thm.Corner);
+                Util.DrawBox(canvas, rtRow, SKColors.Transparent, cRow, SummaryRows.Count > 0 ? GoRoundType.Rect : GoRoundType.B, thm.Corner);
 
                 using (new SKAutoCanvasRestore(canvas))
                 {
@@ -232,7 +250,7 @@ namespace Going.UI.Controls
                     rt.Offset(0, -Convert.ToSingle(vscroll.ScrollPositionWithOffset));
                     var (si, ei) = Util.FindRect(mrows.Select(x => x.Bounds).ToList(), rt);
 
-                    if (si >= 0 && si < mrows.Count && ei > 0 && ei < mrows.Count)
+                    if (si >= 0 && si < mrows.Count && ei >= 0 && ei < mrows.Count)
                     {
                         using (new SKAutoCanvasRestore(canvas))
                         {
@@ -282,13 +300,7 @@ namespace Going.UI.Controls
 
             }
             #endregion
-
-            #region Border
-            Util.DrawBox(canvas, rtColumn, SKColors.Transparent, cCol, GoRoundType.T, thm.Corner);
-            if (SummaryRows.Count > 0) Util.DrawBox(canvas, rtSummary, SKColors.Transparent, cSum, GoRoundType.B, thm.Corner);
-            Util.DrawBox(canvas, rtRow, SKColors.Transparent, cRow, SummaryRows.Count > 0 ? GoRoundType.Rect : GoRoundType.B, thm.Corner);
-            #endregion
-
+         
             hscroll.Draw(canvas, rtScrollH);
             vscroll.Draw(canvas, rtScrollV);
 
@@ -531,6 +543,17 @@ namespace Going.UI.Controls
                         foreach (var v in mrows) v.Selected = !val;
                     }
                 }
+
+                if (x < cl)
+                {
+                    foreach (var c in Columns.Where(x => x.Fixed)) if (CollisionTool.Check(c.Bounds, x, y)) ColumnMouseClick?.Invoke(this, new(c));
+                    foreach (var c in ColumnGroups.Where(x => x.Fixed)) if (CollisionTool.Check(c.Bounds, x, y)) ColumnMouseClick?.Invoke(this, new(c));
+                }
+                else
+                {
+                    foreach (var c in Columns.Where(x => !x.Fixed)) if (CollisionTool.Check(c.Bounds, rx, y)) ColumnMouseClick?.Invoke(this, new(c));
+                    foreach (var c in ColumnGroups.Where(x => !x.Fixed)) if (CollisionTool.Check(c.Bounds, rx, y)) ColumnMouseClick?.Invoke(this, new(c));
+                }
             }
             #endregion
             #region Rows
@@ -542,17 +565,143 @@ namespace Going.UI.Controls
                         var rtSel = Util.FromRect(row.Bounds.Left, row.Bounds.Top, 30, row.Bounds.Height);
                         var rtChk = MathTool.MakeRectangle(rtSel, new SKSize(20, 20));
 
-                        if (CollisionTool.Check(rtChk, x, ry)) row.Selected = !row.Selected;
+                        if (CollisionTool.Check(rtChk, x, ry))
+                        {
+                            row.Selected = !row.Selected;
+                            SelectedChanged?.Invoke(this, EventArgs.Empty);
+                        }
                     }
                     else if (CollisionTool.Check(row.Bounds, x, ry))
                     {
                         select(row);
+                    }
+
+                    if (x < cl)
+                    {
+                        foreach (var c in row.Cells.Where(x => x.Column.Fixed))
+                        {
+                            c.MouseClick(x, ry, button);
+                            if (CollisionTool.Check(c.Bounds, x, ry)) CellMouseClick?.Invoke(this, new(c));
+                        }
+                    }
+                    else
+                    {
+                        foreach (var c in row.Cells.Where(x => !x.Column.Fixed))
+                        {
+                            c.MouseClick(rx, ry, button);
+                            if (CollisionTool.Check(c.Bounds, rx, ry)) CellMouseClick?.Invoke(this, new(c));
+                        }
                     }
                 });
             }
             #endregion
              
             base.OnMouseClick(x, y, button);
+        }
+
+        protected override void OnMouseDoubleClick(float x, float y, GoMouseButton button)
+        {
+            #region var
+            var rts = Areas();
+            var rtColumn = rts["Column"];
+            var rtRow = rts["Row"];
+
+            var ush = ScrollMode == ScrollMode.Both || ScrollMode == ScrollMode.Horizon;
+            var usv = ScrollMode == ScrollMode.Both || ScrollMode == ScrollMode.Vertical;
+
+            var hspos = Convert.ToSingle(hscroll.ScrollPositionWithOffset);
+            var vspos = Convert.ToSingle(vscroll.ScrollPositionWithOffset);
+
+            var rx = x - rtColumn.Left - hspos;
+            var ry = y - rtRow.Top - vspos;
+
+            var cl = Columns.FirstOrDefault(x => !x.Fixed)?.Bounds.Left ?? 0;
+            #endregion
+
+            #region Rows
+            {
+                rowsLoop(rtRow, (i, row) =>
+                {
+                    if (x < cl)
+                    {
+                        foreach (var c in row.Cells.Where(x => x.Column.Fixed)) if (CollisionTool.Check(c.Bounds, x, ry)) CellMouseDoubleClick?.Invoke(this, new(c));
+                    }
+                    else
+                    {
+                        foreach (var c in row.Cells.Where(x => !x.Column.Fixed)) if (CollisionTool.Check(c.Bounds, rx, ry)) CellMouseDoubleClick?.Invoke(this, new(c));
+                    }
+                });
+            }
+            #endregion
+
+            base.OnMouseDoubleClick(x, y, button);
+        }
+
+        protected override void OnMouseLongClick(float x, float y, GoMouseButton button)
+        {
+            #region var
+            var rts = Areas();
+            var rtColumn = rts["Column"];
+            var rtRow = rts["Row"];
+
+            var ush = ScrollMode == ScrollMode.Both || ScrollMode == ScrollMode.Horizon;
+            var usv = ScrollMode == ScrollMode.Both || ScrollMode == ScrollMode.Vertical;
+
+            var hspos = Convert.ToSingle(hscroll.ScrollPositionWithOffset);
+            var vspos = Convert.ToSingle(vscroll.ScrollPositionWithOffset);
+
+            var rx = x - rtColumn.Left - hspos;
+            var ry = y - rtRow.Top - vspos;
+
+            var cl = Columns.FirstOrDefault(x => !x.Fixed)?.Bounds.Left ?? 0;
+            #endregion
+
+            #region Rows
+            {
+                rowsLoop(rtRow, (i, row) =>
+                {
+                    if (x < cl)
+                    {
+                        foreach (var c in row.Cells.Where(x => x.Column.Fixed)) if (CollisionTool.Check(c.Bounds, x, ry)) CellMouseLongClick?.Invoke(this, new(c));
+                    }
+                    else
+                    {
+                        foreach (var c in row.Cells.Where(x => !x.Column.Fixed)) if (CollisionTool.Check(c.Bounds, rx, ry)) CellMouseLongClick?.Invoke(this, new(c));
+                    }
+                });
+            }
+            #endregion
+
+            base.OnMouseLongClick(x, y, button);
+        }
+
+        protected override void OnMouseWheel(float x, float y, float delta)
+        {
+            #region var
+            var rts = Areas();
+            var rtColumn = rts["Column"];
+            var rtRow = rts["Row"];
+
+            var ush = ScrollMode == ScrollMode.Both || ScrollMode == ScrollMode.Horizon;
+            var usv = ScrollMode == ScrollMode.Both || ScrollMode == ScrollMode.Vertical;
+
+            var hspos = Convert.ToSingle(hscroll.ScrollPositionWithOffset);
+            var vspos = Convert.ToSingle(vscroll.ScrollPositionWithOffset);
+
+            var rx = x - rtColumn.Left - hspos;
+            var ry = y - rtRow.Top - vspos;
+
+            var cl = Columns.FirstOrDefault(x => !x.Fixed)?.Bounds.Left ?? 0;
+            #endregion
+
+            #region Wheel
+            if (CollisionTool.Check(rts["Row"], x, y))
+            {
+                if (usv) vscroll.MouseWheel(x, y, delta);
+                else if (ush) hscroll.MouseWheel(x, y, delta);
+            }
+            #endregion
+            base.OnMouseWheel(x, y, delta);
         }
         #endregion
 
@@ -671,18 +820,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Method
-        #region GetColumnRowCount
-        private int GetColumnRowCount()
-        {
-            int ret = 0;
-            foreach (var col in Columns)
-            {
-                var ls = ColumnTree(col);
-                ret = Math.Max(ls.Count, ret);
-            }
-            return ret;
-        }
-        #endregion
+        #region Private
         #region ColumnTree
         List<GoDataGridColumn> ColumnTree(GoDataGridColumn col)
         {
@@ -721,6 +859,130 @@ namespace Going.UI.Controls
         }
         #endregion
 
+        #region select
+        private void select(GoDataGridRow item)
+        {
+            #region Single
+            if (SelectionMode == GoDataGridSelectionMode.Single)
+            {
+                Parallel.ForEach(Rows, (v) => v.Selected = false);
+                item.Selected = true;
+                first = item;
+                SelectedChanged?.Invoke(this, EventArgs.Empty);
+            }
+            #endregion
+            #region Multi
+            else if (SelectionMode == GoDataGridSelectionMode.Multi)
+            {
+                item.Selected = !item.Selected;
+                SelectedChanged?.Invoke(this, EventArgs.Empty);
+            }
+            #endregion
+            #region MultiPC
+            else if (SelectionMode == GoDataGridSelectionMode.MultiPC)
+            {
+                if (bControl)
+                {
+                    #region Control
+                    item.Selected = !item.Selected;
+                    if (item.Selected) first = item;
+
+                    SelectedChanged?.Invoke(this, EventArgs.Empty);
+                    #endregion
+                }
+                else if (bShift)
+                {
+                    #region Shift
+                    if (first == null)
+                    {
+                        item.Selected = true;
+                        SelectedChanged?.Invoke(this, EventArgs.Empty);
+                    }
+                    else
+                    {
+                        int idx1 = mrows.IndexOf(first);
+                        int idx2 = mrows.IndexOf(item);
+                        int min = Math.Min(idx1, idx2);
+                        int max = Math.Max(idx1, idx2);
+                        for (int ii = min; ii <= max; ii++) mrows[ii].Selected = true;
+
+                        SelectedChanged?.Invoke(this, EventArgs.Empty);
+                    }
+                    #endregion
+                }
+                else
+                {
+                    Parallel.ForEach(Rows, (v) => v.Selected = false);
+                    item.Selected = true;
+                    first = item;
+                    SelectedChanged?.Invoke(this, EventArgs.Empty);
+                }
+            }
+            #endregion
+        }
+        #endregion
+
+        #region rowsLoop
+        void rowsLoop(SKRect rtRow, Action<int, GoDataGridRow> loop)
+        {
+            if (mrows.Count > 0)
+            {
+                var vspos = Convert.ToSingle(vscroll.ScrollPositionWithOffset);
+
+                var rt = Util.FromRect(0, 0, rtRow.Width, rtRow.Height);
+                rt.Offset(0, -Convert.ToSingle(vscroll.ScrollPositionWithOffset));
+                var (si, ei) = Util.FindRect(mrows.Select(x => x.Bounds).ToList(), rt);
+
+                if (si >= 0 && si < mrows.Count && ei >= 0 && ei < mrows.Count)
+                {
+                    for (int i = si; i <= ei; i++)
+                    {
+                        var r = mrows[i];
+
+                        loop(i, r);
+                    }
+                }
+            }
+        }
+        #endregion
+        #endregion
+
+        #region Internal
+        internal void InvokeButtonClick(GoDataGridButtonCell cell) => CellButtonClick?.Invoke(this, new GoDataGridCellButtonClickEventArgs(cell));
+        internal void InvokeValueChange(GoDataGridCell cell, object? oldValue, object? newValue) => ValueChanged?.Invoke(this, new GoDataGridCellValueChangedEventArgs(cell, oldValue, newValue));
+
+        internal void InvokeEditText(GoDataGridInputTextCell cell, string? value)
+        {
+            var rts = Areas();
+            var rtColumn = rts["Column"];
+            var rtRow = rts["Row"];
+
+            var hspos = Convert.ToSingle(hscroll.ScrollPositionWithOffset);
+            var vspos = Convert.ToSingle(vscroll.ScrollPositionWithOffset);
+           
+            InputObject = cell;
+            var rt = cell.Bounds;
+            rt.Offset(rtRow.Left + (cell.Column.Fixed ? 0 : hspos), rtRow.Top + vspos);
+            GoInputEventer.Current.FireInputString(this, rt, (s) => { cell.Value = s; }, value);
+        }
+
+        internal void InvokeEditNumber<T>(GoDataGridInputNumberCell<T> cell, T value, T? min, T? max) where T : struct
+        {
+            var rts = Areas();
+            var rtColumn = rts["Column"];
+            var rtRow = rts["Row"];
+
+            var hspos = Convert.ToSingle(hscroll.ScrollPositionWithOffset);
+            var vspos = Convert.ToSingle(vscroll.ScrollPositionWithOffset);
+
+            InputObject = cell;
+            var rt = cell.Bounds;
+            rt.Offset(rtRow.Left + (cell.Column.Fixed ? 0 : hspos), rtRow.Top + vspos);
+            GoInputEventer.Current.FireInputNumber(this, rt, (s) => { cell.Value = ValueTool.FromString<T>(s); }, value, min, max);
+        }
+        #endregion
+
+        #region Public
         #region SetDataSource<T>
         public void SetDataSource<T>(IEnumerable<T> values)
         {
@@ -792,14 +1054,14 @@ namespace Going.UI.Controls
                             {
                                 var col = Columns[i];
                                 var tp = col.GetType();
-                                if (tp.IsGenericType && tp.GetGenericTypeDefinition() == typeof(GoDataGridNumberColumn<>))
+                                if (tp.IsGenericType && (tp.GetGenericTypeDefinition() == typeof(GoDataGridNumberColumn<>) || tp.GetGenericTypeDefinition() == typeof(GoDataGridInputNumberColumn<>)))
                                 {
                                     var p = tp.GetProperty("FormatString");
                                     var frmt = p?.GetValue(col) as string;
 
-                                    if(row is GoDataGridSumSummaryRow)
+                                    if (row is GoDataGridSumSummaryRow)
                                     {
-                                        var cell = new GoDataGridSumSummaryCell(this, row, col) { FormatString= frmt };
+                                        var cell = new GoDataGridSumSummaryCell(this, row, col) { FormatString = frmt };
                                         row.Cells.Add(cell);
                                     }
                                     else if (row is GoDataGridAverageSummaryRow)
@@ -899,6 +1161,9 @@ namespace Going.UI.Controls
                 {
                     if (cols[i].UseFilter && !string.IsNullOrWhiteSpace(cols[i].FilterText))
                     {
+                        var mm = mrows.First();
+                        var v = (mm.Cells[i].Value?.ToString()?.ToLower() ?? "").IndexOf((cols[i].FilterText ?? "").ToLower());
+
                         mrows = mrows.Where(m => ((m.Cells[i].Value?.ToString()?.ToLower() ?? "").IndexOf((cols[i].FilterText ?? "").ToLower()) != -1)).ToList();
                     }
                 }
@@ -926,97 +1191,15 @@ namespace Going.UI.Controls
                 {
                     v.RowIndex = ri;
                     v.Bounds = Util.FromRect(rtRow.Left, y, rtRow.Width, RowHeight);
-
+                    v.Calculate();
                     y += RowHeight;
                     ri++;
                 }
             }
             #endregion
         }
+
         #endregion
-
-        #region select
-        private void select(GoDataGridRow item)
-        {
-            #region Single
-            if (SelectionMode == GoDataGridSelectionMode.Single)
-            {
-                Parallel.ForEach(Rows, (v) => v.Selected = false);
-                item.Selected = true;
-                first = item;
-            }
-            #endregion
-            #region Multi
-            else if (SelectionMode == GoDataGridSelectionMode.Multi)
-            {
-                item.Selected = !item.Selected;
-            }
-            #endregion
-            #region MultiPC
-            else if (SelectionMode == GoDataGridSelectionMode.MultiPC)
-            {
-                if (bControl)
-                {
-                    #region Control
-                    item.Selected = !item.Selected;
-                    if(item.Selected) first = item;
-                    #endregion
-                }
-                else if (bShift)
-                {
-                    #region Shift
-                    if (first == null)
-                    {
-                        item.Selected = true;
-                    }
-                    else
-                    {
-                        int idx1 = mrows.IndexOf(first);
-                        int idx2 = mrows.IndexOf(item);
-                        int min = Math.Min(idx1, idx2);
-                        int max = Math.Max(idx1, idx2);
-
-                        bool b = false;
-                        for (int ii = min; ii <= max; ii++)
-                        {
-                            mrows[ii].Selected = true;
-                        }
-                    }
-                    #endregion
-                }
-                else
-                {
-                    Parallel.ForEach(Rows, (v) => v.Selected = false);
-                    item.Selected = true;
-                    first = item;
-                }
-            }
-            #endregion
-        }
-        #endregion
-
-        #region rowsLoop
-        void rowsLoop(SKRect rtRow, Action<int, GoDataGridRow> loop)
-        {
-            if (mrows.Count > 0)
-            {
-                var vspos = Convert.ToSingle(vscroll.ScrollPositionWithOffset);
-
-                var rt = Util.FromRect(0, 0, rtRow.Width, rtRow.Height);
-                rt.Offset(0, -Convert.ToSingle(vscroll.ScrollPositionWithOffset));
-                var (si, ei) = Util.FindRect(mrows.Select(x => x.Bounds).ToList(), rt);
-
-                if (si >= 0 && si < mrows.Count && ei > 0 && ei < mrows.Count)
-                {
-                    for (int i = si; i <= ei; i++)
-                    {
-                        var r = mrows[i];
-
-                        loop(i, r);
-                    }
-                }
-            }
-        }
         #endregion
         #endregion
     }

@@ -117,8 +117,8 @@ namespace Going.UI.Controls
 
                 Task.Run(async () =>
                 {
-                    while (bDown && (DateTime.Now - downTime).TotalMilliseconds < LongClickTime) await Task.Delay(100);
                     downTime = DateTime.Now;
+                    while (bDown && (DateTime.Now - downTime).TotalMilliseconds < LongClickTime) await Task.Delay(100);
 
                     if ((DateTime.Now - downTime).TotalMilliseconds >= LongClickTime && CollisionTool.Check(rtContent, x, y))
                         OnMouseLongClick(x, y, button);
