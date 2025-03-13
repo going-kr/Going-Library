@@ -35,7 +35,7 @@ namespace Going.UI.Controls
         public float ItemHeight { get; set; } = 30;
         public ObservableList<GoTreeNode> Nodes { get; set; } = [];
 
-        public GoItemSelectionMode SelectionMode { get; set; } = GoItemSelectionMode.SIngle;
+        public GoItemSelectionMode SelectionMode { get; set; } = GoItemSelectionMode.Single;
         [JsonIgnore] public List<GoTreeNode> SelectedNodes { get; } = [];
 
         [JsonIgnore] public double ScrollPosition { get => scroll.ScrollPosition; set => scroll.ScrollPosition = value; }
@@ -299,7 +299,7 @@ namespace Going.UI.Controls
         private void select(GoTreeNode item)
         {
             #region Single
-            if (SelectionMode == GoItemSelectionMode.SIngle)
+            if (SelectionMode == GoItemSelectionMode.Single)
             {
                 SelectedNodes.Clear();
                 SelectedNodes.Add(item);

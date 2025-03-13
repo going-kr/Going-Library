@@ -148,7 +148,7 @@ namespace Going.UI.Containers
                                     p.IsStroke = false; p.Color = cTab;
                                     canvas.DrawRect(Util.FromRect(rtPage.Left, rt.Bottom, c2, c2), p);
 
-                                    var n = (int)rtPage.Left + 0.5F;
+                                    var n = Convert.ToInt32(rtPage.Left) + 0.5F;
                                     p.IsStroke = true; p.StrokeWidth = 1; p.Color = cBorder;
                                     canvas.DrawLine(n, rt.Bottom - c2, n, rt.Bottom + c2, p);
                                 }
@@ -158,7 +158,7 @@ namespace Going.UI.Containers
                                     p.IsStroke = false; p.Color = cTab;
                                     canvas.DrawRect(Util.FromRect(rtPage.Left, rt.Top - c2, c2, c2), p);
 
-                                    var n = (int)rtPage.Left + 0.5F;
+                                    var n = Convert.ToInt32(rtPage.Left) + 0.5F;
                                     p.IsStroke = true; p.StrokeWidth = 1; p.Color = cBorder;
                                     canvas.DrawLine(n, rt.Top + c2, n, rt.Top - c2, p);
                                 }
@@ -168,7 +168,7 @@ namespace Going.UI.Containers
                                     p.IsStroke = false; p.Color = cTab;
                                     canvas.DrawRect(Util.FromRect(rt.Right, rtPage.Top, c2, c2), p);
 
-                                    var n = (int)rtPage.Top + 0.5F;
+                                    var n = Convert.ToInt32(rtPage.Left) + 0.5F;
                                     p.IsStroke = true; p.StrokeWidth = 1; p.Color = cBorder;
                                     canvas.DrawLine(rt.Right - c2, n, rt.Right + c2, n, p);
                                 }
@@ -178,7 +178,7 @@ namespace Going.UI.Containers
                                     p.IsStroke = false; p.Color = cTab;
                                     canvas.DrawRect(Util.FromRect(rt.Left - c2, rtPage.Top, c2, c2), p);
 
-                                    var n = (int)rtPage.Top + 0.5F;
+                                    var n = Convert.ToInt32(rtPage.Left) + 0.5F;
                                     p.IsStroke = true; p.StrokeWidth = 1; p.Color = cBorder;
                                     canvas.DrawLine(rt.Left + c2, n, rt.Left - c2, n, p);
                                 }

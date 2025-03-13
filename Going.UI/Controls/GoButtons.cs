@@ -83,7 +83,7 @@ namespace Going.UI.Controls
                     {
                         using var p = new SKPaint { IsAntialias = true, IsStroke = true, StrokeWidth = 1, Color = cBtn.BrightnessTransmit(thm.BorderBrightness) };
                         using var pe = SKPathEffect.CreateDash([2, 2], 2);
-                        float x = (int)rt.Left; x += 0.5F;
+                        float x = Convert.ToInt32(rt.Left); x += 0.5F;
                         p.PathEffect = pe;
                         canvas.DrawLine(x, rt.Top + 5, x, rt.Bottom - 5, p);
                     }
