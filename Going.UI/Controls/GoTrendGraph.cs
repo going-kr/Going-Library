@@ -1,4 +1,4 @@
-﻿// using Going.UI.Controls.TrendGraph;
+// using Going.UI.Controls.TrendGraph;
 // using Going.UI.Enums;
 // using Going.UI.Themes;
 // using Going.UI.Utils;
