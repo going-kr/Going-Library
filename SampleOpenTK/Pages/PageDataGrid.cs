@@ -5,6 +5,7 @@ using Going.UI.Enums;
 using Going.UI.Tools;
 using Going.UI.Utils;
 using OpenTK.Graphics.ES11;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +28,7 @@ namespace SampleOpenTK.Pages
             dg = new GoDataGrid { Fill = true, Margin = new GoPadding(10) };
             Childrens.Add(dg);
 
-            string[] sz1 = ["100px", "80px", "120px", "11.1%", "11.1%", "11.1%", "11.1%", "11.1%", "11.1%", "11.1%", "11.1%", "11.2%"];
+            string[] sz1 = ["80px", "80px", "120px", "10.0%", "18.0%", "9.0%", "9.0%", "9.0%", "9.0%", "9.0%", "9.0%", "9.0%", "9.0%"];
             string[] sz2 = ["100px", "100px", "100px", "100px", "100px", "100px", "100px", "100px", "100px", "100px", "100px", "100px"];
             var sz = sz1;
 
@@ -35,14 +36,17 @@ namespace SampleOpenTK.Pages
             dg.Columns.Add(new GoDataGridLabelColumn { Name = "DeviceType", HeaderText = "타입", Size = sz[1], GroupName = "Info", Fixed = true, UseFilter = true, TextConverter = ToString });
             dg.Columns.Add(new GoDataGridInputBoolColumn { Name = "Use", HeaderText = "사용여부", Size = sz[2], GroupName = "Info", Fixed = true, OnText = "사용", OffText = "미사용" });
             dg.Columns.Add(new GoDataGridLabelColumn { Name = "Operation", HeaderText = "상태", Size = sz[3], GroupName = "Motor"});
-            dg.Columns.Add(new GoDataGridInputNumberColumn<double> { Name = "Position", HeaderText = "위치", Size = sz[4], GroupName = "Motor", Minimum = 0, Maximum = 2000, FormatString = "0.0" });
-            dg.Columns.Add(new GoDataGridInputNumberColumn<double> { Name = "Speed", HeaderText = "속도", Size = sz[5], GroupName = "Motor", Minimum = 0, Maximum = 100, FormatString = "0.0" });
-            dg.Columns.Add(new GoDataGridNumberColumn<double> { Name = "Current", HeaderText = "전류", Size = sz[6], GroupName = "Sensor", FormatString = "0.0" });
-            dg.Columns.Add(new GoDataGridNumberColumn<double> { Name = "Voltage", HeaderText = "전압", Size = sz[7], GroupName = "Sensor", FormatString = "0.0" });
-            dg.Columns.Add(new GoDataGridNumberColumn<double> { Name = "Temp", HeaderText = "온도", Size = sz[8], GroupName = "Sensor", FormatString = "0.0", UseSort = true });
-            dg.Columns.Add(new GoDataGridNumberColumn<double> { Name = "Presure", HeaderText = "압력", Size = sz[9], GroupName = "Sensor", FormatString = "0.0" });
-            dg.Columns.Add(new GoDataGridLampColumn { Name = "Alarm", HeaderText = "알람", Size = sz[10], GroupName = "Warning", OnColor = "red" });
-            dg.Columns.Add(new GoDataGridButtonColumn { Name = "Button", HeaderText = "리셋", Size = sz[11], GroupName = "Warning", IconString = "fa-rotate", Text = "리셋" });
+            dg.Columns.Add(new GoDataGridInputTimeColumn { Name = "ReserveTime", HeaderText = "예약 시간", Size = sz[4], GroupName = "Motor", DateFormat = "yyyy.MM.dd", DateTimeStyle = GoDateTimeKind.Date });
+            //dg.Columns.Add(new GoDataGridInputColorColumn { Name = "LightColor", HeaderText = "색상", Size = sz[4], GroupName = "Motor" });
+            //dg.Columns.Add(new GoDataGridInputComboColumn { Name = "DOW", HeaderText = "요일", Size = sz[4], GroupName = "Motor", Items = Enum.GetValues<DayOfWeek>().Select(x => new GoDataGridInputComboItem { Text = x.ToString(), Value = x }).ToList() });
+            dg.Columns.Add(new GoDataGridInputNumberColumn<double> { Name = "Position", HeaderText = "위치", Size = sz[5], GroupName = "Motor", Minimum = 0, Maximum = 2000, FormatString = "0.0" });
+            dg.Columns.Add(new GoDataGridInputNumberColumn<double> { Name = "Speed", HeaderText = "속도", Size = sz[6], GroupName = "Motor", Minimum = 0, Maximum = 100, FormatString = "0.0" });
+            dg.Columns.Add(new GoDataGridNumberColumn<double> { Name = "Current", HeaderText = "전류", Size = sz[7], GroupName = "Sensor", FormatString = "0.0" });
+            dg.Columns.Add(new GoDataGridNumberColumn<double> { Name = "Voltage", HeaderText = "전압", Size = sz[8], GroupName = "Sensor", FormatString = "0.0" });
+            dg.Columns.Add(new GoDataGridNumberColumn<double> { Name = "Temp", HeaderText = "온도", Size = sz[9], GroupName = "Sensor", FormatString = "0.0", UseSort = true });
+            dg.Columns.Add(new GoDataGridNumberColumn<double> { Name = "Presure", HeaderText = "압력", Size = sz[10], GroupName = "Sensor", FormatString = "0.0" });
+            dg.Columns.Add(new GoDataGridLampColumn { Name = "Alarm", HeaderText = "알람", Size = sz[11], GroupName = "Warning", OnColor = "red" });
+            dg.Columns.Add(new GoDataGridButtonColumn { Name = "Button", HeaderText = "리셋", Size = sz[12], GroupName = "Warning", IconString = "fa-rotate", Text = "리셋" });
 
             dg.ColumnGroups.Add(new GoDataGridLabelColumn { Name = "Info", HeaderText = "장치 정보", Fixed = true });
             dg.ColumnGroups.Add(new GoDataGridLabelColumn { Name = "Motor", HeaderText = "구동부", GroupName = "State" });
@@ -110,6 +114,9 @@ namespace SampleOpenTK.Pages
         public DeviceType DeviceType { get; set; } = DeviceType.Upper;
         public bool Use { get; set; }
         public string Operation { get => Use ? opr : "Not Use"; set { if (Use) opr = value; } }
+        public DateTime ReserveTime { get; set; }
+        //public SKColor LightColor { get; set; }
+        //public DayOfWeek DOW { get; set; }
         public double Position { get; set; }
         public double Speed { get; set; }
         public double Current { get; set; }

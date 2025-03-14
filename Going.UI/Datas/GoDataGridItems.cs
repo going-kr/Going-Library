@@ -1,4 +1,5 @@
 ﻿using Going.UI.Controls;
+using Going.UI.Design;
 using Going.UI.Enums;
 using Going.UI.Extensions;
 using Going.UI.Managers;
@@ -10,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Net.WebSockets;
 using System.Reflection;
@@ -17,11 +19,13 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Going.UI.Datas
 {
+    #region Base
     #region class : GoDataGridCell
     public abstract class GoDataGridCell
     {
@@ -475,6 +479,7 @@ namespace Going.UI.Datas
         }
         #endregion
     }
+    #endregion
     #endregion
 
     #region Summary 
@@ -1095,12 +1100,355 @@ namespace Going.UI.Datas
         #endregion
     }
     #endregion
-    //InputTime
-    //Inputcolor
-    //InputCombo
+    #region InputTime
+    public class GoDataGridInputTimeCell : GoDataGridCell
+    {
+        #region Properties
+        public GoDateTimeKind DateTimeStyle { get; set; } = GoDateTimeKind.DateTime;
+        public string DateFormat { get; set; } = "yyyy-MM-dd";
+        public string TimeFormat { get; set; } = "HH:mm:ss";
+        #endregion
+
+        #region Constructor
+        public GoDataGridInputTimeCell(GoDataGrid Grid, GoDataGridRow Row, GoDataGridColumn Column) : base(Grid, Row, Column)
+        {
+            if (Column is GoDataGridInputTimeColumn col)
+            {
+                this.DateFormat = col.DateFormat;
+                this.TimeFormat = col.TimeFormat;
+                this.DateTimeStyle = col.DateTimeStyle;
+    }
+        }
+        #endregion
+
+        #region Draw
+        protected override void OnDraw(SKCanvas canvas)
+        {
+            base.OnDraw(canvas);
+
+            var thm = GoTheme.Current;
+            var br = GoTheme.Current.Dark ? 1F : -1F;
+            var dwndVisible = Grid.DateTimeDropDownVisible(this);
+            var cText = thm.ToColor(CellTextColor ?? Grid.TextColor);
+            var cRow = thm.ToColor(CellBackColor ?? Grid.RowColor);
+            var cSel = thm.ToColor(SelectedCellBackColor ?? Grid.SelectedRowColor);
+            var cF = Row.Selected ? cSel : cRow;
+            var cV = cF.BrightnessTransmit(Row.RowIndex % 2 == 0 ? 0.05F : -0.05F);
+            var cB = dwndVisible ? thm.Hignlight : cV.BrightnessTransmit(GoDataGrid.BorderBright * br);
+
+            var rt = Bounds; rt.Inflate(InputInflateW, InputInflateH);
+            Util.DrawBox(canvas, rt, cV.BrightnessTransmit(GoDataGrid.InputBright * br), cB, GoRoundType.Rect, thm.Corner);
+
+            var (rtText, rtArrow) = bounds(rt);
+
+            #region item
+            var format = $"{DateFormat} {TimeFormat}";
+            switch (DateTimeStyle)
+            {
+                case GoDateTimeKind.DateTime: format = $"{DateFormat} {TimeFormat}"; break;
+                case GoDateTimeKind.Time: format = TimeFormat; break;
+                case GoDateTimeKind.Date: format = DateFormat; break;
+            }
+            
+            var text = ValueTool.ToString(Value, format);
+            Util.DrawText(canvas, text, Grid.FontName, Grid.FontStyle, Grid.FontSize, rtText, cText);
+            #endregion
+            #region sep
+            using var p = new SKPaint { IsAntialias = false };
+            using var pe = SKPathEffect.CreateDash([2, 2], 2);
+            p.StrokeWidth = 1;
+            p.IsStroke = false;
+            p.Color = Util.FromArgb(128, cB);
+            p.PathEffect = pe;
+            canvas.DrawLine(rtArrow.Left, rt.Top + 5, rtArrow.Left, rt.Bottom - 5, p);
+            #endregion
+            #region arrow
+            var ico = "fa-calendar";
+            switch (DateTimeStyle)
+            {
+                case GoDateTimeKind.DateTime: ico = "fa-calendar"; break;
+                case GoDateTimeKind.Time: ico = "fa-clock"; break;
+                case GoDateTimeKind.Date: ico = "fa-calendar"; break;
+            }
+
+            if (dwndVisible) Util.DrawIcon(canvas, ico, 14, rtArrow, SKColors.Transparent, cText);
+            else Util.DrawIcon(canvas, ico, 14, rtArrow, cText);
+            #endregion
+        }
+        #endregion
+
+        #region Mouse
+        protected override void OnMouseClick(float x, float y, GoMouseButton button)
+        {
+            var rt = Bounds; rt.Inflate(InputInflateW, InputInflateH);
+            if (Value is DateTime dt && CollisionTool.Check(rt, x, y))
+            {
+                Grid.DateTimeDropDownOpen(this, rt, dt, DateTimeStyle, (time) =>
+                {
+                    if (time.HasValue)
+                    {
+                        var old = Value;
+                        Value = time.Value;
+                        try
+                        {
+                            if ((DateTime?)old != (DateTime?)Value) Grid.InvokeValueChange(this, old, Value);
+                        }
+                        catch { }
+                    }
+                });
+            }
+            base.OnMouseClick(x, y, button);
+        }
+        #endregion
+
+        #region bounds
+        (SKRect rtText, SKRect rtArrow) bounds(SKRect rtValue)
+        {
+            var rts = Util.Columns(rtValue, ["100%", $"{Math.Min(40, Bounds.Height)}px"]);
+            return (rts[0], rts[1]);
+        }
+        #endregion
+    }
+
+    public class GoDataGridInputTimeColumn : GoDataGridColumn
+    {
+        #region Properties
+        public GoDateTimeKind DateTimeStyle { get; set; } = GoDateTimeKind.DateTime;
+        public string DateFormat { get; set; } = "yyyy-MM-dd";
+        public string TimeFormat { get; set; } = "HH:mm:ss";
+        #endregion 
+
+        #region Constructor
+        public GoDataGridInputTimeColumn()
+        {
+            CellType = typeof(GoDataGridInputTimeCell);
+        }
+        #endregion
+    }
+    #endregion
+    #region InputColor
+    public class GoDataGridInputColorCell : GoDataGridCell
+    {
+        #region Properties
+        #endregion
+
+        #region Constructor
+        public GoDataGridInputColorCell(GoDataGrid Grid, GoDataGridRow Row, GoDataGridColumn Column) : base(Grid, Row, Column)
+        {
+            if (Column is GoDataGridInputTimeColumn col)
+            {
+            }
+        }
+        #endregion
+
+        #region Draw
+        protected override void OnDraw(SKCanvas canvas)
+        {
+            base.OnDraw(canvas);
+
+            var thm = GoTheme.Current;
+            var br = GoTheme.Current.Dark ? 1F : -1F;
+            var dwndVisible = Grid.ColorDropDownVisible(this);
+            var cText = thm.ToColor(CellTextColor ?? Grid.TextColor);
+            var cRow = thm.ToColor(CellBackColor ?? Grid.RowColor);
+            var cSel = thm.ToColor(SelectedCellBackColor ?? Grid.SelectedRowColor);
+            var cF = Row.Selected ? cSel : cRow;
+            var cV = cF.BrightnessTransmit(Row.RowIndex % 2 == 0 ? 0.05F : -0.05F);
+            var cB = dwndVisible ? thm.Hignlight : cV.BrightnessTransmit(GoDataGrid.BorderBright * br);
+
+            var rt = Bounds; rt.Inflate(InputInflateW, InputInflateH);
+            Util.DrawBox(canvas, rt, cV.BrightnessTransmit(GoDataGrid.InputBright * br), cB, GoRoundType.Rect, thm.Corner);
+
+            var (rtText, rtArrow) = bounds(rt);
+
+            #region Text
+            if (Value is SKColor c)
+            {
+                var isz = Grid.FontSize;
+                var text = $"#{c.Red:X2}{c.Green:X2}{c.Blue:X2}";
+
+                var (rtIco, rtVal) = Util.TextIconBounds(text, Grid.FontName, Grid.FontStyle, Grid.FontSize, new SKSize(isz, isz), GoDirectionHV.Horizon, 5, rtText, GoContentAlignment.MiddleCenter);
+
+                Util.DrawBox(canvas, rtIco, c, GoRoundType.Rect, thm.Corner);
+                Util.DrawText(canvas, text, Grid.FontName, Grid.FontStyle, Grid.FontSize, rtVal, cText);
+            }
+            #endregion
+            #region sep
+            using var p = new SKPaint { IsAntialias = false };
+            using var pe = SKPathEffect.CreateDash([2, 2], 2);
+            p.StrokeWidth = 1;
+            p.IsStroke = false;
+            p.Color = Util.FromArgb(128, cB);
+            p.PathEffect = pe;
+            canvas.DrawLine(rtArrow.Left, rt.Top + 5, rtArrow.Left, rt.Bottom - 5, p);
+            #endregion
+            #region arrow
+            if (dwndVisible) Util.DrawIcon(canvas, "fa-palette", 14, rtArrow, SKColors.Transparent, cText);
+            else Util.DrawIcon(canvas, "fa-palette", 14, rtArrow, cText);
+            #endregion
+        }
+        #endregion
+
+        #region Mouse
+        protected override void OnMouseClick(float x, float y, GoMouseButton button)
+        {
+            var rt = Bounds; rt.Inflate(InputInflateW, InputInflateH);
+            if (Value is SKColor c && CollisionTool.Check(rt, x, y))
+            {
+                Grid.ColorDropDownOpen(this, rt, c, (color) =>
+                {
+                    if (color.HasValue)
+                    {
+                        var old = Value;
+                        Value = color.Value;
+                        try
+                        {
+                            if ((SKColor?)old != (SKColor?)Value) Grid.InvokeValueChange(this, old, Value);
+                        }
+                        catch { }
+                    }
+                });
+            }
+            base.OnMouseClick(x, y, button);
+        }
+        #endregion
+
+        #region bounds
+        (SKRect rtText, SKRect rtArrow) bounds(SKRect rtValue)
+        {
+            var rts = Util.Columns(rtValue, ["100%", $"{Math.Min(40, Bounds.Height)}px"]);
+            return (rts[0], rts[1]);
+        }
+        #endregion
+    }
+
+    public class GoDataGridInputColorColumn : GoDataGridColumn
+    {
+        #region Properties
+        #endregion 
+
+        #region Constructor
+        public GoDataGridInputColorColumn()
+        {
+            CellType = typeof(GoDataGridInputColorCell);
+        }
+        #endregion
+    }
+    #endregion
+    #region InputCombo
+    public class GoDataGridInputComboCell : GoDataGridCell
+    {
+        #region Properties
+        #endregion
+
+        #region Constructor
+        public GoDataGridInputComboCell(GoDataGrid Grid, GoDataGridRow Row, GoDataGridColumn Column) : base(Grid, Row, Column)
+        {
+            if (Column is GoDataGridInputComboColumn col)
+            {
+            }
+        }
+        #endregion
+
+        #region Draw
+        protected override void OnDraw(SKCanvas canvas)
+        {
+            base.OnDraw(canvas);
+
+            var thm = GoTheme.Current;
+            var br = GoTheme.Current.Dark ? 1F : -1F;
+            var dwndVisible = Grid.ComboDropDownVisible(this);
+            var cText = thm.ToColor(CellTextColor ?? Grid.TextColor);
+            var cRow = thm.ToColor(CellBackColor ?? Grid.RowColor);
+            var cSel = thm.ToColor(SelectedCellBackColor ?? Grid.SelectedRowColor);
+            var cF = Row.Selected ? cSel : cRow;
+            var cV = cF.BrightnessTransmit(Row.RowIndex % 2 == 0 ? 0.05F : -0.05F);
+            var cB = dwndVisible ? thm.Hignlight : cV.BrightnessTransmit(GoDataGrid.BorderBright * br);
+
+            var rt = Bounds; rt.Inflate(InputInflateW, InputInflateH);
+            Util.DrawBox(canvas, rt, cV.BrightnessTransmit(GoDataGrid.InputBright * br), cB, GoRoundType.Rect, thm.Corner);
+
+            var (rtText, rtArrow) = bounds(rt);
+            #region Text
+            if (Column is GoDataGridInputComboColumn col)
+            {
+                var v = col.Items.FirstOrDefault(x => x.Value != null ? x.Value.Equals(Value) : false);
+                if (v != null) Util.DrawText(canvas, v.Text, Grid.FontName, Grid.FontStyle, Grid.FontSize, rtText, cText);
+            }
+            #endregion
+            #region sep
+            using var p = new SKPaint { IsAntialias = false };
+            using var pe = SKPathEffect.CreateDash([2, 2], 2);
+            p.StrokeWidth = 1;
+            p.IsStroke = false;
+            p.Color = Util.FromArgb(128, cB);
+            p.PathEffect = pe;
+            canvas.DrawLine(rtArrow.Left, rt.Top + 5, rtArrow.Left, rt.Bottom - 5, p);
+            #endregion
+            #region arrow
+            Util.DrawIcon(canvas, dwndVisible ? "fa-angle-up" : "fa-angle-down", 14, rtArrow, cText);
+            #endregion
+        }
+        #endregion
+
+        #region Mouse
+        protected override void OnMouseClick(float x, float y, GoMouseButton button)
+        {
+            var rt = Bounds; rt.Inflate(InputInflateW, InputInflateH);
+            if (Column is GoDataGridInputComboColumn col && CollisionTool.Check(rt, x, y))
+            {
+                var v = col.Items.FirstOrDefault(x => x.Value != null ? x.Value.Equals(Value) : false);
+                Grid.ComboDropDownOpen(this, rt, col.ItemHeight, col.MaximumViewCount, col.Items, v, (item) =>
+                {
+                    if (item != null)
+                    {
+                        var old = Value;
+                        Value = item.Value;
+                        try
+                        {
+                            if ((GoDataGridInputComboItem?)old != (GoDataGridInputComboItem?)Value) Grid.InvokeValueChange(this, old, Value);
+                        }
+                        catch { }
+                    }
+                });
+            }
+            base.OnMouseClick(x, y, button);
+        }
+        #endregion
+
+        #region bounds
+        (SKRect rtText, SKRect rtArrow) bounds(SKRect rtValue)
+        {
+            var rts = Util.Columns(rtValue, ["100%", $"{Math.Min(40, Bounds.Height)}px"]);
+            return (rts[0], rts[1]);
+        }
+        #endregion
+    }
+
+    public class GoDataGridInputComboColumn : GoDataGridColumn
+    {
+        #region Properties
+        public List<GoDataGridInputComboItem> Items { get; set; } = [];
+        public int MaximumViewCount { get; set; } = 8;
+        public int ItemHeight { get; set; } = 30;
+        #endregion 
+
+        #region Constructor
+        public GoDataGridInputComboColumn()
+        {
+            CellType = typeof(GoDataGridInputComboCell);
+        }
+        #endregion
+    }
+
+    public class GoDataGridInputComboItem : GoListItem
+    {
+        public object? Value { get; set; }
+    }
+    #endregion
     #endregion
 
-    #region classes : EventArgs
+    #region EventArgs
     public class GoDataGridCellButtonClickEventArgs(GoDataGridCell cell) : EventArgs
     {
         public GoDataGridCell Cell { get; private set; } = cell;

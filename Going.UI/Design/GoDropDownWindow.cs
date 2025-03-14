@@ -107,12 +107,12 @@ namespace Going.UI.Design
             lb.ItemHeight = itemHeight;
 
             var designH = GoDesign.ActiveDesign?.Height ?? 0;
-            var iw = items.Count > 0 ? items.Select(x => Util.MeasureTextIcon(x.Text, lb.FontName, lb.FontStyle, lb.FontSize, x.IconString, lb.IconSize, GoDirectionHV.Horizon, lb.IconGap)).Max(x => x.Width) : 0F;
-
-            var ih = itemHeight * Math.Min(maximumViewCount, items.Count) + 1;
             var rtValue = screenBounds;
-            var bounds = Util.FromRect(rtValue.Left, rtValue.Bottom, Math.Max(iw, rtValue.Width), ih);
-            if (bounds.Bottom > designH) bounds = Util.FromRect(rtValue.Left, rtValue.Top - ih, Math.Max(iw, rtValue.Width), ih);
+            var iw = items.Count > 0 ? items.Select(x => Util.MeasureTextIcon(x.Text, lb.FontName, lb.FontStyle, lb.FontSize, x.IconString, lb.IconSize, GoDirectionHV.Horizon, lb.IconGap)).Max(x => x.Width) : 0F;
+            var ih = itemHeight * Math.Min(maximumViewCount, items.Count) + 1;
+            var w = Math.Max(iw, rtValue.Width);
+            var bounds = Util.FromRect(rtValue.Left, rtValue.Bottom + 1, w, ih);
+            if (bounds.Bottom > designH) bounds = Util.FromRect(rtValue.Left, rtValue.Top - ih-1, Math.Max(iw, rtValue.Width), ih);
 
             Bounds = bounds;
 
@@ -177,11 +177,11 @@ namespace Going.UI.Design
 
             var designH = GoDesign.ActiveDesign?.Height ?? 0;
             var rtValue = screenBounds;
-            var w = Math.Min(300, rtValue.Width);
+            var w = MathTool.Constrain(rtValue.Width, 280, 360);
             var h = w + 40;
-            var bounds = Util.FromRect(rtValue.Left, rtValue.Bottom, Math.Min(w, rtValue.Width), h);
-            if (bounds.Bottom > designH) bounds = Util.FromRect(rtValue.Left, rtValue.Top - h, Math.Max(w, rtValue.Width), h);
 
+            var bounds = Util.FromRect(rtValue.Left, rtValue.Bottom + 1, w, h);
+            if (bounds.Bottom > designH) bounds = Util.FromRect(rtValue.Left, rtValue.Top - h-1, Math.Max(w, rtValue.Width), h);
             Bounds = bounds;
          
             Show();
@@ -238,7 +238,7 @@ namespace Going.UI.Design
 
             var designH = GoDesign.ActiveDesign?.Height ?? 0;
             var rtValue = screenBounds;
-            var w = Math.Min(300, rtValue.Width);
+            var w = MathTool.Constrain(rtValue.Width, 240, 300);
             var h = w + 40 + 40;
             if (style == GoDateTimeKind.DateTime)
             {
@@ -281,8 +281,8 @@ namespace Going.UI.Design
             }
 
             #region bounds
-            var bounds = Util.FromRect(rtValue.Left, rtValue.Bottom, Math.Min(w, rtValue.Width), h);
-            if (bounds.Bottom > designH) bounds = Util.FromRect(rtValue.Left, rtValue.Top - h, Math.Max(w, rtValue.Width), h);
+            var bounds = Util.FromRect(rtValue.Left, rtValue.Bottom + 1, w, h);
+            if (bounds.Bottom > designH) bounds = Util.FromRect(rtValue.Left, rtValue.Top - h - 1, Math.Max(w, rtValue.Width), h);
             Bounds = bounds;
             #endregion
 

@@ -1,5 +1,6 @@
 ﻿using Going.UI.Collections;
 using Going.UI.Datas;
+using Going.UI.Design;
 using Going.UI.Enums;
 using Going.UI.Extensions;
 using Going.UI.Managers;
@@ -12,6 +13,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -65,10 +67,18 @@ namespace Going.UI.Controls
         private double hsV, vsV;
         private bool bShift, bControl;
         private GoDataGridRow? first;
+
+        private GoDateTimeDropDownWindow dwndTime = new GoDateTimeDropDownWindow();
+        private GoDataGridInputTimeCell? dwndTimeCell;
+
+        private GoColorDropDownWindow dwndColor = new GoColorDropDownWindow();
+        private GoDataGridInputColorCell? dwndColorCell;
+
+        private GoComboBoxDropDownWindow dwndCombo = new GoComboBoxDropDownWindow();
+        private GoDataGridInputComboCell? dwndComboCell;
         #endregion
 
         #region Event
-        
         public event EventHandler SelectedChanged;
         public event EventHandler SortChanged;
 
@@ -78,6 +88,10 @@ namespace Going.UI.Controls
         public event EventHandler<GoDataGridCellMouseEventArgs> CellMouseLongClick;
         public event EventHandler<GoDataGridCellButtonClickEventArgs> CellButtonClick;
         public event EventHandler<GoDataGridCellValueChangedEventArgs> ValueChanged;
+
+        public event EventHandler<GoCancelableEventArgs>? DateTimeDropDownOpening;
+        public event EventHandler<GoCancelableEventArgs>? ColorDropDownOpening;
+        public event EventHandler<GoCancelableEventArgs>? ComboDropDownOpening;
         #endregion
 
         #region Constructor
@@ -979,6 +993,65 @@ namespace Going.UI.Controls
             var rt = cell.Bounds;
             rt.Offset(rtRow.Left + (cell.Column.Fixed ? 0 : hspos), rtRow.Top + vspos);
             GoInputEventer.Current.FireInputNumber(this, rt, (s) => { cell.Value = ValueTool.FromString<T>(s); }, value, min, max);
+        }
+
+        internal SKPoint RowToScreen(bool fix, float x, float y)
+        {
+            var rts = Areas();
+            var rtColumn = rts["Column"];
+            var rtRow = rts["Row"];
+
+            var hspos = Convert.ToSingle(hscroll.ScrollPositionWithOffset);
+            var vspos = Convert.ToSingle(vscroll.ScrollPositionWithOffset);
+            x += rtRow.Left + (fix ? 0 : hspos) + ScreenX;
+            y += rtRow.Top + vspos + ScreenY;
+
+            return new SKPoint(x, y);
+        }
+
+        internal bool DateTimeDropDownVisible(GoDataGridInputTimeCell cell) => dwndTime.Visible && dwndTimeCell == cell;
+        internal void DateTimeDropDownOpen(GoDataGridInputTimeCell cell, SKRect rt, DateTime value, GoDateTimeKind style,  Action<DateTime?> action)
+        {
+            var args = new GoCancelableEventArgs();
+            DateTimeDropDownOpening?.Invoke(this, args);
+
+            if (!args.Cancel)
+            {
+                var pt = RowToScreen(cell.Column.Fixed, rt.Left, rt.Top);
+                var vrt = Util.FromRect(pt.X, pt.Y, rt.Width, rt.Height);
+                dwndTimeCell = cell;
+                dwndTime.Show(vrt, FontName, FontStyle, FontSize, value, style, action);
+            }
+        }
+
+        internal bool ColorDropDownVisible(GoDataGridInputColorCell cell) => dwndColor.Visible && dwndColorCell == cell;
+        internal void ColorDropDownOpen(GoDataGridInputColorCell cell, SKRect rt, SKColor value, Action<SKColor?> action)
+        {
+            var args = new GoCancelableEventArgs();
+            ColorDropDownOpening?.Invoke(this, args);
+
+            if (!args.Cancel)
+            {
+                var pt = RowToScreen(cell.Column.Fixed, rt.Left, rt.Top);
+                var vrt = Util.FromRect(pt.X, pt.Y, rt.Width, rt.Height);
+                dwndColorCell = cell;
+                dwndColor.Show(vrt, FontName, FontStyle, FontSize, value, action);
+            }
+        }
+
+        internal bool ComboDropDownVisible(GoDataGridInputComboCell cell) => dwndCombo.Visible && dwndComboCell == cell;
+        internal void ComboDropDownOpen(GoDataGridInputComboCell cell, SKRect rt, float itemHeight, int maximumViewCount, List<GoDataGridInputComboItem> items, GoDataGridInputComboItem? selectedItem, Action<GoDataGridInputComboItem?> action)
+        {
+            var args = new GoCancelableEventArgs();
+            ComboDropDownOpening?.Invoke(this, args);
+
+            if (!args.Cancel)
+            {
+                var pt = RowToScreen(cell.Column.Fixed, rt.Left, rt.Top);
+                var vrt = Util.FromRect(pt.X, pt.Y, rt.Width, rt.Height);
+                dwndComboCell = cell;
+                dwndCombo.Show(vrt, FontName, FontStyle, FontSize, itemHeight, maximumViewCount, items.Cast<GoListItem>().ToList(), selectedItem, (v) => { if (v is GoDataGridInputComboItem c) action(c); });
+            }
         }
         #endregion
 
