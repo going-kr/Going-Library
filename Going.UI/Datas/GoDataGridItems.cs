@@ -902,7 +902,7 @@ namespace Going.UI.Datas
             var cF = Row.Selected ? cSel : cRow;
             var cV = cF.BrightnessTransmit(Row.RowIndex % 2 == 0 ? 0.05F : -0.05F);
             var cB = GoInputEventer.Current.InputControl == Grid && Grid.InputObject == this ? thm.Hignlight : cV.BrightnessTransmit(GoDataGrid.BorderBright * br);
-
+            
             var rt = Bounds; rt.Inflate(InputInflateW, InputInflateH);
             Util.DrawBox(canvas, rt, cV.BrightnessTransmit(GoDataGrid.InputBright * br), cB, GoRoundType.Rect, thm.Corner);
 
@@ -975,6 +975,8 @@ namespace Going.UI.Datas
             var cB = GoInputEventer.Current.InputControl == Grid && Grid.InputObject == this ? thm.Hignlight : cV.BrightnessTransmit(GoDataGrid.BorderBright * br);
 
             var rt = Bounds; rt.Inflate(InputInflateW, InputInflateH);
+            if (Convert.ToInt32(rt.Right) + 0.5F == Bounds.Right) rt.Right -= 1;
+            
             Util.DrawBox(canvas, rt, cV.BrightnessTransmit(GoDataGrid.InputBright * br), cB, GoRoundType.Rect, thm.Corner);
 
             var text = Value is T val ? ValueTool.ToString<T>(val, FormatString) : null;
@@ -1475,5 +1477,34 @@ namespace Going.UI.Datas
     {
         public GoDataGridRow Row { get; private set; } = row;
     }
+
+    public class GoDataGridDateTimeDropDownOpeningEventArgs(GoDataGridInputTimeCell cell, SKRect rt, DateTime value, GoDateTimeKind style, Action<DateTime?> action) : GoCancelableEventArgs
+    {
+        public GoDataGridInputTimeCell Cell { get; } = cell;
+        public SKRect Bounds { get; } = rt;
+        public DateTime Value { get; } = value;
+        public GoDateTimeKind Style { get; } = style;
+        public Action<DateTime?> Action { get; } = action;
+    }
+
+    public class GoDataGridColorDropDownOpeningEventArgs(GoDataGridInputColorCell cell, SKRect rt, SKColor value, Action<SKColor?> action) : GoCancelableEventArgs
+    {
+        public GoDataGridInputColorCell Cell { get; } = cell;
+        public SKRect Bounds { get; } = rt;
+        public SKColor Value { get; } = value;
+        public Action<SKColor?> Action { get; } = action;
+    }
+
+    public class GoDataGridComboDropDownOpeningEventArgs(GoDataGridInputComboCell cell, SKRect rt, float itemHeight, int maximumViewCount, List<GoDataGridInputComboItem> items, GoDataGridInputComboItem? selectedItem, Action<GoDataGridInputComboItem?> action) : GoCancelableEventArgs
+    {
+        public GoDataGridInputComboCell Cell { get; } = cell;
+        public SKRect Bounds { get; } = rt;
+        public float ItemHeight { get; } = itemHeight;
+        public int MaximumViewCount { get; } = maximumViewCount;
+        public List<GoDataGridInputComboItem> Items { get; } = items;
+        public GoDataGridInputComboItem? SelectedItem { get; } = selectedItem;
+        public Action<GoDataGridInputComboItem?> Action { get; } = action;
+    }
+
     #endregion
 }

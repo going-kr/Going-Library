@@ -518,7 +518,7 @@ namespace Going.UI.Forms.Controls
         #region Bounds
         private Rectangle GetDropDownBounds(SKRect rtValue)
         {
-            var w = Convert.ToInt32(Math.Min(300, rtValue.Width));
+            var w = Convert.ToInt32(MathTool.Constrain(rtValue.Width, 280, 360));
             var h = w + 40;
 
             Point pt = PointToScreen(new Point(Convert.ToInt32(rtValue.Left), Convert.ToInt32(rtValue.Bottom)));
@@ -680,7 +680,7 @@ namespace Going.UI.Forms.Controls
         #region Bounds
         private Rectangle GetDropDownBounds(SKRect rtValue)
         {
-            var w = Convert.ToInt32(Math.Min(300, rtValue.Width));
+            var w = Convert.ToInt32(MathTool.Constrain(rtValue.Width, 240, 300));
             var h = DateTimeStyle == GoDateTimeKind.Date ? w + 40 : (DateTimeStyle == GoDateTimeKind.Time ? 80 + 10 : w + 40 + 40);
 
             Point pt = PointToScreen(new Point(Convert.ToInt32(rtValue.Left), Convert.ToInt32(rtValue.Bottom)));
