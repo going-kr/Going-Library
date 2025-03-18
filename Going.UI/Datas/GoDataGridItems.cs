@@ -39,22 +39,23 @@ namespace Going.UI.Datas
 
         public int ColSpan { get; set; } = 1;
         public int RowSpan { get; set; } = 1;
-        public int ColumnIndex => Row.Cells.IndexOf(this);
-        public int RowIndex => Row.RowIndex;
+        [JsonIgnore] public int ColumnIndex => Row.Cells.IndexOf(this);
+        [JsonIgnore] public int RowIndex => Row.RowIndex;
 
         public bool Visible { get; set; } = true;
         public bool Enabled { get; set; } = true;
-        public object? Tag { get; set; }
+        [JsonIgnore] public object? Tag { get; set; }
 
         public string CellBackColor { get; set; }
         public string SelectedCellBackColor { get; set; }
         public string CellTextColor { get; set; }
 
-        public GoDataGrid Grid { get; private set; }
-        public GoDataGridRow Row { get; private set; }
-        public GoDataGridColumn Column { get; private set; }
+        [JsonIgnore] public GoDataGrid Grid { get; private set; }
+        [JsonIgnore] public GoDataGridRow Row { get; private set; }
+        [JsonIgnore] public GoDataGridColumn Column { get; private set; }
 
-        protected PropertyInfo? ValueInfo { get; }
+        [JsonIgnore] protected PropertyInfo? ValueInfo { get; }
+        [JsonIgnore]
         public object? Value
         {
             get => Row.Source != null && ValueInfo != null ? ValueInfo.GetValue(Row.Source) : null;
@@ -65,6 +66,7 @@ namespace Going.UI.Datas
             }
         }
 
+        [JsonIgnore]
         internal SKRect Bounds
         {
             get
@@ -326,13 +328,12 @@ namespace Going.UI.Datas
         #region Properties
         public int RowIndex { get; internal set; }
         public float RowHeight { get; set; }
-        public List<GoDataGridCell> Cells { get; private set; } = [];
-        public object? Source { get; internal set; }
-        public object? Tag { get; set; }
-        public bool Selected { get; set; }
-        public GoDataGrid? Grid { get; internal set; }
-
-        internal SKRect Bounds { get; set; }
+        [JsonIgnore] public List<GoDataGridCell> Cells { get; private set; } = [];
+        [JsonIgnore] public object? Source { get; internal set; }
+        [JsonIgnore] public object? Tag { get; set; }
+        [JsonIgnore] public bool Selected { get; set; }
+        [JsonIgnore] public GoDataGrid? Grid { get; internal set; }
+        [JsonIgnore] internal SKRect Bounds { get; set; }
         #endregion
     }
     #endregion
@@ -344,20 +345,20 @@ namespace Going.UI.Datas
 
         public int ColSpan { get; set; } = 1;
         public int RowSpan { get; set; } = 1;
-        public int ColumnIndex => Row.Cells.IndexOf(this);
-        public int RowIndex => Grid.SummaryRows.IndexOf(Row);
+        [JsonIgnore] public int ColumnIndex => Row.Cells.IndexOf(this);
+        [JsonIgnore] public int RowIndex => Grid.SummaryRows.IndexOf(Row);
 
         public bool Visible { get; set; } = true;
         public bool Enabled { get; set; } = true;
-        public object? Tag { get; set; }
+        [JsonIgnore] public object? Tag { get; set; }
 
         public string CellBackColor { get; set; }
         public string CellTextColor { get; set; }
 
-        public GoDataGrid Grid { get; private set; }
-        public GoDataGridSummaryRow Row { get; private set; }
-        public GoDataGridColumn Column { get; private set; }
-
+        [JsonIgnore] public GoDataGrid Grid { get; private set; }
+        [JsonIgnore] public GoDataGridSummaryRow Row { get; private set; }
+        [JsonIgnore] public GoDataGridColumn Column { get; private set; }
+        [JsonIgnore]
         internal SKRect Bounds
         {
             get
@@ -463,13 +464,13 @@ namespace Going.UI.Datas
         #region Properties
         public int RowIndex { get; internal set; }
         public int RowHeight { get; set; }
-        public List<GoDataGridSummaryCell> Cells { get; private set; } = [];
-        public GoDataGrid? Grid { get; internal set; }
+        [JsonIgnore] public List<GoDataGridSummaryCell> Cells { get; private set; } = [];
+        [JsonIgnore] public GoDataGrid? Grid { get; internal set; }
         public int TitleColumnIndex { get; set; } = 0;
         public int TitleColSpan { get; set; } = 1;
         public string Title { get; set; } = "";
 
-        internal SKRect Bounds { get; set; }
+        [JsonIgnore] internal SKRect Bounds { get; set; }
         #endregion
 
         #region Method

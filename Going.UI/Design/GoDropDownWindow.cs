@@ -31,7 +31,6 @@ namespace Going.UI.Design
         public GoDropDownWindow(List<IGoControl> childrens) : this() => Childrens = childrens;
         public GoDropDownWindow() { Visible = false; }
 
-
         protected override void OnDraw(SKCanvas canvas)
         {
             var thm = GoTheme.Current;
