@@ -233,5 +233,17 @@ namespace Going.UI.Forms.Input
             else txt.Focus();
         }
         #endregion
+
+        #region ClearInput
+        public void ClearInput()
+        {
+            if (InputControl != null)
+            {
+                InputControl.Controls.Remove(txt);
+                InputControl = null;
+                GoInputEventer.Current.ClearInputControl();
+            }
+        }
+        #endregion
     }
 }

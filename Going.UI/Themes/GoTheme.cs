@@ -11,6 +11,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Going.UI.Extensions;
 
 namespace Going.UI.Themes
 {
@@ -145,8 +146,10 @@ namespace Going.UI.Themes
                     if (lsv.Length == 2)
                     {
                         var sub = lsv[1];
-                        if (sub.ToLower() == "dark") ret = Util.FromArgb(ret.Alpha, Convert.ToByte(MathTool.Constrain(ret.Red - 15, 0, 255)), Convert.ToByte(MathTool.Constrain(ret.Green - 15, 0, 255)), Convert.ToByte(MathTool.Constrain(ret.Blue - 15, 0, 255)));
-                        else if (sub.ToLower() == "light") ret = Util.FromArgb(ret.Alpha, Convert.ToByte(MathTool.Constrain(ret.Red + 15, 0, 255)), Convert.ToByte(MathTool.Constrain(ret.Green + 15, 0, 255)), Convert.ToByte(MathTool.Constrain(ret.Blue + 15, 0, 255)));
+                        if (sub.ToLower() == "dark") ret = ret.BrightnessTransmit(-0.15F);
+                        else if (sub.ToLower() == "light") ret = ret.BrightnessTransmit(0.15F);
+                        if (sub.ToLower() == "darkdark") ret = ret.BrightnessTransmit(-0.3F);
+                        else if (sub.ToLower() == "lightlight") ret = ret.BrightnessTransmit(0.3F);
 
                     }
                 }

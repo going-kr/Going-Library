@@ -147,7 +147,7 @@ namespace Going.UI.Forms.Dialogs
         #region Constructor
         public GoComboBoxDropDownWindow()
         {
-            control = new Going.UI.Controls.GoListBox { BackgroundDraw = false };
+            control = new Going.UI.Controls.GoListBox { BackgroundDraw = false, Round = GoRoundType.Rect };
 
             control.ItemClicked += (o, s) =>
             {
