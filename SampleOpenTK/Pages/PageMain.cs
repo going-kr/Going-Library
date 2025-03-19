@@ -46,16 +46,13 @@ namespace SampleOpenTK.Pages
                 //selbox.ShowCheck("테스트", 2, items, sels, (result) => { if (result != null) foreach (var v in result) Console.WriteLine(v.Text); });
                 //selbox.ShowRadio("테스트", 2, items, items[0], (result) => { if (result != null) Console.WriteLine(result.Text); });
                 selbox.ShowCombo("테스트", items, items[0], (result) => { if (result != null) Console.WriteLine(result.Text); });
-
                 //selbox.ShowCheck<DayOfWeek>("테스트", 2, [DayOfWeek.Monday], (result) => { if (result != null) foreach (var v in result) Console.WriteLine(v); });
             };
             btnIB.ButtonClicked += (o, s) =>
             {
                 //inbox.ShowString("테스트", null, (result) => { Console.WriteLine(result); });
                 //inbox.ShowBool("테스트", (result) => { Console.WriteLine(result); });
-
-                var infos = new Dictionary<string, InputBoxInfo>();
-                inbox.Showinputbox<Data>("테스트", 1, null, infos, (result) => { if (result != null) Console.WriteLine(JsonSerializer.Serialize(result)); });
+                inbox.Showinputbox<Data>("테스트", (result) => { if (result != null) Console.WriteLine(JsonSerializer.Serialize(result)); });
             };
         }
     }

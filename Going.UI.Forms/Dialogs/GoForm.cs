@@ -15,6 +15,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Going.UI.Forms.Input;
+using Going.UI.Forms.Controls;
+using SkiaSharp;
+using SkiaSharp.Views.Desktop;
 
 namespace Going.UI.Forms.Dialogs
 {
@@ -165,10 +168,24 @@ namespace Going.UI.Forms.Dialogs
         protected override void OnPaint(PaintEventArgs e)
         {
             var thm = GoTheme.Current;
-            var BackColor = Util.FromArgb(thm.ToColor(this.BackgroundColor));
-            e.Graphics.Clear(BackColor);
 
-            OnContentDraw(e);
+            using (var bitmap = new SKBitmap(this.Width, this.Height))
+            using (var canvas = new SKCanvas(bitmap))
+            using (var surface = SKSurface.Create(bitmap.Info))
+            {
+                var cBack = GoTheme.Current.ToColor(BackgroundColor);
+                canvas.Clear(cBack);
+
+                using var p2 = new SKPaint { IsAntialias = true, Color = SKColors.Black.WithAlpha(Convert.ToByte(Enabled ? 255 : 255 - GoTheme.DisableAlpha)) };
+                var sp = canvas.SaveLayer(p2);
+
+                OnContentDraw(new ContentDrawEventArgs(canvas));
+
+                canvas.RestoreToCount(sp);
+
+                using (var bmp = bitmap.ToBitmap())
+                    e.Graphics.DrawImage(bmp, new Rectangle(0, 0, bmp.Width, bmp.Height));
+            }
 
             base.OnPaint(e);
         }
@@ -205,7 +222,7 @@ namespace Going.UI.Forms.Dialogs
         }
         #endregion
 
-        public virtual void OnContentDraw(PaintEventArgs e) { }
+        public virtual void OnContentDraw(ContentDrawEventArgs e) { }
         #endregion
 
         #region Method
@@ -217,6 +234,17 @@ namespace Going.UI.Forms.Dialogs
                 int darkMode = dark ? 1 : 0;
                 int result = DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, ref darkMode, sizeof(int));
             }
+        }
+        #endregion
+
+        #region ToGoMouseButton
+        protected GoMouseButton ToGoMouseButton(MouseButtons btn)
+        {
+            GoMouseButton ret = GoMouseButton.Left;
+            if (btn == MouseButtons.Left) ret = GoMouseButton.Left;
+            else if (btn == MouseButtons.Right) ret = GoMouseButton.Right;
+            else if (btn == MouseButtons.Middle) ret = GoMouseButton.Middle;
+            return ret;
         }
         #endregion
         #endregion
