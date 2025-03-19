@@ -33,6 +33,7 @@ namespace Going.UI.Controls
         public virtual bool Visible { get; set; } = true;
         public virtual bool Enabled { get; set; } = true;
         public bool Selectable { get; protected set; } = false;
+        [JsonIgnore] public object? Tag { get; set; }
 
         [JsonIgnore] public float X { get => bounds.Left; set => bounds.Left = value; }
         [JsonIgnore] public float Y { get => bounds.Top; set => bounds.Top = value; }
@@ -86,6 +87,8 @@ namespace Going.UI.Controls
         protected virtual void OnMouseDoubleClick(float x, float y, GoMouseButton button) { MouseDoubleClicked?.Invoke(this, new GoMouseClickEventArgs(x, y, button)); }
         protected virtual void OnMouseMove(float x, float y) { MouseMove?.Invoke(this, new GoMouseEventArgs(x, y)); }
         protected virtual void OnMouseWheel(float x, float y, float delta) { MouseWheel?.Invoke(this, new GoMouseWheelEventArgs(x, y, delta)); }
+        protected virtual void OnMouseEnter() { }
+        protected virtual void OnMouseLeave() { }
         protected virtual void OnKeyDown(bool Shift, bool Control, bool Alt, GoKeys key) {  }
         protected virtual void OnKeyUp(bool Shift, bool Control, bool Alt, GoKeys key) {  }
         #endregion
@@ -165,6 +168,7 @@ namespace Going.UI.Controls
         public void SetInvalidate(Action? method) => Invalidate = method;
 
         internal void InvokeDragDrop(float x, float y, object item) => DragDrop?.Invoke(this, new GoDragEventArgs(x, y, item));
+        internal void Leave() => OnMouseLeave();
         #endregion
     }
 }

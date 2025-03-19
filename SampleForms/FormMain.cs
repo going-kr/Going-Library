@@ -71,6 +71,8 @@ namespace SampleForms
             dg.SetDataSource(devs);
 
             dg.CellButtonClick += (o, s) => Console.WriteLine(s.Cell.Row.Cells[0].Value?.ToString());
+            dg.ValueChanged += (o, e) => 
+            dg.RefreshRows();
         }
 
         string? ToString(object? val)

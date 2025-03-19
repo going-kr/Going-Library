@@ -980,7 +980,13 @@ namespace Going.UI.Controls
             InputObject = cell;
             var rt = cell.Bounds;
             rt.Offset(rtRow.Left + (cell.Column.Fixed ? 0 : hspos), rtRow.Top + vspos);
-            GoInputEventer.Current.FireInputString(this, rt, (s) => { cell.Value = s; }, value);
+            GoInputEventer.Current.FireInputString(this, rt, (s) =>
+            {
+                var old = cell.Value;
+                cell.Value = s;
+                if ((old != null && !old.Equals(cell.Value)) || old == null) InvokeValueChange(cell, old, cell.Value);
+
+            }, value);
         }
 
         internal void InvokeEditNumber<T>(GoDataGridInputNumberCell<T> cell, T value, T? min, T? max) where T : struct
@@ -995,7 +1001,13 @@ namespace Going.UI.Controls
             InputObject = cell;
             var rt = cell.Bounds;
             rt.Offset(rtRow.Left + (cell.Column.Fixed ? 0 : hspos), rtRow.Top + vspos);
-            GoInputEventer.Current.FireInputNumber(this, rt, (s) => { cell.Value = ValueTool.FromString<T>(s); }, value, min, max);
+            GoInputEventer.Current.FireInputNumber(this, rt, (s) =>
+            {
+                var old = cell.Value;
+                cell.Value = ValueTool.FromString<T>(s);
+                if ((old != null && !old.Equals(cell.Value)) || old == null) InvokeValueChange(cell, old, cell.Value);
+
+            }, value, min, max);
         }
 
         internal SKPoint RowToScreen(bool fix, float x, float y)

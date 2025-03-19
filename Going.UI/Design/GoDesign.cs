@@ -113,6 +113,8 @@ namespace Going.UI.Design
                 wnd.Design = this;
                 dropdownWindow = wnd;
                 dropdownWindow.Visible = true;
+
+                CurrentPage?.FireMouseMove(-1, -1);
             }
         }
         public void HideDropDownWindow(GoDropDownWindow wnd)
@@ -131,6 +133,9 @@ namespace Going.UI.Design
             wnd.Design = this;
             wnd.Visible = true;
             stkWindow.Push(wnd);
+
+            CurrentPage?.FireMouseMove(-1, -1);
+
         }
         public void HideWindow(GoWindow wnd)
         {
@@ -274,6 +279,10 @@ namespace Going.UI.Design
             if (stkWindow.Count > 0)
             {
                 var ls = stkWindow.Reverse().ToList();
+                var p = new SKPaint { IsAntialias = true };
+                p.IsStroke = false;
+                p.Color = Util.FromArgb(120, SKColors.Black);
+                canvas.DrawRect(Util.FromRect(0, 0, Width, Height), p);
 
                 foreach (var w in ls)
                 {
