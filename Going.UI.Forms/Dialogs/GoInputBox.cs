@@ -70,7 +70,7 @@ namespace Going.UI.Forms.Dialogs
             {
                 bounds.Offset(tpnl.Left + tpnl2.Left + c.Left, tpnl.Top + tpnl2.Top + c.Top);
                 if (tpnl2.Childrens.Contains(c) && c is GoInputString vc)
-                    FormsInputManager.Current.InputString(this, c, bounds, FontName, FontStyle, FontSize, vc.ValueColor, TextColor, callback, value);
+                    FormsInputManager.Current.InputString(this, c, bounds, FontName, FontStyle, FontSize, vc.ValueColor, TextColor, callback, spkey, value);
             };
 
             GoInputEventer.Current.InputNumber += (c, bounds, callback, type, value, min, max) =>
@@ -79,31 +79,31 @@ namespace Going.UI.Forms.Dialogs
                 if (tpnl2.Childrens.Contains(c))
                 {
                     if (type == typeof(byte) && c is GoInputNumber<byte> vc1)
-                        FormsInputManager.Current.InputNumber<byte>(this, c, bounds, FontName, FontStyle, FontSize, vc1.ValueColor, TextColor, (v) => { callback(v); Invalidate(); }, type, value, min, max);
+                        FormsInputManager.Current.InputNumber<byte>(this, c, bounds, FontName, FontStyle, FontSize, vc1.ValueColor, TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
                     else if (type == typeof(sbyte) && c is GoInputNumber<sbyte> vc2)
-                        FormsInputManager.Current.InputNumber<sbyte>(this, c, bounds, FontName, FontStyle, FontSize, vc2.ValueColor, TextColor, (v) => { callback(v); Invalidate(); }, type, value, min, max);
-                    
+                        FormsInputManager.Current.InputNumber<sbyte>(this, c, bounds, FontName, FontStyle, FontSize, vc2.ValueColor, TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
+
                     else if (type == typeof(ushort) && c is GoInputNumber<ushort> vc3)
-                        FormsInputManager.Current.InputNumber<ushort>(this, c, bounds, FontName, FontStyle, FontSize, vc3.ValueColor, TextColor, (v) => { callback(v); Invalidate(); }, type, value, min, max);
+                        FormsInputManager.Current.InputNumber<ushort>(this, c, bounds, FontName, FontStyle, FontSize, vc3.ValueColor, TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
                     else if (type == typeof(short) && c is GoInputNumber<short> vc4)
-                        FormsInputManager.Current.InputNumber<short>(this, c, bounds, FontName, FontStyle, FontSize, vc4.ValueColor, TextColor, (v) => { callback(v); Invalidate(); }, type, value, min, max);
-                 
+                        FormsInputManager.Current.InputNumber<short>(this, c, bounds, FontName, FontStyle, FontSize, vc4.ValueColor, TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
+
                     else if (type == typeof(uint) && c is GoInputNumber<uint> vc5)
-                        FormsInputManager.Current.InputNumber<uint>(this, c, bounds, FontName, FontStyle, FontSize, vc5.ValueColor, TextColor, (v) => { callback(v); Invalidate(); }, type, value, min, max);
+                        FormsInputManager.Current.InputNumber<uint>(this, c, bounds, FontName, FontStyle, FontSize, vc5.ValueColor, TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
                     else if (type == typeof(int) && c is GoInputNumber<int> vc6)
-                        FormsInputManager.Current.InputNumber<int>(this, c, bounds, FontName, FontStyle, FontSize, vc6.ValueColor, TextColor, (v) => { callback(v); Invalidate(); }, type, value, min, max);
+                        FormsInputManager.Current.InputNumber<int>(this, c, bounds, FontName, FontStyle, FontSize, vc6.ValueColor, TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
 
                     else if (type == typeof(ulong) && c is GoInputNumber<ulong> vc7)
-                        FormsInputManager.Current.InputNumber<ulong>(this, c, bounds, FontName, FontStyle, FontSize, vc7.ValueColor, TextColor, (v) => { callback(v); Invalidate(); }, type, value, min, max);
+                        FormsInputManager.Current.InputNumber<ulong>(this, c, bounds, FontName, FontStyle, FontSize, vc7.ValueColor, TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
                     else if (type == typeof(long) && c is GoInputNumber<long> vc9)
-                        FormsInputManager.Current.InputNumber<long>(this, c, bounds, FontName, FontStyle, FontSize, vc9.ValueColor, TextColor, (v) => { callback(v); Invalidate(); }, type, value, min, max);
+                        FormsInputManager.Current.InputNumber<long>(this, c, bounds, FontName, FontStyle, FontSize, vc9.ValueColor, TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
 
                     else if (type == typeof(float) && c is GoInputNumber<float> vc10)
-                        FormsInputManager.Current.InputNumber<float>(this, c, bounds, FontName, FontStyle, FontSize, vc10.ValueColor, TextColor, (v) => { callback(v); Invalidate(); }, type, value, min, max);
+                        FormsInputManager.Current.InputNumber<float>(this, c, bounds, FontName, FontStyle, FontSize, vc10.ValueColor, TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
                     else if (type == typeof(double) && c is GoInputNumber<double> vc11)
-                        FormsInputManager.Current.InputNumber<double>(this, c, bounds, FontName, FontStyle, FontSize, vc11.ValueColor, TextColor, (v) => { callback(v); Invalidate(); }, type, value, min, max);
+                        FormsInputManager.Current.InputNumber<double>(this, c, bounds, FontName, FontStyle, FontSize, vc11.ValueColor, TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
                     else if (type == typeof(decimal) && c is GoInputNumber<decimal> vc12)
-                        FormsInputManager.Current.InputNumber<decimal>(this, c, bounds, FontName, FontStyle, FontSize, vc12.ValueColor, TextColor, (v) => { callback(v); Invalidate(); }, type, value, min, max);
+                        FormsInputManager.Current.InputNumber<decimal>(this, c, bounds, FontName, FontStyle, FontSize, vc12.ValueColor, TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
                 }
             };
         }
@@ -723,6 +723,12 @@ namespace Going.UI.Forms.Dialogs
         }
         #endregion
         #endregion
+        #endregion
+
+        #region SpecialKey
+        void spkey(Keys keycode)
+        {
+        }
         #endregion
         #endregion
     }

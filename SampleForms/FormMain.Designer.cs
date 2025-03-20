@@ -31,9 +31,9 @@
             rm = new Going.UI.Forms.Components.GoResourceManager();
             dg = new Going.UI.Forms.Controls.GoDataGrid();
             goContainer1 = new Going.UI.Forms.Containers.GoContainer();
-            btnMB = new Going.UI.Forms.Controls.GoButton();
-            btnSB = new Going.UI.Forms.Controls.GoButton();
             btnIB = new Going.UI.Forms.Controls.GoButton();
+            btnSB = new Going.UI.Forms.Controls.GoButton();
+            btnMB = new Going.UI.Forms.Controls.GoButton();
             goContainer1.SuspendLayout();
             SuspendLayout();
             // 
@@ -81,28 +81,28 @@
             goContainer1.TabStop = false;
             goContainer1.Text = "goContainer1";
             // 
-            // btnMB
+            // btnIB
             // 
-            btnMB.BackColor = Color.FromArgb(50, 50, 50);
-            btnMB.BackgroundColor = "Back";
-            btnMB.BackgroundDraw = true;
-            btnMB.BorderOnly = false;
-            btnMB.ButtonColor = "Base3";
-            btnMB.FontName = "나눔고딕";
-            btnMB.FontSize = 12F;
-            btnMB.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
-            btnMB.IconDirection = Going.UI.Enums.GoDirectionHV.Horizon;
-            btnMB.IconGap = 5F;
-            btnMB.IconSize = 12F;
-            btnMB.IconString = null;
-            btnMB.Location = new Point(0, 13);
-            btnMB.Name = "btnMB";
-            btnMB.Round = Going.UI.Enums.GoRoundType.All;
-            btnMB.Size = new Size(118, 37);
-            btnMB.TabIndex = 0;
-            btnMB.TabStop = false;
-            btnMB.Text = "MessageBox";
-            btnMB.TextColor = "Fore";
+            btnIB.BackColor = Color.FromArgb(50, 50, 50);
+            btnIB.BackgroundColor = "Back";
+            btnIB.BackgroundDraw = true;
+            btnIB.BorderOnly = false;
+            btnIB.ButtonColor = "Base3";
+            btnIB.FontName = "나눔고딕";
+            btnIB.FontSize = 12F;
+            btnIB.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
+            btnIB.IconDirection = Going.UI.Enums.GoDirectionHV.Horizon;
+            btnIB.IconGap = 5F;
+            btnIB.IconSize = 12F;
+            btnIB.IconString = null;
+            btnIB.Location = new Point(248, 13);
+            btnIB.Name = "btnIB";
+            btnIB.Round = Going.UI.Enums.GoRoundType.All;
+            btnIB.Size = new Size(118, 37);
+            btnIB.TabIndex = 2;
+            btnIB.TabStop = false;
+            btnIB.Text = "InputBox";
+            btnIB.TextColor = "Fore";
             // 
             // btnSB
             // 
@@ -127,28 +127,28 @@
             btnSB.Text = "SelectorBox";
             btnSB.TextColor = "Fore";
             // 
-            // btnIB
+            // btnMB
             // 
-            btnIB.BackColor = Color.FromArgb(50, 50, 50);
-            btnIB.BackgroundColor = "Back";
-            btnIB.BackgroundDraw = true;
-            btnIB.BorderOnly = false;
-            btnIB.ButtonColor = "Base3";
-            btnIB.FontName = "나눔고딕";
-            btnIB.FontSize = 12F;
-            btnIB.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
-            btnIB.IconDirection = Going.UI.Enums.GoDirectionHV.Horizon;
-            btnIB.IconGap = 5F;
-            btnIB.IconSize = 12F;
-            btnIB.IconString = null;
-            btnIB.Location = new Point(248, 13);
-            btnIB.Name = "btnIB";
-            btnIB.Round = Going.UI.Enums.GoRoundType.All;
-            btnIB.Size = new Size(118, 37);
-            btnIB.TabIndex = 2;
-            btnIB.TabStop = false;
-            btnIB.Text = "InputBox";
-            btnIB.TextColor = "Fore";
+            btnMB.BackColor = Color.FromArgb(50, 50, 50);
+            btnMB.BackgroundColor = "Back";
+            btnMB.BackgroundDraw = true;
+            btnMB.BorderOnly = false;
+            btnMB.ButtonColor = "Base3";
+            btnMB.FontName = "나눔고딕";
+            btnMB.FontSize = 12F;
+            btnMB.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
+            btnMB.IconDirection = Going.UI.Enums.GoDirectionHV.Horizon;
+            btnMB.IconGap = 5F;
+            btnMB.IconSize = 12F;
+            btnMB.IconString = null;
+            btnMB.Location = new Point(0, 13);
+            btnMB.Name = "btnMB";
+            btnMB.Round = Going.UI.Enums.GoRoundType.All;
+            btnMB.Size = new Size(118, 37);
+            btnMB.TabIndex = 0;
+            btnMB.TabStop = false;
+            btnMB.Text = "MessageBox";
+            btnMB.TextColor = "Fore";
             // 
             // FormMain
             // 

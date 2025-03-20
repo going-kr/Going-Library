@@ -77,6 +77,7 @@ DataGrid					데이터 그리드											O
 MessageBox                                                                          O
 SelectorBox                                                                         O
 InputBox                                                                            O
+GridLayoutPanel																		O
 
 = 제외 작업 ===================================================================================
 
@@ -85,7 +86,6 @@ WheelPicker					가챠...?												X
 SlidePanel																			X(중복)
 BorderPanel																			X(중복)
 BoxPanel																			X(중복)
-GridLayoutPanel																		X(중복)
 CircleButton				원형 버튼	 => 그라데이션 없이는 밋밋함				X(버튼의 Round Ellipse로 대체)
 TriangleButton				화살표 버튼	 =>			  ''							X(아이콘 버튼으로 대체)
 CategoryPanel				트리뷰 대체  => depth 별 컨테이너 시 표현 자유 낮음		X

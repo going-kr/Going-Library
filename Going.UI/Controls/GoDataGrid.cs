@@ -11,6 +11,7 @@ using SkiaSharp;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data.Common;
 using System.Drawing;
 using System.Globalization;
@@ -53,7 +54,7 @@ namespace Going.UI.Controls
         [JsonIgnore] public List<GoDataGridRow> Rows { get; private set; } = [];
         [JsonIgnore] internal Type? DataType { get; private set; }
         [JsonIgnore] public object? InputObject { get; internal set; }
-        [JsonIgnore] internal List<GoDataGridRow> ViewRows => mrows;
+        [JsonIgnore] public List<GoDataGridRow> ViewRows => mrows;
         #endregion
 
         #region Member Variable
@@ -1295,6 +1296,21 @@ namespace Going.UI.Controls
             }
 
             return ret;
+        }
+        #endregion
+
+        #region InputCell
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public void InputCell(GoDataGridCell cell, string s)
+        {
+            var tp = cell.GetType();
+            var rt = Areas()["Row"];
+            if (cell is GoDataGridInputTextCell || tp.IsGenericType && (tp.GetGenericTypeDefinition() == typeof(GoDataGridInputNumberCell<>)))
+            {
+                if (s == "dn" && (cell.Bounds.Bottom + vscroll.ScrollPositionWithOffset) > rt.Height) vscroll.ScrollPosition += RowHeight;
+                else if (s == "up" && (cell.Bounds.Top + vscroll.ScrollPositionWithOffset) < 0) vscroll.ScrollPosition -= RowHeight;
+                cell.MouseClick(cell.Bounds.MidX, cell.Bounds.MidY, GoMouseButton.Left);
+            }
         }
         #endregion
         #endregion

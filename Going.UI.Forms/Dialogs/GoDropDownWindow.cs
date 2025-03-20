@@ -288,7 +288,7 @@ namespace Going.UI.Forms.Dialogs
                 {
                     var rt = bounds;
                     rt.Offset(color.Left, color.Top);
-                    FormsInputManager.Current.InputNumber<byte>(this, color, rt, color.FontName, color.FontStyle, color.FontSize, color.InputColor, color.TextColor, (v) => { callback(v); Invalidate(); }, type, value, min, max);
+                    FormsInputManager.Current.InputNumber<byte>(this, color, rt, color.FontName, color.FontStyle, color.FontSize, color.InputColor, color.TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
                 }
             };
 
@@ -420,6 +420,13 @@ namespace Going.UI.Forms.Dialogs
             color.Value = value;
         }
         #endregion
+
+        #region spkey
+        void spkey(Keys key)
+        {
+
+        }
+        #endregion
     }
 
     public class GoDateTimeDropDownWindow : GoDropDownWindow
@@ -452,7 +459,7 @@ namespace Going.UI.Forms.Dialogs
                 {
                     var rt = bounds;
                     rt.Offset(c.Left, c.Top);
-                    FormsInputManager.Current.InputNumber<byte>(this, c, rt, vc.FontName, vc.FontStyle, vc.FontSize, vc.ValueColor, vc.TextColor, (v) => { callback(v); Invalidate(); }, type, value, min, max);
+                    FormsInputManager.Current.InputNumber<byte>(this, c, rt, vc.FontName, vc.FontStyle, vc.FontSize, vc.ValueColor, vc.TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
                 }
 
             };
@@ -633,6 +640,13 @@ namespace Going.UI.Forms.Dialogs
             inM.Value = style != GoDateTimeKind.Date ? value.Minute : 0;
             inS.Value = style != GoDateTimeKind.Date ? value.Second : 0;
             #endregion
+        }
+        #endregion
+
+        #region spkey
+        void spkey(Keys key)
+        {
+
         }
         #endregion
     }

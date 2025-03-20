@@ -26,12 +26,12 @@ namespace Going.UI.Forms.Input
         public Control? InputControl { get; private set; }
         public SKRect InputBounds { get; private set; }
         public InputType InputType { get; private set; }
-        
         #endregion
 
         #region Member Variable
         private TextBox txt = new TextBox { BorderStyle = BorderStyle.None, TextAlign = HorizontalAlignment.Center };
         private Action<string>? InputCallback;
+        private Action<Keys>? InputSpecialKeyDown;
         private Type? ValueType;
         private object? ValueOrigin;
         private bool IsMinusInput = false;
@@ -88,14 +88,23 @@ namespace Going.UI.Forms.Input
 
             txt.KeyDown += (o, s) =>
             {
-                if (s.KeyCode == Keys.Escape || s.KeyCode == Keys.Enter)
+                if (InputControl != null)
                 {
-                    if (InputControl != null)
+                    if (s.KeyCode == Keys.Escape || s.KeyCode == Keys.Enter)
                     {
+                        s.SuppressKeyPress = true;
+
                         InputCallback?.Invoke(txt.Text);
                         InputControl.Controls.Remove(txt);
                         InputControl = null;
                         GoInputEventer.Current.ClearInputControl();
+
+                        InputSpecialKeyDown?.Invoke(s.KeyCode);
+
+                    }
+                    else if (s.KeyCode == Keys.Left || s.KeyCode == Keys.Up || s.KeyCode == Keys.Right || s.KeyCode == Keys.Down)
+                    {
+                        InputSpecialKeyDown?.Invoke(s.KeyCode);
                     }
                 }
             };
@@ -105,6 +114,7 @@ namespace Going.UI.Forms.Input
         #region PreFilterMessage
         public bool PreFilterMessage(ref Message m)
         {
+            var cc = Control.FromHandle(m.HWnd);
             if (InputControl != null)
             {
                 int WM_LBUTTONDOWN = 0x0201;
@@ -114,9 +124,11 @@ namespace Going.UI.Forms.Input
                 {
                     int x = m.LParam.ToInt32() & 0xFFFF;
                     int y = (m.LParam.ToInt32() >> 16) & 0xFFFF;
-                    var point = InputControl.PointToClient(new System.Drawing.Point(x, y));
 
-                    if (!InputControl.ClientRectangle.Contains(point) && !CollisionTool.Check(InputBounds, point.X, point.Y))
+                    var ptS = cc != null ? cc.PointToScreen(new Point(x, y)) : new Point(x, y);
+                    var ptC = InputControl.PointToClient(ptS);
+
+                    if (!CollisionTool.Check(InputBounds, ptC.X, ptC.Y))
                     {
                         InputControl.Controls.Remove(txt);
                         InputControl = null;
@@ -129,13 +141,14 @@ namespace Going.UI.Forms.Input
         #endregion
 
         #region InputString
-        public void InputString(Control control, IGoControl baseControl, SKRect bounds, string fontName, GoFontStyle fontStyle, float fontSize, string backColor, string textColor, Action<string> callback, string? value = null)
+        public void InputString(Control control, IGoControl baseControl, SKRect bounds, string fontName, GoFontStyle fontStyle, float fontSize, string backColor, string textColor, Action<string> callback, Action<Keys>? specialKeyDown, string? value = null)
         {
             if (InputControl == null)
             {
                 InputControl = control;
                 InputBounds = bounds;
                 InputCallback = callback;
+                InputSpecialKeyDown = specialKeyDown;
                 InputType = InputType.String;
                 GoInputEventer.Current.SetInputControl(baseControl);
 
@@ -172,13 +185,14 @@ namespace Going.UI.Forms.Input
         #endregion
 
         #region InputNumber
-        public void InputNumber<T>(Control control, IGoControl baseControl, SKRect bounds, string fontName, GoFontStyle fontStyle, float fontSize, string backColor, string textColor, Action<string> callback, Type type, object value, object? min, object? max)
+        public void InputNumber<T>(Control control, IGoControl baseControl, SKRect bounds, string fontName, GoFontStyle fontStyle, float fontSize, string backColor, string textColor, Action<string> callback, Action<Keys>? specialKeyDown, Type type, object value, object? min, object? max)
         {
             if (InputControl == null)
             {
                 InputControl = control;
                 InputBounds = bounds;
                 InputCallback = callback;
+                InputSpecialKeyDown = specialKeyDown;
                 InputType = InputType.Number;
                 ValueType = type;
                 ValueOrigin = value;
