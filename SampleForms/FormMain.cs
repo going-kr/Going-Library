@@ -12,18 +12,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SampleForms
 {
     public partial class FormMain : GoForm
     {
-        Random rnd = new Random();
+        GoMessageBox mb = new ();
+        GoSelectorBox sb = new ();
+        GoInputBox ib = new();
+
+        Random rnd = new ();
         List<Device> devs = [];
 
         public FormMain()
         {
             InitializeComponent();
 
+            #region dg
             string[] sz1 = ["80px", "80px", "120px", "10.0%", "18.0%", "9.0%", "9.0%", "9.0%", "9.0%", "9.0%", "9.0%", "9.0%", "9.0%"];
             string[] sz2 = ["100px", "100px", "100px", "100px", "100px", "100px", "100px", "100px", "100px", "100px", "100px", "100px"];
             var sz = sz1;
@@ -73,8 +79,29 @@ namespace SampleForms
             dg.CellButtonClick += (o, s) => Console.WriteLine(s.Cell.Row.Cells[0].Value?.ToString());
             dg.ValueChanged += (o, e) => 
             dg.RefreshRows();
+            #endregion
+
+            btnMB.ButtonClicked += (o, s) => mb.ShowMessageBoxYesNoCancel("테스트", "이것은 메시지박스 테스트 화면 입니다.\r\n( Test line )");
+           
+            btnSB.ButtonClicked += (o, s) =>
+            {
+                var items = Enum.GetValues<DayOfWeek>().Select(x => new GoListItem { Text = x.ToString(), Tag = x }).ToList();
+                var sels = new List<GoListItem>([items[0], items[2]]);
+                //var r = sb.ShowCheck("테스트", 2, items, sels);
+                //var r = sb.ShowRadio("테스트", 2, items, items[0]);
+                //var r = sb.ShowCombo("테스트", items, items[0]);
+                var r = sb.ShowCheck<DayOfWeek>("테스트", 2, [DayOfWeek.Monday]);
+            };
+
+            btnIB.ButtonClicked += (o, s) =>
+            {
+                //ib.ShowString("테스트", null, (result) => { Console.WriteLine(result); });
+                //ib.ShowBool("테스트", (result) => { Console.WriteLine(result); });
+                var r = ib.Showinputbox<Data>("테스트");
+            };
         }
 
+        #region ToString
         string? ToString(object? val)
         {
             var ret = "";
@@ -88,8 +115,10 @@ namespace SampleForms
                 }
             return ret;
         }
+        #endregion
     }
 
+    #region dg class : Device
     public enum DeviceType { Upper, Under, Wagon, Bridge }
     public class Device
     {
@@ -110,4 +139,16 @@ namespace SampleForms
 
         private string opr = "Stop";
     }
+    #endregion
+    #region ib class : Data
+    class Data
+    {
+        public string? Name { get; set; }
+        public int Value { get; set; }
+        public double Value2 { get; set; }
+        public bool Value3 { get; set; }
+        public DayOfWeek DOW { get; set; }
+        [InputBoxIgnore] public DayOfWeek DOW2 { get; set; }
+    }
+    #endregion
 }

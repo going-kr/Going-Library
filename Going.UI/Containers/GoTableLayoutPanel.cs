@@ -45,8 +45,8 @@ namespace Going.UI.Containers
                     if (idx != null)
                     {
                         var vrt = Util.Merge(rts, idx.Column, idx.Row, idx.ColSpan, idx.RowSpan);
-                        if (c.Fill) c.Bounds = Util.FromRect(vrt, c.Margin);
-                        else c.Bounds = Util.FromRect(vrt.Left, vrt.Top, c.Bounds.Width, c.Bounds.Height);
+                        if (c.Fill) c.Bounds = Util.Int(Util.FromRect(vrt, c.Margin));
+                        else c.Bounds = Util.Int(Util.FromRect(vrt.Left, vrt.Top, c.Bounds.Width, c.Bounds.Height));
                     }
                 }
                 catch { }
