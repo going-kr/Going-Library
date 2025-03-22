@@ -726,7 +726,7 @@ namespace Going.UI.Forms.Dialogs
         #endregion
 
         #region SpecialKey
-        void spkey(Keys keycode)
+        void spkey(Keys key, Keys modifier)
         {
         }
         #endregion

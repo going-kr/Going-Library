@@ -143,7 +143,7 @@ namespace Going.UI.Forms.Controls
         public void SetDataSource<T>(IEnumerable<T> values) => Control.SetDataSource<T>(values);
         public void RefreshRows() => Control.RefreshRows();
 
-        void spkey(Keys key)
+        void spkey(Keys key, Keys modifier)
         {
             if((key == Keys.Enter || key == Keys.Down) && Control.InputObject is GoDataGridCell cell)
             {
@@ -151,7 +151,7 @@ namespace Going.UI.Forms.Controls
                 if (ri + 1 < Control.ViewRows.Count)
                 {
                     FormsInputManager.Current.ClearInput();
-                    Control.InputCell(Control.ViewRows[ri + 1].Cells[cell.ColumnIndex], "dn");
+                    Control.InputCell(Control.ViewRows[ri + 1].Cells[cell.ColumnIndex], "d");
                 }
             }
             else if ((key == Keys.Up) && Control.InputObject is GoDataGridCell cell2)
@@ -160,7 +160,37 @@ namespace Going.UI.Forms.Controls
                 if (ri - 1 >= 0)
                 {
                     FormsInputManager.Current.ClearInput();
-                    Control.InputCell(Control.ViewRows[ri - 1].Cells[cell2.ColumnIndex], "up");
+                    Control.InputCell(Control.ViewRows[ri - 1].Cells[cell2.ColumnIndex], "u");
+                }
+            }
+            else if((key == Keys.Left && modifier == Keys.Control) && Control.InputObject is GoDataGridCell cell3)
+            {
+                var ls = cell3.Row.Cells.Where(x =>
+                {
+                    var tp = x.GetType();
+                    return x is GoDataGridInputTextCell || (tp.IsGenericType && tp.GetGenericTypeDefinition() == typeof(GoDataGridInputNumberCell<>));
+                }).ToList();
+
+                var idx = ls.IndexOf(cell3);
+                if (idx >= 0 && idx - 1 >= 0)
+                {
+                    FormsInputManager.Current.ClearInput();
+                    Control.InputCell(ls[idx - 1], "l");
+                }
+            }
+            else if ((key == Keys.Right && modifier == Keys.Control) && Control.InputObject is GoDataGridCell cell4)
+            {
+                var ls = cell4.Row.Cells.Where(x =>
+                {
+                    var tp = x.GetType();
+                    return x is GoDataGridInputTextCell || (tp.IsGenericType && tp.GetGenericTypeDefinition() == typeof(GoDataGridInputNumberCell<>));
+                }).ToList();
+
+                var idx = ls.IndexOf(cell4);
+                if (idx >= 0 && idx + 1 < ls.Count)
+                {
+                    FormsInputManager.Current.ClearInput();
+                    Control.InputCell(ls[idx + 1], "r");
                 }
             }
         }

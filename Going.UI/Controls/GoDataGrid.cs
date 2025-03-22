@@ -1307,8 +1307,11 @@ namespace Going.UI.Controls
             var rt = Areas()["Row"];
             if (cell is GoDataGridInputTextCell || tp.IsGenericType && (tp.GetGenericTypeDefinition() == typeof(GoDataGridInputNumberCell<>)))
             {
-                if (s == "dn" && (cell.Bounds.Bottom + vscroll.ScrollPositionWithOffset) > rt.Height) vscroll.ScrollPosition += RowHeight;
-                else if (s == "up" && (cell.Bounds.Top + vscroll.ScrollPositionWithOffset) < 0) vscroll.ScrollPosition -= RowHeight;
+                if (s == "u" && (cell.Bounds.Top + vscroll.ScrollPositionWithOffset) < 0) vscroll.ScrollPosition -= RowHeight;
+                else if (s == "d" && (cell.Bounds.Bottom + vscroll.ScrollPositionWithOffset) > rt.Height) vscroll.ScrollPosition += RowHeight;
+                else if (s == "l" && (cell.Bounds.Left + hscroll.ScrollPositionWithOffset) < 0) hscroll.ScrollPosition -= cell.Bounds.Width;
+                else if (s == "r" && (cell.Bounds.Right + hscroll.ScrollPositionWithOffset) > rt.Width) hscroll.ScrollPosition += cell.Bounds.Width;
+
                 cell.MouseClick(cell.Bounds.MidX, cell.Bounds.MidY, GoMouseButton.Left);
             }
         }

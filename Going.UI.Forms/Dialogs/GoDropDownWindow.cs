@@ -422,7 +422,7 @@ namespace Going.UI.Forms.Dialogs
         #endregion
 
         #region spkey
-        void spkey(Keys key)
+        void spkey(Keys key, Keys modifier)
         {
 
         }
@@ -644,7 +644,7 @@ namespace Going.UI.Forms.Dialogs
         #endregion
 
         #region spkey
-        void spkey(Keys key)
+        void spkey(Keys key, Keys modifier)
         {
 
         }

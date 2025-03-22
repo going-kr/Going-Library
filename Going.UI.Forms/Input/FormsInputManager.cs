@@ -31,7 +31,7 @@ namespace Going.UI.Forms.Input
         #region Member Variable
         private TextBox txt = new TextBox { BorderStyle = BorderStyle.None, TextAlign = HorizontalAlignment.Center };
         private Action<string>? InputCallback;
-        private Action<Keys>? InputSpecialKeyDown;
+        private Action<Keys, Keys>? InputSpecialKeyDown;
         private Type? ValueType;
         private object? ValueOrigin;
         private bool IsMinusInput = false;
@@ -99,12 +99,13 @@ namespace Going.UI.Forms.Input
                         InputControl = null;
                         GoInputEventer.Current.ClearInputControl();
 
-                        InputSpecialKeyDown?.Invoke(s.KeyCode);
+                        InputSpecialKeyDown?.Invoke(s.KeyCode, s.Modifiers);
 
                     }
-                    else if (s.KeyCode == Keys.Left || s.KeyCode == Keys.Up || s.KeyCode == Keys.Right || s.KeyCode == Keys.Down)
+                    else if ((s.KeyCode == Keys.Left || s.KeyCode == Keys.Up || s.KeyCode == Keys.Right || s.KeyCode == Keys.Down) && s.Modifiers == Keys.Control)
                     {
-                        InputSpecialKeyDown?.Invoke(s.KeyCode);
+                        s.SuppressKeyPress = true;
+                        InputSpecialKeyDown?.Invoke(s.KeyCode, s.Modifiers);
                     }
                 }
             };
@@ -141,7 +142,7 @@ namespace Going.UI.Forms.Input
         #endregion
 
         #region InputString
-        public void InputString(Control control, IGoControl baseControl, SKRect bounds, string fontName, GoFontStyle fontStyle, float fontSize, string backColor, string textColor, Action<string> callback, Action<Keys>? specialKeyDown, string? value = null)
+        public void InputString(Control control, IGoControl baseControl, SKRect bounds, string fontName, GoFontStyle fontStyle, float fontSize, string backColor, string textColor, Action<string> callback, Action<Keys, Keys>? specialKeyDown, string? value = null)
         {
             if (InputControl == null)
             {
@@ -185,7 +186,7 @@ namespace Going.UI.Forms.Input
         #endregion
 
         #region InputNumber
-        public void InputNumber<T>(Control control, IGoControl baseControl, SKRect bounds, string fontName, GoFontStyle fontStyle, float fontSize, string backColor, string textColor, Action<string> callback, Action<Keys>? specialKeyDown, Type type, object value, object? min, object? max)
+        public void InputNumber<T>(Control control, IGoControl baseControl, SKRect bounds, string fontName, GoFontStyle fontStyle, float fontSize, string backColor, string textColor, Action<string> callback, Action<Keys, Keys>? specialKeyDown, Type type, object value, object? min, object? max)
         {
             if (InputControl == null)
             {

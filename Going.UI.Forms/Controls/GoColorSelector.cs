@@ -41,7 +41,7 @@ namespace Going.UI.Forms.Controls
         #endregion
 
         #region Method
-        void spkey(Keys keyCode)
+        void spkey(Keys key, Keys modifier)
         {
 
         }
