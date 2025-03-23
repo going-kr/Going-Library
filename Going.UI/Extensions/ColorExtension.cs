@@ -30,7 +30,13 @@ namespace Going.UI.Extensions
             return SKColor.FromHsl(h, s, l, color.Alpha);
         }
         #endregion
+        #region Reverse
+        public static SKColor Reverse(this SKColor color)
+        {
+            return new SKColor(Convert.ToByte(255 - color.Red), Convert.ToByte(255 - color.Blue), Convert.ToByte(255 - color.Blue), color.Alpha);
+        }
+        #endregion
 
     }
-     
+
 }

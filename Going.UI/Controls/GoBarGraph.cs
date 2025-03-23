@@ -1,6 +1,7 @@
 ﻿using Going.UI.Datas;
 using Going.UI.Dialogs;
 using Going.UI.Enums;
+using Going.UI.Extensions;
 using Going.UI.Themes;
 using Going.UI.Tools;
 using Going.UI.Utils;
@@ -20,14 +21,14 @@ namespace Going.UI.Controls
         public string GridColor { get; set; } = "Base3";
         public string TextColor { get; set; } = "Fore";
         public string RemarkColor { get; set; } = "Base2";
-        
+
         public string FontName { get; set; } = "나눔고딕";
         public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         public float FontSize { get; set; } = 12;
-        
+
         public int GraduationCount { get; set; } = 10;
         public string? FormatString { get; set; } = null;
-        
+
         public GoBarGraphMode Mode { get; set; } = GoBarGraphMode.List;
         #region  public GoDirectionHV Direction { get; set; } = GoDirectionHV.Vertical;
         private GoDirectionHV dir = GoDirectionHV.Vertical;
@@ -44,19 +45,20 @@ namespace Going.UI.Controls
         #endregion
 
         public List<GoGraphSeries> Series { get; set; } = [];
-        public int BarSize { get; set; } = 30;
-        public int BarGap { get; set; } = 10;
+        public int BarSize { get; set; } = 20;
+        public int BarGap { get; set; } = 20;
 
         public string XAxisName { get; set; } = "";
         public double? Minimum { get; set; }
         public double? Maximum { get; set; }
-        public bool Scrollable { get; set; } = true;
+        public bool ValueDraw { get; set; } = false;
         #endregion
 
         #region Member Variable
         int DataWH => Mode == GoBarGraphMode.List ? (BarGap + (Math.Max(1, Series.Where(x => x.Visible).Count()) * BarSize) + BarGap) : (BarGap + BarSize + BarGap);
-        List<BarGraphValue> datas = new List<BarGraphValue>();
+        List<GoGraphValue> datas = new List<GoGraphValue>();
         Scroll scroll = new Scroll() { Direction = ScrollDirection.Horizon };
+        float mx, my;
         #endregion
 
         #region Constructor
@@ -96,22 +98,19 @@ namespace Going.UI.Controls
             #region spos
             var spos = 0;
             var dwh = 0F;
-            if (Scrollable)
+            if (scroll.ScrollVisible)
             {
-                if (scroll.ScrollVisible)
-                {
-                    dwh = DataWH;
-                    spos = Convert.ToInt32(scroll.ScrollPositionWithOffset);
-                }
-                else
-                {
-                    dwh = BarGap + BarSize + BarGap;
-                }
+                dwh = DataWH;
+                spos = Convert.ToInt32(scroll.ScrollPositionWithOffset);
             }
             else
             {
-                if (Direction == GoDirectionHV.Vertical) dwh = rtNameGrid.Width / datas.Count;
-                else if (Direction == GoDirectionHV.Horizon) dwh = rtNameGrid.Height / datas.Count;
+                if (datas.Count > 0)
+                {
+                    if (Direction == GoDirectionHV.Vertical) dwh = rtNameGrid.Width / datas.Count;
+                    else if (Direction == GoDirectionHV.Horizon) dwh = rtNameGrid.Height / datas.Count;
+                }
+                else dwh = BarGap + BarSize + BarGap;
             }
             #endregion
             #region min / max
@@ -222,6 +221,35 @@ namespace Going.UI.Controls
                                     y = brt.Bottom;
                                 }
                             }
+
+                            if (ValueDraw)
+                            {
+                                y = irt.Top;
+                                foreach (var vk in itm.Values.Keys)
+                                {
+                                    if (dic.TryGetValue(vk, out var ser) && ser.Visible)
+                                    {
+                                        using (new SKAutoCanvasRestore(canvas))
+                                        {
+                                            var brt = Util.FromRect(irt.Left + BarGap, y, irt.Width - (BarGap * 2), Convert.ToSingle(irt.Height * (itm.Values[vk] / vsum)));
+
+                                            canvas.Translate(brt.MidX, brt.MidY);
+                                            canvas.RotateDegrees(-90);
+
+                                            var c = cSeries[ser];
+                                            y = brt.Bottom;
+
+                                            var txt = ValueTool.ToString(itm.Values[vk], FormatString) ?? "";
+                                            var trt = Util.FromRect(-(brt.Height / 2), -(brt.Width / 2), brt.Height, brt.Width);
+                                            var sz = Util.MeasureText(txt, FontName, FontStyle, FontSize);
+
+                                            Util.DrawText(canvas, txt, FontName, FontStyle, FontSize, Util.FromRect(trt.Left, trt.Top, trt.Width - 5, trt.Height), cText, SKColors.Black, 4, GoContentAlignment.MiddleRight);
+                                            //if (sz.Width < trt.Width - 10) Util.DrawText(canvas, txt, FontName, FontStyle, FontSize, Util.FromRect(trt.Left, trt.Top, trt.Width - 5, trt.Height), cText, SKColors.Black, 4, GoContentAlignment.MiddleRight);
+                                            //else Util.DrawText(canvas, txt, FontName, FontStyle, FontSize, Util.FromRect(trt.Right + 5, trt.Top, sz.Width + 1, trt.Height), cText, SKColors.Black, 4, GoContentAlignment.MiddleLeft);
+                                        }
+                                    }
+                                }
+                            }
                         }
                         else
                         {
@@ -234,6 +262,35 @@ namespace Going.UI.Controls
                                     var c = cSeries[ser];
                                     Util.DrawBox(canvas, brt, c, GoRoundType.Rect, thm.Corner);
                                     x = brt.Right;
+                                }
+                            }
+
+                            if (ValueDraw)
+                            {
+                                x = rt.Left + BarGap;
+                                foreach (var vk in itm.Values.Keys)
+                                {
+                                    if (dic.TryGetValue(vk, out var ser) && ser.Visible)
+                                    {
+                                        using (new SKAutoCanvasRestore(canvas))
+                                        {
+                                            var brt = new SKRect(x, Convert.ToSingle(MathTool.Map(itm.Values[vk], vmin, vmax, rt.Bottom, rt.Top)), x + BarSize, rt.Bottom);
+
+                                            canvas.Translate(brt.MidX, brt.MidY);
+                                            canvas.RotateDegrees(-90);
+
+                                            var c = cSeries[ser];
+                                            x = brt.Right;
+
+                                            var txt = ValueTool.ToString(itm.Values[vk], FormatString) ?? "";
+                                            var trt = Util.FromRect(-(brt.Height / 2), -(brt.Width / 2), brt.Height, brt.Width);
+                                            var sz = Util.MeasureText(txt, FontName, FontStyle, FontSize);
+
+                                            Util.DrawText(canvas, txt, FontName, FontStyle, FontSize, Util.FromRect(trt.Left, trt.Top, trt.Width - 5, trt.Height), cText, SKColors.Black, 4, GoContentAlignment.MiddleRight);
+                                            //if (sz.Width < trt.Width - 10) Util.DrawText(canvas, txt, FontName, FontStyle, FontSize, Util.FromRect(trt.Left, trt.Top, trt.Width - 5, trt.Height), cText, SKColors.Black, 4, GoContentAlignment.MiddleRight);
+                                            //else Util.DrawText(canvas, txt, FontName, FontStyle, FontSize, Util.FromRect(trt.Right + 5, trt.Top, sz.Width + 1, trt.Height), cText, SKColors.Black, 4, GoContentAlignment.MiddleLeft);
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -292,7 +349,7 @@ namespace Going.UI.Controls
                 #endregion
 
                 #region Name Axis
-                if(rc >0)
+                if (rc > 0)
                 {
                     using (new SKAutoCanvasRestore(canvas))
                     {
@@ -352,6 +409,28 @@ namespace Going.UI.Controls
                                     x = brt.Left;
                                 }
                             }
+
+                            if (ValueDraw)
+                            {
+                                x = irt.Right;
+                                foreach (var vk in itm.Values.Keys)
+                                {
+                                    if (dic.TryGetValue(vk, out var ser) && ser.Visible)
+                                    {
+                                        var w = Convert.ToSingle(irt.Width * (itm.Values[vk] / vsum));
+                                        var brt = Util.FromRect(x - w, irt.Top + BarGap, w, irt.Height - (BarGap * 2));
+                                        var c = cSeries[ser];
+
+                                        x = brt.Left;
+
+                                        var txt = ValueTool.ToString(itm.Values[vk], FormatString) ?? "";
+                                        var sz = Util.MeasureText(txt, FontName, FontStyle, FontSize);
+
+                                        Util.DrawText(canvas, txt, FontName, FontStyle, FontSize, Util.FromRect(brt.Left, brt.Top, brt.Width - 5, brt.Height), cText, SKColors.Black, 4, GoContentAlignment.MiddleRight);
+
+                                    }
+                                }
+                            }
                         }
                         else
                         {
@@ -364,6 +443,25 @@ namespace Going.UI.Controls
                                     var c = cSeries[ser];
                                     Util.DrawBox(canvas, brt, c, GoRoundType.Rect, thm.Corner);
                                     y = brt.Bottom;
+                                }
+                            }
+
+                            if (ValueDraw)
+                            {
+                                y = rt.Top + BarGap;
+                                foreach (var vk in itm.Values.Keys)
+                                {
+                                    if (dic.TryGetValue(vk, out var ser) && ser.Visible)
+                                    {
+                                        var brt = new SKRect(rt.Left, y, Convert.ToSingle(MathTool.Map(itm.Values[vk], vmin, vmax, rt.Left, rt.Right)), y + BarSize);
+                                        var c = cSeries[ser];
+                                        y = brt.Bottom;
+
+                                        var txt = ValueTool.ToString(itm.Values[vk], FormatString) ?? "";
+                                        var sz = Util.MeasureText(txt, FontName, FontStyle, FontSize);
+
+                                        Util.DrawText(canvas, txt, FontName, FontStyle, FontSize, Util.FromRect(brt.Left, brt.Top, brt.Width - 5, brt.Height), cText, SKColors.Black, 4, GoContentAlignment.MiddleRight);
+                                    }
                                 }
                             }
                         }
@@ -409,17 +507,16 @@ namespace Going.UI.Controls
             var rtScroll = rts["rtScroll"];
             #endregion
 
-            if (Scrollable)
-            {
-                scroll.MouseDown(x, y, rtScroll);
-                if (scroll.TouchMode && CollisionTool.Check(rtGraph, x, y)) scroll.TouchDown(x, y);
-            }
+            scroll.MouseDown(x, y, rtScroll);
+            if (scroll.TouchMode && CollisionTool.Check(rtGraph, x, y)) scroll.TouchDown(x, y);
 
             base.OnMouseDown(x, y, button);
         }
 
         protected override void OnMouseMove(float x, float y)
         {
+            mx = x;
+            my = y;
             #region var
             var rts = Areas();
             var rtValueGrid = rts["ValueGrid"];
@@ -429,11 +526,8 @@ namespace Going.UI.Controls
             var rtScroll = rts["rtScroll"];
             #endregion
 
-            if (Scrollable)
-            {
-                scroll.MouseMove(x, y, rtScroll);
-                if (scroll.TouchMode) scroll.TouchMove(x, y);
-            }
+            scroll.MouseMove(x, y, rtScroll);
+            if (scroll.TouchMode) scroll.TouchMove(x, y);
             base.OnMouseMove(x, y);
         }
 
@@ -448,11 +542,8 @@ namespace Going.UI.Controls
             var rtScroll = rts["rtScroll"];
             #endregion
 
-            if (Scrollable)
-            {
-                scroll.MouseUp(x, y);
-                if (scroll.TouchMode) scroll.TouchUp(x, y);
-            }
+            scroll.MouseUp(x, y);
+            if (scroll.TouchMode) scroll.TouchUp(x, y);
 
             base.OnMouseUp(x, y, button);
         }
@@ -525,7 +616,7 @@ namespace Going.UI.Controls
                 var vw = Util.MeasureText(new string[] { $"{ValueTool.ToString(vmin, FormatString ?? "0")}", $"{ValueTool.ToString(vmax, FormatString ?? "0")}" }.OrderByDescending(x => x.Length).FirstOrDefault() ?? "", FontName, FontStyle, FontSize).Width;
                 var rw = rsw.Any() ? rsw.Max() + 20 : 20;
                 var rc = Math.Max(1, Series.Where(x => x.Visible).Count());
-                var rts = Util.Grid(rtContent, [$"{vw}px", "10px", "100%", "10px", $"{rw}px"], ["10px", "100%", "10px", "40px", $"{(Scrollable ? Scroll.SC_WH : 0)}px"]);
+                var rts = Util.Grid(rtContent, [$"{vw}px", "10px", "100%", "10px", $"{rw}px"], ["10px", "100%", "10px", "40px", $"{Scroll.SC_WH}px"]);
 
                 var rtValueGrid = Util.Merge(rts, 0, 1, 1, 1);
                 var rtNameGrid = Util.Merge(rts, 2, 3, 1, 1);
@@ -545,7 +636,7 @@ namespace Going.UI.Controls
                 var nw = Util.MeasureText(datas.OrderByDescending(x => x.Name.Length).FirstOrDefault()?.Name ?? "", FontName, FontStyle, FontSize).Width;
                 var rw = rsw.Any() ? rsw.Max() + 20 : box + gap + 20;
                 var rc = Math.Max(1, Series.Where(x => x.Visible).Count());
-                var rts = Util.Grid(rtContent, [$"{nw}px", "10px", "100%", "10px", $"{(Scrollable ? Scroll.SC_WH : 0)}px", "10px", $"{rw}px"], ["10px", "100%", "10px", $"{FontSize}px"]);
+                var rts = Util.Grid(rtContent, [$"{nw}px", "10px", "100%", "10px", $"{(Scroll.SC_WH)}px", "10px", $"{rw}px"], ["10px", "100%", "10px", $"{FontSize}px"]);
 
                 var rtNameGrid = Util.Merge(rts, 0, 1, 1, 1);
                 var rtValueGrid = Util.Merge(rts, 2, 3, 1, 1);
@@ -567,7 +658,7 @@ namespace Going.UI.Controls
 
         #region Method
         #region SetDataSource
-        public void SetDataSource<T>(IEnumerable<T> values) 
+        public void SetDataSource<T>(IEnumerable<T> values)
         {
             if (Series.Count > 0)
             {
@@ -593,7 +684,7 @@ namespace Going.UI.Controls
                             var nm = xprop.GetValue(v) as string;
                             if (!string.IsNullOrWhiteSpace(nm))
                             {
-                                var gv = new BarGraphValue() { Name = nm, };
+                                var gv = new GoGraphValue() { Name = nm, };
 
                                 if (gv.Name != null)
                                 {
@@ -608,7 +699,7 @@ namespace Going.UI.Controls
                             }
                         }
 
-                     
+
                     }
                     else throw new Exception("잘못된 데이터 입니다.");
                 }
@@ -620,7 +711,7 @@ namespace Going.UI.Controls
         #endregion
     }
     
-    class BarGraphValue
+    class GoGraphValue
     {
         public string Name { get; set; }
         public Dictionary<string, double> Values { get; } = new Dictionary<string, double>();
