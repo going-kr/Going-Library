@@ -17,7 +17,7 @@ namespace Going.UI.Datas
         public bool Visible { get; set; } = true;
     }
     #endregion
-    #region class : GraphSeries
+    #region class : LineGraphSeries
     public class GoLineGraphSeries
     {
         public string Name { get; set; } = "";
@@ -29,5 +29,4 @@ namespace Going.UI.Datas
         public double Maximum { get; set; } = 100;
     }
     #endregion
-
 }

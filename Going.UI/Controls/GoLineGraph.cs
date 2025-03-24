@@ -31,7 +31,6 @@ namespace Going.UI.Controls
         public string? FormatString { get; set; } = null;
 
         public List<GoLineGraphSeries> Series { get; set; } = [];
-        public string XAxisName { get; set; } = "";
 
         public bool PointDraw { get; set; } = true;
         public bool ValueDraw { get; set; } = false;
@@ -70,13 +69,15 @@ namespace Going.UI.Controls
             var cText = thm.ToColor(TextColor);
             var cRemark = thm.ToColor(RemarkColor);
             var cSeries = Series.ToDictionary(x => x, y => thm.ToColor(y.Color));
+            var cTextBorder = thm.Base1;
+            var nTextBorder = 5F;
             var rts = Areas();
             var rtValueTitle = rts["ValueTitle"];
             var rtValueGrid = rts["ValueGrid"];
             var rtNameGrid = rts["NameGrid"];
             var rtRemark = rts["Remark"];
             var rtGraph = rts["Graph"];
-            var rtScroll = rts["rtScroll"];
+            var rtScroll = rts["Scroll"];
             using var p = new SKPaint { IsAntialias = true };
 
             var rc = Series.Where(x => x.Visible).Count();
@@ -229,7 +230,7 @@ namespace Going.UI.Controls
 
                                 var w = sz.Width + 20;
                                 var trt = Util.FromRect(v.Position.X - (w / 2), v.Position.Y - sz.Height - 10, w, sz.Height);
-                                Util.DrawText(canvas, txt, FontName, FontStyle, FontSize, trt, c, thm.Back, 6);
+                                Util.DrawText(canvas, txt, FontName, FontStyle, FontSize, trt, c, cTextBorder, nTextBorder);
                             }
                         }
                         #endregion
@@ -272,7 +273,7 @@ namespace Going.UI.Controls
             var rtNameGrid = rts["NameGrid"];
             var rtRemark = rts["Remark"];
             var rtGraph = rts["Graph"];
-            var rtScroll = rts["rtScroll"];
+            var rtScroll = rts["Scroll"];
             #endregion
 
             scroll.MouseDown(x, y, rtScroll);
@@ -291,7 +292,7 @@ namespace Going.UI.Controls
             var rtNameGrid = rts["NameGrid"];
             var rtRemark = rts["Remark"];
             var rtGraph = rts["Graph"];
-            var rtScroll = rts["rtScroll"];
+            var rtScroll = rts["Scroll"];
             #endregion
 
             scroll.MouseMove(x, y, rtScroll);
@@ -307,7 +308,7 @@ namespace Going.UI.Controls
             var rtNameGrid = rts["NameGrid"];
             var rtRemark = rts["Remark"];
             var rtGraph = rts["Graph"];
-            var rtScroll = rts["rtScroll"];
+            var rtScroll = rts["Scroll"];
             #endregion
 
             scroll.MouseUp(x, y);
@@ -324,7 +325,7 @@ namespace Going.UI.Controls
             var rtNameGrid = rts["NameGrid"];
             var rtRemark = rts["Remark"];
             var rtGraph = rts["Graph"];
-            var rtScroll = rts["rtScroll"];
+            var rtScroll = rts["Scroll"];
             #endregion
 
             if (CollisionTool.Check(rtRemark, x, y))
@@ -374,7 +375,7 @@ namespace Going.UI.Controls
                 dic["NameGrid"] = rtNameGrid;
                 dic["Remark"] = MathTool.MakeRectangle(rtRemark, new SKSize(rw, (box * rc) + (gap * (rc + 1))));
                 dic["Graph"] = rtGraph;
-                dic["rtScroll"] = rtScroll;
+                dic["Scroll"] = rtScroll;
             }
 
             return dic;
@@ -384,7 +385,7 @@ namespace Going.UI.Controls
 
         #region Method
         #region SetDataSource
-        public void SetDataSource<T>(IEnumerable<T> values)
+        public void SetDataSource<T>(string XAxisName, IEnumerable<T> values)
         {
             if (Series.Count > 0)
             {

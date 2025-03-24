@@ -157,7 +157,12 @@ namespace Going.UI.Utils
                 if (align == GoContentAlignment.MiddleLeft || align == GoContentAlignment.MiddleCenter || align == GoContentAlignment.MiddleRight) startY = bounds.MidY - totalTextHeight / 2F;
                 else if (align == GoContentAlignment.BottomLeft || align == GoContentAlignment.BottomCenter || align == GoContentAlignment.BottomRight) startY = bounds.Bottom - totalTextHeight;
 
-                
+                p.StrokeJoin = SKStrokeJoin.Round;
+                p.IsStroke = true;
+                p.StrokeWidth = bordersize;
+                p.Color = bordercolor;
+                p.StrokeMiter = bordersize;
+                p.StrokeCap = SKStrokeCap.Round;
                 for (int i = 0; i < lines.Count; i++)
                 {
                     float y = startY + (i * lineHeight) - font.Metrics.Ascent;
@@ -169,14 +174,25 @@ namespace Going.UI.Utils
                     float x = bounds.Left;
                     if (align == GoContentAlignment.TopCenter || align == GoContentAlignment.MiddleCenter || align == GoContentAlignment.BottomCenter) x = bounds.MidX - textWidth / 2;
                     else if (align == GoContentAlignment.TopRight || align == GoContentAlignment.MiddleRight || align == GoContentAlignment.BottomRight) x = bounds.Right - textWidth;
-
-                    p.IsStroke = true;
-                    p.StrokeWidth = bordersize;
-                    p.Color = bordercolor;
+   
                     canvas.DrawText(lines[i], x, y, font, p);
+                     
+                }
 
-                    p.IsStroke = false;
-                    p.Color = color;
+                p.IsStroke = false;
+                p.Color = color;
+                for (int i = 0; i < lines.Count; i++)
+                {
+                    float y = startY + (i * lineHeight) - font.Metrics.Ascent;
+#if MeasureA
+                    float textWidth = font.MeasureText(lines[i]) + 1;
+#else
+                    font.MeasureText(lines[i], out var vszrt); var textWidth = vszrt.Width;
+#endif
+                    float x = bounds.Left;
+                    if (align == GoContentAlignment.TopCenter || align == GoContentAlignment.MiddleCenter || align == GoContentAlignment.BottomCenter) x = bounds.MidX - textWidth / 2;
+                    else if (align == GoContentAlignment.TopRight || align == GoContentAlignment.MiddleRight || align == GoContentAlignment.BottomRight) x = bounds.Right - textWidth;
+                     
                     canvas.DrawText(lines[i], x, y, font, p);
                 }
             }

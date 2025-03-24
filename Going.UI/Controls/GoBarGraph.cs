@@ -48,7 +48,6 @@ namespace Going.UI.Controls
         public int BarSize { get; set; } = 20;
         public int BarGap { get; set; } = 20;
 
-        public string XAxisName { get; set; } = "";
         public double? Minimum { get; set; }
         public double? Maximum { get; set; }
         public bool ValueDraw { get; set; } = false;
@@ -84,6 +83,8 @@ namespace Going.UI.Controls
             var thm = GoTheme.Current;
             var cGrid = thm.ToColor(GridColor);
             var cText = thm.ToColor(TextColor);
+            var cTextBorder = thm.Base1;
+            var nTextBorder = 5F;
             var cRemark = thm.ToColor(RemarkColor);
             var cSeries = Series.ToDictionary(x => x, y => thm.ToColor(y.Color));
             var rts = Areas();
@@ -91,7 +92,7 @@ namespace Going.UI.Controls
             var rtNameGrid = rts["NameGrid"];
             var rtRemark = rts["Remark"];
             var rtGraph = rts["Graph"];
-            var rtScroll = rts["rtScroll"];
+            var rtScroll = rts["Scroll"];
             var rc = Series.Where(x => x.Visible).Count();
             using var p = new SKPaint { IsAntialias = true };
             #endregion
@@ -243,9 +244,7 @@ namespace Going.UI.Controls
                                             var trt = Util.FromRect(-(brt.Height / 2), -(brt.Width / 2), brt.Height, brt.Width);
                                             var sz = Util.MeasureText(txt, FontName, FontStyle, FontSize);
 
-                                            Util.DrawText(canvas, txt, FontName, FontStyle, FontSize, Util.FromRect(trt.Left, trt.Top, trt.Width - 5, trt.Height), cText, SKColors.Black, 4, GoContentAlignment.MiddleRight);
-                                            //if (sz.Width < trt.Width - 10) Util.DrawText(canvas, txt, FontName, FontStyle, FontSize, Util.FromRect(trt.Left, trt.Top, trt.Width - 5, trt.Height), cText, SKColors.Black, 4, GoContentAlignment.MiddleRight);
-                                            //else Util.DrawText(canvas, txt, FontName, FontStyle, FontSize, Util.FromRect(trt.Right + 5, trt.Top, sz.Width + 1, trt.Height), cText, SKColors.Black, 4, GoContentAlignment.MiddleLeft);
+                                            Util.DrawText(canvas, txt, FontName, FontStyle, FontSize, Util.FromRect(trt.Left, trt.Top, trt.Width - 5, trt.Height), cText, cTextBorder, nTextBorder, GoContentAlignment.MiddleRight);
                                         }
                                     }
                                 }
@@ -286,9 +285,7 @@ namespace Going.UI.Controls
                                             var trt = Util.FromRect(-(brt.Height / 2), -(brt.Width / 2), brt.Height, brt.Width);
                                             var sz = Util.MeasureText(txt, FontName, FontStyle, FontSize);
 
-                                            Util.DrawText(canvas, txt, FontName, FontStyle, FontSize, Util.FromRect(trt.Left, trt.Top, trt.Width - 5, trt.Height), cText, SKColors.Black, 4, GoContentAlignment.MiddleRight);
-                                            //if (sz.Width < trt.Width - 10) Util.DrawText(canvas, txt, FontName, FontStyle, FontSize, Util.FromRect(trt.Left, trt.Top, trt.Width - 5, trt.Height), cText, SKColors.Black, 4, GoContentAlignment.MiddleRight);
-                                            //else Util.DrawText(canvas, txt, FontName, FontStyle, FontSize, Util.FromRect(trt.Right + 5, trt.Top, sz.Width + 1, trt.Height), cText, SKColors.Black, 4, GoContentAlignment.MiddleLeft);
+                                            Util.DrawText(canvas, txt, FontName, FontStyle, FontSize, Util.FromRect(trt.Left, trt.Top, trt.Width - 5, trt.Height), cText, cTextBorder, nTextBorder, GoContentAlignment.MiddleRight);
                                         }
                                     }
                                 }
@@ -426,7 +423,7 @@ namespace Going.UI.Controls
                                         var txt = ValueTool.ToString(itm.Values[vk], FormatString) ?? "";
                                         var sz = Util.MeasureText(txt, FontName, FontStyle, FontSize);
 
-                                        Util.DrawText(canvas, txt, FontName, FontStyle, FontSize, Util.FromRect(brt.Left, brt.Top, brt.Width - 5, brt.Height), cText, SKColors.Black, 4, GoContentAlignment.MiddleRight);
+                                        Util.DrawText(canvas, txt, FontName, FontStyle, FontSize, Util.FromRect(brt.Left, brt.Top, brt.Width - 5, brt.Height), cText, cTextBorder, nTextBorder, GoContentAlignment.MiddleRight);
 
                                     }
                                 }
@@ -460,7 +457,7 @@ namespace Going.UI.Controls
                                         var txt = ValueTool.ToString(itm.Values[vk], FormatString) ?? "";
                                         var sz = Util.MeasureText(txt, FontName, FontStyle, FontSize);
 
-                                        Util.DrawText(canvas, txt, FontName, FontStyle, FontSize, Util.FromRect(brt.Left, brt.Top, brt.Width - 5, brt.Height), cText, SKColors.Black, 4, GoContentAlignment.MiddleRight);
+                                        Util.DrawText(canvas, txt, FontName, FontStyle, FontSize, Util.FromRect(brt.Left, brt.Top, brt.Width - 5, brt.Height), cText, cTextBorder, nTextBorder, GoContentAlignment.MiddleRight);
                                     }
                                 }
                             }
@@ -504,7 +501,7 @@ namespace Going.UI.Controls
             var rtNameGrid = rts["NameGrid"];
             var rtRemark = rts["Remark"];
             var rtGraph = rts["Graph"];
-            var rtScroll = rts["rtScroll"];
+            var rtScroll = rts["Scroll"];
             #endregion
 
             scroll.MouseDown(x, y, rtScroll);
@@ -523,7 +520,7 @@ namespace Going.UI.Controls
             var rtNameGrid = rts["NameGrid"];
             var rtRemark = rts["Remark"];
             var rtGraph = rts["Graph"];
-            var rtScroll = rts["rtScroll"];
+            var rtScroll = rts["Scroll"];
             #endregion
 
             scroll.MouseMove(x, y, rtScroll);
@@ -539,7 +536,7 @@ namespace Going.UI.Controls
             var rtNameGrid = rts["NameGrid"];
             var rtRemark = rts["Remark"];
             var rtGraph = rts["Graph"];
-            var rtScroll = rts["rtScroll"];
+            var rtScroll = rts["Scroll"];
             #endregion
 
             scroll.MouseUp(x, y);
@@ -556,7 +553,7 @@ namespace Going.UI.Controls
             var rtNameGrid = rts["NameGrid"];
             var rtRemark = rts["Remark"];
             var rtGraph = rts["Graph"];
-            var rtScroll = rts["rtScroll"];
+            var rtScroll = rts["Scroll"];
             #endregion
 
             if (CollisionTool.Check(rtRemark, x, y))
@@ -616,19 +613,19 @@ namespace Going.UI.Controls
                 var vw = Util.MeasureText(new string[] { $"{ValueTool.ToString(vmin, FormatString ?? "0")}", $"{ValueTool.ToString(vmax, FormatString ?? "0")}" }.OrderByDescending(x => x.Length).FirstOrDefault() ?? "", FontName, FontStyle, FontSize).Width;
                 var rw = rsw.Any() ? rsw.Max() + 20 : 20;
                 var rc = Math.Max(1, Series.Where(x => x.Visible).Count());
-                var rts = Util.Grid(rtContent, [$"{vw}px", "10px", "100%", "10px", $"{rw}px"], ["10px", "100%", "10px", "40px", $"{Scroll.SC_WH}px"]);
+                var rts = Util.Grid(rtContent, [$"{vw}px", "10px", "100%", "10px", $"{rw}px"], ["20px", "10px", "100%", "10px", "40px", $"{Scroll.SC_WH}px"]);
 
-                var rtValueGrid = Util.Merge(rts, 0, 1, 1, 1);
-                var rtNameGrid = Util.Merge(rts, 2, 3, 1, 1);
-                var rtGraph = Util.Merge(rts, 2, 1, 1, 1);
-                var rtRemark = Util.Merge(rts, 4, 1, 1, 1);
-                var rtScroll = Util.Merge(rts, 2, 4, 1, 1);
+                var rtValueGrid = Util.Merge(rts, 0, 2, 1, 1);
+                var rtNameGrid = Util.Merge(rts, 2, 4, 1, 1);
+                var rtGraph = Util.Merge(rts, 2, 2, 1, 1);
+                var rtRemark = Util.Merge(rts, 4, 2, 1, 1);
+                var rtScroll = Util.Merge(rts, 2, 5, 1, 1);
 
                 dic["ValueGrid"] = rtValueGrid;
                 dic["NameGrid"] = rtNameGrid;
                 dic["Remark"] = MathTool.MakeRectangle(rtRemark, new SKSize(rw, (box * rc) + (gap * (rc + 1))));
                 dic["Graph"] = rtGraph;
-                dic["rtScroll"] = rtScroll;
+                dic["Scroll"] = rtScroll;
             }
             else
             {
@@ -636,19 +633,19 @@ namespace Going.UI.Controls
                 var nw = Util.MeasureText(datas.OrderByDescending(x => x.Name.Length).FirstOrDefault()?.Name ?? "", FontName, FontStyle, FontSize).Width;
                 var rw = rsw.Any() ? rsw.Max() + 20 : box + gap + 20;
                 var rc = Math.Max(1, Series.Where(x => x.Visible).Count());
-                var rts = Util.Grid(rtContent, [$"{nw}px", "10px", "100%", "10px", $"{(Scroll.SC_WH)}px", "10px", $"{rw}px"], ["10px", "100%", "10px", $"{FontSize}px"]);
+                var rts = Util.Grid(rtContent, [$"{nw}px", "10px", "100%", "10px", $"{(Scroll.SC_WH)}px", "10px", $"{rw}px"], ["20px", "10px", "100%", "10px", $"{FontSize}px"]);
 
-                var rtNameGrid = Util.Merge(rts, 0, 1, 1, 1);
-                var rtValueGrid = Util.Merge(rts, 2, 3, 1, 1);
-                var rtGraph = Util.Merge(rts, 2, 1, 1, 1);
-                var rtRemark = Util.Merge(rts, 6, 1, 1, 1);
-                var rtScroll = Util.Merge(rts, 4, 1, 1, 1);
+                var rtNameGrid = Util.Merge(rts, 0, 2, 1, 1);
+                var rtValueGrid = Util.Merge(rts, 2, 4, 1, 1);
+                var rtGraph = Util.Merge(rts, 2, 2, 1, 1);
+                var rtRemark = Util.Merge(rts, 6, 2, 1, 1);
+                var rtScroll = Util.Merge(rts, 4, 2, 1, 1);
 
                 dic["ValueGrid"] = rtValueGrid;
                 dic["NameGrid"] = rtNameGrid;
                 dic["Remark"] = MathTool.MakeRectangle(rtRemark, new SKSize(rw, (box * rc) + (gap * (rc + 1))));
                 dic["Graph"] = rtGraph;
-                dic["rtScroll"] = rtScroll;
+                dic["Scroll"] = rtScroll;
             }
 
             return dic;
@@ -658,7 +655,7 @@ namespace Going.UI.Controls
 
         #region Method
         #region SetDataSource
-        public void SetDataSource<T>(IEnumerable<T> values)
+        public void SetDataSource<T>(string XAxisName, IEnumerable<T> values)
         {
             if (Series.Count > 0)
             {
