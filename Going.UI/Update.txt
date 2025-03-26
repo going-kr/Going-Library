@@ -1,10 +1,6 @@
 ﻿
 = 미완료 작업 =================================================================================
 
-BarGraph					막대 그래프	
-CircleGraph					원형 그래프	
-LineGraph					꺾은선 그래프
-TimeGraph					타임 그래프												종현님
 TrendGraph					트랜드 그래프											지준
 
 Progress					일자형 프로그레스										상무님(v)
@@ -78,6 +74,11 @@ MessageBox                                                                      
 SelectorBox                                                                         O
 InputBox                                                                            O
 GridLayoutPanel																		O
+
+BarGraph					막대 그래프	                                            O
+CircleGraph					원형 그래프	                                            O
+LineGraph					꺾은선 그래프                                           O
+TimeGraph					타임 그래프												O
 
 = 제외 작업 ===================================================================================
 

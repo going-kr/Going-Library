@@ -1,5 +1,4 @@
-﻿using Going.UI.Datas;
-using Going.UI.Dialogs;
+﻿using Going.UI.Datas;using Going.UI.Dialogs;
 using Going.UI.Enums;
 using Going.UI.Extensions;
 using Going.UI.Themes;
@@ -10,6 +9,7 @@ using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.ConstrainedExecution;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -50,7 +50,6 @@ namespace Going.UI.Controls
 
         public double? Minimum { get; set; }
         public double? Maximum { get; set; }
-        public bool ValueDraw { get; set; } = false;
         #endregion
 
         #region Member Variable
@@ -58,6 +57,7 @@ namespace Going.UI.Controls
         List<GoGraphValue> datas = new List<GoGraphValue>();
         Scroll scroll = new Scroll() { Direction = ScrollDirection.Horizon };
         float mx, my;
+        bool bView;
         #endregion
 
         #region Constructor
@@ -83,7 +83,7 @@ namespace Going.UI.Controls
             var thm = GoTheme.Current;
             var cGrid = thm.ToColor(GridColor);
             var cText = thm.ToColor(TextColor);
-            var cTextBorder = thm.Base1;
+            var cTextBorder = thm.Back;
             var nTextBorder = 5F;
             var cRemark = thm.ToColor(RemarkColor);
             var cSeries = Series.ToDictionary(x => x, y => thm.ToColor(y.Color));
@@ -93,6 +93,8 @@ namespace Going.UI.Controls
             var rtRemark = rts["Remark"];
             var rtGraph = rts["Graph"];
             var rtScroll = rts["Scroll"];
+            var rtViewBox = rts["ViewBox"];
+
             var rc = Series.Where(x => x.Visible).Count();
             using var p = new SKPaint { IsAntialias = true };
             #endregion
@@ -187,29 +189,42 @@ namespace Going.UI.Controls
                 }
                 #endregion
 
+                #region ViewBox
+                Util.DrawTextIcon(canvas, "View", FontName, FontStyle, FontSize, "fa-magnifying-glass-chart", 20, GoDirectionHV.Horizon, 10, rtViewBox, bView ? cText : cGrid);
+                Util.DrawBox(canvas, rtViewBox, SKColors.Transparent, bView ? cText : cGrid, GoRoundType.All, thm.Corner);
+                #endregion
+
                 #region Graph
                 using (new SKAutoCanvasRestore(canvas))
                 {
-                    canvas.ClipRect(rtGraph);
+                    canvas.ClipRect(Util.FromRect(rtGraph.Left, rtGraph.Top, rtGraph.Width + 1, rtGraph.Height + 1));
                     canvas.Translate(rtGraph.Left, rtGraph.Top);
                     canvas.Translate(spos, 0);
 
+                    #region var
                     var vrt = Util.FromRect(-spos, 0, rtGraph.Width, rtGraph.Height);
 
                     var si = Math.Max(0, Convert.ToInt32(Math.Floor(vrt.Left / dwh)));
                     var ei = Math.Min(datas.Count - 1, Convert.ToInt32(Math.Ceiling(vrt.Right / dwh)));
 
                     var dic = Series.ToDictionary(x => x.Name);
+                    int? hovidx = null;
+                    SKRect[]? hovrts = null;
+                    #endregion
+
+                    #region draw
                     for (int i = si; i <= ei; i++)
                     {
                         var itm = datas[i];
                         var rt = Util.FromRect((dwh * i), 0, dwh, rtGraph.Height);
 
+                        List<SKRect> vrts = [];
                         if (Mode == GoBarGraphMode.Stack)
                         {
                             var vsum = itm.Values.Where(x => Series.FirstOrDefault(y => y.Name == x.Key)?.Visible ?? false).Sum(x => x.Value);
                             var irt = new SKRect(rt.Left, Convert.ToSingle(MathTool.Map(vsum, vmin, vmax, rt.Bottom, rt.Top)), rt.Right, rt.Bottom);
 
+                            #region Bar
                             var y = irt.Top;
                             foreach (var vk in itm.Values.Keys)
                             {
@@ -220,39 +235,17 @@ namespace Going.UI.Controls
 
                                     Util.DrawBox(canvas, brt, c, GoRoundType.Rect, thm.Corner);
                                     y = brt.Bottom;
+
+                                    vrts.Add(brt);
                                 }
                             }
-
-                            if (ValueDraw)
-                            {
-                                y = irt.Top;
-                                foreach (var vk in itm.Values.Keys)
-                                {
-                                    if (dic.TryGetValue(vk, out var ser) && ser.Visible)
-                                    {
-                                        using (new SKAutoCanvasRestore(canvas))
-                                        {
-                                            var brt = Util.FromRect(irt.Left + BarGap, y, irt.Width - (BarGap * 2), Convert.ToSingle(irt.Height * (itm.Values[vk] / vsum)));
-
-                                            canvas.Translate(brt.MidX, brt.MidY);
-                                            canvas.RotateDegrees(-90);
-
-                                            var c = cSeries[ser];
-                                            y = brt.Bottom;
-
-                                            var txt = ValueTool.ToString(itm.Values[vk], FormatString) ?? "";
-                                            var trt = Util.FromRect(-(brt.Height / 2), -(brt.Width / 2), brt.Height, brt.Width);
-                                            var sz = Util.MeasureText(txt, FontName, FontStyle, FontSize);
-
-                                            Util.DrawText(canvas, txt, FontName, FontStyle, FontSize, Util.FromRect(trt.Left, trt.Top, trt.Width - 5, trt.Height), cText, cTextBorder, nTextBorder, GoContentAlignment.MiddleRight);
-                                        }
-                                    }
-                                }
-                            }
+                            #endregion
                         }
                         else
                         {
+                            #region Bar
                             var x = rt.Left + BarGap;
+        
                             foreach (var vk in itm.Values.Keys)
                             {
                                 if (dic.TryGetValue(vk, out var ser) && ser.Visible)
@@ -261,37 +254,84 @@ namespace Going.UI.Controls
                                     var c = cSeries[ser];
                                     Util.DrawBox(canvas, brt, c, GoRoundType.Rect, thm.Corner);
                                     x = brt.Right;
+
+                                    vrts.Add(brt);
                                 }
                             }
+                            #endregion
+                        }
 
-                            if (ValueDraw)
+                        if (CollisionTool.Check(rt, mx - rtGraph.Left - spos, my - rtGraph.Top)) { hovidx = i; hovrts = vrts.Count > 0 ? vrts.ToArray() : null; }
+                    }
+                    #endregion
+
+                    #region Hover
+                    if (bView)
+                    {
+                        using var pe = SKPathEffect.CreateDash([2, 2], 2);
+
+                        using (new SKAutoCanvasRestore(canvas))
+                        {
+                            foreach (var vv in hovrts ?? []) canvas.ClipRect(vv, SKClipOperation.Difference);
+
+                            p.IsStroke = false;
+                            p.Color = Util.FromArgb(200, thm.Back);
+                            canvas.DrawRect(Util.FromRect(-spos, 0, rtGraph.Width+1, rtGraph.Height+1), p);
+                        }
+
+                        if (hovidx.HasValue && CollisionTool.Check(rtGraph, mx, my) && hovrts != null)
+                        {
+                            var itm = datas[hovidx.Value];
+                            var rt = Util.FromRect((dwh * hovidx.Value), 0, dwh, rtGraph.Height);
+                            var x = Convert.ToInt32(rt.MidX) + 0.5F;
+
+                            #region line
+                            using (new SKAutoCanvasRestore(canvas))
                             {
-                                x = rt.Left + BarGap;
-                                foreach (var vk in itm.Values.Keys)
-                                {
-                                    if (dic.TryGetValue(vk, out var ser) && ser.Visible)
-                                    {
-                                        using (new SKAutoCanvasRestore(canvas))
-                                        {
-                                            var brt = new SKRect(x, Convert.ToSingle(MathTool.Map(itm.Values[vk], vmin, vmax, rt.Bottom, rt.Top)), x + BarSize, rt.Bottom);
+                                foreach (var vv in hovrts) canvas.ClipRect(vv, SKClipOperation.Difference);
 
-                                            canvas.Translate(brt.MidX, brt.MidY);
-                                            canvas.RotateDegrees(-90);
+                                p.IsStroke = true;
+                                p.StrokeWidth = 1;
+                                p.Color = cGrid;
+                                p.PathEffect = pe;
+                                canvas.DrawLine(x, rt.Top, x, rt.Bottom, p);
+                                p.PathEffect = null;
+                            }
+                            #endregion
 
-                                            var c = cSeries[ser];
-                                            x = brt.Right;
+                            #region time
+                            var s = itm.Name;
+                            var tw = Util.MeasureText(s, FontName, FontStyle, FontSize).Width;
+                            var mvw = Series.Where(x => x.Visible).Select(x => Util.MeasureText($"{x.Alias} : {ValueTool.ToString(Maximum, FormatString ?? "0.0")}", FontName, FontStyle, FontSize).Width + 20).Max();
+                            var gp = 15;
+                            var gpw = (hovrts.Max(x => x.Right) - hovrts.Min(x => x.Left)) / 2F + 10F;
+                            var bdir = x + gpw + Math.Max(tw, mvw) < rtGraph.Width - spos;
+                            var tx = bdir ? x + gpw : x - gpw;
+                            var ty = gp;
 
-                                            var txt = ValueTool.ToString(itm.Values[vk], FormatString) ?? "";
-                                            var trt = Util.FromRect(-(brt.Height / 2), -(brt.Width / 2), brt.Height, brt.Width);
-                                            var sz = Util.MeasureText(txt, FontName, FontStyle, FontSize);
+                            Util.DrawText(canvas, s, FontName, FontStyle, FontSize, Util.FromRect(tx - (bdir ? 0 : tw), ty, tw, 30), cText, GoContentAlignment.MiddleLeft);
+                            ty += 30;
+                            #endregion
 
-                                            Util.DrawText(canvas, txt, FontName, FontStyle, FontSize, Util.FromRect(trt.Left, trt.Top, trt.Width - 5, trt.Height), cText, cTextBorder, nTextBorder, GoContentAlignment.MiddleRight);
-                                        }
-                                    }
-                                }
+                            foreach (var ser in Series.Where(x => x.Visible))
+                            {
+                                var v = itm.Values[ser.Name];
+                                var c = cSeries[ser];
+
+                                #region box
+                                var sv = $"{ser.Alias} : {ValueTool.ToString(v, FormatString ?? "0.0")}";
+                                var vw = Util.MeasureText(sv, FontName, FontStyle, FontSize).Width + 20;
+                                var trt = Util.FromRect(tx - (bdir ? 0 : vw), ty, vw, 30);
+
+                                Util.DrawBox(canvas, trt, thm.Back, c, GoRoundType.All, thm.Corner);
+                                Util.DrawText(canvas, sv, FontName, FontStyle, FontSize, trt, cText);
+                                ty += 40;
+                                #endregion
                             }
                         }
                     }
+                    #endregion
+
                 }
                 #endregion
 
@@ -370,29 +410,43 @@ namespace Going.UI.Controls
                 }
                 #endregion
 
+                #region ViewBox
+                Util.DrawTextIcon(canvas, "View", FontName, FontStyle, FontSize, "fa-magnifying-glass-chart", 20, GoDirectionHV.Horizon, 10, rtViewBox, bView ? cText : cGrid);
+                Util.DrawBox(canvas, rtViewBox, SKColors.Transparent, bView ? cText : cGrid, GoRoundType.All, thm.Corner);
+                #endregion
+
                 #region Graph
                 using (new SKAutoCanvasRestore(canvas))
                 {
-                    canvas.ClipRect(rtGraph);
+                    canvas.ClipRect(Util.FromRect(rtGraph.Left, rtGraph.Top, rtGraph.Width + 1, rtGraph.Height + 1));
                     canvas.Translate(rtGraph.Left, rtGraph.Top);
                     canvas.Translate(0, spos);
 
+                    #region var
                     var vrt = Util.FromRect(0, -spos, rtNameGrid.Width, rtNameGrid.Height);
 
                     var si = Math.Max(0, Convert.ToInt32(Math.Floor(vrt.Top / dwh)));
                     var ei = Math.Min(datas.Count - 1, Convert.ToInt32(Math.Ceiling(vrt.Bottom / dwh)));
 
                     var dic = Series.ToDictionary(x => x.Name);
+
+                    int? hovidx = null;
+                    SKRect[]? hovrts = null;
+                    #endregion
+
+                    #region draw
                     for (int i = si; i <= ei; i++)
                     {
                         var itm = datas[i];
                         var rt = Util.FromRect(0, (dwh * i), rtGraph.Width, dwh);
 
+                        List<SKRect> vrts = [];
                         if (Mode == GoBarGraphMode.Stack)
                         {
                             var vsum = itm.Values.Where(x => Series.FirstOrDefault(y => y.Name == x.Key)?.Visible ?? false).Sum(x => x.Value);
                             var irt = new SKRect(rt.Left, rt.Top, Convert.ToSingle(MathTool.Map(vsum, vmin, vmax, rt.Left, rt.Right)), rt.Bottom);
 
+                            #region Bar
                             var x = irt.Right;
                             foreach (var vk in itm.Values.Keys)
                             {
@@ -404,33 +458,14 @@ namespace Going.UI.Controls
 
                                     Util.DrawBox(canvas, brt, c, GoRoundType.Rect, thm.Corner);
                                     x = brt.Left;
+                                    vrts.Add(brt);
                                 }
                             }
-
-                            if (ValueDraw)
-                            {
-                                x = irt.Right;
-                                foreach (var vk in itm.Values.Keys)
-                                {
-                                    if (dic.TryGetValue(vk, out var ser) && ser.Visible)
-                                    {
-                                        var w = Convert.ToSingle(irt.Width * (itm.Values[vk] / vsum));
-                                        var brt = Util.FromRect(x - w, irt.Top + BarGap, w, irt.Height - (BarGap * 2));
-                                        var c = cSeries[ser];
-
-                                        x = brt.Left;
-
-                                        var txt = ValueTool.ToString(itm.Values[vk], FormatString) ?? "";
-                                        var sz = Util.MeasureText(txt, FontName, FontStyle, FontSize);
-
-                                        Util.DrawText(canvas, txt, FontName, FontStyle, FontSize, Util.FromRect(brt.Left, brt.Top, brt.Width - 5, brt.Height), cText, cTextBorder, nTextBorder, GoContentAlignment.MiddleRight);
-
-                                    }
-                                }
-                            }
+                            #endregion
                         }
                         else
                         {
+                            #region Bar
                             var y = rt.Top + BarGap;
                             foreach (var vk in itm.Values.Keys)
                             {
@@ -440,29 +475,82 @@ namespace Going.UI.Controls
                                     var c = cSeries[ser];
                                     Util.DrawBox(canvas, brt, c, GoRoundType.Rect, thm.Corner);
                                     y = brt.Bottom;
+                                    vrts.Add(brt);
                                 }
                             }
+                            #endregion
+                        }
 
-                            if (ValueDraw)
+                        if (CollisionTool.Check(rt, mx - rtGraph.Left, my - rtGraph.Top - spos)) { hovidx = i; hovrts = vrts.Count > 0 ? vrts.ToArray() : null; }
+                    }
+                    #endregion
+
+                    #region Hover
+                    if (bView)
+                    {
+                        using var pe = SKPathEffect.CreateDash([2, 2], 2);
+
+                        using (new SKAutoCanvasRestore(canvas))
+                        {
+                            foreach (var vv in hovrts ?? []) canvas.ClipRect(vv, SKClipOperation.Difference);
+
+                            p.IsStroke = false;
+                            p.Color = Util.FromArgb(200, thm.Back);
+                            canvas.DrawRect(Util.FromRect(0, -spos, rtGraph.Width+1, rtGraph.Height+1), p);
+                        }
+
+                        if (hovidx.HasValue && CollisionTool.Check(rtGraph, mx, my) && hovrts != null)
+                        {
+                            var itm = datas[hovidx.Value];
+                            var rt = Util.FromRect(0, (dwh * hovidx.Value), rtGraph.Width, dwh);
+                            var y = Convert.ToInt32(rt.MidY) + 0.5F;
+
+                            #region line
+                            using (new SKAutoCanvasRestore(canvas))
                             {
-                                y = rt.Top + BarGap;
-                                foreach (var vk in itm.Values.Keys)
-                                {
-                                    if (dic.TryGetValue(vk, out var ser) && ser.Visible)
-                                    {
-                                        var brt = new SKRect(rt.Left, y, Convert.ToSingle(MathTool.Map(itm.Values[vk], vmin, vmax, rt.Left, rt.Right)), y + BarSize);
-                                        var c = cSeries[ser];
-                                        y = brt.Bottom;
+                                foreach (var vv in hovrts) canvas.ClipRect(vv, SKClipOperation.Difference);
 
-                                        var txt = ValueTool.ToString(itm.Values[vk], FormatString) ?? "";
-                                        var sz = Util.MeasureText(txt, FontName, FontStyle, FontSize);
+                                p.IsStroke = true;
+                                p.StrokeWidth = 1;
+                                p.Color = cGrid;
+                                p.PathEffect = pe;
+                                canvas.DrawLine(rt.Left, y, rt.Right, y, p);
+                                p.PathEffect = null;
+                            }
+                            #endregion
 
-                                        Util.DrawText(canvas, txt, FontName, FontStyle, FontSize, Util.FromRect(brt.Left, brt.Top, brt.Width - 5, brt.Height), cText, cTextBorder, nTextBorder, GoContentAlignment.MiddleRight);
-                                    }
-                                }
+                            #region time
+                            var s = itm.Name;
+                            var tw = Util.MeasureText(s, FontName, FontStyle, FontSize).Width;
+                            var th = (rc * 40) + 30;
+                            var gp = 15;
+                            var gph = (hovrts.Max(x => x.Bottom) - hovrts.Min(x => x.Top)) / 2F + 10F;
+                            var bdir = y + gph + th < rtGraph.Height - spos;
+                            var ty = bdir ? y + gph : y - gph;
+                            var tx = rtGraph.Width - gp;
+
+                            Util.DrawText(canvas, s, FontName, FontStyle, FontSize, Util.FromRect(tx - tw, ty - (bdir ? 0 : th), tw, 30), cText, GoContentAlignment.MiddleRight);
+                            ty += 30;
+                            #endregion
+
+                            foreach (var ser in Series.Where(x => x.Visible))
+                            {
+                                var v = itm.Values[ser.Name];
+                                var c = cSeries[ser];
+
+                                #region box
+                                var sv = $"{ser.Alias} : {ValueTool.ToString(v, FormatString ?? "0.0")}";
+                                var vw = Util.MeasureText(sv, FontName, FontStyle, FontSize).Width + 20;
+                                var trt = Util.FromRect(tx - vw, ty - (bdir ? 0 : th), vw, 30);
+
+                                Util.DrawBox(canvas, trt, thm.Back, c, GoRoundType.All, thm.Corner);
+                                Util.DrawText(canvas, sv, FontName, FontStyle, FontSize, trt, cText);
+                                ty += 40;
+                                #endregion
                             }
                         }
                     }
+                    #endregion
                 }
                 #endregion
 
@@ -502,10 +590,13 @@ namespace Going.UI.Controls
             var rtRemark = rts["Remark"];
             var rtGraph = rts["Graph"];
             var rtScroll = rts["Scroll"];
+            var rtViewBox = rts["ViewBox"];
             #endregion
 
             scroll.MouseDown(x, y, rtScroll);
             if (scroll.TouchMode && CollisionTool.Check(rtGraph, x, y)) scroll.TouchDown(x, y);
+
+            if (CollisionTool.Check(rtViewBox, x, y)) bView = !bView;
 
             base.OnMouseDown(x, y, button);
         }
@@ -611,7 +702,9 @@ namespace Going.UI.Controls
             {
                 var rsw = Series.Select(x => Util.MeasureText(x.Alias, FontName, FontStyle, FontSize).Width + gap + box);
                 var vw = Util.MeasureText(new string[] { $"{ValueTool.ToString(vmin, FormatString ?? "0")}", $"{ValueTool.ToString(vmax, FormatString ?? "0")}" }.OrderByDescending(x => x.Length).FirstOrDefault() ?? "", FontName, FontStyle, FontSize).Width;
-                var rw = rsw.Any() ? rsw.Max() + 20 : 20;
+
+                var trw = Util.MeasureTextIcon("View", FontName, FontStyle, FontSize, "fa-magnifying-glass-chart", 20, GoDirectionHV.Horizon, 10).Width;
+                var rw = Math.Max(trw + 20, rsw.Any() ? rsw.Max() + 20 : 20);
                 var rc = Math.Max(1, Series.Where(x => x.Visible).Count());
                 var rts = Util.Grid(rtContent, [$"{vw}px", "10px", "100%", "10px", $"{rw}px"], ["20px", "10px", "100%", "10px", "40px", $"{Scroll.SC_WH}px"]);
 
@@ -624,6 +717,7 @@ namespace Going.UI.Controls
                 dic["ValueGrid"] = rtValueGrid;
                 dic["NameGrid"] = rtNameGrid;
                 dic["Remark"] = MathTool.MakeRectangle(rtRemark, new SKSize(rw, (box * rc) + (gap * (rc + 1))));
+                dic["ViewBox"] = MathTool.MakeRectangle(rtRemark, new SKSize(rw, 40), GoContentAlignment.TopCenter);
                 dic["Graph"] = rtGraph;
                 dic["Scroll"] = rtScroll;
             }
@@ -631,7 +725,9 @@ namespace Going.UI.Controls
             {
                 var rsw = Series.Select(x => Util.MeasureText(x.Alias, FontName, FontStyle, FontSize).Width + gap + box);
                 var nw = Util.MeasureText(datas.OrderByDescending(x => x.Name.Length).FirstOrDefault()?.Name ?? "", FontName, FontStyle, FontSize).Width;
-                var rw = rsw.Any() ? rsw.Max() + 20 : box + gap + 20;
+
+                var trw = Util.MeasureTextIcon("View", FontName, FontStyle, FontSize, "fa-magnifying-glass-chart", 20, GoDirectionHV.Horizon, 10).Width;
+                var rw = Math.Max(trw + 20, rsw.Any() ? rsw.Max() + 20 : box + gap + 20);
                 var rc = Math.Max(1, Series.Where(x => x.Visible).Count());
                 var rts = Util.Grid(rtContent, [$"{nw}px", "10px", "100%", "10px", $"{(Scroll.SC_WH)}px", "10px", $"{rw}px"], ["20px", "10px", "100%", "10px", $"{FontSize}px"]);
 
@@ -644,6 +740,7 @@ namespace Going.UI.Controls
                 dic["ValueGrid"] = rtValueGrid;
                 dic["NameGrid"] = rtNameGrid;
                 dic["Remark"] = MathTool.MakeRectangle(rtRemark, new SKSize(rw, (box * rc) + (gap * (rc + 1))));
+                dic["ViewBox"] = MathTool.MakeRectangle(rtRemark, new SKSize(rw, 40), GoContentAlignment.TopCenter);
                 dic["Graph"] = rtGraph;
                 dic["Scroll"] = rtScroll;
             }
@@ -708,9 +805,4 @@ namespace Going.UI.Controls
         #endregion
     }
     
-    class GoGraphValue
-    {
-        public string Name { get; set; }
-        public Dictionary<string, double> Values { get; } = new Dictionary<string, double>();
-    }
 }

@@ -27,7 +27,6 @@ namespace Going.UI.Controls
         public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         public float FontSize { get; set; } = 12;
 
-        public bool ValueDraw { get; set; } = false;
         public List<GoGraphSeries> Series { get; set; } = [];
         #endregion
 
@@ -55,8 +54,8 @@ namespace Going.UI.Controls
             var cText = thm.ToColor(TextColor);
             var cRemark = thm.ToColor(RemarkColor);
             var cSeries = Series.ToDictionary(x => x, y => thm.ToColor(y.Color));
-            var cTextBorder = thm.Base1;
-            var nTextBorder = 5F;
+            var cTextBorder = thm.Back;
+            var nTextBorder =3F;
             var rts = Areas();
             var rtRemark = rts["Remark"];
             var rtGraph = rts["Graph"];
@@ -71,7 +70,7 @@ namespace Going.UI.Controls
             #region Graph
             if (sel >= 0 && sel < datas.Count)
             {
-                var wh = Math.Min(rtGraph.Width, rtGraph.Height) - 20;
+                var wh = Math.Min(rtGraph.Width, rtGraph.Height) - 40;
                 var rtF = MathTool.MakeRectangle(rtGraph, new SKSize(wh, wh));
                 var rtS = MathTool.MakeRectangle(rtGraph, new SKSize(wh * 0.5F, wh * 0.5F));
                 var itm = datas[sel];
@@ -94,16 +93,27 @@ namespace Going.UI.Controls
                         var mp = new SKPoint(mx, my);
                         var cp = new SKPoint(rtF.MidX, rtF.MidY);
                         var ma = MathTool.GetAngle(cp, mp);
-                        var bSel = CollisionTool.CheckCircle(rtF, mp) && MathTool.CompareAngle(ma, a, a + vang);
+                        var bSel = CollisionTool.CheckCircle(rtF, mp) && !CollisionTool.CheckCircle(rtS, mp) && MathTool.CompareAngle(ma, a, a + vang);
 
                         var rt = Util.FromRect(rtF);
                         var rtv = Util.FromRect(rtS);
-                        var gp = Math.Abs(DateTime.Now.Millisecond - 500) / 50.0F;
+                        var gp = Math.Abs(DateTime.Now.Millisecond % 500 - 250) / 25.0F;
                         var hp = MathTool.GetPointWithAngle(new SKPoint(0, 0), a + vang / 2f, bSel ? gp : 0);
                         var tpt = MathTool.GetPointWithAngle(cp, a + vang / 2f, wh * 0.75F / 2F);
+                        var opt = MathTool.GetPointWithAngle(cp, a + vang / 2f, wh / 2F + 20);
+
+                        hp = Util.Int(hp);
                         tpt.Offset(hp);
+                        opt.Offset(hp);
                         rt.Offset(hp);
                         rtv.Offset(hp);
+
+                        /*
+                        tpt = Util.Int(tpt);
+                        opt = Util.Int(opt);
+                        rt = Util.Int(rt);
+                        rtv = Util.Int(rtv);
+                        */
                         #endregion
 
                         #region path
@@ -122,28 +132,39 @@ namespace Going.UI.Controls
                         #endregion
 
                         #region border
-                        p.Color = c;// bSel ? c.BrightnessTransmit(thm.BorderBrightness) : c;
+                        var mf = SKMaskFilter.CreateBlur(SKBlurStyle.Normal, 0.5f);
+                        p.Color = bSel ? c.BrightnessTransmit(thm.HoverBorderBrightness) : c;
                         p.IsStroke = true;
                         p.StrokeWidth = 1;
+                        p.MaskFilter = mf;
                         canvas.DrawPath(path, p);
+                        p.MaskFilter = null;
                         #endregion
 
                         #region Text
-                        if(ValueDraw)
                         {
                             using (new SKAutoCanvasRestore(canvas))
                             {
-                                canvas.ClipPath(path);
-                                canvas.Translate(Util.Int(tpt));
-                                canvas.RotateDegrees((a + vang / 2F) + 90);
+                                var s = $"{ser.Alias}";
 
-                                var s = $"{v}";
-                                Util.DrawText(canvas, s, FontName, FontStyle, FontSize, Util.FromRect(-100, -50, 200, 100), cText, cTextBorder, nTextBorder);
+                                if (vang < 10)
+                                {
+                                    canvas.Translate(opt);
+                                    canvas.RotateDegrees((a + vang / 2F) + 90);
+                                    Util.DrawText(canvas, s, FontName, FontStyle, FontSize, Util.FromRect(-100, -50, 200, 100), cText);
+                                }
+                                else
+                                {
+                                    canvas.ClipPath(path); 
+                                    canvas.Translate(tpt);
+                                    Util.DrawText(canvas, s, FontName, FontStyle, FontSize, Util.FromRect(-100, -50, 200, 100), cText, c.BrightnessChange(-0.7F), nTextBorder);
+                                }
+                               
                             }
                         }
                         #endregion
 
-                        #region Text2
+                        #region Text (Center)
                         if (bSel)
                         {
                             var s = $"{ser.Alias}\r\n{v}\r\n{v / sum:0.0%}";

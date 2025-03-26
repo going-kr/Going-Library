@@ -25,7 +25,7 @@ namespace Going.UI.Extensions
         {
             float h, s, l;
             color.ToHsl(out h, out s, out l);
-            var lc = MathTool.Map(MathTool.Constrain(Brightness, -1, 1), -100, 100, 0, 100);
+            var lc = MathTool.Map(MathTool.Constrain(Brightness, -1, 1), -1, 1, 0, 100);
             l = Convert.ToSingle(lc);
             return SKColor.FromHsl(h, s, l, color.Alpha);
         }

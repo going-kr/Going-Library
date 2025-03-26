@@ -3,6 +3,7 @@ using Going.UI.Controls;
 using Going.UI.Datas;
 using Going.UI.Design;
 using Going.UI.Enums;
+using Going.UI.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,7 @@ namespace SampleOpenTK.Pages
         GoBarGraph grpBar;
         GoLineGraph grpLine;
         GoCircleGraph grpCircle;
+        GoTimeGraph grpTime;
 
         Random rnd = new Random();
         List<GRP> ls = new List<GRP>();
@@ -36,9 +38,8 @@ namespace SampleOpenTK.Pages
             tab.TabPages.Add(new GoTabPage { Text = "Trend Graph" });
             Childrens.Add(tab);
 
-            var vd = false;
             #region Bar
-            grpBar = new GoBarGraph { Fill = true, Margin = new GoPadding(0), Minimum = 0, Maximum = 10000, Direction = GoDirectionHV.Vertical, Mode = GoBarGraphMode.Stack, ValueDraw = vd };
+            grpBar = new GoBarGraph { Fill = true, Margin = new GoPadding(0), Minimum = 0, Maximum = 10000, Direction = GoDirectionHV.Vertical, Mode = GoBarGraphMode.Stack };
             grpBar.Series.Add(new GoGraphSeries { Name = "Controller", Alias = "제어기", Color = "red" });
             grpBar.Series.Add(new GoGraphSeries { Name = "Touch", Alias = "터치", Color = "GreenYellow" });
             grpBar.Series.Add(new GoGraphSeries { Name = "Cloud", Alias = "클라우드", Color = "DeepSkyBlue", Visible = true });
@@ -46,7 +47,7 @@ namespace SampleOpenTK.Pages
             tab.TabPages[0].Childrens.Add(grpBar);
             #endregion
             #region Line
-            grpLine = new GoLineGraph { Fill = true, Margin = new GoPadding(0), ValueDraw = vd };
+            grpLine = new GoLineGraph { Fill = true, Margin = new GoPadding(0) };
             grpLine.Series.Add(new GoLineGraphSeries { Name = "Controller", Alias = "제어기", Color = "red", Minimum = 0, Maximum = 10000 });
             grpLine.Series.Add(new GoLineGraphSeries { Name = "Touch", Alias = "터치", Color = "GreenYellow", Minimum = 0, Maximum = 10000 });
             grpLine.Series.Add(new GoLineGraphSeries { Name = "Cloud", Alias = "클라우드", Color = "DeepSkyBlue", Minimum = 0, Maximum = 10000, Visible = true });
@@ -54,7 +55,7 @@ namespace SampleOpenTK.Pages
             tab.TabPages[1].Childrens.Add(grpLine);
             #endregion
             #region Circle
-            grpCircle = new GoCircleGraph { Fill = true, Margin = new GoPadding(0), FontSize = 14, ValueDraw = vd };
+            grpCircle = new GoCircleGraph { Fill = true, Margin = new GoPadding(0), FontSize = 14  };
             /*
             grpCircle.Series.Add(new GoGraphSeries { Name = "Controller", Alias = "제어기", Color = "red" });
             grpCircle.Series.Add(new GoGraphSeries { Name = "Touch", Alias = "터치", Color = "GreenYellow"  });
@@ -76,24 +77,45 @@ namespace SampleOpenTK.Pages
 
             tab.TabPages[2].Childrens.Add(grpCircle);
             #endregion
+            #region Time
+            grpTime = new GoTimeGraph { Fill = true, Margin = new GoPadding(0) };
+            grpTime.Series.Add(new GoLineGraphSeries { Name = "Temp", Alias = "온도", Color = "red", Minimum = 0, Maximum = 200 });
+            grpTime.Series.Add(new GoLineGraphSeries { Name = "Hum", Alias = "습도", Color = "GreenYellow", Minimum = 0, Maximum = 100 });
+            grpTime.Series.Add(new GoLineGraphSeries { Name = "Noise", Alias = "소음", Color = "DeepSkyBlue", Minimum = 0, Maximum = 400, Visible = true });
+
+            tab.TabPages[3].Childrens.Add(grpTime);
+            #endregion
 
             #region data
             for (int y = 2025; y <= 2028; y++)
                 for (int m = 1; m <= 12; m++)
-                    ls.Add(new($"{y}\r\n{m}") { Controller = rnd.Next(0, 10000), Cloud = rnd.Next(0, 10000), Touch = rnd.Next(0, 10000), });
+                    ls.Add(new($"{y}.{m}") { Controller = rnd.Next(0, 10000), Cloud = rnd.Next(0, 10000), Touch = rnd.Next(0, 10000), });
 
             var ls2 = new List<CGRP>();
             var vs = ls.Where(x => x.Month.StartsWith("2025"));
             ls2.Add(new CGRP("Controller", vs, (x) => x.Controller));
             ls2.Add(new CGRP("Touch", vs, (x) => x.Touch));
             ls2.Add(new CGRP("Cloud", vs, (x) => x.Cloud));
+
+            var ls3 = new List<TGRP>();
+            double vt = 0, vh = 0, vn = 0;
+            for (DateTime time = DateTime.Now.Date; time <= DateTime.Now.Date + TimeSpan.FromDays(1); time += TimeSpan.FromSeconds(1))
+            {
+                vt = MathTool.Constrain(vt + (rnd.Next() % 2 == 0 ? 0.5 : -0.5), 0, 200);
+                vh = MathTool.Constrain(vh + (rnd.Next() % 2 == 0 ? 0.5 : -0.5), 0, 100);
+                vn = MathTool.Constrain(vn + (rnd.Next() % 2 == 0 ? 0.5 : -0.5), 0, 400);
+
+                ls3.Add(new TGRP { Time = time, Temp = vt, Hum = vh, Noise = vn });
+            }
             #endregion
 
             grpBar.SetDataSource("Month", ls);
             grpLine.SetDataSource("Month", ls);
             grpCircle.SetDataSource("Product", ls2);
+            grpTime.SetDataSource("Time", ls3);
         }
 
+        #region GRP
         class GRP(string month)
         {
             public string Month { get; set; } = month;
@@ -102,23 +124,34 @@ namespace SampleOpenTK.Pages
             public long Touch { get; set; }
             public long Cloud { get; set; }
         }
-
+        #endregion
+        #region CGRP
         class CGRP(string product, IEnumerable<GRP> vs, Func<GRP, long> func)
         {
             public string Product { get; set; } = product;
 
-            public long Jan { get; set; } = vs.Where(x => x.Month.EndsWith("\r\n1")).Sum(func);
-            public long Feb { get; set; } = vs.Where(x => x.Month.EndsWith("\r\n2")).Sum(func);
-            public long Mar { get; set; } = vs.Where(x => x.Month.EndsWith("\r\n3")).Sum(func);
-            public long Apr { get; set; } = vs.Where(x => x.Month.EndsWith("\r\n4")).Sum(func);
-            public long May { get; set; } = vs.Where(x => x.Month.EndsWith("\r\n5")).Sum(func);
-            public long Jun { get; set; } = vs.Where(x => x.Month.EndsWith("\r\n6")).Sum(func);
-            public long Jul { get; set; } = vs.Where(x => x.Month.EndsWith("\r\n7")).Sum(func);
-            public long Aug { get; set; } = vs.Where(x => x.Month.EndsWith("\r\n8")).Sum(func);
-            public long Sep { get; set; } = vs.Where(x => x.Month.EndsWith("\r\n9")).Sum(func);
-            public long Oct { get; set; } = vs.Where(x => x.Month.EndsWith("\r\n10")).Sum(func);
-            public long Nov { get; set; } = vs.Where(x => x.Month.EndsWith("\r\n11")).Sum(func);
-            public long Dec { get; set; } = vs.Where(x => x.Month.EndsWith("\r\n12")).Sum(func);
+            public long Jan { get; set; } = vs.Where(x => x.Month.EndsWith(".1")).Sum(func);
+            public long Feb { get; set; } = vs.Where(x => x.Month.EndsWith(".")).Sum(func);
+            public long Mar { get; set; } = vs.Where(x => x.Month.EndsWith(".3")).Sum(func);
+            public long Apr { get; set; } = vs.Where(x => x.Month.EndsWith(".4")).Sum(func);
+            public long May { get; set; } = vs.Where(x => x.Month.EndsWith(".5")).Sum(func);
+            public long Jun { get; set; } = vs.Where(x => x.Month.EndsWith(".6")).Sum(func);
+            public long Jul { get; set; } = vs.Where(x => x.Month.EndsWith(".7")).Sum(func);
+            public long Aug { get; set; } = vs.Where(x => x.Month.EndsWith(".8")).Sum(func);
+            public long Sep { get; set; } = vs.Where(x => x.Month.EndsWith(".9")).Sum(func);
+            public long Oct { get; set; } = vs.Where(x => x.Month.EndsWith(".10")).Sum(func);
+            public long Nov { get; set; } = vs.Where(x => x.Month.EndsWith(".11")).Sum(func);
+            public long Dec { get; set; } = vs.Where(x => x.Month.EndsWith(".12")).Sum(func);
         }
+        #endregion
+        #region 
+        class TGRP
+        {
+            public DateTime Time { get; set; }
+            public double Temp { get; set; }
+            public double Hum { get; set; }
+            public double Noise { get; set; }
+        }
+        #endregion
     }
 }

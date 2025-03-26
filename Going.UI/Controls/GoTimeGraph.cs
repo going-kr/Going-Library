@@ -6,19 +6,17 @@ using Going.UI.Tools;
 using Going.UI.Utils;
 using SkiaSharp;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 using System.Xml;
-using System.Xml.Linq;
-using System.Runtime.ConstrainedExecution;
-using System.Drawing;
 
 namespace Going.UI.Controls
 {
-    public class GoLineGraph : GoControl
+    public class GoTimeGraph : GoControl
     {
         #region Properties
         public string GridColor { get; set; } = "Base3";
@@ -29,33 +27,37 @@ namespace Going.UI.Controls
         public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         public float FontSize { get; set; } = 12;
 
-        public int GraduationCount { get; set; } = 10;
-        public string? FormatString { get; set; } = null;
+        public TimeSpan XScale { get; set; } = new TimeSpan(1, 0, 0);
+        public TimeSpan XAxisGraduationTime { get; set; } = new TimeSpan(0, 10, 0);
+        public int YAxisGraduationCount { get; set; } = 10;
+        public string? TimeFormatString { get; set; } = null;
+        public string? ValueFormatString { get; set; } = null;
 
         public List<GoLineGraphSeries> Series { get; set; } = [];
-
-        public int PointWidth { get; set; } = 70;
         #endregion
 
         #region Member Variable
-        private int DataWH => PointWidth;
-        List<GoGraphValue> datas = new List<GoGraphValue>();
+        DateTime? vst = null;
+        DateTime? ved = null;
+
+        List<GoTimeGraphValue> datas = new List<GoTimeGraphValue>();
         Scroll scroll = new Scroll() { Direction = ScrollDirection.Horizon };
         float mx, my;
-        bool bView = false;
+        bool bView;
         #endregion
 
         #region Constructor
-        public GoLineGraph()
+        public GoTimeGraph()
         {
             Selectable = true;
 
-            scroll.GetScrollTotal = () => datas.Count > 0 && Series.Where(x => x.Visible).Count() > 0 ? datas.Count * DataWH : 0;
-            scroll.GetScrollTick = () => DataWH;
-            scroll.GetScrollView = () =>
+            scroll.GetScrollTotal = () => datas.Count > 1 && Series.Count > 0 ? (datas[datas.Count - 1].Time - datas[0].Time).TotalSeconds: 0L;
+            scroll.GetScrollTick = () => XAxisGraduationTime.TotalSeconds;
+            scroll.GetScrollView = () => XScale.TotalSeconds;
+            scroll.GetScrollScaleFactor = () =>
             {
-                var rt = Areas()["Graph"];
-                return  rt.Width;
+                var rtGraph = Areas()["Graph"];
+                return Convert.ToInt64(XScale.TotalSeconds / (double)rtGraph.Width);
             };
         }
         #endregion
@@ -80,23 +82,11 @@ namespace Going.UI.Controls
             var rtGraph = rts["Graph"];
             var rtScroll = rts["Scroll"];
             var rtViewBox = rts["ViewBox"];
+
             using var p = new SKPaint { IsAntialias = true };
 
             var rc = Series.Where(x => x.Visible).Count();
-            #endregion
-            #region spos
-            var spos = 0;
-            var dwh = 0F;
-            if (scroll.ScrollVisible)
-            {
-                dwh = DataWH;
-                spos = Convert.ToInt32(scroll.ScrollPositionWithOffset);
-            }
-            else
-            {
-                if (datas.Count > 0) dwh = rtNameGrid.Width / datas.Count;
-                else dwh = PointWidth;
-            }
+            var sposw = Convert.ToSingle(TimeSpan.FromSeconds(scroll.ScrollPositionWithOffset).TotalSeconds / XScale.TotalSeconds * rtGraph.Width);
             #endregion
 
             #region Value Axis
@@ -107,15 +97,15 @@ namespace Going.UI.Controls
                 {
                     foreach (var v in Series.Where(x => x.Visible))
                     {
-                        var nw = new string[] { v.Alias, ValueTool.ToString(v.Minimum, FormatString) ?? "", ValueTool.ToString(v.Maximum, FormatString) ?? "" }.Select(y => Util.MeasureText(y, FontName, FontStyle, FontSize).Width).OrderByDescending(z => z).FirstOrDefault();
+                        var nw = new string[] { v.Alias, ValueTool.ToString(v.Minimum, ValueFormatString) ?? "", ValueTool.ToString(v.Maximum, ValueFormatString) ?? "" }.Select(y => Util.MeasureText(y, FontName, FontStyle, FontSize).Width).OrderByDescending(z => z).FirstOrDefault();
                         var rtTitle = Util.FromRect(x, rtValueTitle.Top, nw, rtValueTitle.Height);
                         var c = cSeries[v];
                         Util.DrawText(canvas, v.Alias, FontName, FontStyle, FontSize, rtTitle, c, GoContentAlignment.MiddleRight);
 
-                        for (int i = 0; i <= GraduationCount; i++)
+                        for (int i = 0; i <= YAxisGraduationCount; i++)
                         {
-                            var y = Convert.ToSingle(MathTool.Map(i, 0.0, GraduationCount, rtValueGrid.Bottom, rtValueGrid.Top));
-                            var sVal = ValueTool.ToString(MathTool.Map(i, 0, GraduationCount, v.Minimum, v.Maximum), FormatString);
+                            var y = Convert.ToSingle(MathTool.Map(i, 0.0, YAxisGraduationCount, rtValueGrid.Bottom, rtValueGrid.Top));
+                            var sVal = ValueTool.ToString(MathTool.Map(i, 0, YAxisGraduationCount, v.Minimum, v.Maximum), ValueFormatString);
                             var rtValue = Util.FromRect(x, y - ((FontSize + 2) / 2), nw, FontSize + 2);
                             Util.DrawText(canvas, sVal, FontName, FontStyle, FontSize, rtValue, c, GoContentAlignment.MiddleRight);
                         }
@@ -128,9 +118,9 @@ namespace Going.UI.Controls
                 #region Grid
                 using var pe = SKPathEffect.CreateDash([3, 3,], 2);
                 p.PathEffect = pe;
-                for (int i = 0; i <= GraduationCount; i++)
+                for (int i = 0; i <= YAxisGraduationCount; i++)
                 {
-                    var y = Convert.ToInt32(MathTool.Map(i, 0.0, GraduationCount, rtGraph.Bottom, rtGraph.Top)) + 0.5F;
+                    var y = Convert.ToInt32(MathTool.Map(i, 0.0, YAxisGraduationCount, rtGraph.Bottom, rtGraph.Top)) + 0.5F;
                     p.IsStroke = false;
                     p.StrokeWidth = 1F;
                     p.Color = cGrid;
@@ -144,24 +134,62 @@ namespace Going.UI.Controls
             #region Name Axis
             if (rc > 0)
             {
+                var rst = vst ?? datas.First().Time;
+                var red = ved ?? datas.Last().Time;
+                var rsz = Util.MeasureText(rst.ToString(TimeFormatString ?? "yyyy.MM.dd\r\nHH:mm:ss"), FontName, FontStyle, FontSize);
+
+                #region Axis
                 using (new SKAutoCanvasRestore(canvas))
                 {
-                    canvas.ClipRect(rtNameGrid);
+                    canvas.ClipRect(Util.FromRect(rtNameGrid.Left - (rsz.Width / 2f), rtNameGrid.Top, rtNameGrid.Width + rsz.Width, rtNameGrid.Height));
                     canvas.Translate(rtNameGrid.Left, rtNameGrid.Top);
-                    canvas.Translate(spos, 0);
+                    canvas.Translate(Convert.ToInt32(sposw), 0);
 
-                    var vrt = Util.FromRect(-spos, 0, rtNameGrid.Width, rtNameGrid.Height);
+                    var vrt = Util.FromRect(-sposw, 0, rtNameGrid.Width, rtNameGrid.Height);
+                    var wts = TimeSpan.FromSeconds(-scroll.ScrollPositionWithOffset);
+                    var ist = rst + TimeSpan.FromSeconds(Math.Floor(wts.TotalSeconds / XAxisGraduationTime.TotalSeconds) * XAxisGraduationTime.TotalSeconds);
 
-                    var si = Math.Max(0, Convert.ToInt32(Math.Floor(vrt.Left / dwh)));
-                    var ei = Math.Min(datas.Count - 1, Convert.ToInt32(Math.Ceiling(vrt.Right / dwh)));
-
-                    for (int i = si; i <= ei; i++)
+                    for (DateTime i = ist; i <= ist + XScale + XAxisGraduationTime; i += XAxisGraduationTime)
                     {
-                        var itm = datas[i];
-                        var rt = Util.FromRect((dwh * i), 0, dwh, rtNameGrid.Height);
-                        Util.DrawText(canvas, itm.Name, FontName, FontStyle, FontSize, rt, cText, GoContentAlignment.TopCenter);
+                        var ts = i - rst;
+                        var x = Convert.ToSingle(MathTool.Map(ts.TotalSeconds, 0, XScale.TotalSeconds, 0, rtGraph.Width));
+                        var sval = i.ToString(TimeFormatString ?? "yyyy.MM.dd\r\nHH:mm:ss");
+                        var sz = Util.MeasureText(sval, FontName, FontStyle, FontSize);
+                        var rt = Util.FromRect(x - sz.Width / 2F, 0, sz.Width, rtNameGrid.Height);
+
+                        Util.DrawText(canvas, sval, FontName, FontStyle, FontSize, rt, cText);
                     }
                 }
+                #endregion
+
+                #region Grid
+                using (new SKAutoCanvasRestore(canvas))
+                {
+                    canvas.ClipRect(rtGraph);
+                    canvas.Translate(rtGraph.Left, rtGraph.Top);
+                    canvas.Translate(Convert.ToInt32(sposw), 0);
+
+                    var vrt = Util.FromRect(-sposw, 0, rtGraph.Width, rtGraph.Height);
+                    var wts = TimeSpan.FromSeconds(-scroll.ScrollPositionWithOffset);
+                    var ist = rst + TimeSpan.FromSeconds(Math.Floor(wts.TotalSeconds / XAxisGraduationTime.TotalSeconds) * XAxisGraduationTime.TotalSeconds);
+
+                    using var pe = SKPathEffect.CreateDash([3, 3,], 2);
+                    p.PathEffect = pe;
+                    p.IsAntialias = false;
+                    for (DateTime i = ist; i <= ist + XScale + XAxisGraduationTime; i += XAxisGraduationTime)
+                    {
+                        var ts = i - rst;
+                        var x = Convert.ToInt32(MathTool.Map(ts.TotalSeconds, 0, XScale.TotalSeconds, 0, rtGraph.Width)) + 0.5F;
+
+                        p.IsStroke = true;
+                        p.StrokeWidth = 1F;
+                        p.Color = cGrid;
+                        canvas.DrawLine(x, 0, x, rtGraph.Height, p);
+                    }
+                    p.IsAntialias = true;
+                    p.PathEffect = null;
+                }
+                #endregion
             }
             #endregion
 
@@ -171,80 +199,80 @@ namespace Going.UI.Controls
             #endregion
 
             #region Graph
+            using (new SKAutoCanvasRestore(canvas))
             {
-                using (new SKAutoCanvasRestore(canvas))
+                var rst = vst ?? datas.First().Time;
+                var red = ved ?? datas.Last().Time;
+
+                canvas.ClipRect(rtGraph);
+                canvas.Translate(rtGraph.Left, rtGraph.Top);
+                canvas.Translate(Convert.ToInt32(sposw), 0);
+
+                var vrt = Util.FromRect(-sposw, 0, rtGraph.Width, rtGraph.Height);
+                var wts = TimeSpan.FromSeconds(-scroll.ScrollPositionWithOffset);
+                var ist = rst + wts;
+
+                var (si, ei) = FindRange(datas, ist, ist + XScale);
+
+                foreach (var ser in Series.Where(x => x.Visible))
                 {
-                    canvas.ClipRect(rtGraph);
-                    canvas.Translate(rtGraph.Left, rtGraph.Top);
-                    canvas.Translate(spos, 0);
-
-                    var vrt = Util.FromRect(-spos, 0, rtGraph.Width, rtGraph.Height);
-
-                    var si = Math.Max(0, Convert.ToInt32(Math.Floor(vrt.Left / dwh) - 1));
-                    var ei = Math.Min(datas.Count - 1, Convert.ToInt32(Math.Ceiling(vrt.Right / dwh)) + 1);
-
-                    using var fOut = SKImageFilter.CreateDropShadow(2, 2, 1, 1, Util.FromArgb(90, SKColors.Black));
-
-                    int? hovidx = null;
-                    foreach (var ser in Series.Where(x => x.Visible))
+                    var c = cSeries[ser];
+                    #region make lines
+                    var ls = new List<LGV>();
+                    for (int i = si; i <= ei; i++)
                     {
-                        var c = cSeries[ser];
-                        #region make lines
-                        var ls = new List<LGV>();
-                        for (int i = si; i <= ei; i++)
-                        {
-                            var itm = datas[i];
-                            var rt = Util.FromRect((dwh * i), 0, dwh, rtGraph.Height);
-
-                            var x = rt.MidX;
-                            var y = Convert.ToInt32(MathTool.Map(itm.Values[ser.Name], ser.Minimum, ser.Maximum, rt.Bottom, rt.Top));
-                            ls.Add(new LGV() { Position = new SKPoint(x, y), Value = itm.Values[ser.Name] });
-
-                            if (CollisionTool.Check(rt, mx - rtGraph.Left - spos, my - rtGraph.Top)) hovidx = i;
-                        }
-
-                        p.StrokeWidth = 1F;
-                        p.Color = c;
-                        p.IsStroke = false;
-                        if (ls.Count >= 2)
-                        {
-                            var pts = ls.Select(x => x.Position).ToArray();
-                            canvas.DrawPoints(SKPointMode.Polygon, pts, p);
-                        }
-                        #endregion
+                        var itm = datas[i];
+                        var ts = itm.Time - rst;
+                        var x = Convert.ToInt32(MathTool.Map(ts.TotalSeconds, 0, XScale.TotalSeconds, 0, rtGraph.Width)) + 0.5F;
+                        var y = Convert.ToInt32(MathTool.Map(itm.Values[ser.Name], ser.Minimum, ser.Maximum, rtGraph.Height, 0));
+                        ls.Add(new LGV() { Position = new SKPoint(x, y), Value = itm.Values[ser.Name] });
                     }
 
-                    #region Hover
-                    if (bView)
+                    p.StrokeWidth = 1F;
+                    p.Color = c;
+                    p.IsStroke = false;
+                    if (ls.Count >= 2)
                     {
-                        using var pe = SKPathEffect.CreateDash([2, 2], 2);
+                        var pts = ls.Select(x => x.Position).ToArray();
+                        canvas.DrawPoints(SKPointMode.Polygon, pts, p);
+                    }
+                    #endregion
+                }
 
-                        p.IsStroke = false;
-                        p.Color = Util.FromArgb(200, thm.Back);
-                        canvas.DrawRect(Util.FromRect(-spos, 0, rtGraph.Width, rtGraph.Height), p);
+                #region Hover
+                if (bView)
+                {
+                    using var pe = SKPathEffect.CreateDash([2, 2], 2);
 
-                        if (hovidx.HasValue && CollisionTool.Check(rtGraph, mx, my))
+                    p.IsStroke = false;
+                    p.Color = Util.FromArgb(200, thm.Back);
+                    canvas.DrawRect(Util.FromRect(-sposw, 0, rtGraph.Width, rtGraph.Height), p);
+
+                    if (CollisionTool.Check(rtGraph, mx, my))
+                    {
+                        var tmx = Convert.ToInt32(mx - rtGraph.Left - sposw) + 0.5F;
+                        var tmSel = ist + TimeSpan.FromSeconds(MathTool.Map(tmx+sposw, 0, rtGraph.Width, 0, XScale.TotalSeconds));
+
+                        var (pi, ni) = FindItem(datas, tmSel);
+
+                        if (pi >= 0 && pi < datas.Count && ni >= 0 && ni < datas.Count)
                         {
-                            var itm = datas[hovidx.Value];
-                            var rt = Util.FromRect((dwh * hovidx.Value), 0, dwh, rtGraph.Height);
-
                             #region line
-                            var x = Convert.ToInt32(rt.MidX) + 0.5F;
                             p.IsStroke = true;
                             p.StrokeWidth = 1;
                             p.Color = cGrid;
                             p.PathEffect = pe;
-                            canvas.DrawLine(x, rt.Top, x, rt.Bottom, p);
+                            canvas.DrawLine(tmx, 0, tmx, rtGraph.Height, p);
                             p.PathEffect = null;
                             #endregion
 
                             #region time
-                            var s = itm.Name;
+                            var s = ValueTool.ToString(tmSel, TimeFormatString ?? "yyyy.MM.dd HH:mm:ss");
                             var tw = Util.MeasureText(s, FontName, FontStyle, FontSize).Width;
-                            var mvw = Series.Where(x => x.Visible).Select(x => Util.MeasureText($"{x.Alias} : {ValueTool.ToString(x.Maximum, FormatString ?? "0.0")}", FontName, FontStyle, FontSize).Width + 20).Max();
+                            var mvw = Series.Where(x => x.Visible).Select(x => Util.MeasureText($"{x.Alias} : {ValueTool.ToString(x.Maximum, ValueFormatString ?? "0.0")}", FontName, FontStyle, FontSize).Width + 20).Max();
                             var gp = 15;
-                            var bdir = x + gp + Math.Max(tw, mvw) < rtGraph.Width - spos;
-                            var tx = bdir ? x + gp : x - gp;
+                            var bdir = tmx + gp + Math.Max(tw, mvw) < rtGraph.Width - sposw;
+                            var tx = bdir ? tmx + gp : tmx - gp;
                             var ty = gp;
 
                             Util.DrawText(canvas, s, FontName, FontStyle, FontSize, Util.FromRect(tx - (bdir ? 0 : tw), ty, tw, 30), cText, GoContentAlignment.MiddleLeft);
@@ -253,17 +281,18 @@ namespace Going.UI.Controls
 
                             foreach (var ser in Series.Where(x => x.Visible))
                             {
-                                var v = itm.Values[ser.Name];
+                                var v = MathTool.Map(tmSel.Ticks, datas[pi].Time.Ticks, datas[ni].Time.Ticks, datas[pi].Values[ser.Name], datas[ni].Values[ser.Name]);
+
                                 #region point
                                 var c = cSeries[ser];
-                                var y = Convert.ToInt32(MathTool.Map(v, ser.Minimum, ser.Maximum, rt.Bottom, rt.Top));
+                                var y = Convert.ToInt32(MathTool.Map(v, ser.Minimum, ser.Maximum, rtGraph.Height, 0));
                                 p.IsStroke = false;
                                 p.Color = c;
-                                canvas.DrawCircle(x, y, 5, p);
+                                canvas.DrawCircle(tmx, y, 5, p);
                                 #endregion
 
                                 #region box
-                                var sv = $"{ser.Alias} : {ValueTool.ToString(v, FormatString ?? "0.0")}";
+                                var sv = $"{ser.Alias} : {ValueTool.ToString(v, ValueFormatString ?? "0.0")}";
                                 var vw = Util.MeasureText(sv, FontName, FontStyle, FontSize).Width + 20;
                                 var trt = Util.FromRect(tx - (bdir ? 0 : vw), ty, vw, 30);
 
@@ -274,8 +303,8 @@ namespace Going.UI.Controls
                             }
                         }
                     }
-                    #endregion
                 }
+                #endregion
             }
             #endregion
 
@@ -394,17 +423,15 @@ namespace Going.UI.Controls
         {
             var dic = base.Areas();
             var rtContent = dic["Content"];
-
             {
                 var box = FontSize + 2;
                 var gap = 10;
 
-                var lsw = Series.Where(x => x.Visible).Select(x => new string[] { x.Alias, ValueTool.ToString(x.Minimum, FormatString) ?? "", ValueTool.ToString(x.Maximum, FormatString) ?? "" }.Select(y => Util.MeasureText(y, FontName, FontStyle, FontSize).Width).OrderByDescending(z => z).FirstOrDefault());
+                var lsw = Series.Where(x => x.Visible).Select(x => new string[] { x.Alias, ValueTool.ToString(x.Minimum, ValueFormatString) ?? "", ValueTool.ToString(x.Maximum, ValueFormatString) ?? "" }.Select(y => Util.MeasureText(y, FontName, FontStyle, FontSize).Width).OrderByDescending(z => z).FirstOrDefault());
                 var rsw = Series.Select(x => Util.MeasureText(x.Alias, FontName, FontStyle, FontSize).Width + gap + box);
                 var vw = lsw.Any() ? lsw.Sum() + ((lsw.Count() - 1) * 10) : 0;
                 var trw = Util.MeasureTextIcon("View", FontName, FontStyle, FontSize, "fa-magnifying-glass-chart", 20, GoDirectionHV.Horizon, 10).Width;
                 var rw = Math.Max(trw + 20, rsw.Any() ? rsw.Max() + 20 : 20);
-
                 var rc = Math.Max(1, Series.Where(x => x.Visible).Count());
                 var rts = Util.Grid(rtContent, [$"{vw}px", "10px", "100%", "10px", $"{rw}px"], ["20px", "10px", "100%", "10px", "40px", $"{Scroll.SC_WH}px"]);
 
@@ -431,14 +458,14 @@ namespace Going.UI.Controls
 
         #region Method
         #region SetDataSource
-        public void SetDataSource<T>(string XAxisName, IEnumerable<T> values)
+        public void SetDataSource<T>(string XAxisName, IEnumerable<T> values, DateTime? start = null, DateTime? end = null)
         {
             if (Series.Count > 0)
             {
                 var pls = typeof(T).GetProperties();
 
                 var xprop = pls.FirstOrDefault(x => x.Name == XAxisName);
-                if (xprop != null && xprop.PropertyType == typeof(string))
+                if (xprop != null && xprop.PropertyType == typeof(DateTime))
                 {
                     var props = typeof(T).GetProperties().Where(x => x.PropertyType == typeof(double) || x.PropertyType == typeof(float) || x.PropertyType == typeof(decimal) ||
                                                                      x.PropertyType == typeof(byte) || x.PropertyType == typeof(sbyte) ||
@@ -454,41 +481,91 @@ namespace Going.UI.Controls
                         datas.Clear();
                         foreach (var v in values)
                         {
-                            var nm = xprop.GetValue(v) as string;
-                            if (!string.IsNullOrWhiteSpace(nm))
+                            var tm = xprop.GetValue(v) as DateTime?;
+                            if (tm.HasValue)
                             {
-                                var gv = new GoGraphValue() { Name = nm, };
+                                var gv = new GoTimeGraphValue() { Time = tm.Value, };
 
-                                if (gv.Name != null)
+                                foreach (var prop in props)
                                 {
-                                    foreach (var prop in props)
-                                    {
-                                        var val = Convert.ToDouble(prop.GetValue(v));
-                                        gv.Values.Add(prop.Name, val);
-                                    }
-
-                                    datas.Add(gv);
+                                    var val = Convert.ToDouble(prop.GetValue(v));
+                                    gv.Values.Add(prop.Name, val);
                                 }
+
+                                datas.Add(gv);
                             }
                         }
+                        datas = datas.OrderBy(x => x.Time).ToList();
 
-
+                        vst = start;
+                        ved = end;
                     }
                     else throw new Exception("잘못된 데이터 입니다.");
                 }
-                else throw new Exception("해당 타입에 지정한 X축 이름이 존재하지 않거나 string 형이 아닙니다.");
+                else throw new Exception("해당 타입에 지정한 X축 이름이 존재하지 않거나 DateTime 형이 아닙니다.");
             }
             else throw new Exception("GraphSeries는 최소 1개 이상이어야 합니다.");
         }
         #endregion
+
+        #region FindRange
+        (int startIdx, int endIdx) FindRange(List<GoTimeGraphValue> ls, DateTime startTime, DateTime endTime)
+        {
+            int left = 0, right = ls.Count - 1;
+            int startIdx = -1, endIdx = -1;
+
+            while (left <= right)
+            {
+                int mid = (left + right) / 2;
+                if (ls[mid].Time >= startTime)
+                {
+                    startIdx = mid;
+                    right = mid - 1;
+                }
+                else left = mid + 1;
+            }
+
+            left = 0;
+            right = ls.Count - 1;
+
+            while (left <= right)
+            {
+                int mid = (left + right) / 2;
+                if (ls[mid].Time <= endTime)
+                {
+                    endIdx = mid;
+                    left = mid + 1;
+                }
+                else right = mid - 1;
+            }
+
+            return (startIdx, endIdx);
+        }
+        #endregion
+
+        #region FindItem
+        (int si, int ei) FindItem(List<GoTimeGraphValue> ls, DateTime target)
+        {
+            int left = 0, right = ls.Count - 1;
+
+            while (left <= right)
+            {
+                int mid = (left + right) / 2;
+
+                if (ls[mid].Time == target)
+                    return (mid, mid); 
+                else if (ls[mid].Time < target)
+                    left = mid + 1;
+                else
+                    right = mid - 1;
+            }
+
+            int prevIndex = Math.Max(0, right);
+            int nextIndex = Math.Min(ls.Count - 1, left);
+
+            return (prevIndex, nextIndex);
+        }
+        #endregion
         #endregion
     }
-
-    #region class : LGV
-    class LGV
-    {
-        public SKPoint Position { get; set; }
-        public double Value { get; set; }
-    }
-    #endregion
 }

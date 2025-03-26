@@ -29,4 +29,17 @@ namespace Going.UI.Datas
         public double Maximum { get; set; } = 100;
     }
     #endregion
+
+
+    class GoGraphValue
+    {
+        public string Name { get; set; }
+        public Dictionary<string, double> Values { get; } = new Dictionary<string, double>();
+    }
+
+    class GoTimeGraphValue
+    {
+        public DateTime Time { get; set; }
+        public Dictionary<string, double> Values { get; } = new Dictionary<string, double>();
+    }
 }
