@@ -72,6 +72,7 @@ namespace Going.UI.Controls
                 var rt = Areas()["Graph"];
                 return Direction == GoDirectionHV.Horizon ? rt.Height : rt.Width;
             };
+            scroll.Refresh = () => Invalidate?.Invoke();
         }
         #endregion
 

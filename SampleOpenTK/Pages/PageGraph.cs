@@ -23,9 +23,11 @@ namespace SampleOpenTK.Pages
         GoLineGraph grpLine;
         GoCircleGraph grpCircle;
         GoTimeGraph grpTime;
+        GoTrendGraph grpTrend;
 
         Random rnd = new Random();
         List<GRP> ls = new List<GRP>();
+        TGRP tdata = new TGRP { };
         public PageGraph()
         {
             Name = "PageGraph";
@@ -85,6 +87,24 @@ namespace SampleOpenTK.Pages
 
             tab.TabPages[3].Childrens.Add(grpTime);
             #endregion
+            #region Trend
+            grpTrend = new GoTrendGraph
+            {
+                Fill = true,
+                Margin = new GoPadding(0),
+                MaximumXScale = TimeSpan.FromSeconds(10),
+                XScale = TimeSpan.FromSeconds(1),
+                XAxisGraduationTime = TimeSpan.FromSeconds(0.25),
+                TimeFormatString = "HH:mm:ss.fff",
+                Interval = 1
+            };
+
+            grpTrend.Series.Add(new GoLineGraphSeries { Name = "Temp", Alias = "온도", Color = "red", Minimum = 0, Maximum = 200 });
+            grpTrend.Series.Add(new GoLineGraphSeries { Name = "Hum", Alias = "습도", Color = "GreenYellow", Minimum = 0, Maximum = 100 });
+            grpTrend.Series.Add(new GoLineGraphSeries { Name = "Noise", Alias = "소음", Color = "DeepSkyBlue", Minimum = 0, Maximum = 400, Visible = true });
+
+            tab.TabPages[4].Childrens.Add(grpTrend);
+            #endregion
 
             #region data
             for (int y = 2025; y <= 2028; y++)
@@ -107,12 +127,28 @@ namespace SampleOpenTK.Pages
 
                 ls3.Add(new TGRP { Time = time, Temp = vt, Hum = vh, Noise = vn });
             }
+
             #endregion
 
             grpBar.SetDataSource("Month", ls);
             grpLine.SetDataSource("Month", ls);
             grpCircle.SetDataSource("Product", ls2);
             grpTime.SetDataSource("Time", ls3);
+
+            grpTrend.Start(tdata);
+            Task.Run(async () =>
+            {
+                var rnd2 = new Random();
+                while (true)
+                {
+                    var tk = 0.5F;
+                    tdata.Temp = MathTool.Constrain(tdata.Temp + (rnd2.Next() % 2 == 0 ? tk : -tk), 0, 200);
+                    tdata.Hum = MathTool.Constrain(tdata.Hum + (rnd2.Next() % 2 == 0 ? tk : -tk), 0, 100);
+                    tdata.Noise = MathTool.Constrain(tdata.Noise + (rnd2.Next() % 2 == 0 ? tk : -tk), 0, 400);
+                    grpTrend.SetData(tdata);
+                    await Task.Delay(grpTrend.Interval);
+                }
+            });
         }
 
         #region GRP
@@ -144,7 +180,7 @@ namespace SampleOpenTK.Pages
             public long Dec { get; set; } = vs.Where(x => x.Month.EndsWith(".12")).Sum(func);
         }
         #endregion
-        #region 
+        #region TGRP
         class TGRP
         {
             public DateTime Time { get; set; }

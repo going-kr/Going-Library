@@ -57,6 +57,7 @@ namespace Going.UI.Controls
                 var rt = Areas()["Graph"];
                 return  rt.Width;
             };
+            scroll.Refresh = () => Invalidate?.Invoke();
         }
         #endregion
 

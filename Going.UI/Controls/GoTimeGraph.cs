@@ -51,14 +51,15 @@ namespace Going.UI.Controls
         {
             Selectable = true;
 
-            scroll.GetScrollTotal = () => datas.Count > 1 && Series.Count > 0 ? (datas[datas.Count - 1].Time - datas[0].Time).TotalSeconds: 0L;
-            scroll.GetScrollTick = () => XAxisGraduationTime.TotalSeconds;
-            scroll.GetScrollView = () => XScale.TotalSeconds;
+            scroll.GetScrollTotal = () => datas.Count > 1 && Series.Count > 0 ? (datas[datas.Count - 1].Time - datas[0].Time).TotalMilliseconds: 0L;
+            scroll.GetScrollTick = () => XAxisGraduationTime.TotalMilliseconds;
+            scroll.GetScrollView = () => XScale.TotalMilliseconds;
             scroll.GetScrollScaleFactor = () =>
             {
                 var rtGraph = Areas()["Graph"];
-                return Convert.ToInt64(XScale.TotalSeconds / (double)rtGraph.Width);
+                return (XScale.TotalMilliseconds / (double)rtGraph.Width);
             };
+            scroll.Refresh = () => Invalidate?.Invoke();
         }
         #endregion
 
@@ -86,7 +87,7 @@ namespace Going.UI.Controls
             using var p = new SKPaint { IsAntialias = true };
 
             var rc = Series.Where(x => x.Visible).Count();
-            var sposw = Convert.ToSingle(TimeSpan.FromSeconds(scroll.ScrollPositionWithOffset).TotalSeconds / XScale.TotalSeconds * rtGraph.Width);
+            var sposw = Convert.ToSingle(TimeSpan.FromMilliseconds(scroll.ScrollPositionWithOffset).TotalMilliseconds / XScale.TotalMilliseconds * rtGraph.Width);
             #endregion
 
             #region Value Axis
@@ -146,13 +147,13 @@ namespace Going.UI.Controls
                     canvas.Translate(Convert.ToInt32(sposw), 0);
 
                     var vrt = Util.FromRect(-sposw, 0, rtNameGrid.Width, rtNameGrid.Height);
-                    var wts = TimeSpan.FromSeconds(-scroll.ScrollPositionWithOffset);
-                    var ist = rst + TimeSpan.FromSeconds(Math.Floor(wts.TotalSeconds / XAxisGraduationTime.TotalSeconds) * XAxisGraduationTime.TotalSeconds);
+                    var wts = TimeSpan.FromMilliseconds(-scroll.ScrollPositionWithOffset);
+                    var ist = rst + TimeSpan.FromMilliseconds(Math.Floor(wts.TotalMilliseconds / XAxisGraduationTime.TotalMilliseconds) * XAxisGraduationTime.TotalMilliseconds);
 
                     for (DateTime i = ist; i <= ist + XScale + XAxisGraduationTime; i += XAxisGraduationTime)
                     {
                         var ts = i - rst;
-                        var x = Convert.ToSingle(MathTool.Map(ts.TotalSeconds, 0, XScale.TotalSeconds, 0, rtGraph.Width));
+                        var x = Convert.ToSingle(MathTool.Map(ts.TotalMilliseconds, 0, XScale.TotalMilliseconds, 0, rtGraph.Width));
                         var sval = i.ToString(TimeFormatString ?? "yyyy.MM.dd\r\nHH:mm:ss");
                         var sz = Util.MeasureText(sval, FontName, FontStyle, FontSize);
                         var rt = Util.FromRect(x - sz.Width / 2F, 0, sz.Width, rtNameGrid.Height);
@@ -170,8 +171,8 @@ namespace Going.UI.Controls
                     canvas.Translate(Convert.ToInt32(sposw), 0);
 
                     var vrt = Util.FromRect(-sposw, 0, rtGraph.Width, rtGraph.Height);
-                    var wts = TimeSpan.FromSeconds(-scroll.ScrollPositionWithOffset);
-                    var ist = rst + TimeSpan.FromSeconds(Math.Floor(wts.TotalSeconds / XAxisGraduationTime.TotalSeconds) * XAxisGraduationTime.TotalSeconds);
+                    var wts = TimeSpan.FromMilliseconds(-scroll.ScrollPositionWithOffset);
+                    var ist = rst + TimeSpan.FromMilliseconds(Math.Floor(wts.TotalMilliseconds / XAxisGraduationTime.TotalMilliseconds) * XAxisGraduationTime.TotalMilliseconds);
 
                     using var pe = SKPathEffect.CreateDash([3, 3,], 2);
                     p.PathEffect = pe;
@@ -179,7 +180,7 @@ namespace Going.UI.Controls
                     for (DateTime i = ist; i <= ist + XScale + XAxisGraduationTime; i += XAxisGraduationTime)
                     {
                         var ts = i - rst;
-                        var x = Convert.ToInt32(MathTool.Map(ts.TotalSeconds, 0, XScale.TotalSeconds, 0, rtGraph.Width)) + 0.5F;
+                        var x = Convert.ToInt32(MathTool.Map(ts.TotalMilliseconds, 0, XScale.TotalMilliseconds, 0, rtGraph.Width)) + 0.5F;
 
                         p.IsStroke = true;
                         p.StrokeWidth = 1F;
@@ -209,7 +210,7 @@ namespace Going.UI.Controls
                 canvas.Translate(Convert.ToInt32(sposw), 0);
 
                 var vrt = Util.FromRect(-sposw, 0, rtGraph.Width, rtGraph.Height);
-                var wts = TimeSpan.FromSeconds(-scroll.ScrollPositionWithOffset);
+                var wts = TimeSpan.FromMilliseconds(-scroll.ScrollPositionWithOffset);
                 var ist = rst + wts;
 
                 var (si, ei) = FindRange(datas, ist, ist + XScale);
@@ -223,7 +224,7 @@ namespace Going.UI.Controls
                     {
                         var itm = datas[i];
                         var ts = itm.Time - rst;
-                        var x = Convert.ToInt32(MathTool.Map(ts.TotalSeconds, 0, XScale.TotalSeconds, 0, rtGraph.Width)) + 0.5F;
+                        var x = Convert.ToInt32(MathTool.Map(ts.TotalMilliseconds, 0, XScale.TotalMilliseconds, 0, rtGraph.Width)) + 0.5F;
                         var y = Convert.ToInt32(MathTool.Map(itm.Values[ser.Name], ser.Minimum, ser.Maximum, rtGraph.Height, 0));
                         ls.Add(new LGV() { Position = new SKPoint(x, y), Value = itm.Values[ser.Name] });
                     }
@@ -251,7 +252,7 @@ namespace Going.UI.Controls
                     if (CollisionTool.Check(rtGraph, mx, my))
                     {
                         var tmx = Convert.ToInt32(mx - rtGraph.Left - sposw) + 0.5F;
-                        var tmSel = ist + TimeSpan.FromSeconds(MathTool.Map(tmx+sposw, 0, rtGraph.Width, 0, XScale.TotalSeconds));
+                        var tmSel = ist + TimeSpan.FromMilliseconds(MathTool.Map(tmx+sposw, 0, rtGraph.Width, 0, XScale.TotalMilliseconds));
 
                         var (pi, ni) = FindItem(datas, tmSel);
 
@@ -542,7 +543,6 @@ namespace Going.UI.Controls
             return (startIdx, endIdx);
         }
         #endregion
-
         #region FindItem
         (int si, int ei) FindItem(List<GoTimeGraphValue> ls, DateTime target)
         {
