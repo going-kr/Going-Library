@@ -177,7 +177,7 @@
             Controls.Add(ooRun);
             Controls.Add(ooAlm);
             Controls.Add(btnSetting);
-            ImageFolder = "D:\\Project\\Going\\library\\src\\Going\\ImageCanvasSample";
+            ImageFolder = "C:\\Users\\hello\\OneDrive\\Desktop\\RiderProjects\\Going-Library\\ImageCanvasSample";
             Name = "Box";
             Size = new Size(187, 172);
             ResumeLayout(false);

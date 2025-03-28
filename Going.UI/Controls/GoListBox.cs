@@ -65,8 +65,8 @@ namespace Going.UI.Controls
             Selectable = true;
 
             scroll.GetScrollTotal = () => ItemHeight * Items.Count;
-            scroll.GetScrollTick = () => ItemHeight;
-            scroll.GetScrollView = () => Height;
+            scroll.GetScrollTick = () => ItemHeight; // 휠 틱(한번에 이동하는 양)
+            scroll.GetScrollView = () => Height;     // 스크롤 뷰(보이는 화면을 얼마나 보여주는지)
             scroll.Refresh = () => Invalidate?.Invoke();
         }
         #endregion
@@ -88,7 +88,7 @@ namespace Going.UI.Controls
             var rtBox = rts["Box"];
             var rtScroll = rts["Scroll"];
 
-            var spos = Convert.ToSingle(scroll.ScrollPositionWithOffset);
+            var spos = Convert.ToSingle(scroll.ScrollPositionWithOffset);   // 스크롤 위치 + offset : 마우스 누르고 이동한 offset을 같이 가져옴
             #endregion
 
             #region Background
@@ -103,11 +103,12 @@ namespace Going.UI.Controls
             {
                 using var pth = PathTool.Box(rtContent, Round, thm.Corner);
                 canvas.ClipPath(pth, SKClipOperation.Intersect, true);
+                canvas.Translate(rtContent.Left, spos + rtContent.Top); // 스크롤 위치만큼 이동(spos가 필요한 이유) - 여기서부터 위치변경 후 그리기 시작
                 canvas.Translate(rtContent.Left, Convert.ToInt64(spos) + rtContent.Top);
                 itemLoop((i, item) =>
                 {
                     if(SelectedItems.Contains(item))
-                        Util.DrawBox(canvas, item.Bounds, cSel, GoRoundType.Rect, thm.Corner);
+                        Util.DrawBox(canvas, item.Bounds, cSel, GoRoundType.Rect, thm.Corner);  // 선택여부(초록색)
 
                     Util.DrawTextIcon(canvas, item.Text, FontName, FontStyle, FontSize, item.IconString, IconSize, GoDirectionHV.Horizon, IconGap, item.Bounds, cText, ItemAlignment);
                 });
@@ -267,8 +268,8 @@ namespace Going.UI.Controls
             }
             #endregion
 
-            rtBox.Offset(0, -Convert.ToSingle(scroll.ScrollPositionWithOffset));
-            var (si, ei) = Util.FindRect(Items.Select(x => x.Bounds).ToList(), rtBox);
+            rtBox.Offset(0, -Convert.ToSingle(scroll.ScrollPositionWithOffset));       // 시작 인덱스(1000만개가 있다고 해도, 30개만 보여주면 되니까, 속도도 빠름)
+            var (si, ei) = Util.FindRect(Items.Select(x => x.Bounds).ToList(), rtBox); // 끝 인덱스
 
             for (int i = si; i <= ei; i++)
                 loop(i, Items[i]);
@@ -303,11 +304,13 @@ namespace Going.UI.Controls
             }
             #endregion
             #region MultiPC
+            // Ctrl, Shift 눌렀을 때 기능들(Selecting mode를 MultiPC로)
             else if (SelectionMode == GoItemSelectionMode.MultiPC)
             {
                 if (bControl)
                 {
                     #region Control
+                    // Ctrl 누르다 Shift가 눌렸을 때 고려해서 first를 넣은 것
                     if (SelectedItems.Contains(item))
                     {
                         SelectedItems.Remove(item);

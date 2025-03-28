@@ -17,6 +17,7 @@ namespace Going.UI.Containers
     public class GoTableLayoutPanel : GoContainer
     {
         #region Properties
+        // Percent, Auto, Pixel 일일이 귀찮아서 나중에 string을 Parsing해서 사용하게 만들었습니다.
         public List<string> Columns { get; set; } = [];
         public List<string> Rows { get; set; } = [];
 

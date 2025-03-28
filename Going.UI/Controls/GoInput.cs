@@ -530,6 +530,7 @@ namespace Going.UI.Controls
         #endregion
     }
 
+    // 콤보BOX에 Input이 들어갈 수 있음
     public class GoInputCombo : GoInput
     {
         #region Properties
@@ -606,11 +607,11 @@ namespace Going.UI.Controls
 
             if (CollisionTool.Check(rtValue, x, y))
             {
-                var args = new GoCancelableEventArgs();
+                var args = new GoCancelableEventArgs(); // OpenTK는 윈도우 1개, WinForm은 윈도우 여러개(컨트롤 개수만큼) 그래서 이벤트를 취소할 수 있게 해야함
                 DropDownOpening?.Invoke(this, args);
 
                 if (!args.Cancel)
-                {
+                {   // false이면 내장된 이벤트를 실행
                     var rt = rtValue; rt.Offset(ScreenX, ScreenY);
                     var sel = SelectedIndex >= 0 && SelectedIndex < Items.Count ? Items[SelectedIndex] : null;
                     dwnd.Show(rt, FontName, FontStyle, FontSize, ItemHeight, MaximumViewCount, Items, sel, (item) =>

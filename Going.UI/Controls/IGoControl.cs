@@ -15,6 +15,14 @@ namespace Going.UI.Controls
 {
     public interface IGoControl
     {
+        /// <summary>
+        /// Id는 컨트롤의 고유 식별자입니다.
+        /// Name은 거의 사용되지 않습니다.
+        /// Parent는 부모 컨테이너를 나타냅니다.
+        /// Design은 컨트롤이 속한 모든 디자인을 나타냅니다. - json에 엮이면 안됨(순환참조)
+        /// ScreenX, ScreenY는 화면 전체를 기준으로 한 좌표입니다.
+        /// Fire는 아까 GoDesign에서 설명한 이벤트를 발생시키는 메서드입니다.
+        /// </summary>
         Guid Id { get; init; }
         string? Name { get; set; }
         SKRect Bounds { get; set; }

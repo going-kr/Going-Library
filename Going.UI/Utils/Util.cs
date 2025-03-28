@@ -566,7 +566,8 @@ namespace Going.UI.Utils
         public static void DrawBox(SKCanvas canvas, SKRect bounds, SKColor color, GoRoundType round, float corner, bool clean = true) => DrawBox(canvas, bounds, color, color, round, corner, clean);
         public static void DrawBox(SKCanvas canvas, SKRect bounds, SKColor fillcolor, SKColor borderColor, GoRoundType round, float corner, bool clean = true)
         {
-            using var p = new SKPaint { IsAntialias = true };
+            using var p = new SKPaint();
+            p.IsAntialias = true;
 
             if (clean)
             {
@@ -612,6 +613,40 @@ namespace Going.UI.Utils
                 p.Color = borderColor;
                 canvas.DrawRoundRect(bounds, p);
             }
+        }
+        #endregion
+
+        #region Circle
+        public static void DrawCircle(SKCanvas canvas, SKRect bounds, SKColor color, bool clean = true)
+        {
+            using var p = new SKPaint();
+            p.IsAntialias = true;
+
+            if (clean)
+            {
+                bounds = Int(bounds);
+                bounds.Offset(0.5F, 0.5F);
+            }
+
+            p.IsStroke = false;
+            p.Color = color;
+            canvas.DrawOval(bounds, p);
+        }
+        public static void DrawCircle(SKCanvas canvas, float x, float y, float radius, SKColor color, bool clean = true)
+        {
+            using var p = new SKPaint();
+            p.IsAntialias = true;
+
+            if (clean)
+            {
+                x = Int(x);
+                y = Int(y);
+                radius = Int(radius);
+            }
+
+            p.IsStroke = false;
+            p.Color = color;
+            canvas.DrawCircle(x, y, radius, p);
         }
         #endregion
 

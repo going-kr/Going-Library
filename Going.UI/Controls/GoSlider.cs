@@ -11,7 +11,7 @@ namespace Going.UI.Controls
     /// <summary>
     /// 제네릭 슬라이더 컨트롤 - 성능 최적화, 바인딩 지원, 시각적 개선 및 사용자 경험 향상 기능 포함
     /// </summary>
-    public class GoSlider : GoControl
+    public class GoSlider : GoControl, IDisposable
     {
         #region Properties
 
@@ -36,7 +36,7 @@ namespace Going.UI.Controls
         #region 슬라이더 설정
         public string TextColor { get; set; } = "Fore";
         public string BgColor { get; set; } = "Base3";
-        public string SliderColor { get; set; } = "danger";
+        public string SliderColor { get; set; } = "Base5";
         public string EmptyColor { get; set; } = "Base2";
         public string BorderColor { get; set; } = "danger";
         public GoRoundType Round { get; set; } = GoRoundType.All;
@@ -64,15 +64,16 @@ namespace Going.UI.Controls
             get => sValue;
             set {
                 var clampedValue = MathClamp(value, Minimum, Maximum);
-                if (!(Math.Abs(sValue - value) > 0.00001f)) return;
+                if (Math.Abs(sValue - value) < 0.00001f) return;
+
                 sValue = clampedValue;
                 ValueChanged?.Invoke(this, EventArgs.Empty);
                 UpdateValueString();
                 needsLayoutUpdate = true;
             }
         }
-        private string sValueString;
-        public string ValueString
+        private string? sValueString;
+        public string? ValueString
         {
             get => sValueString;
             private set
@@ -106,6 +107,7 @@ namespace Going.UI.Controls
                 needsLayoutUpdate = true;
             }
         }
+        public float SHandleMaxHeight => Height;
         #endregion
 
         #region 슬라이더 값 설정(내부)
@@ -147,17 +149,21 @@ namespace Going.UI.Controls
         #endregion
 
         #region Constructor
+
         public GoSlider()
         {
             Selectable = true;
             InitializeDefaults();
         }
+
         #endregion
 
         #region Member Variable
+
         private bool sDown;
         private bool sHover;
         private float mx, my;   // 마우스 위치 추적
+
         #endregion
 
         #region Override
@@ -165,6 +171,7 @@ namespace Going.UI.Controls
         #region OnDraw
         protected override void OnDraw(SKCanvas canvas)
         {
+
             DrawSlider(canvas);
             base.OnDraw(canvas);
         }
@@ -258,7 +265,7 @@ namespace Going.UI.Controls
                 DrawTicks(canvas, thm, colors.slider);
             }
 
-            //DrawSliderBackground(canvas, thm, contentBox, colors.background);
+            DrawSliderBackground(canvas, thm, contentBox, colors.background);
             UpdateLayout(contentBox);   // 슬라이더 트랙과 핸들 값 업데이트
             DrawSliderTrack(canvas, colors.slider);
             DrawSliderProgress(canvas, thm, contentBox, colors.slider);
@@ -382,16 +389,24 @@ namespace Going.UI.Controls
             }
 
             // 핸들 그리기
-            var radius = HandleRadius;
+            float radius;
+            if (HandleRadius * 2 > SHandleMaxHeight)
+            {
+                radius = SHandleMaxHeight / 2 - 2;
+            }
+            else
+            {
+                radius = HandleRadius;
+            }
             if (isDragging) radius *= 1.1f;
             else if (sHover) radius *= 1.05f;
 
-            canvas.DrawCircle(handleRect.MidX, handleRect.MidY, HandleRadius, handlePaint);
+            canvas.DrawCircle(handleRect.MidX, handleRect.MidY, radius, handlePaint);
             handlePaint.ImageFilter = null;
 
             // 핸들 내부 하이라이트 효과
-            handlePaint.Color = SKColors.White.WithAlpha(80);
-            canvas.DrawCircle(handleRect.MidX - radius * 0.2f, handleRect.MidY - radius * 0.2f, radius * 0.6f, handlePaint);
+            // handlePaint.Color = SKColors.White.WithAlpha(80);
+            // canvas.DrawCircle(handleRect.MidX - radius * 0.2f, handleRect.MidY - radius * 0.2f, radius * 0.6f, handlePaint);
         }
         #endregion
         #region DrawValueLabel
@@ -451,6 +466,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Functions
+
         #region InitializeDefaults
         private void InitializeDefaults()
         {
@@ -463,19 +479,6 @@ namespace Going.UI.Controls
             UpdateValueString();
         }
         #endregion
-        #region UpdateValueString
-        private void UpdateValueString()
-        {
-            ValueString = string.IsNullOrWhiteSpace(ValueFormat) ? Value.ToString(CultureInfo.InvariantCulture) : Value.ToString(ValueFormat);
-        }
-        #endregion
-        #region OnValueStringChanged
-        private void OnValueStringChanged()
-        {
-            UpdateValueString();
-        }
-        #endregion
-
         #region GetThemeColors
         private (SKColor text, SKColor background, SKColor slider) GetThemeColors(GoTheme theme)
         {
@@ -485,6 +488,19 @@ namespace Going.UI.Controls
                 theme.ToColor(BgColor),
                 theme.ToColor(SliderColor).BrightnessTransmit(brightness)
             );
+        }
+        #endregion
+        #region OnValueStringChanged
+        private void OnValueStringChanged()
+        {
+            UpdateValueString();
+        }
+        #endregion
+
+        #region UpdateValueString
+        private void UpdateValueString()
+        {
+            ValueString = string.IsNullOrWhiteSpace(ValueFormat) ? Value.ToString(CultureInfo.InvariantCulture) : Value.ToString(ValueFormat);
         }
         #endregion
         #region UpdateLayout
@@ -623,6 +639,19 @@ namespace Going.UI.Controls
         }
         #endregion
         #endregion
+        #endregion
+
+        #region Dispose
+        public void Dispose()
+        {
+            trackPaint.Dispose();
+            progressPaint.Dispose();
+            handlePaint.Dispose();
+            tickPaint.Dispose();
+            borderPaint.Dispose();
+            textPaint.Dispose();
+            textFont.Dispose();
+        }
         #endregion
     }
 }

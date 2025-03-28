@@ -20,6 +20,7 @@ using static OpenTK.Graphics.OpenGL.GL;
 
 namespace Going.UI.Forms.Dialogs
 {
+    // DropDownWindow 이거 상속받으면됨
     public class GoDropDownWindow : Form, IMessageFilter
     {
         #region Properties
