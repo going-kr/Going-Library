@@ -28,149 +28,261 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             rm = new Going.UI.Forms.Components.GoResourceManager();
-            dg = new Going.UI.Forms.Controls.GoDataGrid();
-            goContainer1 = new Going.UI.Forms.Containers.GoContainer();
-            btnIB = new Going.UI.Forms.Controls.GoButton();
-            btnSB = new Going.UI.Forms.Controls.GoButton();
-            btnMB = new Going.UI.Forms.Controls.GoButton();
-            goContainer1.SuspendLayout();
+            goTabControl1 = new Going.UI.Forms.Containers.GoTabControl();
+            tpBar = new TabPage();
+            grpBar = new Going.UI.Forms.Controls.GoBarGraph();
+            tpLine = new TabPage();
+            grpLine = new Going.UI.Forms.Controls.GoLineGraph();
+            tpCircle = new TabPage();
+            grpCircle = new Going.UI.Forms.Controls.GoCircleGraph();
+            tpTime = new TabPage();
+            grpTime = new Going.UI.Forms.Controls.GoTimeGraph();
+            tpTrend = new TabPage();
+            grpTrend = new Going.UI.Forms.Controls.GoTrendGraph();
+            goTabControl1.SuspendLayout();
+            tpBar.SuspendLayout();
+            tpLine.SuspendLayout();
+            tpCircle.SuspendLayout();
+            tpTime.SuspendLayout();
+            tpTrend.SuspendLayout();
             SuspendLayout();
             // 
             // rm
             // 
             rm.ImageFolder = "D:\\Project\\Going\\library\\src\\Going\\ImageSample";
             // 
-            // dg
+            // goTabControl1
             // 
-            dg.BackColor = Color.FromArgb(50, 50, 50);
-            dg.BackgroundColor = "Back";
-            dg.ColumnColor = "Base1";
-            dg.ColumnHeight = 30F;
-            dg.Dock = DockStyle.Fill;
-            dg.FontName = "나눔고딕";
-            dg.FontSize = 12F;
-            dg.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
-            dg.Location = new Point(10, 10);
-            dg.Name = "dg";
-            dg.RowColor = "Base2";
-            dg.RowHeight = 30F;
-            dg.ScrollMode = Going.UI.Utils.ScrollMode.Vertical;
-            dg.SelectedRowColor = "Select";
-            dg.SelectionMode = Going.UI.Enums.GoDataGridSelectionMode.Single;
-            dg.Size = new Size(973, 595);
-            dg.SummaryRowColor = "Base1";
-            dg.TabIndex = 0;
-            dg.TabStop = false;
-            dg.Text = "goDataGrid1";
-            dg.TextColor = "Fore";
+            goTabControl1.BackgroundColor = "Back";
+            goTabControl1.Controls.Add(tpBar);
+            goTabControl1.Controls.Add(tpLine);
+            goTabControl1.Controls.Add(tpCircle);
+            goTabControl1.Controls.Add(tpTime);
+            goTabControl1.Controls.Add(tpTrend);
+            goTabControl1.Dock = DockStyle.Fill;
+            goTabControl1.FontName = "나눔고딕";
+            goTabControl1.FontSize = 12F;
+            goTabControl1.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
+            goTabControl1.IconDirection = Going.UI.Enums.GoDirectionHV.Horizon;
+            goTabControl1.IconGap = 5F;
+            goTabControl1.IconSize = 12F;
+            goTabControl1.ItemSize = new Size(120, 40);
+            goTabControl1.Location = new Point(10, 10);
+            goTabControl1.Name = "goTabControl1";
+            goTabControl1.SelectedIndex = 0;
+            goTabControl1.Size = new Size(973, 645);
+            goTabControl1.SizeMode = TabSizeMode.Fixed;
+            goTabControl1.TabBorderColor = "Base3";
+            goTabControl1.TabColor = "Base2";
+            goTabControl1.TabIndex = 0;
+            goTabControl1.TextColor = "Fore";
             // 
-            // goContainer1
+            // tpBar
             // 
-            goContainer1.BackColor = Color.FromArgb(50, 50, 50);
-            goContainer1.BackgroundColor = "Back";
-            goContainer1.Controls.Add(btnIB);
-            goContainer1.Controls.Add(btnSB);
-            goContainer1.Controls.Add(btnMB);
-            goContainer1.Dock = DockStyle.Bottom;
-            goContainer1.Location = new Point(10, 605);
-            goContainer1.Name = "goContainer1";
-            goContainer1.Padding = new Padding(0, 10, 0, 0);
-            goContainer1.Size = new Size(973, 50);
-            goContainer1.TabIndex = 1;
-            goContainer1.TabStop = false;
-            goContainer1.Text = "goContainer1";
+            tpBar.BackColor = Color.FromArgb(60, 60, 60);
+            tpBar.Controls.Add(grpBar);
+            tpBar.Location = new Point(4, 44);
+            tpBar.Name = "tpBar";
+            tpBar.Padding = new Padding(10);
+            tpBar.Size = new Size(965, 597);
+            tpBar.TabIndex = 0;
+            tpBar.Text = "Bar";
             // 
-            // btnIB
+            // grpBar
             // 
-            btnIB.BackColor = Color.FromArgb(50, 50, 50);
-            btnIB.BackgroundColor = "Back";
-            btnIB.BackgroundDraw = true;
-            btnIB.BorderOnly = false;
-            btnIB.ButtonColor = "Base3";
-            btnIB.FontName = "나눔고딕";
-            btnIB.FontSize = 12F;
-            btnIB.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
-            btnIB.IconDirection = Going.UI.Enums.GoDirectionHV.Horizon;
-            btnIB.IconGap = 5F;
-            btnIB.IconSize = 12F;
-            btnIB.IconString = null;
-            btnIB.Location = new Point(248, 13);
-            btnIB.Name = "btnIB";
-            btnIB.Round = Going.UI.Enums.GoRoundType.All;
-            btnIB.Size = new Size(118, 37);
-            btnIB.TabIndex = 2;
-            btnIB.TabStop = false;
-            btnIB.Text = "InputBox";
-            btnIB.TextColor = "Fore";
+            grpBar.BackColor = Color.FromArgb(60, 60, 60);
+            grpBar.BackgroundColor = "Base2";
+            grpBar.BarGap = 20;
+            grpBar.BarSize = 20;
+            grpBar.Direction = Going.UI.Enums.GoDirectionHV.Vertical;
+            grpBar.Dock = DockStyle.Fill;
+            grpBar.FontName = "나눔고딕";
+            grpBar.FontSize = 12F;
+            grpBar.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
+            grpBar.FormatString = null;
+            grpBar.GraduationCount = 10;
+            grpBar.GraphColor = "Back";
+            grpBar.GridColor = "Base3";
+            grpBar.Location = new Point(10, 10);
+            grpBar.Maximum = 10000D;
+            grpBar.Minimum = 0D;
+            grpBar.Mode = Going.UI.Datas.GoBarGraphMode.Stack;
+            grpBar.Name = "grpBar";
+            grpBar.RemarkColor = "Base2";
+            grpBar.Size = new Size(945, 577);
+            grpBar.TabIndex = 0;
+            grpBar.TabStop = false;
+            grpBar.Text = "goBarGraph1";
+            grpBar.TextColor = "Fore";
             // 
-            // btnSB
+            // tpLine
             // 
-            btnSB.BackColor = Color.FromArgb(50, 50, 50);
-            btnSB.BackgroundColor = "Back";
-            btnSB.BackgroundDraw = true;
-            btnSB.BorderOnly = false;
-            btnSB.ButtonColor = "Base3";
-            btnSB.FontName = "나눔고딕";
-            btnSB.FontSize = 12F;
-            btnSB.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
-            btnSB.IconDirection = Going.UI.Enums.GoDirectionHV.Horizon;
-            btnSB.IconGap = 5F;
-            btnSB.IconSize = 12F;
-            btnSB.IconString = null;
-            btnSB.Location = new Point(124, 13);
-            btnSB.Name = "btnSB";
-            btnSB.Round = Going.UI.Enums.GoRoundType.All;
-            btnSB.Size = new Size(118, 37);
-            btnSB.TabIndex = 1;
-            btnSB.TabStop = false;
-            btnSB.Text = "SelectorBox";
-            btnSB.TextColor = "Fore";
+            tpLine.BackColor = Color.FromArgb(60, 60, 60);
+            tpLine.Controls.Add(grpLine);
+            tpLine.Location = new Point(4, 44);
+            tpLine.Name = "tpLine";
+            tpLine.Padding = new Padding(10);
+            tpLine.Size = new Size(965, 597);
+            tpLine.TabIndex = 1;
+            tpLine.Text = "Line";
             // 
-            // btnMB
+            // grpLine
             // 
-            btnMB.BackColor = Color.FromArgb(50, 50, 50);
-            btnMB.BackgroundColor = "Back";
-            btnMB.BackgroundDraw = true;
-            btnMB.BorderOnly = false;
-            btnMB.ButtonColor = "Base3";
-            btnMB.FontName = "나눔고딕";
-            btnMB.FontSize = 12F;
-            btnMB.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
-            btnMB.IconDirection = Going.UI.Enums.GoDirectionHV.Horizon;
-            btnMB.IconGap = 5F;
-            btnMB.IconSize = 12F;
-            btnMB.IconString = null;
-            btnMB.Location = new Point(0, 13);
-            btnMB.Name = "btnMB";
-            btnMB.Round = Going.UI.Enums.GoRoundType.All;
-            btnMB.Size = new Size(118, 37);
-            btnMB.TabIndex = 0;
-            btnMB.TabStop = false;
-            btnMB.Text = "MessageBox";
-            btnMB.TextColor = "Fore";
+            grpLine.BackColor = Color.FromArgb(60, 60, 60);
+            grpLine.BackgroundColor = "Base2";
+            grpLine.Dock = DockStyle.Fill;
+            grpLine.FontName = "나눔고딕";
+            grpLine.FontSize = 12F;
+            grpLine.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
+            grpLine.FormatString = null;
+            grpLine.GraduationCount = 10;
+            grpLine.GraphColor = "Back";
+            grpLine.GridColor = "Base3";
+            grpLine.Location = new Point(10, 10);
+            grpLine.Name = "grpLine";
+            grpLine.PointWidth = 70;
+            grpLine.RemarkColor = "Base2";
+            grpLine.Size = new Size(945, 577);
+            grpLine.TabIndex = 0;
+            grpLine.TabStop = false;
+            grpLine.Text = "goLineGraph1";
+            grpLine.TextColor = "Fore";
+            // 
+            // tpCircle
+            // 
+            tpCircle.BackColor = Color.FromArgb(60, 60, 60);
+            tpCircle.Controls.Add(grpCircle);
+            tpCircle.Location = new Point(4, 44);
+            tpCircle.Name = "tpCircle";
+            tpCircle.Padding = new Padding(10);
+            tpCircle.Size = new Size(965, 597);
+            tpCircle.TabIndex = 2;
+            tpCircle.Text = "Circle";
+            // 
+            // grpCircle
+            // 
+            grpCircle.BackColor = Color.FromArgb(60, 60, 60);
+            grpCircle.BackgroundColor = "Base2";
+            grpCircle.Dock = DockStyle.Fill;
+            grpCircle.FontName = "나눔고딕";
+            grpCircle.FontSize = 12F;
+            grpCircle.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
+            grpCircle.GridColor = "Base3";
+            grpCircle.Location = new Point(10, 10);
+            grpCircle.Name = "grpCircle";
+            grpCircle.RemarkColor = "Base2";
+            grpCircle.Size = new Size(945, 577);
+            grpCircle.TabIndex = 0;
+            grpCircle.TabStop = false;
+            grpCircle.Text = "goCircleGraph1";
+            grpCircle.TextColor = "Fore";
+            // 
+            // tpTime
+            // 
+            tpTime.BackColor = Color.FromArgb(60, 60, 60);
+            tpTime.Controls.Add(grpTime);
+            tpTime.Location = new Point(4, 44);
+            tpTime.Name = "tpTime";
+            tpTime.Padding = new Padding(10);
+            tpTime.Size = new Size(965, 597);
+            tpTime.TabIndex = 3;
+            tpTime.Text = "Time";
+            // 
+            // grpTime
+            // 
+            grpTime.BackColor = Color.FromArgb(60, 60, 60);
+            grpTime.BackgroundColor = "Base2";
+            grpTime.Dock = DockStyle.Fill;
+            grpTime.FontName = "나눔고딕";
+            grpTime.FontSize = 12F;
+            grpTime.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
+            grpTime.GraphColor = "Back";
+            grpTime.GridColor = "Base3";
+            grpTime.Location = new Point(10, 10);
+            grpTime.Name = "grpTime";
+            grpTime.RemarkColor = "Base2";
+            grpTime.Size = new Size(945, 577);
+            grpTime.TabIndex = 0;
+            grpTime.TabStop = false;
+            grpTime.Text = "goTimeGraph1";
+            grpTime.TextColor = "Fore";
+            grpTime.TimeFormatString = null;
+            grpTime.ValueFormatString = null;
+            grpTime.XAxisGraduationTime = TimeSpan.Parse("00:10:00");
+            grpTime.XScale = TimeSpan.Parse("01:00:00");
+            grpTime.YAxisGraduationCount = 10;
+            // 
+            // tpTrend
+            // 
+            tpTrend.BackColor = Color.FromArgb(60, 60, 60);
+            tpTrend.Controls.Add(grpTrend);
+            tpTrend.Location = new Point(4, 44);
+            tpTrend.Name = "tpTrend";
+            tpTrend.Padding = new Padding(10);
+            tpTrend.Size = new Size(965, 597);
+            tpTrend.TabIndex = 4;
+            tpTrend.Text = "Trend";
+            // 
+            // grpTrend
+            // 
+            grpTrend.BackColor = Color.FromArgb(60, 60, 60);
+            grpTrend.BackgroundColor = "Base2";
+            grpTrend.Dock = DockStyle.Fill;
+            grpTrend.FontName = "나눔고딕";
+            grpTrend.FontSize = 12F;
+            grpTrend.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
+            grpTrend.GraphColor = "Back";
+            grpTrend.GridColor = "Base3";
+            grpTrend.Interval = 10;
+            grpTrend.Location = new Point(10, 10);
+            grpTrend.MaximumXScale = TimeSpan.Parse("00:00:10");
+            grpTrend.Name = "grpTrend";
+            grpTrend.Pause = false;
+            grpTrend.RemarkColor = "Base2";
+            grpTrend.Size = new Size(945, 577);
+            grpTrend.TabIndex = 0;
+            grpTrend.TabStop = false;
+            grpTrend.Text = "goTrendGraph1";
+            grpTrend.TextColor = "Fore";
+            grpTrend.TimeFormatString = "HH:mm:ss.fff";
+            grpTrend.ValueFormatString = null;
+            grpTrend.XAxisGraduationTime = TimeSpan.Parse("00:00:00.2500000");
+            grpTrend.XScale = TimeSpan.Parse("00:00:01");
+            grpTrend.YAxisGraduationCount = 10;
             // 
             // FormMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(993, 665);
-            Controls.Add(dg);
-            Controls.Add(goContainer1);
+            Controls.Add(goTabControl1);
             Name = "FormMain";
             Padding = new Padding(10);
             Text = "FormMain2";
             Title = "FormMain2";
-            goContainer1.ResumeLayout(false);
+            goTabControl1.ResumeLayout(false);
+            tpBar.ResumeLayout(false);
+            tpLine.ResumeLayout(false);
+            tpCircle.ResumeLayout(false);
+            tpTime.ResumeLayout(false);
+            tpTrend.ResumeLayout(false);
             ResumeLayout(false);
         }
 
         #endregion
         private Going.UI.Forms.Components.GoResourceManager rm;
-        private Going.UI.Forms.Controls.GoDataGrid dg;
-        private Going.UI.Forms.Containers.GoContainer goContainer1;
-        private Going.UI.Forms.Controls.GoButton btnMB;
-        private Going.UI.Forms.Controls.GoButton btnSB;
-        private Going.UI.Forms.Controls.GoButton btnIB;
+        private Going.UI.Forms.Containers.GoTabControl goTabControl1;
+        private TabPage tpBar;
+        private Going.UI.Forms.Controls.GoBarGraph grpBar;
+        private TabPage tpLine;
+        private TabPage tpCircle;
+        private TabPage tpTime;
+        private TabPage tpTrend;
+        private Going.UI.Forms.Controls.GoLineGraph grpLine;
+        private Going.UI.Forms.Controls.GoCircleGraph grpCircle;
+        private Going.UI.Forms.Controls.GoTimeGraph grpTime;
+        private Going.UI.Forms.Controls.GoTrendGraph grpTrend;
     }
 }
