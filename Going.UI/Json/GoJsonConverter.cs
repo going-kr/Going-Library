@@ -22,6 +22,7 @@ namespace Going.UI.Json
             Options.Converters.Add(new SKBitmapConverter());
             Options.Converters.Add(new GoControlConverter());
             Options.Converters.Add(new GoTableLayoutControlCollectionConverter());
+            Options.Converters.Add(new GoGridLayoutControlCollectionConverter());
         }
     }
 
@@ -146,6 +147,34 @@ namespace Going.UI.Json
         class Data
         {
             public Dictionary<Guid, GoTableIndex> indexes { get; set; } = [];
+            public List<IGoControl> ls { get; set; } = [];
+        }
+    }
+    #endregion
+    #region GoGridLayoutControlCollectionConverter
+    public class GoGridLayoutControlCollectionConverter : JsonConverter<GoGridLayoutControlCollection>
+    {
+        public override GoGridLayoutControlCollection Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            var list = JsonSerializer.Deserialize<Data>(ref reader, options);
+
+            var v = new GoGridLayoutControlCollection();
+            if (list != null)
+            {
+                foreach (var i in list.indexes) v.Indexes.Add(i.Key, i.Value);
+                foreach (var c in list.ls) v.Controls.Add(c);
+            }
+            return v;
+        }
+
+        public override void Write(Utf8JsonWriter writer, GoGridLayoutControlCollection value, JsonSerializerOptions options)
+        {
+            JsonSerializer.Serialize(writer, new Data { ls = value.Controls, indexes = value.Indexes }, options);
+        }
+
+        class Data
+        {
+            public Dictionary<Guid, GoGridIndex> indexes { get; set; } = [];
             public List<IGoControl> ls { get; set; } = [];
         }
     }

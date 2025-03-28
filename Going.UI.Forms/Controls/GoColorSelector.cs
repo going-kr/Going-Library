@@ -34,9 +34,16 @@ namespace Going.UI.Forms.Controls
             {
                 if (c == Control)
                 {
-                    FormsInputManager.Current.InputNumber<byte>(this, Control, bounds, FontName, FontStyle, FontSize, InputColor, TextColor, (v) => { callback(v); Invalidate(); }, type, value, min, max);
+                    FormsInputManager.Current.InputNumber<byte>(this, Control, bounds, FontName, FontStyle, FontSize, InputColor, TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
                 }
             };
+        }
+        #endregion
+
+        #region Method
+        void spkey(Keys key, Keys modifier)
+        {
+
         }
         #endregion
     }

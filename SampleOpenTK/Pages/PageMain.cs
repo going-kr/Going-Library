@@ -25,6 +25,9 @@ namespace SampleOpenTK.Pages
         GoMessageBox msgbox;
         GoSelectorBox selbox;
         GoInputBox inbox;
+
+        GoGridLayoutPanel grid;
+
         public PageMain()
         {
             Name = "PageMain";
@@ -42,10 +45,10 @@ namespace SampleOpenTK.Pages
             btnSB.ButtonClicked += (o, s) =>
             {
                 var items = Enum.GetValues<DayOfWeek>().Select(x => new GoListItem { Text = x.ToString(), Tag = x }).ToList();
-                //var sels = new List<GoListItem>([items[0], items[2]]);
+                var sels = new List<GoListItem>([items[0], items[2]]);
                 //selbox.ShowCheck("테스트", 2, items, sels, (result) => { if (result != null) foreach (var v in result) Console.WriteLine(v.Text); });
                 //selbox.ShowRadio("테스트", 2, items, items[0], (result) => { if (result != null) Console.WriteLine(result.Text); });
-                selbox.ShowCombo("테스트", items, items[0], (result) => { if (result != null) Console.WriteLine(result.Text); });
+                //selbox.ShowCombo("테스트", items, items[0], (result) => { if (result != null) Console.WriteLine(result.Text); });
                 //selbox.ShowCheck<DayOfWeek>("테스트", 2, [DayOfWeek.Monday], (result) => { if (result != null) foreach (var v in result) Console.WriteLine(v); });
             };
             btnIB.ButtonClicked += (o, s) =>
@@ -54,6 +57,22 @@ namespace SampleOpenTK.Pages
                 //inbox.ShowBool("테스트", (result) => { Console.WriteLine(result); });
                 inbox.Showinputbox<Data>("테스트", (result) => { if (result != null) Console.WriteLine(JsonSerializer.Serialize(result)); });
             };
+
+            grid = new GoGridLayoutPanel { Left = 140, Top = 10, Width = 300, Height = 400 };
+            grid.AddRow("25%", ["25%", "25%", "25%", "25%"]);
+            grid.AddRow("25%", ["25%", "25%", "25%", "25%"]);
+            grid.AddRow("25%", ["25%", "25%", "25%", "25%"]);
+            grid.AddRow("25%", ["25%", "25%", "25%", "25%"]);
+            grid.AddRow("40px", ["100%", "80px", "80px"]);
+            Childrens.Add(grid);
+
+            grid.Childrens.Add(new GoButton { Fill = true, Text = "OK" }, 1, 4);
+            grid.Childrens.Add(new GoButton { Fill = true, Text = "Cancel" }, 2, 4);
+
+            for (int i = 0; i < 4; i++)
+                for (int j = 0; j < 4; j++)
+                    grid.Childrens.Add(new GoLabel { Fill = true, Text = $"{i * 4 + j}" }, j, i);
+
         }
     }
 

@@ -1,10 +1,6 @@
 ﻿
 = 미완료 작업 =================================================================================
 
-BarGraph					막대 그래프	
-CircleGraph					원형 그래프	
-LineGraph					꺾은선 그래프
-TimeGraph					타임 그래프												종현님
 TrendGraph					트랜드 그래프											지준
 
 Progress					일자형 프로그레스										상무님(v)
@@ -77,6 +73,12 @@ DataGrid					데이터 그리드											O
 MessageBox                                                                          O
 SelectorBox                                                                         O
 InputBox                                                                            O
+GridLayoutPanel																		O
+
+BarGraph					막대 그래프	                                            O
+CircleGraph					원형 그래프	                                            O
+LineGraph					꺾은선 그래프                                           O
+TimeGraph					타임 그래프												O
 
 = 제외 작업 ===================================================================================
 
@@ -85,7 +87,6 @@ WheelPicker					가챠...?												X
 SlidePanel																			X(중복)
 BorderPanel																			X(중복)
 BoxPanel																			X(중복)
-GridLayoutPanel																		X(중복)
 CircleButton				원형 버튼	 => 그라데이션 없이는 밋밋함				X(버튼의 Round Ellipse로 대체)
 TriangleButton				화살표 버튼	 =>			  ''							X(아이콘 버튼으로 대체)
 CategoryPanel				트리뷰 대체  => depth 별 컨테이너 시 표현 자유 낮음		X

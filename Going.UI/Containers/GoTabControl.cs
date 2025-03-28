@@ -186,13 +186,30 @@ namespace Going.UI.Containers
                         }
                     }
                     #endregion
-
                 }
 
                 Util.DrawTextIcon(canvas, tab.Text, FontName, FontStyle, FontSize, tab.IconString, IconSize, IconDirection, IconGap, rt, Util.FromArgb(Convert.ToByte(bSel ? 255 : (tab.Hover ? 150 : 60)), cText));
             });
 
             base.OnDraw(canvas);
+        }
+        #endregion
+
+        #region Override
+        protected override void OnLayout()
+        {
+            var rts = Areas();
+            var rtPanel = rts["Panel"];
+
+            if (SelectedTab != null)
+            {
+                foreach(var c in SelectedTab.Childrens)
+                {
+                    if (c.Fill) c.Bounds = Util.FromRect(Util.FromRect(0, 0, rtPanel.Width, rtPanel.Height), c.Margin);
+                }
+            }
+
+            //base.OnLayout();
         }
         #endregion
 
