@@ -21,6 +21,7 @@ namespace Going.UI.Controls
         public string GridColor { get; set; } = "Base3";
         public string TextColor { get; set; } = "Fore";
         public string RemarkColor { get; set; } = "Base2";
+        public string GraphColor { get; set; } = "Back";
 
         public string FontName { get; set; } = "나눔고딕";
         public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
@@ -82,10 +83,9 @@ namespace Going.UI.Controls
         {
             #region var
             var thm = GoTheme.Current;
+            var cGraph = thm.ToColor(GraphColor);
             var cGrid = thm.ToColor(GridColor);
             var cText = thm.ToColor(TextColor);
-            var cTextBorder = thm.Back;
-            var nTextBorder = 5F;
             var cRemark = thm.ToColor(RemarkColor);
             var cSeries = Series.ToDictionary(x => x, y => thm.ToColor(y.Color));
             var rts = Areas();
@@ -138,6 +138,8 @@ namespace Going.UI.Controls
                 }
             }
             #endregion
+
+            p.Color = cGraph; p.IsStroke = false; canvas.DrawRect(rtGraph, p);
 
             if (Direction == GoDirectionHV.Vertical)
             {
@@ -276,7 +278,7 @@ namespace Going.UI.Controls
                             foreach (var vv in hovrts ?? []) canvas.ClipRect(vv, SKClipOperation.Difference);
 
                             p.IsStroke = false;
-                            p.Color = Util.FromArgb(200, thm.Back);
+                            p.Color = Util.FromArgb(200, cGraph);
                             canvas.DrawRect(Util.FromRect(-spos, 0, rtGraph.Width+1, rtGraph.Height+1), p);
                         }
 
@@ -324,7 +326,7 @@ namespace Going.UI.Controls
                                 var vw = Util.MeasureText(sv, FontName, FontStyle, FontSize).Width + 20;
                                 var trt = Util.FromRect(tx - (bdir ? 0 : vw), ty, vw, 30);
 
-                                Util.DrawBox(canvas, trt, thm.Back, c, GoRoundType.All, thm.Corner);
+                                Util.DrawBox(canvas, trt, cGraph, c, GoRoundType.All, thm.Corner);
                                 Util.DrawText(canvas, sv, FontName, FontStyle, FontSize, trt, cText);
                                 ty += 40;
                                 #endregion
@@ -496,7 +498,7 @@ namespace Going.UI.Controls
                             foreach (var vv in hovrts ?? []) canvas.ClipRect(vv, SKClipOperation.Difference);
 
                             p.IsStroke = false;
-                            p.Color = Util.FromArgb(200, thm.Back);
+                            p.Color = Util.FromArgb(200, cGraph);
                             canvas.DrawRect(Util.FromRect(0, -spos, rtGraph.Width+1, rtGraph.Height+1), p);
                         }
 
@@ -544,7 +546,7 @@ namespace Going.UI.Controls
                                 var vw = Util.MeasureText(sv, FontName, FontStyle, FontSize).Width + 20;
                                 var trt = Util.FromRect(tx - vw, ty - (bdir ? 0 : th), vw, 30);
 
-                                Util.DrawBox(canvas, trt, thm.Back, c, GoRoundType.All, thm.Corner);
+                                Util.DrawBox(canvas, trt, cGraph, c, GoRoundType.All, thm.Corner);
                                 Util.DrawText(canvas, sv, FontName, FontStyle, FontSize, trt, cText);
                                 ty += 40;
                                 #endregion
@@ -794,7 +796,7 @@ namespace Going.UI.Controls
                             }
                         }
 
-
+                        Invalidate?.Invoke();
                     }
                     else throw new Exception("잘못된 데이터 입니다.");
                 }

@@ -1,6 +1,8 @@
-﻿using Going.UI.Datas;
+﻿using Going.UI.Controls;
+using Going.UI.Datas;
 using Going.UI.Enums;
 using Going.UI.Forms.Dialogs;
+using Going.UI.Tools;
 using Going.UI.Utils;
 using SkiaSharp;
 using System;
@@ -12,143 +14,139 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Windows.Devices.Geolocation;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace SampleForms
 {
     public partial class FormMain : GoForm
     {
-        GoMessageBox mb = new ();
-        GoSelectorBox sb = new ();
-        GoInputBox ib = new();
-
-        Random rnd = new ();
-        List<Device> devs = [];
+        Random rnd = new Random();
+        List<GRP> ls = new List<GRP>();
+        TGRP tdata = new TGRP { };
 
         public FormMain()
         {
             InitializeComponent();
 
-            #region dg
-            string[] sz1 = ["80px", "80px", "120px", "10.0%", "18.0%", "9.0%", "9.0%", "9.0%", "9.0%", "9.0%", "9.0%", "9.0%", "9.0%"];
-            string[] sz2 = ["100px", "100px", "100px", "100px", "100px", "100px", "100px", "100px", "100px", "100px", "100px", "100px"];
-            var sz = sz1;
-
-            dg.Columns.Add(new GoDataGridInputTextColumn { Name = "Name", HeaderText = "명칭", Size = sz[0], GroupName = "Info", Fixed = true, UseFilter = true });
-            dg.Columns.Add(new GoDataGridLabelColumn { Name = "DeviceType", HeaderText = "타입", Size = sz[1], GroupName = "Info", Fixed = true, UseFilter = true, TextConverter = ToString });
-            dg.Columns.Add(new GoDataGridInputBoolColumn { Name = "Use", HeaderText = "사용여부", Size = sz[2], GroupName = "Info", Fixed = true, OnText = "사용", OffText = "미사용" });
-            dg.Columns.Add(new GoDataGridLabelColumn { Name = "Operation", HeaderText = "상태", Size = sz[3], GroupName = "Motor" });
-            //dg.Columns.Add(new GoDataGridInputTimeColumn { Name = "ReserveTime", HeaderText = "예약 시간", Size = sz[4], GroupName = "Motor", DateFormat = "yyyy.MM.dd", DateTimeStyle = GoDateTimeKind.Date });
-            //dg.Columns.Add(new GoDataGridInputColorColumn { Name = "LightColor", HeaderText = "색상", Size = sz[4], GroupName = "Motor" });
-            dg.Columns.Add(new GoDataGridInputComboColumn { Name = "DOW", HeaderText = "요일", Size = sz[4], GroupName = "Motor", Items = Enum.GetValues<DayOfWeek>().Select(x => new GoDataGridInputComboItem { Text = x.ToString(), Value = x }).ToList() });
-            dg.Columns.Add(new GoDataGridInputNumberColumn<double> { Name = "Position", HeaderText = "위치", Size = sz[5], GroupName = "Motor", Minimum = 0, Maximum = 2000, FormatString = "0.0" });
-            dg.Columns.Add(new GoDataGridInputNumberColumn<double> { Name = "Speed", HeaderText = "속도", Size = sz[6], GroupName = "Motor", Minimum = 0, Maximum = 100, FormatString = "0.0" });
-            dg.Columns.Add(new GoDataGridNumberColumn<double> { Name = "Current", HeaderText = "전류", Size = sz[7], GroupName = "Sensor", FormatString = "0.0" });
-            dg.Columns.Add(new GoDataGridNumberColumn<double> { Name = "Voltage", HeaderText = "전압", Size = sz[8], GroupName = "Sensor", FormatString = "0.0" });
-            dg.Columns.Add(new GoDataGridNumberColumn<double> { Name = "Temp", HeaderText = "온도", Size = sz[9], GroupName = "Sensor", FormatString = "0.0", UseSort = true });
-            dg.Columns.Add(new GoDataGridNumberColumn<double> { Name = "Presure", HeaderText = "압력", Size = sz[10], GroupName = "Sensor", FormatString = "0.0" });
-            dg.Columns.Add(new GoDataGridLampColumn { Name = "Alarm", HeaderText = "알람", Size = sz[11], GroupName = "Warning", OnColor = "red" });
-            dg.Columns.Add(new GoDataGridButtonColumn { Name = "Button", HeaderText = "리셋", Size = sz[12], GroupName = "Warning", IconString = "fa-rotate", Text = "리셋" });
-
-            dg.ColumnGroups.Add(new GoDataGridLabelColumn { Name = "Info", HeaderText = "장치 정보", Fixed = true });
-            dg.ColumnGroups.Add(new GoDataGridLabelColumn { Name = "Motor", HeaderText = "구동부", GroupName = "State" });
-            dg.ColumnGroups.Add(new GoDataGridLabelColumn { Name = "Sensor", HeaderText = "센서부", GroupName = "State" });
-            dg.ColumnGroups.Add(new GoDataGridLabelColumn { Name = "Warning", HeaderText = "알람", GroupName = "State" });
-            dg.ColumnGroups.Add(new GoDataGridLabelColumn { Name = "State", HeaderText = "상태" });
-
-            dg.SummaryRows.Add(new GoDataGridSumSummaryRow { Title = "합계", TitleColumnIndex = 0, TitleColSpan = 3, });
-
-            dg.SelectionMode = GoDataGridSelectionMode.Selector;
-            dg.ScrollMode = ScrollMode.Vertical;
-
-            for (int i = 0; i < 100; i++)
-            {
-                string nm = "";
-                DeviceType tp = DeviceType.Upper;
-                if (i < 70) { tp = DeviceType.Upper; nm = $"{ToString(tp)}{i + 1}"; }
-                else if (i < 80) { tp = DeviceType.Under; nm = $"{ToString(tp)}{i - 70 + 1}"; }
-                else if (i < 90) { tp = DeviceType.Wagon; nm = $"{ToString(tp)}{i - 80 + 1}"; }
-                else if (i < 100) { tp = DeviceType.Bridge; nm = $"{ToString(tp)}{i - 90 + 1}"; }
-
-                devs.Add(new Device { Name = nm, DeviceType = tp });
-                devs[i].Position = i;
-            }
-
-            dg.SetDataSource(devs);
-
-            dg.CellButtonClick += (o, s) => Console.WriteLine(s.Cell.Row.Cells[0].Value?.ToString());
-            dg.ValueChanged += (o, e) => 
-            dg.RefreshRows();
+            #region Bar
+            grpBar.Series.Add(new GoGraphSeries { Name = "Controller", Alias = "제어기", Color = "red" });
+            grpBar.Series.Add(new GoGraphSeries { Name = "Touch", Alias = "터치", Color = "GreenYellow" });
+            grpBar.Series.Add(new GoGraphSeries { Name = "Cloud", Alias = "클라우드", Color = "DeepSkyBlue", Visible = true });
+            #endregion
+            #region Line
+            grpLine.Series.Add(new GoLineGraphSeries { Name = "Controller", Alias = "제어기", Color = "red", Minimum = 0, Maximum = 10000 });
+            grpLine.Series.Add(new GoLineGraphSeries { Name = "Touch", Alias = "터치", Color = "GreenYellow", Minimum = 0, Maximum = 10000 });
+            grpLine.Series.Add(new GoLineGraphSeries { Name = "Cloud", Alias = "클라우드", Color = "DeepSkyBlue", Minimum = 0, Maximum = 10000, Visible = true });
+            #endregion
+            #region Circle
+            grpCircle.Series.Add(new GoGraphSeries { Name = "Jan", Alias = "1월", Color = "#f00" });
+            grpCircle.Series.Add(new GoGraphSeries { Name = "Feb", Alias = "2월", Color = "#0f0" });
+            grpCircle.Series.Add(new GoGraphSeries { Name = "Mar", Alias = "3월", Color = "#00f" });
+            grpCircle.Series.Add(new GoGraphSeries { Name = "Apr", Alias = "4월", Color = "#ff0" });
+            grpCircle.Series.Add(new GoGraphSeries { Name = "May", Alias = "5월", Color = "#0ff" });
+            grpCircle.Series.Add(new GoGraphSeries { Name = "Jun", Alias = "6월", Color = "#f0f" });
+            grpCircle.Series.Add(new GoGraphSeries { Name = "Jul", Alias = "7월", Color = "#800" });
+            grpCircle.Series.Add(new GoGraphSeries { Name = "Aug", Alias = "8월", Color = "#080" });
+            grpCircle.Series.Add(new GoGraphSeries { Name = "Sep", Alias = "9월", Color = "#008" });
+            grpCircle.Series.Add(new GoGraphSeries { Name = "Oct", Alias = "10월", Color = "#880" });
+            grpCircle.Series.Add(new GoGraphSeries { Name = "Nov", Alias = "11월", Color = "#088" });
+            grpCircle.Series.Add(new GoGraphSeries { Name = "Dec", Alias = "12월", Color = "#808" });
+            #endregion
+            #region Time
+            grpTime.Series.Add(new GoLineGraphSeries { Name = "Temp", Alias = "온도", Color = "red", Minimum = 0, Maximum = 200 });
+            grpTime.Series.Add(new GoLineGraphSeries { Name = "Hum", Alias = "습도", Color = "GreenYellow", Minimum = 0, Maximum = 100 });
+            grpTime.Series.Add(new GoLineGraphSeries { Name = "Noise", Alias = "소음", Color = "DeepSkyBlue", Minimum = 0, Maximum = 400, Visible = true });
+            #endregion
+            #region Trend
+            grpTrend.Series.Add(new GoLineGraphSeries { Name = "Temp", Alias = "온도", Color = "red", Minimum = 0, Maximum = 200 });
+            grpTrend.Series.Add(new GoLineGraphSeries { Name = "Hum", Alias = "습도", Color = "GreenYellow", Minimum = 0, Maximum = 100 });
+            grpTrend.Series.Add(new GoLineGraphSeries { Name = "Noise", Alias = "소음", Color = "DeepSkyBlue", Minimum = 0, Maximum = 400, Visible = true });
             #endregion
 
-            btnMB.ButtonClicked += (o, s) => mb.ShowMessageBoxYesNoCancel("테스트", "이것은 메시지박스 테스트 화면 입니다.\r\n( Test line )");
-           
-            btnSB.ButtonClicked += (o, s) =>
-            {
-                var items = Enum.GetValues<DayOfWeek>().Select(x => new GoListItem { Text = x.ToString(), Tag = x }).ToList();
-                var sels = new List<GoListItem>([items[0], items[2]]);
-                //var r = sb.ShowCheck("테스트", 2, items, sels);
-                //var r = sb.ShowRadio("테스트", 2, items, items[0]);
-                //var r = sb.ShowCombo("테스트", items, items[0]);
-                var r = sb.ShowCheck<DayOfWeek>("테스트", 2, [DayOfWeek.Monday]);
-            };
+            #region data
+            for (int y = 2025; y <= 2028; y++)
+                for (int m = 1; m <= 12; m++)
+                    ls.Add(new($"{y}.{m}") { Controller = rnd.Next(0, 10000), Cloud = rnd.Next(0, 10000), Touch = rnd.Next(0, 10000), });
 
-            btnIB.ButtonClicked += (o, s) =>
-            {
-                //ib.ShowString("테스트", null, (result) => { Console.WriteLine(result); });
-                //ib.ShowBool("테스트", (result) => { Console.WriteLine(result); });
-                var r = ib.Showinputbox<Data>("테스트");
-            };
-        }
+            var ls2 = new List<CGRP>();
+            var vs = ls.Where(x => x.Month.StartsWith("2025"));
+            ls2.Add(new CGRP("Controller", vs, (x) => x.Controller));
+            ls2.Add(new CGRP("Touch", vs, (x) => x.Touch));
+            ls2.Add(new CGRP("Cloud", vs, (x) => x.Cloud));
 
-        #region ToString
-        string? ToString(object? val)
-        {
-            var ret = "";
-            if (val is DeviceType tp)
-                switch (tp)
+            var ls3 = new List<TGRP>();
+            double vt = 0, vh = 0, vn = 0;
+            for (DateTime time = DateTime.Now.Date; time <= DateTime.Now.Date + TimeSpan.FromDays(1); time += TimeSpan.FromSeconds(1))
+            {
+                vt = MathTool.Constrain(vt + (rnd.Next() % 2 == 0 ? 0.5 : -0.5), 0, 200);
+                vh = MathTool.Constrain(vh + (rnd.Next() % 2 == 0 ? 0.5 : -0.5), 0, 100);
+                vn = MathTool.Constrain(vn + (rnd.Next() % 2 == 0 ? 0.5 : -0.5), 0, 400);
+
+                ls3.Add(new TGRP { Time = time, Temp = vt, Hum = vh, Noise = vn });
+            }
+
+            #endregion
+
+            grpBar.SetDataSource("Month", ls);
+            grpLine.SetDataSource("Month", ls);
+            grpCircle.SetDataSource("Product", ls2);
+            grpTime.SetDataSource("Time", ls3);
+
+            grpTrend.Start(tdata);
+            Task.Run(async () =>
+            {
+                var rnd2 = new Random();
+                while (true)
                 {
-                    case DeviceType.Upper: ret = "상부"; break;
-                    case DeviceType.Under: ret = "하부"; break;
-                    case DeviceType.Wagon: ret = "웨건"; break;
-                    case DeviceType.Bridge: ret = "브릿지"; break;
+                    var tk = 0.5F;
+                    tdata.Temp = MathTool.Constrain(tdata.Temp + (rnd2.Next() % 2 == 0 ? tk : -tk), 0, 200);
+                    tdata.Hum = MathTool.Constrain(tdata.Hum + (rnd2.Next() % 2 == 0 ? tk : -tk), 0, 100);
+                    tdata.Noise = MathTool.Constrain(tdata.Noise + (rnd2.Next() % 2 == 0 ? tk : -tk), 0, 400);
+                    grpTrend.SetData(tdata);
+                    await Task.Delay(grpTrend.Interval);
                 }
-            return ret;
+            });
         }
-        #endregion
     }
 
-    #region dg class : Device
-    public enum DeviceType { Upper, Under, Wagon, Bridge }
-    public class Device
+    #region GRP
+    class GRP(string month)
     {
-        public string Name { get; set; } = "Device";
-        public DeviceType DeviceType { get; set; } = DeviceType.Upper;
-        public bool Use { get; set; }
-        public string Operation { get => Use ? opr : "Not Use"; set { if (Use) opr = value; } }
-        //public DateTime ReserveTime { get; set; }
-        //public SKColor LightColor { get; set; }
-        public DayOfWeek DOW { get; set; }
-        public double Position { get; set; }
-        public double Speed { get; set; }
-        public double Current { get; set; }
-        public double Voltage { get; set; }
-        public double Temp { get; set; }
-        public double Presure { get; set; }
-        public bool Alarm { get; set; }
+        public string Month { get; set; } = month;
 
-        private string opr = "Stop";
+        public long Controller { get; set; }
+        public long Touch { get; set; }
+        public long Cloud { get; set; }
     }
     #endregion
-    #region ib class : Data
-    class Data
+    #region CGRP
+    class CGRP(string product, IEnumerable<GRP> vs, Func<GRP, long> func)
     {
-        public string? Name { get; set; }
-        public int Value { get; set; }
-        public double Value2 { get; set; }
-        public bool Value3 { get; set; }
-        public DayOfWeek DOW { get; set; }
-        [InputBoxIgnore] public DayOfWeek DOW2 { get; set; }
+        public string Product { get; set; } = product;
+
+        public long Jan { get; set; } = vs.Where(x => x.Month.EndsWith(".1")).Sum(func);
+        public long Feb { get; set; } = vs.Where(x => x.Month.EndsWith(".")).Sum(func);
+        public long Mar { get; set; } = vs.Where(x => x.Month.EndsWith(".3")).Sum(func);
+        public long Apr { get; set; } = vs.Where(x => x.Month.EndsWith(".4")).Sum(func);
+        public long May { get; set; } = vs.Where(x => x.Month.EndsWith(".5")).Sum(func);
+        public long Jun { get; set; } = vs.Where(x => x.Month.EndsWith(".6")).Sum(func);
+        public long Jul { get; set; } = vs.Where(x => x.Month.EndsWith(".7")).Sum(func);
+        public long Aug { get; set; } = vs.Where(x => x.Month.EndsWith(".8")).Sum(func);
+        public long Sep { get; set; } = vs.Where(x => x.Month.EndsWith(".9")).Sum(func);
+        public long Oct { get; set; } = vs.Where(x => x.Month.EndsWith(".10")).Sum(func);
+        public long Nov { get; set; } = vs.Where(x => x.Month.EndsWith(".11")).Sum(func);
+        public long Dec { get; set; } = vs.Where(x => x.Month.EndsWith(".12")).Sum(func);
+    }
+    #endregion
+    #region TGRP
+    class TGRP
+    {
+        public DateTime Time { get; set; }
+        public double Temp { get; set; }
+        public double Hum { get; set; }
+        public double Noise { get; set; }
     }
     #endregion
 }

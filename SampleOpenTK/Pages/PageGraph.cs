@@ -96,7 +96,7 @@ namespace SampleOpenTK.Pages
                 XScale = TimeSpan.FromSeconds(1),
                 XAxisGraduationTime = TimeSpan.FromSeconds(0.25),
                 TimeFormatString = "HH:mm:ss.fff",
-                Interval = 1
+                Interval = 10
             };
 
             grpTrend.Series.Add(new GoLineGraphSeries { Name = "Temp", Alias = "온도", Color = "red", Minimum = 0, Maximum = 200 });

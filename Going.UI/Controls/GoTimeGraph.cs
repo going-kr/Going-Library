@@ -22,6 +22,7 @@ namespace Going.UI.Controls
         public string GridColor { get; set; } = "Base3";
         public string TextColor { get; set; } = "Fore";
         public string RemarkColor { get; set; } = "Base2";
+        public string GraphColor { get; set; } = "Back";
 
         public string FontName { get; set; } = "나눔고딕";
         public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
@@ -69,12 +70,11 @@ namespace Going.UI.Controls
         {
             #region var
             var thm = GoTheme.Current;
+            var cGraph = thm.ToColor(GraphColor);
             var cGrid = thm.ToColor(GridColor);
             var cText = thm.ToColor(TextColor);
             var cRemark = thm.ToColor(RemarkColor);
             var cSeries = Series.ToDictionary(x => x, y => thm.ToColor(y.Color));
-            var cTextBorder = thm.Back;
-            var nTextBorder = 5F;
             var rts = Areas();
             var rtValueTitle = rts["ValueTitle"];
             var rtValueGrid = rts["ValueGrid"];
@@ -89,6 +89,8 @@ namespace Going.UI.Controls
             var rc = Series.Where(x => x.Visible).Count();
             var sposw = Convert.ToSingle(TimeSpan.FromMilliseconds(scroll.ScrollPositionWithOffset).TotalMilliseconds / XScale.TotalMilliseconds * rtGraph.Width);
             #endregion
+
+            p.Color = cGraph; p.IsStroke = false; canvas.DrawRect(rtGraph, p);
 
             #region Value Axis
             {
@@ -135,8 +137,8 @@ namespace Going.UI.Controls
             #region Name Axis
             if (rc > 0)
             {
-                var rst = vst ?? datas.First().Time;
-                var red = ved ?? datas.Last().Time;
+                var rst = vst ?? (datas.Count > 0 ? datas.First().Time : DateTime.Now);
+                var red = ved ?? (datas.Count > 0 ? datas.Last().Time : DateTime.Now);
                 var rsz = Util.MeasureText(rst.ToString(TimeFormatString ?? "yyyy.MM.dd\r\nHH:mm:ss"), FontName, FontStyle, FontSize);
 
                 #region Axis
@@ -202,8 +204,8 @@ namespace Going.UI.Controls
             #region Graph
             using (new SKAutoCanvasRestore(canvas))
             {
-                var rst = vst ?? datas.First().Time;
-                var red = ved ?? datas.Last().Time;
+                var rst = vst ?? (datas.Count > 0 ? datas.First().Time : DateTime.Now);
+                var red = ved ?? (datas.Count > 0 ? datas.Last().Time : DateTime.Now);
 
                 canvas.ClipRect(rtGraph);
                 canvas.Translate(rtGraph.Left, rtGraph.Top);
@@ -215,29 +217,32 @@ namespace Going.UI.Controls
 
                 var (si, ei) = FindRange(datas, ist, ist + XScale);
 
-                foreach (var ser in Series.Where(x => x.Visible))
+                if (si >= 0 && si < datas.Count && ei >= 0 && ei < datas.Count)
                 {
-                    var c = cSeries[ser];
-                    #region make lines
-                    var ls = new List<LGV>();
-                    for (int i = si; i <= ei; i++)
+                    foreach (var ser in Series.Where(x => x.Visible))
                     {
-                        var itm = datas[i];
-                        var ts = itm.Time - rst;
-                        var x = Convert.ToInt32(MathTool.Map(ts.TotalMilliseconds, 0, XScale.TotalMilliseconds, 0, rtGraph.Width)) + 0.5F;
-                        var y = Convert.ToInt32(MathTool.Map(itm.Values[ser.Name], ser.Minimum, ser.Maximum, rtGraph.Height, 0));
-                        ls.Add(new LGV() { Position = new SKPoint(x, y), Value = itm.Values[ser.Name] });
-                    }
+                        var c = cSeries[ser];
+                        #region make lines
+                        var ls = new List<LGV>();
+                        for (int i = si; i <= ei; i++)
+                        {
+                            var itm = datas[i];
+                            var ts = itm.Time - rst;
+                            var x = Convert.ToInt32(MathTool.Map(ts.TotalMilliseconds, 0, XScale.TotalMilliseconds, 0, rtGraph.Width)) + 0.5F;
+                            var y = Convert.ToInt32(MathTool.Map(itm.Values[ser.Name], ser.Minimum, ser.Maximum, rtGraph.Height, 0));
+                            ls.Add(new LGV() { Position = new SKPoint(x, y), Value = itm.Values[ser.Name] });
+                        }
 
-                    p.StrokeWidth = 1F;
-                    p.Color = c;
-                    p.IsStroke = false;
-                    if (ls.Count >= 2)
-                    {
-                        var pts = ls.Select(x => x.Position).ToArray();
-                        canvas.DrawPoints(SKPointMode.Polygon, pts, p);
+                        p.StrokeWidth = 1F;
+                        p.Color = c;
+                        p.IsStroke = false;
+                        if (ls.Count >= 2)
+                        {
+                            var pts = ls.Select(x => x.Position).ToArray();
+                            canvas.DrawPoints(SKPointMode.Polygon, pts, p);
+                        }
+                        #endregion
                     }
-                    #endregion
                 }
 
                 #region Hover
@@ -246,7 +251,7 @@ namespace Going.UI.Controls
                     using var pe = SKPathEffect.CreateDash([2, 2], 2);
 
                     p.IsStroke = false;
-                    p.Color = Util.FromArgb(200, thm.Back);
+                    p.Color = Util.FromArgb(200, cGraph);
                     canvas.DrawRect(Util.FromRect(-sposw, 0, rtGraph.Width, rtGraph.Height), p);
 
                     if (CollisionTool.Check(rtGraph, mx, my))
@@ -297,7 +302,7 @@ namespace Going.UI.Controls
                                 var vw = Util.MeasureText(sv, FontName, FontStyle, FontSize).Width + 20;
                                 var trt = Util.FromRect(tx - (bdir ? 0 : vw), ty, vw, 30);
 
-                                Util.DrawBox(canvas, trt, thm.Back, c, GoRoundType.All, thm.Corner);
+                                Util.DrawBox(canvas, trt, cGraph, c, GoRoundType.All, thm.Corner);
                                 Util.DrawText(canvas, sv, FontName, FontStyle, FontSize, trt, cText);
                                 ty += 40;
                                 #endregion
@@ -500,6 +505,8 @@ namespace Going.UI.Controls
 
                         vst = start;
                         ved = end;
+
+                        Invalidate?.Invoke();
                     }
                     else throw new Exception("잘못된 데이터 입니다.");
                 }
