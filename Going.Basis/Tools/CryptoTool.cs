@@ -1,12 +1,12 @@
-﻿using SkiaSharp;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Going.UI.Tools
+namespace Going.Basis.Tools
 {
     public class CryptoTool
     {
@@ -14,19 +14,6 @@ namespace Going.UI.Tools
         #region Encode
         public static string? EncodeBase64String(string data, Encoding? enc = null) => Convert.ToBase64String((enc ?? Encoding.UTF8).GetBytes(data));
         public static string? EncodeBase64String(byte[] data) => Convert.ToBase64String(data);
-        public static string? EncodeBase64String(SKBitmap data)
-        {
-            string? ret = null;
-            if (data != null)
-            {
-                using (SKImage image = SKImage.FromBitmap(data))
-                using (SKData v = image.Encode(SKEncodedImageFormat.Png, 100))
-                {
-                    ret = Convert.ToBase64String(v.ToArray());
-                }
-            }
-            return ret;
-        }
         #endregion
         #region Decode
         public static T? DecodeBase64String<T>(string data, Encoding? enc = null)
@@ -34,7 +21,6 @@ namespace Going.UI.Tools
             T? ret = default;
             if (typeof(T) == typeof(string)) ret = (T)(object)(enc ?? Encoding.UTF8).GetString(Convert.FromBase64String(data));
             else if (typeof(T) == typeof(byte[])) ret = (T)(object)Convert.FromBase64String(data);
-            else if (typeof(T) == typeof(SKBitmap)) ret = (T)(object)SKBitmap.Decode(Convert.FromBase64String(data));
             return ret;
         }
         #endregion
