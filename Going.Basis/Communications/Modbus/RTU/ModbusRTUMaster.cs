@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Going.Basis.Communications.Modbus
+namespace Going.Basis.Communications.Modbus.RTU
 {
     public class ModbusRTUMaster
     {
@@ -25,11 +25,11 @@ namespace Going.Basis.Communications.Modbus
         #region class : EventArgs
         public class BitReadEventArgs(Work WorkItem, bool[] Datas) : EventArgs
         {
-            public int MessageID => WorkItem.MessageID; 
-            public int Slave => WorkItem.Data[0]; 
-            public ModbusFunction Function => (ModbusFunction)WorkItem.Data[1]; 
-            public int StartAddress => (WorkItem.Data[2] << 8) | WorkItem.Data[3]; 
-            public int Length => (WorkItem.Data[4] << 8) | WorkItem.Data[5];
+            public int MessageID => WorkItem.MessageID;
+            public int Slave => WorkItem.Data[0];
+            public ModbusFunction Function => (ModbusFunction)WorkItem.Data[1];
+            public int StartAddress => WorkItem.Data[2] << 8 | WorkItem.Data[3];
+            public int Length => WorkItem.Data[4] << 8 | WorkItem.Data[5];
             public bool[] ReceiveData => Datas;
         }
 
@@ -38,8 +38,8 @@ namespace Going.Basis.Communications.Modbus
             public int MessageID => WorkItem.MessageID;
             public int Slave => WorkItem.Data[0];
             public ModbusFunction Function => (ModbusFunction)WorkItem.Data[1];
-            public int StartAddress => (WorkItem.Data[2] << 8) | WorkItem.Data[3];
-            public int Length => (WorkItem.Data[4] << 8) | WorkItem.Data[5];
+            public int StartAddress => WorkItem.Data[2] << 8 | WorkItem.Data[3];
+            public int Length => WorkItem.Data[4] << 8 | WorkItem.Data[5];
 
             public int[] ReceiveData => Datas;
         }
@@ -49,27 +49,27 @@ namespace Going.Basis.Communications.Modbus
             public int MessageID => WorkItem.MessageID;
             public int Slave => WorkItem.Data[0];
             public ModbusFunction Function => (ModbusFunction)WorkItem.Data[1];
-            public int StartAddress => (WorkItem.Data[2] << 8) | WorkItem.Data[3];
-            public bool WriteValue => ((WorkItem.Data[4] << 8) | WorkItem.Data[5]) == 0xFF00;
+            public int StartAddress => WorkItem.Data[2] << 8 | WorkItem.Data[3];
+            public bool WriteValue => (WorkItem.Data[4] << 8 | WorkItem.Data[5]) == 0xFF00;
         }
 
         public class WordWriteEventArgs(Work WorkItem) : EventArgs
         {
-            public int MessageID => WorkItem.MessageID; 
-            public int Slave => WorkItem.Data[0]; 
-            public ModbusFunction Function => (ModbusFunction)WorkItem.Data[1];  
-            public int StartAddress => (WorkItem.Data[2] << 8) | WorkItem.Data[3];
-            public int WriteValue => (WorkItem.Data[4] << 8) | WorkItem.Data[5];
+            public int MessageID => WorkItem.MessageID;
+            public int Slave => WorkItem.Data[0];
+            public ModbusFunction Function => (ModbusFunction)WorkItem.Data[1];
+            public int StartAddress => WorkItem.Data[2] << 8 | WorkItem.Data[3];
+            public int WriteValue => WorkItem.Data[4] << 8 | WorkItem.Data[5];
         }
-        
+
         public class MultiBitWriteEventArgs : EventArgs
         {
             public int MessageID => WorkItem.MessageID;
             public int Slave => WorkItem.Data[0];
             public ModbusFunction Function => (ModbusFunction)WorkItem.Data[1];
-            public int StartAddress => (WorkItem.Data[2] << 8) | WorkItem.Data[3];
-            public int Length => (WorkItem.Data[4] << 8) | WorkItem.Data[5];
-           
+            public int StartAddress => WorkItem.Data[2] << 8 | WorkItem.Data[3];
+            public int Length => WorkItem.Data[4] << 8 | WorkItem.Data[5];
+
             public bool[] WriteValues { get; private set; }
 
             private Work WorkItem;
@@ -95,11 +95,11 @@ namespace Going.Basis.Communications.Modbus
             public int MessageID => WorkItem.MessageID;
             public int Slave => WorkItem.Data[0];
             public ModbusFunction Function => (ModbusFunction)WorkItem.Data[1];
-            public int StartAddress => (WorkItem.Data[2] << 8) | WorkItem.Data[3];
-            public int Length => (WorkItem.Data[4] << 8) | WorkItem.Data[5];
+            public int StartAddress => WorkItem.Data[2] << 8 | WorkItem.Data[3];
+            public int Length => WorkItem.Data[4] << 8 | WorkItem.Data[5];
 
             public int[] WriteValues { get; private set; }
-           
+
             private Work WorkItem;
 
             public MultiWordWriteEventArgs(Work WorkItem)
@@ -109,7 +109,7 @@ namespace Going.Basis.Communications.Modbus
                 List<int> ret = new List<int>();
                 for (int i = 7; i < WorkItem.Data.Length - 2; i += 2)
                 {
-                    ret.Add((WorkItem.Data[i] << 8) | WorkItem.Data[i + 1]);
+                    ret.Add(WorkItem.Data[i] << 8 | WorkItem.Data[i + 1]);
                 }
                 WriteValues = [.. ret];
                 #endregion
@@ -121,9 +121,9 @@ namespace Going.Basis.Communications.Modbus
             public int MessageID => WorkItem.MessageID;
             public int Slave => WorkItem.Data[0];
             public ModbusFunction Function => (ModbusFunction)WorkItem.Data[1];
-            public int StartAddress => (WorkItem.Data[2] << 8) | WorkItem.Data[3];
+            public int StartAddress => WorkItem.Data[2] << 8 | WorkItem.Data[3];
             public int BitIndex => WorkItem.Data[4];
-            public bool WriteValue => ((WorkItem.Data[5] << 8) | WorkItem.Data[6]) == 0xFF00;
+            public bool WriteValue => (WorkItem.Data[5] << 8 | WorkItem.Data[6]) == 0xFF00;
 
         }
 
@@ -132,7 +132,7 @@ namespace Going.Basis.Communications.Modbus
             public int MessageID => WorkItem.MessageID;
             public int Slave => WorkItem.Data[0];
             public ModbusFunction Function => (ModbusFunction)WorkItem.Data[1];
-            public int StartAddress => (WorkItem.Data[2] << 8) | WorkItem.Data[3];
+            public int StartAddress => WorkItem.Data[2] << 8 | WorkItem.Data[3];
         }
 
         public class CRCErrorEventArgs(Work WorkItem) : EventArgs
@@ -140,7 +140,7 @@ namespace Going.Basis.Communications.Modbus
             public int MessageID => WorkItem.MessageID;
             public int Slave => WorkItem.Data[0];
             public ModbusFunction Function => (ModbusFunction)WorkItem.Data[1];
-            public int StartAddress => (WorkItem.Data[2] << 8) | WorkItem.Data[3];
+            public int StartAddress => WorkItem.Data[2] << 8 | WorkItem.Data[3];
         }
         #endregion
 
@@ -251,7 +251,7 @@ namespace Going.Basis.Communications.Modbus
                         ser.Close();
                         DeviceClosed?.Invoke(this, EventArgs.Empty);
                     }
-                    
+
                     IsStart = false;
 
                 }, cancel.Token);
@@ -350,7 +350,7 @@ namespace Going.Basis.Communications.Modbus
                                             #region BitRead
                                             {
                                                 int ByteCount = baResponse[2];
-                                                int Length = ((w.Data[4] << 8) | w.Data[5]);
+                                                int Length = w.Data[4] << 8 | w.Data[5];
                                                 byte[] baData = new byte[ByteCount];
                                                 Array.Copy(baResponse, 3, baData, 0, ByteCount);
                                                 BitArray ba = new BitArray(baData);
@@ -368,7 +368,7 @@ namespace Going.Basis.Communications.Modbus
                                             {
                                                 int ByteCount = baResponse[2];
                                                 int[] data = new int[ByteCount / 2];
-                                                for (int i = 0; i < data.Length; i++) data[i] = Convert.ToUInt16(baResponse[3 + (i * 2)] << 8 | baResponse[4 + (i * 2)]);
+                                                for (int i = 0; i < data.Length; i++) data[i] = Convert.ToUInt16(baResponse[3 + i * 2] << 8 | baResponse[4 + i * 2]);
 
                                                 WordReadReceived?.Invoke(this, new WordReadEventArgs(w, data));
                                             }
@@ -438,6 +438,56 @@ namespace Going.Basis.Communications.Modbus
         }
         #endregion
 
+        #region ContainAutoID
+        public bool ContainAutoID(int MessageID)
+        {
+            bool ret = false;
+            for (int i = AutoWorkList.Count - 1; i >= 0; i--)
+            {
+                if (AutoWorkList[i].MessageID == MessageID)
+                {
+                    ret = true;
+                }
+            }
+            return ret;
+        }
+        #endregion
+        #region RemoveManual
+        public bool RemoveManual(int MessageID)
+        {
+            bool ret = false;
+            for (int i = ManualWorkList.Count - 1; i >= 0; i--)
+            {
+                if (ManualWorkList[i].MessageID == MessageID)
+                {
+                    ManualWorkList.RemoveAt(i);
+                    ret = true;
+                }
+            }
+            return ret;
+        }
+        #endregion
+        #region RemoveAuto
+        public bool RemoveAuto(int MessageID)
+        {
+            bool ret = false;
+            for (int i = AutoWorkList.Count - 1; i >= 0; i--)
+            {
+                if (AutoWorkList[i].MessageID == MessageID)
+                {
+                    AutoWorkList.RemoveAt(i);
+                    ret = true;
+                }
+            }
+            return ret;
+        }
+        #endregion
+        #region Clear
+        public void ClearManual() { ManualWorkList.Clear(); }
+        public void ClearAuto() { AutoWorkList.Clear(); }
+        public void ClearWorkSchedule() { WorkQueue.Clear(); }
+        #endregion
+
         #region AutoBitRead
         public void AutoBitRead_FC1(int id, int slave, int startAddr, int length, int? timeout = null) => AutoBitRead(id, slave, 1, startAddr, length, timeout);
         public void AutoBitRead_FC2(int id, int slave, int startAddr, int length, int? timeout = null) => AutoBitRead(id, slave, 2, startAddr, length, timeout);
@@ -484,7 +534,6 @@ namespace Going.Basis.Communications.Modbus
             AutoWorkList.Add(new Work(id, data, length * 2 + 5) { Timeout = timeout });
         }
         #endregion
-
         #region ManualBitRead
         public void ManualBitRead_FC1(int id, int slave, int startAddr, int length, int? repeatCount = null, int? timeout = null) => ManualBitRead(id, slave, 1, startAddr, length, repeatCount, timeout);
         public void ManualBitRead_FC2(int id, int slave, int startAddr, int length, int? repeatCount = null, int? timeout = null) => ManualBitRead(id, slave, 2, startAddr, length, repeatCount, timeout);
@@ -574,7 +623,7 @@ namespace Going.Basis.Communications.Modbus
         public void ManualMultiBitWrite_FC15(int id, int slave, int startAddr, bool[] values, int? repeatCount = null, int? timeout = null)
         {
             int Length = values.Length / 8;
-            Length += (values.Length % 8 == 0) ? 0 : 1;
+            Length += values.Length % 8 == 0 ? 0 : 1;
 
             byte[] data = new byte[9 + Length];
             byte crcHi = 0xff, crcLo = 0xff;
@@ -592,7 +641,7 @@ namespace Going.Basis.Communications.Modbus
             {
                 byte val = 0;
                 int nTemp = 0;
-                for (int j = (i * 8); j < values.Length && j < (i * 8) + 8; j++)
+                for (int j = i * 8; j < values.Length && j < i * 8 + 8; j++)
                 {
                     if (values[j])
                         val |= Convert.ToByte(Math.Pow(2, nTemp));
@@ -611,7 +660,7 @@ namespace Going.Basis.Communications.Modbus
         #region ManualMultiWordWrite_FC16
         public void ManualMultiWordWrite_FC16(int id, int slave, int startAddr, int[] values, int? repeatCount = null, int? timeout = null)
         {
-            byte[] data = new byte[9 + (values.Length * 2)];
+            byte[] data = new byte[9 + values.Length * 2];
             byte crcHi = 0xff, crcLo = 0xff;
 
             data[0] = Convert.ToByte(slave);
@@ -624,8 +673,8 @@ namespace Going.Basis.Communications.Modbus
 
             for (int i = 0; i < values.Length; i++)
             {
-                data[7 + (i * 2)] = values[i].Byte1();
-                data[8 + (i * 2)] = values[i].Byte0();
+                data[7 + i * 2] = values[i].Byte1();
+                data[8 + i * 2] = values[i].Byte0();
             }
 
             ModbusCRC.GetCRC(data, data.Length - 2, ref crcHi, ref crcLo);

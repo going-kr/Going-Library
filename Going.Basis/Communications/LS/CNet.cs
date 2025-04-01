@@ -30,6 +30,14 @@ namespace Going.Basis.Communications.LS
 
     public class CNet
     {
+        #region const : Special Code
+        private const byte ENQ = 0x05;
+        private const byte EOT = 0x04;
+        private const byte STX = 0x02;
+        private const byte ETX = 0x03;
+        private const byte ACK = 0x06;
+        private const byte NAK = 0x15;
+        #endregion
         #region class : Work
         internal class Work(int id, byte[] data, string[]? Devices = null)
         {
@@ -78,15 +86,7 @@ namespace Going.Basis.Communications.LS
             public int ErrorCode { get; private set; } = ErrCode;
         }
         #endregion
-        #region const : Special Code
-        private const byte ENQ = 0x05;
-        private const byte EOT = 0x04;
-        private const byte STX = 0x02;
-        private const byte ETX = 0x03;
-        private const byte ACK = 0x06;
-        private const byte NAK = 0x15;
-        #endregion
-
+        
         #region Properties
         public string Port { get => ser.PortName; set => ser.PortName = value; }
         public int Baudrate { get => ser.BaudRate; set => ser.BaudRate = value; }
@@ -109,9 +109,9 @@ namespace Going.Basis.Communications.LS
         Queue<Work> WorkQueue = [];
         List<Work> AutoWorkList = [];
         List<Work> ManualWorkList = [];
-        
+
         byte[] baResponse = new byte[0];
-        
+
         Task? task;
         CancellationTokenSource? cancel;
         #endregion
@@ -190,7 +190,7 @@ namespace Going.Basis.Communications.LS
                         ser.Close();
                         DeviceClosed?.Invoke(this, EventArgs.Empty);
                     }
-                    
+
                     IsStart = false;
 
                 }, cancel.Token);
@@ -400,7 +400,7 @@ namespace Going.Basis.Communications.LS
                                     #endregion
                                 }
                             }
-                         
+
                             bRepeat = false;
                         }
                         else
@@ -424,6 +424,56 @@ namespace Going.Basis.Communications.LS
             }
             catch { }
         }
+        #endregion
+
+        #region ContainAutoID
+        public bool ContainAutoID(int MessageID)
+        {
+            bool ret = false;
+            for (int i = AutoWorkList.Count - 1; i >= 0; i--)
+            {
+                if (AutoWorkList[i].MessageID == MessageID)
+                {
+                    ret = true;
+                }
+            }
+            return ret;
+        }
+        #endregion
+        #region RemoveManual
+        public bool RemoveManual(int MessageID)
+        {
+            bool ret = false;
+            for (int i = ManualWorkList.Count - 1; i >= 0; i--)
+            {
+                if (ManualWorkList[i].MessageID == MessageID)
+                {
+                    ManualWorkList.RemoveAt(i);
+                    ret = true;
+                }
+            }
+            return ret;
+        }
+        #endregion
+        #region RemoveAuto
+        public bool RemoveAuto(int MessageID)
+        {
+            bool ret = false;
+            for (int i = AutoWorkList.Count - 1; i >= 0; i--)
+            {
+                if (AutoWorkList[i].MessageID == MessageID)
+                {
+                    AutoWorkList.RemoveAt(i);
+                    ret = true;
+                }
+            }
+            return ret;
+        }
+        #endregion
+        #region Clear
+        public void ClearManual() { ManualWorkList.Clear(); }
+        public void ClearAuto() { AutoWorkList.Clear(); }
+        public void ClearWorkSchedule() { WorkQueue.Clear(); }
         #endregion
 
         #region AutoRSS(id, slave, device)
@@ -520,7 +570,6 @@ namespace Going.Basis.Communications.LS
             AutoWorkList.Add(new Work(id, data) { Devices = [.. d], Timeout = timeout });
         }
         #endregion
-
         #region ManualRSS(id, slave, device)
         public void ManualRSS(int id, int slave, string device, int? repeatCount = null, int? timeout = null)
         {
@@ -654,13 +703,13 @@ namespace Going.Basis.Communications.LS
         }
         #endregion
         #region ManualWSS(id, slave, values)
-        public void ManualWSS(int id, int slave, CNetValue[] values, int? repeatCount = null, int? timeout = null)
+        public void ManualWSS(int id, int slave, IEnumerable<CNetValue> values, int? repeatCount = null, int? timeout = null)
         {
             var strbul = new StringBuilder();
             strbul.Append((char)ENQ);
             strbul.Append(slave.ToString("X2"));
             strbul.Append("wSS");
-            strbul.Append(values.Length.ToString("X2"));
+            strbul.Append(values.Count().ToString("X2"));
             foreach (var v in values)
             {
                 strbul.Append(v.Device.Length.ToString("X2"));

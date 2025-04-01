@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace Going.Basis.Communications.Modbus
+namespace Going.Basis.Communications.Modbus.RTU
 {
     public class ModbusRTUSlave
     {
@@ -18,9 +18,9 @@ namespace Going.Basis.Communications.Modbus
         {
             public int Slave => Data[0];
             public ModbusFunction Function => (ModbusFunction)Data[1];
-            public int StartAddress => (Data[2] << 8) | Data[3];
-            public int Length => (Data[4] << 8) | Data[5];
-            
+            public int StartAddress => Data[2] << 8 | Data[3];
+            public int Length => Data[4] << 8 | Data[5];
+
             public bool Success { get; set; }
             public bool[]? ResponseData { get; set; }
         }
@@ -29,8 +29,8 @@ namespace Going.Basis.Communications.Modbus
         {
             public int Slave => Data[0];
             public ModbusFunction Function => (ModbusFunction)Data[1];
-            public int StartAddress => (Data[2] << 8) | Data[3];
-            public int Length => (Data[4] << 8) | Data[5];
+            public int StartAddress => Data[2] << 8 | Data[3];
+            public int Length => Data[4] << 8 | Data[5];
 
             public bool Success { get; set; }
             public int[]? ResponseData { get; set; }
@@ -40,8 +40,8 @@ namespace Going.Basis.Communications.Modbus
         {
             public int Slave => Data[0];
             public ModbusFunction Function => (ModbusFunction)Data[1];
-            public int StartAddress => (Data[2] << 8) | Data[3];
-            public bool WriteValue => ((Data[4] << 8) | Data[5]) == 0xFF00;
+            public int StartAddress => Data[2] << 8 | Data[3];
+            public bool WriteValue => (Data[4] << 8 | Data[5]) == 0xFF00;
 
             public bool Success { get; set; }
         }
@@ -50,8 +50,8 @@ namespace Going.Basis.Communications.Modbus
         {
             public int Slave => Data[0];
             public ModbusFunction Function => (ModbusFunction)Data[1];
-            public int StartAddress => (Data[2] << 8) | Data[3];
-            public ushort WriteValue => Convert.ToUInt16((Data[4] << 8) | Data[5]);
+            public int StartAddress => Data[2] << 8 | Data[3];
+            public ushort WriteValue => Convert.ToUInt16(Data[4] << 8 | Data[5]);
 
             public bool Success { get; set; }
         }
@@ -60,10 +60,10 @@ namespace Going.Basis.Communications.Modbus
         {
             public int Slave => Data[0];
             public ModbusFunction Function => (ModbusFunction)Data[1];
-            public int StartAddress => (Data[2] << 8) | Data[3];
-            public int Length => (Data[4] << 8) | Data[5];
+            public int StartAddress => Data[2] << 8 | Data[3];
+            public int Length => Data[4] << 8 | Data[5];
             public bool[] WriteValues { get; private set; }
-            
+
             public bool Success { get; set; }
 
             byte[] Data;
@@ -85,10 +85,10 @@ namespace Going.Basis.Communications.Modbus
         {
             public int Slave => Data[0];
             public ModbusFunction Function => (ModbusFunction)Data[1];
-            public int StartAddress => (Data[2] << 8) | Data[3];
-            public int Length => (Data[4] << 8) | Data[5];
+            public int StartAddress => Data[2] << 8 | Data[3];
+            public int Length => Data[4] << 8 | Data[5];
             public ushort[] WriteValues { get; private set; }
-            
+
             public bool Success { get; set; }
 
             byte[] Data;
@@ -100,7 +100,7 @@ namespace Going.Basis.Communications.Modbus
                 List<ushort> ret = new List<ushort>();
                 for (int i = 7; i < Data.Length - 2; i += 2)
                 {
-                    ret.Add(Convert.ToUInt16((Data[i] << 8) | Data[i + 1]));
+                    ret.Add(Convert.ToUInt16(Data[i] << 8 | Data[i + 1]));
                 }
                 WriteValues = ret.ToArray();
                 #endregion
@@ -111,10 +111,10 @@ namespace Going.Basis.Communications.Modbus
         {
             public int Slave => Data[0];
             public ModbusFunction Function => (ModbusFunction)Data[1];
-            public int StartAddress => (Data[2] << 8) | Data[3];
+            public int StartAddress => Data[2] << 8 | Data[3];
             public int BitIndex => Data[4];
-            public bool WriteValue => ((Data[5] << 8) | Data[6]) == 0xFF00;
-          
+            public bool WriteValue => (Data[5] << 8 | Data[6]) == 0xFF00;
+
             public bool Success { get; set; }
         }
         #endregion
@@ -135,8 +135,6 @@ namespace Going.Basis.Communications.Modbus
 
         Task? task;
         CancellationTokenSource? cancel;
-
-       
         #endregion
 
         #region Event
@@ -207,8 +205,8 @@ namespace Going.Basis.Communications.Modbus
                                 {
                                     int Slave = lstResponse[0];
                                     ModbusFunction Function = (ModbusFunction)lstResponse[1];
-                                    int StartAddress = (lstResponse[2] << 8) | lstResponse[3];
-                                  
+                                    int StartAddress = lstResponse[2] << 8 | lstResponse[3];
+
                                     switch (Function)
                                     {
                                         case ModbusFunction.BITREAD_F1:
@@ -230,11 +228,11 @@ namespace Going.Basis.Communications.Modbus
                                                             #region MakeData
                                                             List<byte> Datas = new List<byte>();
                                                             int nlen = args.ResponseData.Length / 8;
-                                                            nlen += (args.ResponseData.Length % 8 == 0) ? 0 : 1;
+                                                            nlen += args.ResponseData.Length % 8 == 0 ? 0 : 1;
                                                             for (int i = 0; i < nlen; i++)
                                                             {
                                                                 byte val = 0;
-                                                                for (int j = (i * 8), nTemp = 0; j < args.ResponseData.Length && j < (i * 8) + 8; j++, nTemp++)
+                                                                for (int j = i * 8, nTemp = 0; j < args.ResponseData.Length && j < i * 8 + 8; j++, nTemp++)
                                                                     if (args.ResponseData[j])
                                                                         val |= Convert.ToByte(Math.Pow(2, nTemp));
                                                                 Datas.Add(val);
@@ -283,7 +281,7 @@ namespace Going.Basis.Communications.Modbus
                                                             for (int i = 0; i < args.ResponseData.Length; i++)
                                                             {
                                                                 Datas.Add((byte)((args.ResponseData[i] & 0xFF00) >> 8));
-                                                                Datas.Add((byte)((args.ResponseData[i] & 0x00FF)));
+                                                                Datas.Add((byte)(args.ResponseData[i] & 0x00FF));
                                                             }
                                                             #endregion
                                                             #region Serial Write
@@ -328,9 +326,9 @@ namespace Going.Basis.Communications.Modbus
                                                             ret.Add((byte)args.Slave);
                                                             ret.Add((byte)args.Function);
                                                             ret.Add((byte)((args.StartAddress & 0xFF00) >> 8));
-                                                            ret.Add((byte)((args.StartAddress & 0x00FF)));
+                                                            ret.Add((byte)(args.StartAddress & 0x00FF));
                                                             ret.Add((byte)((nv & 0xFF00) >> 8));
-                                                            ret.Add((byte)((nv & 0x00FF)));
+                                                            ret.Add((byte)(nv & 0x00FF));
                                                             byte nhi = 0xFF, nlo = 0xFF;
                                                             ModbusCRC.GetCRC(ret, 0, ret.Count, ref nhi, ref nlo);
                                                             ret.Add(nhi);
@@ -366,9 +364,9 @@ namespace Going.Basis.Communications.Modbus
                                                             ret.Add((byte)args.Slave);
                                                             ret.Add((byte)args.Function);
                                                             ret.Add((byte)((args.StartAddress & 0xFF00) >> 8));
-                                                            ret.Add((byte)((args.StartAddress & 0x00FF)));
+                                                            ret.Add((byte)(args.StartAddress & 0x00FF));
                                                             ret.Add((byte)((args.WriteValue & 0xFF00) >> 8));
-                                                            ret.Add((byte)((args.WriteValue & 0x00FF)));
+                                                            ret.Add((byte)(args.WriteValue & 0x00FF));
                                                             byte nhi = 0xFF, nlo = 0xFF;
                                                             ModbusCRC.GetCRC(ret, 0, ret.Count, ref nhi, ref nlo);
                                                             ret.Add(nhi);
@@ -388,7 +386,7 @@ namespace Going.Basis.Communications.Modbus
                                             #region MultiBitWrite
                                             if (lstResponse.Count >= 7)
                                             {
-                                                int Length = (lstResponse[4] << 8) | lstResponse[5];
+                                                int Length = lstResponse[4] << 8 | lstResponse[5];
                                                 int ByteCount = lstResponse[6];
                                                 if (lstResponse.Count >= 9 + ByteCount)
                                                 {
@@ -408,9 +406,9 @@ namespace Going.Basis.Communications.Modbus
                                                                 ret.Add((byte)args.Slave);
                                                                 ret.Add((byte)args.Function);
                                                                 ret.Add((byte)((args.StartAddress & 0xFF00) >> 8));
-                                                                ret.Add((byte)((args.StartAddress & 0x00FF)));
+                                                                ret.Add((byte)(args.StartAddress & 0x00FF));
                                                                 ret.Add((byte)((args.Length & 0xFF00) >> 8));
-                                                                ret.Add((byte)((args.Length & 0x00FF)));
+                                                                ret.Add((byte)(args.Length & 0x00FF));
                                                                 byte nhi = 0xFF, nlo = 0xFF;
                                                                 ModbusCRC.GetCRC(ret, 0, ret.Count, ref nhi, ref nlo);
                                                                 ret.Add(nhi);
@@ -431,7 +429,7 @@ namespace Going.Basis.Communications.Modbus
                                             #region MultiWordWrite
                                             if (lstResponse.Count >= 7)
                                             {
-                                                int Length = (lstResponse[4] << 8) | lstResponse[5];
+                                                int Length = lstResponse[4] << 8 | lstResponse[5];
                                                 int ByteCount = lstResponse[6];
                                                 if (lstResponse.Count >= 9 + ByteCount)
                                                 {
@@ -451,9 +449,9 @@ namespace Going.Basis.Communications.Modbus
                                                                 ret.Add((byte)args.Slave);
                                                                 ret.Add((byte)args.Function);
                                                                 ret.Add((byte)((args.StartAddress & 0xFF00) >> 8));
-                                                                ret.Add((byte)((args.StartAddress & 0x00FF)));
+                                                                ret.Add((byte)(args.StartAddress & 0x00FF));
                                                                 ret.Add((byte)((args.Length & 0xFF00) >> 8));
-                                                                ret.Add((byte)((args.Length & 0x00FF)));
+                                                                ret.Add((byte)(args.Length & 0x00FF));
                                                                 byte nhi = 0xFF, nlo = 0xFF;
                                                                 ModbusCRC.GetCRC(ret, 0, ret.Count, ref nhi, ref nlo);
                                                                 ret.Add(nhi);
@@ -491,9 +489,9 @@ namespace Going.Basis.Communications.Modbus
                                                             ret.Add((byte)args.Slave);
                                                             ret.Add((byte)args.Function);
                                                             ret.Add((byte)((args.StartAddress & 0xFF00) >> 8));
-                                                            ret.Add((byte)((args.StartAddress & 0x00FF)));
+                                                            ret.Add((byte)(args.StartAddress & 0x00FF));
                                                             ret.Add((byte)((nv & 0xFF00) >> 8));
-                                                            ret.Add((byte)((nv & 0x00FF)));
+                                                            ret.Add((byte)(nv & 0x00FF));
                                                             byte nhi = 0xFF, nlo = 0xFF;
                                                             ModbusCRC.GetCRC(ret, 0, ret.Count, ref nhi, ref nlo);
                                                             ret.Add(nhi);
@@ -514,7 +512,7 @@ namespace Going.Basis.Communications.Modbus
                                 #endregion
 
                                 #region buffer clear
-                                if (ok ||((DateTime.Now - prev).TotalMilliseconds >= 20 && lstResponse.Count > 0))
+                                if (ok || (DateTime.Now - prev).TotalMilliseconds >= 20 && lstResponse.Count > 0)
                                 {
                                     lstResponse.Clear();
                                     ser.DiscardInBuffer();
@@ -563,7 +561,7 @@ namespace Going.Basis.Communications.Modbus
         #region ProcessBitReads
         public static void ProcessBitReads(BitReadRequestArgs args, int BaseAddress, bool[] BaseArray)
         {
-            var BA = new bool[Convert.ToInt32(Math.Ceiling((double)BaseArray.Length / 8.0) * 8.0)];
+            var BA = new bool[Convert.ToInt32(Math.Ceiling(BaseArray.Length / 8.0) * 8.0)];
             Array.Copy(BaseArray, BA, BaseArray.Length);
             if (args.StartAddress >= BaseAddress && args.StartAddress + args.Length < BaseAddress + BA.Length)
             {
@@ -629,7 +627,7 @@ namespace Going.Basis.Communications.Modbus
         #region ProcessWordBitSet
         public static void ProcessWordBitSet(WordBitSetRequestArgs args, int BaseAddress, int[] BaseArray)
         {
-            if (args.StartAddress >= BaseAddress && args.StartAddress < BaseAddress + BaseArray.Length && (args.BitIndex >= 0 && args.BitIndex < 16))
+            if (args.StartAddress >= BaseAddress && args.StartAddress < BaseAddress + BaseArray.Length && args.BitIndex >= 0 && args.BitIndex < 16)
             {
                 var p = Convert.ToInt32(Math.Pow(2, args.BitIndex));
                 if (args.WriteValue) BaseArray[args.StartAddress - BaseAddress] |= p;

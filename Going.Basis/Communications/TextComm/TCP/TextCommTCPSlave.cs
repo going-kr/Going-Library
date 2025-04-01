@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Going.Basis.Communications.Modbus
+namespace Going.Basis.Communications.TextComm.TCP
 {
-    internal class ModbusTCPSlave
+    internal class TextCommTCPSlave
     {
     }
 }
