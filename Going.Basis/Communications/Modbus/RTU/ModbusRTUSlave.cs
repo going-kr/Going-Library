@@ -512,7 +512,7 @@ namespace Going.Basis.Communications.Modbus.RTU
                                 #endregion
 
                                 #region buffer clear
-                                if (ok || (DateTime.Now - prev).TotalMilliseconds >= 20 && lstResponse.Count > 0)
+                                if (ok || ((DateTime.Now - prev).TotalMilliseconds >= 50 && lstResponse.Count > 0))
                                 {
                                     lstResponse.Clear();
                                     ser.DiscardInBuffer();

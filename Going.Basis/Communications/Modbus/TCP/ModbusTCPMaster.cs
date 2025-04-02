@@ -162,7 +162,7 @@ namespace Going.Basis.Communications.Modbus.TCP
         #endregion
 
         #region Member Variable
-        Socket client;
+        Socket? client;
 
         Queue<Work> WorkQueue = [];
         List<Work> AutoWorkList = [];
@@ -184,7 +184,6 @@ namespace Going.Basis.Communications.Modbus.TCP
         public event EventHandler<MultiWordWriteEventArgs>? MultiWordWriteReceived;
         public event EventHandler<WordBitSetEventArgs>? WordBitSetReceived;
         public event EventHandler<TimeoutEventArgs>? TimeoutReceived;
-        public event EventHandler<CRCErrorEventArgs>? CRCErrorReceived;
 
         public event EventHandler<SocketEventArgs>? SocketConnected;
         public event EventHandler<SocketEventArgs>? SocketDisconnected;
@@ -261,7 +260,7 @@ namespace Going.Basis.Communications.Modbus.TCP
                         }
                     }
 
-                    if (bIsOpen)
+                    if (bIsOpen && client != null)
                     {
                         client.Close();
                         SocketDisconnected?.Invoke(this, new SocketEventArgs(client));
@@ -317,7 +316,7 @@ namespace Going.Basis.Communications.Modbus.TCP
                         try
                         {
                             EndPoint ipep = new IPEndPoint(IPAddress.Parse(RemoteIP), RemotePort);
-                            client.SendTo(w.Data, ipep);
+                            client?.SendTo(w.Data, ipep);
                         }
                         catch (SocketException ex)
                         {
