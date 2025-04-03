@@ -350,7 +350,7 @@ namespace Going.UI.Controls
             }
             else
             {
-                progressRect.Bottom = handleRect.MidY;
+                progressRect.Top = handleRect.MidY;
             }
 
             if (EnableShadow)
@@ -368,13 +368,11 @@ namespace Going.UI.Controls
         {
             handlePaint.Color = sDown ? color.WithAlpha(230) : color;
 
-
             if (EnableShadow)
             {
                 using var shadow = SKImageFilter.CreateDropShadow(2, 2, 3, 3, new SKColor(0, 0, 0, 80));
                 handlePaint.ImageFilter = shadow;
             }
-
 
             float radius;
             if (HandleRadius * 2 > SHandleMaxHeight)
@@ -404,60 +402,19 @@ namespace Going.UI.Controls
             textFont.Size = FontSize;
             textFont.Typeface = SKTypeface.FromFamilyName(FontName);
 
-            var textWidth = textFont.MeasureText(ValueString, textPaint);
             var textHeight = textFont.Size;
-            var isHeightEnough = Bounds.Height >= MinHeightForLabelBelow;
 
-            SKPoint labelPosition;
-            if (Direction == GoDirectionHV.Horizon)
-            {
-                if (isHeightEnough)
-                {
-                    labelPosition = new SKPoint(handleRect.MidX, handleRect.MidY + HandleRadius + FontSize + 5);
-                    canvas.DrawText(ValueString, labelPosition, textAlign, textFont, textPaint);
-                }
-                else
-                {
-                    labelPosition = new SKPoint(handleRect.MidX, handleRect.MidY);
-                    canvas.Save();
+            var labelPosition = new SKPoint(handleRect.MidX, handleRect.MidY);
+            canvas.Save();
 
-                    using var clipPath = new SKPath();
-                    clipPath.AddOval(handleRect);
-                    clipPath.Close();
-                    canvas.ClipPath(clipPath);
-                    textPaint.Color = SKColors.White;
+            using var clipPath = new SKPath();
+            clipPath.AddOval(handleRect);
+            clipPath.Close();
+            canvas.ClipPath(clipPath);
 
-                    var textOffset = textHeight * 0.3f;
-                    canvas.DrawText(ValueString, labelPosition.X, labelPosition.Y + textOffset, textAlign, textFont, textPaint);
-                    canvas.Restore();
-                }
-            }
-            else
-            {
-                if (isHeightEnough)
-                {
-                    labelPosition = new SKPoint(handleRect.MidX + HandleRadius + 10, handleRect.MidY);
-                    textAlign = SKTextAlign.Left;
-                    textPaint.Color = color;
-                    canvas.DrawText(ValueString, labelPosition, textAlign, textFont, textPaint);
-                }
-                else
-                {
-                    labelPosition = new SKPoint(handleRect.MidX, handleRect.MidY);
-                    textAlign = SKTextAlign.Center;
-                    canvas.Save();
-
-                    using var clipPath = new SKPath();
-                    clipPath.AddOval(handleRect);
-                    clipPath.Close();
-                    canvas.ClipPath(clipPath);
-                    textPaint.Color = SKColors.White;
-
-                    var textOffset = textHeight * 0.3f;
-                    canvas.DrawText(ValueString, labelPosition.X, labelPosition.Y + textOffset, textAlign, textFont, textPaint);
-                    canvas.Restore();
-                }
-            }
+            var textOffset = textHeight * 0.3f;
+            canvas.DrawText(ValueString, labelPosition.X, labelPosition.Y + textOffset, textAlign, textFont, textPaint);
+            canvas.Restore();
         }
         #endregion
 
@@ -536,7 +493,6 @@ namespace Going.UI.Controls
                     contentBox.Bottom - maxHandleRadius - (isHeightEnough ? 0 : extraSpace / 2)
                 );
             }
-
 
             float handleX, handleY;
             if (Direction == GoDirectionHV.Horizon)
