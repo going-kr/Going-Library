@@ -32,9 +32,9 @@ namespace Going.UI.Controls
 
         #region 슬라이더 설정
         public string TextColor { get; set; } = "Fore";
-        public string BgColor { get; set; } = "Base3";
+        public string BackColor { get; set; } = "Back";
         public string SliderColor { get; set; } = "Base5";
-        public string EmptyColor { get; set; } = "Base2";
+        public string ProgressColor { get; set; } = "Base1";
         public string BorderColor { get; set; } = "danger";
         public GoRoundType Round { get; set; } = GoRoundType.All;
         public GoDirectionHV Direction { get; set; } = GoDirectionHV.Horizon;
@@ -513,9 +513,9 @@ namespace Going.UI.Controls
             var brightness = sLowerDown || sUpperDown ? theme.DownBrightness : 0;
             return (
                 theme.ToColor(TextColor).BrightnessTransmit(brightness),
-                theme.ToColor(BgColor),
+                theme.ToColor(BackColor),
                 theme.ToColor(SliderColor).BrightnessTransmit(brightness),
-                theme.ToColor(EmptyColor)
+                theme.ToColor(ProgressColor)
             );
         }
         #endregion
