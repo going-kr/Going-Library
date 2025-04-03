@@ -27,9 +27,6 @@ namespace Going.UI.Controls
         public float FontSize { get; set; } = 18;
         public float ValueFontSize { get; set; } = 14;
 
-        public string Title { get; set; } = "Title";
-        public float TitleFontSize { get; set; } = 12;
-
         public string TextColor { get; set; } = "Fore";
         public string FillColor { get; set; } = "Good";
         public string EmptyColor { get; set; } = "Base1";

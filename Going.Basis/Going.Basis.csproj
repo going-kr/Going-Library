@@ -4,6 +4,11 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Title></Title>
+    <Authors>Going</Authors>
+    <RepositoryUrl>https://github.com/going-kr/Going-Library</RepositoryUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/Going-kr/Going-Library/master/icon/Going_logo_blue.png</PackageIconUrl>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
