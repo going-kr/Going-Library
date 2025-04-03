@@ -74,7 +74,7 @@ namespace Going.UI.Controls
         public string? ValueString
         {
             get => sValueString;
-            private set
+            set
             {
                 if (string.Equals(sValueString, value, StringComparison.Ordinal)) return;
                 sValueString = value;
@@ -105,7 +105,7 @@ namespace Going.UI.Controls
                 needsLayoutUpdate = true;
             }
         }
-        public float SHandleMaxHeight => Height;
+        private float SHandleMaxHeight => Height;
         #endregion
 
         #region 슬라이더 값 설정(내부)
