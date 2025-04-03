@@ -133,22 +133,43 @@ namespace Going.UI.Controls
             {
                 case ProgressDirection.LeftToRight:
                     rtFill = new SKRect(x + Gap, y + Gap, x + Gap + fillSize, y + barHeight - Gap);
-                    rtValueText = new SKRect( rtFill.Right - 40, y + (barHeight / 2) - (ValueFontSize / 2), rtFill.Right, y + (barHeight / 2) + (ValueFontSize / 2) );
+                    // 텍스트 영역이 rtFill보다 크지 않도록 조정
+                    rtValueText = new SKRect(
+                        Math.Max(rtFill.Right - 40, rtFill.Left),
+                        y + (barHeight / 2) - (ValueFontSize / 2),
+                        rtFill.Right,
+                        y + (barHeight / 2) + (ValueFontSize / 2)
+                    );
                     break;
 
                 case ProgressDirection.RightToLeft:
-                    rtFill = new SKRect( x + barWidth - Gap - fillSize, y + Gap, x + barWidth - Gap, y + barHeight - Gap ); 
-                    rtValueText = new SKRect( rtFill.Left + 5, y + (barHeight / 2) - (ValueFontSize / 2), rtFill.Left + 45, y + (barHeight / 2) + (ValueFontSize / 2) );
+                    rtFill = new SKRect(x + barWidth - Gap - fillSize, y + Gap, x + barWidth - Gap, y + barHeight - Gap);
+                    rtValueText = new SKRect(
+                        rtFill.Left,
+                        y + (barHeight / 2) - (ValueFontSize / 2),
+                        Math.Min(rtFill.Left + 40, rtFill.Right),
+                        y + (barHeight / 2) + (ValueFontSize / 2)
+                    );
                     break;
 
                 case ProgressDirection.BottomToTop:
-                    rtFill = new SKRect( x + Gap, y + barHeight - Gap - fillSize, x + barWidth - Gap, y + barHeight - Gap );
-                    rtValueText = new SKRect( x + (barWidth / 2) - 20, rtFill.Top, x + (barWidth / 2) + 20, rtFill.Top + 30 );
+                    rtFill = new SKRect(x + Gap, y + barHeight - Gap - fillSize, x + barWidth - Gap, y + barHeight - Gap);
+                    rtValueText = new SKRect(
+                        x + (barWidth / 2) - 20,
+                        Math.Max(rtFill.Top, y + Gap),
+                        x + (barWidth / 2) + 20,
+                        Math.Min(rtFill.Top + 30, rtFill.Bottom)
+                    );
                     break;
 
                 case ProgressDirection.TopToBottom:
-                    rtFill = new SKRect( x + Gap, y + Gap, x + barWidth - Gap, y + Gap + fillSize);
-                    rtValueText = new SKRect( x + (barWidth / 2) - 20, rtFill.Bottom - 30, x + (barWidth / 2) + 20, rtFill.Bottom);
+                    rtFill = new SKRect(x + Gap, y + Gap, x + barWidth - Gap, y + Gap + fillSize);
+                    rtValueText = new SKRect(
+                        x + (barWidth / 2) - 20,
+                        Math.Max(rtFill.Bottom - 30, rtFill.Top),
+                        x + (barWidth / 2) + 20,
+                        rtFill.Bottom
+                    );
                     break;
 
                 default:
