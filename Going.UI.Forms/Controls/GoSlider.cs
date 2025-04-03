@@ -28,9 +28,9 @@ namespace Going.UI.Forms.Controls
 
         #region 슬라이더 설정
         public string TextColor { get => Control.TextColor; set { if (Control.TextColor != value) { Control.TextColor = value; Invalidate(); } } }
-        public string BgColor { get => Control.BgColor; set { if (Control.BgColor != value) { Control.BgColor = value; Invalidate(); } } }
+        public string BgColor { get => Control.BackColor; set { if (Control.BackColor != value) { Control.BackColor = value; Invalidate(); } } }
         public string SliderColor { get => Control.SliderColor; set { if (Control.SliderColor != value) { Control.SliderColor = value; Invalidate(); } } }
-        public string EmptyColor { get => Control.EmptyColor; set { if (Control.EmptyColor != value) { Control.EmptyColor = value; Invalidate(); } } }
+        public string EmptyColor { get => Control.ProgressColor; set { if (Control.ProgressColor != value) { Control.ProgressColor = value; Invalidate(); } } }
         public string BorderColor { get => Control.BorderColor; set { if (Control.BorderColor != value) { Control.BorderColor = value; Invalidate(); } } }
         public GoRoundType Round { get => Control.Round; set { if (Control.Round != value) { Control.Round = value; Invalidate(); } } }
         public GoDirectionHV Direction { get => Control.Direction; set { if (Control.Direction != value) { Control.Direction = value; Invalidate(); } } }
