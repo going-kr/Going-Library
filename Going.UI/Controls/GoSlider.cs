@@ -26,7 +26,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region 슬라이더 배경 설정
-        public bool BackgroundDraw { get; set; } = false;
+        public bool BackgroundDraw { get; set; }
         public bool BorderOnly { get; set; }
         #endregion
 
@@ -42,10 +42,11 @@ namespace Going.UI.Controls
 
         #region 슬라이더 표시 설정(외형)
         public bool ShowValueLabel { get; set; } = true;
-        public string ValueFormat { get; set; } = "F1";
+        public string ValueFormat { get; set; } = "0";
         public int BarSize { get; set; } = 4;
         public float HandleRadius { get; set; } = 15f;
         public bool EnableShadow { get; set; } = true;
+        public float HandleHoverScale { get; set; } = 1.05f;
         #endregion
 
         #region 틱(단계) 설정
@@ -120,7 +121,6 @@ namespace Going.UI.Controls
         #endregion
 
         #region 캐싱된 값들
-        private double normalizedValue;
         private bool needsLayoutUpdate = true;
         #endregion
 
@@ -385,8 +385,8 @@ namespace Going.UI.Controls
             {
                 radius = HandleRadius;
             }
-            if (isDragging) radius *= 1.1f;
-            else if (sHover) radius *= 1.05f;
+
+            if (isDragging || sHover) radius *= HandleHoverScale;
 
             canvas.DrawCircle(handleRect.MidX, handleRect.MidY, radius, handlePaint);
             handlePaint.ImageFilter = null;
@@ -505,41 +505,35 @@ namespace Going.UI.Controls
         #region UpdateLayout
         private void UpdateLayout(SKRect contentBox)
         {
-
-            normalizedValue = (Value - Minimum) / (Maximum - Minimum);
+            var normalizedValue = (Value - Minimum) / (Maximum - Minimum);
             normalizedValue = MathClamp(normalizedValue, 0, 1);
 
 
-            var availableSpace = Direction == GoDirectionHV.Horizon ? contentBox.Height : contentBox.Width;
             var isHeightEnough = Bounds.Height >= MinHeightForLabelBelow;
 
-
             var extraSpace = isHeightEnough && ShowValueLabel ? FontSize + 10 : 0;
+            var maxHandleRadius = HandleRadius * HandleHoverScale;
 
             if (Direction == GoDirectionHV.Horizon)
             {
-
                 var trackY = contentBox.MidY;
-
-
                 if (!isHeightEnough && ShowValueLabel) trackY += extraSpace / 2;
 
                 trackRect = new SKRect(
-                    contentBox.Left + HandleRadius,
+                    contentBox.Left + maxHandleRadius,
                     trackY - (float)BarSize / 2,
-                    contentBox.Right - HandleRadius,
+                    contentBox.Right - maxHandleRadius,
                     trackY + (float)BarSize / 2
                 );
             }
             else
             {
-
                 var trackX = contentBox.MidX;
                 trackRect = new SKRect(
                     trackX - (float)BarSize / 2,
-                    contentBox.Top + HandleRadius + (isHeightEnough ? extraSpace / 2 : 0),
+                    contentBox.Top + maxHandleRadius + (isHeightEnough ? extraSpace / 2 : 0),
                     trackX + (float)BarSize / 2,
-                    contentBox.Bottom - HandleRadius - (isHeightEnough ? 0 : extraSpace / 2)
+                    contentBox.Bottom - maxHandleRadius - (isHeightEnough ? 0 : extraSpace / 2)
                 );
             }
 
@@ -557,10 +551,10 @@ namespace Going.UI.Controls
             }
 
             handleRect = new SKRect(
-                handleX - HandleRadius,
-                handleY - HandleRadius,
-                handleX + HandleRadius,
-                handleY + HandleRadius
+                handleX - maxHandleRadius,
+                handleY - maxHandleRadius,
+                handleX + maxHandleRadius,
+                handleY + maxHandleRadius
             );
         }
         #endregion
