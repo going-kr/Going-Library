@@ -9,11 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Going.UI.OpenTK\Going.UI.OpenTK.csproj" />
+    <Compile Remove="obj\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <None Remove="obj\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="obj\" />
+    <ProjectReference Include="..\Going.UI.OpenTK\Going.UI.OpenTK.csproj" />
   </ItemGroup>
 
 </Project>
