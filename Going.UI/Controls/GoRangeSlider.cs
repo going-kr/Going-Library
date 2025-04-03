@@ -8,7 +8,6 @@ using System.Globalization;
 
 namespace Going.UI.Controls
 {
-    // todo : 화면에서 이상하게 출력되는 이유를 알았다. : Event가 발생을 했을 때, 해당 이벤트 동작이 일어나면서 다시 그려지는데, 그 때, 이벤트가 발생한 위치를 기준으로 다시 그리기 때문에, 이상하게 출력되는 것이다.
     public class GoRangeSlider : GoControl, IDisposable
     {
         #region Properties
@@ -93,7 +92,7 @@ namespace Going.UI.Controls
         public string? LowerValueString
         {
             get => sLowerValueString;
-            private set
+            set
             {
                 if (string.Equals(sLowerValueString, value, StringComparison.Ordinal)) return;
                 sLowerValueString = value;
@@ -103,7 +102,7 @@ namespace Going.UI.Controls
         public string? UpperValueString
         {
             get => sUpperValueString;
-            private set
+            set
             {
                 if (string.Equals(sUpperValueString, value, StringComparison.Ordinal)) return;
                 sUpperValueString = value;

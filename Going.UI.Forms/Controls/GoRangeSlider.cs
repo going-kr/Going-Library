@@ -1,17 +1,16 @@
-﻿
-using Going.UI.Enums;
+﻿using Going.UI.Enums;
 using SkiaSharp;
 
 namespace Going.UI.Forms.Controls
 {
-    public class GoSlider : GoWrapperControl<Going.UI.Controls.GoSlider>
+    public class GoRangeSlider : GoWrapperControl<Going.UI.Controls.GoRangeSlider>
     {
         #region Properties
 
         #region 아이콘 설정
         public string? IconString { get => Control.IconString; set { if (Control.IconString != value) { Control.IconString = value; Invalidate(); } } }
         public float IconSize { get => Control.IconSize; set { if (Control.IconSize != value) { Control.IconSize = value; Invalidate(); } } }
-        public float IconGap { get => Control.IconGap; set { if (Control.IconGap != value) { Control.IconGap = value; Invalidate(); } } }
+        public float IconGap { get => Control.IconGap; set { if (Control.IconSize != value) { Control.IconSize = value; Invalidate(); } } }
         public GoDirectionHV IconDirection { get => Control.IconDirection; set { if (Control.IconDirection != value) { Control.IconDirection = value; Invalidate(); } } }
         #endregion
 
@@ -53,38 +52,33 @@ namespace Going.UI.Forms.Controls
         #endregion
 
         #region 슬라이더 값 설정(외부)
-        public double Value { get => Control.Value; set { if (Control.Value != value) { Control.Value = value; Invalidate(); } } }
-        public string? ValueString { get => Control.ValueString; set { if (Control.ValueString != value) { Control.ValueString = value; Invalidate(); } } }
+        public double LowerValue { get => Control.LowerValue; set { if (Control.LowerValue != value) { Control.LowerValue = value; Invalidate(); } } }
+        public double UpperValue { get => Control.UpperValue; set { if (Control.UpperValue != value) { Control.UpperValue = value; Invalidate(); } }}
+        public string? LowerValueString { get => Control.LowerValueString; set { if (Control.LowerValueString != value) { Control.LowerValueString = value; Invalidate(); } }}
+        public string? UpperValueString { get => Control.UpperValueString; set { if (Control.UpperValueString != value) { Control.UpperValueString = value; Invalidate(); } }}
         public double Minimum { get => Control.Minimum; set { if (Control.Minimum != value) { Control.Minimum = value; Invalidate(); } } }
         public double Maximum { get => Control.Maximum; set { if (Control.Maximum != value) { Control.Maximum = value; Invalidate(); } } }
+        #endregion
+
+        #region 슬라이더 값 설정(내부)
+        public float MinHandleSeparation { get => Control.MinHandleSeparation; set { if (Control.MinHandleSeparation != value) { Control.MinHandleSeparation = value; Invalidate(); } } }
         #endregion
 
         #endregion
 
         #region Event
-
+        public event EventHandler? LowerValueChanged { add => Control.LowerValueChanged += value; remove => Control.LowerValueChanged -= value; }
+        public event EventHandler? UpperValueChanged { add => Control.UpperValueChanged += value; remove => Control.UpperValueChanged -= value; }
+        public event EventHandler? RangeChanged { add => Control.RangeChanged += value; remove => Control.RangeChanged -= value; }
         public event EventHandler? SliderDragStarted { add => Control.SliderDragStarted += value; remove => Control.SliderDragStarted -= value; }
         public event EventHandler? SliderDragCompleted { add => Control.SliderDragCompleted += value; remove => Control.SliderDragCompleted -= value; }
-        public event EventHandler? ValueChanged { add => Control.SliderDragStarted += value; remove => Control.SliderDragStarted -= value; }
-
         #endregion
 
         #region Constructor
-        public GoSlider()
+        public GoRangeSlider()
         {
             SetStyle(ControlStyles.Selectable, true);
         }
-        #endregion
-
-        #region User Interaction Methods
-
-        #region IncrementalValue
-        public void IncrementalValue() => Control.IncrementalValue();
-        public void DecrementalValue() => Control.DecrementalValue();
-        public void SetValueToMinimum() => Control.SetValueToMinimum();
-        public void SetValueToMaximum() => Control.SetValueToMaximum();
-        #endregion
-
         #endregion
 
         #region Dispose
