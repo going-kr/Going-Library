@@ -108,6 +108,8 @@ namespace SampleForms
                     await Task.Delay(grpTrend.Interval);
                 }
             });
+
+            trackBar1.ValueChanged += (o, s) => goProgress1.Value = trackBar1.Value;
         }
     }
 

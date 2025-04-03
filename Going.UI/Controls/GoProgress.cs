@@ -90,9 +90,12 @@ namespace Going.UI.Controls
                 canvas.DrawRoundRect(rtFill, CornerRadius, CornerRadius, p);
             }
 
-            var txt = string.IsNullOrWhiteSpace(Format) ? Value.ToString() : Value.ToString(Format);
-            Util.DrawText(canvas, txt, FontName, FontStyle, ValueFontSize, rtValueText, cText);
-
+            using (new SKAutoCanvasRestore(canvas))
+            {
+                canvas.ClipRect(rtFill);
+                var txt = string.IsNullOrWhiteSpace(Format) ? Value.ToString() : Value.ToString(Format);
+                Util.DrawText(canvas, txt, FontName, FontStyle, ValueFontSize, rtValueText, cText);
+            }
             base.OnDraw(canvas);
         }
 

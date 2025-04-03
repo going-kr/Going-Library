@@ -41,12 +41,17 @@
             grpTime = new Going.UI.Forms.Controls.GoTimeGraph();
             tpTrend = new TabPage();
             grpTrend = new Going.UI.Forms.Controls.GoTrendGraph();
+            tabPage1 = new TabPage();
+            goProgress1 = new Going.UI.Forms.Controls.GoProgress();
+            trackBar1 = new TrackBar();
             goTabControl1.SuspendLayout();
             tpBar.SuspendLayout();
             tpLine.SuspendLayout();
             tpCircle.SuspendLayout();
             tpTime.SuspendLayout();
             tpTrend.SuspendLayout();
+            tabPage1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)trackBar1).BeginInit();
             SuspendLayout();
             // 
             // rm
@@ -61,6 +66,7 @@
             goTabControl1.Controls.Add(tpCircle);
             goTabControl1.Controls.Add(tpTime);
             goTabControl1.Controls.Add(tpTrend);
+            goTabControl1.Controls.Add(tabPage1);
             goTabControl1.Dock = DockStyle.Fill;
             goTabControl1.FontName = "나눔고딕";
             goTabControl1.FontSize = 12F;
@@ -252,6 +258,55 @@
             grpTrend.XScale = TimeSpan.Parse("00:00:01");
             grpTrend.YAxisGraduationCount = 10;
             // 
+            // tabPage1
+            // 
+            tabPage1.BackColor = Color.FromArgb(60, 60, 60);
+            tabPage1.Controls.Add(trackBar1);
+            tabPage1.Controls.Add(goProgress1);
+            tabPage1.Location = new Point(4, 44);
+            tabPage1.Name = "tabPage1";
+            tabPage1.Padding = new Padding(3);
+            tabPage1.Size = new Size(965, 597);
+            tabPage1.TabIndex = 5;
+            tabPage1.Text = "tabPage1";
+            // 
+            // goProgress1
+            // 
+            goProgress1.BackColor = Color.FromArgb(60, 60, 60);
+            goProgress1.BackgroundColor = "base2";
+            goProgress1.BorderColor = "Transparent";
+            goProgress1.CornerRadius = 5;
+            goProgress1.Direction = Going.UI.Controls.ProgressDirection.LeftToRight;
+            goProgress1.EmptyColor = "Base1";
+            goProgress1.FillColor = "Good";
+            goProgress1.FontName = "나눔고딕";
+            goProgress1.FontSize = 18F;
+            goProgress1.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
+            goProgress1.Format = "0";
+            goProgress1.Gap = 5;
+            goProgress1.Location = new Point(32, 38);
+            goProgress1.Maximum = 100D;
+            goProgress1.Minimum = 0D;
+            goProgress1.Name = "goProgress1";
+            goProgress1.Size = new Size(325, 31);
+            goProgress1.TabIndex = 0;
+            goProgress1.TabStop = false;
+            goProgress1.Text = "goProgress1";
+            goProgress1.TextColor = "Fore";
+            goProgress1.Value = 0D;
+            goProgress1.ValueFontSize = 14F;
+            // 
+            // trackBar1
+            // 
+            trackBar1.LargeChange = 50;
+            trackBar1.Location = new Point(32, 102);
+            trackBar1.Maximum = 100;
+            trackBar1.Name = "trackBar1";
+            trackBar1.Size = new Size(325, 45);
+            trackBar1.SmallChange = 5;
+            trackBar1.TabIndex = 1;
+            trackBar1.TickStyle = TickStyle.None;
+            // 
             // FormMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -268,6 +323,9 @@
             tpCircle.ResumeLayout(false);
             tpTime.ResumeLayout(false);
             tpTrend.ResumeLayout(false);
+            tabPage1.ResumeLayout(false);
+            tabPage1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)trackBar1).EndInit();
             ResumeLayout(false);
         }
 
@@ -284,5 +342,8 @@
         private Going.UI.Forms.Controls.GoCircleGraph grpCircle;
         private Going.UI.Forms.Controls.GoTimeGraph grpTime;
         private Going.UI.Forms.Controls.GoTrendGraph grpTrend;
+        private TabPage tabPage1;
+        private Going.UI.Forms.Controls.GoProgress goProgress1;
+        private TrackBar trackBar1;
     }
 }
