@@ -32,7 +32,7 @@ namespace Going.UI.Controls
 
         #region 슬라이더 설정
         public string TextColor { get; set; } = "Fore";
-        public string BackColor { get; set; } = "Back";
+        public string BoxColor { get; set; } = "Back";
         public string SliderColor { get; set; } = "Base5";
         public string ProgressColor { get; set; } = "Base1";
         public string BorderColor { get; set; } = "danger";
@@ -440,7 +440,7 @@ namespace Going.UI.Controls
             var brightness = sDown ? theme.DownBrightness : 0;
             return (
                 theme.ToColor(TextColor).BrightnessTransmit(brightness),
-                theme.ToColor(BackColor),
+                theme.ToColor(BoxColor),
                 theme.ToColor(SliderColor).BrightnessTransmit(brightness),
                 theme.ToColor(ProgressColor)
             );
