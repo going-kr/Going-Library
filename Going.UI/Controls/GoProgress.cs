@@ -76,7 +76,6 @@ namespace Going.UI.Controls
             var cText = thm.ToColor(TextColor);
             var cEmpty = thm.ToColor(EmptyColor);
             var cFill = thm.ToColor(FillColor);
-            var cBorder = thm.ToColor(BorderColor);
             var rts = Areas();
             var rtBar = rts["Gauge"];
             var rtFill = rts["Fill"];
@@ -84,13 +83,16 @@ namespace Going.UI.Controls
 
             using var p = new SKPaint { IsAntialias = true };
 
+            // 배경
             p.Color = cEmpty;
             canvas.DrawRoundRect(rtBar, CornerRadius, CornerRadius, p);
 
-            var rtInnerFill = new SKRect(rtFill.Left + Gap, rtFill.Top + Gap, rtFill.Right - Gap, rtFill.Bottom - Gap);
-            p.Color = cFill;
-            canvas.DrawRoundRect(rtInnerFill, CornerRadius, CornerRadius, p);
-                        
+            if (rtFill.Width > 0 && rtFill.Height > 0)
+            {
+                p.Color = cFill;
+                canvas.DrawRoundRect(rtFill, CornerRadius, CornerRadius, p);
+            }
+
             var txt = string.IsNullOrWhiteSpace(Format) ? Value.ToString() : Value.ToString(Format);
             Util.DrawText(canvas, txt, FontName, FontStyle, ValueFontSize, rtValueText, cText);
 
@@ -110,31 +112,48 @@ namespace Going.UI.Controls
             SKRect rtBar = new SKRect(x, y, x + barWidth, y + barHeight);
             rts["Gauge"] = rtBar;
 
-            float fillSize = (float)MathTool.Map(Value, Minimum, Maximum, 0, (Direction == ProgressDirection.LeftToRight || Direction == ProgressDirection.RightToLeft) ? barWidth : barHeight);
+            float usableWidth = barWidth - Gap * 2;
+            float usableHeight = barHeight - Gap * 2;
+            float fillSize = 0;
+
+            if (Maximum > Minimum)
+            {
+                double ratio = (Value - Minimum) / (Maximum - Minimum);
+                float usable = (Direction == ProgressDirection.LeftToRight || Direction == ProgressDirection.RightToLeft)
+                    ? usableWidth
+                    : usableHeight;
+
+                fillSize = (float)(Math.Clamp(ratio, 0, 1) * usable);
+            }
 
             SKRect rtFill;
             SKRect rtValueText;
+
             switch (Direction)
             {
                 case ProgressDirection.LeftToRight:
-                    rtFill = new SKRect(x, y, x + fillSize, y + barHeight);
-                    rtValueText = new SKRect(x + fillSize - 30, y + (barHeight / 2) - (ValueFontSize / 2), x + fillSize + 0, y + (barHeight / 2) + (ValueFontSize / 2));
+                    rtFill = new SKRect(x + Gap, y + Gap, x + Gap + fillSize, y + barHeight - Gap);
+                    rtValueText = new SKRect( rtFill.Right - 40, y + (barHeight / 2) - (ValueFontSize / 2), rtFill.Right, y + (barHeight / 2) + (ValueFontSize / 2) );
                     break;
+
                 case ProgressDirection.RightToLeft:
-                    rtFill = new SKRect(x + barWidth - fillSize, y, x + barWidth, y + barHeight);
-                    rtValueText = new SKRect(x + barWidth - fillSize + 10, y + (barHeight / 2) - (ValueFontSize / 2), x + barWidth - fillSize + 30, y + (barHeight / 2) + (ValueFontSize / 2));
+                    rtFill = new SKRect( x + barWidth - Gap - fillSize, y + Gap, x + barWidth - Gap, y + barHeight - Gap ); 
+                    rtValueText = new SKRect( rtFill.Left + 5, y + (barHeight / 2) - (ValueFontSize / 2), rtFill.Left + 45, y + (barHeight / 2) + (ValueFontSize / 2) );
                     break;
+
                 case ProgressDirection.BottomToTop:
-                    rtFill = new SKRect(x, y + barHeight - fillSize, x + barWidth, y + barHeight);
-                    rtValueText = new SKRect(x + barWidth / 2 - 20, y + barHeight - fillSize + 30, x + barWidth / 2 + 20, y + barHeight - fillSize);
+                    rtFill = new SKRect( x + Gap, y + barHeight - Gap - fillSize, x + barWidth - Gap, y + barHeight - Gap );
+                    rtValueText = new SKRect( x + (barWidth / 2) - 20, rtFill.Top, x + (barWidth / 2) + 20, rtFill.Top + 30 );
                     break;
+
                 case ProgressDirection.TopToBottom:
-                    rtFill = new SKRect(x, y, x + barWidth, y + fillSize);
-                    rtValueText = new SKRect(x + barWidth / 2 - 20, y + fillSize, x + barWidth / 2 + 20, y + fillSize - 30);
+                    rtFill = new SKRect( x + Gap, y + Gap, x + barWidth - Gap, y + Gap + fillSize);
+                    rtValueText = new SKRect( x + (barWidth / 2) - 20, rtFill.Bottom - 30, x + (barWidth / 2) + 20, rtFill.Bottom);
                     break;
+
                 default:
-                    rtFill = new SKRect(x, y, x + fillSize, y + barHeight);
-                    rtValueText = new SKRect(x + fillSize - 30, y + (barHeight / 2) - (ValueFontSize / 2), x + fillSize + 20, y + (barHeight / 2) + (ValueFontSize / 2));
+                    rtFill = new SKRect(0, 0, 0, 0);
+                    rtValueText = new SKRect(0, 0, 0, 0);
                     break;
             }
 
