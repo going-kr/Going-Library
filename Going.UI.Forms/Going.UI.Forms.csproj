@@ -10,14 +10,12 @@
     <RepositoryUrl>https://github.com/going-kr/Going-Library</RepositoryUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/Going-kr/Going-Library/master/icon/Going_logo_blue.png</PackageIconUrl>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Description>WinForms version of Going UI</Description>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Going.UI" Version="1.0.0" />
     <PackageReference Include="SkiaSharp.Views.WindowsForms" Version="3.116.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Going.UI\Going.UI.csproj" />
   </ItemGroup>
 
 </Project>
