@@ -9,9 +9,6 @@ using System.Globalization;
 namespace Going.UI.Controls
 {
     // todo : 화면에서 이상하게 출력되는 이유를 알았다. : Event가 발생을 했을 때, 해당 이벤트 동작이 일어나면서 다시 그려지는데, 그 때, 이벤트가 발생한 위치를 기준으로 다시 그리기 때문에, 이상하게 출력되는 것이다.
-    /// <summary>
-    /// 범위 선택 슬라이더 컨트롤 - 두 개의 핸들을 사용하여 최소값과 최대값을 선택할 수 있는 컴포넌트
-    /// </summary>
     public class GoRangeSlider : GoControl, IDisposable
     {
         #region Properties
@@ -30,7 +27,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region 슬라이더 배경 설정
-        public bool BackgroundDraw { get; set; } = true;
+        public bool BackgroundDraw { get; set; }
         public bool BorderOnly { get; set; }
         #endregion
 
@@ -46,10 +43,11 @@ namespace Going.UI.Controls
 
         #region 슬라이더 표시 설정(외형)
         public bool ShowValueLabel { get; set; } = true;
-        public string ValueFormat { get; set; } = "F1";
+        public string ValueFormat { get; set; } = "0";
         public int BarSize { get; set; } = 4;
         public float HandleRadius { get; set; } = 15f;
         public bool EnableShadow { get; set; } = true;
+        public float HandleHoverScale { get; set; } = 1.05f;
         #endregion
 
         #region 틱(단계) 설정
@@ -154,8 +152,6 @@ namespace Going.UI.Controls
         #endregion
 
         #region 캐싱된 값들
-        private double normalizedLowerValue; // 0.0 ~ 1.0 사이의 정규화된 값
-        private double normalizedUpperValue;
         private bool needsLayoutUpdate = true;
         #endregion
 
@@ -319,11 +315,17 @@ namespace Going.UI.Controls
 
             // 두 핸들 그리기
             DrawsSliderHandle(canvas, lowerHandleRect, colors.slider, sLowerDown, sLowerHover);
+
+            if (ShowValueLabel)
+            {
+                DrawLowerValueLabel(canvas, colors.text);
+            }
+
             DrawsSliderHandle(canvas, upperHandleRect, colors.slider, sUpperDown, sUpperHover);
 
             if (ShowValueLabel)
             {
-                DrawValueLabels(canvas, colors.text);
+                DrawUpperValueLabel(canvas, colors.text);
             }
         }
         #endregion
@@ -376,16 +378,13 @@ namespace Going.UI.Controls
         #region DrawSliderBackground
         private void DrawSliderBackground(SKCanvas canvas, GoTheme thm, SKRect rect, SKColor color)
         {
-            if (BackgroundDraw)
-            {
-                // 배경 그리기
-                Util.DrawBox(canvas, rect, BorderOnly ? SKColors.Transparent : color, Round, thm.Corner);
+            if (!BackgroundDraw) return;
 
-                // 테두리 그리기
-                if (BorderOnly) return;
-                borderPaint.Color = thm.ToColor(BorderColor);
-                borderPaint.StrokeWidth = 1;
-            }
+            Util.DrawBox(canvas, rect, BorderOnly ? SKColors.Transparent : color, Round, thm.Corner);
+
+            if (BorderOnly) return;
+            borderPaint.Color = thm.ToColor(BorderColor);
+            borderPaint.StrokeWidth = 1;
         }
         #endregion
         #region DrawSliderTrack
@@ -398,23 +397,19 @@ namespace Going.UI.Controls
         #region DrawSliderProgress
         private void DrawSliderProgress(SKCanvas canvas, SKColor color)
         {
-            // 슬라이더 진행 트랙 그리기 (두 핸들 사이)
             progressPaint.Color = color;
 
             SKRect progressRect;
             if (Direction == GoDirectionHV.Horizon)
             {
-                // 수평 방향 : 낮은 값 핸들에서 높은 값 핸들까지
                 progressRect = new SKRect(lowerHandleRect.MidX, trackRect.Top, upperHandleRect.MidX, trackRect.Bottom);
             }
             else
             {
-                // 수직 방향 : 낮은 값 핸들에서 높은 값 핸들까지
                 progressRect = new SKRect(trackRect.Left, upperHandleRect.MidY, trackRect.Right, lowerHandleRect.MidY);
             }
 
-            // 프로그레스 바 유효성 검사 - 너비나 높이가 항상 양수가 되도록
-            var isValidProgress = false;
+            bool isValidProgress;
 
             if (Direction == GoDirectionHV.Horizon)
             {
@@ -443,132 +438,58 @@ namespace Going.UI.Controls
         {
             handlePaint.Color = isDown ? color.WithAlpha(230) : color;
 
-            // 그림자 효과
             if (EnableShadow)
             {
                 using var shadow = SKImageFilter.CreateDropShadow(2, 2, 3, 3, new SKColor(0, 0, 0, 80));
                 handlePaint.ImageFilter = shadow;
             }
 
-            // 핸들 그리기
             canvas.DrawCircle(rect.MidX, rect.MidY, MathHandleSizeClamp(isDown, isHover), handlePaint);
             handlePaint.ImageFilter = null;
-
-            // 핸들 내부 하이라이트 효과
-            // handlePaint.Color = SKColors.White.WithAlpha(80);
-            // canvas.DrawCircle(rect.MidX - radius * 0.2f, rect.MidY - radius * 0.2f, radius * 0.6f, handlePaint);
         }
         #endregion
-        #region DrawValueLabels
-        private void DrawValueLabels(SKCanvas canvas, SKColor color)
+        #region DrawLowerValueLabel
+        private void DrawLowerValueLabel(SKCanvas canvas, SKColor color)
         {
             textPaint.Color = color;
             textAlign = SKTextAlign.Center;
             textFont.Size = FontSize;
             textFont.Typeface = SKTypeface.FromFamilyName(FontName);
 
-            // 텍스트 측정하여 공간 계산
-            var isHeightEnough = Bounds.Height >= MinHeightForLabelBelow;
-            
-            // 핸들이 너무 가까이 있는지 확인
-            bool areHandleClose;
+            canvas.Save();
 
-            if (Direction == GoDirectionHV.Horizon)
+            using (var clipPath = new SKPath())
             {
-                // 수평 모드에서는 X 거리 확인
-                var handleDistance = Math.Abs(upperHandleRect.MidX - lowerHandleRect.MidX);
+                clipPath.AddOval(lowerHandleRect);
+                clipPath.Close();
+                canvas.ClipPath(clipPath);
 
-                // 두 핸들 사이 거리가 텍스트를 표시하기에 충분한지 확인
-                var textWidth = Math.Max(textFont.MeasureText(LowerValueString), textFont.MeasureText(UpperValueString));
-
-                areHandleClose = handleDistance < textWidth * 2 + 10; // 여유 공간 추가
+                var textOffset = FontSize * 0.3f;
+                canvas.DrawText(LowerValueString, lowerHandleRect.MidX, lowerHandleRect.MidY + textOffset, textAlign, textFont, textPaint);
             }
-            else
+            canvas.Restore();
+        }
+        #endregion
+        #region DrawUpperValueLabel
+        private void DrawUpperValueLabel(SKCanvas canvas, SKColor color)
+        {
+            textPaint.Color = color;
+            textAlign = SKTextAlign.Center;
+            textFont.Size = FontSize;
+            textFont.Typeface = SKTypeface.FromFamilyName(FontName);
+
+            canvas.Save();
+
+            using (var clipPath = new SKPath())
             {
-                // 수직 모드에서는 Y 거리 확인
-                var handleDistance = Math.Abs(upperHandleRect.MidY - lowerHandleRect.MidY);
-                areHandleClose = handleDistance < FontSize * 2 + 10;
+                clipPath.AddOval(upperHandleRect);
+                clipPath.Close();
+                canvas.ClipPath(clipPath);
+
+                var textOffset = FontSize * 0.3f;
+                canvas.DrawText(UpperValueString, upperHandleRect.MidX, upperHandleRect.MidY + textOffset, textAlign, textFont, textPaint);
             }
-
-            if (Direction == GoDirectionHV.Horizon)
-            {
-                if (isHeightEnough)
-                {
-                    // 충분한 공간이 있을 때 - 핸들 아래에 표시
-                    if (areHandleClose)
-                    {
-                        // 핸들이 가까울 때는 사이에 하나의 레이블만 표시
-                        var centerX = (lowerHandleRect.MidX + upperHandleRect.MidX) / 2;
-                        var rangeText = $"{LowerValueString} - {UpperValueString}";
-
-                        canvas.DrawText(rangeText, centerX, lowerHandleRect.MidY + HandleRadius + FontSize + 5, textAlign, textFont, textPaint);
-                    }
-                    else
-                    {
-                        // 각 핸들 아래에 개별 레이블 표시
-                        canvas.DrawText(LowerValueString, lowerHandleRect.MidX, lowerHandleRect.MidY + HandleRadius + FontSize + 5, textAlign, textFont, textPaint);
-                        canvas.DrawText(UpperValueString, upperHandleRect.MidX, upperHandleRect.MidY + HandleRadius + FontSize + 5, textAlign, textFont, textPaint);
-                    }
-                }
-                else
-                {
-                    // 공간이 부족할 때 - 핸들과 겹치게 표시
-                    textPaint.Color = SKColors.White;
-
-                    // 핸들이 가까울 때는 각 핸들의 값을 표시하는 대신 범위를 표시
-                    if (areHandleClose)
-                    {
-                        canvas.DrawText(LowerValueString?[..Math.Min(3, LowerValueString.Length)], lowerHandleRect.MidX, lowerHandleRect.MidY + FontSize/3, textAlign, textFont, textPaint);
-                        canvas.DrawText(UpperValueString?[..Math.Min(3, UpperValueString.Length)], upperHandleRect.MidX, upperHandleRect.MidY + FontSize/3, textAlign, textFont, textPaint);
-                    }
-                    else
-                    {
-                        canvas.DrawText(LowerValueString, lowerHandleRect.MidX, lowerHandleRect.MidY + FontSize/3, textAlign, textFont, textPaint);
-                        canvas.DrawText(UpperValueString, upperHandleRect.MidX, upperHandleRect.MidY + FontSize/3, textAlign, textFont, textPaint);
-                    }
-                }
-            }
-            else
-            {
-                if (isHeightEnough)
-                {
-                    // 수직 슬라이더 - 핸들 오른쪽에 표시
-                    textAlign = SKTextAlign.Left;
-                    textPaint.Color = color;
-
-                    if (areHandleClose)
-                    {
-                        // 핸들과 가까울 때는 가운데에 범위 표시
-                        var centerY = (lowerHandleRect.MidY + upperHandleRect.MidY) / 2;
-                        var rangeText = $"{LowerValueString} - {UpperValueString}";
-
-                        canvas.DrawText(rangeText, lowerHandleRect.MidX + HandleRadius + 10, centerY, textAlign, textFont, textPaint);
-                    }
-                    else
-                    {
-                        canvas.DrawText(LowerValueString, lowerHandleRect.MidX + HandleRadius + 10, lowerHandleRect.MidY, textAlign, textFont, textPaint);
-                        canvas.DrawText(UpperValueString, upperHandleRect.MidX + HandleRadius + 10, upperHandleRect.MidY, textAlign, textFont, textPaint);
-                    }
-                }
-                else
-                {
-                    // 핸들과 겹치게 표시
-                    textAlign = SKTextAlign.Center;
-                    textPaint.Color = SKColors.White;
-
-                    if (areHandleClose)
-                    {
-                        // 공간이 부족할 때는 짧게 표시
-                        canvas.DrawText(LowerValueString?[..Math.Min(3, LowerValueString.Length)], lowerHandleRect.MidX, lowerHandleRect.MidY + FontSize/3, textAlign, textFont, textPaint);
-                        canvas.DrawText(UpperValueString?[..Math.Min(3, UpperValueString.Length)], upperHandleRect.MidX, upperHandleRect.MidY + FontSize/3, textAlign, textFont, textPaint);
-                    }
-                    else
-                    {
-                        canvas.DrawText(LowerValueString, lowerHandleRect.MidX, lowerHandleRect.MidY + FontSize/3, textAlign, textFont, textPaint);
-                        canvas.DrawText(UpperValueString, upperHandleRect.MidX, upperHandleRect.MidY + FontSize/3, textAlign, textFont, textPaint);
-                    }
-                }
-            }
+            canvas.Restore();
         }
         #endregion
 
@@ -579,7 +500,6 @@ namespace Going.UI.Controls
         #region InitializeDefaults
         private void InitializeDefaults()
         {
-            // 초기값 설정
             sMinimum = 0D;
             sMaximum = 100D;
             sLowerValue = 25D;
@@ -604,59 +524,75 @@ namespace Going.UI.Controls
         #region UpdateLayout
         private void UpdateLayout(SKRect contentBox)
         {
-            // 값 정규화 업데이트
-            normalizedLowerValue = (LowerValue - Minimum) / (Maximum - Minimum);
-            normalizedUpperValue = (UpperValue - Minimum) / (Maximum - Minimum);
+            var normalizedLowerValue = (LowerValue - Minimum) / (Maximum - Minimum);
+            var normalizedUpperValue = (UpperValue - Minimum) / (Maximum - Minimum);
 
             normalizedLowerValue = MathClamp(normalizedLowerValue, 0, 1);
             normalizedUpperValue = MathClamp(normalizedUpperValue, 0, 1);
 
-            // 트랙 위치 업데이트
             var isHeightEnough = Bounds.Height >= MinHeightForLabelBelow;
 
-            // 값 레이블을 위한 여분 공간 계산
             var extraSpace = isHeightEnough && ShowValueLabel ? FontSize + 10 : 0;
+
+            var maxHandleRadius = HandleRadius * HandleHoverScale;
 
             if (Direction == GoDirectionHV.Horizon)
             {
-                // 수평 슬라이더
                 var trackY = contentBox.MidY;
 
-                // 화면이 작을 경우 라벨이 위로 가므로 슬라이더를 약간 아래로 조정
-                if (!isHeightEnough && ShowValueLabel) trackY += FontSize / 2;
-
                 trackRect = new SKRect(
-                    contentBox.Left + HandleRadius,
+                    contentBox.Left + maxHandleRadius,
                     trackY - (float)BarSize / 2,
-                    contentBox.Right - HandleRadius,
+                    contentBox.Right - maxHandleRadius,
                     trackY + (float)BarSize / 2
                 );
 
-                // 핸들 위치 계산
                 var lowerHandleX = trackRect.Left + (float)normalizedLowerValue * trackRect.Width;
+                var lowerHandleY = trackY;
                 var upperHandleX = trackRect.Left + (float)normalizedUpperValue * trackRect.Width;
+                var upperHandleY = trackY;
 
-                lowerHandleRect = new SKRect(lowerHandleX - HandleRadius, trackY - HandleRadius, lowerHandleX + HandleRadius, trackY + HandleRadius);
-                upperHandleRect = new SKRect(upperHandleX - HandleRadius, trackY - HandleRadius, upperHandleX + HandleRadius, trackY + HandleRadius);
+                lowerHandleRect = new SKRect(
+                    lowerHandleX - maxHandleRadius,
+                    lowerHandleY - maxHandleRadius,
+                    lowerHandleX + maxHandleRadius,
+                    lowerHandleY + maxHandleRadius
+                    );
+                upperHandleRect = new SKRect(
+                    upperHandleX - maxHandleRadius,
+                    upperHandleY - maxHandleRadius,
+                    upperHandleX + maxHandleRadius,
+                    upperHandleY + maxHandleRadius
+                    );
             }
             else
             {
-                // 수직 슬라이더
                 var trackX = contentBox.MidX;
 
                 trackRect = new SKRect(
                     trackX - (float)BarSize / 2,
-                    contentBox.Top + HandleRadius + (isHeightEnough ? extraSpace / 2 : 0),
+                    contentBox.Top + maxHandleRadius + (isHeightEnough ? extraSpace / 2 : 0),
                     trackX + (float)BarSize / 2,
-                    contentBox.Bottom - HandleRadius - (isHeightEnough ? 0 : extraSpace / 2)
+                    contentBox.Bottom - maxHandleRadius - (isHeightEnough ? 0 : extraSpace / 2)
                 );
 
-                // 핸들 위치 계산 (수직에서는 위쪽이 최대값)
+                var lowerHandleX = trackX;
                 var lowerHandleY = trackRect.Bottom - (float)normalizedLowerValue * trackRect.Height;
+                var upperHandleX = trackX;
                 var upperHandleY = trackRect.Bottom - (float)normalizedUpperValue * trackRect.Height;
 
-                lowerHandleRect = new SKRect(trackX - HandleRadius, lowerHandleY - HandleRadius, trackX + HandleRadius, lowerHandleY + HandleRadius);
-                upperHandleRect = new SKRect(trackX - HandleRadius, upperHandleY - HandleRadius, trackX + HandleRadius, upperHandleY + HandleRadius);
+                lowerHandleRect = new SKRect(
+                    lowerHandleX - maxHandleRadius,
+                    lowerHandleY - maxHandleRadius,
+                    lowerHandleX + maxHandleRadius,
+                    lowerHandleY + maxHandleRadius
+                    );
+                upperHandleRect = new SKRect(
+                    upperHandleX - maxHandleRadius,
+                    upperHandleY - maxHandleRadius,
+                    upperHandleX + maxHandleRadius,
+                    upperHandleY + maxHandleRadius
+                    );
             }
         }
         #endregion
@@ -681,14 +617,13 @@ namespace Going.UI.Controls
                 normalizedPos = MathClamp(1 - (y - trackRect.Top) / trackRect.Height, 0, 1);
             }
 
-            // 상한값에 너무 근접하지 않도록 제한
+            var normalizedUpperValue = (UpperValue - Minimum) / (Maximum - Minimum);
             normalizedPos = Math.Min(normalizedPos, normalizedUpperValue - MinHandleSeparation);
 
             var newValue = Minimum + normalizedPos * (Maximum - Minimum);
 
             if (Tick is > 0)
             {
-                // 틱 값에 맞게 조정
                 newValue = Math.Round(newValue / Tick.Value) * Tick.Value;
             }
 
@@ -709,14 +644,13 @@ namespace Going.UI.Controls
                 normalizedPos = MathClamp(1 - (y - trackRect.Top) / trackRect.Height, 0, 1);
             }
 
-            // 하한값에 너무 근접하지 않도록 제한
+            var normalizedLowerValue = (LowerValue - Minimum) / (Maximum - Minimum);
             normalizedPos = Math.Max(normalizedPos, normalizedLowerValue + MinHandleSeparation);
 
             var newValue = Minimum + normalizedPos * (Maximum - Minimum);
 
             if (Tick is > 0)
             {
-                // 틱 값에 맞게 조정
                 newValue = Math.Round(newValue / Tick.Value) * Tick.Value;
             }
 
@@ -737,17 +671,16 @@ namespace Going.UI.Controls
                 normalizedPos = MathClamp(1 - (y - trackRect.Top) / trackRect.Height, 0, 1);
             }
 
-            // 어느 핸들이 더 가까운지 결정
+            var normalizedLowerValue = (LowerValue - Minimum) / (Maximum - Minimum);
+            var normalizedUpperValue = (UpperValue - Minimum) / (Maximum - Minimum);
             if (Math.Abs(normalizedPos - normalizedLowerValue) < Math.Abs(normalizedPos - normalizedUpperValue))
             {
-                // 낮은 값 핸들이 더 가까움
                 sLowerDown = true;
                 isDraggingLower = true;
                 UpdateLowerValueFromPosition(x, y);
             }
             else
             {
-                // 높은 값 핸들이 더 가까움
                 sUpperDown = true;
                 isDraggingUpper = true;
                 UpdateUpperValueFromPosition(x, y);
@@ -769,8 +702,7 @@ namespace Going.UI.Controls
             if (HandleRadius * 2 < Height) radius = HandleRadius;
             else radius = Height / 2 - 2;
 
-            if (isDown) radius *= 1.1f;
-            else if (isHover) radius *= 1.05f;
+            if (isDown || isHover) radius *= HandleHoverScale;
 
             return radius;
         }
@@ -781,12 +713,8 @@ namespace Going.UI.Controls
         #region User Interaction Methods
 
         #region SetRange
-        /// <summary>
-        /// 슬라이더의 범위를 한번에 설정합니다.
-        /// </summary>
         public void SetRange(double lower, double upper)
         {
-            // 값 범위 검증
             lower = MathClamp(lower, Minimum, Maximum);
             upper = MathClamp(upper, Minimum, Maximum);
 

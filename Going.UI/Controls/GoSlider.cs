@@ -8,9 +8,6 @@ using System.Globalization;
 
 namespace Going.UI.Controls
 {
-    /// <summary>
-    /// 제네릭 슬라이더 컨트롤 - 성능 최적화, 바인딩 지원, 시각적 개선 및 사용자 경험 향상 기능 포함
-    /// </summary>
     public class GoSlider : GoControl, IDisposable
     {
         #region Properties
@@ -29,7 +26,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region 슬라이더 배경 설정
-        public bool BackgroundDraw { get; set; } = true;
+        public bool BackgroundDraw { get; set; }
         public bool BorderOnly { get; set; }
         #endregion
 
@@ -45,10 +42,11 @@ namespace Going.UI.Controls
 
         #region 슬라이더 표시 설정(외형)
         public bool ShowValueLabel { get; set; } = true;
-        public string ValueFormat { get; set; } = "F1";
+        public string ValueFormat { get; set; } = "0";
         public int BarSize { get; set; } = 4;
         public float HandleRadius { get; set; } = 15f;
         public bool EnableShadow { get; set; } = true;
+        public float HandleHoverScale { get; set; } = 1.05f;
         #endregion
 
         #region 틱(단계) 설정
@@ -90,7 +88,7 @@ namespace Going.UI.Controls
             {
                 if (Math.Abs(sMinimum - value) < 0.00001f) return;
                 sMinimum = value;
-                // 최소값이 변경되면 현재 값도 제한 범위 내로 조정
+
                 Value = Math.Max(value, Value);
                 needsLayoutUpdate = true;
             }
@@ -115,7 +113,7 @@ namespace Going.UI.Controls
         private SKRect trackRect;
         private SKRect handleRect;
         private const float TrackHeight = 4f;
-        private int MinHeightForLabelBelow { get; set; } = 80;  // 라벨을 아래에 표시하기 위한 최소 높이
+        private int MinHeightForLabelBelow { get; set; } = 80;
         #endregion
 
         #region 슬라이더 상태값 설정
@@ -123,7 +121,6 @@ namespace Going.UI.Controls
         #endregion
 
         #region 캐싱된 값들
-        private double normalizedValue; // 0.0 ~ 1.0 사이의 정규화된 값
         private bool needsLayoutUpdate = true;
         #endregion
 
@@ -162,7 +159,7 @@ namespace Going.UI.Controls
 
         private bool sDown;
         private bool sHover;
-        private float mx, my;   // 마우스 위치 추적
+        private float mx, my;
 
         #endregion
 
@@ -192,7 +189,6 @@ namespace Going.UI.Controls
             }
             else if (CollisionTool.Check(trackRect, x, y))
             {
-                // 트랙 클릭 시 즉시 해당 위치로 이동
                 UpdateValueFromPosition(x, y);
                 sDown = true;
                 isDragging = true;
@@ -209,9 +205,6 @@ namespace Going.UI.Controls
             my = y;
             sHover = CollisionTool.Check(handleRect, x, y);
 
-            // var rts = Areas();
-            // var rtBox = rts["Content"];
-
             if (isDragging)
             {
                 UpdateValueFromPosition(x, y);
@@ -226,14 +219,14 @@ namespace Going.UI.Controls
             mx = x;
             my = y;
 
-            // var rts = Areas();
-            // var rtBox = rts["Content"];
+
+
 
             if (sDown)
             {
                 sDown = false;
                 if (isDragging) SliderDragCompleted?.Invoke(this, EventArgs.Empty);
-                // if (CollisionTool.Check(handleRect, x, y)) SliderDragStarted?.Invoke(this, EventArgs.Empty);
+
             }
             isDragging = false;
 
@@ -266,8 +259,8 @@ namespace Going.UI.Controls
             }
 
             DrawSliderBackground(canvas, thm, contentBox, colors.background);
-            UpdateLayout(contentBox);   // 슬라이더 트랙과 핸들 값 업데이트
-            DrawSliderTrack(canvas, colors.slider);
+            UpdateLayout(contentBox);
+            DrawSliderTrack(canvas, colors.empty);
             DrawSliderProgress(canvas, thm, contentBox, colors.slider);
             DrawSliderHandle(canvas, handleRect, colors.slider);
 
@@ -275,8 +268,6 @@ namespace Going.UI.Controls
             {
                 DrawValueLabel(canvas, colors.text);
             }
-
-            // Util.DrawText(canvas, ValueString, FontName, FontStyle, FontSize, handleRect, SKColors.Aqua);
         }
         #endregion
         #region DrawTicks
@@ -288,7 +279,6 @@ namespace Going.UI.Controls
             var count = TickCount;
             if (Tick.HasValue)
             {
-                // 틱 값이 설정되었으면 범위에 맞게 틱 개수 계산
                 count = (int)Math.Ceiling((Maximum - Minimum) / Tick.Value);
             }
 
@@ -330,10 +320,9 @@ namespace Going.UI.Controls
         {
             if (BackgroundDraw)
             {
-                // 배경 그리기
+
                 Util.DrawBox(canvas, rect, BorderOnly ? SKColors.Transparent : color, Round, thm.Corner);
 
-                // 테두리 그리기
                 if (BorderOnly) return;
                 borderPaint.Color = thm.ToColor(BorderColor);
                 borderPaint.StrokeWidth = 1;
@@ -350,7 +339,7 @@ namespace Going.UI.Controls
         #region DrawSliderProgress
         private void DrawSliderProgress(SKCanvas canvas, GoTheme thm, SKRect contentBox, SKColor color)
         {
-            // 슬라이더 진행 트랙 그리기
+
             progressPaint.Color = color;
 
             var progressRect = trackRect;
@@ -361,9 +350,7 @@ namespace Going.UI.Controls
             }
             else
             {
-                // 수직 방향에서는 아래에서 위로 채워짐
-                // progressRect = new SKRect(trackRect.Left, trackRect.Top, trackRect.Right, handleRect.MidY);
-                progressRect.Bottom = handleRect.MidY;
+                progressRect.Top = handleRect.MidY;
             }
 
             if (EnableShadow)
@@ -381,14 +368,12 @@ namespace Going.UI.Controls
         {
             handlePaint.Color = sDown ? color.WithAlpha(230) : color;
 
-            // 그림자 효과
             if (EnableShadow)
             {
                 using var shadow = SKImageFilter.CreateDropShadow(2, 2, 3, 3, new SKColor(0, 0, 0, 80));
                 handlePaint.ImageFilter = shadow;
             }
 
-            // 핸들 그리기
             float radius;
             if (HandleRadius * 2 > SHandleMaxHeight)
             {
@@ -398,15 +383,15 @@ namespace Going.UI.Controls
             {
                 radius = HandleRadius;
             }
-            if (isDragging) radius *= 1.1f;
-            else if (sHover) radius *= 1.05f;
+
+            if (isDragging || sHover) radius *= HandleHoverScale;
 
             canvas.DrawCircle(handleRect.MidX, handleRect.MidY, radius, handlePaint);
             handlePaint.ImageFilter = null;
 
-            // 핸들 내부 하이라이트 효과
-            // handlePaint.Color = SKColors.White.WithAlpha(80);
-            // canvas.DrawCircle(handleRect.MidX - radius * 0.2f, handleRect.MidY - radius * 0.2f, radius * 0.6f, handlePaint);
+
+
+
         }
         #endregion
         #region DrawValueLabel
@@ -417,49 +402,19 @@ namespace Going.UI.Controls
             textFont.Size = FontSize;
             textFont.Typeface = SKTypeface.FromFamilyName(FontName);
 
-            // 텍스트 측정하여 공간 계산
-            var textBounds = new SKRect();
-            textFont.MeasureText(ValueString);
-            var isHeightEnough = Bounds.Height >= MinHeightForLabelBelow;
+            var textHeight = textFont.Size;
 
-            SKPoint labelPosition;
-            if (Direction == GoDirectionHV.Horizon)
-            {
-                if (isHeightEnough)
-                {
-                    // 충분한 공간이 있을 때 - 핸들 아래에 표시
-                    labelPosition = new SKPoint(handleRect.MidX, handleRect.MidY + HandleRadius + FontSize + 5);
-                }
-                else
-                {
-                    // 공간이 좁을 때 - 핸들과 겹치게 표시 (중앙에)
-                    labelPosition = new SKPoint(handleRect.MidX, handleRect.MidY - textBounds.Height / 4);
+            var labelPosition = new SKPoint(handleRect.MidX, handleRect.MidY);
+            canvas.Save();
 
-                    // 핸들과 겹치므로 대비를 위해 흰색으로 표시
-                    textPaint.Color = SKColors.White;
-                }
-            }
-            else
-            {
-                if (isHeightEnough)
-                {
-                    // 수직 슬라이더의 경우 - 핸들 오른쪽에 표시
-                    labelPosition = new SKPoint(handleRect.MidX + HandleRadius + 10, handleRect.MidY);
-                    textAlign = SKTextAlign.Left;
-                    textPaint.Color = color;
-                }
-                else
-                {
-                    // 공간이 좁을 때 - 핸들 위에 표시
-                    labelPosition = new SKPoint(handleRect.MidX + HandleRadius + 10, handleRect.MidY);
-                    textAlign = SKTextAlign.Center;
+            using var clipPath = new SKPath();
+            clipPath.AddOval(handleRect);
+            clipPath.Close();
+            canvas.ClipPath(clipPath);
 
-                    // 핸들과 겹치므로 대비를 위해 흰색으로 표시
-                    textPaint.Color = SKColors.White;
-                }
-            }
-
-            canvas.DrawText(ValueString, labelPosition, textAlign, textFont, textPaint);
+            var textOffset = textHeight * 0.3f;
+            canvas.DrawText(ValueString, labelPosition.X, labelPosition.Y + textOffset, textAlign, textFont, textPaint);
+            canvas.Restore();
         }
         #endregion
 
@@ -470,7 +425,7 @@ namespace Going.UI.Controls
         #region InitializeDefaults
         private void InitializeDefaults()
         {
-            // 초기값 설정
+
             sMinimum = 0D;
             sMaximum = 100D;
             sValue = 0D;
@@ -480,13 +435,14 @@ namespace Going.UI.Controls
         }
         #endregion
         #region GetThemeColors
-        private (SKColor text, SKColor background, SKColor slider) GetThemeColors(GoTheme theme)
+        private (SKColor text, SKColor background, SKColor slider, SKColor empty) GetThemeColors(GoTheme theme)
         {
             var brightness = sDown ? theme.DownBrightness : 0;
             return (
                 theme.ToColor(TextColor).BrightnessTransmit(brightness),
                 theme.ToColor(BgColor),
-                theme.ToColor(SliderColor).BrightnessTransmit(brightness)
+                theme.ToColor(SliderColor).BrightnessTransmit(brightness),
+                theme.ToColor(EmptyColor)
             );
         }
         #endregion
@@ -506,45 +462,38 @@ namespace Going.UI.Controls
         #region UpdateLayout
         private void UpdateLayout(SKRect contentBox)
         {
-            // 값 정규화 업데이트
-            normalizedValue = (Value - Minimum) / (Maximum - Minimum);
+            var normalizedValue = (Value - Minimum) / (Maximum - Minimum);
             normalizedValue = MathClamp(normalizedValue, 0, 1);
 
-            // 트랙 위치 업데이트
-            var availableSpace = Direction == GoDirectionHV.Horizon ? contentBox.Height : contentBox.Width;
+
             var isHeightEnough = Bounds.Height >= MinHeightForLabelBelow;
 
-            // 값 레이블을 위한 여분 공간 계산
             var extraSpace = isHeightEnough && ShowValueLabel ? FontSize + 10 : 0;
+            var maxHandleRadius = HandleRadius * HandleHoverScale;
 
             if (Direction == GoDirectionHV.Horizon)
             {
-                // 수평 슬라이더
                 var trackY = contentBox.MidY;
-
-                // 화면이 작을 경우 라벨이 위로 가므로 슬라이더를 약간 아래로 조정
                 if (!isHeightEnough && ShowValueLabel) trackY += extraSpace / 2;
 
                 trackRect = new SKRect(
-                    contentBox.Left + HandleRadius,
+                    contentBox.Left + maxHandleRadius,
                     trackY - (float)BarSize / 2,
-                    contentBox.Right - HandleRadius,
+                    contentBox.Right - maxHandleRadius,
                     trackY + (float)BarSize / 2
                 );
             }
             else
             {
-                // 수직 슬라이더
                 var trackX = contentBox.MidX;
                 trackRect = new SKRect(
-                    trackX - (float)BarSize / 2,    // 오류 : 여기가 문제 > 수정 = 기호를 +에서 -로 변경
-                    contentBox.Top + HandleRadius + (isHeightEnough ? extraSpace / 2 : 0),
-                    trackX + (float)BarSize / 2,    // 오류 : 여기도 동일한 값
-                    contentBox.Bottom - HandleRadius - (isHeightEnough ? 0 : extraSpace / 2)
+                    trackX - (float)BarSize / 2,
+                    contentBox.Top + maxHandleRadius + (isHeightEnough ? extraSpace / 2 : 0),
+                    trackX + (float)BarSize / 2,
+                    contentBox.Bottom - maxHandleRadius - (isHeightEnough ? 0 : extraSpace / 2)
                 );
             }
 
-            // 핸들 위치 계산
             float handleX, handleY;
             if (Direction == GoDirectionHV.Horizon)
             {
@@ -558,10 +507,10 @@ namespace Going.UI.Controls
             }
 
             handleRect = new SKRect(
-                handleX - HandleRadius,
-                handleY - HandleRadius,
-                handleX + HandleRadius,
-                handleY + HandleRadius
+                handleX - maxHandleRadius,
+                handleY - maxHandleRadius,
+                handleX + maxHandleRadius,
+                handleY + maxHandleRadius
             );
         }
         #endregion
@@ -575,7 +524,7 @@ namespace Going.UI.Controls
 
             if (Tick is > 0)
             {
-                // 틱 값에 맞게 조정
+
                 newValue = Math.Round(newValue / Tick.Value) * Tick.Value;
             }
 
@@ -602,7 +551,7 @@ namespace Going.UI.Controls
             }
             else
             {
-                // 최소 스텝은 0.1
+
                 step = Math.Max(0.1, step);
             }
 
@@ -619,7 +568,7 @@ namespace Going.UI.Controls
             }
             else
             {
-                // 최소 스텝은 0.1
+
                 step = Math.Max(0.1, step);
             }
 

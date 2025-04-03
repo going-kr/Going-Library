@@ -1,5 +1,6 @@
 ﻿using Going.UI.Controls;
 using Going.UI.Design;
+using Going.UI.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,11 +11,9 @@ namespace SampleOpenTK.Pages
 {
     public class PageControl : GoPage
     {
-        #region Variables
-        private int Value = 0;
-        private bool increasing = true;
-        private DateTime updatetime = DateTime.Now;
-        #endregion
+        GoProgress prgs;
+        GoSlider sldh, sldv;
+        GoRangeSlider rsldh, rsldv;
         public PageControl()
         {
             Name = "PageControl";
@@ -29,50 +28,19 @@ namespace SampleOpenTK.Pages
             Childrens.Add(pg4);
             Childrens.Add(slider);
 
-            slider.ValueChanged += (o, s) =>
-            {
-                foreach (var child in Childrens)
-                {
-                    if (child is GoProgress pg)
-                        pg.Value = slider.Value;
-                }
-            };
-        }
+            prgs = new GoProgress { Left = 10, Top = 10, Width = 200, Height = 40 };
+            sldh = new GoSlider { Left = 10, Top = 60, Width = 200, Height = 40 };
+            sldv = new GoSlider { Left = 220, Top = 0, Width = 40, Height = 200, Direction = GoDirectionHV.Vertical };
+            rsldh = new GoRangeSlider { Left = 10, Top = 110, Width = 200, Height = 40 };
+            rsldv = new GoRangeSlider { Left = 280, Top = 0, Width = 40, Height = 200, Direction = GoDirectionHV.Vertical };
 
-        #region Override
-        protected override void OnUpdate()
-        {
-            /*
-            if ((DateTime.Now - updatetime).TotalMilliseconds >= 100)
-            {
-                updatetime = DateTime.Now;
-                if (increasing)
-                {
-                    Value += 1;
-                    if (Value >= 100)
-                    {
-                        Value = 100;
-                        increasing = false;
-                    }
-                }
-                else
-                {
-                    Value -= 1;
-                    if (Value <= 0)
-                    {
-                        Value = 0;
-                        increasing = true;
-                    }
-                }
-                
-                foreach (var child in Childrens)
-                {
-                    if (child is GoProgress pg)
-                        pg.Value = Value;
-                }
-            }
-            */
-            base.OnUpdate();
+            Childrens.Add(prgs);
+            Childrens.Add(sldh);
+            Childrens.Add(sldv);
+            Childrens.Add(rsldh);
+            Childrens.Add(rsldv);
+
+            sldv.ValueChanged += (o, s) => prgs.Value = sldv.Value;
         }
         #endregion
     }

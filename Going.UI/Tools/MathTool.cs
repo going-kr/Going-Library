@@ -101,13 +101,6 @@ namespace Going.UI.Tools
         }
 
 
-        /// <summary>
-        /// 제한값 구하기
-        /// </summary>
-        /// <param name="val">현재값</param>
-        /// <param name="min">최소값</param>
-        /// <param name="max">최대값</param>
-        /// <returns>제한값</returns>
         public static double Constrain(double val, double min, double max)
         {
             double ret = val;

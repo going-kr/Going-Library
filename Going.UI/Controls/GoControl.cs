@@ -14,14 +14,6 @@ namespace Going.UI.Controls
 {
     public class GoControl : IGoControl
     {
-        /// <summary>
-        /// Selectable은 컨트롤이 선택될 수 있는지 여부를 나타냅니다.
-        /// 예를 들어,
-        /// 드래그를 할 수 있는 것들을 선택할 수 없게 하기 위해 사용됩니다.
-        /// Selectable은 이미 선택되었을 때 다른 이벤트를 발생시키지 않습니다.
-        /// Drawn은 컨트롤 안에 특정 컨트롤을 추가로 조금 그릴 때 사용됩니다.
-        /// Areas는 컨트롤의 영역을 정의하는 객체입니다.
-        /// </summary>
         #region Properties
         public static int LongClickTime { get; set; } = 2000;
         
