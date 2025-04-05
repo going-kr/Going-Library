@@ -11,7 +11,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Going.UI.Tools;
 using System.Diagnostics.Eventing.Reader;
-using Windows.ApplicationModel.Activation;
 using Going.UI.ImageCanvas;
 
 namespace Going.UI.Forms.ImageCanvas

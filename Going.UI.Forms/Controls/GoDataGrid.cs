@@ -18,7 +18,6 @@ using System.Threading.Tasks;
 using Going.UI.Extensions;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Header;
 using Going.UI.Tools;
-using Windows.AI.MachineLearning;
 
 namespace Going.UI.Forms.Controls
 {
