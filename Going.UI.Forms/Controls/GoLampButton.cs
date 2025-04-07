@@ -10,7 +10,7 @@ namespace Going.UI.Forms.Controls
     public class GoLampButton : GoWrapperControl<Going.UI.Controls.GoLampButton>
     {
         #region Properties
-        public override string Text { get => Control.Text; set { if (Control.Text != value) { Control.Text = value; Invalidate(); } } }
+        public override string Text { get => base.Text; set { base.Text = value; if (Control.Text != value) { Control.Text = value; Invalidate(); } } }
         public string FontName { get => Control.FontName; set { if (Control.FontName != value) { Control.FontName = value; Invalidate(); } } }
         public GoFontStyle FontStyle { get => Control.FontStyle; set { if (Control.FontStyle != value) { Control.FontStyle = value; Invalidate(); } } }
         public float FontSize { get => Control.FontSize; set { if (Control.FontSize != value) { Control.FontSize = value; Invalidate(); } } }
@@ -35,6 +35,7 @@ namespace Going.UI.Forms.Controls
         public GoLampButton()
         {
             SetStyle(ControlStyles.Selectable, true);
+            Control.Text = base.Text;
         }
         #endregion
     }

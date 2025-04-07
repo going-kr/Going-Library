@@ -16,7 +16,7 @@ namespace Going.UI.Forms.Controls
         #endregion
 
         #region 슬라이더 라벨 설정
-        public string Text { get => Control.Text; set { if (Control.Text != value) { Control.Text = value; Invalidate(); } } }
+        public override string Text { get => base.Text; set { base.Text = value; if (Control.Text != value) { Control.Text = value; Invalidate(); } } }
         public string FontName { get => Control.FontName; set { if (Control.FontName != value) { Control.FontName = value; Invalidate(); } } }
         public float FontSize { get => Control.FontSize; set { if (Control.FontSize != value) { Control.FontSize = value; Invalidate(); } } }
         #endregion
@@ -72,6 +72,7 @@ namespace Going.UI.Forms.Controls
         #region Constructor
         public GoSlider()
         {
+            Control.Text = base.Text;
             SetStyle(ControlStyles.Selectable, true);
         }
         #endregion

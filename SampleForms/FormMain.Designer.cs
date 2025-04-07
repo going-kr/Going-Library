@@ -42,8 +42,9 @@
             tpTrend = new TabPage();
             grpTrend = new Going.UI.Forms.Controls.GoTrendGraph();
             tabPage1 = new TabPage();
-            goProgress1 = new Going.UI.Forms.Controls.GoProgress();
+            goButton1 = new Going.UI.Forms.Controls.GoButton();
             trackBar1 = new TrackBar();
+            goProgress1 = new Going.UI.Forms.Controls.GoProgress();
             goTabControl1.SuspendLayout();
             tpBar.SuspendLayout();
             tpLine.SuspendLayout();
@@ -261,6 +262,7 @@
             // tabPage1
             // 
             tabPage1.BackColor = Color.FromArgb(60, 60, 60);
+            tabPage1.Controls.Add(goButton1);
             tabPage1.Controls.Add(trackBar1);
             tabPage1.Controls.Add(goProgress1);
             tabPage1.Location = new Point(4, 44);
@@ -269,6 +271,39 @@
             tabPage1.Size = new Size(965, 597);
             tabPage1.TabIndex = 5;
             tabPage1.Text = "tabPage1";
+            // 
+            // goButton1
+            // 
+            goButton1.BackColor = Color.FromArgb(50, 50, 50);
+            goButton1.BackgroundColor = "Back";
+            goButton1.BackgroundDraw = true;
+            goButton1.BorderOnly = false;
+            goButton1.ButtonColor = "Base3";
+            goButton1.FontName = "나눔고딕";
+            goButton1.FontSize = 12F;
+            goButton1.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
+            goButton1.IconDirection = Going.UI.Enums.GoDirectionHV.Horizon;
+            goButton1.IconGap = 5F;
+            goButton1.IconSize = 12F;
+            goButton1.IconString = "fa-check";
+            goButton1.Location = new Point(434, 189);
+            goButton1.Name = "goButton1";
+            goButton1.Round = Going.UI.Enums.GoRoundType.All;
+            goButton1.Size = new Size(163, 39);
+            goButton1.TabIndex = 2;
+            goButton1.TabStop = false;
+            goButton1.TextColor = "Fore";
+            // 
+            // trackBar1
+            // 
+            trackBar1.LargeChange = 50;
+            trackBar1.Location = new Point(32, 102);
+            trackBar1.Maximum = 100;
+            trackBar1.Name = "trackBar1";
+            trackBar1.Size = new Size(325, 45);
+            trackBar1.SmallChange = 5;
+            trackBar1.TabIndex = 1;
+            trackBar1.TickStyle = TickStyle.None;
             // 
             // goProgress1
             // 
@@ -295,17 +330,6 @@
             goProgress1.TextColor = "Fore";
             goProgress1.Value = 0D;
             goProgress1.ValueFontSize = 14F;
-            // 
-            // trackBar1
-            // 
-            trackBar1.LargeChange = 50;
-            trackBar1.Location = new Point(32, 102);
-            trackBar1.Maximum = 100;
-            trackBar1.Name = "trackBar1";
-            trackBar1.Size = new Size(325, 45);
-            trackBar1.SmallChange = 5;
-            trackBar1.TabIndex = 1;
-            trackBar1.TickStyle = TickStyle.None;
             // 
             // FormMain
             // 
@@ -345,5 +369,6 @@
         private TabPage tabPage1;
         private Going.UI.Forms.Controls.GoProgress goProgress1;
         private TrackBar trackBar1;
+        private Going.UI.Forms.Controls.GoButton goButton1;
     }
 }

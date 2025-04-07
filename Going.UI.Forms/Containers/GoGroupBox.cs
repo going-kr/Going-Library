@@ -21,7 +21,7 @@ namespace Going.UI.Forms.Containers
         public float IconGap { get => control.IconGap; set { if (control.IconGap != value) { control.IconGap = value; Invalidate(); } } }
 
         [Editor(typeof(MultilineStringEditor), typeof(UITypeEditor))]
-        public override string Text { get => control.Text; set { if (control.Text != value) { control.Text = value; Invalidate(); } } }
+        public override string Text { get => base.Text; set { base.Text = value; if (control.Text != value) { control.Text = value; Invalidate(); } } }
         public string FontName { get => control.FontName; set { if (control.FontName != value) { control.FontName = value; Invalidate(); } } }
         public GoFontStyle FontStyle { get => control.FontStyle; set { if (control.FontStyle != value) { control.FontStyle = value; Invalidate(); } } }
         public float FontSize { get => control.FontSize; set { if (control.FontSize != value) { control.FontSize = value; Invalidate(); } } }
@@ -42,6 +42,13 @@ namespace Going.UI.Forms.Containers
 
         #region Member Variable
         Going.UI.Containers.GoGroupBox control = new Going.UI.Containers.GoGroupBox();
+        #endregion
+
+        #region Constructor
+        public GoGroupBox()
+        {
+            control.Text = base.Text;
+        }
         #endregion
 
         #region Override

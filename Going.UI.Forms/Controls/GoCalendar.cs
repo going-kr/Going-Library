@@ -11,7 +11,7 @@ namespace Going.UI.Forms.Controls
     public class GoCalendar : GoWrapperControl<Going.UI.Controls.GoCalendar>
     {
         #region Properties
-        public override string Text { get => Control.Text; set { if (Control.Text != value) { Control.Text = value; Invalidate(); } } }
+        public override string Text { get => base.Text; set { base.Text = value; if (Control.Text != value) { Control.Text = value; Invalidate(); } } }
         public string FontName { get => Control.FontName; set { if (Control.FontName != value) { Control.FontName = value; Invalidate(); } } }
         public GoFontStyle FontStyle { get => Control.FontStyle; set { if (Control.FontStyle != value) { Control.FontStyle = value; Invalidate(); } } }
         public float FontSize { get => Control.FontSize; set { if (Control.FontSize != value) { Control.FontSize = value; Invalidate(); } } }
@@ -28,6 +28,14 @@ namespace Going.UI.Forms.Controls
         public bool MultiSelect { get => Control.MultiSelect; set { if (Control.MultiSelect != value) { Control.MultiSelect = value; Invalidate(); } } }
         public bool NoneSelect { get => Control.NoneSelect; set { if (Control.NoneSelect != value) { Control.NoneSelect = value; Invalidate(); } } }
         public List<DateTime> SelectedDays => Control.SelectedDays;
+        #endregion
+
+        #region Constructor
+        public GoCalendar()
+        {
+            SetStyle(ControlStyles.Selectable, true);
+            Control.Text = base.Text;
+        }
         #endregion
     }
 }
