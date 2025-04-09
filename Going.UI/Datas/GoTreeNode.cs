@@ -50,10 +50,16 @@ namespace Going.UI.Datas
             get => sBounds;
             set
             {
+                bool chk = false;
                 if (sBounds != value)
                 {
                     sBounds = value;
-
+                    chk = true;
+                }
+                
+                chk |= Nodes.Any(x => x.Bounds.Height == 0);
+                if (chk)
+                {
                     var th = TreeView?.ItemHeight ?? 30;
                     var y = Bounds.Top + th;
                     foreach (var item in Nodes)

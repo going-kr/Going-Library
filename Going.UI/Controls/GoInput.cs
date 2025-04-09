@@ -605,7 +605,7 @@ namespace Going.UI.Controls
         {
             var rtValue = Areas()["Value"];
 
-            if (CollisionTool.Check(rtValue, x, y))
+            if (CollisionTool.Check(rtValue, x, y) && Items.Count > 0)
             {
                 var args = new GoCancelableEventArgs(); // OpenTK는 윈도우 1개, WinForm은 윈도우 여러개(컨트롤 개수만큼) 그래서 이벤트를 취소할 수 있게 해야함
                 DropDownOpening?.Invoke(this, args);

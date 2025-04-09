@@ -109,8 +109,9 @@ namespace SampleForms
                 }
             });
 
-            trackBar1.ValueChanged += (o, s) => goProgress1.Value = trackBar1.Value;
 
+            goInputCombo1.Items.Add(new GoListItem { Text = "Item1" });
+            goInputCombo1.Items.Add(new GoListItem { Text = "Item2" });
         }
     }
 

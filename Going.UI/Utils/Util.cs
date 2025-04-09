@@ -315,6 +315,50 @@ namespace Going.UI.Utils
             }
         }
 
+        public static void DrawIcon(SKCanvas canvas, string? iconString, float iconSize, SKRect bounds, SKColor color, SKColor colorborder, int borderSize, GoContentAlignment align = GoContentAlignment.MiddleCenter)
+        {
+            var fi = iconString != null ? GoIconManager.GetIcon(iconString) : null;
+
+            if (fi != null && iconSize > 0)
+            {
+                using var p = new SKPaint { IsAntialias = true };
+                using var font = new SKFont(fi.FontFamily, iconSize);
+
+                var lineHeight = font.Spacing;
+                float totalTextHeight = lineHeight;
+
+                float startY = bounds.Top;
+                if (align == GoContentAlignment.MiddleLeft || align == GoContentAlignment.MiddleCenter || align == GoContentAlignment.MiddleRight) startY = bounds.MidY - totalTextHeight / 2F;
+                else if (align == GoContentAlignment.BottomLeft || align == GoContentAlignment.BottomCenter || align == GoContentAlignment.BottomRight) startY = bounds.Bottom - totalTextHeight;
+
+                float y = startY - font.Metrics.Ascent;
+#if MeasureA
+                float textWidth = font.MeasureText(fi.IconText);
+#else
+                font.MeasureText(fi.IconText, out var vszrt); var textWidth = vszrt.Width;
+#endif
+
+                float x = bounds.Left;
+                if (align == GoContentAlignment.TopCenter || align == GoContentAlignment.MiddleCenter || align == GoContentAlignment.BottomCenter) x = bounds.MidX - textWidth / 2;
+                else if (align == GoContentAlignment.TopRight || align == GoContentAlignment.MiddleRight || align == GoContentAlignment.BottomRight) x = bounds.Right - textWidth;
+
+                if (colorborder != SKColors.Transparent)
+                {
+                    p.IsStroke = true;
+                    p.StrokeWidth = borderSize;
+                    p.Color = colorborder;
+                    canvas.DrawText(fi.IconText, x, y, font, p);
+                }
+
+                if (color != SKColors.Transparent)
+                {
+                    p.IsStroke = false;
+                    p.Color = color;
+                    canvas.DrawText(fi.IconText, x, y, font, p);
+                }
+            }
+        }
+
         public static SKPath? GetIconPath(string? iconString, float iconSize, float rotate, SKRect bounds)
         {
             SKPath? ret = null;

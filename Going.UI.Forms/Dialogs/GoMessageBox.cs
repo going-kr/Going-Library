@@ -24,6 +24,9 @@ namespace Going.UI.Forms.Dialogs
         public string NoText { get => btnNo.Text; set => btnNo.Text = value; }
         public string OkText { get => btnOK.Text; set => btnOK.Text = value; }
         public string CancelText { get => btnCancel.Text; set => btnCancel.Text = value; }
+
+        public int? MinimumWidth { get; set; }
+        public int? MinimumHeight { get; set; }
         #endregion
 
         #region Member Variable
@@ -102,8 +105,8 @@ namespace Going.UI.Forms.Dialogs
             lbl.Text = message;
 
             var sz = Util.MeasureText(message, lbl.FontName, lbl.FontStyle, lbl.FontSize);
-            var w = Math.Max(180, sz.Width + 80);
-            var h = Math.Max(120, sz.Height + 50 + 40 + 40);
+            var w = Math.Max(MinimumWidth ?? 180, sz.Width + 80);
+            var h = Math.Max(MinimumHeight ?? 120, sz.Height + 50 + 40 + 40);
 
             return (Convert.ToInt32(w), Convert.ToInt32(h));
         }

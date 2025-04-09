@@ -41,6 +41,9 @@ namespace Going.UI.Design
         public Dictionary<string, GoPage> Pages { get; private set; } = [];
 
         [JsonInclude]
+        public Dictionary<string, GoWindow> Windows { get; private set; } = [];
+
+        [JsonInclude]
         private Dictionary<string, List<SKBitmap>> Images { get; } = [];
 
         [JsonInclude]
@@ -128,6 +131,12 @@ namespace Going.UI.Design
         #endregion
 
         #region Window
+        public void ShowWindow(string name)
+        {
+            if (Windows.TryGetValue(name, out var wnd))
+                ShowWindow(wnd);
+        }
+
         public void ShowWindow(GoWindow wnd)
         {
             wnd.Design = this;

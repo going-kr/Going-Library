@@ -51,6 +51,9 @@ namespace Going.UI.Forms.Dialogs
         {
             InitializeComponent();
 
+            this.Width = Convert.ToInt32(minw);
+            this.Height = Convert.ToInt32(minh);
+
             TitleIconString = "fa-pen-to-square";
             TitleIconSize = 18;
 
@@ -70,7 +73,7 @@ namespace Going.UI.Forms.Dialogs
             {
                 bounds.Offset(tpnl.Left + tpnl2.Left + c.Left, tpnl.Top + tpnl2.Top + c.Top);
                 if (tpnl2.Childrens.Contains(c) && c is GoInputString vc)
-                    FormsInputManager.Current.InputString(this, c, bounds, FontName, FontStyle, FontSize, vc.ValueColor, TextColor, callback, spkey, value);
+                    FormsInputManager.Current.InputString(this, c, bounds, FontName, FontStyle, FontSize, vc.ValueColor, TextColor, (v) => { callback(v); Invalidate(); }, spkey, value);
             };
 
             GoInputEventer.Current.InputNumber += (c, bounds, callback, type, value, min, max) =>
@@ -152,7 +155,7 @@ namespace Going.UI.Forms.Dialogs
 
         #region Method
         #region Show[Class]
-        public T? Showinputbox<T>(string title, int columnCount = 1, T? value = null, Dictionary<string, InputBoxInfo>? infos = null) where T : class
+        public T? ShowInputBox<T>(string title, int columnCount = 1, T? value = null, Dictionary<string, InputBoxInfo>? infos = null) where T : class
         {
             T? ret = null;
             this.Text = title;

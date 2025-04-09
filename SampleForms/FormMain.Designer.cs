@@ -42,9 +42,7 @@
             tpTrend = new TabPage();
             grpTrend = new Going.UI.Forms.Controls.GoTrendGraph();
             tabPage1 = new TabPage();
-            goButton1 = new Going.UI.Forms.Controls.GoButton();
-            trackBar1 = new TrackBar();
-            goProgress1 = new Going.UI.Forms.Controls.GoProgress();
+            goInputCombo1 = new Going.UI.Forms.Controls.GoInputCombo();
             goTabControl1.SuspendLayout();
             tpBar.SuspendLayout();
             tpLine.SuspendLayout();
@@ -52,7 +50,6 @@
             tpTime.SuspendLayout();
             tpTrend.SuspendLayout();
             tabPage1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)trackBar1).BeginInit();
             SuspendLayout();
             // 
             // rm
@@ -262,9 +259,7 @@
             // tabPage1
             // 
             tabPage1.BackColor = Color.FromArgb(60, 60, 60);
-            tabPage1.Controls.Add(goButton1);
-            tabPage1.Controls.Add(trackBar1);
-            tabPage1.Controls.Add(goProgress1);
+            tabPage1.Controls.Add(goInputCombo1);
             tabPage1.Location = new Point(4, 44);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
@@ -272,64 +267,34 @@
             tabPage1.TabIndex = 5;
             tabPage1.Text = "tabPage1";
             // 
-            // goButton1
+            // goInputCombo1
             // 
-            goButton1.BackColor = Color.FromArgb(50, 50, 50);
-            goButton1.BackgroundColor = "Back";
-            goButton1.BackgroundDraw = true;
-            goButton1.BorderOnly = false;
-            goButton1.ButtonColor = "Base3";
-            goButton1.FontName = "나눔고딕";
-            goButton1.FontSize = 12F;
-            goButton1.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
-            goButton1.IconDirection = Going.UI.Enums.GoDirectionHV.Horizon;
-            goButton1.IconGap = 5F;
-            goButton1.IconSize = 12F;
-            goButton1.IconString = "fa-check";
-            goButton1.Location = new Point(434, 189);
-            goButton1.Name = "goButton1";
-            goButton1.Round = Going.UI.Enums.GoRoundType.All;
-            goButton1.Size = new Size(163, 39);
-            goButton1.TabIndex = 2;
-            goButton1.TabStop = false;
-            goButton1.TextColor = "Fore";
-            // 
-            // trackBar1
-            // 
-            trackBar1.LargeChange = 50;
-            trackBar1.Location = new Point(32, 102);
-            trackBar1.Maximum = 100;
-            trackBar1.Name = "trackBar1";
-            trackBar1.Size = new Size(325, 45);
-            trackBar1.SmallChange = 5;
-            trackBar1.TabIndex = 1;
-            trackBar1.TickStyle = TickStyle.None;
-            // 
-            // goProgress1
-            // 
-            goProgress1.BackColor = Color.FromArgb(60, 60, 60);
-            goProgress1.BackgroundColor = "base2";
-            goProgress1.BorderColor = "Transparent";
-            goProgress1.CornerRadius = 5;
-            goProgress1.Direction = Going.UI.Controls.ProgressDirection.LeftToRight;
-            goProgress1.EmptyColor = "Base1";
-            goProgress1.FillColor = "Good";
-            goProgress1.FontName = "나눔고딕";
-            goProgress1.FontSize = 18F;
-            goProgress1.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
-            goProgress1.Format = "0";
-            goProgress1.Gap = 5;
-            goProgress1.Location = new Point(32, 38);
-            goProgress1.Maximum = 100D;
-            goProgress1.Minimum = 0D;
-            goProgress1.Name = "goProgress1";
-            goProgress1.Size = new Size(325, 31);
-            goProgress1.TabIndex = 0;
-            goProgress1.TabStop = false;
-            goProgress1.Text = "goProgress1";
-            goProgress1.TextColor = "Fore";
-            goProgress1.Value = 0D;
-            goProgress1.ValueFontSize = 14F;
+            goInputCombo1.BackColor = Color.FromArgb(50, 50, 50);
+            goInputCombo1.BackgroundColor = "Back";
+            goInputCombo1.BorderColor = "Base3";
+            goInputCombo1.ButtonSize = null;
+            goInputCombo1.Direction = Going.UI.Enums.GoDirectionHV.Horizon;
+            goInputCombo1.FillColor = "Base3";
+            goInputCombo1.FontName = "나눔고딕";
+            goInputCombo1.FontSize = 12F;
+            goInputCombo1.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
+            goInputCombo1.IconGap = 5F;
+            goInputCombo1.IconSize = 12F;
+            goInputCombo1.IconString = null;
+            goInputCombo1.ItemHeight = 30;
+            goInputCombo1.Location = new Point(135, 110);
+            goInputCombo1.MaximumViewCount = 8;
+            goInputCombo1.Name = "goInputCombo1";
+            goInputCombo1.Round = Going.UI.Enums.GoRoundType.All;
+            goInputCombo1.SelectedIndex = -1;
+            goInputCombo1.Size = new Size(393, 39);
+            goInputCombo1.TabIndex = 0;
+            goInputCombo1.TabStop = false;
+            goInputCombo1.Text = "goInputCombo1";
+            goInputCombo1.TextColor = "Fore";
+            goInputCombo1.Title = null;
+            goInputCombo1.TitleSize = 100F;
+            goInputCombo1.ValueColor = "Base1";
             // 
             // FormMain
             // 
@@ -348,8 +313,6 @@
             tpTime.ResumeLayout(false);
             tpTrend.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
-            tabPage1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)trackBar1).EndInit();
             ResumeLayout(false);
         }
 
@@ -367,8 +330,6 @@
         private Going.UI.Forms.Controls.GoTimeGraph grpTime;
         private Going.UI.Forms.Controls.GoTrendGraph grpTrend;
         private TabPage tabPage1;
-        private Going.UI.Forms.Controls.GoProgress goProgress1;
-        private TrackBar trackBar1;
-        private Going.UI.Forms.Controls.GoButton goButton1;
+        private Going.UI.Forms.Controls.GoInputCombo goInputCombo1;
     }
 }

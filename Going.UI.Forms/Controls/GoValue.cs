@@ -45,6 +45,7 @@ namespace Going.UI.Forms.Controls
 
         #region Event
         public event EventHandler ValueClicked { add => Control.ValueClicked += value; remove => Control.ValueClicked -= value; }
+        public event EventHandler<ButtonClickEventArgs>? ButtonClicked { add => Control.ButtonClicked += value; remove => Control.ButtonClicked -= value; }
         #endregion
 
         #region Constructor
@@ -90,6 +91,8 @@ namespace Going.UI.Forms.Controls
 
         #region Event
         public event EventHandler ValueClicked { add => Control.ValueClicked += value; remove => Control.ValueClicked -= value; }
+        public event EventHandler<ButtonClickEventArgs>? ButtonClicked { add => Control.ButtonClicked += value; remove => Control.ButtonClicked -= value; }
+
         #endregion
 
         #region Constructor
@@ -131,10 +134,16 @@ namespace Going.UI.Forms.Controls
         public float? ButtonSize { get => Control.ButtonSize; set { if (Control.ButtonSize != value) { Control.ButtonSize = value; Invalidate(); } } }
 
         public bool Value { get => Control.Value; set { if (Control.Value != value) { Control.Value = value; Invalidate(); } } }
+
+        public string? OnText { get => Control.OnText; set { if (Control.OnText != value) { Control.OnText = value; Invalidate(); } } }
+        public string? OffText { get => Control.OffText; set { if (Control.OffText != value) { Control.OffText = value; Invalidate(); } } }
+        public string? OnIconString { get => Control.OnIconString; set { if (Control.OnIconString != value) { Control.OnIconString = value; Invalidate(); } } }
+        public string? OffIconString { get => Control.OffIconString; set { if (Control.OffIconString != value) { Control.OffIconString = value; Invalidate(); } } }
         #endregion
 
         #region Event
         public event EventHandler ValueClicked { add => Control.ValueClicked += value; remove => Control.ValueClicked -= value; }
+        public event EventHandler<ButtonClickEventArgs>? ButtonClicked { add => Control.ButtonClicked += value; remove => Control.ButtonClicked -= value; }
         #endregion
 
         #region Constructor

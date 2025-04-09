@@ -154,6 +154,12 @@ namespace Going.UI.Forms.Controls
         public float? ButtonSize { get => Control.ButtonSize; set { if (Control.ButtonSize != value) { Control.ButtonSize = value; Invalidate(); } } }
 
         public bool Value { get => Control.Value; set { if (Control.Value != value) { Control.Value = value; Invalidate(); } } }
+
+        public string? OnText { get => Control.OnText; set { if (Control.OnText != value) { Control.OnText = value; Invalidate(); } } }
+        public string? OffText { get => Control.OffText; set { if (Control.OffText != value) { Control.OffText = value; Invalidate(); } } }
+        public string? OnIconString { get => Control.OnIconString; set { if (Control.OnIconString != value) { Control.OnIconString = value; Invalidate(); } } }
+        public string? OffIconString { get => Control.OffIconString; set { if (Control.OffIconString != value) { Control.OffIconString = value; Invalidate(); } } }
+
         #endregion
 
         #region Event
@@ -319,7 +325,7 @@ namespace Going.UI.Forms.Controls
             int n = Items.Count;
             Point pt = PointToScreen(new Point(Convert.ToInt32(rtValue.Left), Convert.ToInt32(rtValue.Bottom)));
             if (MaximumViewCount != -1) n = Items.Count > MaximumViewCount ? MaximumViewCount : Items.Count;
-            Size inflatedDropSize = new Size(this.Width, n * ItemHeight + 2);
+            Size inflatedDropSize = new Size(Convert.ToInt32(rtValue.Width), n * ItemHeight + 2);
             Rectangle screenBounds = new Rectangle(pt, inflatedDropSize);
             Rectangle workingArea = Screen.GetWorkingArea(screenBounds);
 

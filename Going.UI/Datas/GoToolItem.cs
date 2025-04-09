@@ -132,10 +132,16 @@ namespace Going.UI.Datas
             get => sBounds; 
             set
             {
+                bool chk = false;
                 if (sBounds != value)
                 {
                     sBounds = value;
+                    chk = true;
+                }
 
+                chk |= Items.Any(x => x.Bounds.Height == 0);
+                if (chk)
+                {
                     var ih = ToolBox?.ItemHeight ?? 30;
                     var y = Bounds.Top + ih;
                     foreach (var item in Items)

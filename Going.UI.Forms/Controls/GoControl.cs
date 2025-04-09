@@ -69,8 +69,10 @@ namespace Going.UI.Forms.Controls
 
             using var p = new SKPaint { IsAntialias = true, Color = SKColors.Black.WithAlpha(Convert.ToByte(Enabled ? 255 : 255 - GoTheme.DisableAlpha)) };
             var sp = canvas.SaveLayer(p);
-            
-            OnContentDraw(new ContentDrawEventArgs(canvas));
+
+            var args = new ContentDrawEventArgs(canvas);
+            OnContentDraw(args);
+            ContentDraw?.Invoke(this, args);
 
             canvas.RestoreToCount(sp);
 

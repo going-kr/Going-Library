@@ -271,8 +271,9 @@ namespace Going.UI.Controls
             rtBox.Offset(0, -Convert.ToSingle(scroll.ScrollPositionWithOffset));       // 시작 인덱스(1000만개가 있다고 해도, 30개만 보여주면 되니까, 속도도 빠름)
             var (si, ei) = Util.FindRect(Items.Select(x => x.Bounds).ToList(), rtBox); // 끝 인덱스
 
-            for (int i = si; i <= ei; i++)
-                loop(i, Items[i]);
+            if (si >= 0 && si < Items.Count && ei >= 0 && ei < Items.Count)
+                for (int i = si; i <= ei; i++)
+                    loop(i, Items[i]);
         }
         #endregion
 

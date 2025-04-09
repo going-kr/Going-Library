@@ -395,6 +395,20 @@ namespace Going.UI.Controls
             return ret;
         }
         #endregion
+
+        #region GetTreeNode
+        public GoTreeNode? GetTreeNode(int x, int y)
+        {
+            var rts = Areas();
+
+            GoTreeNode? sel = null;
+            itemLoop((i, category) =>
+            {
+                category.MouseDown(x, y - rts["Box"].Top - Convert.ToSingle(scroll.ScrollPositionWithOffset), GoMouseButton.Left, (v) => sel ??= v);
+            });
+            return sel;
+        }
+        #endregion
         #endregion
     }
 }

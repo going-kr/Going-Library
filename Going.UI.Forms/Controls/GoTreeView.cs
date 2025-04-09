@@ -55,5 +55,9 @@ namespace Going.UI.Forms.Controls
             SetStyle(ControlStyles.Selectable, true);
         }
         #endregion
+
+        #region Method
+        public GoTreeNode? GetTreeNode(int x, int y) => Control.GetTreeNode(x, y);
+        #endregion
     }
 }
