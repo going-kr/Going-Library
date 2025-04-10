@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -68,6 +69,20 @@ namespace Going.UIEditor.Windows
                             cmsMenu.Items.Add(tsmiExplorerRename);
                         }
                     }
+                }
+            };
+            #endregion
+            #region tvExplorer.ItemDoubleClicked
+            tvExplorer.ItemDoubleClicked += (o, s) =>
+            {
+                var itm = tvExplorer.SelectedNodes.FirstOrDefault();
+
+                if (itm != null)
+                {
+                    var p = Program.CurrentProject;
+                    if (itm.Text == Master) Program.MainForm.ShowEditorWindow(p.Design);
+                    else if (itm.Tag is GoPage page) Program.MainForm.ShowEditorWindow(page);
+                    else if (itm.Tag is GoWindow wnd) Program.MainForm.ShowEditorWindow(wnd);
                 }
             };
             #endregion
@@ -180,7 +195,7 @@ namespace Going.UIEditor.Windows
                                 if (!p.Design.Pages.ContainsKey(ret))
                                 {
                                     var ls = p.Design.Pages.Values.ToList();
-                                    p.Name = ret;
+                                    v.Name = ret;
                                     p.Design.Pages.Clear();
                                     foreach (var i in ls) p.Design.Pages.Add(i.Name!, i);
 

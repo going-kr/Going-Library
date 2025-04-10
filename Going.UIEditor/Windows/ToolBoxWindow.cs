@@ -52,6 +52,10 @@ namespace Going.UIEditor.Windows
                 s += string.Concat(lsContainers.Select(x => (x.IsGenericType ? x.Name.Split('`').FirstOrDefault() + "<T>" : x.Name) + "\r\n"));
             }
             #endregion
+
+            #region Evenrt
+            toolBox.DragStart += (o, s) => DoDragDrop(s.Item, DragDropEffects.All);
+            #endregion
         }
         #endregion
 

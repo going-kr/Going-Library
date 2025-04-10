@@ -20,6 +20,7 @@ namespace Going.UIEditor
         ExplorerWindow? explorer;
         ToolBoxWindow? toolBox;
         PropertiesWindow? properties;
+        List<EditorWindow> editors = [];
         bool bDownSaveAs = false;
         Timer tmr;
         #endregion
@@ -28,9 +29,10 @@ namespace Going.UIEditor
         public FormMain()
         {
             InitializeComponent();
-
+            dockPanel.DockLeftPortion = dockPanel.DockRightPortion = 0.175;
             #region new
             dockPanel.Theme = new xTheme();
+            dockPanel.ShowDocumentIcon = true;
             tmr = new Timer { Interval = 10, Enabled = true };
             #endregion
             #region event
@@ -47,14 +49,53 @@ namespace Going.UIEditor
             };
             #endregion
 
+            #region Menu
+            #region File
             tsmiNew.Click += (o, s) => NewFile();
             tsmiOpen.Click += (o, s) => OpenFile();
             tsmiSave.Click += (o, s) => SaveFile();
             tsmiSaveAs.Click += (o, s) => SaveAsFile();
-            tsmiProgramSetting.Click += (o, s) => ProgramSetting();
             tsmiClose.Click += (o, s) => CloseFile();
             tsmiExit.Click += (o, s) => Close();
+            #endregion
+            #region View
+            tsmiExplorer.Click += (o, s) =>
+            {
+                if ((explorer?.IsDisposed ?? false) && !explorer.Visible)
+                {
+                    explorer = new ExplorerWindow { Title = LM.Explorer };
+                    explorer.FormClosed += (o, s) => { explorer.Dispose(); explorer = null; };
+                    explorer.Show(dockPanel, DockState.Float);
+                }
+                else explorer?.Focus();
+            };
 
+            tsmiToolBox.Click += (o, s) =>
+            {
+                if ((toolBox?.IsDisposed ?? false) && !toolBox.Visible)
+                {
+                    toolBox = new ToolBoxWindow { Title = LM.ToolBox };
+                    toolBox.FormClosed += (o, s) => { toolBox.Dispose(); toolBox = null; };
+                    toolBox.Show(dockPanel, DockState.Float);
+                }
+                else explorer?.Focus();
+            };
+
+            tsmiProperties.Click += (o, s) =>
+            {
+                if ((properties?.IsDisposed ?? false) && !properties.Visible)
+                {
+                    properties = new  PropertiesWindow { Title = LM.Properties };
+                    properties.FormClosed += (o, s) => { properties.Dispose(); properties = null; };
+                    properties.Show(dockPanel, DockState.Float);
+                }
+                else explorer?.Focus();
+            };
+            #endregion
+            tsmiProgramSetting.Click += (o, s) => ProgramSetting();
+            #endregion
+
+            #region ToolBar
             btnNew.ButtonClicked += (o, s) => NewFile();
             btnOpen.ButtonClicked += (o, s) => OpenFile();
             btnSave.ButtonClicked += (o, s) => SaveFile();
@@ -79,14 +120,19 @@ namespace Going.UIEditor
                         }
                 }
             };
+            #endregion
 
+            #region Language
             Program.DataMgr.LanguageChanged += (o, s) => SetLang();
+            #endregion
+            #region Timer
             tmr.Tick += (o, s) =>
             {
                 var p = Program.CurrentProject;
                 this.Title = $"Going UI Editor{(p != null ? $" - {p.Name}{(p.Edit || p.FilePath == null ? "*" : "")}" : "")}";
                 valPath.Value = Util2.EllipsisPath(p?.ProjectFolder ?? "", valPath.FontName, valPath.FontStyle, valPath.FontSize, valPath.Width - (valPath.TitleSize ?? 0) - (valPath.ButtonSize ?? 0) - 20);
             };
+            #endregion
             #endregion
 
             SetUI();
@@ -132,6 +178,10 @@ namespace Going.UIEditor
                 toolBox = new ToolBoxWindow { Title = LM.ToolBox };
                 properties = new PropertiesWindow { Title = LM.Properties };
 
+                explorer.FormClosed += (o, s) => { explorer.Dispose(); explorer = null; };
+                toolBox.FormClosed += (o, s) => { toolBox.Dispose(); toolBox = null; };
+                properties.FormClosed += (o, s) => { properties.Dispose(); properties = null; };
+
                 explorer.Show(dockPanel, DockState.DockLeft);
                 toolBox.Show(explorer.Pane, DockAlignment.Bottom, 0.7);
                 properties.Show(dockPanel, DockState.DockRight);
@@ -159,10 +209,11 @@ namespace Going.UIEditor
                 explorer?.Close();
                 toolBox?.Close();
                 properties?.Close();
-
-                explorer?.Dispose();
-                toolBox?.Dispose();
-                properties?.Dispose();
+                
+                var ls = editors.ToList();
+                editors.Clear();
+                foreach (var w in ls) w.Close();
+               
             }
         }
         #endregion
@@ -289,6 +340,25 @@ namespace Going.UIEditor
             }
 
             return ret;
+        }
+        #endregion
+
+        #region ShowEditorWindow
+        public void ShowEditorWindow(object? editorTarget)
+        {
+            if (editorTarget != null)
+            {
+                var o = editors.FirstOrDefault(x => x.Target == editorTarget);
+                if (o == null)
+                {
+                    var wnd = new EditorWindow(editorTarget);
+                    wnd.FormClosed += (o, s) => { if (o is EditorWindow w && editors.Contains(w)) editors.Remove(w); };
+                    editors.Add(wnd);
+
+                    wnd.Show(dockPanel, DockState.Document);
+                }
+                else o.Activate();
+            }
         }
         #endregion
 

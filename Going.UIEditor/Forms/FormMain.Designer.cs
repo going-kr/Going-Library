@@ -49,6 +49,7 @@
             tsmiSave = new ToolStripMenuItem();
             tsmiSaveAs = new ToolStripMenuItem();
             tsmiClose = new ToolStripMenuItem();
+            toolStripSeparator2 = new ToolStripSeparator();
             tsmiExit = new ToolStripMenuItem();
             tsmiEdit = new ToolStripMenuItem();
             tsmiUndo = new ToolStripMenuItem();
@@ -74,7 +75,6 @@
             tsmiProgramSetting = new ToolStripMenuItem();
             tsmiHelp = new ToolStripMenuItem();
             tsmiProgramInfo = new ToolStripMenuItem();
-            toolStripSeparator2 = new ToolStripSeparator();
             pnlTool.SuspendLayout();
             goTableLayoutPanel1.SuspendLayout();
             pnlStatus.SuspendLayout();
@@ -90,7 +90,7 @@
             pnlTool.Location = new Point(0, 24);
             pnlTool.Name = "pnlTool";
             pnlTool.Padding = new Padding(5);
-            pnlTool.Size = new Size(1264, 50);
+            pnlTool.Size = new Size(1424, 50);
             pnlTool.TabIndex = 0;
             pnlTool.TabStop = false;
             pnlTool.Text = "goContainer1";
@@ -122,7 +122,7 @@
             goTableLayoutPanel1.Name = "goTableLayoutPanel1";
             goTableLayoutPanel1.RowCount = 1;
             goTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            goTableLayoutPanel1.Size = new Size(1254, 40);
+            goTableLayoutPanel1.Size = new Size(1414, 40);
             goTableLayoutPanel1.TabIndex = 1;
             // 
             // btnDeploy
@@ -140,7 +140,7 @@
             btnDeploy.IconGap = 5F;
             btnDeploy.IconSize = 20F;
             btnDeploy.IconString = "fa-download";
-            btnDeploy.Location = new Point(1217, 3);
+            btnDeploy.Location = new Point(1377, 3);
             btnDeploy.Name = "btnDeploy";
             btnDeploy.Round = UI.Enums.GoRoundType.All;
             btnDeploy.Size = new Size(34, 34);
@@ -260,7 +260,7 @@
             valPath.IconGap = 5F;
             valPath.IconSize = 12F;
             valPath.IconString = null;
-            valPath.Location = new Point(817, 3);
+            valPath.Location = new Point(977, 3);
             valPath.Name = "valPath";
             valPath.Round = UI.Enums.GoRoundType.All;
             valPath.Size = new Size(394, 34);
@@ -284,7 +284,7 @@
             pnlStatus.Location = new Point(0, 711);
             pnlStatus.Name = "pnlStatus";
             pnlStatus.Padding = new Padding(8);
-            pnlStatus.Size = new Size(1264, 50);
+            pnlStatus.Size = new Size(1424, 50);
             pnlStatus.TabIndex = 1;
             pnlStatus.TabStop = false;
             pnlStatus.Text = "goContainer2";
@@ -356,10 +356,14 @@
             // 
             dockPanel.Dock = DockStyle.Fill;
             dockPanel.DockBackColor = Color.FromArgb(45, 45, 48);
+            dockPanel.DockBottomPortion = 0.2D;
+            dockPanel.DockLeftPortion = 0.2D;
+            dockPanel.DockRightPortion = 0.2D;
+            dockPanel.DockTopPortion = 0.2D;
             dockPanel.Location = new Point(0, 74);
             dockPanel.Name = "dockPanel";
             dockPanel.ShowAutoHideContentOnHover = false;
-            dockPanel.Size = new Size(1264, 637);
+            dockPanel.Size = new Size(1424, 637);
             dockPanel.TabIndex = 2;
             // 
             // goMenuStrip1
@@ -369,7 +373,7 @@
             goMenuStrip1.Items.AddRange(new ToolStripItem[] { tsmiFile, tsmiEdit, tsmiView, tsmiProj, tsmiTool, tsmiHelp });
             goMenuStrip1.Location = new Point(0, 0);
             goMenuStrip1.Name = "goMenuStrip1";
-            goMenuStrip1.Size = new Size(1264, 24);
+            goMenuStrip1.Size = new Size(1424, 24);
             goMenuStrip1.TabIndex = 3;
             goMenuStrip1.Text = "goMenuStrip1";
             // 
@@ -419,6 +423,11 @@
             tsmiClose.Name = "tsmiClose";
             tsmiClose.Size = new Size(185, 22);
             tsmiClose.Text = "닫기(&C)";
+            // 
+            // toolStripSeparator2
+            // 
+            toolStripSeparator2.Name = "toolStripSeparator2";
+            toolStripSeparator2.Size = new Size(182, 6);
             // 
             // tsmiExit
             // 
@@ -606,21 +615,16 @@
             tsmiProgramInfo.Size = new Size(154, 22);
             tsmiProgramInfo.Text = "프로그램 정보(&I)";
             // 
-            // toolStripSeparator2
-            // 
-            toolStripSeparator2.Name = "toolStripSeparator2";
-            toolStripSeparator2.Size = new Size(182, 6);
-            // 
             // FormMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1264, 761);
+            ClientSize = new Size(1424, 761);
             Controls.Add(dockPanel);
             Controls.Add(pnlStatus);
             Controls.Add(pnlTool);
             Controls.Add(goMenuStrip1);
-            MinimumSize = new Size(1280, 800);
+            MinimumSize = new Size(1440, 800);
             Name = "FormMain";
             Text = "Going.UIEditor";
             Title = "Going.UIEditor";

@@ -151,6 +151,30 @@ namespace Going.UI.Forms.Dialogs
             Invalidate();
             base.OnMouseLeave(e);
         }
+
+        protected override void OnShown(EventArgs e)
+        {
+            Task.Run(async () =>
+            {
+                try
+                {
+                    await Task.Delay(100);
+                    var c = tpnl2.Childrens.FirstOrDefault();
+                    if (c is GoInputString || c is GoInputInteger || c is GoInputFloat)
+                    {
+                        Invoke(() =>
+                        {
+                            c?.FireMouseDown(0, 0, GoMouseButton.Left);
+                            c?.FireMouseMove(0, 0);
+                            c?.FireMouseUp(0, 0, GoMouseButton.Left);
+                        });
+                    }
+                }
+                catch { }
+               
+            });
+            base.OnShown(e);
+        }
         #endregion
 
         #region Method
@@ -534,7 +558,7 @@ namespace Going.UI.Forms.Dialogs
             tpnl2.Childrens.Clear();
             tpnl2.Childrens.Add(new GoInputString { Fill = true, Value = value ?? "" }, 0, 0);
 
-            if(this.ShowDialog() == DialogResult.OK)
+            if (this.ShowDialog() == DialogResult.OK)
             {
                 ret = tpnl2.Childrens[0] is GoInputString c ? c.Value : null;
             }
@@ -731,6 +755,10 @@ namespace Going.UI.Forms.Dialogs
         #region SpecialKey
         void spkey(Keys key, Keys modifier)
         {
+            if(key == Keys.Enter && tpnl2.Childrens.Count () == 1)
+            {
+                DialogResult = DialogResult.OK;
+            }
         }
         #endregion
         #endregion

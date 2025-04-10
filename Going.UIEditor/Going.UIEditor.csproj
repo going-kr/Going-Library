@@ -12,6 +12,7 @@
   <ItemGroup>
     <PackageReference Include="DockPanelSuite" Version="3.1.1" />
     <PackageReference Include="DockPanelSuite.ThemeVS2015" Version="3.1.1" />
+    <PackageReference Include="GuiLabs.Undo" Version="1.0.2" />
   </ItemGroup>
 
   <ItemGroup>

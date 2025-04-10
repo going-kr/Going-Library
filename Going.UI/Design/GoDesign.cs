@@ -191,6 +191,12 @@ namespace Going.UI.Design
                 GUI.Init(this, page);
             }
 
+            foreach(var wnd in Windows.Values)
+            {
+                wnd.Design = this;
+                GUI.Init(this, wnd);
+            }
+
             TitleBar.FireInit(this);
             LeftSideBar.FireInit(this);
             RightSideBar.FireInit(this);
