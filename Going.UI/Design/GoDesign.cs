@@ -12,6 +12,7 @@ using Going.UI.Utils;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Formats.Tar;
 using System.IO;
 using System.Linq;
@@ -656,15 +657,46 @@ namespace Going.UI.Design
 
             if (container != null)
             {
-                if (container is IGoControl vc) ret.Add(vc);
-                foreach (var c in container.Childrens)
-                    if (CollisionTool.Check(c.Bounds, x, y))
-                    {
-                        if (c is IGoContainer con)
-                            ret.AddRange(ControlStack(con, x - c.Left - con.PanelBounds.Left, y - c.Top - con.PanelBounds.Top));
-                        else
-                            ret.Add(c);
-                    }
+                if (container is IGoControl vc && CollisionTool.Check(Util.FromRect(0, 0, vc.Width, vc.Height), x, y))
+                {
+                    ret.Add(vc);
+                    foreach (var c in container.Childrens)
+                        if (CollisionTool.Check(c.Bounds, x, y))
+                        {
+                            if (c is IGoContainer con)
+                                ret.AddRange(ControlStack(con, x - c.Left - con.PanelBounds.Left + con.ViewPosition.X,
+                                                               y - c.Top - con.PanelBounds.Top + con.ViewPosition.Y));
+                            else
+                                ret.Add(c);
+                        }
+                }
+            }
+
+            return ret;
+        }
+
+        public List<IGoControl> ControlStack(IGoContainer container, SKRect rt)
+        {
+            List<IGoControl> ret = [];
+
+            if (container != null)
+            {
+                if (container is IGoControl vc && CollisionTool.Check(Util.FromRect(0, 0, vc.Width, vc.Height), rt))
+                {
+                    ret.Add(vc);
+                    foreach (var c in container.Childrens)
+                        if (CollisionTool.Check(c.Bounds, rt))
+                        {
+                            if (c is IGoContainer con)
+                            {
+                                var vrt = rt;
+                                vrt.Offset(-c.Left - con.PanelBounds.Left + con.ViewPosition.X, -c.Top - con.PanelBounds.Top + con.ViewPosition.Y);
+                                ret.AddRange(ControlStack(con, vrt));
+                            }
+                            else
+                                ret.Add(c);
+                        }
+                }
             }
 
             return ret;
@@ -706,6 +738,98 @@ namespace Going.UI.Design
 
             return ret;
         }
+        #endregion
+
+        #region DesignTime
+        #region DesignTimeDraw
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public void DesignTimeDraw(SKCanvas canvas, GoPage? page = null)
+        {
+            #region bounds
+            var (rtL, rtT, rtR, rtB, rtF, rtFR) = bounds();
+            LeftSideBar.Bounds = rtL;
+            TitleBar.Bounds = rtT;
+            RightSideBar.Bounds = rtR;
+            Footer.Bounds = rtB;
+            if (page != null) page.Bounds = rtFR;
+            #endregion
+
+            #region Background
+            if (UseTitleBar || UseLeftSideBar || UseRightSideBar || UseFooter)
+            {
+                var thm = GoTheme.Current;
+                canvas.Clear(thm.ToColor(BarColor));
+
+                var vrt = Util.Int(Util.FromRect(rtF.Left, rtF.Top, rtF.Width - 1, rtF.Height - 1)); vrt.Offset(0.5F, 0.5F);
+                var rtP = roundPage(vrt);
+                Util.DrawBox(canvas, rtP, thm.Back, thm.Back);
+            }
+            #endregion
+
+            #region page
+            if (page != null)
+            {
+                using (new SKAutoCanvasRestore(canvas))
+                {
+                    canvas.ClipRect(rtF);
+                    canvas.Translate(page.Bounds.Left, page.Bounds.Top);
+                    page.FireDraw(canvas);
+                }
+            }
+            #endregion
+
+            #region TitleBar
+            if (UseTitleBar)
+            {
+                using (new SKAutoCanvasRestore(canvas))
+                {
+                    canvas.ClipRect(TitleBar.Bounds);
+                    canvas.Translate(TitleBar.Bounds.Left, TitleBar.Bounds.Top);
+                    TitleBar.FireDraw(canvas);
+                }
+            }
+            #endregion
+            #region LeftSideBar
+            if (UseLeftSideBar)
+            {
+                using (new SKAutoCanvasRestore(canvas))
+                {
+                    canvas.ClipRect(LeftSideBar.Bounds);
+                    canvas.Translate(LeftSideBar.Bounds.Left, LeftSideBar.Bounds.Top);
+                    LeftSideBar.FireDraw(canvas);
+                }
+            }
+            #endregion
+            #region RightSideBar
+            if (UseRightSideBar)
+            {
+                using (new SKAutoCanvasRestore(canvas))
+                {
+                    canvas.ClipRect(RightSideBar.Bounds);
+                    canvas.Translate(RightSideBar.Bounds.Left, RightSideBar.Bounds.Top);
+                    RightSideBar.FireDraw(canvas);
+                }
+            }
+            #endregion
+            #region Footer
+            if (UseFooter)
+            {
+                using (new SKAutoCanvasRestore(canvas))
+                {
+                    canvas.ClipRect(Footer.Bounds);
+                    canvas.Translate(Footer.Bounds.Left, Footer.Bounds.Top);
+                    Footer.FireDraw(canvas);
+                }
+            }
+            #endregion
+        }
+        #endregion
+
+        #region DesignTimeBounds
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public (SKRect rtL, SKRect rtT, SKRect rtR, SKRect rtB, SKRect rtF, SKRect rtFR) DesignTimeBounds() => bounds();
+        #endregion
+
         #endregion
         #endregion
     }
