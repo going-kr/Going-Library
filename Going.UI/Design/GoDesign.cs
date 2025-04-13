@@ -178,10 +178,6 @@ namespace Going.UI.Design
         }
         #endregion
 
-        /// <summary>
-        /// 윈도우에서 발생하는 일반적인 기능들을 이쪽으로 bypass
-        /// CurrentPage를 봐서 현 페이지에 전달하는 기능을 함
-        /// </summary>
         #region Fire
         #region Init
         public void Init()
