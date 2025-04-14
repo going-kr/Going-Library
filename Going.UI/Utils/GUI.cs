@@ -25,20 +25,20 @@ namespace Going.UI.Utils
         {
             foreach (var c in container.Childrens)
             {
+                if ((c.FirstRender || c.Parent != container) && c is GoControl c2)
+                    c2.Parent = container;
+
                 if (CollisionTool.Check(Util.FromRect(container.ViewPosition.X, container.ViewPosition.Y, container.PanelBounds.Width, container.PanelBounds.Height), c.Bounds))
                 {
-                    if (c.FirstRender && c is GoControl c2)
-                        c2.Parent = container;
-
                     using (new SKAutoCanvasRestore(canvas))
                     {
                         canvas.ClipRect(c.Bounds);
                         canvas.Translate(c.Left, c.Top);
                         c.FireDraw(canvas);
                     }
-
-                    if (c.FirstRender && c is GoControl c3) c3.FirstRender = false;
                 }
+
+                if (c.FirstRender && c is GoControl c3) c3.FirstRender = false;
             }
         }
 

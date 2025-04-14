@@ -92,7 +92,6 @@ namespace Going.UI.Forms.Controls
         #region Event
         public event EventHandler ValueClicked { add => Control.ValueClicked += value; remove => Control.ValueClicked -= value; }
         public event EventHandler<ButtonClickEventArgs>? ButtonClicked { add => Control.ButtonClicked += value; remove => Control.ButtonClicked -= value; }
-
         #endregion
 
         #region Constructor
@@ -104,7 +103,7 @@ namespace Going.UI.Forms.Controls
     }
 
     public class GoValueInteger : GoValueNumber<int> { }
-    public class GoValueFloat : GoValueNumber<double> { }
+    public class GoValueDouble : GoValueNumber<double> { }
 
     public class GoValueBoolean : GoWrapperControl<Going.UI.Controls.GoValueBoolean>
     {

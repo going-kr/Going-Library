@@ -1,5 +1,6 @@
 ﻿using Going.UI.Controls;
 using Going.UI.Datas;
+using Going.UI.Themes;
 using Going.UI.Utils;
 using SkiaSharp;
 using System;
@@ -32,9 +33,34 @@ namespace Going.UI.Containers
         #endregion
 
         #region Override
+        protected override void OnDraw(SKCanvas canvas)
+        {
+            if(Design != null && Design.DesignMode)
+            {
+                var rt = Areas()["Content"];
+                var rts = Util.Grid(rt, Columns.ToArray(), Rows.ToArray());
+
+                using var pe = SKPathEffect.CreateDash([1, 2], 2);
+                using var p = new SKPaint { };
+
+                p.IsStroke = true;
+                p.StrokeWidth = 1;
+                p.Color = GoTheme.Current.Base3;
+                p.PathEffect = pe;
+                foreach(var v in rts)
+                {
+                    var vrt = v;
+                    vrt.Inflate(-0.5F, -0.5F);
+                    canvas.DrawRect(vrt, p);
+                }
+                p.PathEffect = null;
+            }
+
+            base.OnDraw(canvas);
+        }
+
         protected override void OnLayout()
         {
-            var b = Bounds;
             var rt = Areas()["Content"];
             var rts = Util.Grid(rt, Columns.ToArray(), Rows.ToArray());
             foreach (var c in Childrens)
@@ -45,8 +71,9 @@ namespace Going.UI.Containers
                     if (idx != null)
                     {
                         var vrt = Util.Merge(rts, idx.Column, idx.Row, idx.ColSpan, idx.RowSpan);
-                        if (c.Fill) c.Bounds = Util.Int(Util.FromRect(vrt, c.Margin));
-                        else c.Bounds = Util.Int(Util.FromRect(vrt.Left, vrt.Top, c.Bounds.Width, c.Bounds.Height));
+                        c.Bounds = Util.Int(Util.FromRect(vrt, c.Margin));
+                        //if (c.Fill) c.Bounds = Util.Int(Util.FromRect(vrt, c.Margin));
+                        //else c.Bounds = Util.Int(Util.FromRect(vrt.Left, vrt.Top, Math.Min(vrt.Width, c.Bounds.Width), Math.Min(vrt.Height, c.Bounds.Height)));
                     }
                 }
                 catch { }

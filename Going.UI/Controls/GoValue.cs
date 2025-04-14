@@ -339,10 +339,7 @@ namespace Going.UI.Controls
         }
         #endregion
     }
-
-    public class GoValueInteger : GoValueNumber<int> { }
-    public class GoValueFloat : GoValueNumber<double> { }
-
+     
     public class GoValueBoolean : GoValue
     {
         #region Properties

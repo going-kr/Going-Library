@@ -1,7 +1,9 @@
-﻿using Going.UI.Datas;
+﻿using Going.UI.Controls;
+using Going.UI.Datas;
 using Going.UI.Enums;
 using Going.UIEditor.Utils;
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -39,17 +41,30 @@ namespace Going.UIEditor.Windows
 
                 var types = asm.GetTypes();
                 var lsControls = types.Where(x => x.FullName?.StartsWith("Going.UI.Controls.") ?? false)
-                                      .Where(x => FindType(x, typeof(Going.UI.Controls.GoControl)) && !x.IsAbstract).ToList();
+                                      .Where(x => FindType(x, typeof(Going.UI.Controls.GoControl)) && !x.IsAbstract && !x.IsGenericType).ToList();
                 var lsContainers = types.Where(x => x.FullName?.StartsWith("Going.UI.Containers.") ?? false)
-                                        .Where(x => FindType(x, typeof(Going.UI.Containers.GoContainer)) && !x.IsAbstract).ToList();
+                                        .Where(x => FindType(x, typeof(Going.UI.Containers.GoContainer)) && !x.IsAbstract && !x.IsGenericType).ToList();
 
-                toolBox.Categories[0].Items.AddRange(lsControls.Select(x => new GoToolItem { Text = x.IsGenericType ? x.Name.Split('`').FirstOrDefault() + "<T>" : x.Name, Tag = x }));
-                toolBox.Categories[1].Items.AddRange(lsContainers.Select(x => new GoToolItem { Text = x.IsGenericType ? x.Name.Split('`').FirstOrDefault() + "<T>" : x.Name, Tag = x }));
 
-                var s = "";
-                s += string.Concat(lsControls.Select(x => (x.IsGenericType ? x.Name.Split('`').FirstOrDefault() + "<T>" : x.Name) + "\r\n"));
-                s += "\r\n";
-                s += string.Concat(lsContainers.Select(x => (x.IsGenericType ? x.Name.Split('`').FirstOrDefault() + "<T>" : x.Name) + "\r\n"));
+                int ii = lsControls.IndexOf(typeof(GoInputDateTime)) + 1;
+                lsControls.InsertRange(ii, 
+                    [typeof(GoInputNumber<byte>), typeof(GoInputNumber<ushort>), typeof(GoInputNumber<uint>), typeof(GoInputNumber<ulong>),
+                     typeof(GoInputNumber<sbyte>), typeof(GoInputNumber<short>), typeof(GoInputNumber<int>), typeof(GoInputNumber<long>),
+                     typeof(GoInputNumber<float>), typeof(GoInputNumber<double>), typeof(GoInputNumber<decimal>)]);
+
+
+                int iv = lsControls.IndexOf(typeof(GoValueBoolean)) + 1;
+                lsControls.InsertRange(iv,
+                    [typeof(GoValueNumber<byte>), typeof(GoValueNumber<ushort>), typeof(GoValueNumber<uint>), typeof(GoValueNumber<ulong>),
+                     typeof(GoValueNumber<sbyte>), typeof(GoValueNumber<short>), typeof(GoValueNumber<int>), typeof(GoValueNumber<long>),
+                     typeof(GoValueNumber<float>), typeof(GoValueNumber<double>), typeof(GoValueNumber<decimal>)]);
+
+                //lsControls.Sort((x, y) => x.FullName != null ? x.FullName.CompareTo(y.FullName) : 0);
+
+
+                toolBox.Categories[0].Items.AddRange(lsControls.Select(x => new GoToolItem { Text = x.IsGenericType ? x.Name.Split('`').FirstOrDefault() + $"<{NumberTypeName(x.GenericTypeArguments[0])}>" : x.Name, Tag = x }));
+                toolBox.Categories[1].Items.AddRange(lsContainers.Select(x => new GoToolItem { Text = x.IsGenericType ? x.Name.Split('`').FirstOrDefault() + $"<{NumberTypeName(x.GenericTypeArguments[0])}>" : x.Name, Tag = x }));
+
             }
             #endregion
 
@@ -66,6 +81,23 @@ namespace Going.UIEditor.Windows
             else if (v == typeof(object)) return false;
             else if (v != null) return FindType(v.BaseType, n);
             else return false;
+        }
+
+        string NumberTypeName(Type t)
+        {
+            var s = "";
+            if (t == typeof(byte)) s = "byte";
+            else if (t == typeof(ushort)) s = "ushort";
+            else if (t == typeof(uint)) s = "uint";
+            else if (t == typeof(ulong)) s = "ulong";
+            else if (t == typeof(sbyte)) s = "sbyte";
+            else if (t == typeof(short)) s = "short";
+            else if (t == typeof(int)) s = "int";
+            else if (t == typeof(long)) s = "long";
+            else if (t == typeof(float)) s = "float";
+            else if (t == typeof(double)) s = "double";
+            else if (t == typeof(decimal)) s = "decimal";
+            return s;
         }
         #endregion
     }

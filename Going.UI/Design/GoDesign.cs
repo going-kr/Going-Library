@@ -62,6 +62,8 @@ namespace Going.UI.Design
         [JsonInclude] public GoSideBar LeftSideBar { get; private set; } = new() { Visible = false };
         [JsonInclude] public GoSideBar RightSideBar { get; private set; } = new() { Visible = false };
         [JsonInclude] public GoFooter Footer { get; private set; } = new() { Visible = false };
+
+        [JsonIgnore, EditorBrowsable(EditorBrowsableState.Never)] public bool DesignMode { get; set; } = false;
         #endregion
 
         #region Member Variable
@@ -208,13 +210,60 @@ namespace Going.UI.Design
             // 화면은 다 띄워야해서 else 처리 안함
             // MouseEvent : DropDownWindow > Window > Page 순으로 처리
             #region Page
+            DrawPage(canvas, CurrentPage);
+            #endregion
+
+            #region Window
+            if (stkWindow.Count > 0)
+            {
+                var ls = stkWindow.Reverse().ToList();
+                var p = new SKPaint { IsAntialias = true };
+                p.IsStroke = false;
+                p.Color = Util.FromArgb(120, SKColors.Black);
+                canvas.DrawRect(Util.FromRect(0, 0, Width, Height), p);
+
+                foreach (var w in ls)
+                {
+                    using (new SKAutoCanvasRestore(canvas))
+                    {
+                        canvas.Translate(w.Bounds.Left, w.Bounds.Top);
+                        w.FireDraw(canvas);
+                    }
+                }
+            }
+            #endregion
+
+            #region DropDownWindow
+            if (dropdownWindow != null)
+            {
+                using (new SKAutoCanvasRestore(canvas))
+                {
+                    canvas.Translate(dropdownWindow.Bounds.Left, dropdownWindow.Bounds.Top);
+                    dropdownWindow.FireDraw(canvas);
+                }
+            }
+            #endregion
+
+            #region DragDrop
+            if (dragItem != null)
+            {
+                var rt = Util.FromRect(MousePosition.X - 12, MousePosition.Y - 12, 24, 24);
+                rt.Offset(5, 10);
+                Util.DrawIcon(canvas, "fa-hand-pointer", 24, rt, GoTheme.Current.Fore);
+            }
+            #endregion
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public void DrawPage(SKCanvas canvas, GoPage? page = null)
+        {
             #region bounds
             var (rtL, rtT, rtR, rtB, rtF, rtFR) = bounds();
             LeftSideBar.Bounds = rtL;
             TitleBar.Bounds = rtT;
             RightSideBar.Bounds = rtR;
             Footer.Bounds = rtB;
-            if (CurrentPage != null) CurrentPage.Bounds = rtFR;
+            if (page != null) page.Bounds = rtFR;
             #endregion
 
             #region Background
@@ -229,14 +278,14 @@ namespace Going.UI.Design
             }
             #endregion
 
-            #region CurrentPage
-            if (CurrentPage != null)
+            #region page
+            if (page != null)
             {
                 using (new SKAutoCanvasRestore(canvas))
                 {
                     canvas.ClipRect(rtF);
-                    canvas.Translate(CurrentPage.Bounds.Left, CurrentPage.Bounds.Top);
-                    CurrentPage.FireDraw(canvas);
+                    canvas.Translate(page.Bounds.Left, page.Bounds.Top);
+                    page.FireDraw(canvas);
                 }
             }
             #endregion
@@ -283,47 +332,6 @@ namespace Going.UI.Design
                     canvas.Translate(Footer.Bounds.Left, Footer.Bounds.Top);
                     Footer.FireDraw(canvas);
                 }
-            }
-            #endregion
-            #endregion
-
-            #region Window
-            if (stkWindow.Count > 0)
-            {
-                var ls = stkWindow.Reverse().ToList();
-                var p = new SKPaint { IsAntialias = true };
-                p.IsStroke = false;
-                p.Color = Util.FromArgb(120, SKColors.Black);
-                canvas.DrawRect(Util.FromRect(0, 0, Width, Height), p);
-
-                foreach (var w in ls)
-                {
-                    using (new SKAutoCanvasRestore(canvas))
-                    {
-                        canvas.Translate(w.Bounds.Left, w.Bounds.Top);
-                        w.FireDraw(canvas);
-                    }
-                }
-            }
-            #endregion
-
-            #region DropDownWindow
-            if (dropdownWindow != null)
-            {
-                using (new SKAutoCanvasRestore(canvas))
-                {
-                    canvas.Translate(dropdownWindow.Bounds.Left, dropdownWindow.Bounds.Top);
-                    dropdownWindow.FireDraw(canvas);
-                }
-            }
-            #endregion
-
-            #region DragDrop
-            if (dragItem != null)
-            {
-                var rt = Util.FromRect(MousePosition.X - 12, MousePosition.Y - 12, 24, 24);
-                rt.Offset(5, 10);
-                Util.DrawIcon(canvas, "fa-hand-pointer", 24, rt, GoTheme.Current.Fore);
             }
             #endregion
         }
@@ -653,15 +661,17 @@ namespace Going.UI.Design
 
             if (container != null)
             {
-                if (container is IGoControl vc && CollisionTool.Check(Util.FromRect(0, 0, vc.Width, vc.Height), x, y))
+                if (container is IGoControl vc) //&& CollisionTool.Check(Util.FromRect(0, 0, vc.Width, vc.Height), x, y))
                 {
                     ret.Add(vc);
                     foreach (var c in container.Childrens)
                         if (CollisionTool.Check(c.Bounds, x, y))
                         {
                             if (c is IGoContainer con)
+                            {
                                 ret.AddRange(ControlStack(con, x - c.Left - con.PanelBounds.Left + con.ViewPosition.X,
                                                                y - c.Top - con.PanelBounds.Top + con.ViewPosition.Y));
+                            }
                             else
                                 ret.Add(c);
                         }
@@ -736,96 +746,9 @@ namespace Going.UI.Design
         }
         #endregion
 
-        #region DesignTime
-        #region DesignTimeDraw
+        #region LayoutBounds
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public void DesignTimeDraw(SKCanvas canvas, GoPage? page = null)
-        {
-            #region bounds
-            var (rtL, rtT, rtR, rtB, rtF, rtFR) = bounds();
-            LeftSideBar.Bounds = rtL;
-            TitleBar.Bounds = rtT;
-            RightSideBar.Bounds = rtR;
-            Footer.Bounds = rtB;
-            if (page != null) page.Bounds = rtFR;
-            #endregion
-
-            #region Background
-            if (UseTitleBar || UseLeftSideBar || UseRightSideBar || UseFooter)
-            {
-                var thm = GoTheme.Current;
-                canvas.Clear(thm.ToColor(BarColor));
-
-                var vrt = Util.Int(Util.FromRect(rtF.Left, rtF.Top, rtF.Width - 1, rtF.Height - 1)); vrt.Offset(0.5F, 0.5F);
-                var rtP = roundPage(vrt);
-                Util.DrawBox(canvas, rtP, thm.Back, thm.Back);
-            }
-            #endregion
-
-            #region page
-            if (page != null)
-            {
-                using (new SKAutoCanvasRestore(canvas))
-                {
-                    canvas.ClipRect(rtF);
-                    canvas.Translate(page.Bounds.Left, page.Bounds.Top);
-                    page.FireDraw(canvas);
-                }
-            }
-            #endregion
-
-            #region TitleBar
-            if (UseTitleBar)
-            {
-                using (new SKAutoCanvasRestore(canvas))
-                {
-                    canvas.ClipRect(TitleBar.Bounds);
-                    canvas.Translate(TitleBar.Bounds.Left, TitleBar.Bounds.Top);
-                    TitleBar.FireDraw(canvas);
-                }
-            }
-            #endregion
-            #region LeftSideBar
-            if (UseLeftSideBar)
-            {
-                using (new SKAutoCanvasRestore(canvas))
-                {
-                    canvas.ClipRect(LeftSideBar.Bounds);
-                    canvas.Translate(LeftSideBar.Bounds.Left, LeftSideBar.Bounds.Top);
-                    LeftSideBar.FireDraw(canvas);
-                }
-            }
-            #endregion
-            #region RightSideBar
-            if (UseRightSideBar)
-            {
-                using (new SKAutoCanvasRestore(canvas))
-                {
-                    canvas.ClipRect(RightSideBar.Bounds);
-                    canvas.Translate(RightSideBar.Bounds.Left, RightSideBar.Bounds.Top);
-                    RightSideBar.FireDraw(canvas);
-                }
-            }
-            #endregion
-            #region Footer
-            if (UseFooter)
-            {
-                using (new SKAutoCanvasRestore(canvas))
-                {
-                    canvas.ClipRect(Footer.Bounds);
-                    canvas.Translate(Footer.Bounds.Left, Footer.Bounds.Top);
-                    Footer.FireDraw(canvas);
-                }
-            }
-            #endregion
-        }
-        #endregion
-
-        #region DesignTimeBounds
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public (SKRect rtL, SKRect rtT, SKRect rtR, SKRect rtB, SKRect rtF, SKRect rtFR) DesignTimeBounds() => bounds();
-        #endregion
-
+        public (SKRect rtL, SKRect rtT, SKRect rtR, SKRect rtB, SKRect rtF, SKRect rtFR) LayoutBounds() => bounds();
         #endregion
         #endregion
     }

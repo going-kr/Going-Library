@@ -109,9 +109,7 @@ namespace SampleForms
                 }
             });
 
-
-            goInputCombo1.Items.Add(new GoListItem { Text = "Item1" });
-            goInputCombo1.Items.Add(new GoListItem { Text = "Item2" });
+             
         }
     }
 

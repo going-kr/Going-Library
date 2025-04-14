@@ -160,7 +160,9 @@ namespace Going.UI.Forms.Dialogs
                 {
                     await Task.Delay(100);
                     var c = tpnl2.Childrens.FirstOrDefault();
-                    if (c is GoInputString || c is GoInputInteger || c is GoInputFloat)
+                    var tp = c.GetType();
+                    
+                    if (c is GoInputString || (tp.IsGenericType && tp.GetGenericTypeDefinition() == typeof(GoInputNumber<>)))
                     {
                         Invoke(() =>
                         {

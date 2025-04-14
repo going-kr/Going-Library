@@ -429,9 +429,6 @@ namespace Going.UI.Controls
         #endregion
     }
 
-    public class GoInputInteger : GoInputNumber<int> { }
-    public class GoInputFloat : GoInputNumber<double> { }
-
     public class GoInputBoolean : GoInput
     {
         #region Properties
