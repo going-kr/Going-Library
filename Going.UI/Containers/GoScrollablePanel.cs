@@ -80,56 +80,79 @@ namespace Going.UI.Containers
         #region Mouse
         protected override void OnMouseDown(float x, float y, GoMouseButton button)
         {
-            base.OnMouseDown(x + ViewPosition.X, y + ViewPosition.Y, button);
-
             var rts = Areas();
             var rtPanel = rts["Panel"];
             var rtScrollV = rts["ScrollV"];
             var rtScrollH = rts["ScrollH"];
 
-            if (Design?.SelectedControl == null)
+            if (!(Design?.DesignMode ?? false))
             {
-                #region Scroll
-                vscroll.MouseDown(x, y, rtScrollV);
-                if (vscroll.TouchMode && CollisionTool.Check(rtPanel, x, y)) vscroll.TouchDown(x, y);
+                base.OnMouseDown(x + ViewPosition.X, y + ViewPosition.Y, button);
 
+                if (Design?.SelectedControl == null)
+                {
+                    #region Scroll
+                    vscroll.MouseDown(x, y, rtScrollV);
+                    if (vscroll.TouchMode && CollisionTool.Check(rtPanel, x, y)) vscroll.TouchDown(x, y);
+
+                    hscroll.MouseDown(x, y, rtScrollH);
+                    if (hscroll.TouchMode && CollisionTool.Check(rtPanel, x, y)) hscroll.TouchDown(x, y);
+                    #endregion
+                }
+            }
+            else
+            {
+                vscroll.MouseDown(x, y, rtScrollV);
                 hscroll.MouseDown(x, y, rtScrollH);
-                if (hscroll.TouchMode && CollisionTool.Check(rtPanel, x, y)) hscroll.TouchDown(x, y);
-                #endregion
             }
         }
 
         protected override void OnMouseMove(float x, float y)
         {
-            base.OnMouseMove(x + ViewPosition.X, y + ViewPosition.Y);
-
             var rts = Areas();
             var rtPanel = rts["Panel"];
             var rtScrollV = rts["ScrollV"];
             var rtScrollH = rts["ScrollH"];
 
-            #region Scroll
-            vscroll.MouseMove(x, y, rtScrollV);
-            if (vscroll.TouchMode) vscroll.TouchMove(x, y);
+            if (!(Design?.DesignMode ?? false))
+            {
+                base.OnMouseMove(x + ViewPosition.X, y + ViewPosition.Y);
 
-            hscroll.MouseMove(x, y, rtScrollH);
-            if (hscroll.TouchMode) hscroll.TouchMove(x, y);
-            #endregion
+                #region Scroll
+                vscroll.MouseMove(x, y, rtScrollV);
+                if (vscroll.TouchMode) vscroll.TouchMove(x, y);
+
+                hscroll.MouseMove(x, y, rtScrollH);
+                if (hscroll.TouchMode) hscroll.TouchMove(x, y);
+                #endregion
+            }
+            else
+            {
+                vscroll.MouseMove(x, y, rtScrollV);
+                hscroll.MouseMove(x, y, rtScrollH);
+            }
         }
 
         protected override void OnMouseUp(float x, float y, GoMouseButton button)
         {
-            base.OnMouseUp(x + ViewPosition.X, y + ViewPosition.Y, button);
-
             var rts = Areas();
+            if (!(Design?.DesignMode ?? false))
+            {
+                base.OnMouseUp(x + ViewPosition.X, y + ViewPosition.Y, button);
 
-            #region Scroll
-            vscroll.MouseUp(x, y);
-            if (vscroll.TouchMode) vscroll.TouchUp(x, y);
+                #region Scroll
+                vscroll.MouseUp(x, y);
+                if (vscroll.TouchMode) vscroll.TouchUp(x, y);
 
-            hscroll.MouseUp(x, y);
-            if (hscroll.TouchMode) hscroll.TouchUp(x, y);
-            #endregion
+                hscroll.MouseUp(x, y);
+                if (hscroll.TouchMode) hscroll.TouchUp(x, y);
+                #endregion
+            }
+            else
+            {
+                vscroll.MouseUp(x, y);
+                hscroll.MouseUp(x, y);
+            }
         }
 
         protected override void OnMouseWheel(float x, float y, float delta)

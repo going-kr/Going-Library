@@ -20,6 +20,7 @@ using System.Runtime.ConstrainedExecution;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 using Cursor = System.Windows.Forms.Cursor;
 using GoControl = Going.UI.Controls.GoControl;
 using Keys = System.Windows.Forms.Keys;
@@ -48,6 +49,8 @@ namespace Going.UIEditor.Windows
         Anchor? dragAnchor;
 
         SKPoint? ptDown, ptMove;
+
+        GoScrollablePanel? downspnl;
         #endregion
 
         #region Constructor
@@ -149,25 +152,37 @@ namespace Going.UIEditor.Windows
                             #region drag anchor
                             if (ptDown.HasValue && ptMove.HasValue)
                             {
-                                var gx = ptMove.Value.X - ptDown.Value.X;
-                                var gy = ptMove.Value.Y - ptDown.Value.Y;
-
-                                foreach (var c in sels.Where(x => x.Parent == dragAnchor.Control.Parent || dragAnchor.Name != "move"))
+                                dragAnchorProc(dragAnchor, ptDown.Value, ptMove.Value,
+                                #region tpnl
+                                (vcon, vc, tidx) =>
                                 {
-                                    if (!isTopLevelContainer(c))
+                                    if (tidx != null && vcon is GoTableLayoutPanel tpnl)
                                     {
-                                        var nrt = calcbox(dragAnchor.Name, Util.FromRect(c.ScreenX, c.ScreenY, c.Width, c.Height), gx, gy);
-                                        var (vx, vy) = containerviewpos(c.Parent);
-                                        nrt.Offset(-vx, -vy);
+                                        var trt = Util.FromRect(tpnl.ScreenX, tpnl.ScreenY, tpnl.Width - 1, tpnl.Height - 1);
+                                        var rts = Util.Grid(trt, [.. tpnl.Columns], [.. tpnl.Rows]);
+                                        var vrt = Util.Merge(rts, tidx.Col, tidx.Row, tidx.Colspan, tidx.Rowspan);
 
                                         p.IsStroke = true;
                                         p.Color = SKColors.Red;
                                         p.StrokeWidth = 1;
                                         p.PathEffect = pe;
-                                        canvas.DrawRect(nrt, p);
+                                        canvas.DrawRect(vrt, p);
                                         p.PathEffect = null;
                                     }
+                                },
+                                #endregion
+                                #region Other
+                                (vcon, vc, srt, nrt) =>
+                                {
+                                    p.IsStroke = true;
+                                    p.Color = SKColors.Red;
+                                    p.StrokeWidth = 1;
+                                    p.PathEffect = pe;
+                                    canvas.DrawRect(srt, p);
+                                    p.PathEffect = null;
                                 }
+                                #endregion
+                                );
                             }
                             #endregion
                         }
@@ -271,6 +286,27 @@ namespace Going.UIEditor.Windows
                     Anchor? a = selanchor(x, y);
                     if (a != null) dragAnchor = a;
                     #endregion
+
+                    #region scroll
+                    if(a == null)
+                    {
+                        if (target_control(x, y) is GoScrollablePanel spnl)
+                        {
+                            var srts = spnl.Areas();
+                            var rtV = srts["ScrollV"];
+                            var rtH = srts["ScrollH"];
+
+                            var sx = x - spnl.ScreenX;
+                            var sy = y - spnl.ScreenY;
+                            if (CollisionTool.Check(rtV, sx, sy) || CollisionTool.Check(rtH, sx, sy))
+                            {
+                                ptDown = null;
+                                downspnl = spnl;
+                                downspnl.FireMouseDown(sx, sy, ToGoMouseButton(e.Button));
+                            }
+                        }
+                    }
+                    #endregion
                 }
             }
             base.OnMouseDown(e);
@@ -295,39 +331,19 @@ namespace Going.UIEditor.Windows
                     var cur = Cursors.Default;
                     if (dragAnchor != null)
                     {
-                        #region check target container 
-                        (IGoContainer con, int x, int y, Dictionary<IGoControl, SKPoint> gps)? target = null;
-                        if (dragAnchor.Name == "move")
+                        if (ptDown.HasValue && ptMove.HasValue)
                         {
-                            var (con, cx, cy) = target_container(x, y, dragAnchor.Control);
-                            if (con != null) target = (con, cx, cy, sels.ToDictionary(x => x, y => new SKPoint(dragAnchor.Control.ScreenX - y.ScreenX, dragAnchor.Control.ScreenY - y.ScreenY)));
+                            dragAnchorProc(dragAnchor, ptDown.Value, ptMove.Value,
+                            #region tpnl
+                            (vcon, vc, tidx) => {
+                                cur = tidx != null ? cursor(dragAnchor.Name) : Cursors.No;
+                            },
+                            #endregion
+                            #region Other    
+                            (vcon, vc, srt, nrt) => { cur = cursor(dragAnchor.Name); }
+                            #endregion
+                            );
                         }
-                        #endregion
-
-                        if (target.HasValue)
-                        {
-                            if (target.Value.con is GoTableLayoutPanel tpnl)
-                            {
-                                #region table layout
-                                cur = Cursors.No;
-
-                                if (sels.Count == 1)
-                                {
-                                    #region move
-                                    if (dragAnchor.Name == "move" && tableCollision(tpnl, target.Value.x, target.Value.y, dragAnchor.Control, out var tidx) && tidx.Control == null)
-                                        cur = cursor(dragAnchor.Name);
-                                    #endregion
-                                }
-                                #endregion
-                            }
-                            else
-                            {
-                                #region other
-                                cur = cursor(dragAnchor.Name);
-                                #endregion
-                            }
-                        }
-                        else cur = Cursors.No;
                     }
                     else
                     {
@@ -335,6 +351,13 @@ namespace Going.UIEditor.Windows
                         if (a != null) cur = cursor(a.Name);
                     }
                     Cursor = cur;
+                    #endregion
+
+                    #region scroll
+                    if (dragAnchor == null)
+                    {
+                        if (downspnl != null) downspnl.FireMouseMove(x - downspnl.ScreenX, y - downspnl.ScreenY);
+                    }
                     #endregion
                 }
             }
@@ -360,98 +383,55 @@ namespace Going.UIEditor.Windows
                         #region anchor drag
                         if (ptDown.HasValue && ptMove.HasValue)
                         {
-                            var gx = ptMove.Value.X - ptDown.Value.X;
-                            var gy = ptMove.Value.Y - ptDown.Value.Y;
-
-                            #region check target container 
-                            (IGoContainer con, int x, int y, Dictionary<IGoControl, SKPoint> gps)? target = null;
-                            if (dragAnchor.Name == "move")
+                            var pi = typeof(IGoControl).GetProperty("Bounds");
+                            if (pi != null)
                             {
-                                var (con, cx, cy) = target_container(x, y, dragAnchor.Control);
-                                if (con != null) target = (con, cx, cy, sels.ToDictionary(x => x, y => new SKPoint(dragAnchor.Control.ScreenX - y.ScreenX, dragAnchor.Control.ScreenY - y.ScreenY)));
-                            }
-                            #endregion
-
-                            if (target.HasValue)
-                            {
-                                if (target.Value.con is GoTableLayoutPanel tpnl)
+                                TransAction(() =>
                                 {
-                                    #region table layout
-                                    if (sels.Count == 1)
+                                    dragAnchorProc(dragAnchor, ptDown.Value, ptMove.Value,
+                                    #region tpnl
+                                    (vcon, vc, tidx) =>
                                     {
-                                        #region move
-                                        if (dragAnchor.Name == "move" && tableCollision(tpnl, target.Value.x, target.Value.y, dragAnchor.Control, out var tidx) && tidx.Control == null)
+                                        if(tidx != null && vcon is GoTableLayoutPanel tpnl)
                                         {
                                             DeleteControl(dragAnchor.Control);
                                             AddControl(tpnl, dragAnchor.Control, tidx.Col, tidx.Row, tidx.Colspan, tidx.Rowspan);
                                         }
-                                        #endregion
+                                    },
+                                    #endregion
+                                    #region Other
+                                    (vcon, vc, srt, nrt) =>
+                                    {
+                                        if (dragAnchor.Name == "move" && vc.Parent != vcon)
+                                        {
+                                            DeleteControl(vc);
+                                            AddControl(vcon, vc);
+                                            var ort = vc.Bounds;
+                                            EditObject(vc, pi, ort, nrt);
+                                        }
+                                        else
+                                        {
+                                            var ort = vc.Bounds;
+                                            EditObject(vc, pi, ort, nrt);
+                                        }
                                     }
                                     #endregion
-                                }
-                                else
-                                {
-                                    #region other
-                                    TransAction(() =>
-                                    {
-                                        var pi = typeof(IGoControl).GetProperty("Bounds");
-                                        if (pi != null)
-                                        {
-                                            foreach (var c in sels.Where(x => (x.Parent == dragAnchor.Control.Parent) || dragAnchor.Name != "move"))
-                                            {
-                                                if (!isTopLevelContainer(c))
-                                                {
-                                                    if (dragAnchor.Name == "move" && target.HasValue && c.Parent != target.Value.con)
-                                                    {
-                                                        #region parent 변경 시
-                                                        DeleteControl(c);
-                                                        AddControl(target.Value.con, c);
-                                                        var ort = c.Bounds;
-                                                        var nrt = Util.FromRect(target.Value.x - target.Value.gps[c].X - c.Width / 2, target.Value.y - target.Value.gps[c].Y - c.Height / 2, c.Width, c.Height);
-                                                        EditObject(c, pi, ort, nrt);
-                                                        #endregion
-                                                    }
-                                                    else
-                                                    {
-                                                        #region parent 동일 시
-                                                        var ort = c.Bounds;
-                                                        var nrt = calcbox(dragAnchor.Name, c.Bounds, gx, gy);
-                                                        EditObject(c, pi, ort, nrt);
-                                                        #endregion
-                                                    }
-                                                }
-                                            }
-
-                                            SelectedControl([.. sels], [.. sels]);
-                                        }
-                                    });
-                                    #endregion
-                                }
+                                    );
+                                });
                             }
                         }
                         #endregion
                     }
                     else
                     {
-                        #region control select
-                        var (con, cx, cy) = container(x, y);
-                        if (con != null && ptDown.HasValue)
+                        if (ptDown.HasValue)
                         {
                             #region search
                             List<IGoControl>? vsels = null;
                             if (Math.Abs(MathTool.GetDistance(new SKPoint(x, y), ptDown.Value)) > 3)
-                            {
-                                var pc = prj.Design.ControlStack(con, cx, cy).LastOrDefault();
-                                var drt = MathTool.MakeRectangle(new SKPoint(x, y), ptDown.Value);
-                                drt.Offset(cx - x, cy - y);
-                                vsels = prj.Design.ControlStack(con, drt).Where(x => x.Parent == pc).ToList();
-                            }
+                                vsels = target_control(ptDown.Value, new SKPoint(x, y));
                             else
-                            {
-                                var ls = prj.Design.ControlStack(con, cx, cy);
-                                var vsel = ls.LastOrDefault();
-                                if (vsel != null) vsels = [vsel];
-                            }
+                                vsels = target_control(x, y) is IGoControl c ? [c] : [];
                             #endregion
                             #region select
                             if (vsels != null)
@@ -476,11 +456,15 @@ namespace Going.UIEditor.Windows
                             }
                             #endregion
                         }
+
+                        #region scroll
+                        if (downspnl != null) downspnl.FireMouseUp(x - downspnl.ScreenX, y - downspnl.ScreenY, ToGoMouseButton(e.Button));
                         #endregion
                     }
                 }
 
                 #region release
+                downspnl = null;
                 dragAnchor = null;
                 ptDown = ptMove = null;
                 #endregion
@@ -504,17 +488,12 @@ namespace Going.UIEditor.Windows
                     #endregion
 
                     #region wheel
-                    var (con, cx, cy) = container(x, y);
-                    if (con != null)
+                    var vc = target_controlstick(x, y).LastOrDefault(x => x is GoScrollablePanel);
+                    if (vc is GoScrollablePanel sc)
                     {
-                        var ls = prj.Design.ControlStack(con, cx, cy);
-                        var vc = ls.LastOrDefault();
-                        if (vc is GoScrollablePanel sc)
-                        {
-                            var vx = x - sc.ScreenX;
-                            var vy = y - sc.ScreenY;
-                            sc.FireMouseWheel(vx, vy, delta);
-                        }
+                        var vx = x - sc.ScreenX;
+                        var vy = y - sc.ScreenY;
+                        sc.FireMouseWheel(vx, vy, delta);
                     }
                     #endregion
                 }
@@ -572,7 +551,7 @@ namespace Going.UIEditor.Windows
                     if (con != null)
                     {
                         if (con is GoTableLayoutPanel tpnl)
-                            ef = tableIndex(tpnl, cx, cy, out var idx) && idx.Control == null ? DragDropEffects.All : DragDropEffects.None;
+                            ef = tableIndex(tpnl, cx, cy, out var idx) ? DragDropEffects.All : DragDropEffects.None;
                         else
                             ef = DragDropEffects.All;
                     }
@@ -609,14 +588,14 @@ namespace Going.UIEditor.Windows
                             vc.Left = cx; vc.Top = cy; vc.Width = 80; vc.Height = 40;
                             if (vc is GoTableLayoutPanel tpnl)
                             {
-                                tpnl.Rows = ["50%", "50%"];
-                                tpnl.Columns = ["50%", "50%"];
+                                tpnl.Rows = ["20%", "20%", "20%", "20%", "20%"];
+                                tpnl.Columns = ["20%", "20%", "20%", "20%", "20%"];
                             }
                             #endregion
 
                             TransAction(() =>
                             {
-                                if (con is GoTableLayoutPanel tpnl && tableIndex(tpnl, cx, cy, out var tidx) && tidx.Control == null)
+                                if (con is GoTableLayoutPanel tpnl && tableIndex(tpnl, cx, cy, out var tidx))
                                 {
                                     AddControl(tpnl, vc, tidx.Col, tidx.Row, 1, 1);
                                     SelectedControl([.. sels], [vc]);
@@ -847,7 +826,6 @@ namespace Going.UIEditor.Windows
             else return (con, x, y);
         }
         #endregion
-
         #region containerpos
         (int x, int y) containerpos(IGoContainer con, float x, float y)
         {
@@ -857,7 +835,6 @@ namespace Going.UIEditor.Windows
             return (Convert.ToInt32(cx), Convert.ToInt32(cy));
         }
         #endregion
-
         #region containerviewpos
         (float x, float y) containerviewpos(IGoContainer? con)
         {
@@ -874,6 +851,87 @@ namespace Going.UIEditor.Windows
             }
 
             return (vx, vy);
+        }
+        #endregion
+
+        #region target_control
+        IGoControl? target_control(int x, int y)
+        {
+            IGoControl? ret = null;
+            var prj = Program.CurrentProject;
+            var (con, cx, cy) = container(x, y);
+            if (con != null && prj != null)
+            {
+                ret = prj.Design.ControlStack(con, cx, cy).LastOrDefault();
+            }
+            return ret;
+        }
+
+        List<IGoControl> target_control(SKPoint ptDown, SKPoint ptUp)
+        {
+            //int x = Convert.ToInt32(ptUp.X), y = Convert.ToInt32(ptUp.Y);
+            int x = Convert.ToInt32(ptDown.X), y = Convert.ToInt32(ptDown.Y);
+            List<IGoControl> ret = [];
+            var prj = Program.CurrentProject;
+            var (con, cx, cy) = target_container(x, y);
+            if (con != null && prj != null)
+            {
+                var drt = MathTool.MakeRectangle(ptUp, ptDown);
+                drt.Offset(cx - x, cy - y);
+
+                //var pc = prj.Design.ControlStack(con, cx, cy).LastOrDefault();
+                ret = prj.Design.ControlStack(con, drt).Where(x => x.Parent == con).ToList();
+            }
+            return ret;
+        }
+        #endregion
+        #region target_container
+        (IGoContainer? con, int cx, int cy) target_container(int x, int y, IGoControl? dragControl = null)
+        {
+            var prj = Program.CurrentProject;
+
+            var (con, cx, cy) = container(x, y);
+            if (con != null && prj != null)
+            {
+                if (dragControl != null)
+                {
+                    var cls = prj.Design.ControlStack(con, cx, cy);
+                    var idx = cls.IndexOf(dragControl);
+                    if (idx >= 0) cls = cls.GetRange(0, idx);
+                    //var pc = cls.LastOrDefault();
+                    var pc = cls.LastOrDefault(vv => vv is IGoContainer);
+                    if (pc is IGoContainer vcon)
+                    {
+                        con = vcon;
+                        (cx, cy) = containerpos(con, x, y);
+                    }
+                }
+                else
+                {
+                    //var pc = prj.Design.ControlStack(con, cx, cy).LastOrDefault();
+                    var pc = prj.Design.ControlStack(con, cx, cy).LastOrDefault(vv => vv is IGoContainer);
+                    if (pc is IGoContainer vcon)
+                    {
+                        con = vcon;
+                        (cx, cy) = containerpos(con, x, y);
+                    }
+                }
+            }
+
+            return (con, cx, cy);
+        }
+        #endregion
+        #region target_controlstack
+        List<IGoControl> target_controlstick(int x, int y)
+        {
+            List<IGoControl> ret = [];
+            var prj = Program.CurrentProject;
+            var (con, cx, cy) = container(x, y);
+            if (con != null && prj != null)
+            {
+                ret = prj.Design.ControlStack(con, cx, cy);
+            }
+            return ret;
         }
         #endregion
 
@@ -950,96 +1008,127 @@ namespace Going.UIEditor.Windows
         #region tableIndex
         bool tableIndex(GoTableLayoutPanel tpnl, int x, int y, out TableIndex idx)
         {
-            idx = new TableIndex { Col = -1, Row = -1, Colspan = 1, Rowspan = 1, Control = null };
+            idx = new TableIndex { Col = -1, Row = -1, Colspan = 1, Rowspan = 1 };
 
             var ret = false;
             var rt = tpnl.Areas()["Content"];
             var rts = Util.Grid(rt, [.. tpnl.Columns], [.. tpnl.Rows]);
             for (int ir = 0; ir < tpnl.Rows.Count; ir++)
                 for (int ic = 0; ic < tpnl.Columns.Count; ic++)
-                    if (CollisionTool.Check(rts[ir, ic], x, y))
+                    if (CollisionTool.Check(rts[ir, ic], x, y) && tpnl.Childrens[ic, ir] == null)
                     {
                         idx.Col = ic;
                         idx.Row = ir;
-                        idx.Control = tpnl.Childrens[ic, ir];
                         ret = true;
                     }
 
             return ret;
         }
-        
-        bool tableCollision(GoTableLayoutPanel tpnl, int x, int y, IGoControl c, out TableIndex idx)
+
+        bool tableIndex(GoTableLayoutPanel tpnl, SKPoint ptDown, SKPoint ptUp, Anchor anc, out List<TableIndex> idxs)
         {
-            idx = new TableIndex { Col = -1, Row = -1, Colspan = 1, Rowspan = 1, Control = null };
+            idxs = [];
 
-            var ri = tpnl.Childrens[c];
-            if (ri != null) { idx.Colspan = ri.ColSpan; idx.Rowspan = ri.RowSpan; }
+            var gx = ptUp.X - ptDown.X;
+            var gy = ptUp.Y - ptDown.Y;
+            var crt = calcbox(anc.Name, anc.Control.Bounds, gx, gy);
 
-            var ret = false;
             var rt = tpnl.Areas()["Content"];
             var rts = Util.Grid(rt, [.. tpnl.Columns], [.. tpnl.Rows]);
             for (int ir = 0; ir < tpnl.Rows.Count; ir++)
                 for (int ic = 0; ic < tpnl.Columns.Count; ic++)
-                    if (CollisionTool.Check(rts[ir, ic], x, y))
+                    if (CollisionTool.Check(rts[ir, ic], crt))
                     {
-                        var srt = Util.Merge(rts, ic, ir, idx.Colspan, idx.Rowspan); srt.Inflate(-1, -1);
-                        var vidx = tpnl.Childrens.Indexes.FirstOrDefault(ti =>
-                        {
-                            var drt = Util.Merge(rts, ti.Value.Column, ti.Value.Row, ti.Value.ColSpan, ti.Value.RowSpan);
-                            drt.Inflate(-1, -1);
-                            return CollisionTool.Check(drt, srt);
-                        }).Value;
-                        var vc = vidx != null && tpnl.Childrens[vidx.Column, vidx.Row] != c ? tpnl.Childrens[vidx.Column, vidx.Row] : null;
-
-                        idx.Col = ic;
-                        idx.Row = ir;
-                        idx.Control = vc;
-                        ret = vc == null;
+                        idxs.Add(new TableIndex { Col = ic, Row = ir });
                     }
 
-            return ret;
+            return idxs.Count > 0;
         }
         #endregion
 
-        #region target_container
-        (IGoContainer? con, int cx, int cy) target_container(int x, int y, IGoControl? dragControl = null)
+        #region dragAnchorProc
+        void dragAnchorProc(Anchor anc, SKPoint ptDown, SKPoint ptMove,
+            Action <IGoContainer, IGoControl, TableIndex?> tbl,
+            Action<IGoContainer, IGoControl, SKRect, SKRect> other)
         {
-            var prj = Program.CurrentProject;
-            var (con, cx, cy) = container(x, y);
-            if (con != null && prj != null)
+            var x = Convert.ToInt32(ptMove.X);
+            var y = Convert.ToInt32(ptMove.Y);
+            var c = anc.Control;
+            var (con, cx, cy) = target_container(x, y, c);
+
+            if (con is GoTableLayoutPanel tpnl)
             {
-                if (dragControl != null)
+                TableIndex? tidx = null;
+                #region tpnl
+                if (sels.Count == 1)
                 {
-                    var cls = prj.Design.ControlStack(con, cx, cy);
-                    var idx = cls.IndexOf(dragControl);
-                    if (idx >= 0) cls = cls.GetRange(0, idx);
-                    var pc = cls.LastOrDefault();
-                    if (pc is IGoContainer vcon)
+                    var rt = tpnl.Areas()["Content"];
+                    var rts = Util.Grid(rt, [.. tpnl.Columns], [.. tpnl.Rows]);
+
+                    var ri = tpnl.Childrens[c];
+
+                    if (anc.Name == "move")
                     {
-                        con = vcon;
-                        (cx, cy) = containerpos(con, x, y);
+                        if (tableIndex(tpnl, cx, cy, out var tidx2))
+                        {
+                            var l = tidx2.Col;
+                            var t = tidx2.Row;
+                            var r = ((ri?.ColSpan ?? tidx2.Colspan) - 1) + l;
+                            var b = ((ri?.RowSpan ?? tidx2.Rowspan) - 1) + t;
+                            if (l >= 0 && t >= 0 && r < tpnl.Columns.Count && b < tpnl.Rows.Count)
+                                tidx = new TableIndex { Col = tidx2.Col, Row = tidx2.Row, Colspan = ri?.ColSpan ?? tidx2.Colspan, Rowspan = ri?.RowSpan ?? tidx2.Rowspan };
+                        }
                     }
                     else
                     {
-                        con = null;
+                        if (tableIndex(tpnl, ptDown, ptMove, anc, out var tidxs) && !tidxs.Any(x => tpnl.Childrens[x.Col, x.Row] != null && tpnl.Childrens[x.Col, x.Row] != c))
+                        {
+                            var l = tidxs.Min(x => x.Col);
+                            var t = tidxs.Min(x => x.Row);
+                            var r = tidxs.Max(x => x.Col);
+                            var b = tidxs.Max(x => x.Row);
+
+                            if (l >= 0 && t >= 0 && r < tpnl.Columns.Count && b < tpnl.Rows.Count)
+                                tidx = new TableIndex { Col = l, Row = t, Colspan = r - l + 1, Rowspan = b - t + 1 };
+                        }
                     }
                 }
-                else
+                #endregion
+                tbl(con, c, tidx);
+            }
+            else if(con != null)
+            {
+                #region other
+                var gx = ptMove.X - ptDown.X;
+                var gy = ptMove.Y - ptDown.Y;
+
+                var gps = sels.ToDictionary(x => x, y => new SKPoint(anc.Control.ScreenX - y.ScreenX, anc.Control.ScreenY - y.ScreenY));
+                //nrt = Util.FromRect(cx - gps[c].X - c.Width / 2, cy - gps[c].Y - c.Height / 2, c.Width, c.Height);
+
+                foreach (var vc in sels.Where(x => x.Parent == anc.Control.Parent || anc.Name != "move"))
                 {
-                    var pc = prj.Design.ControlStack(con, cx, cy).LastOrDefault();
-                    if (pc is IGoContainer vcon)
+                    if (!isTopLevelContainer(vc))
                     {
-                        con = vcon;
-                        (cx, cy) = containerpos(con, x, y);
+                        var srt = calcbox(anc.Name, vc.Bounds, gx, gy);
+                        var (vx, vy) = containerviewpos(vc.Parent);
+                        srt.Offset(-vx, -vy);
+                        srt.Offset(vc.ScreenX - vc.Left, vc.ScreenY - vc.Top);
+
+                        var (tx, ty) = containerpos(con, srt.Left, srt.Top);
+                        var nrt = Util.FromRect(tx, ty, srt.Width, srt.Height);
+
+
+                        other(con, vc, srt, nrt);
                     }
                 }
+                #endregion
             }
 
-            return (con, cx, cy);
         }
         #endregion
         #endregion
         #endregion
+
     }
 
     #region EditAction
@@ -1195,7 +1284,6 @@ namespace Going.UIEditor.Windows
         public int Row { get; set; }
         public int Colspan { get; set; }
         public int Rowspan { get; set; }
-        public IGoControl? Control { get; set; }
     }
     #endregion
 

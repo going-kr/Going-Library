@@ -1,3 +1,4 @@
+using Going.UI.Controls;
 using Going.UI.Forms.Dialogs;
 using Going.UI.Themes;
 using Going.UI.Utils;
@@ -24,6 +25,7 @@ namespace Going.UIEditor
         [STAThread]
         static void Main()
         {
+ 
             ApplicationConfiguration.Initialize();
 
             GoTheme.Current.Select = GoTheme.Current.ToColor("#007acc");
