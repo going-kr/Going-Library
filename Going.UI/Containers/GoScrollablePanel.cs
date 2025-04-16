@@ -157,9 +157,12 @@ namespace Going.UI.Containers
 
         protected override void OnMouseWheel(float x, float y, float delta)
         {
-            base.OnMouseWheel(x + ViewPosition.X, y + ViewPosition.Y, delta);
+            if (CollisionTool.Check(Areas()["Content"], x, y))
+            {
+                base.OnMouseWheel(x + ViewPosition.X, y + ViewPosition.Y, delta);
 
-            vscroll.MouseWheel(x, y, delta);
+                vscroll.MouseWheel(x, y, delta);
+            }
         }
 
         protected override void OnMouseClick(float x, float y, GoMouseButton button)

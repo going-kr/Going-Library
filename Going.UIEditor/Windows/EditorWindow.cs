@@ -21,6 +21,7 @@ using System.Runtime.ConstrainedExecution;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 using Cursor = System.Windows.Forms.Cursor;
 using GoControl = Going.UI.Controls.GoControl;
@@ -159,7 +160,8 @@ namespace Going.UIEditor.Windows
                                 {
                                     if (tidx != null && vcon is GoTableLayoutPanel tpnl)
                                     {
-                                        var trt = Util.FromRect(tpnl.ScreenX, tpnl.ScreenY, tpnl.Width - 1, tpnl.Height - 1);
+                                        var (vx, vy) = containerviewpos(tpnl.Parent);
+                                        var trt = Util.FromRect(tpnl.ScreenX - vx, tpnl.ScreenY - vy, tpnl.Width - 1, tpnl.Height - 1);
                                         var rts = Util.Grid(trt, [.. tpnl.Columns], [.. tpnl.Rows]);
                                         var vrt = Util.Merge(rts, tidx.Col, tidx.Row, tidx.Colspan, tidx.Rowspan);
 
@@ -177,7 +179,8 @@ namespace Going.UIEditor.Windows
                                 {
                                     if (gidx != null && vcon is GoGridLayoutPanel gpnl)
                                     {
-                                        var rts = gpnl.GridBounds(Util.FromRect(gpnl.ScreenX, gpnl.ScreenY, gpnl.Width - 1, gpnl.Height - 1));
+                                        var (vx, vy) = containerviewpos(gpnl.Parent);
+                                        var rts = gpnl.GridBounds(Util.FromRect(gpnl.ScreenX - vx, gpnl.ScreenY - vy, gpnl.Width - 1, gpnl.Height - 1));
                                         var vrt = gpnl.CellBounds(rts, gidx.Col, gidx.Row);
                                         if (vrt.HasValue)
                                         {
@@ -338,62 +341,65 @@ namespace Going.UIEditor.Windows
                     #region spcial container (spnl/tab/swpnl) mouse event 
                     if (a == null)
                     {
-                        var tc = target_control(x, y);
-                        if (tc is GoScrollablePanel spnl)
+                        var tc2 = target_control(x, y + 20);
+                        if (tc2 is GoSwitchPanel sw && sels.Contains(sw))
                         {
-                            #region scroll
-                            var srts = spnl.Areas();
-                            var rtV = srts["ScrollV"];
-                            var rtH = srts["ScrollH"];
+                            #region swpnl
+                            var (rtA, rtT, rtP, rtN) = swpnl_toolbounds(sw, Util.FromRect(0, 0, sw.Width, sw.Height));
+                            int idx = sw.SelectedPage != null ? sw.Pages.IndexOf(sw.SelectedPage) : -1;
+                            #endregion
 
-                            var sx = x - spnl.ScreenX;
-                            var sy = y - spnl.ScreenY;
-                            if (CollisionTool.Check(rtV, sx, sy) || CollisionTool.Check(rtH, sx, sy))
+                            var (sx, sy) = containerpos(sw.Parent!, x, y);
+                            sx -= Convert.ToInt32(sw.Left);
+                            sy -= Convert.ToInt32(sw.Top);
+
+                            if (CollisionTool.Check(rtA, sx, sy))
                             {
                                 ptDown = null;
-                                downControl = spnl;
-                                downControl.FireMouseDown(sx, sy, ToGoMouseButton(e.Button));
-                            }
-                            #endregion
-                        }
-                        else if(tc is GoTabControl tab)
-                        {
-                            #region tab
-                            var sx = x - tab.ScreenX;
-                            var sy = y - tab.ScreenY;
-                            if (CollisionTool.Check(tab.Areas()["Nav"], sx, sy))
-                            {
-                                ptDown = null;
-                                downControl = tab;
-                                downControl.FireMouseDown(sx, sy, ToGoMouseButton(e.Button));
-                            }
-                            #endregion
-                        }
-                        else 
-                        {
-                            #region sw
-                            var tc2 = target_control(x, y + 20);
-                            if (tc2 is GoSwitchPanel sw && sels.Contains(sw))
-                            {
-                                #region swpnl
-                                var (rtA, rtT, rtP, rtN) = swpnl_toolbounds(sw, Util.FromRect(0, 0, sw.Width, sw.Height));
-                                int idx = sw.SelectedPage != null ? sw.Pages.IndexOf(sw.SelectedPage) : -1;
-                                #endregion
 
-                                var sx = x - sw.ScreenX;
-                                var sy = y - sw.ScreenY;
+                                if (CollisionTool.Check(rtP, sx, sy) && idx - 1 >= 0)
+                                    sw.SetPage(sw.Pages[idx - 1].Name);
+                                else if (CollisionTool.Check(rtN, sx, sy) && idx + 1 < sw.Pages.Count)
+                                    sw.SetPage(sw.Pages[idx + 1].Name);
+                            }
+                        }
+                        else
+                        {
+                            var tc = target_control(x, y);
+                            if (tc is GoScrollablePanel spnl)
+                            {
+                                #region scroll
+                                var srts = spnl.Areas();
+                                var rtV = srts["ScrollV"];
+                                var rtH = srts["ScrollH"];
 
-                                if (CollisionTool.Check(rtA, sx, sy))
+                                var (sx, sy) = containerpos(spnl.Parent!, x, y);
+                                sx -= Convert.ToInt32(spnl.Left);
+                                sy -= Convert.ToInt32(spnl.Top);
+
+                                if (CollisionTool.Check(rtV, sx, sy) || CollisionTool.Check(rtH, sx, sy))
                                 {
                                     ptDown = null;
-
-                                    if (CollisionTool.Check(rtP, sx, sy) && idx - 1 >= 0)
-                                        sw.SetPage(sw.Pages[idx - 1].Name);
-                                    else if (CollisionTool.Check(rtN, sx, sy) && idx + 1 < sw.Pages.Count)
-                                        sw.SetPage(sw.Pages[idx + 1].Name);
+                                    downControl = spnl;
+                                    downControl.FireMouseDown(sx, sy, ToGoMouseButton(e.Button));
                                 }
+                                #endregion
                             }
-                            #endregion
+                            else if (tc is GoTabControl tab)
+                            {
+                                #region tab
+                                var (sx, sy) = containerpos(tab.Parent!, x, y);
+                                sx -= Convert.ToInt32(tab.Left);
+                                sy -= Convert.ToInt32(tab.Top);
+
+                                if (CollisionTool.Check(tab.Areas()["Nav"], sx, sy))
+                                {
+                                    ptDown = null;
+                                    downControl = tab;
+                                    downControl.FireMouseDown(sx, sy, ToGoMouseButton(e.Button));
+                                }
+                                #endregion
+                            }
                         }
                     }
                     #endregion
@@ -451,8 +457,14 @@ namespace Going.UIEditor.Windows
 
                     #region spcial container (spnl/tab/swpnl) mouse event 
                     if (dragAnchor == null)
-                    {
-                        if (downControl is GoScrollablePanel spnl) spnl.FireMouseMove(x - spnl.ScreenX, y - spnl.ScreenY);
+                    {                       
+                        if (downControl is GoScrollablePanel spnl)
+                        {
+                            var (sx, sy) = containerpos(spnl.Parent!, x, y);
+                            sx -= Convert.ToInt32(spnl.Left);
+                            sy -= Convert.ToInt32(spnl.Top);
+                            spnl.FireMouseMove(sx, sy);
+                        }
                     }
                     #endregion
                 }
@@ -564,8 +576,21 @@ namespace Going.UIEditor.Windows
                         }
 
                         #region spcial container (spnl/tab/swpnl) mouse event 
-                        if (downControl is GoScrollablePanel spnl) spnl.FireMouseUp(x - spnl.ScreenX, y - spnl.ScreenY, ToGoMouseButton(e.Button));
-                        else if(downControl is GoTabControl tab) tab.FireMouseUp(x - tab.ScreenX, y - tab.ScreenY, ToGoMouseButton(e.Button));
+
+                        if (downControl is GoScrollablePanel spnl)
+                        {
+                            var (sx, sy) = containerpos(spnl.Parent!, x, y);
+                            sx -= Convert.ToInt32(spnl.Left);
+                            sy -= Convert.ToInt32(spnl.Top);
+                            spnl.FireMouseUp(sx, sy, ToGoMouseButton(e.Button));
+                        }
+                        else if (downControl is GoTabControl tab)
+                        {
+                            var (sx, sy) = containerpos(tab.Parent!, x, y);
+                            sx -= Convert.ToInt32(tab.Left);
+                            sy -= Convert.ToInt32(tab.Top);
+                            tab.FireMouseUp(sx, sy, ToGoMouseButton(e.Button));
+                        }
                         #endregion
                     }
                 }
@@ -603,9 +628,11 @@ namespace Going.UIEditor.Windows
                     var cls = target_controlstack(x, y); 
                     if (cls.LastOrDefault(x => x is GoScrollablePanel) is GoScrollablePanel sc)
                     {
-                        var vx = x - sc.ScreenX;
-                        var vy = y - sc.ScreenY;
-                        sc.FireMouseWheel(vx, vy, delta);
+                        var (vx, vy) = containerviewpos(sc.Parent);
+                        var sx = x - sc.ScreenX + vx;
+                        var sy = y - sc.ScreenY + vy;
+                        if (CollisionTool.Check(Util.FromRect(0, 0, sc.Width, sc.Height), sx, sy))
+                            sc.FireMouseWheel(sx, sy, delta);
                     }
                     #endregion
                 }
@@ -968,6 +995,16 @@ namespace Going.UIEditor.Windows
             var cy = y - (con is GoControl cc2 ? cc2.ScreenY : 0) - con.PanelBounds.Top + vy;
             return (Convert.ToInt32(cx), Convert.ToInt32(cy));
         }
+
+        /*
+        (int x, int y) containerpos_wo(IGoContainer con, float x, float y)
+        {
+            var (vx, vy) = containerviewpos(con is GoScrollablePanel spnl ? spnl.Parent : con);
+            var cx = x - (con is GoControl cc1 ? cc1.ScreenX : 0) - con.PanelBounds.Left + vx;
+            var cy = y - (con is GoControl cc2 ? cc2.ScreenY : 0) - con.PanelBounds.Top + vy;
+            return (Convert.ToInt32(cx), Convert.ToInt32(cy));
+        }
+        */
         #endregion
         #region containerviewpos
         (float x, float y) containerviewpos(IGoContainer? con)
@@ -1209,8 +1246,14 @@ namespace Going.UIEditor.Windows
             var x = Convert.ToInt32(ptMove.X);
             var y = Convert.ToInt32(ptMove.Y);
             var c = anc.Control;
-            var (con, cx, cy) = target_container(x, y, c);
 
+            var (con, cx, cy) = target_container(Convert.ToInt32(ptMove.X), Convert.ToInt32(ptMove.Y), c);
+            if (anc.Name != "move")
+            {
+                con = c.Parent;
+                (cx, cy) = containerpos(con!, x, y);
+            }
+            
             if (con is GoTableLayoutPanel tpnl)
             {
                 TableIndex? tidx = null;
