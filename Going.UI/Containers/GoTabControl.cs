@@ -216,9 +216,9 @@ namespace Going.UI.Containers
         #region Mouse
         protected override void OnMouseMove(float x, float y)
         {
-            var rts = Areas();
             base.OnMouseMove(x, y);
 
+            var rts = Areas();
             var rtNav = rts["Nav"];
             tabLoop(rtNav, (i, tab, rt) =>
             {
@@ -228,9 +228,9 @@ namespace Going.UI.Containers
 
         protected override void OnMouseClick(float x, float y, GoMouseButton button)
         {
-            var rts = Areas();
-            base.OnMouseClick(x, y, button);
+            if (!(Design?.DesignMode ?? false)) base.OnMouseClick(x, y, button);
 
+            var rts = Areas();
             var rtNav = rts["Nav"];
             tabLoop(rtNav, (i, tab, rt) =>
             {

@@ -2,6 +2,7 @@
 using Going.UI.Controls;
 using Going.UI.Datas;
 using Going.UI.Design;
+using Going.UI.Enums;
 using Going.UI.Forms.Controls;
 using Going.UI.Json;
 using Going.UI.Themes;
@@ -50,7 +51,7 @@ namespace Going.UIEditor.Windows
 
         SKPoint? ptDown, ptMove;
 
-        GoScrollablePanel? downspnl;
+        IGoControl? downControl;
         #endregion
 
         #region Constructor
@@ -171,6 +172,25 @@ namespace Going.UIEditor.Windows
                                     }
                                 },
                                 #endregion
+                                #region gpnl
+                                (vcon, vc, gidx) =>
+                                {
+                                    if (gidx != null && vcon is GoGridLayoutPanel gpnl)
+                                    {
+                                        var rts = gpnl.GridBounds(Util.FromRect(gpnl.ScreenX, gpnl.ScreenY, gpnl.Width - 1, gpnl.Height - 1));
+                                        var vrt = gpnl.CellBounds(rts, gidx.Col, gidx.Row);
+                                        if (vrt.HasValue)
+                                        {
+                                            p.IsStroke = true;
+                                            p.Color = SKColors.Red;
+                                            p.StrokeWidth = 1;
+                                            p.PathEffect = pe;
+                                            canvas.DrawRect(vrt.Value, p);
+                                            p.PathEffect = null;
+                                        }
+                                    }
+                                },
+                                #endregion
                                 #region Other
                                 (vcon, vc, srt, nrt) =>
                                 {
@@ -205,13 +225,14 @@ namespace Going.UIEditor.Windows
                             {
                                 if (c is GoControl vc)
                                 {
+                                    #region rt
+                                    var vrt = Util.FromRect(vc.ScreenX, vc.ScreenY, vc.Width, vc.Height);
+                                    var (vx, vy) = containerviewpos(vc.Parent);
+                                    vrt.Offset(-vx, -vy);
+                                    #endregion
+
                                     using (new SKAutoCanvasRestore(canvas))
                                     {
-                                        #region rt
-                                        var vrt = Util.FromRect(vc.ScreenX, vc.ScreenY, vc.Width, vc.Height);
-                                        var (vx, vy) = containerviewpos(vc.Parent);
-                                        vrt.Offset(-vx, -vy);
-                                        #endregion
                                         #region box
                                         p.IsStroke = true;
                                         p.Color = SKColors.Red;
@@ -224,7 +245,7 @@ namespace Going.UIEditor.Windows
                                             int x = Convert.ToInt32(ev.X - rt.Value.Left);
                                             int y = Convert.ToInt32(ev.Y - rt.Value.Top);
 
-                                            var ancs = Util2.GetAnchors(vc, vrt);
+                                            var ancs = Util2.GetAnchors(vc, vrt).Where(a => c.Parent is GoGridLayoutPanel ? a.Name == "move" : true); 
 
                                             if (CollisionTool.Check(vrt, x, y) || ancs.Any(a => CollisionTool.Check(MathTool.MakeRectangle(a.Position, ANC_SZ * 2), new SKPoint(x, y))))
                                             {
@@ -255,6 +276,33 @@ namespace Going.UIEditor.Windows
                                         #endregion
                                     }
                                 }
+
+                                #region swpnl
+                                if (c is GoSwitchPanel sw)
+                                {
+                                    #region rt
+                                    var vrt = Util.FromRect(sw.ScreenX, sw.ScreenY, sw.Width, sw.Height);
+                                    var (vx, vy) = containerviewpos(sw.Parent);
+                                    vrt.Offset(-vx, -vy);
+                                    #endregion
+
+                                    var (rtA, rtT, rtP, rtN) = swpnl_toolbounds(sw, vrt);
+                                    int idx = sw.SelectedPage != null ? sw.Pages.IndexOf(sw.SelectedPage) : -1;
+                                    var s = sw.SelectedPage != null ? sw.SelectedPage.Name : $"Page {idx}";
+
+                                    Util.DrawText(canvas, s, "나눔고딕", GoFontStyle.Normal, 12, rtT, thm.Base5);
+                                    Util.DrawIcon(canvas, "fa-angle-left", 12, rtP, idx - 1 >= 0 ? thm.Base5 : thm.Base3);
+                                    Util.DrawIcon(canvas, "fa-angle-right", 12, rtN, idx + 1 < sw.Pages.Count ? thm.Base5 : thm.Base3);
+                                    #region box
+                                    p.IsStroke = true;
+                                    p.Color = SKColors.Red;
+                                    p.StrokeWidth = 1;
+                                    p.PathEffect = pe;
+                                    canvas.DrawRect(rtA, p);
+                                    p.PathEffect = null;
+                                    #endregion
+                                }
+                                #endregion
                             }
                             #endregion
                         }
@@ -287,11 +335,13 @@ namespace Going.UIEditor.Windows
                     if (a != null) dragAnchor = a;
                     #endregion
 
-                    #region scroll
-                    if(a == null)
+                    #region spcial container (spnl/tab/swpnl) mouse event 
+                    if (a == null)
                     {
-                        if (target_control(x, y) is GoScrollablePanel spnl)
+                        var tc = target_control(x, y);
+                        if (tc is GoScrollablePanel spnl)
                         {
+                            #region scroll
                             var srts = spnl.Areas();
                             var rtV = srts["ScrollV"];
                             var rtH = srts["ScrollH"];
@@ -301,9 +351,49 @@ namespace Going.UIEditor.Windows
                             if (CollisionTool.Check(rtV, sx, sy) || CollisionTool.Check(rtH, sx, sy))
                             {
                                 ptDown = null;
-                                downspnl = spnl;
-                                downspnl.FireMouseDown(sx, sy, ToGoMouseButton(e.Button));
+                                downControl = spnl;
+                                downControl.FireMouseDown(sx, sy, ToGoMouseButton(e.Button));
                             }
+                            #endregion
+                        }
+                        else if(tc is GoTabControl tab)
+                        {
+                            #region tab
+                            var sx = x - tab.ScreenX;
+                            var sy = y - tab.ScreenY;
+                            if (CollisionTool.Check(tab.Areas()["Nav"], sx, sy))
+                            {
+                                ptDown = null;
+                                downControl = tab;
+                                downControl.FireMouseDown(sx, sy, ToGoMouseButton(e.Button));
+                            }
+                            #endregion
+                        }
+                        else 
+                        {
+                            #region sw
+                            var tc2 = target_control(x, y + 20);
+                            if (tc2 is GoSwitchPanel sw && sels.Contains(sw))
+                            {
+                                #region swpnl
+                                var (rtA, rtT, rtP, rtN) = swpnl_toolbounds(sw, Util.FromRect(0, 0, sw.Width, sw.Height));
+                                int idx = sw.SelectedPage != null ? sw.Pages.IndexOf(sw.SelectedPage) : -1;
+                                #endregion
+
+                                var sx = x - sw.ScreenX;
+                                var sy = y - sw.ScreenY;
+
+                                if (CollisionTool.Check(rtA, sx, sy))
+                                {
+                                    ptDown = null;
+
+                                    if (CollisionTool.Check(rtP, sx, sy) && idx - 1 >= 0)
+                                        sw.SetPage(sw.Pages[idx - 1].Name);
+                                    else if (CollisionTool.Check(rtN, sx, sy) && idx + 1 < sw.Pages.Count)
+                                        sw.SetPage(sw.Pages[idx + 1].Name);
+                                }
+                            }
+                            #endregion
                         }
                     }
                     #endregion
@@ -339,6 +429,12 @@ namespace Going.UIEditor.Windows
                                 cur = tidx != null ? cursor(dragAnchor.Name) : Cursors.No;
                             },
                             #endregion
+                            #region gpnl
+                            (vcon, vc, gidx) =>
+                            {
+                                cur = gidx != null ? cursor(dragAnchor.Name) : Cursors.No;
+                            },
+                            #endregion
                             #region Other    
                             (vcon, vc, srt, nrt) => { cur = cursor(dragAnchor.Name); }
                             #endregion
@@ -353,10 +449,10 @@ namespace Going.UIEditor.Windows
                     Cursor = cur;
                     #endregion
 
-                    #region scroll
+                    #region spcial container (spnl/tab/swpnl) mouse event 
                     if (dragAnchor == null)
                     {
-                        if (downspnl != null) downspnl.FireMouseMove(x - downspnl.ScreenX, y - downspnl.ScreenY);
+                        if (downControl is GoScrollablePanel spnl) spnl.FireMouseMove(x - spnl.ScreenX, y - spnl.ScreenY);
                     }
                     #endregion
                 }
@@ -399,7 +495,17 @@ namespace Going.UIEditor.Windows
                                         }
                                     },
                                     #endregion
-                                    #region Other
+                                    #region gpnl
+                                    (vcon, vc, gidx) =>
+                                    {
+                                        if (gidx != null && vcon is GoGridLayoutPanel gpnl)
+                                        {
+                                            DeleteControl(dragAnchor.Control);
+                                            AddControl(gpnl, dragAnchor.Control, gidx.Col, gidx.Row);
+                                        }
+                                    },
+                                    #endregion
+                                    #region other
                                     (vcon, vc, srt, nrt) =>
                                     {
                                         if (dragAnchor.Name == "move" && vc.Parent != vcon)
@@ -457,14 +563,20 @@ namespace Going.UIEditor.Windows
                             #endregion
                         }
 
-                        #region scroll
-                        if (downspnl != null) downspnl.FireMouseUp(x - downspnl.ScreenX, y - downspnl.ScreenY, ToGoMouseButton(e.Button));
+                        #region spcial container (spnl/tab/swpnl) mouse event 
+                        if (downControl is GoScrollablePanel spnl) spnl.FireMouseUp(x - spnl.ScreenX, y - spnl.ScreenY, ToGoMouseButton(e.Button));
+                        else if(downControl is GoTabControl tab) tab.FireMouseUp(x - tab.ScreenX, y - tab.ScreenY, ToGoMouseButton(e.Button));
                         #endregion
                     }
                 }
 
                 #region release
-                downspnl = null;
+                var clears1 = sels.Where(x => x.Parent is GoTabControl tab && !tab.Childrens.Contains(x)).ToArray();
+                var clears2 = sels.Where(x => x.Parent is GoSwitchPanel swpnl && !swpnl.Childrens.Contains(x)).ToArray();
+                foreach (var c in clears1) sels.Remove(c);
+                foreach (var c in clears2) sels.Remove(c);
+
+                downControl = null;
                 dragAnchor = null;
                 ptDown = ptMove = null;
                 #endregion
@@ -488,8 +600,8 @@ namespace Going.UIEditor.Windows
                     #endregion
 
                     #region wheel
-                    var vc = target_controlstick(x, y).LastOrDefault(x => x is GoScrollablePanel);
-                    if (vc is GoScrollablePanel sc)
+                    var cls = target_controlstack(x, y); 
+                    if (cls.LastOrDefault(x => x is GoScrollablePanel) is GoScrollablePanel sc)
                     {
                         var vx = x - sc.ScreenX;
                         var vy = y - sc.ScreenY;
@@ -591,6 +703,23 @@ namespace Going.UIEditor.Windows
                                 tpnl.Rows = ["20%", "20%", "20%", "20%", "20%"];
                                 tpnl.Columns = ["20%", "20%", "20%", "20%", "20%"];
                             }
+                            else if(vc is GoGridLayoutPanel gpnl)
+                            {
+                                gpnl.AddRow("25%", ["25%", "25%", "25%", "25%"]);
+                                gpnl.AddRow("25%", ["33.3%", "33.4%", "33.3%"]);
+                                gpnl.AddRow("25%", ["50%", "50%"]);
+                                gpnl.AddRow("25%", ["100%"]);
+                            }
+                            else if(vc is GoTabControl tab)
+                            {
+                                tab.TabPages.Add(new GoTabPage { Text = "tab1" });
+                                tab.TabPages.Add(new GoTabPage { Text = "tab2" });
+                            }
+                            else if (vc is GoSwitchPanel swpnl)
+                            {
+                                swpnl.Pages.Add(new GoSubPage { Name = "pnl1" });
+                                swpnl.Pages.Add(new GoSubPage { Name = "pnl2" });
+                            }
                             #endregion
 
                             TransAction(() =>
@@ -598,6 +727,11 @@ namespace Going.UIEditor.Windows
                                 if (con is GoTableLayoutPanel tpnl && tableIndex(tpnl, cx, cy, out var tidx))
                                 {
                                     AddControl(tpnl, vc, tidx.Col, tidx.Row, 1, 1);
+                                    SelectedControl([.. sels], [vc]);
+                                }
+                                else if (con is GoGridLayoutPanel gpnl && gridIndex(gpnl, cx, cy, out var gidx))
+                                {
+                                    AddControl(gpnl, vc, gidx.Col, gidx.Row);
                                     SelectedControl([.. sels], [vc]);
                                 }
                                 else
@@ -922,7 +1056,7 @@ namespace Going.UIEditor.Windows
         }
         #endregion
         #region target_controlstack
-        List<IGoControl> target_controlstick(int x, int y)
+        List<IGoControl> target_controlstack(int x, int y)
         {
             List<IGoControl> ret = [];
             var prj = Program.CurrentProject;
@@ -972,7 +1106,7 @@ namespace Going.UIEditor.Windows
 
                 if (c is GoControl vc)
                 {
-                    var ancs = Util2.GetAnchors(vc, vrt);
+                    var ancs = Util2.GetAnchors(vc, vrt).Where(a => c.Parent is GoGridLayoutPanel ? a.Name == "move" : true);
                     a ??= ancs.FirstOrDefault(a => CollisionTool.Check(MathTool.MakeRectangle(a.Position, ANC_SZ * 2), x, y));
                 }
             }
@@ -1046,9 +1180,30 @@ namespace Going.UIEditor.Windows
         }
         #endregion
 
+        #region gridindex
+        bool gridIndex(GoGridLayoutPanel gpnl, int x, int y, out GridIndex idx)
+        {
+            idx = new GridIndex { Col = -1, Row = -1 };
+
+            var ret = false;
+            var rts = gpnl.GridBounds();
+            for (int ir = 0; ir < gpnl.Rows.Count; ir++)
+                for (int ic = 0; ic < gpnl.Rows[ir].Columns.Count; ic++)
+                    if (gpnl.CellBounds(rts, ic, ir) is SKRect vrt && CollisionTool.Check(vrt, x, y) && gpnl.Childrens[ic, ir] == null)
+                    {
+                        idx.Col = ic;
+                        idx.Row = ir;
+                        ret = true;
+                    }
+
+            return ret;
+        }
+        #endregion
+
         #region dragAnchorProc
         void dragAnchorProc(Anchor anc, SKPoint ptDown, SKPoint ptMove,
             Action <IGoContainer, IGoControl, TableIndex?> tbl,
+            Action<IGoContainer, IGoControl, GridIndex?> grid,
             Action<IGoContainer, IGoControl, SKRect, SKRect> other)
         {
             var x = Convert.ToInt32(ptMove.X);
@@ -1096,6 +1251,26 @@ namespace Going.UIEditor.Windows
                 #endregion
                 tbl(con, c, tidx);
             }
+            else if(con is GoGridLayoutPanel gpnl)
+            {
+                GridIndex? gidx = null;
+                #region gpnl
+                if (sels.Count == 1)
+                {
+                    var rts = gpnl.GridBounds();
+                    if (anc.Name == "move")
+                    {
+                        if (gridIndex(gpnl, cx, cy, out var gidx2))
+                        {
+                            var l = gidx2.Col;
+                            var t = gidx2.Row;
+                            gidx = new GridIndex { Col = gidx2.Col, Row = gidx2.Row, };
+                        }
+                    }
+                }
+                #endregion
+                grid(con, c, gidx);
+            }
             else if(con != null)
             {
                 #region other
@@ -1124,6 +1299,23 @@ namespace Going.UIEditor.Windows
                 #endregion
             }
 
+        }
+        #endregion
+
+        #region swpnl_toolbounds
+        (SKRect rtA, SKRect rtT, SKRect rtP, SKRect rtN) swpnl_toolbounds(GoSwitchPanel sw, SKRect rt)
+        {
+            int idx = sw.SelectedPage != null ? sw.Pages.IndexOf(sw.SelectedPage) : -1;
+            var s = sw.SelectedPage != null ? sw.SelectedPage.Name : $"Page {idx}";
+            var sz = Util.MeasureText(s, "나눔고딕", GoFontStyle.Normal, 12);
+
+            var H = 20;
+            var rtA = Util.FromRect(rt.Left, rt.Top - H, sz.Width + 20 + H + H, H);
+            var rtT = Util.FromRect(rt.Left, rt.Top - H-1, sz.Width + 20, H);
+            var rtP = Util.FromRect(rtT.Right, rtT.Top, H, H);
+            var rtN = Util.FromRect(rtP.Right, rtP.Top, H, H);
+
+            return (rtA, rtT, rtP, rtN);
         }
         #endregion
         #endregion
@@ -1277,7 +1469,7 @@ namespace Going.UIEditor.Windows
         public SKPoint Position { get; set; }
     }
     #endregion
-    #region TalbeInde
+    #region TalbeIndex
     class TableIndex
     {
         public int Col { get; set; }
@@ -1286,5 +1478,11 @@ namespace Going.UIEditor.Windows
         public int Rowspan { get; set; }
     }
     #endregion
-
+    #region GridIndex
+    class GridIndex
+    {
+        public int Col { get; set; }
+        public int Row { get; set; }
+    }
+    #endregion
 }
