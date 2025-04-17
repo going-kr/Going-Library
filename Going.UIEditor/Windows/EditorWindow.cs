@@ -14,6 +14,7 @@ using GuiLabs.Undo;
 using Microsoft.VisualBasic;
 using OpenTK.Compute.OpenCL;
 using OpenTK.Graphics.ES20;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 using SkiaSharp;
 using System.Data;
 using System.Diagnostics;
@@ -168,20 +169,38 @@ namespace Going.UIEditor.Windows
                                 srt.Offset(-vx, -vy);
                                 srt.Offset(c.ScreenX - c.Left, c.ScreenY - c.Top);
 
-                                magnet_proc(dragAnchor, srt, true, 
+                                mag_proc(dragAnchor, srt, false, (mx) => gx += mx.DistR, (my) => gy += my.DistR);
+                                mag_proc(dragAnchor, srt, true, 
                                 (mx) =>
                                 {
                                     p.IsStroke = true;
                                     p.Color = SKColors.Red;
                                     p.StrokeWidth = 1;
-                                    if (mx.MagX.HasValue) canvas.DrawLine(mx.MagX.Value, mx.PairY1, mx.MagX.Value, mx.PairY2, p);
+
+                                    var vsrt = calcbox(dragAnchor.Name, c.Bounds, gx, gy);
+                                    var (vx, vy) = containerviewpos(c.Parent);
+                                    vsrt.Offset(-vx, -vy);
+                                    vsrt.Offset(c.ScreenX - c.Left, c.ScreenY - c.Top);
+
+                                    var y1 = Math.Min(vsrt.Top, mx.PairYs.Min());
+                                    var y2 = Math.Max(vsrt.Bottom, mx.PairYs.Max());
+                                    if (mx.MagX.HasValue) canvas.DrawLine(mx.MagX.Value, y1, mx.MagX.Value, y2, p);
                                 }, 
                                 (my) =>
                                 {
                                     p.IsStroke = true;
                                     p.Color = SKColors.Red;
                                     p.StrokeWidth = 1;
-                                    if (my.MagY.HasValue) canvas.DrawLine(my.PairX1, my.MagY.Value, my.PairX2, my.MagY.Value, p);
+
+
+                                    var vsrt = calcbox(dragAnchor.Name, c.Bounds, gx, gy);
+                                    var (vx, vy) = containerviewpos(c.Parent);
+                                    vsrt.Offset(-vx, -vy);
+                                    vsrt.Offset(c.ScreenX - c.Left, c.ScreenY - c.Top);
+
+                                    var x1 = Math.Min(vsrt.Left, my.PairXs.Min());
+                                    var x2 = Math.Max(vsrt.Right, my.PairXs.Max());
+                                    if (my.MagY.HasValue) canvas.DrawLine(x1, my.MagY.Value, x2, my.MagY.Value, p);
                                 });
                             }
                             #endregion
@@ -695,6 +714,16 @@ namespace Going.UIEditor.Windows
                         case Keys.Control | Keys.Y: Redo(); break;
 
                         case Keys.Delete: Delete(); break;
+
+                        case Keys.Left: ControlMove(-1, 0); break;
+                        case Keys.Right: ControlMove(1, 0); break;
+                        case Keys.Up: ControlMove(0, -1); break;
+                        case Keys.Down: ControlMove(0, 1); break;
+
+                        case Keys.Shift | Keys.Left: ControlMove(-10, 0); break;
+                        case Keys.Shift | Keys.Right: ControlMove(10, 0); break;
+                        case Keys.Shift | Keys.Up: ControlMove(0, -10); break;
+                        case Keys.Shift | Keys.Down: ControlMove(0, 10); break;
                     }
                 }
             }
@@ -973,6 +1002,25 @@ namespace Going.UIEditor.Windows
             if (p != null && CanRedo)
             {
                 actmgr?.Redo(); p.Edit = true;
+            }
+        }
+        #endregion
+
+        #region ControlMove
+        void ControlMove(float gx, float gy)
+        {
+            var pi = typeof(IGoControl).GetProperty("Bounds");
+            if (pi != null)
+            {
+                TransAction(() =>
+                {
+                    foreach (var c in sels.Where(x => x.Parent is not GoTableLayoutPanel && x.Parent is not GoGridLayoutPanel))
+                    {
+                        var ort = c.Bounds;
+                        var nrt = c.Bounds; nrt.Offset(gx, gy);
+                        EditObject(c, pi, ort, nrt);
+                    }
+                });
             }
         }
         #endregion
@@ -1381,7 +1429,7 @@ namespace Going.UIEditor.Windows
                     srt.Offset(-vx, -vy);
                     srt.Offset(c.ScreenX - c.Left, c.ScreenY - c.Top);
 
-                    magnet_proc(anc, srt, false, (mx) => gx += mx.DistR, (my) => gy += my.DistR);
+                    mag_proc(anc, srt, false, (mx) => gx += mx.DistR, (my) => gy += my.DistR);
                 }
                 #endregion
 
@@ -1504,8 +1552,8 @@ namespace Going.UIEditor.Windows
                                 OriginNameX = io == 0 ? "l" : (io == 1 ? "c" : "r"),
                                 MagX = txs[it],
                                 MagNameX = it == 0 ? "l" : (it == 1 ? "c" : "r"),
-                                PairY1 = Math.Min(tys.Min(), ys.Min()),
-                                PairY2 = Math.Max(tys.Max(), ys.Max()),
+                                PairXs = txs,
+                                PairYs = tys,
                             });
 
                 for (int io = 0; io < ys.Length; io++)
@@ -1520,15 +1568,15 @@ namespace Going.UIEditor.Windows
                                 OriginNameY = io == 0 ? "t" : (io == 1 ? "c" : "b"),
                                 MagY = tys[it],
                                 MagNameY = it == 0 ? "t" : (it == 1 ? "c" : "b"),
-                                PairX1 = Math.Min(txs.Min(), xs.Min()),
-                                PairX2 = Math.Max(txs.Max(), xs.Max()),
+                                PairXs = txs,
+                                PairYs = tys,
                             });
             }
             return ret;
         }
         #endregion
-        #region magnet_proc
-        void magnet_proc(Anchor anc, SKRect srt, bool loop, Action<Mag> routineX, Action<Mag> routineY)
+        #region mag_proc
+        void mag_proc(Anchor anc, SKRect srt, bool loop, Action<Mag> routineX, Action<Mag> routineY)
         {
             var c = anc.Control;
             var alls = search_control(container()).Where(xc => xc.Parent is IGoControl vcon ? CollisionTool.Check(xc.Bounds, Util.FromRect(xc.Parent.ViewPosition.X, xc.Parent.ViewPosition.Y, vcon.Width, vcon.Height)) : false);
@@ -1754,10 +1802,8 @@ namespace Going.UIEditor.Windows
         public float? OriginX { get; set; }
         public float? OriginY { get; set; }
 
-        public float PairX1 { get; set; }
-        public float PairX2 { get; set; }
-        public float PairY1 { get; set; }
-        public float PairY2 { get; set; }
+        public float[] PairXs { get; set; }
+        public float[] PairYs { get; set; }
 
         public float Dist { get; set; }
         public float DistR { get; set; }
