@@ -8,19 +8,24 @@ using Going.UI.Json;
 using Going.UI.Themes;
 using Going.UI.Tools;
 using Going.UI.Utils;
+using Going.UIEditor.Managers;
 using Going.UIEditor.Utils;
 using GuiLabs.Undo;
+using Microsoft.VisualBasic;
 using OpenTK.Compute.OpenCL;
 using OpenTK.Graphics.ES20;
 using SkiaSharp;
 using System.Data;
 using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.Reflection;
 using System.Runtime.ConstrainedExecution;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using Windows.Data.Xml.Dom;
+using Windows.Media.Control;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 using Cursor = System.Windows.Forms.Cursor;
@@ -34,6 +39,7 @@ namespace Going.UIEditor.Windows
     {
         #region Const
         const int ANC_SZ = 4;
+        const int MAG_GP = 3;
         #endregion
 
         #region Properties
@@ -151,6 +157,61 @@ namespace Going.UIEditor.Windows
 
                         if (dragAnchor != null)
                         {
+                            #region magnet
+                            if (ptMove.HasValue && ptDown.HasValue)
+                            {
+                                var c = dragAnchor.Control;
+                                var gx = ptMove.Value.X - ptDown.Value.X;
+                                var gy = ptMove.Value.Y - ptDown.Value.Y;
+                                var srt = calcbox(dragAnchor.Name, c.Bounds, gx, gy);
+
+                                var (vx, vy) = containerviewpos(c.Parent);
+                                srt.Offset(-vx, -vy);
+                                srt.Offset(c.ScreenX - c.Left, c.ScreenY - c.Top);
+
+                                var alls = search_control(container()).Where(xc => xc.Parent is IGoControl vcon ? CollisionTool.Check(xc.Bounds, Util.FromRect(xc.Parent.ViewPosition.X, xc.Parent.ViewPosition.Y, vcon.Width, vcon.Height)) : false);
+
+                                var (xs, ys) = mag_controlpos(srt);
+                                var tls = alls.Where(tc => tc != c && mag_check(tc, xs, ys)).ToList();
+                                var pts = mag_points(tls, xs, ys, dragAnchor);
+
+                                var lsx = pts.Where(x => x.MagX != null);
+                                var lsy = pts.Where(x => x.MagY != null);
+                                var lkx = lsx.ToLookup(x => x.Dist);
+                                var lky = lsy.ToLookup(x => x.Dist);
+                                var kx = lsx.OrderBy(x => x.Dist).FirstOrDefault();
+                                var ky = lsy.OrderBy(y => y.Dist).FirstOrDefault();
+
+                                if (kx != null && lkx.Contains(kx.Dist))
+                                {
+                                    var xls = lkx[kx.Dist].ToList();
+                                    var fx = xls.FirstOrDefault();
+                                    if (fx != null)
+                                        foreach (var mx in xls.Where(vv => vv.Dist == fx.Dist && vv.DistR == fx.DistR))
+                                        {
+                                            p.IsStroke = true;
+                                            p.Color = SKColors.Red;
+                                            p.StrokeWidth = 1;
+                                            if (mx.MagX.HasValue) canvas.DrawLine(mx.MagX.Value, mx.PairY1, mx.MagX.Value, mx.PairY2, p);
+                                        }
+                                }
+
+                                if (ky != null && lky.Contains(ky.Dist))
+                                {
+                                    var yls = lky[ky.Dist].ToList();
+                                    var fy = yls.FirstOrDefault();
+                                    if (fy != null)
+                                        foreach (var my in yls.Where(vv => vv.Dist == fy.Dist && vv.DistR == fy.DistR))
+                                        {
+                                            p.IsStroke = true;
+                                            p.Color = SKColors.Red;
+                                            p.StrokeWidth = 1;
+                                            if (my.MagY.HasValue) canvas.DrawLine(my.PairX1, my.MagY.Value, my.PairX2, my.MagY.Value, p);
+                                        }
+                                }
+                            }
+                            #endregion
+                      
                             #region drag anchor
                             if (ptDown.HasValue && ptMove.HasValue)
                             {
@@ -194,7 +255,7 @@ namespace Going.UIEditor.Windows
                                     }
                                 },
                                 #endregion
-                                #region Other
+                                #region other
                                 (vcon, vc, srt, nrt) =>
                                 {
                                     p.IsStroke = true;
@@ -248,7 +309,7 @@ namespace Going.UIEditor.Windows
                                             int x = Convert.ToInt32(ev.X - rt.Value.Left);
                                             int y = Convert.ToInt32(ev.Y - rt.Value.Top);
 
-                                            var ancs = Util2.GetAnchors(vc, vrt).Where(a => c.Parent is GoGridLayoutPanel ? a.Name == "move" : true); 
+                                            var ancs = Util2.GetAnchors(vc, vrt).Where(a => c.Parent is GoGridLayoutPanel ? a.Name == "move" : true);
 
                                             if (CollisionTool.Check(vrt, x, y) || ancs.Any(a => CollisionTool.Check(MathTool.MakeRectangle(a.Position, ANC_SZ * 2), new SKPoint(x, y))))
                                             {
@@ -963,6 +1024,25 @@ namespace Going.UIEditor.Windows
 
         #region Tool
         #region container
+        List<IGoContainer> container()
+        {
+            List<IGoContainer> con = [];
+
+            if (Target is GoDesign design2)
+            {
+                var (rtL, rtT, rtR, rtB, rtF, rtFR) = design2.LayoutBounds();
+
+                if (design2.UseLeftSideBar) con.Add(design2.LeftSideBar);
+                else if (design2.UseRightSideBar) con.Add(design2.RightSideBar);
+                else if (design2.UseTitleBar) con.Add(design2.TitleBar);
+                else if (design2.UseFooter) con.Add(design2.Footer);
+            }
+            else if (Target is GoPage page2) con.Add(page2);
+            else if (Target is GoWindow wnd2) con.Add(wnd2);
+
+            return con;
+        }
+
         (IGoContainer? con, int cx, int cy) container(int x, int y)
         {
             IGoContainer? con = null;
@@ -1320,8 +1400,46 @@ namespace Going.UIEditor.Windows
                 var gx = ptMove.X - ptDown.X;
                 var gy = ptMove.Y - ptDown.Y;
 
-                var gps = sels.ToDictionary(x => x, y => new SKPoint(anc.Control.ScreenX - y.ScreenX, anc.Control.ScreenY - y.ScreenY));
-                //nrt = Util.FromRect(cx - gps[c].X - c.Width / 2, cy - gps[c].Y - c.Height / 2, c.Width, c.Height);
+                #region magnet
+                {
+                    var srt = calcbox(anc.Name, c.Bounds, gx, gy);
+                    var (vx, vy) = containerviewpos(c.Parent);
+                    srt.Offset(-vx, -vy);
+                    srt.Offset(c.ScreenX - c.Left, c.ScreenY - c.Top);
+
+                    var alls = search_control(container()).Where(xc => xc.Parent is IGoControl vcon ? CollisionTool.Check(xc.Bounds, Util.FromRect(xc.Parent.ViewPosition.X, xc.Parent.ViewPosition.Y, vcon.Width, vcon.Height)) : false);
+                    var (xs, ys) = mag_controlpos(srt);
+                    var tls = alls.Where(tc => tc != c && mag_check(tc, xs, ys)).ToList();
+                    var pts = mag_points(tls, xs, ys, anc);
+
+                    var lsx = pts.Where(x => x.MagX != null);
+                    var lsy = pts.Where(x => x.MagY != null);
+                    var lkx = lsx.ToLookup(x => x.Dist);
+                    var lky = lsy.ToLookup(x => x.Dist);
+                    var kx = lsx.OrderBy(x => x.Dist).FirstOrDefault();
+                    var ky = lsy.OrderBy(y => y.Dist).FirstOrDefault();
+
+                    if (kx != null && lkx.Contains(kx.Dist))
+                    {
+                        var xls = lkx[kx.Dist].ToList();
+                        var mx = xls.FirstOrDefault();
+                        if(mx != null)
+                        {
+                            gx += mx.DistR;
+                        }
+                    }
+
+                    if (ky != null && lky.Contains(ky.Dist))
+                    {
+                        var yls = lky[ky.Dist].ToList();
+                        var my= yls.FirstOrDefault();
+                        if(my != null)
+                        {
+                            gy += my.DistR;
+                        }
+                    }
+                }
+                #endregion
 
                 foreach (var vc in sels.Where(x => x.Parent == anc.Control.Parent || anc.Name != "move"))
                 {
@@ -1361,11 +1479,115 @@ namespace Going.UIEditor.Windows
             return (rtA, rtT, rtP, rtN);
         }
         #endregion
-        #endregion
+
+        #region search_control
+        List<IGoControl> search_control(IEnumerable<IGoContainer> containers)
+        {
+            List<IGoControl> ret = [];
+
+            if (containers != null)
+            {
+                foreach (var container in containers)
+                    if (container is IGoControl vc)
+                    {
+                        ret.Add(vc);
+                        foreach (var c in container.Childrens)
+                            if (c is IGoContainer con)
+                                ret.AddRange(search_control([con]));
+                            else
+                                ret.Add(c);
+                    }
+            }
+
+            return ret;
+        }
         #endregion
 
+        #region mag_controlpos
+        (float[] xs, float[] ys) mag_controlpos(IGoControl c)
+        {
+            var (vx, vy) = containerviewpos(c.Parent);
+            var xg = c.ScreenX - c.Left - vx;
+            var yg = c.ScreenY - c.Top - vy;
+            float[] ys = [c.Bounds.Top + yg, c.Bounds.MidY + yg, c.Bounds.Bottom + yg];
+            float[] xs = [c.Bounds.Left + xg, c.Bounds.MidX + xg, c.Bounds.Right + xg];
+
+            return (xs, ys);
+        }
+
+        (float[] xs, float[] ys) mag_controlpos(SKRect srt)
+        {
+            float[] ys = [srt.Top, srt.MidY, srt.Bottom];
+            float[] xs = [srt.Left, srt.MidX, srt.Right];
+
+            return (xs, ys);
+        }
+        #endregion
+        #region mag_check
+        bool mag_check(IGoControl tc, float[] xs, float[] ys)
+        {
+            var (txs, tys) = mag_controlpos(tc);
+
+            foreach (var x in xs)
+                foreach (var tx in txs)
+                    if (Math.Abs(tx - x) <= MAG_GP) return true;
+
+            foreach (var y in ys)
+                foreach (var ty in tys)
+                    if (Math.Abs(ty - y) <= MAG_GP) return true;
+
+            return false;
+        }
+        #endregion
+        #region mag_points
+        List<Mag> mag_points(List<IGoControl> tcs, float[] xs, float[] ys, Anchor anc)
+        {
+            List<Mag> ret = [];
+
+            foreach (var tc in tcs)
+            {
+                var (txs, tys) = mag_controlpos(tc);
+
+                for (int io = 0; io < xs.Length; io++)
+                    for (int it = 0; it < txs.Length; it++)
+                        if (Math.Abs(txs[it] - xs[io]) <= MAG_GP && (anc.Name == "move" || (anc.Name.Contains('l') && io == 0) || (anc.Name.Contains('r') && io == 2)))
+                            ret.Add(new Mag
+                            {
+                                Target = tc,
+                                Dist = Math.Abs(txs[it] - xs[io]),
+                                DistR = txs[it] - xs[io],
+                                OriginX = xs[io],
+                                OriginNameX = io == 0 ? "l" : (io == 1 ? "c" : "r"),
+                                MagX = txs[it],
+                                MagNameX = it == 0 ? "l" : (it == 1 ? "c" : "r"),
+                                PairY1 = Math.Min(tys.Min(), ys.Min()),
+                                PairY2 = Math.Max(tys.Max(), ys.Max()),
+                            });
+
+                for (int io = 0; io < ys.Length; io++)
+                    for (int it = 0; it < tys.Length; it++)
+                        if (Math.Abs(tys[it] - ys[io]) <= MAG_GP && (anc.Name == "move" || (anc.Name.Contains('t') && io == 0) || (anc.Name.Contains('b') && io == 2)))
+                            ret.Add(new Mag
+                            {
+                                Target = tc,
+                                Dist = Math.Abs(tys[it] - ys[io]),
+                                DistR = tys[it] - ys[io],
+                                OriginY = ys[io],
+                                OriginNameY = io == 0 ? "t" : (io == 1 ? "c" : "b"),
+                                MagY = tys[it],
+                                MagNameY = it == 0 ? "t" : (it == 1 ? "c" : "b"),
+                                PairX1 = Math.Min(txs.Min(), xs.Min()),
+                                PairX2 = Math.Max(txs.Max(), xs.Max()),
+                            });
+            }
+            return ret;
+        }
+        #endregion
+        #endregion
+        #endregion
     }
 
+    #region classes
     #region EditAction
     public class EditAction : GuiLabs.Undo.AbstractAction
     {
@@ -1527,5 +1749,30 @@ namespace Going.UIEditor.Windows
         public int Col { get; set; }
         public int Row { get; set; }
     }
+    #endregion
+    #region Mag
+    class Mag
+    {
+        public IGoControl? Target { get; set; }
+
+        public string? MagNameX { get; set; }
+        public string? MagNameY { get; set; }
+        public float? MagX { get; set; }
+        public float? MagY { get; set; }
+
+        public string? OriginNameX { get; set; }
+        public string? OriginNameY { get; set; }
+        public float? OriginX { get; set; }
+        public float? OriginY { get; set; }
+
+        public float PairX1 { get; set; }
+        public float PairX2 { get; set; }
+        public float PairY1 { get; set; }
+        public float PairY2 { get; set; }
+
+        public float Dist { get; set; }
+        public float DistR { get; set; }
+    }
+    #endregion
     #endregion
 }

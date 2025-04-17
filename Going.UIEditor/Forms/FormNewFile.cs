@@ -33,6 +33,23 @@ namespace Going.UIEditor.Forms
         }
         #endregion
 
+        #region Override
+        protected override void OnShown(EventArgs e)
+        {
+            Task.Run(async () =>
+            {
+                await Task.Delay(100);
+
+                Invoke(() => { 
+                inName.Input();
+                });
+            });
+            
+            
+            base.OnShown(e);
+        }
+        #endregion
+
         #region Method
         #region ValidCheck
         bool ValidCheck() => !string.IsNullOrWhiteSpace(inName.Value) && inWidth.Value > 0 && inHeight.Value > 0;

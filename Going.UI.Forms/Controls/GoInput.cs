@@ -67,6 +67,15 @@ namespace Going.UI.Forms.Controls
             };
         }
         #endregion
+
+        #region Method
+        public void Input()
+        {
+            var rt = Control.Areas()["Value"];
+            Control.FireMouseDown(rt.Left + 1, rt.Top + 1, GoMouseButton.Left);
+            Control.FireMouseUp(rt.Left + 1, rt.Top + 1, GoMouseButton.Left);
+        }
+        #endregion
     }
 
     public class GoInputNumber<T> : GoWrapperControl<Going.UI.Controls.GoInputNumber<T>> where T : struct
@@ -119,6 +128,15 @@ namespace Going.UI.Forms.Controls
                                                                         (v) => { callback(v); Invalidate(); }, null, type, value, min, max);
                 }
             };
+        }
+        #endregion
+
+        #region Method
+        public void Input()
+        {
+            var rt = Control.Areas()["Value"];
+            Control.FireMouseDown(rt.Left + 1, rt.Top + 1, GoMouseButton.Left);
+            Control.FireMouseUp(rt.Left + 1, rt.Top + 1, GoMouseButton.Left);
         }
         #endregion
     }
