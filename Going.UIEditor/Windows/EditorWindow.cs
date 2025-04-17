@@ -39,7 +39,7 @@ namespace Going.UIEditor.Windows
     {
         #region Const
         const int ANC_SZ = 4;
-        const int MAG_GP = 3;
+        const int MAG_GP = 5;
         #endregion
 
         #region Properties
@@ -164,51 +164,25 @@ namespace Going.UIEditor.Windows
                                 var gx = ptMove.Value.X - ptDown.Value.X;
                                 var gy = ptMove.Value.Y - ptDown.Value.Y;
                                 var srt = calcbox(dragAnchor.Name, c.Bounds, gx, gy);
-
                                 var (vx, vy) = containerviewpos(c.Parent);
                                 srt.Offset(-vx, -vy);
                                 srt.Offset(c.ScreenX - c.Left, c.ScreenY - c.Top);
 
-                                var alls = search_control(container()).Where(xc => xc.Parent is IGoControl vcon ? CollisionTool.Check(xc.Bounds, Util.FromRect(xc.Parent.ViewPosition.X, xc.Parent.ViewPosition.Y, vcon.Width, vcon.Height)) : false);
-
-                                var (xs, ys) = mag_controlpos(srt);
-                                var tls = alls.Where(tc => tc != c && mag_check(tc, xs, ys)).ToList();
-                                var pts = mag_points(tls, xs, ys, dragAnchor);
-
-                                var lsx = pts.Where(x => x.MagX != null);
-                                var lsy = pts.Where(x => x.MagY != null);
-                                var lkx = lsx.ToLookup(x => x.Dist);
-                                var lky = lsy.ToLookup(x => x.Dist);
-                                var kx = lsx.OrderBy(x => x.Dist).FirstOrDefault();
-                                var ky = lsy.OrderBy(y => y.Dist).FirstOrDefault();
-
-                                if (kx != null && lkx.Contains(kx.Dist))
+                                magnet_proc(dragAnchor, srt, true, 
+                                (mx) =>
                                 {
-                                    var xls = lkx[kx.Dist].ToList();
-                                    var fx = xls.FirstOrDefault();
-                                    if (fx != null)
-                                        foreach (var mx in xls.Where(vv => vv.Dist == fx.Dist && vv.DistR == fx.DistR))
-                                        {
-                                            p.IsStroke = true;
-                                            p.Color = SKColors.Red;
-                                            p.StrokeWidth = 1;
-                                            if (mx.MagX.HasValue) canvas.DrawLine(mx.MagX.Value, mx.PairY1, mx.MagX.Value, mx.PairY2, p);
-                                        }
-                                }
-
-                                if (ky != null && lky.Contains(ky.Dist))
+                                    p.IsStroke = true;
+                                    p.Color = SKColors.Red;
+                                    p.StrokeWidth = 1;
+                                    if (mx.MagX.HasValue) canvas.DrawLine(mx.MagX.Value, mx.PairY1, mx.MagX.Value, mx.PairY2, p);
+                                }, 
+                                (my) =>
                                 {
-                                    var yls = lky[ky.Dist].ToList();
-                                    var fy = yls.FirstOrDefault();
-                                    if (fy != null)
-                                        foreach (var my in yls.Where(vv => vv.Dist == fy.Dist && vv.DistR == fy.DistR))
-                                        {
-                                            p.IsStroke = true;
-                                            p.Color = SKColors.Red;
-                                            p.StrokeWidth = 1;
-                                            if (my.MagY.HasValue) canvas.DrawLine(my.PairX1, my.MagY.Value, my.PairX2, my.MagY.Value, p);
-                                        }
-                                }
+                                    p.IsStroke = true;
+                                    p.Color = SKColors.Red;
+                                    p.StrokeWidth = 1;
+                                    if (my.MagY.HasValue) canvas.DrawLine(my.PairX1, my.MagY.Value, my.PairX2, my.MagY.Value, p);
+                                });
                             }
                             #endregion
                       
@@ -1407,37 +1381,7 @@ namespace Going.UIEditor.Windows
                     srt.Offset(-vx, -vy);
                     srt.Offset(c.ScreenX - c.Left, c.ScreenY - c.Top);
 
-                    var alls = search_control(container()).Where(xc => xc.Parent is IGoControl vcon ? CollisionTool.Check(xc.Bounds, Util.FromRect(xc.Parent.ViewPosition.X, xc.Parent.ViewPosition.Y, vcon.Width, vcon.Height)) : false);
-                    var (xs, ys) = mag_controlpos(srt);
-                    var tls = alls.Where(tc => tc != c && mag_check(tc, xs, ys)).ToList();
-                    var pts = mag_points(tls, xs, ys, anc);
-
-                    var lsx = pts.Where(x => x.MagX != null);
-                    var lsy = pts.Where(x => x.MagY != null);
-                    var lkx = lsx.ToLookup(x => x.Dist);
-                    var lky = lsy.ToLookup(x => x.Dist);
-                    var kx = lsx.OrderBy(x => x.Dist).FirstOrDefault();
-                    var ky = lsy.OrderBy(y => y.Dist).FirstOrDefault();
-
-                    if (kx != null && lkx.Contains(kx.Dist))
-                    {
-                        var xls = lkx[kx.Dist].ToList();
-                        var mx = xls.FirstOrDefault();
-                        if(mx != null)
-                        {
-                            gx += mx.DistR;
-                        }
-                    }
-
-                    if (ky != null && lky.Contains(ky.Dist))
-                    {
-                        var yls = lky[ky.Dist].ToList();
-                        var my= yls.FirstOrDefault();
-                        if(my != null)
-                        {
-                            gy += my.DistR;
-                        }
-                    }
+                    magnet_proc(anc, srt, false, (mx) => gx += mx.DistR, (my) => gy += my.DistR);
                 }
                 #endregion
 
@@ -1581,6 +1525,51 @@ namespace Going.UIEditor.Windows
                             });
             }
             return ret;
+        }
+        #endregion
+        #region magnet_proc
+        void magnet_proc(Anchor anc, SKRect srt, bool loop, Action<Mag> routineX, Action<Mag> routineY)
+        {
+            var c = anc.Control;
+            var alls = search_control(container()).Where(xc => xc.Parent is IGoControl vcon ? CollisionTool.Check(xc.Bounds, Util.FromRect(xc.Parent.ViewPosition.X, xc.Parent.ViewPosition.Y, vcon.Width, vcon.Height)) : false);
+
+            var (xs, ys) = mag_controlpos(srt);
+            var tls = alls.Where(tc => tc != c && mag_check(tc, xs, ys)).ToList();
+            var pts = mag_points(tls, xs, ys, anc);
+
+            var lsx = pts.Where(x => x.MagX != null);
+            var lsy = pts.Where(x => x.MagY != null);
+            var lkx = lsx.ToLookup(x => x.Dist);
+            var lky = lsy.ToLookup(x => x.Dist);
+            var kx = lsx.OrderBy(x => x.Dist).FirstOrDefault();
+            var ky = lsy.OrderBy(y => y.Dist).FirstOrDefault();
+
+            if (kx != null && lkx.Contains(kx.Dist))
+            {
+                var xls = lkx[kx.Dist].ToList();
+                var fx = xls.FirstOrDefault();
+                if (fx != null)
+                {
+                    if (loop)
+                        foreach (var mx in xls.Where(vv => vv.Dist == fx.Dist && vv.DistR == fx.DistR)) routineX(mx);
+                    else 
+                        routineX(fx);
+                }
+            }
+
+            if (ky != null && lky.Contains(ky.Dist))
+            {
+                var yls = lky[ky.Dist].ToList();
+                var fy = yls.FirstOrDefault();
+                if (fy != null)
+                {
+                    if (loop)
+                        foreach (var my in yls.Where(vv => vv.Dist == fy.Dist && vv.DistR == fy.DistR)) routineY(my);
+                    else
+                        routineY(fy);
+                    
+                }
+            }
         }
         #endregion
         #endregion
