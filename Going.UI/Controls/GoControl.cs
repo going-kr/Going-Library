@@ -12,31 +12,49 @@ using System.Text.Json.Serialization;
 
 namespace Going.UI.Controls
 {
+    public class PCategory
+    {
+        public const string Control = "Control";
+        public const string Bounds = "Bounds";
+
+        public static List<string> Names = [Control, Bounds];
+        public static int Index(string category) => Names.IndexOf(category);
+    }
+
+    public class GoPropertyAttribute(string category, int order) : Attribute
+    {
+        public string Category { get; set; } = category;
+        public int Order { get; set; } = order;
+    }
+
+    public class GoColorPropertyAttribute(string category, int order) : GoPropertyAttribute(category, order) { }
+
     public class GoControl : IGoControl
     {
         #region Properties
         public static int LongClickTime { get; set; } = 2000;
         
         public Guid Id { get; init; } = Guid.NewGuid();
-        public string? Name { get; set; }
-        public SKRect Bounds { get => bounds; set => bounds = value; }
-        public GoPadding Margin { get; set; } = new(3, 3, 3, 3);
-        public bool Fill { get; set; } = false;
-        public virtual bool Visible { get; set; } = true;
-        public virtual bool Enabled { get; set; } = true;
+        [GoProperty(PCategory.Control, 0)] public string? Name { get; set; }
+        [GoProperty(PCategory.Control, 1)] public virtual bool Visible { get; set; } = true;
+        [GoProperty(PCategory.Control, 2)] public virtual bool Enabled { get; set; } = true;
         public bool Selectable { get; protected set; } = false;
         [JsonIgnore] public object? Tag { get; set; }
 
         [JsonIgnore] public float X { get => bounds.Left; set => bounds.Left = value; }
         [JsonIgnore] public float Y { get => bounds.Top; set => bounds.Top = value; }
-        [JsonIgnore] public float Left { get => bounds.Left; set => bounds.Left = value; }
-        [JsonIgnore] public float Top { get => bounds.Top; set => bounds.Top = value; }
-        [JsonIgnore] public float Right { get => bounds.Right; set => bounds.Right = value; }
-        [JsonIgnore] public float Bottom { get => bounds.Bottom; set => bounds.Bottom = value; }
-        [JsonIgnore] public float Width { get => bounds.Width; set => bounds.Right = value + bounds.Left; }
-        [JsonIgnore] public float Height { get => bounds.Height; set => bounds.Bottom = value + bounds.Top; }
         [JsonIgnore] public float ScreenX => Parent != null && Parent is GoControl pc ? pc.ScreenX + Parent.PanelBounds.Left + X : X;
         [JsonIgnore] public float ScreenY => Parent != null && Parent is GoControl pc ? pc.ScreenY + Parent.PanelBounds.Top + Y : Y;
+
+        [GoProperty(PCategory.Bounds, 0)] public SKRect Bounds { get => bounds; set => bounds = value; }
+        [GoProperty(PCategory.Bounds, 1), JsonIgnore] public float Left { get => bounds.Left; set => bounds.Left = value; }
+        [GoProperty(PCategory.Bounds, 2), JsonIgnore] public float Top { get => bounds.Top; set => bounds.Top = value; }
+        [GoProperty(PCategory.Bounds, 3), JsonIgnore] public float Right { get => bounds.Right; set => bounds.Right = value; }
+        [GoProperty(PCategory.Bounds, 4), JsonIgnore] public float Bottom { get => bounds.Bottom; set => bounds.Bottom = value; }
+        [GoProperty(PCategory.Bounds, 5), JsonIgnore] public float Width { get => bounds.Width; set => bounds.Right = value + bounds.Left; }
+        [GoProperty(PCategory.Bounds, 6), JsonIgnore] public float Height { get => bounds.Height; set => bounds.Bottom = value + bounds.Top; }
+        [GoProperty(PCategory.Bounds, 7)] public bool Fill { get; set; } = false;
+        [GoProperty(PCategory.Bounds, 8)] public GoPadding Margin { get; set; } = new(3, 3, 3, 3);
 
         [JsonIgnore] public bool FirstRender { get; internal set; } = true;
         [JsonIgnore] public IGoContainer? Parent { get; internal set; }

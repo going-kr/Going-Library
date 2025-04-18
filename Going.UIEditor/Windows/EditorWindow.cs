@@ -8,27 +8,16 @@ using Going.UI.Json;
 using Going.UI.Themes;
 using Going.UI.Tools;
 using Going.UI.Utils;
-using Going.UIEditor.Managers;
 using Going.UIEditor.Utils;
 using GuiLabs.Undo;
-using Microsoft.VisualBasic;
-using OpenTK.Compute.OpenCL;
-using OpenTK.Graphics.ES20;
-using OpenTK.Windowing.GraphicsLibraryFramework;
 using SkiaSharp;
 using System.Data;
 using System.Diagnostics;
-using System.Diagnostics.Eventing.Reader;
-using System.Drawing;
 using System.Reflection;
-using System.Runtime.ConstrainedExecution;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
-using Windows.Data.Xml.Dom;
-using Windows.Media.Control;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
+using System.Threading.Channels;
+using WeifenLuo.WinFormsUI.Docking;
 using Cursor = System.Windows.Forms.Cursor;
 using GoControl = Going.UI.Controls.GoControl;
 using Keys = System.Windows.Forms.Keys;
@@ -532,6 +521,7 @@ namespace Going.UIEditor.Windows
             var prj = Program.CurrentProject;
             if (prj != null)
             {
+                bool changed = false;
                 var rt = GetBounds();
                 if (rt.HasValue)
                 {
@@ -625,6 +615,8 @@ namespace Going.UIEditor.Windows
                                     sels.Clear();
                                     foreach (var v in vsels) sels.Add(v);
                                 }
+
+                                changed = true;
                             }
                             #endregion
                         }
@@ -654,6 +646,9 @@ namespace Going.UIEditor.Windows
                 var clears2 = sels.Where(x => x.Parent is GoSwitchPanel swpnl && !swpnl.Childrens.Contains(x)).ToArray();
                 foreach (var c in clears1) sels.Remove(c);
                 foreach (var c in clears2) sels.Remove(c);
+
+                changed |= clears1.Count() > 0 || clears2.Count() > 0;
+                if (changed && DockPanel.Contents.FirstOrDefault(x => x is PropertiesWindow) is PropertiesWindow pw) pw.SelectObjects(sels);
 
                 downControl = null;
                 dragAnchor = null;
@@ -931,7 +926,7 @@ namespace Going.UIEditor.Windows
             var p = Program.CurrentProject;
             if (p != null)
             {
-                actmgr.RecordAction(new SelectedAction(sels, news, olds));
+                actmgr.RecordAction(new SelectedAction(DockPanel, sels, news, olds));
                 p.Edit = true;
             }
         }
@@ -1741,11 +1736,13 @@ namespace Going.UIEditor.Windows
     #region SelectedAction
     public class SelectedAction : AbstractAction
     {
+        DockPanel dockPanel;
         List<IGoControl> sels;
         IEnumerable<IGoControl> news, olds;
 
-        public SelectedAction(List<IGoControl> sels, IEnumerable<IGoControl> news, IEnumerable<IGoControl> olds)
+        public SelectedAction(DockPanel dockPanel, List<IGoControl> sels, IEnumerable<IGoControl> news, IEnumerable<IGoControl> olds)
         {
+            this.dockPanel = dockPanel;
             this.sels = sels;
             this.olds = olds;
             this.news = news;
@@ -1755,11 +1752,13 @@ namespace Going.UIEditor.Windows
         {
             sels.Clear();
             sels.AddRange(news);
+            if (dockPanel.Contents.FirstOrDefault(x => x is PropertiesWindow) is PropertiesWindow pw) pw.SelectObjects(sels);
         }
         protected override void UnExecuteCore()
         {
             sels.Clear();
             sels.AddRange(olds);
+            if (dockPanel.Contents.FirstOrDefault(x => x is PropertiesWindow) is PropertiesWindow pw) pw.SelectObjects(sels);
         }
     }
     #endregion

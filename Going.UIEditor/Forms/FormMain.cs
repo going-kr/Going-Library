@@ -16,6 +16,10 @@ namespace Going.UIEditor
 {
     public partial class FormMain : GoForm
     {
+        #region Const
+        const string PATH_LAYOUT = "layout.xml";
+        #endregion
+
         #region Member Variable
         ExplorerWindow? explorer;
         ToolBoxWindow? toolBox;
@@ -61,7 +65,7 @@ namespace Going.UIEditor
             #region View
             tsmiExplorer.Click += (o, s) =>
             {
-                if ((explorer?.IsDisposed ?? false) && !explorer.Visible)
+                if (((explorer?.IsDisposed ?? false) && !explorer.Visible) || explorer == null)
                 {
                     explorer = new ExplorerWindow { Title = LM.Explorer };
                     explorer.FormClosed += (o, s) => { explorer.Dispose(); explorer = null; };
@@ -72,7 +76,7 @@ namespace Going.UIEditor
 
             tsmiToolBox.Click += (o, s) =>
             {
-                if ((toolBox?.IsDisposed ?? false) && !toolBox.Visible)
+                if (((toolBox?.IsDisposed ?? false) && !toolBox.Visible) || toolBox == null)
                 {
                     toolBox = new ToolBoxWindow { Title = LM.ToolBox };
                     toolBox.FormClosed += (o, s) => { toolBox.Dispose(); toolBox = null; };
@@ -83,7 +87,7 @@ namespace Going.UIEditor
 
             tsmiProperties.Click += (o, s) =>
             {
-                if ((properties?.IsDisposed ?? false) && !properties.Visible)
+                if (((properties?.IsDisposed ?? false) && !properties.Visible) || properties == null)
                 {
                     properties = new  PropertiesWindow { Title = LM.Properties };
                     properties.FormClosed += (o, s) => { properties.Dispose(); properties = null; };
@@ -174,17 +178,44 @@ namespace Going.UIEditor
                 btnDeploy.Visible = true;
                 #endregion
 
-                explorer = new ExplorerWindow { Title = LM.Explorer};
-                toolBox = new ToolBoxWindow { Title = LM.ToolBox };
-                properties = new PropertiesWindow { Title = LM.Properties };
+                if (File.Exists(PATH_LAYOUT))
+                {
+                    dockPanel.LoadFromXml(PATH_LAYOUT, new DeserializeDockContent((s) =>
+                    {
+                        switch (s)
+                        {
+                            case "Going.UIEditor.Windows.ExplorerWindow":
+                                explorer = new ExplorerWindow { Title = LM.Explorer };
+                                explorer.FormClosed += (o, s) => { explorer.Dispose(); explorer = null; };
+                                return explorer;
+                            case "Going.UIEditor.Windows.ToolBoxWindow":
+                                toolBox = new ToolBoxWindow { Title = LM.ToolBox };
+                                toolBox.FormClosed += (o, s) => { toolBox.Dispose(); toolBox = null; };
+                                return toolBox;
+                            case "Going.UIEditor.Windows.PropertiesWindow":
+                                properties = new PropertiesWindow { Title = LM.Properties };
+                                properties.FormClosed += (o, s) => { properties.Dispose(); properties = null; };
+                                return properties;
+                            default:
+                                return null;
+                        }
 
-                explorer.FormClosed += (o, s) => { explorer.Dispose(); explorer = null; };
-                toolBox.FormClosed += (o, s) => { toolBox.Dispose(); toolBox = null; };
-                properties.FormClosed += (o, s) => { properties.Dispose(); properties = null; };
+                    }));
+                }
+                else
+                {
+                    explorer = new ExplorerWindow { Title = LM.Explorer };
+                    toolBox = new ToolBoxWindow { Title = LM.ToolBox };
+                    properties = new PropertiesWindow { Title = LM.Properties };
 
-                explorer.Show(dockPanel, DockState.DockLeft);
-                toolBox.Show(explorer.Pane, DockAlignment.Bottom, 0.7);
-                properties.Show(dockPanel, DockState.DockRight);
+                    explorer.FormClosed += (o, s) => { explorer.Dispose(); explorer = null; };
+                    toolBox.FormClosed += (o, s) => { toolBox.Dispose(); toolBox = null; };
+                    properties.FormClosed += (o, s) => { properties.Dispose(); properties = null; };
+
+                    explorer.Show(dockPanel, DockState.DockLeft);
+                    toolBox.Show(explorer.Pane, DockAlignment.Bottom, 0.7);
+                    properties.Show(dockPanel, DockState.DockRight);
+                }
             }
             else
             {
@@ -307,14 +338,16 @@ namespace Going.UIEditor
         #region OpenFile
         void OpenFile()
         {
-            var p = Program.CurrentProject;
-            if (p != null && (p.Edit || p.FilePath == null)) p.Save();
+            var r = CloseFile();
 
-            var v = Project.Open();
-            if(v != null)
+            if (r != DialogResult.Cancel)
             {
-                Program.CurrentProject = v;
-                SetUI();
+                var v = Project.Open();
+                if (v != null)
+                {
+                    Program.CurrentProject = v;
+                    SetUI();
+                }
             }
         }
         #endregion
@@ -335,6 +368,8 @@ namespace Going.UIEditor
 
             if (ret != DialogResult.Cancel)
             {
+                if (p != null) dockPanel.SaveAsXml(PATH_LAYOUT);
+
                 Program.CurrentProject = null;
                 SetUI();
             }

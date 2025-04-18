@@ -28,12 +28,36 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "PropertiesWindow";
+            pg = new Controls.GoPropertyGrid();
+            SuspendLayout();
+            // 
+            // pg
+            // 
+            pg.BackColor = Color.FromArgb(50, 50, 50);
+            pg.BackgroundColor = "Back";
+            pg.Dock = DockStyle.Fill;
+            pg.Location = new Point(5, 5);
+            pg.Name = "pg";
+            pg.Size = new Size(790, 440);
+            pg.TabIndex = 0;
+            pg.TabStop = false;
+            pg.Text = "goPropertyGrid1";
+            // 
+            // PropertiesWindow
+            // 
+            AutoScaleDimensions = new SizeF(7F, 14F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(800, 450);
+            Controls.Add(pg);
+            Name = "PropertiesWindow";
+            Padding = new Padding(5);
+            Text = "PropertiesWindow";
+            Title = "PropertiesWindow";
+            ResumeLayout(false);
         }
 
         #endregion
+
+        private Controls.GoPropertyGrid pg;
     }
 }
