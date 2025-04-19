@@ -13,54 +13,57 @@ namespace Going.UI.Controls
         #region Properties
 
         #region 아이콘 설정
-        public string? IconString { get; set; }
-        public float IconSize { get; set; } = 12;
-        public float IconGap { get; set; } = 5;
-        public GoDirectionHV IconDirection { get; set; }
+        [GoProperty(PCategory.Misc, 0)] public string? IconString { get; set; }
+        [GoProperty(PCategory.Misc, 1)] public float IconSize { get; set; } = 12;
+        [GoProperty(PCategory.Misc, 2)] public float IconGap { get; set; } = 5;
+        [GoProperty(PCategory.Misc, 3)] public GoDirectionHV IconDirection { get; set; }
         #endregion
 
         #region 슬라이더 라벨 설정
-        public string Text { get; set; } = "label";
-        public string FontName { get; set; } = "나눔고딕";
-        public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Misc, 4)] public string Text { get; set; } = "label";
+        [GoProperty(PCategory.Misc, 5)] public string FontName { get; set; } = "나눔고딕";
+        [GoProperty(PCategory.Misc, 6)] public float FontSize { get; set; } = 12;
         #endregion
 
         #region 슬라이더 배경 설정
-        public bool BackgroundDraw { get; set; }
-        public bool BorderOnly { get; set; }
+        [GoProperty(PCategory.Misc, 7)] public bool BackgroundDraw { get; set; }
+        [GoProperty(PCategory.Misc, 8)] public bool BorderOnly { get; set; }
         #endregion
 
         #region 슬라이더 설정
-        public string TextColor { get; set; } = "Fore";
-        public string BoxColor { get; set; } = "Back";
-        public string SliderColor { get; set; } = "Base5";
-        public string ProgressColor { get; set; } = "Base1";
-        public string BorderColor { get; set; } = "danger";
-        public GoRoundType Round { get; set; } = GoRoundType.All;
-        public GoDirectionHV Direction { get; set; } = GoDirectionHV.Horizon;
+        [GoProperty(PCategory.Misc, 9)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Misc, 10)] public string BoxColor { get; set; } = "Back";
+        [GoProperty(PCategory.Misc, 11)] public string SliderColor { get; set; } = "Base5";
+        [GoProperty(PCategory.Misc, 12)] public string ProgressColor { get; set; } = "Base1";
+        [GoProperty(PCategory.Misc, 13)] public string BorderColor { get; set; } = "danger";
+        [GoProperty(PCategory.Misc, 14)] public GoRoundType Round { get; set; } = GoRoundType.All;
+        [GoProperty(PCategory.Misc, 15)] public GoDirectionHV Direction { get; set; } = GoDirectionHV.Horizon;
         #endregion
 
         #region 슬라이더 표시 설정(외형)
-        public bool ShowValueLabel { get; set; } = true;
-        public string ValueFormat { get; set; } = "0";
-        public int BarSize { get; set; } = 4;
-        public float HandleRadius { get; set; } = 15f;
-        public bool EnableShadow { get; set; } = true;
-        public float HandleHoverScale { get; set; } = 1.05f;
+        [GoProperty(PCategory.Misc, 16)] public bool ShowValueLabel { get; set; } = true;
+        [GoProperty(PCategory.Misc, 17)] public string ValueFormat { get; set; } = "0";
+        [GoProperty(PCategory.Misc, 18)] public int BarSize { get; set; } = 4;
+        [GoProperty(PCategory.Misc, 19)] public float HandleRadius { get; set; } = 15f;
+        [GoProperty(PCategory.Misc, 20)] public bool EnableShadow { get; set; } = true;
+        [GoProperty(PCategory.Misc, 21)] public float HandleHoverScale { get; set; } = 1.05f;
         #endregion
 
         #region 틱(단계) 설정
-        public double? Tick { get; set; } = null;
-        public bool ShowTicks { get; set; } = false;
-        public int TickCount { get; set; } = 5;
-        public float TickSize { get; set; } = 10f;
+        [GoProperty(PCategory.Misc, 22)] public double? Tick { get; set; } = null;
+        [GoProperty(PCategory.Misc, 23)] public bool ShowTicks { get; set; } = false;
+        [GoProperty(PCategory.Misc, 24)] public int TickCount { get; set; } = 5;
+        [GoProperty(PCategory.Misc, 25)] public float TickSize { get; set; } = 10f;
         #endregion
 
         #region 슬라이더 값 설정(외부)
         private double sValue;
-        public double Value {
+        [GoProperty(PCategory.Misc, 26)]
+        public double Value
+        {
             get => sValue;
-            set {
+            set
+            {
                 var clampedValue = MathClamp(value, Minimum, Maximum);
                 if (Math.Abs(sValue - value) < 0.00001f) return;
 
@@ -71,6 +74,7 @@ namespace Going.UI.Controls
             }
         }
         private string? sValueString;
+        [GoProperty(PCategory.Misc, 27)]
         public string? ValueString
         {
             get => sValueString;
@@ -81,6 +85,7 @@ namespace Going.UI.Controls
             }
         }
         private double sMinimum;
+        [GoProperty(PCategory.Misc, 28)]
         public double Minimum
         {
             get => sMinimum;
@@ -94,6 +99,7 @@ namespace Going.UI.Controls
             }
         }
         private double sMaximum = 100D;
+        [GoProperty(PCategory.Misc, 29)]
         public double Maximum
         {
             get => sMaximum;
@@ -128,7 +134,7 @@ namespace Going.UI.Controls
         private readonly SKPaint trackPaint = new SKPaint { IsAntialias = true, Style = SKPaintStyle.Fill };
         private readonly SKPaint progressPaint = new SKPaint { IsAntialias = true, Style = SKPaintStyle.Fill };
         private readonly SKPaint handlePaint = new SKPaint { IsAntialias = true, Style = SKPaintStyle.Fill };
-        private readonly SKPaint tickPaint = new SKPaint {IsAntialias = true, Style = SKPaintStyle.Fill };
+        private readonly SKPaint tickPaint = new SKPaint { IsAntialias = true, Style = SKPaintStyle.Fill };
         private readonly SKPaint borderPaint = new SKPaint { IsAntialias = true, Style = SKPaintStyle.Stroke };
         private readonly SKPaint textPaint = new SKPaint { IsAntialias = true };
         private SKTextAlign textAlign = SKTextAlign.Center;

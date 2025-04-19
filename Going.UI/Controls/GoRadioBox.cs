@@ -15,16 +15,17 @@ namespace Going.UI.Controls
     public class GoRadioBox : GoControl
     {
         #region Properties
-        public string Text { get; set; } = "label";
-        public string FontName { get; set; } = "나눔고딕";
-        public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
-        public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Misc, 0)] public string Text { get; set; } = "label";
+        [GoProperty(PCategory.Misc, 1)] public string FontName { get; set; } = "나눔고딕";
+        [GoProperty(PCategory.Misc, 2)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Misc, 3)] public float FontSize { get; set; } = 12;
 
-        public string TextColor { get; set; } = "Fore";
-        public string BoxColor { get; set; } = "Base1";
-        public string CheckColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Misc, 4)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Misc, 5)] public string BoxColor { get; set; } = "Base1";
+        [GoProperty(PCategory.Misc, 6)] public string CheckColor { get; set; } = "Fore";
 
         private bool bCheck = false;
+        [GoProperty(PCategory.Misc, 7)]
         public bool Checked
         {
             get => bCheck; set
@@ -44,9 +45,9 @@ namespace Going.UI.Controls
                 }
             }
         }
-        public int BoxSize { get; set; } = 24;
-        public int Gap { get; set; } = 10;
-        public GoContentAlignment ContentAlignment { get; set; } = GoContentAlignment.MiddleCenter;
+        [GoProperty(PCategory.Misc, 8)] public int BoxSize { get; set; } = 24;
+        [GoProperty(PCategory.Misc, 9)] public int Gap { get; set; } = 10;
+        [GoProperty(PCategory.Misc,10)] public GoContentAlignment ContentAlignment { get; set; } = GoContentAlignment.MiddleCenter;
         #endregion
 
         #region Event

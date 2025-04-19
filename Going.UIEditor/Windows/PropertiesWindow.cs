@@ -24,7 +24,9 @@ namespace Going.UIEditor.Windows
 {
     public partial class PropertiesWindow : xWindow
     {
+        #region Properties
         public GoPropertyGrid Grid => pg;
+        #endregion
 
         #region Constructor
         public PropertiesWindow()
@@ -35,11 +37,17 @@ namespace Going.UIEditor.Windows
             Title = "Properties";
         }
         #endregion
-        
-        public void SelectObjects(IEnumerable<IGoControl>? objects)
+
+        #region Method
+        public void SelectObjects(EditorWindow editor, IEnumerable<IGoControl>? objects)
         {
-            pg.SelectedObjects = [.. objects];
+            pg.SelectedEditor = editor;
+            pg.SelectedObjects = objects == null ? null : [.. objects];
+            pg.Invalidate();
         }
+
+        public void RefreshGrid() => pg.Invalidate();
+        #endregion
     }
-     
+
 }

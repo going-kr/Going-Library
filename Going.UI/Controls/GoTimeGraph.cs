@@ -19,22 +19,22 @@ namespace Going.UI.Controls
     public class GoTimeGraph : GoControl
     {
         #region Properties
-        public string GridColor { get; set; } = "Base3";
-        public string TextColor { get; set; } = "Fore";
-        public string RemarkColor { get; set; } = "Base2";
-        public string GraphColor { get; set; } = "Back";
+        [GoProperty(PCategory.Misc, 0)] public string GridColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Misc, 1)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Misc, 2)] public string RemarkColor { get; set; } = "Base2";
+        [GoProperty(PCategory.Misc, 3)] public string GraphColor { get; set; } = "Back";
 
-        public string FontName { get; set; } = "나눔고딕";
-        public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
-        public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Misc, 4)] public string FontName { get; set; } = "나눔고딕";
+        [GoProperty(PCategory.Misc, 5)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Misc, 6)] public float FontSize { get; set; } = 12;
 
-        public TimeSpan XScale { get; set; } = new TimeSpan(1, 0, 0);
-        public TimeSpan XAxisGraduationTime { get; set; } = new TimeSpan(0, 10, 0);
-        public int YAxisGraduationCount { get; set; } = 10;
-        public string? TimeFormatString { get; set; } = null;
-        public string? ValueFormatString { get; set; } = null;
+        [GoProperty(PCategory.Misc, 7)] public TimeSpan XScale { get; set; } = new TimeSpan(1, 0, 0);
+        [GoProperty(PCategory.Misc, 8)] public TimeSpan XAxisGraduationTime { get; set; } = new TimeSpan(0, 10, 0);
+        [GoProperty(PCategory.Misc, 9)] public int YAxisGraduationCount { get; set; } = 10;
+        [GoProperty(PCategory.Misc, 10)] public string? TimeFormatString { get; set; } = null;
+        [GoProperty(PCategory.Misc, 11)] public string? ValueFormatString { get; set; } = null;
 
-        public List<GoLineGraphSeries> Series { get; set; } = [];
+        [GoProperty(PCategory.Misc, 12)] public List<GoLineGraphSeries> Series { get; set; } = [];
         #endregion
 
         #region Member Variable
@@ -52,7 +52,7 @@ namespace Going.UI.Controls
         {
             Selectable = true;
 
-            scroll.GetScrollTotal = () => datas.Count > 1 && Series.Count > 0 ? (datas[datas.Count - 1].Time - datas[0].Time).TotalMilliseconds: 0L;
+            scroll.GetScrollTotal = () => datas.Count > 1 && Series.Count > 0 ? (datas[datas.Count - 1].Time - datas[0].Time).TotalMilliseconds : 0L;
             scroll.GetScrollTick = () => XAxisGraduationTime.TotalMilliseconds;
             scroll.GetScrollView = () => XScale.TotalMilliseconds;
             scroll.GetScrollScaleFactor = () =>
@@ -257,7 +257,7 @@ namespace Going.UI.Controls
                     if (CollisionTool.Check(rtGraph, mx, my))
                     {
                         var tmx = Convert.ToInt32(mx - rtGraph.Left - sposw) + 0.5F;
-                        var tmSel = ist + TimeSpan.FromMilliseconds(MathTool.Map(tmx+sposw, 0, rtGraph.Width, 0, XScale.TotalMilliseconds));
+                        var tmSel = ist + TimeSpan.FromMilliseconds(MathTool.Map(tmx + sposw, 0, rtGraph.Width, 0, XScale.TotalMilliseconds));
 
                         var (pi, ni) = FindItem(datas, tmSel);
 
@@ -560,7 +560,7 @@ namespace Going.UI.Controls
                 int mid = (left + right) / 2;
 
                 if (ls[mid].Time == target)
-                    return (mid, mid); 
+                    return (mid, mid);
                 else if (ls[mid].Time < target)
                     left = mid + 1;
                 else

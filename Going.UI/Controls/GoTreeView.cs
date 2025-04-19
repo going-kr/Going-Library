@@ -17,25 +17,25 @@ namespace Going.UI.Controls
     public class GoTreeView : GoControl
     {
         #region Properties
-        public float IconSize { get; set; } = 12;
-        public float IconGap { get; set; } = 5;
-        public string FontName { get; set; } = "나눔고딕";
-        public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
-        public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Misc, 0)] public float IconSize { get; set; } = 12;
+        [GoProperty(PCategory.Misc, 1)] public float IconGap { get; set; } = 5;
+        [GoProperty(PCategory.Misc, 2)] public string FontName { get; set; } = "나눔고딕";
+        [GoProperty(PCategory.Misc, 3)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Misc, 4)] public float FontSize { get; set; } = 12;
 
-        public string TextColor { get; set; } = "Fore";
-        public string BoxColor { get; set; } = "Base1";
-        public string BorderColor { get; set; } = "Base3";
-        public string SelectColor { get; set; } = "Select";
-        public GoRoundType Round { get; set; } = GoRoundType.All;
+        [GoProperty(PCategory.Misc, 5)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Misc, 6)] public string BoxColor { get; set; } = "Base1";
+        [GoProperty(PCategory.Misc, 7)] public string BorderColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Misc, 8)] public string SelectColor { get; set; } = "Select";
+        [GoProperty(PCategory.Misc, 9)] public GoRoundType Round { get; set; } = GoRoundType.All;
 
-        public bool BackgroundDraw { get; set; } = true;
-        public bool DragMode { get; set; } = false;
+        [GoProperty(PCategory.Misc, 10)] public bool BackgroundDraw { get; set; } = true;
+        [GoProperty(PCategory.Misc, 11)] public bool DragMode { get; set; } = false;
 
-        public float ItemHeight { get; set; } = 30;
-        public ObservableList<GoTreeNode> Nodes { get; set; } = [];
+        [GoProperty(PCategory.Misc, 12)] public float ItemHeight { get; set; } = 30;
+        [GoProperty(PCategory.Misc, 13)] public ObservableList<GoTreeNode> Nodes { get; set; } = [];
 
-        public GoItemSelectionMode SelectionMode { get; set; } = GoItemSelectionMode.Single;
+        [GoProperty(PCategory.Misc, 14)] public GoItemSelectionMode SelectionMode { get; set; } = GoItemSelectionMode.Single;
         [JsonIgnore] public List<GoTreeNode> SelectedNodes { get; } = [];
 
         [JsonIgnore] public double ScrollPosition { get => scroll.ScrollPosition; set => scroll.ScrollPosition = value; }
@@ -49,7 +49,7 @@ namespace Going.UI.Controls
         private Scroll scroll = new Scroll() { Direction = ScrollDirection.Vertical };
         private SKRect rtBoxP = new SKRect();
         private bool bShift, bControl;
-        private GoTreeNode ? first = null;
+        private GoTreeNode? first = null;
         #endregion
 
         #region Event 
@@ -106,12 +106,12 @@ namespace Going.UI.Controls
                 using var pth = PathTool.Box(rtContent, Round, thm.Corner);
                 canvas.ClipPath(pth, SKClipOperation.Intersect, true);
                 canvas.Translate(rtContent.Left, Convert.ToInt64(spos) + rtContent.Top);
-                
+
                 itemLoop((i, node) =>
                 {
                     node.Draw(canvas);
                 });
-                
+
             }
 
             scroll.Draw(canvas, rtScroll);
@@ -387,7 +387,7 @@ namespace Going.UI.Controls
         List<GoTreeNode> mk(IEnumerable<GoTreeNode> nodes)
         {
             List<GoTreeNode> ret = [];
-            foreach(var nd in nodes)
+            foreach (var nd in nodes)
             {
                 ret.Add(nd);
                 if (nd.Expand) ret.AddRange(mk(nd.Nodes));

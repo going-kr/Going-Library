@@ -20,21 +20,21 @@ namespace Going.UI.Containers
     public class GoGroupBox : GoContainer
     {
         #region Properties
-        public string? IconString { get; set; }
-        public float IconSize { get; set; } = 12;
-        public float IconGap { get; set; } = 5;
+        [GoProperty(PCategory.Misc, 0)] public string? IconString { get; set; }
+        [GoProperty(PCategory.Misc, 1)] public float IconSize { get; set; } = 12;
+        [GoProperty(PCategory.Misc, 2)] public float IconGap { get; set; } = 5;
 
-        public string Text { get; set; } = "Panel";
-        public string FontName { get; set; } = "나눔고딕";
-        public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
-        public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Misc, 3)] public string Text { get; set; } = "Panel";
+        [GoProperty(PCategory.Misc, 4)] public string FontName { get; set; } = "나눔고딕";
+        [GoProperty(PCategory.Misc, 5)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Misc, 6)] public float FontSize { get; set; } = 12;
 
-        public string TextColor { get; set; } = "Fore";
-        public string BorderColor { get; set; } = "Base3";
-        public GoRoundType Round { get; set; } = GoRoundType.All;
+        [GoProperty(PCategory.Misc, 7)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Misc, 8)] public string BorderColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Misc, 9)] public GoRoundType Round { get; set; } = GoRoundType.All;
 
-        public List<GoButtonItem> Buttons { get; set; } = [];
-        public float? ButtonWidth { get; set; }
+        [GoProperty(PCategory.Misc, 10)] public List<GoButtonItem> Buttons { get; set; } = [];
+        [GoProperty(PCategory.Misc, 11)] public float? ButtonWidth { get; set; }
 
         [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
 

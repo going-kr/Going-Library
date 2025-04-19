@@ -15,9 +15,9 @@ namespace Going.UI.Controls
     public class GoPicture : GoControl
     {
         #region Properties
-        public string? Image { get; set; }
-        public GoImageScaleMode ScaleMode { get; set; } = GoImageScaleMode.Real;
-        public GoRoundType Round { get; set; } = GoRoundType.Rect;
+        [GoImageProperty(PCategory.Misc, 0)] public string? Image { get; set; }
+        [GoProperty(PCategory.Misc, 1)] public GoImageScaleMode ScaleMode { get; set; } = GoImageScaleMode.Real;
+        [GoProperty(PCategory.Misc, 2)] public GoRoundType Round { get; set; } = GoRoundType.Rect;
         #endregion
 
         #region Override

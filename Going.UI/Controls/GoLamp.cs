@@ -14,16 +14,17 @@ namespace Going.UI.Controls
     public class GoLamp : GoControl
     {
         #region Properties
-        public string Text { get; set; } = "label";
-        public string FontName { get; set; } = "나눔고딕";
-        public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
-        public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Misc, 0)] public string Text { get; set; } = "label";
+        [GoProperty(PCategory.Misc, 1)] public string FontName { get; set; } = "나눔고딕";
+        [GoProperty(PCategory.Misc, 2)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Misc, 3)] public float FontSize { get; set; } = 12;
 
-        public string TextColor { get; set; } = "Fore";
-        public string OnColor { get; set; } = "Good";
-        public string OffColor { get; set; } = "Base2";
+        [GoProperty(PCategory.Misc, 4)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Misc, 5)] public string OnColor { get; set; } = "Good";
+        [GoProperty(PCategory.Misc, 6)] public string OffColor { get; set; } = "Base2";
 
         private bool bOnOff = false;
+        [GoProperty(PCategory.Misc, 7)]
         public bool OnOff
         {
             get => bOnOff; set
@@ -36,9 +37,9 @@ namespace Going.UI.Controls
             }
         }
 
-        public int LampSize { get; set; } = 24;
-        public int Gap { get; set; } = 10;
-        public GoContentAlignment ContentAlignment { get; set; } = GoContentAlignment.MiddleCenter;
+        [GoProperty(PCategory.Misc, 8)] public int LampSize { get; set; } = 24;
+        [GoProperty(PCategory.Misc, 9)] public int Gap { get; set; } = 10;
+        [GoProperty(PCategory.Misc, 10)] public GoContentAlignment ContentAlignment { get; set; } = GoContentAlignment.MiddleCenter;
         #endregion
 
         #region Event

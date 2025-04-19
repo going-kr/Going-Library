@@ -20,25 +20,25 @@ namespace Going.UI.Controls
     public class GoToolBox : GoControl
     {
         #region Properties
-        public float IconSize { get; set; } = 12;
-        public float IconGap { get; set; } = 5;
-        public string FontName { get; set; } = "나눔고딕";
-        public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
-        public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Misc, 0)] public float IconSize { get; set; } = 12;
+        [GoProperty(PCategory.Misc, 1)] public float IconGap { get; set; } = 5;
+        [GoProperty(PCategory.Misc, 2)] public string FontName { get; set; } = "나눔고딕";
+        [GoProperty(PCategory.Misc, 3)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Misc, 4)] public float FontSize { get; set; } = 12;
 
-        public string TextColor { get; set; } = "Fore";
-        public string BoxColor { get; set; } = "Base1";
-        public string BorderColor { get; set; } = "Base3";
-        public string SelectColor { get; set; } = "Select";
-        public string CategoryColor { get; set; } = "Base2";
-        public GoRoundType Round { get; set; } = GoRoundType.All;
+        [GoProperty(PCategory.Misc, 5)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Misc, 6)] public string BoxColor { get; set; } = "Base1";
+        [GoProperty(PCategory.Misc, 7)] public string BorderColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Misc, 8)] public string SelectColor { get; set; } = "Select";
+        [GoProperty(PCategory.Misc, 9)] public string CategoryColor { get; set; } = "Base2";
+        [GoProperty(PCategory.Misc, 10)] public GoRoundType Round { get; set; } = GoRoundType.All;
 
-        public bool BackgroundDraw { get; set; } = true;
+        [GoProperty(PCategory.Misc, 11)] public bool BackgroundDraw { get; set; } = true;
 
-        public float ItemHeight { get; set; } = 30;
-        public ObservableList<GoToolCategory> Categories { get; set; } = [];
+        [GoProperty(PCategory.Misc, 12)] public float ItemHeight { get; set; } = 30;
+        [GoProperty(PCategory.Misc, 13)] public ObservableList<GoToolCategory> Categories { get; set; } = [];
 
-        public bool DragMode { get; set; } = true;
+        [GoProperty(PCategory.Misc, 14)] public bool DragMode { get; set; } = true;
 
         [JsonIgnore] public double ScrollPosition { get => scroll.ScrollPosition; set => scroll.ScrollPosition = value; }
         [JsonIgnore] internal double ScrollPositionWithOffset => scroll.ScrollPositionWithOffset;
@@ -130,7 +130,7 @@ namespace Going.UI.Controls
         protected override void OnMouseDown(float x, float y, GoMouseButton button)
         {
             var rts = Areas();
-            
+
             GoToolItem? sel = null;
             itemLoop((i, category) => { category.MouseDown(x, y - rts["Box"].Top - Convert.ToSingle(scroll.ScrollPositionWithOffset), button, (v) => sel ??= v); });
 
@@ -158,7 +158,7 @@ namespace Going.UI.Controls
         protected override void OnMouseMove(float x, float y)
         {
             var rts = Areas();
-         
+
             ItemMouseX = x;
             ItemMouseY = y - rts["Box"].Top - Convert.ToSingle(scroll.ScrollPositionWithOffset);
 

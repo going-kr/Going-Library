@@ -1,4 +1,5 @@
-﻿using SkiaSharp;
+﻿using Going.UI.Controls;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,8 +11,8 @@ namespace Going.UI.Datas
 {
     public class GoListItem
     {
-        public string? IconString { get; set; }
-        public string? Text { get; set; }
+        [GoProperty(PCategory.Control, 0)] public string? IconString { get; set; }
+        [GoProperty(PCategory.Control, 1)] public string? Text { get; set; }
         public object? Tag { get; set; }
 
         internal SKRect Bounds { get; set; }

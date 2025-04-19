@@ -19,26 +19,26 @@ namespace Going.UI.Controls
     public class GoTrendGraph : GoControl
     {
         #region Properties
-        public string GridColor { get; set; } = "Base3";
-        public string TextColor { get; set; } = "Fore";
-        public string RemarkColor { get; set; } = "Base2";
-        public string GraphColor { get; set; } = "Back";
+        [GoProperty(PCategory.Misc, 0)] public string GridColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Misc, 1)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Misc, 2)] public string RemarkColor { get; set; } = "Base2";
+        [GoProperty(PCategory.Misc, 3)] public string GraphColor { get; set; } = "Back";
 
-        public string FontName { get; set; } = "나눔고딕";
-        public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
-        public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Misc, 4)] public string FontName { get; set; } = "나눔고딕";
+        [GoProperty(PCategory.Misc, 5)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Misc, 6)] public float FontSize { get; set; } = 12;
 
-        public TimeSpan MaximumXScale { get; set; } = new TimeSpan(1, 0, 0, 0);
-        public TimeSpan XScale { get; set; } = new TimeSpan(1, 0, 0);
-        public TimeSpan XAxisGraduationTime { get; set; } = new TimeSpan(0, 10, 0);
-        public int YAxisGraduationCount { get; set; } = 10;
-        public string? TimeFormatString { get; set; } = null;
-        public string? ValueFormatString { get; set; } = null;
-        
-        public int Interval { get; set; } = 1000;
-        public bool IsStart { get; private set; } = false;
+        [GoProperty(PCategory.Misc, 7)] public TimeSpan MaximumXScale { get; set; } = new TimeSpan(1, 0, 0, 0);
+        [GoProperty(PCategory.Misc, 8)] public TimeSpan XScale { get; set; } = new TimeSpan(1, 0, 0);
+        [GoProperty(PCategory.Misc, 9)] public TimeSpan XAxisGraduationTime { get; set; } = new TimeSpan(0, 10, 0);
+        [GoProperty(PCategory.Misc, 10)] public int YAxisGraduationCount { get; set; } = 10;
+        [GoProperty(PCategory.Misc, 11)] public string? TimeFormatString { get; set; } = null;
+        [GoProperty(PCategory.Misc, 12)] public string? ValueFormatString { get; set; } = null;
 
-        public List<GoLineGraphSeries> Series { get; set; } = [];
+        [GoProperty(PCategory.Misc, 13)] public int Interval { get; set; } = 1000;
+        [GoProperty(PCategory.Misc, 14)] public bool IsStart { get; private set; } = false;
+
+        [GoProperty(PCategory.Misc, 15)] public List<GoLineGraphSeries> Series { get; set; } = [];
 
         #region Pause
         private bool bPause = false;
@@ -75,7 +75,7 @@ namespace Going.UI.Controls
         DateTime nowTime = DateTime.Now;
         List<GoTimeGraphValue> datas = new List<GoTimeGraphValue>();
         List<GoTimeGraphValue> pdatas = new List<GoTimeGraphValue>();
-        
+
         Scroll scroll = new Scroll() { Direction = ScrollDirection.Horizon };
         float mx, my;
         bool bView;
@@ -312,7 +312,7 @@ namespace Going.UI.Controls
                         {
                             var tmx = Convert.ToSingle(mx - rtGraph.Left - sposw);
                             var tmSel = vst + TimeSpan.FromMilliseconds(MathTool.Map(tmx + sposw, 0, rtGraph.Width, 0, XScale.TotalMilliseconds));
-                            
+
                             var (pi, ni) = FindItem([.. va], tmSel);
 
                             if (pi >= 0 && pi < va.Length && ni >= 0 && ni < va.Length)
@@ -525,7 +525,7 @@ namespace Going.UI.Controls
 
         #region Method
         #region Start
-        public void Start<T>(T value) 
+        public void Start<T>(T value)
         {
             if (!IsStart)
             {
@@ -596,7 +596,7 @@ namespace Going.UI.Controls
         #region SetData
         public void SetData<T>(T Data)
         {
-            if (IsStart && this.value != null &&this.value.GetType() == typeof(T))
+            if (IsStart && this.value != null && this.value.GetType() == typeof(T))
                 this.value = Data;
         }
         #endregion

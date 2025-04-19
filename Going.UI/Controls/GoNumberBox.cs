@@ -22,18 +22,19 @@ namespace Going.UI.Controls
         #endregion
 
         #region Properties
-        public string FontName { get; set; } = "나눔고딕";
-        public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
-        public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Misc, 0)] public string FontName { get; set; } = "나눔고딕";
+        [GoProperty(PCategory.Misc, 1)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Misc, 2)] public float FontSize { get; set; } = 12;
 
-        public GoDirectionHV Direction { get; set; } = GoDirectionHV.Horizon;
-        public string TextColor { get; set; } = "Fore";
-        public string BorderColor { get; set; } = "Base3";
-        public string ButtonColor { get; set; } = "Base3";
-        public string ValueColor { get; set; } = "Base1";
-        public GoRoundType Round { get; set; } = GoRoundType.All;
+        [GoProperty(PCategory.Misc, 3)] public GoDirectionHV Direction { get; set; } = GoDirectionHV.Horizon;
+        [GoProperty(PCategory.Misc, 4)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Misc, 5)] public string BorderColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Misc, 6)] public string ButtonColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Misc, 7)] public string ValueColor { get; set; } = "Base1";
+        [GoProperty(PCategory.Misc, 8)] public GoRoundType Round { get; set; } = GoRoundType.All;
 
         private double nVal = 0;
+        [GoProperty(PCategory.Misc,10)]
         public double Value
         {
             get => nVal;
@@ -47,11 +48,11 @@ namespace Going.UI.Controls
             }
         }
 
-        public double Minimum { get; set; } = 0D;
-        public double Maximum { get; set; } = 100D;
-        public double Tick { get; set; } = 1D;
-        public string? Format { get; set; }
-        public float ButtonSize { get; set; } = 40;
+        [GoProperty(PCategory.Misc,11)] public double Minimum { get; set; } = 0D;
+        [GoProperty(PCategory.Misc,12)] public double Maximum { get; set; } = 100D;
+        [GoProperty(PCategory.Misc,13)] public double Tick { get; set; } = 1D;
+        [GoProperty(PCategory.Misc,14)] public string? Format { get; set; }
+        [GoProperty(PCategory.Misc,15)] public float ButtonSize { get; set; } = 40;
         #endregion
 
         #region Member Variable

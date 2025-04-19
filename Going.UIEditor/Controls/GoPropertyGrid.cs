@@ -1,10 +1,14 @@
 ﻿using Going.UI.Controls;
 using Going.UI.Datas;
 using Going.UI.Enums;
+using Going.UI.Extensions;
 using Going.UI.Forms.Controls;
 using Going.UI.Themes;
 using Going.UI.Tools;
 using Going.UI.Utils;
+using Going.UIEditor.Managers;
+using Going.UIEditor.Utils;
+using Going.UIEditor.Windows;
 using SkiaSharp;
 using System;
 using System.Collections;
@@ -16,6 +20,8 @@ using System.Reflection.Metadata;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using Windows.ApplicationModel.Activation;
 using Windows.Storage.Provider;
 
 namespace Going.UIEditor.Controls
@@ -28,6 +34,7 @@ namespace Going.UIEditor.Controls
         internal bool IsScrolling { get; private set; }
         internal bool DrawScroll { get; set; } = true;
         internal bool Scrollable => scroll.ScrollView < scroll.ScrollTotal;
+        internal double ScrollPositionWithOffset => scroll.ScrollPositionWithOffset;
         public double ScrollPosition
         {
             get => scroll.ScrollPosition;
@@ -38,12 +45,13 @@ namespace Going.UIEditor.Controls
         public int ItemHeight { get; set; } = 30;
         #endregion
         #region SelectedObjects
+        public EditorWindow? SelectedEditor { get; set; }
         public IEnumerable<object>? SelectedObjects
         {
-            get => sels; 
+            get => sels;
             set
             {
-                if(sels != value)
+                if (sels != value)
                 {
                     sels = value;
                     SelectObjs(sels);
@@ -93,20 +101,20 @@ namespace Going.UIEditor.Controls
             using var p = new SKPaint { IsAntialias = true };
             using var pe = SKPathEffect.CreateDash([2, 2,], 2);
 
-            var spos = Convert.ToSingle(scroll.ScrollPositionWithOffset);  
+            var spos = Convert.ToSingle(scroll.ScrollPositionWithOffset);
             #endregion
 
             var (rtView, rtScroll, rtContent, rtsCol) = bounds();
 
-            if(prj != null && properties.Count > 0)
+            if (prj != null && properties.Count > 0)
             {
                 using (new SKAutoCanvasRestore(canvas))
                 {
                     var crt = rtContent; crt.Inflate(1, 1);
                     canvas.ClipRect(crt);
-                    canvas.Translate(rtContent.Left, spos + rtContent.Top); 
-                    p.IsAntialias = false;
+                    canvas.Translate(rtContent.Left, spos + rtContent.Top);
 
+                    p.IsAntialias = false;
                     rtContent.Offset(0, -Convert.ToSingle(scroll.ScrollPositionWithOffset));
                     var (si, ei) = Util.FindRect(properties.Select(x => x.Bounds).ToList(), rtContent);
 
@@ -156,6 +164,7 @@ namespace Going.UIEditor.Controls
                             {
                                 p.PathEffect = pe;
                                 canvas.DrawLine(rtsCol[0].Right, t, rtsCol[0].Right, b, p);
+                                canvas.DrawLine(rtsCol[1].Right, t, rtsCol[1].Right, b, p);
                                 p.PathEffect = null;
                             }
                         }
@@ -185,8 +194,16 @@ namespace Going.UIEditor.Controls
             var (rtView, rtScroll, rtContent, rtsCol) = bounds();
             var x = e.X;
             var y = e.Y;
+            var spos = Convert.ToSingle(scroll.ScrollPositionWithOffset);
+            var ry = y - rtContent.Top - spos;
+
+            itemLoop((i, item) => item.MouseDown(x, ry, rtsCol));
+
+            #region Scroll
             scroll.MouseDown(x, y, rtScroll);
             if (scroll.TouchMode && CollisionTool.Check(rtContent, x, y)) scroll.TouchDown(x, y);
+            #endregion
+
             Invalidate();
             base.OnMouseDown(e);
         }
@@ -196,18 +213,34 @@ namespace Going.UIEditor.Controls
             var (rtView, rtScroll, rtContent, rtsCol) = bounds();
             var x = e.X;
             var y = e.Y;
+            var spos = Convert.ToSingle(scroll.ScrollPositionWithOffset);
+            var ry = y - rtContent.Top - spos;
+
+            itemLoop((i, item) => item.MouseMove(x, ry, rtsCol));
+
+            #region Scroll
             scroll.MouseMove(x, y, rtScroll);
             if (scroll.TouchMode) scroll.TouchMove(x, y);
+            #endregion
+
             Invalidate();
             base.OnMouseMove(e);
         }
 
         protected override void OnMouseUp(MouseEventArgs e)
         {
+            var (rtView, rtScroll, rtContent, rtsCol) = bounds();
             var x = e.X;
             var y = e.Y;
+            var spos = Convert.ToSingle(scroll.ScrollPositionWithOffset);
+            var ry = y - rtContent.Top - spos;
+
+            itemLoop((i, item) => item.MouseUp(x, ry, rtsCol));
+
+            #region Scroll
             scroll.MouseUp(x, y);
             if (scroll.TouchMode) scroll.TouchUp(x, y);
+            #endregion
             base.OnMouseUp(e);
         }
 
@@ -216,28 +249,27 @@ namespace Going.UIEditor.Controls
             var (rtView, rtScroll, rtContent, rtsCol) = bounds();
             var x = e.X;
             var y = e.Y;
+            var spos = Convert.ToSingle(scroll.ScrollPositionWithOffset);
+            var ry = y - rtContent.Top - spos;
+
+            itemLoop((i, item) => item.MouseWheel(x, ry, rtsCol));
+
+            #region Scroll
             if (CollisionTool.Check(rtContent, x, y)) scroll.MouseWheel(x, y, e.Delta / 120F);
+            #endregion
             Invalidate();
             base.OnMouseWheel(e);
         }
 
-        protected override void OnMouseClick(MouseEventArgs e)
+        protected override void OnMouseLeave(EventArgs e)
         {
             var (rtView, rtScroll, rtContent, rtsCol) = bounds();
-            var x = e.X;
-            var y = e.Y;
             var spos = Convert.ToSingle(scroll.ScrollPositionWithOffset);
-            var ry = y - rtContent.Top - spos;
 
-            itemLoop((i, item) =>
-            {
-                if (CollisionTool.Check(item.Bounds, x, ry))
-                {
-                     
-                }
-            });
+            itemLoop((i, item) => item.MouseMove(-1, -1, rtsCol));
+
             Invalidate();
-            base.OnMouseClick(e);
+            base.OnMouseLeave(e);
         }
         #endregion
         #endregion
@@ -268,7 +300,7 @@ namespace Going.UIEditor.Controls
         {
             var (rtView, rtScroll, rtContent, rtsCell) = bounds();
 
-            rtContent.Offset(0, -Convert.ToSingle(scroll.ScrollPositionWithOffset));       
+            rtContent.Offset(0, -Convert.ToSingle(scroll.ScrollPositionWithOffset));
             var (si, ei) = Util.FindRect(properties.Select(x => x.Bounds).ToList(), rtContent);
 
             if (si >= 0 && si < properties.Count && ei >= 0 && ei < properties.Count)
@@ -294,7 +326,7 @@ namespace Going.UIEditor.Controls
                     #region make dic
                     var dic = new Dictionary<string, List<Obj>>();
                     foreach (var obj in objs)
-                        foreach(var pi in obj.GetType().GetProperties().Where(x=>x.CanWrite && x.CanRead && Attribute.IsDefined(x, typeof(GoPropertyAttribute))))
+                        foreach (var pi in obj.GetType().GetProperties().Where(x => x.CanWrite && x.CanRead && Attribute.IsDefined(x, typeof(GoPropertyAttribute))))
                         {
                             if (!dic.ContainsKey(pi.Name)) dic[pi.Name] = [];
 
@@ -309,8 +341,37 @@ namespace Going.UIEditor.Controls
                     var keys = dic.OrderBy(x => x.Value.FirstOrDefault()?.CategoryOrder ?? int.MaxValue).ThenBy(x => x.Value.FirstOrDefault()?.PropertyOrder ?? int.MaxValue).Select(x => x.Key).ToList();
                     #endregion
 
+
                     string? cat = null;
                     float y = 0F;
+
+                    #region Id
+                    properties.Add(new PropertyGridItem(this) { Category = PCategory.ID, Type = PropertyGridItemType.Category, Bounds = Util.FromRect(rtContent.Left, y, rtContent.Width, ItemHeight), });
+                    y += ItemHeight;
+                    properties.Add(new PropertyGridItemID(this)
+                    {
+                        Name = "ID",
+                        Type = PropertyGridItemType.Item,
+                        Info = null,
+                        Category = PCategory.ID,
+                        CategoryOrder = PCategory.Index(PCategory.ID),
+                        PropertyOrder = 0,
+                        Bounds = Util.FromRect(rtContent.Left, y, rtContent.Width, ItemHeight),
+                    });
+                    y += ItemHeight;
+                    properties.Add(new PropertyGridItemCType(this)
+                    {
+                        Name = "Type",
+                        Type = PropertyGridItemType.Item,
+                        Info = null,
+                        Category = PCategory.ID,
+                        CategoryOrder = PCategory.Index(PCategory.ID),
+                        PropertyOrder = 1,
+                        Bounds = Util.FromRect(rtContent.Left, y, rtContent.Width, ItemHeight),
+                    });
+                    y += ItemHeight;
+                    #endregion
+
                     foreach (var k in keys)
                     {
                         var os = dic[k];
@@ -379,14 +440,21 @@ namespace Going.UIEditor.Controls
     public enum PropertyGridItemType { Category, Item }
     public class PropertyGridItem(GoPropertyGrid pg)
     {
+        #region Properties
         public string Name { get; set; } = "";
         public PropertyGridItemType Type { get; set; } = PropertyGridItemType.Item;
         public PropertyInfo? Info { get; set; }
         public string? Category { get; set; }
-        public int CategoryOrder { get; set; } 
-        public int PropertyOrder { get; set; } 
+        public int CategoryOrder { get; set; }
+        public int PropertyOrder { get; set; }
         public SKRect Bounds { get; set; }
         public GoPropertyGrid Grid => pg;
+
+        public bool ItemDown { get; private set; } = false;
+        public bool ValueDown { get; private set; } = false;
+        public bool ButtonDown { get; private set; } = false;
+        public bool ButtonHover { get; private set; } = false;
+        #endregion 
 
         #region Method
         #region Draw
@@ -400,18 +468,117 @@ namespace Going.UIEditor.Controls
             }
             else
             {
-                var rtTitle = Util.FromRect(rtsCol[0].Left, Bounds.Top, rtsCol[0].Width, Bounds.Height);
-                var rtValue = Util.FromRect(rtsCol[1].Left, Bounds.Top, rtsCol[1].Width, Bounds.Height);
-                var rtButton = Util.FromRect(rtsCol[2].Left, Bounds.Top, rtsCol[2].Width, Bounds.Height);
+                var (rtTitle, rtValue, rtButton) = bounds(rtsCol);
 
                 Util.DrawText(canvas, Name, pg.FontName, pg.FontStyle, pg.FontSize, rtTitle, thm.Base5);
 
+                OnDrawValue(canvas, rtTitle, rtValue, rtButton);
             }
         }
         #endregion
 
+        #region Mouse
+        public void MouseDown(float x, float y, SKRect[] rtsCol)
+        {
+            if (Type == PropertyGridItemType.Item && CollisionTool.Check(Bounds, x, y))
+            {
+                ItemDown = true;
+
+                var (rtTitle, rtValue, rtButton) = bounds(rtsCol);
+                if (CollisionTool.Check(rtValue, x, y)) ValueDown = true;
+                else if (CollisionTool.Check(rtButton, x, y)) ButtonDown = true;
+            }
+        }
+
+        public void MouseMove(float x, float y, SKRect[] rtsCol)
+        {
+            if (Type == PropertyGridItemType.Item )
+            {
+                var (rtTitle, rtValue, rtButton) = bounds(rtsCol);
+                ButtonHover = CollisionTool.Check(rtButton, x, y);
+            }
+        }
+
+        public void MouseUp(float x, float y, SKRect[] rtsCol)
+        {
+            if (Type == PropertyGridItemType.Item && (CollisionTool.Check(Bounds, x, y) || ItemDown))
+            {
+                var (rtTitle, rtValue, rtButton) = bounds(rtsCol);
+
+                var valueout = true;
+
+                ItemDown = false;
+
+                if (ValueDown)
+                {
+                    ValueDown = false;
+                    if (CollisionTool.Check(rtValue, x, y))
+                    {
+                        OnValueClick(rtValue, rtButton);
+                        valueout = false;
+                    }
+                }
+
+                if (ButtonDown)
+                {
+                    ButtonDown = false;
+                    if (IsUseButton(Info) && CollisionTool.Check(rtButton, x, y))
+                    {
+                        OnButtonClick(rtValue, rtButton);
+                    }
+                }
+
+                if (valueout) OnValueOutsideClick(rtValue, rtButton);
+            }
+        }
+
+        public void MouseWheel(float x, float y, SKRect[] rtsCol)
+        {
+            if (Type == PropertyGridItemType.Item)
+            {
+                var (rtTitle, rtValue, rtButton) = bounds(rtsCol);
+                OnMouseWheel(rtValue, rtButton);
+            }
+        }
+        #endregion
+
+        #region Tools
+        (SKRect rtTitle, SKRect rtValue, SKRect rtButton) bounds(SKRect[] rtsCol)
+        {
+            var rtTitle = Util.FromRect(rtsCol[0].Left, Bounds.Top, rtsCol[0].Width, Bounds.Height);
+            var rtValue = Util.FromRect(rtsCol[1].Left, Bounds.Top, rtsCol[1].Width, Bounds.Height);
+            var rtButton = Util.FromRect(rtsCol[2].Left, Bounds.Top, rtsCol[2].Width, Bounds.Height);
+            return (rtTitle, rtValue, rtButton);
+        }
+        #endregion
+
         #region Virtual
-        public virtual void OnDrawValue(SKCanvas canvas, SKRect rtTitle, SKRect rtValue, SKRect rtButton) { }
+        protected virtual void OnDrawValue(SKCanvas canvas, SKRect rtTitle, SKRect rtValue, SKRect rtButton) { }
+        protected virtual void OnValueClick(SKRect rtValue, SKRect rtButton) { }
+        protected virtual void OnValueOutsideClick(SKRect rtValue, SKRect rtButton) { }
+        protected virtual void OnButtonClick(SKRect rtValue, SKRect rtButton) { }
+        protected virtual void OnMouseWheel(SKRect rtValue, SKRect rtButton) { }
+        #endregion
+
+        #region SetValue
+        protected void SetValue(object? c, PropertyInfo Info, object? value)
+        {
+            if (pg != null && Info != null && c != null)
+            {
+                if (pg.SelectedObjects != null && pg.SelectedEditor != null)
+                {
+                    pg.SelectedEditor.TransAction(() =>
+                    {
+                        foreach (var p in pg.SelectedObjects)
+                        {
+                            var ovalue = Info.GetValue(p);
+                            pg.SelectedEditor.EditObject(p, Info, ovalue, value);
+                        }
+                    });
+                    pg.SelectedEditor.Invalidate();
+                }
+            }
+        }
         #endregion
         #endregion
 
@@ -432,9 +599,8 @@ namespace Going.UIEditor.Controls
             }
             else return false;
         }
-        public static bool IsUseButton(PropertyInfo? Info) => IsColor(Info) || IsCollection(Info) || IsEnum(Info) || (Info?.PropertyType.IsEnum ?? false);
-        public static bool IsColor(PropertyInfo? Info) => Info != null && Info.GetCustomAttribute(typeof(GoColorPropertyAttribute)) != null;
-        public static bool IsCollection(PropertyInfo? Info) => Info != null && typeof(IEnumerable).IsAssignableFrom(Info.PropertyType) && Info.PropertyType != typeof(string);
+        public static bool IsUseButton(PropertyInfo? Info) => IsCollection(Info) || IsEnum(Info) || (Info?.PropertyType.IsEnum ?? false);
+        public static bool IsCollection(PropertyInfo? Info) => Info != null && typeof(IEnumerable).IsAssignableFrom(Info.PropertyType) && Info.PropertyType != typeof(string) && !Attribute.IsDefined(Info, typeof(GoSizesPropertyAttribute));
         public static bool IsEnum(PropertyInfo? Info) => Info != null && Info.PropertyType.IsEnum;
         public static bool IsBool(PropertyInfo? Info) => Info != null && Info.PropertyType == typeof(bool);
 
@@ -450,6 +616,19 @@ namespace Going.UIEditor.Controls
                 {
                     if (val is GoPadding pad) ret = $"{pad.Left}, {pad.Top}, {pad.Right}, {pad.Bottom}";
                     else if (val is SKRect rt) ret = $"{rt.Left}, {rt.Top}, {rt.Width}, {rt.Height}";
+                    else if (val is SKColor color)
+                    {
+                        if (color.Alpha == 255)
+                            ret = $"#{color.Red:X2}{color.Green:X2}{color.Blue:X2}";
+                        else
+                            ret = $"#{color.Red:X2}{color.Green:X2}{color.Blue:X2}{color.Alpha:X2}";
+                    }
+                    else if (val is TimeSpan ts) ret = ts.ToString();
+                    else if (val is DateTime time) ret = time.ToString();
+                    else if (val is List<string> szs && Attribute.IsDefined(Info, typeof(GoSizesPropertyAttribute)) && szs.Count > 0)
+                    {
+                        ret = string.Concat(szs.Select(x => $"{x}, "))[..^2];
+                    }
                     else ret = val?.ToString() ?? "";
                 }
             }
@@ -470,7 +649,6 @@ namespace Going.UIEditor.Controls
                 sbyte i8; short i16; int i32; long i64;
                 float f1; double f2; decimal f3;
                 #endregion
-
                 #region Padding
                 if (tp == typeof(GoPadding))
                 {
@@ -480,7 +658,7 @@ namespace Going.UIEditor.Controls
                         ret = new GoPadding(l, t, r, b);
                 }
                 #endregion
-                #region Padding
+                #region SKRect
                 else if (tp == typeof(SKRect))
                 {
                     float x, y, w, h;
@@ -489,11 +667,29 @@ namespace Going.UIEditor.Controls
                         ret = Util.FromRect(x, y, w, h);
                 }
                 #endregion
+                #region SKColor
+                else if (tp == typeof(SKColor))
+                {
+                    ret = GoTheme.Current.ToColor(text);
+                }
+                #endregion
                 #region TimeSpan
                 else if (tp == typeof(TimeSpan))
                 {
                     if (TimeSpan.TryParse(text, out TimeSpan ts))
                         ret = ts;
+                }
+                #endregion
+                #region DateTime
+                else if (tp == typeof(DateTime))
+                {
+                    if (DateTime.TryParse(text, out DateTime dt)) ret = dt;
+                }
+                #endregion
+                #region DateTime
+                else if (tp == typeof(List<string>) && Attribute.IsDefined(Info, typeof(GoSizesPropertyAttribute)))
+                {
+                    ret = text.Split(',').Select(x => x.Trim()).ToList();
                 }
                 #endregion
                 #region String / Number
@@ -528,12 +724,312 @@ namespace Going.UIEditor.Controls
         #endregion
     }
 
-    public class PropertyGridItemBool(GoPropertyGrid pg) : PropertyGridItem(pg) { }
-    public class PropertyGridItemEnum(GoPropertyGrid pg) : PropertyGridItem(pg) { }
-    public class PropertyGridItemEdit(GoPropertyGrid pg) : PropertyGridItem(pg)
+    #region ID
+    public class PropertyGridItemID(GoPropertyGrid pg) : PropertyGridItem(pg)
     {
-        public void ClearInput() { }
+        #region Draw
+        protected override void OnDrawValue(SKCanvas canvas, SKRect rtTitle, SKRect rtValue, SKRect rtButton)
+        {
+            base.OnDrawValue(canvas, rtTitle, rtValue, rtButton);
+
+            var thm = GoTheme.Current;
+            var s = Util2.EllipsisPath(Grid.SelectedObjects?.Count() == 1 && Grid.SelectedObjects?.FirstOrDefault() is IGoControl c ? c.Id.ToString() : "", Grid.FontName, Grid.FontStyle, Grid.FontSize, rtValue.Width - 20);
+            Util.DrawText(canvas, s, Grid.FontName, Grid.FontStyle, Grid.FontSize, rtValue, thm.Base5);
+        }
+        #endregion
     }
-    public class PropertyGridItemCollection(GoPropertyGrid pg) : PropertyGridItem(pg) { }
+    #endregion
+    #region Type
+    public class PropertyGridItemCType(GoPropertyGrid pg) : PropertyGridItem(pg)
+    {
+        #region Draw
+        protected override void OnDrawValue(SKCanvas canvas, SKRect rtTitle, SKRect rtValue, SKRect rtButton)
+        {
+            base.OnDrawValue(canvas, rtTitle, rtValue, rtButton);
+
+            var thm = GoTheme.Current;
+            var s = Grid.SelectedObjects?.Count() == 1 && Grid.SelectedObjects?.FirstOrDefault() is IGoControl c ? c.GetType().Name : "";
+            Util.DrawText(canvas, s, Grid.FontName, Grid.FontStyle, Grid.FontSize, rtValue, thm.Base5);
+        }
+        #endregion
+    }
+    #endregion
+    #region Bool
+    public class PropertyGridItemBool(GoPropertyGrid pg) : PropertyGridItem(pg)
+    {
+        #region Override
+        #region Draw
+        protected override void OnDrawValue(SKCanvas canvas, SKRect rtTitle, SKRect rtValue, SKRect rtButton)
+        {
+            base.OnDrawValue(canvas, rtTitle, rtValue, rtButton);
+
+            var thm = GoTheme.Current;
+
+            var vs = Grid.SelectedObjects?.Select(x => ValueToString(x));
+            var lk = vs?.ToLookup(x => x);
+            var s = lk?.Count == 1 ? (lk.FirstOrDefault()?.Key ?? "") : "";
+
+            Util.DrawText(canvas, s, Grid.FontName, Grid.FontStyle, Grid.FontSize, rtValue, thm.Base5);
+        }
+        #endregion
+
+        #region Click
+        protected override void OnValueClick(SKRect rtValue, SKRect rtButton)
+        {
+            if (Info != null && Grid.SelectedObjects != null)
+            {
+                var vs = Grid.SelectedObjects.Select(x => Info?.GetValue(x));
+                var lk = vs.ToLookup(x => x);
+                var val = lk.Count == 1 ? (lk.FirstOrDefault()?.Key ?? null) : null;
+
+                foreach (var obj in Grid.SelectedObjects)
+                    SetValue(obj, Info, (val is bool b && !b));
+            }
+            base.OnValueClick(rtValue, rtButton);
+        }
+        #endregion
+        #endregion
+    }
+    #endregion
+    #region Enum
+    public class PropertyGridItemEnum(GoPropertyGrid pg) : PropertyGridItem(pg)
+    {
+        #region Override
+        #region Draw
+        protected override void OnDrawValue(SKCanvas canvas, SKRect rtTitle, SKRect rtValue, SKRect rtButton)
+        {
+            base.OnDrawValue(canvas, rtTitle, rtValue, rtButton);
+
+            var thm = GoTheme.Current;
+
+            #region Value
+            var vs = Grid.SelectedObjects?.Select(x => ValueToString(x));
+            var lk = vs?.ToLookup(x => x);
+            var s = lk?.Count == 1 ? (lk.FirstOrDefault()?.Key ?? "") : "";
+
+            Util.DrawText(canvas, s, Grid.FontName, Grid.FontStyle, Grid.FontSize, rtValue, thm.Base5);
+            #endregion
+
+            #region Button
+            if(IsUseButton(Info))
+            {
+                var vrt = rtButton;
+                var c = (ButtonHover ? thm.Fore : thm.Base5).BrightnessTransmit(ButtonDown ? thm.DownBrightness : 0);
+                if (ButtonDown) vrt.Offset(0, 1);
+                Util.DrawIcon(canvas, "fa-ellipsis", 12, vrt, c);
+            }
+            #endregion
+        }
+        #endregion
+
+        #region Button
+        protected override void OnButtonClick(SKRect rtValue, SKRect rtButton)
+        {
+            if (Info != null && Grid.SelectedObjects != null)
+            {
+                var tp = Info.PropertyType;
+                var values = Enum.GetValues(tp).Cast<object>().Select(x => new GoListItem { Text = x.ToString(), Tag = x }).ToList();
+
+                var vs = Grid.SelectedObjects.Select(x => Info?.GetValue(x));
+                var lk = vs.ToLookup(x => x);
+                var val = lk.Count == 1 ? (lk.FirstOrDefault()?.Key ?? null) : null;
+                var ret = Program.SelBox.ShowRadio(Name, (values.Count > 10 ? 4 : (values.Count > 3 ? 3 : 1)), values, values.FirstOrDefault(x => object.Equals(x.Tag, val)));
+                if (ret != null && ret.Tag != null) 
+                {
+                    foreach (var obj in Grid.SelectedObjects)
+                        SetValue(obj, Info, ret.Tag);
+                }
+            }
+            base.OnButtonClick(rtValue, rtButton);
+        }
+        #endregion
+        #endregion
+    }
+    #endregion
+
+    public class PropertyGridItemEdit  : PropertyGridItem 
+    {
+        #region Member Variable
+        private TextBox txt;
+        #endregion
+
+        #region Constructor
+        public PropertyGridItemEdit(GoPropertyGrid pg) : base(pg)
+        {
+            txt = new TextBox { Name = Name, Font = pg.Font, TextAlign = HorizontalAlignment.Center, BorderStyle = BorderStyle.None, Visible = true };
+            #region  txt.TextChanged 
+            txt.TextChanged += (o, s) =>
+            {
+                if (Info != null)
+                {
+                    var tp = Info.PropertyType;
+                    if (tp == typeof(float) || tp == typeof(double) || tp == typeof(decimal))
+                    {
+                        #region Floating
+                        var selectionStart = txt.SelectionStart;
+                        var selectionLength = txt.SelectionLength;
+
+                        var newText = String.Empty;
+                        bool bComma = false;
+                        foreach (var c in txt.Text.ToCharArray())
+                        {
+                            if (Char.IsDigit(c) || Char.IsControl(c) || (c == '.' && !bComma && txt.Text != ".") || (newText.Length == 0 && (c == '-' || c == '+'))) newText += c;
+                            if (c == '.' && txt.Text != ".") bComma = true;
+                        }
+                        txt.Text = newText;
+                        txt.SelectionStart = selectionStart <= txt.Text.Length ? selectionStart : txt.Text.Length;
+                        #endregion
+                    }
+                    else if (tp == typeof(sbyte) || tp == typeof(short) || tp == typeof(int) || tp == typeof(long) ||
+                           tp == typeof(byte) || tp == typeof(ushort) || tp == typeof(uint) || tp == typeof(ulong))
+                    {
+                        #region Number
+                        var selectionStart = txt.SelectionStart;
+                        var selectionLength = txt.SelectionLength;
+
+                        var newText = String.Empty;
+                        foreach (var c in txt.Text.ToCharArray())
+                        {
+                            if (Char.IsDigit(c) || Char.IsControl(c) || (newText.Length == 0 && (c == '-' || c == '+'))) newText += c;
+                        }
+                        txt.Text = newText;
+                        txt.SelectionStart = selectionStart <= txt.Text.Length ? selectionStart : txt.Text.Length;
+                        #endregion
+                    }
+                }
+            };
+            #endregion
+            #region txt.KeyDown
+            txt.KeyDown += (o, s) =>
+            {
+                if (Info != null)
+                {
+                    if (IsEditType(Info))
+                    {
+                        if (s.KeyCode == Keys.Enter) CompleteInput();
+                        if (s.KeyCode == Keys.Escape) ClearInput();
+                    }
+                }
+            };
+            #endregion
+            txt.LostFocus += (o, s) => ClearInput();
+        }
+        #endregion
+
+        #region Override
+        #region Draw
+        protected override void OnDrawValue(SKCanvas canvas, SKRect rtTitle, SKRect rtValue, SKRect rtButton)
+        {
+            base.OnDrawValue(canvas, rtTitle, rtValue, rtButton);
+
+            var thm = GoTheme.Current;
+
+            #region Value
+            var vs = Grid.SelectedObjects?.Select(x => ValueToString(x));
+            var lk = vs?.ToLookup(x => x);
+            var s = lk?.Count == 1 ? (lk.FirstOrDefault()?.Key ?? "") : "";
+
+            Util.DrawText(canvas, s, Grid.FontName, Grid.FontStyle, Grid.FontSize, rtValue, thm.Base5);
+            #endregion
+
+            #region Button
+            if (IsUseButton(Info))
+            {
+                var vrt = rtButton;
+                var c = (ButtonHover ? thm.Fore : thm.Base5).BrightnessTransmit(ButtonDown ? thm.DownBrightness : 0);
+                if (ButtonDown) vrt.Offset(0, 1);
+                Util.DrawIcon(canvas, "fa-ellipsis", 12, vrt, c);
+            }
+            #endregion
+        }
+        #endregion
+
+        #region Click
+        protected override void OnValueClick(SKRect rtValue, SKRect rtButton)
+        {
+            SetInput(rtValue);
+
+            base.OnValueClick(rtValue, rtButton);
+        }
+        #endregion
+
+        #region Button
+        protected override void OnButtonClick(SKRect rtValue, SKRect rtButton)
+        {
+            SetInput(rtValue);
+            base.OnButtonClick(rtValue, rtButton);
+        }
+        #endregion
+
+        protected override void OnMouseWheel(SKRect rtValue, SKRect rtButton) => ClearInput();
+        protected override void OnValueOutsideClick(SKRect rtValue, SKRect rtButton) => ClearInput();
+        #endregion
+
+        #region Method
+        #region SetInput
+        void SetInput(SKRect rtValue)
+        {
+            if (Info != null && Grid.SelectedObjects != null)
+            {
+                var vs = Grid.SelectedObjects?.Select(x => ValueToString(x));
+                var lk = vs?.ToLookup(x => x);
+                var s = lk?.Count == 1 ? (lk.FirstOrDefault()?.Key ?? "") : "";
+
+                var thm = GoTheme.Current;
+                txt.ForeColor = Util.FromArgb(thm.Base5);
+                txt.BackColor = Util.FromArgb(thm.Back);
+                txt.Text = s;
+                Grid.Controls.Add(txt);
+                var srt = rtValue;
+                srt.Offset(0, Convert.ToSingle(Grid.ScrollPositionWithOffset));
+                SetBounds(srt);
+
+                Grid.BeginInvoke(new Action(() => { txt.Focus(); txt.SelectAll(); }));
+            }
+        }
+        #endregion
+        #region ClearInput
+        public void ClearInput() => Grid.Controls.Remove(txt);
+        #endregion
+        #region CompleteInput
+        public void CompleteInput()
+        {
+            if (Info != null && Grid.SelectedObjects != null)
+            {
+                object? vv = ValueFromString(txt.Text);
+                if (vv is string s && s == "{NONE}") vv = null;
+                foreach (var obj in Grid.SelectedObjects)
+                    SetValue(obj, Info, vv);
+            }
+            Grid?.BeginInvoke(new Action(() => { txt.Focus(); txt.SelectAll(); }));
+        }
+        #endregion
+
+        #region SetBounds
+        void SetBounds(SKRect rtValue)
+        {
+            var rt = MathTool.MakeRectangle(Util.Int(rtValue), new SKSize(Convert.ToInt32(rtValue.Width - 20), txt.Height));
+            txt.Bounds = new Rectangle(Convert.ToInt32(rt.Left), Convert.ToInt32(rt.Top), Convert.ToInt32(rt.Width), Convert.ToInt32(rt.Height));
+        }
+        #endregion
+        #endregion
+    }
+    public class PropertyGridItemCollection(GoPropertyGrid pg) : PropertyGridItem(pg)
+    {
+        #region Draw
+        protected override void OnDrawValue(SKCanvas canvas, SKRect rtTitle, SKRect rtValue, SKRect rtButton)
+        {
+            base.OnDrawValue(canvas, rtTitle, rtValue, rtButton);
+
+            var thm = GoTheme.Current;
+
+            var vs = Grid.SelectedObjects?.Select(x => ValueToString(x));
+            var lk = vs?.ToLookup(x => x);
+            var s = lk?.Count == 1 ? (lk.FirstOrDefault()?.Key ?? "") : "";
+
+            Util.DrawText(canvas, s, Grid.FontName, Grid.FontStyle, Grid.FontSize, rtValue, thm.Base5);
+        }
+        #endregion
+    }
     #endregion
 }

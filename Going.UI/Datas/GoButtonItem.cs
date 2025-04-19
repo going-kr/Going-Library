@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Going.UI.Controls;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,10 +10,10 @@ namespace Going.UI.Datas
 {
     public class GoButtonItem
     {
-        public string Name { get; set; }
-        public string? Text { get; set; }
-        public string? IconString { get; set; }
-        public string Size { get; set; } = "100%";
+        [GoProperty(PCategory.Misc, 0)] public string Name { get; set; }
+        [GoProperty(PCategory.Misc, 1)] public string? Text { get; set; }
+        [GoProperty(PCategory.Misc, 2)] public string? IconString { get; set; }
+        [GoSizeProperty(PCategory.Misc, 3)] public string Size { get; set; } = "100%";
 
         [JsonIgnore] internal bool Hover { get; set; } = false;
         [JsonIgnore] internal bool Down { get; set; } = false;

@@ -18,22 +18,22 @@ namespace Going.UI.Controls
     public class GoButtons : GoControl
     {
         #region Properties
-        public float IconSize { get; set; } = 12;
-        public GoDirectionHV IconDirection { get; set; }
-        public float IconGap { get; set; } = 5;
-        public string FontName { get; set; } = "나눔고딕";
-        public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
-        public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Misc, 0)] public float IconSize { get; set; } = 12;
+        [GoProperty(PCategory.Misc, 1)] public GoDirectionHV IconDirection { get; set; }
+        [GoProperty(PCategory.Misc, 2)] public float IconGap { get; set; } = 5;
+        [GoProperty(PCategory.Misc, 3)] public string FontName { get; set; } = "나눔고딕";
+        [GoProperty(PCategory.Misc, 4)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Misc, 5)] public float FontSize { get; set; } = 12;
 
-        public string TextColor { get; set; } = "Fore";
-        public string ButtonColor { get; set; } = "Base3";
-        public string SelectedButtonColor { get; set; } = "Select";
-        public GoRoundType Round { get; set; } = GoRoundType.All;
+        [GoProperty(PCategory.Misc, 6)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Misc, 7)] public string ButtonColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Misc, 8)] public string SelectedButtonColor { get; set; } = "Select";
+        [GoProperty(PCategory.Misc, 9)] public GoRoundType Round { get; set; } = GoRoundType.All;
 
-        public List<GoButtonsItem> Buttons { get; set; } = [];
+        [GoProperty(PCategory.Misc, 10)] public List<GoButtonsItem> Buttons { get; set; } = [];
 
-        public GoDirectionHV Direction { get; set; } = GoDirectionHV.Horizon;
-        public GoButtonsMode Mode { get; set; } = GoButtonsMode.Button;
+        [GoProperty(PCategory.Misc, 11)] public GoDirectionHV Direction { get; set; } = GoDirectionHV.Horizon;
+        [GoProperty(PCategory.Misc, 12)] public GoButtonsMode Mode { get; set; } = GoButtonsMode.Button;
         #endregion
 
         #region Event

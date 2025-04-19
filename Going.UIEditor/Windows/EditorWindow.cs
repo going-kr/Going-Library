@@ -648,7 +648,7 @@ namespace Going.UIEditor.Windows
                 foreach (var c in clears2) sels.Remove(c);
 
                 changed |= clears1.Count() > 0 || clears2.Count() > 0;
-                if (changed && DockPanel.Contents.FirstOrDefault(x => x is PropertiesWindow) is PropertiesWindow pw) pw.SelectObjects(sels);
+                if (changed && DockPanel.Contents.FirstOrDefault(x => x is PropertiesWindow) is PropertiesWindow pw) pw.SelectObjects(this, sels);
 
                 downControl = null;
                 dragAnchor = null;
@@ -926,7 +926,7 @@ namespace Going.UIEditor.Windows
             var p = Program.CurrentProject;
             if (p != null)
             {
-                actmgr.RecordAction(new SelectedAction(DockPanel, sels, news, olds));
+                actmgr.RecordAction(new SelectedAction(this, DockPanel, sels, news, olds));
                 p.Edit = true;
             }
         }
@@ -989,6 +989,8 @@ namespace Going.UIEditor.Windows
             {
                 actmgr?.Undo();
                 p.Edit = true;
+
+                if (DockPanel.Contents.FirstOrDefault(x => x is PropertiesWindow) is PropertiesWindow pw) pw.RefreshGrid();
             }
         }
         public void Redo()
@@ -997,6 +999,8 @@ namespace Going.UIEditor.Windows
             if (p != null && CanRedo)
             {
                 actmgr?.Redo(); p.Edit = true;
+
+                if (DockPanel.Contents.FirstOrDefault(x => x is PropertiesWindow) is PropertiesWindow pw) pw.RefreshGrid();
             }
         }
         #endregion
@@ -1736,12 +1740,14 @@ namespace Going.UIEditor.Windows
     #region SelectedAction
     public class SelectedAction : AbstractAction
     {
+        EditorWindow wnd;
         DockPanel dockPanel;
         List<IGoControl> sels;
         IEnumerable<IGoControl> news, olds;
 
-        public SelectedAction(DockPanel dockPanel, List<IGoControl> sels, IEnumerable<IGoControl> news, IEnumerable<IGoControl> olds)
+        public SelectedAction(EditorWindow wnd, DockPanel dockPanel, List<IGoControl> sels, IEnumerable<IGoControl> news, IEnumerable<IGoControl> olds)
         {
+            this.wnd = wnd;
             this.dockPanel = dockPanel;
             this.sels = sels;
             this.olds = olds;
@@ -1752,13 +1758,13 @@ namespace Going.UIEditor.Windows
         {
             sels.Clear();
             sels.AddRange(news);
-            if (dockPanel.Contents.FirstOrDefault(x => x is PropertiesWindow) is PropertiesWindow pw) pw.SelectObjects(sels);
+            if (dockPanel.Contents.FirstOrDefault(x => x is PropertiesWindow) is PropertiesWindow pw) pw.SelectObjects(wnd, sels);
         }
         protected override void UnExecuteCore()
         {
             sels.Clear();
             sels.AddRange(olds);
-            if (dockPanel.Contents.FirstOrDefault(x => x is PropertiesWindow) is PropertiesWindow pw) pw.SelectObjects(sels);
+            if (dockPanel.Contents.FirstOrDefault(x => x is PropertiesWindow) is PropertiesWindow pw) pw.SelectObjects(wnd, sels);
         }
     }
     #endregion

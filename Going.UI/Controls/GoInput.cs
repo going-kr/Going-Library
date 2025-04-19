@@ -24,26 +24,26 @@ namespace Going.UI.Controls
     public abstract class GoInput : GoControl
     {
         #region Properties
-        public string? IconString { get; set; }
-        public float IconSize { get; set; } = 12;
-        public float IconGap { get; set; } = 5;
+        [GoProperty(PCategory.Misc, 0)] public string? IconString { get; set; }
+        [GoProperty(PCategory.Misc, 1)] public float IconSize { get; set; } = 12;
+        [GoProperty(PCategory.Misc, 2)] public float IconGap { get; set; } = 5;
 
-        public string FontName { get; set; } = "나눔고딕";
-        public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
-        public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Misc, 3)] public string FontName { get; set; } = "나눔고딕";
+        [GoProperty(PCategory.Misc, 4)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Misc, 5)] public float FontSize { get; set; } = 12;
 
-        public GoDirectionHV Direction { get; set; } = GoDirectionHV.Horizon;
-        public string TextColor { get; set; } = "Fore";
-        public string BorderColor { get; set; } = "Base3";
-        public string FillColor { get; set; } = "Base3";
-        public string ValueColor { get; set; } = "Base1";
-        public GoRoundType Round { get; set; } = GoRoundType.All;
+        [GoProperty(PCategory.Misc, 6)] public GoDirectionHV Direction { get; set; } = GoDirectionHV.Horizon;
+        [GoProperty(PCategory.Misc, 7)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Misc, 8)] public string BorderColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Misc, 9)] public string FillColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Misc, 10)] public string ValueColor { get; set; } = "Base1";
+        [GoProperty(PCategory.Misc, 11)] public GoRoundType Round { get; set; } = GoRoundType.All;
 
-        public float? TitleSize { get; set; }
-        public string? Title { get; set; }
+        [GoProperty(PCategory.Misc, 12)] public float? TitleSize { get; set; }
+        [GoProperty(PCategory.Misc, 13)] public string? Title { get; set; }
 
-        public float? ButtonSize { get; set; }
-        public List<GoButtonItem> Buttons { get; set; } = [];
+        [GoProperty(PCategory.Misc, 14)] public float? ButtonSize { get; set; }
+        [GoProperty(PCategory.Misc, 15)] public List<GoButtonItem> Buttons { get; set; } = [];
         [JsonIgnore] public virtual bool Valid => true;
 
         [JsonIgnore] private bool UseTitle => TitleSize.HasValue && TitleSize.Value > 0;
@@ -155,7 +155,7 @@ namespace Going.UI.Controls
                 });
             }
 
-            if (GoInputEventer.Current.InputControl == this) Util.DrawBox(canvas, rtValue, SKColors.Transparent,cInput, rndValue, thm.Corner);
+            if (GoInputEventer.Current.InputControl == this) Util.DrawBox(canvas, rtValue, SKColors.Transparent, cInput, rndValue, thm.Corner);
             #endregion
 
             base.OnDraw(canvas);
@@ -271,6 +271,7 @@ namespace Going.UI.Controls
     {
         #region Properties
         private string sVal = "";
+        [GoProperty(PCategory.Misc, 16)]
         public string Value
         {
             get => sVal;
@@ -312,6 +313,7 @@ namespace Going.UI.Controls
     {
         #region Properties
         private T sVal = default(T);
+        [GoProperty(PCategory.Misc, 16)]
         public T Value
         {
             get => sVal;
@@ -325,15 +327,15 @@ namespace Going.UI.Controls
             }
         }
 
-        public T? Minimum { get; set; } = null;
-        public T? Maximum { get; set; } = null;
+        [GoProperty(PCategory.Misc, 17)] public T? Minimum { get; set; } = null;
+        [GoProperty(PCategory.Misc, 18)] public T? Maximum { get; set; } = null;
 
-        public string? FormatString { get; set; } = null;
+        [GoProperty(PCategory.Misc, 19)] public string? FormatString { get; set; } = null;
 
         [JsonIgnore] public override bool Valid => bValid;
 
-        public string? Unit { get; set; }
-        public float? UnitSize { get; set; } = null;
+        [GoProperty(PCategory.Misc, 20)] public string? Unit { get; set; }
+        [GoProperty(PCategory.Misc, 21)] public float? UnitSize { get; set; } = null;
         #endregion
 
         #region Event
@@ -433,6 +435,7 @@ namespace Going.UI.Controls
     {
         #region Properties
         private bool sVal = false;
+        [GoProperty(PCategory.Misc, 16)]
         public bool Value
         {
             get => sVal;
@@ -450,10 +453,10 @@ namespace Going.UI.Controls
             }
         }
 
-        public string? OnText { get; set; } = "ON";
-        public string? OffText { get; set; } = "OFF";
-        public string? OnIconString { get; set; }
-        public string? OffIconString { get; set; }
+        [GoProperty(PCategory.Misc, 17)] public string? OnText { get; set; } = "ON";
+        [GoProperty(PCategory.Misc, 18)] public string? OffText { get; set; } = "OFF";
+        [GoProperty(PCategory.Misc, 19)] public string? OnIconString { get; set; }
+        [GoProperty(PCategory.Misc, 20)] public string? OffIconString { get; set; }
         #endregion
         
         #region Event
@@ -550,8 +553,8 @@ namespace Going.UI.Controls
 
         [JsonIgnore] public GoListItem? SelectedItem => SelectedIndex >= 0 && SelectedIndex < Items.Count ? Items[SelectedIndex] : null;
 
-        public int MaximumViewCount { get; set; } = 8;
-        public int ItemHeight { get; set; } = 30;
+        [GoProperty(PCategory.Misc, 16)] public int MaximumViewCount { get; set; } = 8;
+        [GoProperty(PCategory.Misc, 17)] public int ItemHeight { get; set; } = 30;
         #endregion
 
         #region Event
@@ -838,6 +841,7 @@ namespace Going.UI.Controls
     public class GoInputColor : GoInput
     {
         #region Properties
+        [GoProperty(PCategory.Misc, 16)]
         public SKColor Value
         {
             get => cValue; 
@@ -934,6 +938,7 @@ namespace Going.UI.Controls
     public class GoInputDateTime : GoInput
     {
         #region Properties
+        [GoProperty(PCategory.Misc, 16)]
         public DateTime Value
         {
             get => cValue;
@@ -947,9 +952,9 @@ namespace Going.UI.Controls
             }
         }
 
-        public GoDateTimeKind DateTimeStyle { get; set; } = GoDateTimeKind.DateTime;
-        public string DateFormat { get; set; } = "yyyy-MM-dd";
-        public string TimeFormat { get; set; } = "HH:mm:ss";
+        [GoProperty(PCategory.Misc, 17)] public GoDateTimeKind DateTimeStyle { get; set; } = GoDateTimeKind.DateTime;
+        [GoProperty(PCategory.Misc, 18)] public string DateFormat { get; set; } = "yyyy-MM-dd";
+        [GoProperty(PCategory.Misc, 19)] public string TimeFormat { get; set; } = "HH:mm:ss";
         #endregion
 
         #region Event

@@ -17,16 +17,17 @@ namespace Going.UI.Controls
     public class GoStep : GoControl
     {
         #region Properties
-        public string? PrevIconString { get; set; } = "fa-chevron-left";
-        public string? NextIconString { get; set; } = "fa-chevron-right";
+        [GoProperty(PCategory.Misc, 0)] public string? PrevIconString { get; set; } = "fa-chevron-left";
+        [GoProperty(PCategory.Misc, 1)] public string? NextIconString { get; set; } = "fa-chevron-right";
 
-        public string ButtonColor { get; set; } = "Base3";
-        public string StepColor { get; set; } = "Base2";
-        public string SelectColor { get; set; } = "Select";
-        public bool IsCircle { get; set; } = false;
-        public bool UseButton { get; set; } = true;
+        [GoProperty(PCategory.Misc, 2)] public string ButtonColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Misc, 3)] public string StepColor { get; set; } = "Base2";
+        [GoProperty(PCategory.Misc, 4)] public string SelectColor { get; set; } = "Select";
+        [GoProperty(PCategory.Misc, 5)] public bool IsCircle { get; set; } = false;
+        [GoProperty(PCategory.Misc, 6)] public bool UseButton { get; set; } = true;
 
         public int StepCount { get; set; } = 7;
+        [GoProperty(PCategory.Misc, 7)]
         public int Step
         {
             get => nStep;

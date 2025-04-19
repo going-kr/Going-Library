@@ -14,12 +14,12 @@ namespace Going.UI.Controls
     public class GoAnimate : GoControl
     {
         #region Properties
-        public string? OnImage { get; set; }
-        public string? OffImage { get; set; }
-        public GoImageScaleMode ScaleMode { get; set; } = GoImageScaleMode.Real;
-        public GoRoundType Round { get; set; } = GoRoundType.Rect;
-        public int Time { get; set; } = 30;
-
+        [GoImageProperty(PCategory.Misc, 0)] public string? OnImage { get; set; }
+        [GoImageProperty(PCategory.Misc, 1)] public string? OffImage { get; set; }
+        [GoProperty(PCategory.Misc, 2)] public GoImageScaleMode ScaleMode { get; set; } = GoImageScaleMode.Real;
+        [GoProperty(PCategory.Misc, 3)] public GoRoundType Round { get; set; } = GoRoundType.Rect;
+        [GoProperty(PCategory.Misc, 4)] public int Time { get; set; } = 30;
+        [GoProperty(PCategory.Misc, 5)]
         public bool OnOff
         {
             get => bOnOff;

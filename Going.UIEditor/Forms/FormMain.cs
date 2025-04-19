@@ -391,6 +391,9 @@ namespace Going.UIEditor
                     editors.Add(wnd);
 
                     wnd.Show(dockPanel, DockState.Document);
+
+                    var pwnd = dockPanel.Contents.FirstOrDefault(x => x is PropertiesWindow);
+                    if (pwnd is PropertiesWindow props) props.SelectObjects(wnd, null);
                 }
                 else o.Activate();
             }

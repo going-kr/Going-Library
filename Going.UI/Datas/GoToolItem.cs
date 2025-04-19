@@ -22,8 +22,8 @@ namespace Going.UI.Datas
     public class GoToolItem
     {
         #region Properties
-        public string? Text { get; set; }
-        public string? IconString { get; set; }
+        [GoProperty(PCategory.Control, 0)] public string? Text { get; set; }
+        [GoProperty(PCategory.Control, 1)] public string? IconString { get; set; }
         public object? Tag { get; set; }
 
         [JsonIgnore] internal SKRect Bounds { get; set; }

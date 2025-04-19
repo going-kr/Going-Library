@@ -21,20 +21,20 @@ namespace Going.UI.Containers
     public class GoTabControl : GoContainer
     {
         #region Properties
-        public GoDirectionHV IconDirection { get; set; }
-        public float IconSize { get; set; } = 12;
-        public float IconGap { get; set; } = 5;
+        [GoProperty(PCategory.Misc, 0)] public GoDirectionHV IconDirection { get; set; }
+        [GoProperty(PCategory.Misc, 1)] public float IconSize { get; set; } = 12;
+        [GoProperty(PCategory.Misc, 2)] public float IconGap { get; set; } = 5;
 
-        public string FontName { get; set; } = "나눔고딕";
-        public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
-        public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Misc, 3)] public string FontName { get; set; } = "나눔고딕";
+        [GoProperty(PCategory.Misc, 4)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Misc, 5)] public float FontSize { get; set; } = 12;
 
-        public string TextColor { get; set; } = "Fore";
-        public string TabColor { get; set; } = "Base2";
-        public string TabBorderColor { get; set; } = "Base3";
-        public GoDirection TabPosition { get; set; } = GoDirection.Up;
+        [GoProperty(PCategory.Misc, 6)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Misc, 7)] public string TabColor { get; set; } = "Base2";
+        [GoProperty(PCategory.Misc, 8)] public string TabBorderColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Misc, 9)] public GoDirection TabPosition { get; set; } = GoDirection.Up;
 
-        public float NavSize { get; set; } = 40;
+        [GoProperty(PCategory.Misc, 10)] public float NavSize { get; set; } = 40;
 
         [JsonIgnore]
         public GoTabPage? SelectedTab
@@ -338,9 +338,9 @@ namespace Going.UI.Containers
     #region class : GoTabPage
     public class GoTabPage 
     {
-        public string Name { get; set; }
-        public string? IconString { get; set; }
-        public string? Text { get; set; }
+        [GoProperty(PCategory.Control, 0)] public string Name { get; set; }
+        [GoProperty(PCategory.Control, 1)] public string? IconString { get; set; }
+        [GoProperty(PCategory.Control, 2)] public string? Text { get; set; }
         internal bool Hover { get; set; }
 
         [JsonInclude]

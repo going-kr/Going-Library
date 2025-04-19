@@ -18,21 +18,22 @@ namespace Going.UI.Controls
     public class GoBarGraph : GoControl
     {
         #region Properties
-        public string GridColor { get; set; } = "Base3";
-        public string TextColor { get; set; } = "Fore";
-        public string RemarkColor { get; set; } = "Base2";
-        public string GraphColor { get; set; } = "Back";
+        [GoProperty(PCategory.Misc, 0)] public string GridColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Misc, 1)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Misc, 2)] public string RemarkColor { get; set; } = "Base2";
+        [GoProperty(PCategory.Misc, 3)] public string GraphColor { get; set; } = "Back";
 
-        public string FontName { get; set; } = "나눔고딕";
-        public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
-        public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Misc, 4)] public string FontName { get; set; } = "나눔고딕";
+        [GoProperty(PCategory.Misc, 5)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Misc, 6)] public float FontSize { get; set; } = 12;
 
-        public int GraduationCount { get; set; } = 10;
-        public string? FormatString { get; set; } = null;
+        [GoProperty(PCategory.Misc, 7)] public int GraduationCount { get; set; } = 10;
+        [GoProperty(PCategory.Misc, 8)] public string? FormatString { get; set; } = null;
 
-        public GoBarGraphMode Mode { get; set; } = GoBarGraphMode.List;
+        [GoProperty(PCategory.Misc, 9)] public GoBarGraphMode Mode { get; set; } = GoBarGraphMode.List;
         #region  public GoDirectionHV Direction { get; set; } = GoDirectionHV.Vertical;
         private GoDirectionHV dir = GoDirectionHV.Vertical;
+        [GoProperty(PCategory.Misc, 10)]
         public GoDirectionHV Direction
         {
             get => dir;
@@ -45,12 +46,12 @@ namespace Going.UI.Controls
         }
         #endregion
 
-        public List<GoGraphSeries> Series { get; set; } = [];
-        public int BarSize { get; set; } = 20;
-        public int BarGap { get; set; } = 20;
+        [GoProperty(PCategory.Misc, 11)] public List<GoGraphSeries> Series { get; set; } = [];
+        [GoProperty(PCategory.Misc, 12)] public int BarSize { get; set; } = 20;
+        [GoProperty(PCategory.Misc, 13)] public int BarGap { get; set; } = 20;
 
-        public double? Minimum { get; set; }
-        public double? Maximum { get; set; }
+        [GoProperty(PCategory.Misc, 14)] public double? Minimum { get; set; }
+        [GoProperty(PCategory.Misc, 15)] public double? Maximum { get; set; }
         #endregion
 
         #region Member Variable

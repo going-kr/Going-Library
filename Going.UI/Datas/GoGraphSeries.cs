@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Going.UI.Controls;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,22 +12,22 @@ namespace Going.UI.Datas
     #region class : GraphSeries
     public class GoGraphSeries
     {
-        public string Name { get; set; } = "";
-        public string Alias { get; set; } = "";
-        public string Color { get; set; } = "Red";
-        public bool Visible { get; set; } = true;
+        [GoProperty(PCategory.Control, 0)] public string Name { get; set; } = "";
+        [GoProperty(PCategory.Control, 1)] public string Alias { get; set; } = "";
+        [GoProperty(PCategory.Control, 2)] public string Color { get; set; } = "Red";
+        [GoProperty(PCategory.Control, 3)] public bool Visible { get; set; } = true;
     }
     #endregion
     #region class : LineGraphSeries
     public class GoLineGraphSeries
     {
-        public string Name { get; set; } = "";
-        public string Alias { get; set; } = "";
-        public string Color { get; set; } = "Red";
-        public bool Visible { get; set; } = true;
+        [GoProperty(PCategory.Control, 0)] public string Name { get; set; } = "";
+        [GoProperty(PCategory.Control, 1)] public string Alias { get; set; } = "";
+        [GoProperty(PCategory.Control, 2)] public string Color { get; set; } = "Red";
+        [GoProperty(PCategory.Control, 3)] public bool Visible { get; set; } = true;
 
-        public double Minimum { get; set; } = 0;
-        public double Maximum { get; set; } = 100;
+        [GoProperty(PCategory.Control, 4)] public double Minimum { get; set; } = 0;
+        [GoProperty(PCategory.Control, 5)] public double Maximum { get; set; } = 100;
     }
     #endregion
 

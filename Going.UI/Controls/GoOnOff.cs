@@ -16,24 +16,25 @@ namespace Going.UI.Controls
     public class GoOnOff : GoControl
     {
         #region Properties
-        public string OnText { get; set; } = "On";
-        public string OffText { get; set; } = "Off";
-        public string CursorIconString { get; set; } = "fa-power-off";
-        public string FontName { get; set; } = "나눔고딕";
-        public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
-        public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Misc, 0)] public string OnText { get; set; } = "On";
+        [GoProperty(PCategory.Misc, 1)] public string OffText { get; set; } = "Off";
+        [GoProperty(PCategory.Misc, 2)] public string CursorIconString { get; set; } = "fa-power-off";
+        [GoProperty(PCategory.Misc, 3)] public string FontName { get; set; } = "나눔고딕";
+        [GoProperty(PCategory.Misc, 4)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Misc, 5)] public float FontSize { get; set; } = 12;
 
-        public string TextColor { get; set; } = "Fore";
-        public string BoxColor { get; set; } = "Base1";
-        public string BorderColor { get; set; } = "Base3";
-        public string CursorColor { get; set; } = "Base3";
-        public string OnColor { get; set; } = "lime";
-        public string OffColor { get; set; } = "gray";
+        [GoProperty(PCategory.Misc, 6)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Misc, 7)] public string BoxColor { get; set; } = "Base1";
+        [GoProperty(PCategory.Misc, 8)] public string BorderColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Misc, 9)] public string CursorColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Misc, 10)] public string OnColor { get; set; } = "lime";
+        [GoProperty(PCategory.Misc, 11)] public string OffColor { get; set; } = "gray";
 
         private bool bOnOff = false;
+        [GoProperty(PCategory.Misc, 12)]
         public bool OnOff
         {
-            get => bOnOff; 
+            get => bOnOff;
             set
             {
                 if (bOnOff != value)
@@ -80,7 +81,7 @@ namespace Going.UI.Controls
             var cBorder = thm.ToColor(BorderColor);
             var cCursor = thm.ToColor(CursorColor);
             var cOn = thm.ToColor(OnColor);
-            var cOff= thm.ToColor(OffColor);
+            var cOff = thm.ToColor(OffColor);
             var rts = Areas();
             var rtContent = rts["Content"];
             var rtCursor = rts["Cursor"];
@@ -105,7 +106,7 @@ namespace Going.UI.Controls
             base.OnDraw(canvas);
         }
 
-       
+
         protected override void OnMouseDown(float x, float y, GoMouseButton button)
         {
             var rts = Areas();

@@ -22,19 +22,20 @@ namespace Going.UI.Controls
     public class GoProgress : GoControl
     {
         #region Properties
-        public string FontName { get; set; } = "나눔고딕";
-        public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
-        public float FontSize { get; set; } = 18;
-        public float ValueFontSize { get; set; } = 14;
+        [GoProperty(PCategory.Misc, 0)] public string FontName { get; set; } = "나눔고딕";
+        [GoProperty(PCategory.Misc, 1)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Misc, 2)] public float FontSize { get; set; } = 18;
+        [GoProperty(PCategory.Misc, 3)] public float ValueFontSize { get; set; } = 14;
 
-        public string TextColor { get; set; } = "Fore";
-        public string FillColor { get; set; } = "Good";
-        public string EmptyColor { get; set; } = "Base1";
-        public string BorderColor { get; set; } = "Transparent";
+        [GoProperty(PCategory.Misc, 4)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Misc, 5)] public string FillColor { get; set; } = "Good";
+        [GoProperty(PCategory.Misc, 6)] public string EmptyColor { get; set; } = "Base1";
+        [GoProperty(PCategory.Misc, 7)] public string BorderColor { get; set; } = "Transparent";
 
-        public ProgressDirection Direction { get; set; } = ProgressDirection.LeftToRight;
+        [GoProperty(PCategory.Misc, 8)] public ProgressDirection Direction { get; set; } = ProgressDirection.LeftToRight;
 
         private double nValue = 0;
+        [GoProperty(PCategory.Misc, 9)]
         public double Value
         {
             get => nValue;
@@ -48,12 +49,12 @@ namespace Going.UI.Controls
             }
         }
 
-        public double Minimum { get; set; } = 0;
-        public double Maximum { get; set; } = 100;
+        [GoProperty(PCategory.Misc, 10)] public double Minimum { get; set; } = 0;
+        [GoProperty(PCategory.Misc, 11)] public double Maximum { get; set; } = 100;
 
-        public string Format { get; set; } = "0";
-        public int Gap { get; set; } = 5;
-        public int CornerRadius { get; set; } = 5;
+        [GoProperty(PCategory.Misc, 12)] public string Format { get; set; } = "0";
+        [GoProperty(PCategory.Misc, 13)] public int Gap { get; set; } = 5;
+        [GoProperty(PCategory.Misc, 14)] public int CornerRadius { get; set; } = 5;
         #endregion
 
         #region Event

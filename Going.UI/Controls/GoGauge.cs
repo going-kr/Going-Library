@@ -17,19 +17,20 @@ namespace Going.UI.Controls
     public class GoGauge : GoControl
     {
         #region Properties
-        public string FontName { get; set; } = "나눔고딕";
-        public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
-        public float FontSize { get; set; } = 18;
+        [GoProperty(PCategory.Misc, 0)] public string FontName { get; set; } = "나눔고딕";
+        [GoProperty(PCategory.Misc, 1)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Misc, 2)] public float FontSize { get; set; } = 18;
 
-        public string Title { get; set; } = "Title";
-        public float TitleFontSize { get; set; } = 12;
+        [GoProperty(PCategory.Misc, 3)] public string Title { get; set; } = "Title";
+        [GoProperty(PCategory.Misc, 4)] public float TitleFontSize { get; set; } = 12;
 
-        public string TextColor { get; set; } = "Fore";
-        public string FillColor { get; set; } = "Good";
-        public string EmptyColor { get; set; } = "Base1";
-        public string BorderColor { get; set; } = "Base1";
+        [GoProperty(PCategory.Misc, 5)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Misc, 6)] public string FillColor { get; set; } = "Good";
+        [GoProperty(PCategory.Misc, 7)] public string EmptyColor { get; set; } = "Base1";
+        [GoProperty(PCategory.Misc, 8)] public string BorderColor { get; set; } = "Base1";
 
         private double nValue = 0;
+        [GoProperty(PCategory.Misc, 9)]
         public double Value
         {
             get => nValue;
@@ -43,14 +44,14 @@ namespace Going.UI.Controls
             }
         }
 
-        public double Minimum { get; set; } = 0;
-        public double Maximum { get; set; } = 100;
-        
-        public string Format { get; set; } = "0";
-        public int StartAngle { get; set; } = 135;
-        public int SweepAngle { get; set; } = 270;
-        public int BarSize { get; set; } = 24;
-        public int Gap { get; set; } = 0;
+        [GoProperty(PCategory.Misc, 10)] public double Minimum { get; set; } = 0;
+        [GoProperty(PCategory.Misc, 11)] public double Maximum { get; set; } = 100;
+
+        [GoProperty(PCategory.Misc, 12)] public string Format { get; set; } = "0";
+        [GoProperty(PCategory.Misc, 13)] public int StartAngle { get; set; } = 135;
+        [GoProperty(PCategory.Misc, 14)] public int SweepAngle { get; set; } = 270;
+        [GoProperty(PCategory.Misc, 15)] public int BarSize { get; set; } = 24;
+        [GoProperty(PCategory.Misc, 16)] public int Gap { get; set; } = 0;
         #endregion
 
         #region Event

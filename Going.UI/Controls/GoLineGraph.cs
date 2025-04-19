@@ -21,21 +21,21 @@ namespace Going.UI.Controls
     public class GoLineGraph : GoControl
     {
         #region Properties
-        public string GridColor { get; set; } = "Base3";
-        public string TextColor { get; set; } = "Fore";
-        public string RemarkColor { get; set; } = "Base2";
-        public string GraphColor { get; set; } = "Back";
+        [GoProperty(PCategory.Misc, 0)] public string GridColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Misc, 1)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Misc, 2)] public string RemarkColor { get; set; } = "Base2";
+        [GoProperty(PCategory.Misc, 3)] public string GraphColor { get; set; } = "Back";
 
-        public string FontName { get; set; } = "나눔고딕";
-        public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
-        public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Misc, 4)] public string FontName { get; set; } = "나눔고딕";
+        [GoProperty(PCategory.Misc, 5)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Misc, 6)] public float FontSize { get; set; } = 12;
 
-        public int GraduationCount { get; set; } = 10;
-        public string? FormatString { get; set; } = null;
+        [GoProperty(PCategory.Misc, 7)] public int GraduationCount { get; set; } = 10;
+        [GoProperty(PCategory.Misc, 8)] public string? FormatString { get; set; } = null;
 
-        public List<GoLineGraphSeries> Series { get; set; } = [];
+        [GoProperty(PCategory.Misc, 9)] public List<GoLineGraphSeries> Series { get; set; } = [];
 
-        public int PointWidth { get; set; } = 70;
+        [GoProperty(PCategory.Misc, 10)] public int PointWidth { get; set; } = 70;
         #endregion
 
         #region Member Variable

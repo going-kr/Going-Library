@@ -14,10 +14,12 @@ namespace Going.UI.Controls
 {
     public class PCategory
     {
+        public const string ID = "ID";
         public const string Control = "Control";
         public const string Bounds = "Bounds";
+        public const string Misc = "Misc";
 
-        public static List<string> Names = [Control, Bounds];
+        public static List<string> Names = [ID, Control, Bounds, Misc];
         public static int Index(string category) => Names.IndexOf(category);
     }
 
@@ -27,7 +29,9 @@ namespace Going.UI.Controls
         public int Order { get; set; } = order;
     }
 
-    public class GoColorPropertyAttribute(string category, int order) : GoPropertyAttribute(category, order) { }
+    public class GoSizePropertyAttribute(string category, int order) : GoPropertyAttribute(category, order) { }
+    public class GoSizesPropertyAttribute(string category, int order) : GoPropertyAttribute(category, order) { }
+    public class GoImagePropertyAttribute(string category, int order) : GoPropertyAttribute(category, order) { }
 
     public class GoControl : IGoControl
     {

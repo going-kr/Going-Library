@@ -17,19 +17,19 @@ namespace Going.UI.Controls
     public class GoNavigator : GoControl
     {
         #region Properties
-        public float IconSize { get; set; } = 12;
-        public GoDirectionHV IconDirection { get; set; }
-        public float IconGap { get; set; } = 5;
-        public string FontName { get; set; } = "나눔고딕";
-        public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
-        public float FontSize { get; set; } = 12;
-        public string TextColor { get; set; } = "Fore";
-        public float Indent { get; set; } = 20;
-        public float MenuGap { get; set; } = 30F;
+        [GoProperty(PCategory.Misc, 0)] public float IconSize { get; set; } = 12;
+        [GoProperty(PCategory.Misc, 1)] public GoDirectionHV IconDirection { get; set; }
+        [GoProperty(PCategory.Misc, 2)] public float IconGap { get; set; } = 5;
+        [GoProperty(PCategory.Misc, 3)] public string FontName { get; set; } = "나눔고딕";
+        [GoProperty(PCategory.Misc, 4)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Misc, 5)] public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Misc, 6)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Misc, 7)] public float Indent { get; set; } = 20;
+        [GoProperty(PCategory.Misc, 8)] public float MenuGap { get; set; } = 30F;
 
-        public ObservableList<GoMenuItem> Menus { get; set; } = [];
+        [GoProperty(PCategory.Misc, 9)] public ObservableList<GoMenuItem> Menus { get; set; } = [];
 
-        public GoDirectionHV Direction { get; set; } = GoDirectionHV.Horizon;
+        [GoProperty(PCategory.Misc, 10)] public GoDirectionHV Direction { get; set; } = GoDirectionHV.Horizon;
         #endregion
 
         #region Member Variable
