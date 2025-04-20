@@ -27,16 +27,30 @@ namespace Going.UI.Forms.Controls
         public SKColor Value { get => Control.Value; set { if (Control.Value != value) { Control.Value = value; Invalidate(); } } }
         #endregion
 
+        #region Member Variable
+        FormsInputManager IM;
+        #endregion
+
         #region Constructor
         public GoColorSelector()
         {
+            IM = new FormsInputManager(this);
             GoInputEventer.Current.InputNumber += (c, bounds, callback, type, value, min, max) =>
             {
                 if (c == Control)
                 {
-                    FormsInputManager.Current.InputNumber<byte>(this, Control, bounds, FontName, FontStyle, FontSize, InputColor, TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
+                    IM.InputNumber<byte>(Control, bounds, FontName, FontStyle, FontSize, InputColor, TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
                 }
             };
+        }
+        #endregion
+
+        #region Dispose
+        protected override void Dispose(bool disposing)
+        {
+            IM.ClearInput();
+            IM.Dispose();
+            base.Dispose(disposing);
         }
         #endregion
 

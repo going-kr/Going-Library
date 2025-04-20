@@ -16,20 +16,17 @@ using TextBox = System.Windows.Forms.TextBox;
 
 namespace Going.UI.Forms.Input
 {
-    public class FormsInputManager : IMessageFilter
+    public class FormsInputManager : IMessageFilter, IDisposable
     {
         #region Properties
-        private static readonly Lazy<FormsInputManager> _instance = new Lazy<FormsInputManager>(() => new FormsInputManager());
-        public static FormsInputManager Current => _instance.Value;
-
         public bool IsInput => InputControl != null;
-        public Control? InputControl { get; private set; }
+        public Control InputControl { get; init; }
         public SKRect InputBounds { get; private set; }
         public InputType InputType { get; private set; }
         #endregion
 
         #region Member Variable
-        private TextBox txt = new TextBox { BorderStyle = BorderStyle.None, TextAlign = HorizontalAlignment.Center };
+        private TextBox txt;
         private Action<string>? InputCallback;
         private Action<Keys, Keys>? InputSpecialKeyDown;
         private Type? ValueType;
@@ -39,76 +36,73 @@ namespace Going.UI.Forms.Input
         #endregion
 
         #region Constructor
-        private FormsInputManager()
+        public FormsInputManager(Control c)
         {
             Application.AddMessageFilter(this);
+            InputControl = c;
+
+            txt = new TextBox { BorderStyle = BorderStyle.None, TextAlign = HorizontalAlignment.Center, Visible = false };
 
             txt.TextChanged += (o, s) =>
             {
-                if (InputControl != null)
+                if (InputType == InputType.String) InputCallback?.Invoke(txt.Text);
+                else
                 {
-                    if (InputType == InputType.String) InputCallback?.Invoke(txt.Text);
-                    else
+                    var t = ValueType;
+
+                    var selectionStart = txt.SelectionStart;
+                    var selectionLength = txt.SelectionLength;
+                    var newText = String.Empty;
+
+                    #region parse
+                    if (t == typeof(float) || t == typeof(double) || t == typeof(decimal))
                     {
-                        var t = ValueType;
-
-                        var selectionStart = txt.SelectionStart;
-                        var selectionLength = txt.SelectionLength;
-                        var newText = String.Empty;
-
-                        #region parse
-                        if (t == typeof(float) || t == typeof(double) || t == typeof(decimal))
+                        var bComma = false;
+                        foreach (Char c in txt.Text.ToCharArray())
                         {
-                            var bComma = false;
-                            foreach (Char c in txt.Text.ToCharArray())
-                            {
-                                if (Char.IsDigit(c) || Char.IsControl(c) || (c == '.' && !bComma && txt.Text != ".") || (newText.Length == 0 && (c == '-' || c == '+') && IsMinusInput)) newText += c;
-                                if (c == '.' && txt.Text != ".") bComma = true;
-                            }
-                            txt.Text = newText;
-                            txt.SelectionStart = selectionStart <= txt.Text.Length ? selectionStart : txt.Text.Length;
+                            if (Char.IsDigit(c) || Char.IsControl(c) || (c == '.' && !bComma && txt.Text != ".") || (newText.Length == 0 && (c == '-' || c == '+') && IsMinusInput)) newText += c;
+                            if (c == '.' && txt.Text != ".") bComma = true;
                         }
-                        else if (t == typeof(sbyte) || t == typeof(short) || t == typeof(int) || t == typeof(long) ||
-                                t == typeof(byte) || t == typeof(ushort) || t == typeof(uint) || t == typeof(ulong))
-                        {
-                            foreach (var c in txt.Text.ToCharArray())
-                            {
-                                if (Char.IsDigit(c) || Char.IsControl(c) || (newText.Length == 0 && (c == '-' || c == '+') && IsMinusInput)) newText += c;
-                            }
-                        }
-                        #endregion
-
                         txt.Text = newText;
                         txt.SelectionStart = selectionStart <= txt.Text.Length ? selectionStart : txt.Text.Length;
-                     
-                        InputCallback?.Invoke(txt.Text);
                     }
+                    else if (t == typeof(sbyte) || t == typeof(short) || t == typeof(int) || t == typeof(long) ||
+                            t == typeof(byte) || t == typeof(ushort) || t == typeof(uint) || t == typeof(ulong))
+                    {
+                        foreach (var c in txt.Text.ToCharArray())
+                        {
+                            if (Char.IsDigit(c) || Char.IsControl(c) || (newText.Length == 0 && (c == '-' || c == '+') && IsMinusInput)) newText += c;
+                        }
+                    }
+                    #endregion
+
+                    txt.Text = newText;
+                    txt.SelectionStart = selectionStart <= txt.Text.Length ? selectionStart : txt.Text.Length;
+
+                    InputCallback?.Invoke(txt.Text);
                 }
             };
 
             txt.KeyDown += (o, s) =>
             {
-                if (InputControl != null)
+                if (s.KeyCode == Keys.Escape || s.KeyCode == Keys.Enter)
                 {
-                    if (s.KeyCode == Keys.Escape || s.KeyCode == Keys.Enter)
-                    {
-                        s.SuppressKeyPress = true;
+                    s.SuppressKeyPress = true;
 
-                        InputCallback?.Invoke(txt.Text);
-                        InputControl.Controls.Remove(txt);
-                        InputControl = null;
-                        GoInputEventer.Current.ClearInputControl();
+                    ClearInput();
 
-                        InputSpecialKeyDown?.Invoke(s.KeyCode, s.Modifiers);
+                    InputCallback?.Invoke(txt.Text);
+                    InputSpecialKeyDown?.Invoke(s.KeyCode, s.Modifiers);
 
-                    }
-                    else if ((s.KeyCode == Keys.Left || s.KeyCode == Keys.Up || s.KeyCode == Keys.Right || s.KeyCode == Keys.Down) && s.Modifiers == Keys.Control)
-                    {
-                        s.SuppressKeyPress = true;
-                        InputSpecialKeyDown?.Invoke(s.KeyCode, s.Modifiers);
-                    }
+                }
+                else if ((s.KeyCode == Keys.Left || s.KeyCode == Keys.Up || s.KeyCode == Keys.Right || s.KeyCode == Keys.Down) && s.Modifiers == Keys.Control)
+                {
+                    s.SuppressKeyPress = true;
+                    InputSpecialKeyDown?.Invoke(s.KeyCode, s.Modifiers);
                 }
             };
+
+            InputControl.Controls.Add(txt);
         }
         #endregion
 
@@ -116,7 +110,7 @@ namespace Going.UI.Forms.Input
         public bool PreFilterMessage(ref Message m)
         {
             var cc = Control.FromHandle(m.HWnd);
-            if (InputControl != null)
+            if (!InputControl.IsDisposed)
             {
                 int WM_LBUTTONDOWN = 0x0201;
                 int WM_RBUTTONDOWN = 0x0204;
@@ -133,9 +127,7 @@ namespace Going.UI.Forms.Input
 
                     if (!CollisionTool.Check(InputBounds, ptC.X, ptC.Y))
                     {
-                        InputControl.Controls.Remove(txt);
-                        InputControl = null;
-                        GoInputEventer.Current.ClearInputControl();
+                        ClearInput();
                     }
                 }
             }
@@ -144,11 +136,10 @@ namespace Going.UI.Forms.Input
         #endregion
 
         #region InputString
-        public void InputString(Control control, IGoControl baseControl, SKRect bounds, string fontName, GoFontStyle fontStyle, float fontSize, string backColor, string textColor, Action<string> callback, Action<Keys, Keys>? specialKeyDown, string? value = null)
+        public void InputString(IGoControl baseControl, SKRect bounds, string fontName, GoFontStyle fontStyle, float fontSize, string backColor, string textColor, Action<string> callback, Action<Keys, Keys>? specialKeyDown, string? value = null)
         {
-            if (InputControl == null)
+            if (!txt.Visible)
             {
-                InputControl = control;
                 InputBounds = bounds;
                 InputCallback = callback;
                 InputSpecialKeyDown = specialKeyDown;
@@ -178,8 +169,7 @@ namespace Going.UI.Forms.Input
                 txt.BackColor = Util.FromArgb(GoTheme.Current.ToColor(backColor));
                 txt.ForeColor = Util.FromArgb(GoTheme.Current.ToColor(textColor));
                 txt.Text = value;
-
-                InputControl.Controls.Add(txt);
+                txt.Visible = true;
                 txt.Focus();
                 txt.SelectAll();
             }
@@ -188,11 +178,10 @@ namespace Going.UI.Forms.Input
         #endregion
 
         #region InputNumber
-        public void InputNumber<T>(Control control, IGoControl baseControl, SKRect bounds, string fontName, GoFontStyle fontStyle, float fontSize, string backColor, string textColor, Action<string> callback, Action<Keys, Keys>? specialKeyDown, Type type, object value, object? min, object? max)
+        public void InputNumber<T>(IGoControl baseControl, SKRect bounds, string fontName, GoFontStyle fontStyle, float fontSize, string backColor, string textColor, Action<string> callback, Action<Keys, Keys>? specialKeyDown, Type type, object value, object? min, object? max)
         {
-            if (InputControl == null)
+            if (!txt.Visible)
             {
-                InputControl = control;
                 InputBounds = bounds;
                 InputCallback = callback;
                 InputSpecialKeyDown = specialKeyDown;
@@ -240,8 +229,7 @@ namespace Going.UI.Forms.Input
                 txt.BackColor = Util.FromArgb(GoTheme.Current.ToColor(backColor));
                 txt.ForeColor = Util.FromArgb(GoTheme.Current.ToColor(textColor));
                 txt.Text = ValueTool.ToString(value, null);
-
-                InputControl.Controls.Add(txt);
+                txt.Visible = true;
                 txt.Focus();
                 txt.SelectAll();
             }
@@ -252,12 +240,16 @@ namespace Going.UI.Forms.Input
         #region ClearInput
         public void ClearInput()
         {
-            if (InputControl != null)
-            {
-                InputControl.Controls.Remove(txt);
-                InputControl = null;
-                GoInputEventer.Current.ClearInputControl();
-            }
+            txt.Visible = false;
+            GoInputEventer.Current.ClearInputControl();
+        }
+        #endregion
+
+        #region Dispose
+        public void Dispose()
+        {
+            Application.RemoveMessageFilter(this);
+            txt.Dispose();
         }
         #endregion
     }

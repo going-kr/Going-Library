@@ -36,7 +36,7 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Misc, 12)] public GoContentAlignment ItemAlignment { get; set; } = GoContentAlignment.MiddleCenter;
         [GoProperty(PCategory.Misc, 13)] public GoItemSelectionMode SelectionMode { get; set; } = GoItemSelectionMode.Single;
 
-        public ObservableList<GoListItem> Items { get; set; } = [];
+        [GoProperty(PCategory.Misc, 14)] public ObservableList<GoListItem> Items { get; set; } = [];
         [JsonIgnore] public List<GoListItem> SelectedItems { get; } = [];
         [JsonIgnore] public double ScrollPosition { get => scroll.ScrollPosition; set => scroll.ScrollPosition = value; }
         [JsonIgnore] internal double ScrollPositionWithOffset => scroll.ScrollPositionWithOffset;

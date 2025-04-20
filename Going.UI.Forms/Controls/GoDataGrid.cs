@@ -65,6 +65,10 @@ namespace Going.UI.Forms.Controls
         public event EventHandler<GoDataGridCellValueChangedEventArgs>? ValueChanged { add => Control.ValueChanged += value; remove => Control.ValueChanged -= value; }
         #endregion
 
+        #region Member Variable
+        FormsInputManager IM;
+        #endregion
+
         #region Constructor
         public GoDataGrid()
         {
@@ -74,6 +78,8 @@ namespace Going.UI.Forms.Controls
             Control.GetColorDropDownVisible += (cell) => (dwnd_C?.Visible ?? false) && dwndCell_C == cell;
             Control.GetDateTimeDropDownVisible += (cell) => (dwnd_DT?.Visible ?? false) && dwndCell_DT == cell;
             Control.GetComboDropDownVisible += (cell) => (dwnd_CB?.Visible ?? false) && dwndCell_CB == cell;
+
+            IM = new FormsInputManager(this);
 
             GoInputEventer.Current.InputNumber += (c, bounds, callback, type, value, min, max) =>
             {
@@ -86,17 +92,17 @@ namespace Going.UI.Forms.Controls
                     var cF = cell.Row.Selected ? cSel : cRow;
                     var cV = cF.BrightnessTransmit(cell.Row.RowIndex % 2 == 0 ? 0.05F : -0.05F).BrightnessTransmit(GoDataGrid.InputBright * br);
 
-                    if (type == typeof(byte)) FormsInputManager.Current.InputNumber<byte>(this, Control, bounds, FontName, FontStyle, FontSize, $"#{cV.Red:X2}{cV.Green:X2}{cV.Blue:X2}", TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
-                    else if (type == typeof(sbyte)) FormsInputManager.Current.InputNumber<sbyte>(this, Control, bounds, FontName, FontStyle, FontSize, $"#{cV.Red:X2}{cV.Green:X2}{cV.Blue:X2}", TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
-                    else if (type == typeof(ushort)) FormsInputManager.Current.InputNumber<ushort>(this, Control, bounds, FontName, FontStyle, FontSize, $"#{cV.Red:X2}{cV.Green:X2}{cV.Blue:X2}", TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
-                    else if (type == typeof(short)) FormsInputManager.Current.InputNumber<short>(this, Control, bounds, FontName, FontStyle, FontSize, $"#{cV.Red:X2}{cV.Green:X2}{cV.Blue:X2}", TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
-                    else if (type == typeof(int)) FormsInputManager.Current.InputNumber<int>(this, Control, bounds, FontName, FontStyle, FontSize, $"#{cV.Red:X2}{cV.Green:X2}{cV.Blue:X2}", TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
-                    else if (type == typeof(uint)) FormsInputManager.Current.InputNumber<uint>(this, Control, bounds, FontName, FontStyle, FontSize, $"#{cV.Red:X2}{cV.Green:X2}{cV.Blue:X2}", TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
-                    else if (type == typeof(long)) FormsInputManager.Current.InputNumber<long>(this, Control, bounds, FontName, FontStyle, FontSize, $"#{cV.Red:X2}{cV.Green:X2}{cV.Blue:X2}", TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
-                    else if (type == typeof(ulong)) FormsInputManager.Current.InputNumber<ulong>(this, Control, bounds, FontName, FontStyle, FontSize, $"#{cV.Red:X2}{cV.Green:X2}{cV.Blue:X2}", TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
-                    else if (type == typeof(float)) FormsInputManager.Current.InputNumber<float>(this, Control, bounds, FontName, FontStyle, FontSize, $"#{cV.Red:X2}{cV.Green:X2}{cV.Blue:X2}", TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
-                    else if (type == typeof(double)) FormsInputManager.Current.InputNumber<double>(this, Control, bounds, FontName, FontStyle, FontSize, $"#{cV.Red:X2}{cV.Green:X2}{cV.Blue:X2}", TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
-                    else if (type == typeof(decimal)) FormsInputManager.Current.InputNumber<decimal>(this, Control, bounds, FontName, FontStyle, FontSize, $"#{cV.Red:X2}{cV.Green:X2}{cV.Blue:X2}", TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
+                    if (type == typeof(byte)) IM.InputNumber<byte>(Control, bounds, FontName, FontStyle, FontSize, $"#{cV.Red:X2}{cV.Green:X2}{cV.Blue:X2}", TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
+                    else if (type == typeof(sbyte)) IM.InputNumber<sbyte>(Control, bounds, FontName, FontStyle, FontSize, $"#{cV.Red:X2}{cV.Green:X2}{cV.Blue:X2}", TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
+                    else if (type == typeof(ushort)) IM.InputNumber<ushort>(Control, bounds, FontName, FontStyle, FontSize, $"#{cV.Red:X2}{cV.Green:X2}{cV.Blue:X2}", TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
+                    else if (type == typeof(short)) IM.InputNumber<short>(Control, bounds, FontName, FontStyle, FontSize, $"#{cV.Red:X2}{cV.Green:X2}{cV.Blue:X2}", TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
+                    else if (type == typeof(int)) IM.InputNumber<int>(Control, bounds, FontName, FontStyle, FontSize, $"#{cV.Red:X2}{cV.Green:X2}{cV.Blue:X2}", TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
+                    else if (type == typeof(uint)) IM.InputNumber<uint>(Control, bounds, FontName, FontStyle, FontSize, $"#{cV.Red:X2}{cV.Green:X2}{cV.Blue:X2}", TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
+                    else if (type == typeof(long)) IM.InputNumber<long>(Control, bounds, FontName, FontStyle, FontSize, $"#{cV.Red:X2}{cV.Green:X2}{cV.Blue:X2}", TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
+                    else if (type == typeof(ulong)) IM.InputNumber<ulong>(Control, bounds, FontName, FontStyle, FontSize, $"#{cV.Red:X2}{cV.Green:X2}{cV.Blue:X2}", TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
+                    else if (type == typeof(float)) IM.InputNumber<float>(Control, bounds, FontName, FontStyle, FontSize, $"#{cV.Red:X2}{cV.Green:X2}{cV.Blue:X2}", TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
+                    else if (type == typeof(double)) IM.InputNumber<double>(Control, bounds, FontName, FontStyle, FontSize, $"#{cV.Red:X2}{cV.Green:X2}{cV.Blue:X2}", TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
+                    else if (type == typeof(decimal)) IM.InputNumber<decimal>(Control, bounds, FontName, FontStyle, FontSize, $"#{cV.Red:X2}{cV.Green:X2}{cV.Blue:X2}", TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
 
                 }
             };
@@ -114,7 +120,7 @@ namespace Going.UI.Forms.Controls
                         var cF = cell.Row.Selected ? cSel : cRow;
                         var cV = cF.BrightnessTransmit(cell.Row.RowIndex % 2 == 0 ? 0.05F : -0.05F).BrightnessTransmit(GoDataGrid.InputBright * br);
 
-                        FormsInputManager.Current.InputString(this, Control, bounds, FontName, FontStyle, FontSize, $"#{cV.Red:X2}{cV.Green:X2}{cV.Blue:X2}", TextColor, callback, spkey, value);
+                        IM.InputString(Control, bounds, FontName, FontStyle, FontSize, $"#{cV.Red:X2}{cV.Green:X2}{cV.Blue:X2}", TextColor, callback, spkey, value);
                     }
                     else if(Control.InputObject is GoDataGridColumn col)
                     {
@@ -123,7 +129,7 @@ namespace Going.UI.Forms.Controls
                         var cF = thm.ToColor(ColumnColor);
                         var cV = cF.BrightnessTransmit(GoDataGrid.InputBright * br);
 
-                        FormsInputManager.Current.InputString(this, Control, bounds, FontName, FontStyle, FontSize, $"#{cV.Red:X2}{cV.Green:X2}{cV.Blue:X2}", TextColor, callback, spkey, value);
+                        IM.InputString(Control, bounds, FontName, FontStyle, FontSize, $"#{cV.Red:X2}{cV.Green:X2}{cV.Blue:X2}", TextColor, callback, spkey, value);
                     }
                 }
             };
@@ -133,9 +139,18 @@ namespace Going.UI.Forms.Controls
         #region Override
         protected override void OnResize(EventArgs e)
         {
-            FormsInputManager.Current.ClearInput();
+            IM.ClearInput();
             base.OnResize(e);
         }
+
+        #region Dispose
+        protected override void Dispose(bool disposing)
+        {
+            IM.ClearInput();
+            IM.Dispose();
+            base.Dispose(disposing);
+        }
+        #endregion
         #endregion
 
         #region Method
@@ -149,7 +164,7 @@ namespace Going.UI.Forms.Controls
                 var ri = Control.ViewRows.IndexOf(cell.Row);
                 if (ri + 1 < Control.ViewRows.Count)
                 {
-                    FormsInputManager.Current.ClearInput();
+                    IM.ClearInput();
                     Control.InputCell(Control.ViewRows[ri + 1].Cells[cell.ColumnIndex], "d");
                 }
             }
@@ -158,7 +173,7 @@ namespace Going.UI.Forms.Controls
                 var ri = Control.ViewRows.IndexOf(cell2.Row);
                 if (ri - 1 >= 0)
                 {
-                    FormsInputManager.Current.ClearInput();
+                    IM.ClearInput();
                     Control.InputCell(Control.ViewRows[ri - 1].Cells[cell2.ColumnIndex], "u");
                 }
             }
@@ -173,7 +188,7 @@ namespace Going.UI.Forms.Controls
                 var idx = ls.IndexOf(cell3);
                 if (idx >= 0 && idx - 1 >= 0)
                 {
-                    FormsInputManager.Current.ClearInput();
+                    IM.ClearInput();
                     Control.InputCell(ls[idx - 1], "l");
                 }
             }
@@ -188,7 +203,7 @@ namespace Going.UI.Forms.Controls
                 var idx = ls.IndexOf(cell4);
                 if (idx >= 0 && idx + 1 < ls.Count)
                 {
-                    FormsInputManager.Current.ClearInput();
+                    IM.ClearInput();
                     Control.InputCell(ls[idx + 1], "r");
                 }
             }
@@ -526,5 +541,7 @@ namespace Going.UI.Forms.Controls
         #endregion
         #endregion
         #endregion
+
+
     }
 }

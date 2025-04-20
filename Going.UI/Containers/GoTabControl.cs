@@ -60,7 +60,8 @@ namespace Going.UI.Containers
 
         [JsonIgnore] public override SKRect PanelBounds => Areas()["Panel"];
 
-        [JsonInclude] public List<GoTabPage> TabPages { get; } = [];
+        //[GoProperty(PCategory.Misc, 11),JsonInclude] public List<GoTabPage> TabPages { get; } = [];
+        [GoProperty(PCategory.Misc, 11)] public List<GoTabPage> TabPages { get; set; } = [];
         #endregion
 
         #region Event
@@ -73,8 +74,8 @@ namespace Going.UI.Containers
         #endregion
 
         #region Constructor
-        [JsonConstructor]
-        public GoTabControl(List<GoTabPage> tabPages) : this() => this.TabPages = tabPages;
+        //[JsonConstructor]
+        //public GoTabControl(List<GoTabPage> tabPages) : this() => this.TabPages = tabPages;
         public GoTabControl() { }
         #endregion
 
@@ -349,6 +350,8 @@ namespace Going.UI.Containers
         [JsonConstructor]
         public GoTabPage(List<IGoControl> childrens) : this() => Childrens = childrens;
         public GoTabPage() { }
+
+        public override string ToString() => Name;
     }
     #endregion
 }

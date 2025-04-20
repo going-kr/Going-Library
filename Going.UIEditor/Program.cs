@@ -21,7 +21,7 @@ namespace Going.UIEditor
         public static FormMain MainForm { get; set; }
         public static FormSetting SettingForm { get; set; }
         public static FormNewFile NewFileForm { get; set; }
-        
+
         [STAThread]
         static void Main()
         {

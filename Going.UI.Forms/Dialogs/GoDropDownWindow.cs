@@ -278,22 +278,26 @@ namespace Going.UI.Forms.Dialogs
         private Action<SKColor?>? feedback;
 
         private IGoControl[] cs => [color, btnOK, btnCancel];
+
+        private FormsInputManager IM;
         #endregion
 
         #region Constructor
         public GoColorDropDownWindow()
         {
+            color = new Going.UI.Controls.GoColorSelector { };
+
+            IM = new FormsInputManager(this);
             GoInputEventer.Current.InputNumber += (c, bounds, callback, type, value, min, max) =>
             {
                 if (c == color)
                 {
                     var rt = bounds;
                     rt.Offset(color.Left, color.Top);
-                    FormsInputManager.Current.InputNumber<byte>(this, color, rt, color.FontName, color.FontStyle, color.FontSize, color.InputColor, color.TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
+                    IM.InputNumber<byte>(color, rt, color.FontName, color.FontStyle, color.FontSize, color.InputColor, color.TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
                 }
             };
 
-            color = new Going.UI.Controls.GoColorSelector {   };
             btnOK = new UI.Controls.GoButton { Text = "선택" };
             btnCancel = new UI.Controls.GoButton { Text = "취소" };
 
@@ -408,6 +412,15 @@ namespace Going.UI.Forms.Dialogs
             base.OnVisibleChanged(e);
         }
         #endregion
+
+        #region Dispose
+        protected override void Dispose(bool disposing)
+        {
+            IM.ClearInput();
+            IM.Dispose();
+            base.Dispose(disposing);
+        }
+        #endregion
         #endregion
 
         #region Set
@@ -449,20 +462,23 @@ namespace Going.UI.Forms.Dialogs
                 else return [cal, btnOK, btnCancel, inH, inM, inS];
             }
         }
+
+        private FormsInputManager IM;
         #endregion
 
         #region Constructor
         public GoDateTimeDropDownWindow()
         {
+            IM = new FormsInputManager(this);
+
             GoInputEventer.Current.InputNumber += (c, bounds, callback, type, value, min, max) =>
             {
                 if ((c == inH || c == inM || c == inS) && c is Going.UI.Controls.GoInputNumber<int> vc)
                 {
                     var rt = bounds;
                     rt.Offset(c.Left, c.Top);
-                    FormsInputManager.Current.InputNumber<byte>(this, c, rt, vc.FontName, vc.FontStyle, vc.FontSize, vc.ValueColor, vc.TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
+                    IM.InputNumber<byte>(c, rt, vc.FontName, vc.FontStyle, vc.FontSize, vc.ValueColor, vc.TextColor, (v) => { callback(v); Invalidate(); }, spkey, type, value, min, max);
                 }
-
             };
 
             cal = new Going.UI.Controls.GoCalendar { BackgroundDraw = false, MultiSelect = false };
@@ -615,6 +631,15 @@ namespace Going.UI.Forms.Dialogs
         {
             Invalidate();
             base.OnVisibleChanged(e);
+        }
+        #endregion
+
+        #region Dispose
+        protected override void Dispose(bool disposing)
+        {
+            IM.ClearInput();
+            IM.Dispose();
+            base.Dispose(disposing);
         }
         #endregion
         #endregion

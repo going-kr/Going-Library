@@ -766,16 +766,16 @@ namespace Going.UI.Utils
 
             foreach (var size in sizes)
             {
-                if (size.EndsWith("px"))
+                if (size.EndsWith("px") && float.TryParse(size.Replace("px", ""), out var val1))
                 {
-                    float px = float.Parse(size.Replace("px", ""));
+                    float px = val1;
                     result.Add(px);
                     fixedTotal += px;
                 }
-                else if (size.EndsWith("%"))
+                else if (size.EndsWith("%")&& float.TryParse(size.Replace("%", ""), out var val2))
                 {
-                    float percent = float.Parse(size.Replace("%", "")) / 100f;
-                    result.Add(-percent); // Negative for percentage
+                    float percent = val2 / 100f;
+                    result.Add(-percent); 
                     totalPercentage += percent;
                 }
                 else
@@ -792,6 +792,24 @@ namespace Going.UI.Utils
             }
 
             return result.ToArray();
+        }
+        #endregion
+        #region ValidSizes
+        public static bool ValidSizes(string[] sizes)
+        {
+            List<bool> ret = [];
+            foreach (var size in sizes)
+            {
+                if (size.EndsWith("px") && float.TryParse(size.Replace("px", ""), out _))
+                {
+                    ret.Add(true);
+                }
+                else if (size.EndsWith("%") && float.TryParse(size.Replace("%", ""), out _))
+                {
+                    ret.Add(true);
+                }
+            }
+            return ret.Count == sizes.Length;
         }
         #endregion
         #endregion

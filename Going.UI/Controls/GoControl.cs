@@ -37,7 +37,7 @@ namespace Going.UI.Controls
     {
         #region Properties
         public static int LongClickTime { get; set; } = 2000;
-        
+
         public Guid Id { get; init; } = Guid.NewGuid();
         [GoProperty(PCategory.Control, 0)] public string? Name { get; set; }
         [GoProperty(PCategory.Control, 1)] public virtual bool Visible { get; set; } = true;
@@ -45,20 +45,42 @@ namespace Going.UI.Controls
         public bool Selectable { get; protected set; } = false;
         [JsonIgnore] public object? Tag { get; set; }
 
-        [JsonIgnore] public float X { get => bounds.Left; set => bounds.Left = value; }
-        [JsonIgnore] public float Y { get => bounds.Top; set => bounds.Top = value; }
         [JsonIgnore] public float ScreenX => Parent != null && Parent is GoControl pc ? pc.ScreenX + Parent.PanelBounds.Left + X : X;
         [JsonIgnore] public float ScreenY => Parent != null && Parent is GoControl pc ? pc.ScreenY + Parent.PanelBounds.Top + Y : Y;
 
         [GoProperty(PCategory.Bounds, 0)] public SKRect Bounds { get => bounds; set => bounds = value; }
-        [GoProperty(PCategory.Bounds, 1), JsonIgnore] public float Left { get => bounds.Left; set => bounds.Left = value; }
-        [GoProperty(PCategory.Bounds, 2), JsonIgnore] public float Top { get => bounds.Top; set => bounds.Top = value; }
-        [GoProperty(PCategory.Bounds, 3), JsonIgnore] public float Right { get => bounds.Right; set => bounds.Right = value; }
-        [GoProperty(PCategory.Bounds, 4), JsonIgnore] public float Bottom { get => bounds.Bottom; set => bounds.Bottom = value; }
-        [GoProperty(PCategory.Bounds, 5), JsonIgnore] public float Width { get => bounds.Width; set => bounds.Right = value + bounds.Left; }
-        [GoProperty(PCategory.Bounds, 6), JsonIgnore] public float Height { get => bounds.Height; set => bounds.Bottom = value + bounds.Top; }
-        [GoProperty(PCategory.Bounds, 7)] public bool Fill { get; set; } = false;
-        [GoProperty(PCategory.Bounds, 8)] public GoPadding Margin { get; set; } = new(3, 3, 3, 3);
+        [GoProperty(PCategory.Bounds, 1), JsonIgnore]
+        public float X
+        {
+            get => bounds.Left;
+            set
+            {
+                var gx = value - bounds.Left;
+                var rt = bounds;
+                rt.Offset(gx, 0);
+                bounds = rt;
+            }
+        }
+        [GoProperty(PCategory.Bounds, 2), JsonIgnore]
+        public float Y
+        {
+            get => bounds.Top;
+            set
+            {
+                var gy = value - bounds.Top;
+                var rt = bounds;
+                rt.Offset(0, gy);
+                bounds = rt;
+            }
+        }
+        [GoProperty(PCategory.Bounds, 3), JsonIgnore] public float Width { get => bounds.Width; set => bounds.Right = value + bounds.Left; }
+        [GoProperty(PCategory.Bounds, 4), JsonIgnore] public float Height { get => bounds.Height; set => bounds.Bottom = value + bounds.Top; }
+        [GoProperty(PCategory.Bounds, 5), JsonIgnore] public float Left { get => bounds.Left; set => bounds.Left = value; }
+        [GoProperty(PCategory.Bounds, 6), JsonIgnore] public float Top { get => bounds.Top; set => bounds.Top = value; }
+        [GoProperty(PCategory.Bounds, 7), JsonIgnore] public float Right { get => bounds.Right; set => bounds.Right = value; }
+        [GoProperty(PCategory.Bounds, 8), JsonIgnore] public float Bottom { get => bounds.Bottom; set => bounds.Bottom = value; }
+        [GoProperty(PCategory.Bounds, 9)] public bool Fill { get; set; } = false;
+        [GoProperty(PCategory.Bounds, 10)] public GoPadding Margin { get; set; } = new(3, 3, 3, 3);
 
         [JsonIgnore] public bool FirstRender { get; internal set; } = true;
         [JsonIgnore] public IGoContainer? Parent { get; internal set; }
@@ -93,7 +115,7 @@ namespace Going.UI.Controls
         #region virtual
         protected virtual void OnInit(GoDesign? design) { }
         protected virtual void OnDraw(SKCanvas canvas) { Drawn?.Invoke(this, canvas); }
-        protected virtual void OnUpdate() {  }
+        protected virtual void OnUpdate() { }
         protected virtual void OnMouseDown(float x, float y, GoMouseButton button) { MouseDown?.Invoke(this, new GoMouseClickEventArgs(x, y, button)); }
         protected virtual void OnMouseUp(float x, float y, GoMouseButton button) { MouseUp?.Invoke(this, new GoMouseClickEventArgs(x, y, button)); }
         protected virtual void OnMouseClick(float x, float y, GoMouseButton button) { MouseClicked?.Invoke(this, new GoMouseClickEventArgs(x, y, button)); }
@@ -103,8 +125,8 @@ namespace Going.UI.Controls
         protected virtual void OnMouseWheel(float x, float y, float delta) { MouseWheel?.Invoke(this, new GoMouseWheelEventArgs(x, y, delta)); }
         protected virtual void OnMouseEnter() { }
         protected virtual void OnMouseLeave() { }
-        protected virtual void OnKeyDown(bool Shift, bool Control, bool Alt, GoKeys key) {  }
-        protected virtual void OnKeyUp(bool Shift, bool Control, bool Alt, GoKeys key) {  }
+        protected virtual void OnKeyDown(bool Shift, bool Control, bool Alt, GoKeys key) { }
+        protected virtual void OnKeyUp(bool Shift, bool Control, bool Alt, GoKeys key) { }
         #endregion
 
         #region Fire
@@ -138,7 +160,7 @@ namespace Going.UI.Controls
             {
                 dx = x; dy = y;
                 bDown = true;
-                downTime = DateTime.Now; 
+                downTime = DateTime.Now;
                 OnMouseDown(x, y, button);
 
                 Task.Run(async () =>

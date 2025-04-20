@@ -17,6 +17,8 @@ namespace Going.UI.Datas
 
         [JsonIgnore] internal bool Hover { get; set; } = false;
         [JsonIgnore] internal bool Down { get; set; } = false;
+
+        public override string ToString() => Name ?? string.Empty;
     }
 
     public class GoButtonsItem : GoButtonItem

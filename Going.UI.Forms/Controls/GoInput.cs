@@ -57,13 +57,18 @@ namespace Going.UI.Forms.Controls
         public event EventHandler ValueChanged { add => Control.ValueChanged += value; remove => Control.ValueChanged -= value; }
         #endregion
 
+        #region Member Variable
+        FormsInputManager IM;
+        #endregion
+
         #region Constructor
         public GoInputString()
         {
+            IM = new FormsInputManager(this);
             GoInputEventer.Current.InputString += (c, bounds, callback, value) =>
             {
                 if (c == Control)
-                    FormsInputManager.Current.InputString(this, Control, bounds, FontName, FontStyle, FontSize, ValueColor, TextColor, callback, null, value);
+                    IM.InputString(Control, bounds, FontName, FontStyle, FontSize, ValueColor, TextColor, callback, null, value);
             };
         }
         #endregion
@@ -74,6 +79,15 @@ namespace Going.UI.Forms.Controls
             var rt = Control.Areas()["Value"];
             Control.FireMouseDown(rt.Left + 1, rt.Top + 1, GoMouseButton.Left);
             Control.FireMouseUp(rt.Left + 1, rt.Top + 1, GoMouseButton.Left);
+        }
+        #endregion
+
+        #region Dispose
+        protected override void Dispose(bool disposing)
+        {
+            IM.ClearInput();
+            IM.Dispose();
+            base.Dispose(disposing);
         }
         #endregion
     }
@@ -117,15 +131,21 @@ namespace Going.UI.Forms.Controls
         public event EventHandler ValueChanged { add => Control.ValueChanged += value; remove => Control.ValueChanged -= value; }
         #endregion
 
+        #region Member Variable
+        FormsInputManager IM;
+        #endregion
+
         #region Constructor
         public GoInputNumber()
         {
+            IM = new FormsInputManager(this);
+
             GoInputEventer.Current.InputNumber += (c, bounds, callback, type, value, min, max) =>
             {
                 if (c == Control)
                 {
-                    FormsInputManager.Current.InputNumber<T>(this, Control, bounds, FontName, FontStyle, FontSize, ValueColor, TextColor,
-                                                                        (v) => { callback(v); Invalidate(); }, null, type, value, min, max);
+                    IM.InputNumber<T>(Control, bounds, FontName, FontStyle, FontSize, ValueColor, TextColor,
+                                                                 (v) => { callback(v); Invalidate(); }, null, type, value, min, max);
                 }
             };
         }
@@ -137,6 +157,15 @@ namespace Going.UI.Forms.Controls
             var rt = Control.Areas()["Value"];
             Control.FireMouseDown(rt.Left + 1, rt.Top + 1, GoMouseButton.Left);
             Control.FireMouseUp(rt.Left + 1, rt.Top + 1, GoMouseButton.Left);
+        }
+        #endregion
+
+        #region Dispose
+        protected override void Dispose(bool disposing)
+        {
+            IM.ClearInput();
+            IM.Dispose();
+            base.Dispose(disposing);
         }
         #endregion
     }

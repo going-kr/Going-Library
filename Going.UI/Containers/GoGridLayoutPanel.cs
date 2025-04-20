@@ -119,11 +119,13 @@ namespace Going.UI.Containers
         #endregion
     }
 
-    #region class
+    #region class : GoGridLayoutPanelRow
     public class GoGridLayoutPanelRow
     {
         [GoSizeProperty(PCategory.Misc, 0)] public string Height { get; set; } = "100%";
         [GoSizesProperty(PCategory.Misc, 1)] public List<string> Columns { get; set; } = [];
+
+        public override string ToString() => $"{Height} / Columns : {Columns.Count}";
     }
     #endregion
     #region class : GoGridIndex

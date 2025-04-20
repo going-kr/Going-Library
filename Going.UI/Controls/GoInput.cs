@@ -534,7 +534,7 @@ namespace Going.UI.Controls
     public class GoInputCombo : GoInput
     {
         #region Properties
-        public List<GoListItem> Items { get; set; } = [];
+        [GoProperty(PCategory.Misc, 16)] public List<GoListItem> Items { get; set; } = [];
 
         private int nSelIndex = -1;
         [JsonIgnore]
@@ -553,8 +553,8 @@ namespace Going.UI.Controls
 
         [JsonIgnore] public GoListItem? SelectedItem => SelectedIndex >= 0 && SelectedIndex < Items.Count ? Items[SelectedIndex] : null;
 
-        [GoProperty(PCategory.Misc, 16)] public int MaximumViewCount { get; set; } = 8;
         [GoProperty(PCategory.Misc, 17)] public int ItemHeight { get; set; } = 30;
+        [GoProperty(PCategory.Misc, 18)] public int MaximumViewCount { get; set; } = 8;
         #endregion
 
         #region Event
@@ -636,7 +636,7 @@ namespace Going.UI.Controls
     public class GoInputSelector : GoInput
     {
         #region Properties
-        public List<GoListItem> Items { get; set; } = [];
+        [GoProperty(PCategory.Misc, 16)] public List<GoListItem> Items { get; set; } = [];
 
         private int nSelIndex = -1;
         [JsonIgnore]

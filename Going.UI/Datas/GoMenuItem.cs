@@ -17,6 +17,6 @@ namespace Going.UI.Datas
 
         internal SKRect Bounds { get; set; }
 
-        public override string ToString() => Text ?? string.Empty;
+        public override string ToString() => $"{Text ?? string.Empty} / Page : {PageName}";
     }
 }

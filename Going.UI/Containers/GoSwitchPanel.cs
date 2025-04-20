@@ -38,7 +38,8 @@ namespace Going.UI.Containers
         }
 
         [JsonIgnore] public override IEnumerable<IGoControl> Childrens => SelectedPage?.Childrens ?? [];
-        [JsonInclude] public List<GoSubPage> Pages { get; } = [];
+        [GoProperty(PCategory.Misc, 0)] public List<GoSubPage> Pages { get; set; } = [];
+        //[GoProperty(PCategory.Misc, 0), JsonInclude] public List<GoSubPage> Pages { get; } = [];
         #endregion
 
         #region Event
@@ -51,8 +52,8 @@ namespace Going.UI.Containers
         #endregion
 
         #region Constructor
-        [JsonConstructor]
-        public GoSwitchPanel(List<GoSubPage> pages) : this() => this.Pages = pages;
+        //[JsonConstructor]
+        //public GoSwitchPanel(List<GoSubPage> pages) : this() => this.Pages = pages;
         public GoSwitchPanel() { }
         #endregion
 
@@ -102,6 +103,8 @@ namespace Going.UI.Containers
         [JsonConstructor]
         public GoSubPage(List<IGoControl> childrens) : this() => Childrens = childrens;
         public GoSubPage() { }
+
+        public override string ToString() => Name;
     }
     #endregion
 }

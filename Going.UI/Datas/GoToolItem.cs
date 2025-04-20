@@ -103,11 +103,11 @@ namespace Going.UI.Datas
     public class GoToolCategory
     {
         #region Properties
-        public string? Text { get; set; }
-        public string? IconString { get; set; }
+        [GoProperty(PCategory.Control, 0)] public string? Text { get; set; }
+        [GoProperty(PCategory.Control, 1)] public string? IconString { get; set; }
         public object? Tag { get; set; }
-        public ObservableList<GoToolItem> Items { get; set; } = [];
-        public bool Expand { get; set; } = true;
+        [GoProperty(PCategory.Control, 2)] public ObservableList<GoToolItem> Items { get; set; } = [];
+        [GoProperty(PCategory.Control, 3)] public bool Expand { get; set; } = true;
 
         [JsonIgnore] internal bool Changed { get => Items.Changed; set => Items.Changed = value; }
        
