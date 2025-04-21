@@ -22,16 +22,16 @@ namespace Going.UI.Controls
         #endregion
 
         #region Properties
-        [GoProperty(PCategory.Misc, 0)] public string FontName { get; set; } = "나눔고딕";
-        [GoProperty(PCategory.Misc, 1)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
-        [GoProperty(PCategory.Misc, 2)] public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 0)] public string FontName { get; set; } = "나눔고딕";
+        [GoProperty(PCategory.Control, 1)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Control, 2)] public float FontSize { get; set; } = 12;
 
-        [GoProperty(PCategory.Misc, 3)] public string TextColor { get; set; } = "Fore";
-        [GoProperty(PCategory.Misc, 4)] public string KnobColor { get; set; } = "Base3";
-        [GoProperty(PCategory.Misc, 5)] public string CursorColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Control, 3)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Control, 4)] public string KnobColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Control, 5)] public string CursorColor { get; set; } = "Fore";
 
         private double nValue = 0;
-        [GoProperty(PCategory.Misc, 6)]
+        [GoProperty(PCategory.Control, 6)]
         public double Value
         {
             get => nValue;
@@ -45,14 +45,14 @@ namespace Going.UI.Controls
             }
         }
 
-        [GoProperty(PCategory.Misc, 7)] public double Minimum { get; set; } = 0;
-        [GoProperty(PCategory.Misc, 8)] public double Maximum { get; set; } = 100;
-        [GoProperty(PCategory.Misc, 9)] public double? Tick { get; set; } = null;
+        [GoProperty(PCategory.Control, 7)] public double Minimum { get; set; } = 0;
+        [GoProperty(PCategory.Control, 8)] public double Maximum { get; set; } = 100;
+        [GoProperty(PCategory.Control, 9)] public double? Tick { get; set; } = null;
 
-        [GoProperty(PCategory.Misc, 10)] public string Format { get; set; } = "0";
-        [GoProperty(PCategory.Misc, 11)] public int SweepAngle { get; set; } = 270;
+        [GoProperty(PCategory.Control, 10)] public string Format { get; set; } = "0";
+        [GoProperty(PCategory.Control, 11)] public int SweepAngle { get; set; } = 270;
 
-        [GoProperty(PCategory.Misc, 12)] public bool DrawText { get; set; } = true;
+        [GoProperty(PCategory.Control, 12)] public bool DrawText { get; set; } = true;
         #endregion
 
         #region Event

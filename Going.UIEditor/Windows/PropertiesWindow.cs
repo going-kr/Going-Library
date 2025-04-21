@@ -1,5 +1,6 @@
 ﻿using Going.UI.Controls;
 using Going.UI.Datas;
+using Going.UI.Design;
 using Going.UI.Enums;
 using Going.UI.Forms.Controls;
 using Going.UI.Themes;
@@ -39,12 +40,21 @@ namespace Going.UIEditor.Windows
         #endregion
 
         #region Method
-        public void SelectObjects(EditorWindow editor, IEnumerable<IGoControl>? objects)
+        public void SelectObjects(EditorWindow? editor, IEnumerable<IGoControl>? objects)
         {
             pg.SelectedEditor = editor;
             pg.SelectedObjects = objects == null ? null : [.. objects];
             pg.Invalidate();
         }
+
+        public void SelectDesign(EditorWindow? editor, GoDesign design)
+        {
+            pg.SelectedEditor = editor;
+            pg.SelectedObjects = design == null ? null : [design];
+            pg.Invalidate();
+        }
+
+        public (EditorWindow? wnd, IEnumerable<object>? sels) GetSelectedObject() => (pg.SelectedEditor, pg.SelectedObjects);
 
         public void RefreshGrid() => pg.Invalidate();
         #endregion

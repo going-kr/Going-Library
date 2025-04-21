@@ -20,23 +20,23 @@ namespace Going.UI.Controls
     public class GoListBox : GoControl
     {
         #region Properties
-        [GoProperty(PCategory.Misc, 0)] public float IconSize { get; set; } = 12;
-        [GoProperty(PCategory.Misc, 1)] public float IconGap { get; set; } = 5;
-        [GoProperty(PCategory.Misc, 2)] public string FontName { get; set; } = "나눔고딕";
-        [GoProperty(PCategory.Misc, 3)] public GoFontStyle FontStyle { get; set; }= GoFontStyle.Normal;
-        [GoProperty(PCategory.Misc, 4)] public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 0)] public float IconSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 1)] public float IconGap { get; set; } = 5;
+        [GoProperty(PCategory.Control, 2)] public string FontName { get; set; } = "나눔고딕";
+        [GoProperty(PCategory.Control, 3)] public GoFontStyle FontStyle { get; set; }= GoFontStyle.Normal;
+        [GoProperty(PCategory.Control, 4)] public float FontSize { get; set; } = 12;
 
-        [GoProperty(PCategory.Misc, 5)] public string TextColor { get; set; } = "Fore";
-        [GoProperty(PCategory.Misc, 6)] public string BoxColor { get; set; } = "Base1";
-        [GoProperty(PCategory.Misc, 7)] public string BorderColor { get; set; } = "Base3";
-        [GoProperty(PCategory.Misc, 8)] public string SelectColor { get; set; } = "Select";
-        [GoProperty(PCategory.Misc, 9)] public GoRoundType Round { get; set; } = GoRoundType.All;
-        [GoProperty(PCategory.Misc, 10)] public bool BackgroundDraw { get; set; } = true;
-        [GoProperty(PCategory.Misc, 11)] public float ItemHeight { get; set; } = 30;
-        [GoProperty(PCategory.Misc, 12)] public GoContentAlignment ItemAlignment { get; set; } = GoContentAlignment.MiddleCenter;
-        [GoProperty(PCategory.Misc, 13)] public GoItemSelectionMode SelectionMode { get; set; } = GoItemSelectionMode.Single;
+        [GoProperty(PCategory.Control, 5)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Control, 6)] public string BoxColor { get; set; } = "Base1";
+        [GoProperty(PCategory.Control, 7)] public string BorderColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Control, 8)] public string SelectColor { get; set; } = "Select";
+        [GoProperty(PCategory.Control, 9)] public GoRoundType Round { get; set; } = GoRoundType.All;
+        [GoProperty(PCategory.Control, 10)] public bool BackgroundDraw { get; set; } = true;
+        [GoProperty(PCategory.Control, 11)] public float ItemHeight { get; set; } = 30;
+        [GoProperty(PCategory.Control, 12)] public GoContentAlignment ItemAlignment { get; set; } = GoContentAlignment.MiddleCenter;
+        [GoProperty(PCategory.Control, 13)] public GoItemSelectionMode SelectionMode { get; set; } = GoItemSelectionMode.Single;
 
-        [GoProperty(PCategory.Misc, 14)] public ObservableList<GoListItem> Items { get; set; } = [];
+        [GoProperty(PCategory.Control, 14)] public ObservableList<GoListItem> Items { get; set; } = [];
         [JsonIgnore] public List<GoListItem> SelectedItems { get; } = [];
         [JsonIgnore] public double ScrollPosition { get => scroll.ScrollPosition; set => scroll.ScrollPosition = value; }
         [JsonIgnore] internal double ScrollPositionWithOffset => scroll.ScrollPositionWithOffset;

@@ -24,18 +24,18 @@ namespace Going.UI.Controls
         #endregion
 
         #region Properties
-        [GoProperty(PCategory.Misc, 0)] public string FontName { get; set; } = "나눔고딕";
-        [GoProperty(PCategory.Misc, 1)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
-        [GoProperty(PCategory.Misc, 2)] public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 0)] public string FontName { get; set; } = "나눔고딕";
+        [GoProperty(PCategory.Control, 1)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Control, 2)] public float FontSize { get; set; } = 12;
 
-        [GoProperty(PCategory.Misc, 3)] public string TextColor { get; set; } = "Fore";
-        [GoProperty(PCategory.Misc, 4)] public string InputColor { get; set; } = "Base1";
-        [GoProperty(PCategory.Misc, 5)] public string BorderColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Control, 3)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Control, 4)] public string InputColor { get; set; } = "Base1";
+        [GoProperty(PCategory.Control, 5)] public string BorderColor { get; set; } = "Base3";
 
-        [GoProperty(PCategory.Misc, 6)] public GoContentAlignment ContentAlignment { get; set; } = GoContentAlignment.MiddleCenter;
+        [GoProperty(PCategory.Control, 6)] public GoContentAlignment ContentAlignment { get; set; } = GoContentAlignment.MiddleCenter;
 
         [JsonIgnore]
-        [GoProperty(PCategory.Misc, 7)]
+        [GoProperty(PCategory.Control, 7)]
         public SKColor Value
         {
             get => Util.FromHsvDouble(nH, nS, nV);

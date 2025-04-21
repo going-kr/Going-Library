@@ -18,6 +18,7 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Channels;
 using WeifenLuo.WinFormsUI.Docking;
+using Windows.Media.Protection.PlayReady;
 using Cursor = System.Windows.Forms.Cursor;
 using GoControl = Going.UI.Controls.GoControl;
 using Keys = System.Windows.Forms.Keys;
@@ -43,7 +44,7 @@ namespace Going.UIEditor.Windows
         private Timer tmr;
         ActionManager actmgr;
         List<IGoControl> sels { get; } = [];
-
+        bool selDesign = false;
         Anchor? dragAnchor;
 
         SKPoint? ptDown, ptMove;
@@ -72,6 +73,7 @@ namespace Going.UIEditor.Windows
             #region Event
             tmr.Tick += (o, s) =>
             {
+                var prj = Program.CurrentProject;
                 if (IsActivated)
                     Invalidate();
             };
@@ -89,6 +91,24 @@ namespace Going.UIEditor.Windows
         }
         #endregion
 
+        #region OnActivated
+        protected override void OnGotFocus(EventArgs e)
+        {
+            if (DockPanel.Contents.FirstOrDefault(x => x is PropertiesWindow) is PropertiesWindow pw)
+            {
+                var (editor, _) = pw.GetSelectedObject();
+                if (editor != this)
+                {
+                    if (sels?.Count() == 0 && Target is GoDesign design2)
+                        pw.SelectDesign(this, design2);
+                    else
+                        pw.SelectObjects(this, sels);
+                }
+            }
+            base.OnGotFocus(e);
+        }
+        #endregion
+
         #region Draw
         public override void OnContentDraw(ContentDrawEventArgs e)
         {
@@ -99,7 +119,6 @@ namespace Going.UIEditor.Windows
             if (prj != null)
             {
                 prj.Design.DesignMode = true;
-                prj.Design.UseTitleBar = prj.Design.UseLeftSideBar = prj.Design.UseRightSideBar = prj.Design.UseFooter = true;
 
                 SKRect? rt = GetBounds();
                 using var p = new SKPaint { };
@@ -349,6 +368,24 @@ namespace Going.UIEditor.Windows
                                     #endregion
                                 }
                                 #endregion
+                            }
+                            #endregion
+
+                            #region selected design
+                            if (Target is GoDesign design2)
+                            {
+                                if (DockPanel.Contents.FirstOrDefault(x => x is PropertiesWindow) is PropertiesWindow pw)
+                                {
+                                    var (wnd, vsels) = pw.GetSelectedObject();
+                                    if(wnd == this && vsels?.FirstOrDefault() == prj.Design)
+                                    {
+                                        p.IsStroke = true;
+                                        p.Color = SKColors.Red;
+                                        p.StrokeWidth = 1;
+                                        canvas.DrawRect(Util.FromRect(0, 0, prj.Width, prj.Height), p);
+                                    }
+
+                                }
                             }
                             #endregion
                         }
@@ -648,7 +685,13 @@ namespace Going.UIEditor.Windows
                 foreach (var c in clears2) sels.Remove(c);
 
                 changed |= clears1.Count() > 0 || clears2.Count() > 0;
-                if (changed && DockPanel.Contents.FirstOrDefault(x => x is PropertiesWindow) is PropertiesWindow pw) pw.SelectObjects(this, sels);
+                if (changed && DockPanel.Contents.FirstOrDefault(x => x is PropertiesWindow) is PropertiesWindow pw)
+                {
+                    if (sels?.Count() == 0 && Target is GoDesign design2)
+                        pw.SelectDesign(this, design2);
+                    else
+                        pw.SelectObjects(this, sels);
+                }
 
                 downControl = null;
                 dragAnchor = null;

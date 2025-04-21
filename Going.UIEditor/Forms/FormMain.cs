@@ -96,6 +96,10 @@ namespace Going.UIEditor
                 else explorer?.Focus();
             };
             #endregion
+            #region Tools
+            tsmiResourceManager.Click += (o, s) => ResourceManager();
+            #endregion
+
             tsmiProgramSetting.Click += (o, s) => ProgramSetting();
             #endregion
 
@@ -105,7 +109,7 @@ namespace Going.UIEditor
             btnSave.ButtonClicked += (o, s) => SaveFile();
             btnSaveAs.ButtonClicked += (o, s) => SaveAsFile();
             btnProgramSetting.ButtonClicked += (o, s) => ProgramSetting();
-
+            
             valPath.ButtonClicked += (o, s) =>
             {
                 if(s.Button.Name == "select")
@@ -283,7 +287,7 @@ namespace Going.UIEditor
             tsmiProjectProps.Text = $"{LM.ProjectProps}(&P)";
             #endregion
             #region Tool
-            tsmiTool.Text = $"{LM.Project}(&T)";
+            tsmiTool.Text = $"{LM.Tool}(&T)";
             tsmiResourceManager.Text = $"{LM.Resources}(&R)";
             tsmiProgramSetting.Text = $"{LM.ProgramSetting}(&S)";
             #endregion
@@ -397,6 +401,13 @@ namespace Going.UIEditor
                 }
                 else o.Activate();
             }
+        }
+        #endregion
+
+        #region ResourceManager
+        void ResourceManager()
+        {
+            Program.ResourceForm.ShowResourceManager();
         }
         #endregion
 

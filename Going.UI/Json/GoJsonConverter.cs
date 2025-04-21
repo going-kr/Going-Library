@@ -8,6 +8,9 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Buffers.Text;
+using Going.UI.ImageCanvas;
+using Going.UI.Design;
 
 namespace Going.UI.Json
 {
@@ -20,7 +23,9 @@ namespace Going.UI.Json
             Options.Converters.Add(new SKColorConverter());
             Options.Converters.Add(new SKRectConverter());
             Options.Converters.Add(new SKBitmapConverter());
+            Options.Converters.Add(new SKImageConverter());
             Options.Converters.Add(new GoControlConverter());
+            Options.Converters.Add(new GoPagesConverter());
             Options.Converters.Add(new GoTableLayoutControlCollectionConverter());
             Options.Converters.Add(new GoGridLayoutControlCollectionConverter());
         }
@@ -53,11 +58,13 @@ namespace Going.UI.Json
     #region SKBitmapConverter 
     public class SKBitmapConverter : JsonConverter<SKBitmap>
     {
-        public override SKBitmap Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override SKBitmap? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             if (reader.TokenType == JsonTokenType.String)
             {
-                string base64String = reader.GetString();
+                var base64String = reader.GetString();
+                if (string.IsNullOrEmpty(base64String)) return null;
+
                 byte[] imageBytes = Convert.FromBase64String(base64String);
                 using var stream = new SKMemoryStream(imageBytes);
                 return SKBitmap.Decode(stream);
@@ -72,6 +79,31 @@ namespace Going.UI.Json
             byte[] imageBytes = stream.DetachAsData().ToArray();
             string base64String = Convert.ToBase64String(imageBytes);
             writer.WriteStringValue(base64String);
+        }
+    }
+    #endregion
+    #region SKImageConverter 
+    public class SKImageConverter : JsonConverter<SKImage>
+    {
+        public override SKImage? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            if (reader.TokenType == JsonTokenType.String)
+            {
+                var base64String = reader.GetString();
+                if (string.IsNullOrEmpty(base64String)) return null;
+
+                byte[] imageBytes = Convert.FromBase64String(base64String);
+                return SKImage.FromEncodedData(imageBytes);
+            }
+            throw new JsonException("Invalid format for SKBitmap");
+        }
+
+        public override void Write(Utf8JsonWriter writer, SKImage value, JsonSerializerOptions options)
+        {
+            using var data = value.Encode(SKEncodedImageFormat.Png, 100);
+            byte[] bytes = data.ToArray();
+            string base64 = Convert.ToBase64String(bytes);
+            writer.WriteStringValue(base64);
         }
     }
     #endregion
@@ -94,7 +126,10 @@ namespace Going.UI.Json
                     string propertyName = reader.GetString();
                     reader.Read();
 
-                    if (propertyName == "Type") typeName = reader.GetString();
+                    if (propertyName == "Type")
+                    {
+                        typeName = reader.GetString();
+                    }
                     else if (propertyName == "Value")
                     {
                         if (typeName == null)
@@ -114,11 +149,92 @@ namespace Going.UI.Json
 
         public override void Write(Utf8JsonWriter writer, IGoControl value, JsonSerializerOptions options)
         {
+            
             writer.WriteStartObject();
             writer.WritePropertyName("Type");
             writer.WriteStringValue(value.GetType().AssemblyQualifiedName);
             writer.WritePropertyName("Value");
             JsonSerializer.Serialize(writer, value, value.GetType(), options);
+            writer.WriteEndObject();
+        }
+    }
+    #endregion
+    #region GoPagesConverter
+    public class GoPagesConverter : JsonConverter<Dictionary<string, GoPage>>
+    {
+        public override Dictionary<string, GoPage> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            var result = new Dictionary<string, GoPage>();
+
+            if (reader.TokenType != JsonTokenType.StartObject)
+                throw new JsonException("Expected StartObject");
+
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonTokenType.EndObject)                    return result;
+                if (reader.TokenType != JsonTokenType.PropertyName)                    throw new JsonException("Expected PropertyName");
+
+                string key = reader.GetString();
+                reader.Read(); 
+
+                if (reader.TokenType != JsonTokenType.StartObject)
+                    throw new JsonException("Expected StartObject for GoPage entry");
+
+                string typeName = null;
+                GoPage pageInstance = null;
+
+                while (reader.Read())
+                {
+                    if (reader.TokenType == JsonTokenType.EndObject)
+                        break;
+
+                    if (reader.TokenType != JsonTokenType.PropertyName)
+                        throw new JsonException("Expected PropertyName inside page entry");
+
+                    string propName = reader.GetString();
+                    reader.Read();
+
+                    if (propName == "Type")
+                    {
+                        typeName = reader.GetString();
+                    }
+                    else if (propName == "Value")
+                    {
+                        if (typeName == null)
+                            throw new JsonException("Type is missing in GoPage entry");
+
+                        var type = Type.GetType(typeName);
+                        if (type == null)
+                            throw new JsonException($"Unknown GoPage type: {typeName}");
+
+                        pageInstance = (GoPage)JsonSerializer.Deserialize(ref reader, type, options);
+                    }
+                }
+
+                if (pageInstance == null)
+                    throw new JsonException("Value is missing in GoPage entry");
+
+                result[key] = pageInstance;
+            }
+
+            throw new JsonException("Unexpected end of GoPages JSON");
+        }
+
+        public override void Write(Utf8JsonWriter writer, Dictionary<string, GoPage> value, JsonSerializerOptions options)
+        {
+            writer.WriteStartObject();
+
+            foreach (var kvp in value)
+            {
+                writer.WritePropertyName(kvp.Key);
+
+                writer.WriteStartObject();
+                writer.WriteString("Type", kvp.Value.GetType().AssemblyQualifiedName);
+                writer.WritePropertyName("Value");
+                JsonSerializer.Serialize(writer, kvp.Value, kvp.Value.GetType(), options);
+                writer.WriteEndObject();
+            }
+
             writer.WriteEndObject();
         }
     }

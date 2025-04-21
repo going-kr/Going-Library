@@ -19,11 +19,11 @@ namespace Going.UI.Datas
     public class GoTreeNode
     {
         #region Properties
-        [GoProperty(PCategory.Control, 0)] public string? Text { get; set; }
-        [GoProperty(PCategory.Control, 1)] public string? IconString { get; set; }
+        [GoProperty(PCategory.Basic, 0)] public string? Text { get; set; }
+        [GoProperty(PCategory.Basic, 1)] public string? IconString { get; set; }
         public object? Tag { get; set; }
-        [GoProperty(PCategory.Control, 2)] public ObservableList<GoTreeNode> Nodes { get; set; } = [];
-        [GoProperty(PCategory.Control, 3)] public bool Expand { get; set; } = true;
+        [GoProperty(PCategory.Basic, 2)] public ObservableList<GoTreeNode> Nodes { get; set; } = [];
+        [GoProperty(PCategory.Basic, 3)] public bool Expand { get; set; } = true;
         
         [JsonIgnore] public int Depth => Parent == null ? 0 : Parent.Depth + 1;
         [JsonIgnore] internal bool Changed { get => Nodes.Changed; set => Nodes.Changed = value; }

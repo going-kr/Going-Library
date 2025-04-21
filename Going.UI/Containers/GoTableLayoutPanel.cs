@@ -19,8 +19,8 @@ namespace Going.UI.Containers
     {
         #region Properties
         // Percent, Auto, Pixel 일일이 귀찮아서 나중에 string을 Parsing해서 사용하게 만들었습니다.
-        [GoSizesProperty(PCategory.Misc, 0)] public List<string> Columns { get; set; } = [];
-        [GoSizesProperty(PCategory.Misc, 1)] public List<string> Rows { get; set; } = [];
+        [GoSizesProperty(PCategory.Control, 0)] public List<string> Columns { get; set; } = [];
+        [GoSizesProperty(PCategory.Control, 1)] public List<string> Rows { get; set; } = [];
 
         [JsonInclude]
         public override GoTableLayoutControlCollection Childrens { get; } = [];

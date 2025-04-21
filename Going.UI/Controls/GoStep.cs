@@ -17,17 +17,17 @@ namespace Going.UI.Controls
     public class GoStep : GoControl
     {
         #region Properties
-        [GoProperty(PCategory.Misc, 0)] public string? PrevIconString { get; set; } = "fa-chevron-left";
-        [GoProperty(PCategory.Misc, 1)] public string? NextIconString { get; set; } = "fa-chevron-right";
+        [GoProperty(PCategory.Control, 0)] public string? PrevIconString { get; set; } = "fa-chevron-left";
+        [GoProperty(PCategory.Control, 1)] public string? NextIconString { get; set; } = "fa-chevron-right";
 
-        [GoProperty(PCategory.Misc, 2)] public string ButtonColor { get; set; } = "Base3";
-        [GoProperty(PCategory.Misc, 3)] public string StepColor { get; set; } = "Base2";
-        [GoProperty(PCategory.Misc, 4)] public string SelectColor { get; set; } = "Select";
-        [GoProperty(PCategory.Misc, 5)] public bool IsCircle { get; set; } = false;
-        [GoProperty(PCategory.Misc, 6)] public bool UseButton { get; set; } = true;
+        [GoProperty(PCategory.Control, 2)] public string ButtonColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Control, 3)] public string StepColor { get; set; } = "Base2";
+        [GoProperty(PCategory.Control, 4)] public string SelectColor { get; set; } = "Select";
+        [GoProperty(PCategory.Control, 5)] public bool IsCircle { get; set; } = false;
+        [GoProperty(PCategory.Control, 6)] public bool UseButton { get; set; } = true;
 
         public int StepCount { get; set; } = 7;
-        [GoProperty(PCategory.Misc, 7)]
+        [GoProperty(PCategory.Control, 7)]
         public int Step
         {
             get => nStep;

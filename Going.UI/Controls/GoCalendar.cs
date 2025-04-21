@@ -16,18 +16,18 @@ namespace Going.UI.Controls
     public class GoCalendar : GoControl
     {
         #region Properties
-        [GoProperty(PCategory.Misc, 0)] public string FontName { get; set; } = "나눔고딕";
-        [GoProperty(PCategory.Misc, 1)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
-        [GoProperty(PCategory.Misc, 2)] public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 0)] public string FontName { get; set; } = "나눔고딕";
+        [GoProperty(PCategory.Control, 1)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Control, 2)] public float FontSize { get; set; } = 12;
 
-        [GoProperty(PCategory.Misc, 3)] public string TextColor { get; set; } = "Fore";
-        [GoProperty(PCategory.Misc, 4)] public string BoxColor { get; set; } = "Base3";
-        [GoProperty(PCategory.Misc, 5)] public string SelectColor { get; set; } = "Select";
-        [GoProperty(PCategory.Misc, 6)] public GoRoundType Round { get; set; } = GoRoundType.All;
+        [GoProperty(PCategory.Control, 3)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Control, 4)] public string BoxColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Control, 5)] public string SelectColor { get; set; } = "Select";
+        [GoProperty(PCategory.Control, 6)] public GoRoundType Round { get; set; } = GoRoundType.All;
 
-        [GoProperty(PCategory.Misc, 7)] public bool BackgroundDraw { get; set; } = true;
-        [GoProperty(PCategory.Misc, 8)] public bool MultiSelect { get; set; } = false;
-        [GoProperty(PCategory.Misc, 9)] public bool NoneSelect { get; set; } = false;
+        [GoProperty(PCategory.Control, 7)] public bool BackgroundDraw { get; set; } = true;
+        [GoProperty(PCategory.Control, 8)] public bool MultiSelect { get; set; } = false;
+        [GoProperty(PCategory.Control, 9)] public bool NoneSelect { get; set; } = false;
 
         [JsonIgnore] public int CurrentYear { get; private set; } = DateTime.Now.Year;
         [JsonIgnore] public int CurrentMonth { get; private set; } = DateTime.Now.Month;

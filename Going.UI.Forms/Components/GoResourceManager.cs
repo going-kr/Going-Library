@@ -24,7 +24,7 @@ namespace Going.UI.Forms.Components
             }
         }
 
-        public List<SKBitmap> GetImage(string? name)
+        public List<SKImage> GetImage(string? name)
         {
             var folder = GoResources.Get(ImageFolder);
             if (folder != null && name != null && folder.Images.TryGetValue(name, out var ret)) return ret;

@@ -75,8 +75,8 @@ namespace Going.UI.OpenTK.Windows
         {
             if (Environment.OSVersion.Platform == PlatformID.Unix) WindowState = WindowState.Fullscreen;
 
-            GoInputEventer.Current.InputString += OpenTKInputManager.Current.InputString;
-            GoInputEventer.Current.InputNumber += OpenTKInputManager.Current.InputNumber;
+            GoInputEventer.Current.InputString += TKInputManager.Current.InputString;
+            GoInputEventer.Current.InputNumber += TKInputManager.Current.InputNumber;
         }
         #endregion
 
@@ -154,15 +154,15 @@ namespace Going.UI.OpenTK.Windows
                         #endregion
 
                         #region Draw
-                        OpenTKInputManager.Current.ScreenSize = new SKSize(Width, Height);
+                        TKInputManager.Current.ScreenSize = new SKSize(Width, Height);
 
                         using (new SKAutoCanvasRestore(canvas))
                         {
-                            canvas.Translate(0, OpenTKInputManager.Current.TranslateY);
+                            canvas.Translate(0, TKInputManager.Current.TranslateY);
                             Design.Draw(canvas);
                         }
 
-                        OpenTKInputManager.Current.Draw(canvas);
+                        TKInputManager.Current.Draw(canvas);
                         #endregion
 
                         #region Debug
@@ -215,7 +215,7 @@ namespace Going.UI.OpenTK.Windows
             float y = MousePosition.Y;
             GoMouseButton mb = ToGoMouseButton(e.Button);
 
-            if (OpenTKInputManager.Current.IsInput) OpenTKInputManager.Current.MouseDown(x, y, mb);
+            if (TKInputManager.Current.IsInput) TKInputManager.Current.MouseDown(x, y, mb);
             else Design.MouseDown(x, y, mb);
 
             base.OnMouseDown(e);
@@ -228,7 +228,7 @@ namespace Going.UI.OpenTK.Windows
             float y = MousePosition.Y;
             GoMouseButton mb = ToGoMouseButton(e.Button);
 
-            if (OpenTKInputManager.Current.IsInput) OpenTKInputManager.Current.MouseUp(x, y, mb);
+            if (TKInputManager.Current.IsInput) TKInputManager.Current.MouseUp(x, y, mb);
             else Design.MouseUp(x, y, mb);
 
             if ((DateTime.Now - dcTime).TotalMilliseconds < 300) Design.MouseDoubleClick(x, y, mb);
@@ -243,7 +243,7 @@ namespace Going.UI.OpenTK.Windows
             float x = MousePosition.X;
             float y = MousePosition.Y;
 
-            if (OpenTKInputManager.Current.IsInput) OpenTKInputManager.Current.MouseMove(x, y);
+            if (TKInputManager.Current.IsInput) TKInputManager.Current.MouseMove(x, y);
             else Design.MouseMove(x, y);
 
             base.OnMouseMove(e);

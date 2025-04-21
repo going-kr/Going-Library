@@ -54,6 +54,10 @@
             T_sld = new Going.UI.Forms.ImageCanvas.IcSlider();
             T_prgs = new Going.UI.Forms.ImageCanvas.IcProgress();
             T_btnMain = new Going.UI.Forms.ImageCanvas.IcButton();
+            tabPageBackground1 = new Going.UI.Forms.ImageCanvas.TabPageBackground();
+            tabPageBackground2 = new Going.UI.Forms.ImageCanvas.TabPageBackground();
+            tabPageBackground3 = new Going.UI.Forms.ImageCanvas.TabPageBackground();
+            tabPageBackground4 = new Going.UI.Forms.ImageCanvas.TabPageBackground();
             ic.SuspendLayout();
             main.SuspendLayout();
             setting.SuspendLayout();
@@ -70,7 +74,7 @@
             ic.Controls.Add(schedule);
             ic.Controls.Add(test);
             ic.Dock = DockStyle.Fill;
-            ic.ImageFolder = "C:\\Users\\hello\\OneDrive\\Desktop\\RiderProjects\\Going-Library\\ImageCanvasSample";
+            ic.ImageFolder = "C:\\Users\\hy752\\Desktop\\ImageCanvasSample";
             ic.ItemSize = new Size(0, 1);
             ic.Location = new Point(0, 0);
             ic.Multiline = true;
@@ -79,6 +83,10 @@
             ic.Size = new Size(800, 480);
             ic.SizeMode = TabSizeMode.Fixed;
             ic.TabIndex = 0;
+            ic.TabPageImage.Add(tabPageBackground1);
+            ic.TabPageImage.Add(tabPageBackground2);
+            ic.TabPageImage.Add(tabPageBackground3);
+            ic.TabPageImage.Add(tabPageBackground4);
             ic.TabStop = false;
             ic.Text = "icCanvas1";
             // 
@@ -110,11 +118,12 @@
             // 
             box7.Alarm = false;
             box7.BackgroundColor = "white";
-            box7.ContainerName = "box";
             box7.IconState = 0;
-            box7.ImageFolder = "C:\\Users\\hello\\OneDrive\\Desktop\\RiderProjects\\Going-Library\\ImageCanvasSample";
+            box7.ImageFolder = "C:\\Users\\hy752\\Desktop\\ImageCanvasSample";
             box7.Location = new Point(402, 232);
             box7.Name = "box7";
+            box7.OffImage = "box.container.off";
+            box7.OnImage = "box.container.on";
             box7.Run = false;
             box7.Size = new Size(187, 172);
             box7.TabIndex = 46;
@@ -126,11 +135,12 @@
             // 
             box6.Alarm = false;
             box6.BackgroundColor = "white";
-            box6.ContainerName = "box";
             box6.IconState = 0;
-            box6.ImageFolder = "C:\\Users\\hello\\OneDrive\\Desktop\\RiderProjects\\Going-Library\\ImageCanvasSample";
+            box6.ImageFolder = "C:\\Users\\hy752\\Desktop\\ImageCanvasSample";
             box6.Location = new Point(209, 232);
             box6.Name = "box6";
+            box6.OffImage = "box.container.off";
+            box6.OnImage = "box.container.on";
             box6.Run = false;
             box6.Size = new Size(187, 172);
             box6.TabIndex = 45;
@@ -142,11 +152,12 @@
             // 
             box5.Alarm = false;
             box5.BackgroundColor = "white";
-            box5.ContainerName = "box";
             box5.IconState = 0;
-            box5.ImageFolder = "C:\\Users\\hello\\OneDrive\\Desktop\\RiderProjects\\Going-Library\\ImageCanvasSample";
+            box5.ImageFolder = "C:\\Users\\hy752\\Desktop\\ImageCanvasSample";
             box5.Location = new Point(16, 232);
             box5.Name = "box5";
+            box5.OffImage = "box.container.off";
+            box5.OnImage = "box.container.on";
             box5.Run = false;
             box5.Size = new Size(187, 172);
             box5.TabIndex = 44;
@@ -158,11 +169,12 @@
             // 
             box4.Alarm = false;
             box4.BackgroundColor = "white";
-            box4.ContainerName = "box";
             box4.IconState = 0;
-            box4.ImageFolder = "C:\\Users\\hello\\OneDrive\\Desktop\\RiderProjects\\Going-Library\\ImageCanvasSample";
+            box4.ImageFolder = "C:\\Users\\hy752\\Desktop\\ImageCanvasSample";
             box4.Location = new Point(595, 54);
             box4.Name = "box4";
+            box4.OffImage = "box.container.off";
+            box4.OnImage = "box.container.on";
             box4.Run = false;
             box4.Size = new Size(187, 172);
             box4.TabIndex = 43;
@@ -174,11 +186,12 @@
             // 
             box3.Alarm = false;
             box3.BackgroundColor = "white";
-            box3.ContainerName = "box";
             box3.IconState = 0;
-            box3.ImageFolder = "C:\\Users\\hello\\OneDrive\\Desktop\\RiderProjects\\Going-Library\\ImageCanvasSample";
+            box3.ImageFolder = "C:\\Users\\hy752\\Desktop\\ImageCanvasSample";
             box3.Location = new Point(402, 54);
             box3.Name = "box3";
+            box3.OffImage = "box.container.off";
+            box3.OnImage = "box.container.on";
             box3.Run = false;
             box3.Size = new Size(187, 172);
             box3.TabIndex = 42;
@@ -190,11 +203,12 @@
             // 
             box2.Alarm = false;
             box2.BackgroundColor = "white";
-            box2.ContainerName = "box";
             box2.IconState = 0;
-            box2.ImageFolder = "C:\\Users\\hello\\OneDrive\\Desktop\\RiderProjects\\Going-Library\\ImageCanvasSample";
+            box2.ImageFolder = "C:\\Users\\hy752\\Desktop\\ImageCanvasSample";
             box2.Location = new Point(209, 54);
             box2.Name = "box2";
+            box2.OffImage = "box.container.off";
+            box2.OnImage = "box.container.on";
             box2.Run = false;
             box2.Size = new Size(187, 172);
             box2.TabIndex = 41;
@@ -206,11 +220,12 @@
             // 
             box1.Alarm = false;
             box1.BackgroundColor = "white";
-            box1.ContainerName = "box";
             box1.IconState = 0;
-            box1.ImageFolder = "C:\\Users\\hello\\OneDrive\\Desktop\\RiderProjects\\Going-Library\\ImageCanvasSample";
+            box1.ImageFolder = "C:\\Users\\hy752\\Desktop\\ImageCanvasSample";
             box1.Location = new Point(16, 54);
             box1.Name = "box1";
+            box1.OffImage = "box.container.off";
+            box1.OnImage = "box.container.on";
             box1.Run = false;
             box1.Size = new Size(187, 172);
             box1.TabIndex = 40;
@@ -222,11 +237,12 @@
             // 
             box8.Alarm = false;
             box8.BackgroundColor = "white";
-            box8.ContainerName = "box";
             box8.IconState = 0;
-            box8.ImageFolder = "C:\\Users\\hello\\OneDrive\\Desktop\\RiderProjects\\Going-Library\\ImageCanvasSample";
+            box8.ImageFolder = "C:\\Users\\hy752\\Desktop\\ImageCanvasSample";
             box8.Location = new Point(595, 232);
             box8.Name = "box8";
+            box8.OffImage = "box.container.off";
+            box8.OnImage = "box.container.on";
             box8.Run = false;
             box8.Size = new Size(187, 172);
             box8.TabIndex = 39;
@@ -431,8 +447,6 @@
             // 
             // T_sld
             // 
-            T_sld.BarName = "bar";
-            T_sld.CurosrName = "sld";
             T_sld.DrawText = true;
             T_sld.FontName = "나눔고딕";
             T_sld.FontSize = 12F;
@@ -442,6 +456,10 @@
             T_sld.Maximum = 100D;
             T_sld.Minimum = 0D;
             T_sld.Name = "T_sld";
+            T_sld.OffBarImage = null;
+            T_sld.OffCursorImage = null;
+            T_sld.OnBarImage = null;
+            T_sld.OnCursorImage = null;
             T_sld.Size = new Size(441, 58);
             T_sld.TabIndex = 2;
             T_sld.Text = "icSlider1";
@@ -451,7 +469,6 @@
             // 
             // T_prgs
             // 
-            T_prgs.BarName = "prgs";
             T_prgs.DrawText = true;
             T_prgs.FontName = "나눔고딕";
             T_prgs.FontSize = 12F;
@@ -461,6 +478,8 @@
             T_prgs.Maximum = 100D;
             T_prgs.Minimum = 0D;
             T_prgs.Name = "T_prgs";
+            T_prgs.OffBarImage = null;
+            T_prgs.OnBarImage = null;
             T_prgs.Size = new Size(441, 58);
             T_prgs.TabIndex = 1;
             T_prgs.Text = "icProgress1";
@@ -481,6 +500,30 @@
             T_btnMain.Size = new Size(175, 39);
             T_btnMain.TabIndex = 0;
             T_btnMain.TextColor = "Black";
+            // 
+            // tabPageBackground1
+            // 
+            tabPageBackground1.OffImage = "main.page.off";
+            tabPageBackground1.OnImage = "main.page.on";
+            tabPageBackground1.TabPage = main;
+            // 
+            // tabPageBackground2
+            // 
+            tabPageBackground2.OffImage = "setting.page.off";
+            tabPageBackground2.OnImage = "setting.page.on";
+            tabPageBackground2.TabPage = setting;
+            // 
+            // tabPageBackground3
+            // 
+            tabPageBackground3.OffImage = "schedule.page.off";
+            tabPageBackground3.OnImage = "schedule.page.on";
+            tabPageBackground3.TabPage = schedule;
+            // 
+            // tabPageBackground4
+            // 
+            tabPageBackground4.OffImage = "test.page.off";
+            tabPageBackground4.OnImage = "test.page.on";
+            tabPageBackground4.TabPage = test;
             // 
             // FormCanvas
             // 
@@ -530,5 +573,9 @@
         private Box box2;
         private Box box1;
         private Box box8;
+        private Going.UI.Forms.ImageCanvas.TabPageBackground tabPageBackground1;
+        private Going.UI.Forms.ImageCanvas.TabPageBackground tabPageBackground2;
+        private Going.UI.Forms.ImageCanvas.TabPageBackground tabPageBackground3;
+        private Going.UI.Forms.ImageCanvas.TabPageBackground tabPageBackground4;
     }
 }

@@ -31,13 +31,14 @@ namespace Going.UI.Design
         #region Properties
         public static GoDesign? ActiveDesign { get; set; }
 
-        public bool UseTitleBar { get => TitleBar.Visible; set => TitleBar.Visible = value; }
-        public bool UseLeftSideBar { get => LeftSideBar.Visible; set => LeftSideBar.Visible = value; }
-        public bool UseRightSideBar { get => RightSideBar.Visible; set => RightSideBar.Visible = value; }
-        public bool UseFooter { get => Footer.Visible; set => Footer.Visible = value; }
-        public string BarColor { get; set; } = "Base2";
-        public bool OverlaySideBar { get; set; } = false;
-
+        [GoProperty(PCategory.Control, 0)] public bool UseTitleBar { get => TitleBar.Visible; set => TitleBar.Visible = value; }
+        [GoProperty(PCategory.Control, 0)] public bool UseLeftSideBar { get => LeftSideBar.Visible; set => LeftSideBar.Visible = value; }
+        [GoProperty(PCategory.Control, 0)] public bool UseRightSideBar { get => RightSideBar.Visible; set => RightSideBar.Visible = value; }
+        [GoProperty(PCategory.Control, 0)] public bool UseFooter { get => Footer.Visible; set => Footer.Visible = value; }
+        [GoProperty(PCategory.Control, 0)] public string BarColor { get; set; } = "Base2";
+        [GoProperty(PCategory.Control, 0)] public bool OverlaySideBar { get; set; } = false;
+        [GoProperty(PCategory.Control, 0)] public bool ExpandLeftSideBar { get => LeftSideBar.Expand; set { if(UseLeftSideBar) LeftSideBar.Expand = value; } }
+        [GoProperty(PCategory.Control, 0)] public bool ExpandRightSideBar { get => RightSideBar.Expand; set { if(UseRightSideBar) RightSideBar.Expand = value; } }
         [JsonInclude]
         public Dictionary<string, GoPage> Pages { get; private set; } = [];
 
@@ -45,10 +46,7 @@ namespace Going.UI.Design
         public Dictionary<string, GoWindow> Windows { get; private set; } = [];
 
         [JsonInclude]
-        private Dictionary<string, List<SKBitmap>> Images { get; } = [];
-
-        [JsonInclude]
-        private IcImageFolder? IcFolder { get; set; }
+        private Dictionary<string, List<SKImage>> Images { get; } = [];
 
         [JsonIgnore] public int Width { get; private set; }
         [JsonIgnore] public int Height { get; private set; }
@@ -77,7 +75,7 @@ namespace Going.UI.Design
         public GoDesign() => ActiveDesign = this;
 
         [JsonConstructor]
-        public GoDesign(Dictionary<string, GoPage> pages, Dictionary<string, List<SKBitmap>> images, GoTitleBar titleBar, GoSideBar leftSideBar, GoSideBar rightSideBar, GoFooter footer) : this()
+        public GoDesign(Dictionary<string, GoPage> pages, Dictionary<string, List<SKImage>> images, GoTitleBar titleBar, GoSideBar leftSideBar, GoSideBar rightSideBar, GoFooter footer) : this()
         {
             Pages = pages;
             Images = images;
@@ -605,13 +603,14 @@ namespace Going.UI.Design
         #endregion
 
         #region Image
-        public void AddImage(string name, string path)
+        public void AddImage(string name, byte[] data)
         {
-            if (!Images.ContainsKey(name) && File.Exists(path))
+            var nm = name.ToLower();
+            if (!Images.ContainsKey(nm))
             {
-                var data = File.ReadAllBytes(path);
                 var ls = ImageExtractor.ProcessImageFromMemory(data);
-                if (ls != null && ls.Count > 0) Images.Add(name, ls);
+                if (ls != null && ls.Count > 0)
+                    Images.Add(nm, ls);
             }
         }
 
@@ -621,32 +620,22 @@ namespace Going.UI.Design
             {
                 foreach (var path in Directory.GetFiles(directory))
                 {
+                    var data = File.ReadAllBytes(path);
                     var name = Path.GetFileNameWithoutExtension(path);
                     if (Images.ContainsKey(name))
                     {
                         var ls = Images.Keys.Where(x => x.StartsWith(name));
                         var ls2 = ls.Where(x => x.Split('_').Length == 2);
                         var max = ls2.Count() > 0 ? ls2.Max(x => int.TryParse(x.Split('_')[1], out var n) ? n : 0) : 0;
-                        AddImage($"{name}_{max + 1}", path);
+                        AddImage($"{name}_{max + 1}", data);
                     }
-                    else AddImage(name, path);
+                    else AddImage(name, data);
                 }
             }
         }
 
-        public List<SKBitmap> GetImage(string? name) => name != null && Images.TryGetValue(name, out var ls) ? ls : [];
-        #endregion
-
-        #region ImageCnavas
-        public void LoadIC(string path)
-        {
-            if (path != null && Directory.Exists(path))
-            {
-                IcFolder = new IcImageFolder(path);
-            }
-        }
-
-        public IcImageFolder? GetIC() => IcFolder;
+        public List<(string name, List<SKImage> images)> GetImages() => Images.Select(x => (x.Key, x.Value)).ToList();
+        public List<SKImage> GetImage(string? name) => name != null && Images.TryGetValue(name.ToLower(), out var ls) ? ls : [];
         #endregion
 
         #region Drag

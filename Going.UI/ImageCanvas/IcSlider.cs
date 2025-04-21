@@ -15,17 +15,20 @@ namespace Going.UI.ImageCanvas
     public class IcSlider : GoControl
     {
         #region Properties
-        public string FontName { get; set; } = "나눔고딕";
-        public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
-        public float FontSize { get; set; } = 12;
-        public string TextColor { get; set; } = "Black";
+        [GoProperty(PCategory.Control, 0)] public string FontName { get; set; } = "나눔고딕";
+        [GoProperty(PCategory.Control, 1)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Control, 2)] public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 3)] public string TextColor { get; set; } = "Black";
 
-        public string? BarImage { get; set; }
-        public string? CursorImage { get; set; }
+        [GoProperty(PCategory.Control, 4)] public string? OffBarImage { get; set; }
+        [GoProperty(PCategory.Control, 5)] public string? OnBarImage { get; set; }
+        [GoProperty(PCategory.Control, 6)] public string? OffCursorImage { get; set; }
+        [GoProperty(PCategory.Control, 7)] public string? OnCursorImage { get; set; }
 
-        public string FormatString { get; set; } = "0";
-        public double Minimum { get; set; } = 0D;
-        public double Maximum { get; set; } = 100D;
+        [GoProperty(PCategory.Control, 8)] public string FormatString { get; set; } = "0";
+        [GoProperty(PCategory.Control, 9)] public double Minimum { get; set; } = 0D;
+        [GoProperty(PCategory.Control, 10)] public double Maximum { get; set; } = 100D;
+        [GoProperty(PCategory.Control, 11)]
         public double Value
         {
             get => nValue;
@@ -40,9 +43,9 @@ namespace Going.UI.ImageCanvas
             }
         }
 
-        public double? Tick { get; set; }
+        [GoProperty(PCategory.Control, 12)] public double? Tick { get; set; }
 
-        public bool DrawText { get; set; } = true;
+        [GoProperty(PCategory.Control, 13)] public bool DrawText { get; set; } = true;
         #endregion
 
         #region Member Variable
@@ -62,55 +65,93 @@ namespace Going.UI.ImageCanvas
             var rtBox = rts["Content"];
             var cText = thm.ToColor(TextColor);
 
-            var (ip, img, cBack) = vars();
-            bounds(ip, (_, rtBar, rtCur, rtFill, bmBar, bmCur) =>
+            if (Design != null && Parent != null)
             {
-                canvas.DrawBitmap(bmBar.Off, rtBar);
-                if (Value > Minimum) canvas.DrawBitmap(bmBar.On, Util.FromRect(0, 0, rtFill.Width, rtFill.Height), rtFill);
-                canvas.DrawBitmap(bCurDown ? bmCur.On : bmCur.Off, rtCur);
-                if (DrawText) Util.DrawText(canvas, Value.ToString(FormatString ?? "0"), FontName, FontStyle, FontSize, rtCur, cText);
-            });
+                var offB = Design.GetImage(OffBarImage).FirstOrDefault();
+                var onB = Design.GetImage(OnBarImage).FirstOrDefault();
+                var offC = Design.GetImage(OffCursorImage).FirstOrDefault();
+                var onC = Design.GetImage(OnCursorImage).FirstOrDefault();
+
+                if (offB != null && onB != null && offC != null && onC != null)
+                {
+                    bounds(offB, offC, (_, rtBar, rtCur, rtFill) =>
+                    {
+                        canvas.DrawImage(offB, rtBar, Util.Sampling);
+                        if (Value > Minimum) canvas.DrawImage(onB, Util.FromRect(0, 0, rtFill.Width, rtFill.Height), rtFill, Util.Sampling);
+                        canvas.DrawImage(bCurDown ? onC : offC, rtCur, Util.Sampling);
+                        if (DrawText) Util.DrawText(canvas, Value.ToString(FormatString ?? "0"), FontName, FontStyle, FontSize, rtCur, cText);
+                    });
+                }
+            }
 
             base.OnDraw(canvas);
         }
 
         protected override void OnMouseDown(float x, float y, GoMouseButton button)
         {
-            var (ip, img, cBack) = vars();
-
-            bounds(ip, (rtBox, rtBar, rtCur, rtFill, bmBar, bmCur) =>
+            if (Design != null && Parent != null)
             {
-                if (CollisionTool.Check(rtCur, x, y)) bCurDown = true;
-            });
+                var offB = Design.GetImage(OffBarImage).FirstOrDefault();
+                var onB = Design.GetImage(OnBarImage).FirstOrDefault();
+                var offC = Design.GetImage(OffCursorImage).FirstOrDefault();
+                var onC = Design.GetImage(OnCursorImage).FirstOrDefault();
 
+                if (offB != null && onB != null && offC != null && onC != null)
+                {
+                    bounds(offB, offC, (rtBox, rtBar, rtCur, rtFill) =>
+                    {
+                        if (CollisionTool.Check(rtCur, x, y)) bCurDown = true;
+                    });
+                }
+            }
             base.OnMouseDown(x, y, button);
         }
+
         protected override void OnMouseUp(float x, float y, GoMouseButton button)
         {
             if (bCurDown)
             {
-                var (ip, img, cBack) = vars();
-
-                bounds(ip, (rtBox, rtBar, rtCur, rtFill, bmBar, bmCur) =>
+                if (Design != null && Parent != null)
                 {
-                    Value = MathTool.Map(MathTool.Constrain(x, rtBar.Left, rtBar.Right), rtBar.Left, rtBar.Right, Minimum, Maximum);
-                });
+                    var offB = Design.GetImage(OffBarImage).FirstOrDefault();
+                    var onB = Design.GetImage(OnBarImage).FirstOrDefault();
+                    var offC = Design.GetImage(OffCursorImage).FirstOrDefault();
+                    var onC = Design.GetImage(OnCursorImage).FirstOrDefault();
 
+                    if (offB != null && onB != null && offC != null && onC != null)
+                    {
+                        bounds(offB, offC, (rtBox, rtBar, rtCur, rtFill) =>
+                        {
+                            Value = MathTool.Map(MathTool.Constrain(x, rtBar.Left, rtBar.Right), rtBar.Left, rtBar.Right, Minimum, Maximum);
+                        });
+                    }
+                }
+             
                 bCurDown = false;
             }
 
             base.OnMouseUp(x, y, button);
         }
+
         protected override void OnMouseMove(float x, float y)
         {
             if (bCurDown)
             {
-                var (ip, img, cBack) = vars();
-
-                bounds(ip, (rtBox, rtBar, rtCur, rtFill, bmBar, bmCur) =>
+                if (Design != null && Parent != null)
                 {
-                    Value = MathTool.Map(MathTool.Constrain(x, rtBar.Left, rtBar.Right), rtBar.Left, rtBar.Right, Minimum, Maximum);
-                });
+                    var offB = Design.GetImage(OffBarImage).FirstOrDefault();
+                    var onB = Design.GetImage(OnBarImage).FirstOrDefault();
+                    var offC = Design.GetImage(OffCursorImage).FirstOrDefault();
+                    var onC = Design.GetImage(OnCursorImage).FirstOrDefault();
+
+                    if (offB != null && onB != null && offC != null && onC != null)
+                    {
+                        bounds(offB, offC, (rtBox, rtBar, rtCur, rtFill) =>
+                        {
+                            Value = MathTool.Map(MathTool.Constrain(x, rtBar.Left, rtBar.Right), rtBar.Left, rtBar.Right, Minimum, Maximum);
+                        });
+                    }
+                }
             }
             base.OnMouseMove(x, y);
         }
@@ -119,49 +160,18 @@ namespace Going.UI.ImageCanvas
 
         #region Method
         #region bounds
-        void bounds(IcImageFolder? ip, Action<SKRect, SKRect, SKRect, SKRect, IcOnOffImage, IcOnOffImage> act)
+        void bounds(SKImage? bmBar, SKImage bmCur, Action<SKRect, SKRect, SKRect, SKRect> act)
         {
-            if (ip != null && BarImage != null && CursorImage != null &&
-                ip.Miscs.TryGetValue(CursorImage, out var bmCur) && ip.Miscs.TryGetValue(BarImage, out var bmBar) &&
-                bmBar.On != null && bmBar.Off != null && bmCur.On != null && bmCur.Off != null)
-            {
-                var rtBox = Util.FromRect(0, 0, Width, Height);
-                var rtBar = MathTool.MakeRectangle(rtBox, new SKSize(bmBar.Off.Width, bmBar.Off.Height));
+            var rtBox = Util.FromRect(0, 0, Width, Height);
+            var rtBar = bmBar != null ? MathTool.MakeRectangle(rtBox, new SKSize(bmBar.Width, bmBar.Height)) : rtBox;
 
-                var w = Convert.ToSingle(MathTool.Map(Value, Minimum, Maximum, 0, rtBar.Width));
-                var rtFill = Util.FromRect(rtBar.Left, rtBar.Top, w, rtBar.Height);
+            var w = Convert.ToSingle(MathTool.Map(Value, Minimum, Maximum, 0, rtBar.Width));
+            var rtFill = Util.FromRect(rtBar.Left, rtBar.Top, w, rtBar.Height);
 
-                var x = Convert.ToSingle(MathTool.Map(Value, Minimum, Maximum, rtBar.Left, rtBar.Right));
-                var y = rtBar.MidY;
-                var rtCur = MathTool.MakeRectangle(new SKPoint(x, y), bmCur.Off.Width / 2F, bmCur.Off.Height / 2F);
-                act(rtBox, rtBar, rtCur, rtFill, bmBar, bmCur);
-            }
-        }
-        #endregion
-        #region vars
-        (IcImageFolder? ip, IcOnOffImage? img, SKColor cBack) vars()
-        {
-            var thm = GoTheme.Current;
-            SKColor cBack = thm.Back;
-            IcImageFolder? ip = null;
-            IcOnOffImage? img = null;
-
-            if (Design != null)
-            {
-                ip = Design.GetIC();
-                if (Parent is IcContainer con)
-                {
-                    cBack = thm.ToColor(con.BackgroundColor);
-                    img = ip != null && con.ContainerImage != null && ip.Containers.TryGetValue(con.ContainerImage, out var v) ? v : null;
-                }
-                else if (Parent is IcPage page)
-                {
-                    cBack = thm.ToColor(page.BackgroundColor);
-                    img = ip != null && page.Name != null && ip.Pages.TryGetValue(page.Name, out var v) ? v : null;
-                }
-            }
-
-            return (ip, img, cBack);
+            var x = Convert.ToSingle(MathTool.Map(Value, Minimum, Maximum, rtBar.Left, rtBar.Right));
+            var y = rtBar.MidY;
+            var rtCur = MathTool.MakeRectangle(new SKPoint(x, y), bmCur.Width / 2F, bmCur.Height / 2F);
+            act(rtBox, rtBar, rtCur, rtFill);
         }
         #endregion
         #endregion

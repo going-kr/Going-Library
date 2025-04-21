@@ -15,10 +15,10 @@ namespace Going.UI.Controls
     public class GoIconButton : GoControl
     {
         #region Properties
-        [GoProperty(PCategory.Misc, 0)] public string? IconString { get; set; }
-        [GoProperty(PCategory.Misc, 1)] public float Rotate { get; set; } = 0;
-        [GoProperty(PCategory.Misc, 2)] public string ButtonColor { get; set; } = "Base3";
-        [GoProperty(PCategory.Misc, 3)] public bool ClickBoundsExtends { get; set; } = false;
+        [GoProperty(PCategory.Control, 0)] public string? IconString { get; set; }
+        [GoProperty(PCategory.Control, 1)] public float Rotate { get; set; } = 0;
+        [GoProperty(PCategory.Control, 2)] public string ButtonColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Control, 3)] public bool ClickBoundsExtends { get; set; } = false;
         #endregion
 
         #region Event

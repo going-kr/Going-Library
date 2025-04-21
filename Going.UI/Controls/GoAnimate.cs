@@ -14,12 +14,12 @@ namespace Going.UI.Controls
     public class GoAnimate : GoControl
     {
         #region Properties
-        [GoImageProperty(PCategory.Misc, 0)] public string? OnImage { get; set; }
-        [GoImageProperty(PCategory.Misc, 1)] public string? OffImage { get; set; }
-        [GoProperty(PCategory.Misc, 2)] public GoImageScaleMode ScaleMode { get; set; } = GoImageScaleMode.Real;
-        [GoProperty(PCategory.Misc, 3)] public GoRoundType Round { get; set; } = GoRoundType.Rect;
-        [GoProperty(PCategory.Misc, 4)] public int Time { get; set; } = 30;
-        [GoProperty(PCategory.Misc, 5)]
+        [GoImageProperty(PCategory.Control, 0)] public string? OnImage { get; set; }
+        [GoImageProperty(PCategory.Control, 1)] public string? OffImage { get; set; }
+        [GoProperty(PCategory.Control, 2)] public GoImageScaleMode ScaleMode { get; set; } = GoImageScaleMode.Real;
+        [GoProperty(PCategory.Control, 3)] public GoRoundType Round { get; set; } = GoRoundType.Rect;
+        [GoProperty(PCategory.Control, 4)] public int Time { get; set; } = 30;
+        [GoProperty(PCategory.Control, 5)]
         public bool OnOff
         {
             get => bOnOff;
@@ -93,7 +93,7 @@ namespace Going.UI.Controls
                     using (new SKAutoCanvasRestore(canvas))
                     {
                         canvas.ClipPath(path, SKClipOperation.Intersect, true);
-                        canvas.DrawBitmap(img, rt);
+                        canvas.DrawImage(img, rt, Util.Sampling);
                     }
                 }
             }

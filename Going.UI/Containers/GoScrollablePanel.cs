@@ -16,8 +16,8 @@ namespace Going.UI.Containers
     public class GoScrollablePanel : GoContainer
     {
         #region Properties
-        [GoProperty(PCategory.Misc, 0)] public float? PanelWidth { get; set; }
-        [GoProperty(PCategory.Misc, 1)] public float? PanelHeight { get; set; }
+        [GoProperty(PCategory.Control, 0)] public float? PanelWidth { get; set; }
+        [GoProperty(PCategory.Control, 1)] public float? PanelHeight { get; set; }
 
         [JsonIgnore] public override SKPoint ViewPosition => new SKPoint(-Convert.ToSingle(hscroll.ScrollPositionWithOffset), -Convert.ToSingle(vscroll.ScrollPositionWithOffset));
         [JsonInclude] public override List<IGoControl> Childrens { get; } = [];

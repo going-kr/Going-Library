@@ -16,20 +16,20 @@ namespace Going.UI.Controls
     public class GoLampButton : GoControl
     {
         #region Properties
-        [GoProperty(PCategory.Misc, 0)] public string Text { get; set; } = "label";
-        [GoProperty(PCategory.Misc, 1)] public string FontName { get; set; } = "나눔고딕";
-        [GoProperty(PCategory.Misc, 2)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
-        [GoProperty(PCategory.Misc, 3)] public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 0)] public string Text { get; set; } = "label";
+        [GoProperty(PCategory.Control, 1)] public string FontName { get; set; } = "나눔고딕";
+        [GoProperty(PCategory.Control, 2)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Control, 3)] public float FontSize { get; set; } = 12;
 
-        [GoProperty(PCategory.Misc, 4)] public string TextColor { get; set; } = "Fore";
-        [GoProperty(PCategory.Misc, 5)] public string ButtonColor { get; set; } = "Base3";
-        [GoProperty(PCategory.Misc, 6)] public string OnColor { get; set; } = "Good";
-        [GoProperty(PCategory.Misc, 7)] public string OffColor { get; set; } = "Base2";
+        [GoProperty(PCategory.Control, 4)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Control, 5)] public string ButtonColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Control, 6)] public string OnColor { get; set; } = "Good";
+        [GoProperty(PCategory.Control, 7)] public string OffColor { get; set; } = "Base2";
 
-        [GoProperty(PCategory.Misc, 8)] public GoRoundType Round { get; set; } = GoRoundType.All;
+        [GoProperty(PCategory.Control, 8)] public GoRoundType Round { get; set; } = GoRoundType.All;
 
         private bool bOnOff = false;
-        [GoProperty(PCategory.Misc, 9)]
+        [GoProperty(PCategory.Control, 9)]
         public bool OnOff
         {
             get => bOnOff; set
@@ -42,8 +42,8 @@ namespace Going.UI.Controls
             }
         }
 
-        [GoProperty(PCategory.Misc, 10)] public int LampSize { get; set; } = 24;
-        [GoProperty(PCategory.Misc, 11)] public int Gap { get; set; } = 10;
+        [GoProperty(PCategory.Control, 10)] public int LampSize { get; set; } = 24;
+        [GoProperty(PCategory.Control, 11)] public int Gap { get; set; } = 10;
         #endregion
 
         #region Event

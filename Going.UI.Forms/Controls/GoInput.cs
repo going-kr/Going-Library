@@ -58,13 +58,13 @@ namespace Going.UI.Forms.Controls
         #endregion
 
         #region Member Variable
-        FormsInputManager IM;
+        WFInputManager IM;
         #endregion
 
         #region Constructor
         public GoInputString()
         {
-            IM = new FormsInputManager(this);
+            IM = new WFInputManager(this);
             GoInputEventer.Current.InputString += (c, bounds, callback, value) =>
             {
                 if (c == Control)
@@ -132,13 +132,13 @@ namespace Going.UI.Forms.Controls
         #endregion
 
         #region Member Variable
-        FormsInputManager IM;
+        WFInputManager IM;
         #endregion
 
         #region Constructor
         public GoInputNumber()
         {
-            IM = new FormsInputManager(this);
+            IM = new WFInputManager(this);
 
             GoInputEventer.Current.InputNumber += (c, bounds, callback, type, value, min, max) =>
             {

@@ -21,6 +21,8 @@ namespace Going.UIEditor
         public static FormMain MainForm { get; set; }
         public static FormSetting SettingForm { get; set; }
         public static FormNewFile NewFileForm { get; set; }
+        public static FormNewPage NewPageForm { get; set; }
+        public static FormResourceManager ResourceForm { get; set; }
 
         [STAThread]
         static void Main()
@@ -38,6 +40,8 @@ namespace Going.UIEditor
             MessageBox = new GoMessageBox { MinimumWidth = 200 };
             SettingForm = new FormSetting();
             NewFileForm = new FormNewFile();
+            NewPageForm = new FormNewPage();
+            ResourceForm = new FormResourceManager();
             MainForm = new FormMain();
 
             Application.Run(MainForm);

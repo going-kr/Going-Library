@@ -16,16 +16,16 @@ namespace Going.UI.ImageCanvas
     public class IcOnOff : GoControl
     {
         #region Properties
-        public string? IconString { get; set; }
-        public float IconSize { get; set; } = 12;
-        public GoDirectionHV IconDirection { get; set; } = GoDirectionHV.Horizon;
-        public float IconGap { get; set; } = 5;
-        public string Text { get; set; } = "label";
-        public string FontName { get; set; } = "나눔고딕";
-        public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
-        public float FontSize { get; set; } = 12;
-        public string TextColor { get; set; } = "Black";
-
+        [GoProperty(PCategory.Control, 0)] public string? IconString { get; set; }
+        [GoProperty(PCategory.Control, 1)] public float IconSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 2)] public GoDirectionHV IconDirection { get; set; } = GoDirectionHV.Horizon;
+        [GoProperty(PCategory.Control, 3)] public float IconGap { get; set; } = 5;
+        [GoProperty(PCategory.Control, 4)] public string Text { get; set; } = "label";
+        [GoProperty(PCategory.Control, 5)] public string FontName { get; set; } = "나눔고딕";
+        [GoProperty(PCategory.Control, 6)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Control, 7)] public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 8)] public string TextColor { get; set; } = "Black";
+        [GoProperty(PCategory.Control, 9)]
         public bool OnOff
         {
             get => bOnOff;
@@ -39,7 +39,7 @@ namespace Going.UI.ImageCanvas
             }
         }
 
-        public bool ToggleMode { get; set; } = false;
+        [GoProperty(PCategory.Control, 10)] public bool ToggleMode { get; set; } = false;
         #endregion
 
         #region Member Variable
@@ -58,14 +58,23 @@ namespace Going.UI.ImageCanvas
             var rtBox = rts["Content"];
             var cText = thm.ToColor(TextColor);
 
-            var (ip, img, cBack) = vars();
-            if (ip != null && img != null && Parent != null && img.On != null && img.Off != null)
+            if (Design != null && Parent != null)
             {
-                var sx = (double)img.On.Width / Parent.Bounds.Width;
-                var sy = (double)img.On.Height / Parent.Bounds.Height;
-                canvas.DrawBitmap(OnOff ? img.On : img.Off, Util.FromRect(Convert.ToInt16(Left * sx), Convert.ToInt32(Top * sy), Convert.ToInt32(Width * sx), Convert.ToInt32(Height * sy)), rtBox);
+                List<SKImage>? offs = null, ons = null;
+                if (Parent is IcContainer con) { offs = Design.GetImage(con.OffImage); ons = Design.GetImage(con.OffImage); }
+                else if (Parent is IcPage page) { offs = Design.GetImage(page.OffImage); ons = Design.GetImage(page.OffImage); }
 
-                Util.DrawTextIcon(canvas, Text, FontName, FontStyle, FontSize, IconString, IconSize, IconDirection, IconGap, rtBox, cText, GoContentAlignment.MiddleCenter);
+                if (offs?.Count > 0 && ons?.Count > 0)
+                {
+                    var off = offs.First();
+                    var on = ons.First();
+
+                    var sx = (double)on.Width / Parent.Bounds.Width;
+                    var sy = (double)on.Height / Parent.Bounds.Height;
+                    canvas.DrawImage(OnOff ? on : off, Util.FromRect(Convert.ToInt16(Left * sx), Convert.ToInt32(Top * sy), Convert.ToInt32(Width * sx), Convert.ToInt32(Height * sy)), rtBox, Util.Sampling);
+
+                    Util.DrawTextIcon(canvas, Text, FontName, FontStyle, FontSize, IconString, IconSize, IconDirection, IconGap, rtBox, cText, GoContentAlignment.MiddleCenter);
+                }
             }
 
             base.OnDraw(canvas);
@@ -79,35 +88,6 @@ namespace Going.UI.ImageCanvas
 
             base.OnMouseDown(x, y, button);
         }
-        #endregion
-
-        #region Method
-        #region vars
-        (IcImageFolder? ip, IcOnOffImage? img, SKColor cBack) vars()
-        {
-            var thm = GoTheme.Current;
-            SKColor cBack = thm.Back;
-            IcImageFolder? ip = null;
-            IcOnOffImage? img = null;
-
-            if (Design != null)
-            {
-                ip = Design.GetIC();
-                if (Parent is IcContainer con)
-                {
-                    cBack = thm.ToColor(con.BackgroundColor);
-                    img = ip != null && con.ContainerImage != null && ip.Containers.TryGetValue(con.ContainerImage, out var v) ? v : null;
-                }
-                else if (Parent is IcPage page)
-                {
-                    cBack = thm.ToColor(page.BackgroundColor);
-                    img = ip != null && page.Name != null && ip.Pages.TryGetValue(page.Name, out var v) ? v : null;
-                }
-            }
-
-            return (ip, img, cBack);
-        }
-        #endregion
         #endregion
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Going.UI.Datas;
 using Going.UI.Design;
+using Going.UI.ImageCanvas;
 using Going.UIEditor.Datas;
 using Going.UIEditor.Utils;
 using System;
@@ -97,12 +98,12 @@ namespace Going.UIEditor.Windows
                     if (nm == Pages)
                     {
                         #region Page Add
-                        var ret = Program.InputBox.ShowString($"{LM.Page} {LM.Add}");
+                        var ret = Program.NewPageForm.ShowNewPage();
                         if (ret != null)
                         {
-                            if (!p.Design.Pages.ContainsKey(ret))
+                            if (!p.Design.Pages.ContainsKey(ret.Name))
                             {
-                                p.Design.AddPage(new GoPage { Name = ret });
+                                p.Design.AddPage(ret.UseIcPage ? new IcPage { Name = ret.Name } : new GoPage { Name = ret.Name });
                                 p.Edit = true;
                                 RefreshTreeView();
                             }

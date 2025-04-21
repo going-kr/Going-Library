@@ -66,7 +66,7 @@ namespace Going.UI.Forms.Controls
         #endregion
 
         #region Member Variable
-        FormsInputManager IM;
+        WFInputManager IM;
         #endregion
 
         #region Constructor
@@ -79,7 +79,7 @@ namespace Going.UI.Forms.Controls
             Control.GetDateTimeDropDownVisible += (cell) => (dwnd_DT?.Visible ?? false) && dwndCell_DT == cell;
             Control.GetComboDropDownVisible += (cell) => (dwnd_CB?.Visible ?? false) && dwndCell_CB == cell;
 
-            IM = new FormsInputManager(this);
+            IM = new WFInputManager(this);
 
             GoInputEventer.Current.InputNumber += (c, bounds, callback, type, value, min, max) =>
             {

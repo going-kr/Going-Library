@@ -19,15 +19,15 @@ namespace Going.UI.Controls
     public class GoCircleGraph : GoControl
     {
         #region Properties
-        [GoProperty(PCategory.Misc, 0)] public string GridColor { get; set; } = "Base3";
-        [GoProperty(PCategory.Misc, 1)] public string TextColor { get; set; } = "Fore";
-        [GoProperty(PCategory.Misc, 2)] public string RemarkColor { get; set; } = "Base2";
+        [GoProperty(PCategory.Control, 0)] public string GridColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Control, 1)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Control, 2)] public string RemarkColor { get; set; } = "Base2";
 
-        [GoProperty(PCategory.Misc, 3)] public string FontName { get; set; } = "나눔고딕";
-        [GoProperty(PCategory.Misc, 4)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
-        [GoProperty(PCategory.Misc, 5)] public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 3)] public string FontName { get; set; } = "나눔고딕";
+        [GoProperty(PCategory.Control, 4)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Control, 5)] public float FontSize { get; set; } = 12;
 
-        [GoProperty(PCategory.Misc, 6)] public List<GoGraphSeries> Series { get; set; } = [];
+        [GoProperty(PCategory.Control, 6)] public List<GoGraphSeries> Series { get; set; } = [];
         #endregion
 
         #region Member Variable

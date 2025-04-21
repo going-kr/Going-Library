@@ -27,6 +27,18 @@ namespace Going.UI.Tools
             }
             return ret;
         }
+        public static string? EncodeBase64String(SKImage image)
+        {
+            string? ret = null;
+            if (image != null)
+            {
+                using (SKData v = image.Encode(SKEncodedImageFormat.Png, 100))
+                {
+                    ret = Convert.ToBase64String(v.ToArray());
+                }
+            }
+            return ret;
+        }
         #endregion
         #region Decode
         public static T? DecodeBase64String<T>(string data, Encoding? enc = null)
@@ -35,6 +47,7 @@ namespace Going.UI.Tools
             if (typeof(T) == typeof(string)) ret = (T)(object)(enc ?? Encoding.UTF8).GetString(Convert.FromBase64String(data));
             else if (typeof(T) == typeof(byte[])) ret = (T)(object)Convert.FromBase64String(data);
             else if (typeof(T) == typeof(SKBitmap)) ret = (T)(object)SKBitmap.Decode(Convert.FromBase64String(data));
+            else if (typeof(T) == typeof(SKImage)) ret = (T)(object)SKImage.FromEncodedData(Convert.FromBase64String(data));
             return ret;
         }
         #endregion

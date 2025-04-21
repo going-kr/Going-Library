@@ -16,7 +16,7 @@ using TextBox = System.Windows.Forms.TextBox;
 
 namespace Going.UI.Forms.Input
 {
-    public class FormsInputManager : IMessageFilter, IDisposable
+    public class WFInputManager : IMessageFilter, IDisposable
     {
         #region Properties
         public bool IsInput => InputControl != null;
@@ -36,7 +36,7 @@ namespace Going.UI.Forms.Input
         #endregion
 
         #region Constructor
-        public FormsInputManager(Control c)
+        public WFInputManager(Control c)
         {
             Application.AddMessageFilter(this);
             InputControl = c;

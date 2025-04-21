@@ -16,22 +16,22 @@ namespace Going.UI.Controls
     public class GoOnOff : GoControl
     {
         #region Properties
-        [GoProperty(PCategory.Misc, 0)] public string OnText { get; set; } = "On";
-        [GoProperty(PCategory.Misc, 1)] public string OffText { get; set; } = "Off";
-        [GoProperty(PCategory.Misc, 2)] public string CursorIconString { get; set; } = "fa-power-off";
-        [GoProperty(PCategory.Misc, 3)] public string FontName { get; set; } = "나눔고딕";
-        [GoProperty(PCategory.Misc, 4)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
-        [GoProperty(PCategory.Misc, 5)] public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 0)] public string OnText { get; set; } = "On";
+        [GoProperty(PCategory.Control, 1)] public string OffText { get; set; } = "Off";
+        [GoProperty(PCategory.Control, 2)] public string CursorIconString { get; set; } = "fa-power-off";
+        [GoProperty(PCategory.Control, 3)] public string FontName { get; set; } = "나눔고딕";
+        [GoProperty(PCategory.Control, 4)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Control, 5)] public float FontSize { get; set; } = 12;
 
-        [GoProperty(PCategory.Misc, 6)] public string TextColor { get; set; } = "Fore";
-        [GoProperty(PCategory.Misc, 7)] public string BoxColor { get; set; } = "Base1";
-        [GoProperty(PCategory.Misc, 8)] public string BorderColor { get; set; } = "Base3";
-        [GoProperty(PCategory.Misc, 9)] public string CursorColor { get; set; } = "Base3";
-        [GoProperty(PCategory.Misc, 10)] public string OnColor { get; set; } = "lime";
-        [GoProperty(PCategory.Misc, 11)] public string OffColor { get; set; } = "gray";
+        [GoProperty(PCategory.Control, 6)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Control, 7)] public string BoxColor { get; set; } = "Base1";
+        [GoProperty(PCategory.Control, 8)] public string BorderColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Control, 9)] public string CursorColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Control, 10)] public string OnColor { get; set; } = "lime";
+        [GoProperty(PCategory.Control, 11)] public string OffColor { get; set; } = "gray";
 
         private bool bOnOff = false;
-        [GoProperty(PCategory.Misc, 12)]
+        [GoProperty(PCategory.Control, 12)]
         public bool OnOff
         {
             get => bOnOff;

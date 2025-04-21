@@ -48,7 +48,7 @@ namespace Going.UI.Forms.Dialogs
         GoTableLayoutPanel tpnl2;
         GoButton btnOk, btnCancel;
 
-        FormsInputManager IM;
+        WFInputManager IM;
         #endregion
 
         #region Constructor
@@ -74,7 +74,7 @@ namespace Going.UI.Forms.Dialogs
             btnOk.ButtonClicked += (o, s) => DialogResult = DialogResult.OK;
             btnCancel.ButtonClicked += (o, s) => DialogResult = DialogResult.Cancel;
 
-            IM = new FormsInputManager(this);
+            IM = new WFInputManager(this);
 
             GoInputEventer.Current.InputString += (c, bounds, callback, value) =>
             {

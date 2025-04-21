@@ -15,7 +15,7 @@ namespace Going.UI.Containers
     public class GoGridLayoutPanel : GoContainer
     {
         #region Properties
-        [GoProperty(PCategory.Misc, 0)] public List<GoGridLayoutPanelRow> Rows { get; set; } = [];
+        [GoProperty(PCategory.Control, 0)] public List<GoGridLayoutPanelRow> Rows { get; set; } = [];
 
         [JsonInclude]
         public override GoGridLayoutControlCollection Childrens { get; } = [];
@@ -122,8 +122,8 @@ namespace Going.UI.Containers
     #region class : GoGridLayoutPanelRow
     public class GoGridLayoutPanelRow
     {
-        [GoSizeProperty(PCategory.Misc, 0)] public string Height { get; set; } = "100%";
-        [GoSizesProperty(PCategory.Misc, 1)] public List<string> Columns { get; set; } = [];
+        [GoSizeProperty(PCategory.Control, 0)] public string Height { get; set; } = "100%";
+        [GoSizesProperty(PCategory.Control, 1)] public List<string> Columns { get; set; } = [];
 
         public override string ToString() => $"{Height} / Columns : {Columns.Count}";
     }

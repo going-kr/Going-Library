@@ -32,7 +32,6 @@ namespace SampleOpenTK.Windows
 
             #region Design Setting
             Design.AddImageFolder("D:\\Project\\Going\\library\\src\\Going\\ImageSample");
-            Design.LoadIC("D:\\Project\\Going\\library\\src\\Going\\ImageCanvasSample");
 
             Design.UseTitleBar = true;
             Design.UseLeftSideBar = true;

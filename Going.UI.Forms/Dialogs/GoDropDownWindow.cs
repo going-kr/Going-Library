@@ -279,7 +279,7 @@ namespace Going.UI.Forms.Dialogs
 
         private IGoControl[] cs => [color, btnOK, btnCancel];
 
-        private FormsInputManager IM;
+        private WFInputManager IM;
         #endregion
 
         #region Constructor
@@ -287,7 +287,7 @@ namespace Going.UI.Forms.Dialogs
         {
             color = new Going.UI.Controls.GoColorSelector { };
 
-            IM = new FormsInputManager(this);
+            IM = new WFInputManager(this);
             GoInputEventer.Current.InputNumber += (c, bounds, callback, type, value, min, max) =>
             {
                 if (c == color)
@@ -463,13 +463,13 @@ namespace Going.UI.Forms.Dialogs
             }
         }
 
-        private FormsInputManager IM;
+        private WFInputManager IM;
         #endregion
 
         #region Constructor
         public GoDateTimeDropDownWindow()
         {
-            IM = new FormsInputManager(this);
+            IM = new WFInputManager(this);
 
             GoInputEventer.Current.InputNumber += (c, bounds, callback, type, value, min, max) =>
             {

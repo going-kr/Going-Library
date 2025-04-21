@@ -109,10 +109,32 @@ namespace SampleForms
                 }
             });
 
-             
+            var vls = new List<DGI>();
+            for (int i = 0; i < 100; i++)
+                vls.Add(new DGI { Name = $"Item{i + 1}", Text = "" });
+
+            dg.Columns.Add(new GoDataGridInputTextColumn { Name = "Name", HeaderText = "명칭", Size = "20%" });
+            dg.Columns.Add(new GoDataGridInputTextColumn { Name = "Text", HeaderText = "텍스트", Size = "20%" });
+            dg.Columns.Add(new GoDataGridInputNumberColumn<int> { Name = "Number1", HeaderText = "값1", Size = "20%" });
+            dg.Columns.Add(new GoDataGridInputNumberColumn<float> { Name = "Number2", HeaderText = "값2", Size = "20%" });
+            dg.Columns.Add(new GoDataGridInputNumberColumn<double> { Name = "Number3", HeaderText = "값3", Size = "20%" });
+
+            dg.SetDataSource(vls);
         }
+
+
     }
 
+    #region DGI
+    class DGI
+    {
+        public string Name { get; set; } = "";
+        public string Text { get; set; } = "";
+        public int Number1 { get; set; }
+        public float Number2 { get; set; }
+        public double Number3 { get; set; }
+    }
+    #endregion
     #region GRP
     class GRP(string month)
     {

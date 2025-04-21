@@ -31,21 +31,21 @@ namespace Going.UI.Controls
         #endregion
 
         #region Properties
-        [GoProperty(PCategory.Misc, 0)] public string FontName { get; set; } = "나눔고딕";
-        [GoProperty(PCategory.Misc, 1)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
-        [GoProperty(PCategory.Misc, 2)] public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 0)] public string FontName { get; set; } = "나눔고딕";
+        [GoProperty(PCategory.Control, 1)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Control, 2)] public float FontSize { get; set; } = 12;
 
-        [GoProperty(PCategory.Misc, 3)] public string TextColor { get; set; } = "Fore";
-        [GoProperty(PCategory.Misc, 4)] public string RowColor { get; set; } = "Base2";
-        [GoProperty(PCategory.Misc, 5)] public string SummaryRowColor { get; set; } = "Base1";
-        [GoProperty(PCategory.Misc, 6)] public string ColumnColor { get; set; } = "Base1";
-        [GoProperty(PCategory.Misc, 7)] public string SelectedRowColor { get; set; } = "Select";
+        [GoProperty(PCategory.Control, 3)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Control, 4)] public string RowColor { get; set; } = "Base2";
+        [GoProperty(PCategory.Control, 5)] public string SummaryRowColor { get; set; } = "Base1";
+        [GoProperty(PCategory.Control, 6)] public string ColumnColor { get; set; } = "Base1";
+        [GoProperty(PCategory.Control, 7)] public string SelectedRowColor { get; set; } = "Select";
 
-        [GoProperty(PCategory.Misc, 8)] public float RowHeight { get; set; } = 30F;
-        [GoProperty(PCategory.Misc, 9)] public float ColumnHeight { get; set; } = 30F;
+        [GoProperty(PCategory.Control, 8)] public float RowHeight { get; set; } = 30F;
+        [GoProperty(PCategory.Control, 9)] public float ColumnHeight { get; set; } = 30F;
 
-        [GoProperty(PCategory.Misc, 10)] public ScrollMode ScrollMode { get; set; } = ScrollMode.Vertical;
-        [GoProperty(PCategory.Misc, 11)] public GoDataGridSelectionMode SelectionMode { get; set; } = GoDataGridSelectionMode.Single;
+        [GoProperty(PCategory.Control, 10)] public ScrollMode ScrollMode { get; set; } = ScrollMode.Vertical;
+        [GoProperty(PCategory.Control, 11)] public GoDataGridSelectionMode SelectionMode { get; set; } = GoDataGridSelectionMode.Single;
 
         public ObservableList<GoDataGridColumn> ColumnGroups { get; private set; } = [];
         public ObservableList<GoDataGridColumn> Columns { get; private set; } = [];

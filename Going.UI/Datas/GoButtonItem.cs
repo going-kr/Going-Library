@@ -10,10 +10,10 @@ namespace Going.UI.Datas
 {
     public class GoButtonItem
     {
-        [GoProperty(PCategory.Misc, 0)] public string Name { get; set; }
-        [GoProperty(PCategory.Misc, 1)] public string? Text { get; set; }
-        [GoProperty(PCategory.Misc, 2)] public string? IconString { get; set; }
-        [GoSizeProperty(PCategory.Misc, 3)] public string Size { get; set; } = "100%";
+        [GoProperty(PCategory.Control, 0)] public string Name { get; set; }
+        [GoProperty(PCategory.Control, 1)] public string? Text { get; set; }
+        [GoProperty(PCategory.Control, 2)] public string? IconString { get; set; }
+        [GoSizeProperty(PCategory.Control, 3)] public string Size { get; set; } = "100%";
 
         [JsonIgnore] internal bool Hover { get; set; } = false;
         [JsonIgnore] internal bool Down { get; set; } = false;

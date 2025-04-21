@@ -15,11 +15,11 @@ namespace Going.UI.Controls
     public class PCategory
     {
         public const string ID = "ID";
-        public const string Control = "Control";
+        public const string Basic = "Basic";
         public const string Bounds = "Bounds";
-        public const string Misc = "Misc";
+        public const string Control = "Control";
 
-        public static List<string> Names = [ID, Control, Bounds, Misc];
+        public static List<string> Names = [ID, Basic, Bounds, Control];
         public static int Index(string category) => Names.IndexOf(category);
     }
 
@@ -39,9 +39,9 @@ namespace Going.UI.Controls
         public static int LongClickTime { get; set; } = 2000;
 
         public Guid Id { get; init; } = Guid.NewGuid();
-        [GoProperty(PCategory.Control, 0)] public string? Name { get; set; }
-        [GoProperty(PCategory.Control, 1)] public virtual bool Visible { get; set; } = true;
-        [GoProperty(PCategory.Control, 2)] public virtual bool Enabled { get; set; } = true;
+        [GoProperty(PCategory.Basic, 0)] public string? Name { get; set; }
+        [GoProperty(PCategory.Basic, 1)] public virtual bool Visible { get; set; } = true;
+        [GoProperty(PCategory.Basic, 2)] public virtual bool Enabled { get; set; } = true;
         public bool Selectable { get; protected set; } = false;
         [JsonIgnore] public object? Tag { get; set; }
 

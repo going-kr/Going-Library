@@ -93,7 +93,7 @@ namespace Going.UIEditor.Controls
             scroll.GetScrollTotal = () => properties.Count * ItemHeight + 1;
             scroll.GetScrollTick = () => ItemHeight;
             scroll.GetScrollView = () => Height;
-            scroll.Refresh = () => Invalidate();
+            scroll.Refresh = () => Invoke(Invalidate);
         }
         #endregion
 
@@ -376,7 +376,7 @@ namespace Going.UIEditor.Controls
                     ph = Height;
 
                     #region Id
-                    if (!objs.Any(x => x?.GetType().GetInterface("Going.UI.Controls.IGoControl") == null))
+                    if (!objs.Any(x => x?.GetType().GetInterface("Going.UI.Controls.IGoControl") == null) && objs.Count() > 0)
                     {
                         properties.Add(new PropertyGridItem(this) { Category = PCategory.ID, Type = PropertyGridItemType.Category, Bounds = Util.FromRect(rtContent.Left, y, rtContent.Width, ItemHeight), });
                         y += ItemHeight;
@@ -982,11 +982,14 @@ namespace Going.UIEditor.Controls
             var thm = GoTheme.Current;
 
             #region Value
-            var vs = Grid.SelectedObjects?.Select(x => ValueToString(x));
-            var lk = vs?.ToLookup(x => x);
-            var s = lk?.Count == 1 ? (lk.FirstOrDefault()?.Key ?? "") : "";
+            if (!txt.Visible)
+            {
+                var vs = Grid.SelectedObjects?.Select(x => ValueToString(x));
+                var lk = vs?.ToLookup(x => x);
+                var s = lk?.Count == 1 ? (lk.FirstOrDefault()?.Key ?? "") : "";
 
-            Util.DrawText(canvas, s, Grid.FontName, Grid.FontStyle, Grid.FontSize, rtValue, thm.Base5);
+                Util.DrawText(canvas, s, Grid.FontName, Grid.FontStyle, Grid.FontSize, rtValue, thm.Base5);
+            }
             #endregion
 
             #region Button
@@ -1220,6 +1223,8 @@ namespace Going.UIEditor.Controls
 
                     using (var dlg = new Going.UI.Forms.Dialogs.GoInputBox { MinimumWidth = 300  })
                     {
+                        dlg.OkText = LM.Ok;
+                        dlg.CancelText = LM.Cancel;
                         var ret = dlg.ShowString(Info.Name, rs);
 
                         var itms = ret?.Split(',').Select(x => x.Trim()).ToArray();

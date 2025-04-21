@@ -17,11 +17,11 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Going.UI.OpenTK.Input
 {
-    public class OpenTKInputManager
+    public class TKInputManager
     {
         #region Properties
-        private static readonly Lazy<OpenTKInputManager> _instance = new Lazy<OpenTKInputManager>(() => new OpenTKInputManager());
-        public static OpenTKInputManager Current => _instance.Value;
+        private static readonly Lazy<TKInputManager> _instance = new Lazy<TKInputManager>(() => new TKInputManager());
+        public static TKInputManager Current => _instance.Value;
 
         public bool IsInput => InputControl != null;
         public IGoControl? InputControl => GoInputEventer.Current.InputControl;
@@ -92,7 +92,7 @@ namespace Going.UI.OpenTK.Input
         #endregion
 
         #region Constructor
-        public OpenTKInputManager()
+        public TKInputManager()
         {
             keyboard.Completed += (s) =>
             {

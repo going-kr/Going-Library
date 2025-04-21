@@ -13,6 +13,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms.Design;
+using Windows.Devices.Gpio.Provider;
 
 namespace Going.UI.Forms.ImageCanvas
 {
@@ -20,18 +21,8 @@ namespace Going.UI.Forms.ImageCanvas
     public class IcContainer : UserControl
     {
         #region Properties
-        public string? ContainerName
-        {
-            get => sContainerName; 
-            set
-            {
-                if (sContainerName != value)
-                {
-                    sContainerName = value;
-                    Invalidate();
-                }
-            }
-        }
+        public string? OffImage { get => sOffImage; set { if (sOffImage != value) { sOffImage = value; Invalidate(); } } }
+        public string? OnImage { get => sOnImage; set { if (sOnImage != value) { sOnImage = value; Invalidate(); } } }
 
         [Editor("System.Windows.Forms.Design.FolderNameEditor, System.Design", typeof(System.Drawing.Design.UITypeEditor))]
         public string? ImageFolder
@@ -42,7 +33,7 @@ namespace Going.UI.Forms.ImageCanvas
                 if (sImageFolder != value)
                 {
                     sImageFolder = value;
-                    IcResources.Load(sImageFolder);
+                    if (sImageFolder != null) IcResources.Load(sImageFolder);
                     Invalidate();
                 }
             }
@@ -64,7 +55,7 @@ namespace Going.UI.Forms.ImageCanvas
 
         #region Member Variable
         private string? sImageFolder;
-        private string? sContainerName;
+        private string? sOffImage, sOnImage;
         private string sBackgroundColor = "Back";
         #endregion
 
@@ -113,8 +104,8 @@ namespace Going.UI.Forms.ImageCanvas
             var rtBox = Util.FromRect(0, 0, Width, Height);
 
             var ip = IcResources.Get(ImageFolder);
-            if (ip != null && ContainerName != null&& ip.Containers.TryGetValue(ContainerName, out var img) && img.Off != null && img.On != null)
-                canvas.DrawBitmap(img.Off, rtBox);
+            if (ip != null && ip.GetImage(OffImage)?.FirstOrDefault() is SKImage off && ip.GetImage(OnImage)?.FirstOrDefault() is SKImage on)
+                canvas.DrawImage(off, rtBox, Util.Sampling);
         }
         #endregion
 
@@ -126,5 +117,7 @@ namespace Going.UI.Forms.ImageCanvas
         }
         #endregion
         #endregion
+
+      
     }
 }

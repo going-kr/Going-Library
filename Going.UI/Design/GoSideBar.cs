@@ -17,21 +17,21 @@ namespace Going.UI.Design
     public class GoTitleBar : GoContainer
     {
         #region Properties
-        public float BarSize { get; set; } = 50F;
+        [GoProperty(PCategory.Control, 0)] public float BarSize { get; set; } = 50F;
 
-        public string Title { get; set; } = "Title";
-        public string? TitleImage { get; set; } = null;
+        [GoProperty(PCategory.Control, 1)] public string Title { get; set; } = "Title";
+        [GoProperty(PCategory.Control, 2)] public string? TitleImage { get; set; } = null;
 
-        public string LeftExpandIconString { get; set; } = "fa-bars";
-        public string LeftCollapseIconString { get; set; } = "fa-chevron-left";
-        public string RightExpandIconString { get; set; } = "fa-ellipsis-vertical";
-        public string RightCollapseIconString { get; set; } = "fa-chevron-right";
-        public float IconSize { get; set; } = 16;
+        [GoProperty(PCategory.Control, 3)] public string LeftExpandIconString { get; set; } = "fa-bars";
+        [GoProperty(PCategory.Control, 4)] public string LeftCollapseIconString { get; set; } = "fa-chevron-left";
+        [GoProperty(PCategory.Control, 5)] public string RightExpandIconString { get; set; } = "fa-ellipsis-vertical";
+        [GoProperty(PCategory.Control, 6)] public string RightCollapseIconString { get; set; } = "fa-chevron-right";
+        [GoProperty(PCategory.Control, 7)] public float IconSize { get; set; } = 16;
 
-        public string TextColor { get; set; } = "Fore";
-        public string FontName { get; set; } = "나눔고딕";
-        public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
-        public float FontSize { get; set; } = 16;
+        [GoProperty(PCategory.Control, 8)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Control, 9)] public string FontName { get; set; } = "나눔고딕";
+        [GoProperty(PCategory.Control, 10)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Control, 11)] public float FontSize { get; set; } = 16;
 
         public override SKRect PanelBounds => Areas()["Panel"];
 
@@ -59,7 +59,7 @@ namespace Going.UI.Design
 
             #region Title
             var (rtIco, rtText) = Util.TextIconBounds(Title, FontName, FontStyle, FontSize, new SKSize(img?.Width ?? 0, img?.Height ?? 0), GoDirectionHV.Horizon, 10, rtTitle, GoContentAlignment.MiddleCenter);
-            if (img != null) canvas.DrawBitmap(img, rtIco);
+            if (img != null) canvas.DrawImage(img, rtIco, Util.Sampling);
             Util.DrawText(canvas, Title, FontName, FontStyle, FontSize, rtText, cText);
             #endregion
 
@@ -150,8 +150,8 @@ namespace Going.UI.Design
     public class GoSideBar : GoContainer
     {
         #region Properties
-        public float BarSize { get; set; } = 150F;
-        public bool Fixed { get; set; } = false;
+        [GoProperty(PCategory.Control, 0)] public float BarSize { get; set; } = 150F;
+        [GoProperty(PCategory.Control, 1)] public bool Fixed { get; set; } = false;
 
         internal float RealBarSize => Fixed ? BarSize : (ani.IsPlaying ? (ani.Variable == "Expand" ? ani.Value(AnimationAccel.DCL, 0F, BarSize)
                                                                                                    : ani.Value(AnimationAccel.DCL, BarSize, 0F))
@@ -161,6 +161,7 @@ namespace Going.UI.Design
 
         public override List<IGoControl> Childrens { get; } = [];
 
+        [GoProperty(PCategory.Control, 2)]
         [JsonIgnore]
         public bool Expand
         {
@@ -170,13 +171,20 @@ namespace Going.UI.Design
                 if (Fixed) bExpand = true;
                 else
                 {
-                    if (bExpand != value)
+                    if (Design?.DesignMode ?? false)
                     {
-                        ani.Stop();
-                        ani.Start(Animation.Time200, value ? "Expand" : "Collapse", () =>
+                        bExpand = value;
+                    }
+                    else
+                    {
+                        if (bExpand != value)
                         {
-                            bExpand = value;
-                        });
+                            ani.Stop();
+                            ani.Start(Animation.Time200, value ? "Expand" : "Collapse", () =>
+                            {
+                                bExpand = value;
+                            });
+                        }
                     }
                 }
             }
@@ -191,7 +199,7 @@ namespace Going.UI.Design
 
     public class GoFooter : GoContainer
     {
-        public float BarSize { get; set; } = 40F;
+        [GoProperty(PCategory.Control, 0)] public float BarSize { get; set; } = 40F;
 
         public override List<IGoControl> Childrens { get; } = [];
     }

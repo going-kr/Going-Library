@@ -19,22 +19,22 @@ namespace Going.UI.Controls
     public class GoTimeGraph : GoControl
     {
         #region Properties
-        [GoProperty(PCategory.Misc, 0)] public string GridColor { get; set; } = "Base3";
-        [GoProperty(PCategory.Misc, 1)] public string TextColor { get; set; } = "Fore";
-        [GoProperty(PCategory.Misc, 2)] public string RemarkColor { get; set; } = "Base2";
-        [GoProperty(PCategory.Misc, 3)] public string GraphColor { get; set; } = "Back";
+        [GoProperty(PCategory.Control, 0)] public string GridColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Control, 1)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Control, 2)] public string RemarkColor { get; set; } = "Base2";
+        [GoProperty(PCategory.Control, 3)] public string GraphColor { get; set; } = "Back";
 
-        [GoProperty(PCategory.Misc, 4)] public string FontName { get; set; } = "나눔고딕";
-        [GoProperty(PCategory.Misc, 5)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
-        [GoProperty(PCategory.Misc, 6)] public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 4)] public string FontName { get; set; } = "나눔고딕";
+        [GoProperty(PCategory.Control, 5)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Control, 6)] public float FontSize { get; set; } = 12;
 
-        [GoProperty(PCategory.Misc, 7)] public TimeSpan XScale { get; set; } = new TimeSpan(1, 0, 0);
-        [GoProperty(PCategory.Misc, 8)] public TimeSpan XAxisGraduationTime { get; set; } = new TimeSpan(0, 10, 0);
-        [GoProperty(PCategory.Misc, 9)] public int YAxisGraduationCount { get; set; } = 10;
-        [GoProperty(PCategory.Misc, 10)] public string? TimeFormatString { get; set; } = null;
-        [GoProperty(PCategory.Misc, 11)] public string? ValueFormatString { get; set; } = null;
+        [GoProperty(PCategory.Control, 7)] public TimeSpan XScale { get; set; } = new TimeSpan(1, 0, 0);
+        [GoProperty(PCategory.Control, 8)] public TimeSpan XAxisGraduationTime { get; set; } = new TimeSpan(0, 10, 0);
+        [GoProperty(PCategory.Control, 9)] public int YAxisGraduationCount { get; set; } = 10;
+        [GoProperty(PCategory.Control, 10)] public string? TimeFormatString { get; set; } = null;
+        [GoProperty(PCategory.Control, 11)] public string? ValueFormatString { get; set; } = null;
 
-        [GoProperty(PCategory.Misc, 12)] public List<GoLineGraphSeries> Series { get; set; } = [];
+        [GoProperty(PCategory.Control, 12)] public List<GoLineGraphSeries> Series { get; set; } = [];
         #endregion
 
         #region Member Variable

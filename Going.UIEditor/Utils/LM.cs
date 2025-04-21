@@ -34,6 +34,7 @@ namespace Going.UIEditor.Utils
             }
         }
         #endregion
+ 
         #region Save
         public static string Save
         {
@@ -688,6 +689,81 @@ namespace Going.UIEditor.Utils
             {
                 if (lang == Lang.KO) return "Containers";
                 else if (lang == Lang.EN) return "Containers";
+                else return "";
+            }
+        }
+        #endregion
+        #endregion
+
+        #region 컬렉션 에디터
+        #region Item
+        public static string Item
+        {
+            get
+            {
+                if (lang == Lang.KO) return "항목";
+                else if (lang == Lang.EN) return "Item";
+                else return "";
+            }
+        }
+        #endregion
+        #region Items
+        public static string Items
+        {
+            get
+            {
+                if (lang == Lang.KO) return "목록";
+                else if (lang == Lang.EN) return "Items";
+                else return "";
+            }
+        }
+        #endregion
+        #endregion
+
+        #region 리소스 메니저
+        #region ImageList
+        public static string ImageList
+        {
+            get
+            {
+                if (lang == Lang.KO) return "이미지 목록";
+                else if (lang == Lang.EN) return "Images";
+                else return "";
+            }
+        }
+        #endregion
+        #endregion
+
+        #region 새 페이지
+        #region NewPage
+        public static string NewPage
+        {
+            get
+            {
+                if (lang == Lang.KO) return "새 페이지";
+                else if (lang == Lang.EN) return "New Page";
+                else return "";
+            }
+        }
+        #endregion
+        #region PageName
+        public static string PageName
+        {
+            get
+            {
+                if (lang == Lang.KO) return "페이지 명";
+                else if (lang == Lang.EN) return "Page Name";
+                else return "";
+            }
+        }
+        #endregion
+        #region PageType
+        public static string PageType
+        {
+            get
+            {
+                if (lang == Lang.KO) return "페이지 유형";
+                else if (lang == Lang.EN) return "Page Type";
                 else return "";
             }
         }

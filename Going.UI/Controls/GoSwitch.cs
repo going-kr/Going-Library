@@ -23,28 +23,28 @@ namespace Going.UI.Controls
         #endregion
 
         #region Properties
-        [GoProperty(PCategory.Misc, 0)] public string OnText { get; set; } = "On";
-        [GoProperty(PCategory.Misc, 1)] public string OffText { get; set; } = "Off";
-        [GoProperty(PCategory.Misc, 2)] public string? OnIconString { get; set; }
-        [GoProperty(PCategory.Misc, 3)] public string? OffIconString { get; set; }
-        [GoProperty(PCategory.Misc, 4)] public string FontName { get; set; } = "나눔고딕";
-        [GoProperty(PCategory.Misc, 5)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
-        [GoProperty(PCategory.Misc, 6)] public float FontSize { get; set; } = 12;
-        [GoProperty(PCategory.Misc, 7)] public float IconSize { get; set; } = 12;
-        [GoProperty(PCategory.Misc, 8)] public GoDirectionHV IconDirection { get; set; }
-        [GoProperty(PCategory.Misc,10)] public float IconGap { get; set; } = 5;
+        [GoProperty(PCategory.Control, 0)] public string OnText { get; set; } = "On";
+        [GoProperty(PCategory.Control, 1)] public string OffText { get; set; } = "Off";
+        [GoProperty(PCategory.Control, 2)] public string? OnIconString { get; set; }
+        [GoProperty(PCategory.Control, 3)] public string? OffIconString { get; set; }
+        [GoProperty(PCategory.Control, 4)] public string FontName { get; set; } = "나눔고딕";
+        [GoProperty(PCategory.Control, 5)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Control, 6)] public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 7)] public float IconSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 8)] public GoDirectionHV IconDirection { get; set; }
+        [GoProperty(PCategory.Control,10)] public float IconGap { get; set; } = 5;
 
-        [GoProperty(PCategory.Misc,11)] public string OnTextColor { get; set; } = "Fore";
-        [GoProperty(PCategory.Misc,12)] public string OffTextColor { get; set; } = "Base5";
-        [GoProperty(PCategory.Misc,13)] public string BoxColor { get; set; } = "Base1";
-        [GoProperty(PCategory.Misc,14)] public string BorderColor { get; set; } = "Base3";
-        [GoProperty(PCategory.Misc,15)] public string SwitchColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Control,11)] public string OnTextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Control,12)] public string OffTextColor { get; set; } = "Base5";
+        [GoProperty(PCategory.Control,13)] public string BoxColor { get; set; } = "Base1";
+        [GoProperty(PCategory.Control,14)] public string BorderColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Control,15)] public string SwitchColor { get; set; } = "Base3";
 
-        [GoProperty(PCategory.Misc,16)] public string OnIconColor { get; set; } = "lime";
-        [GoProperty(PCategory.Misc,17)] public string OffIconColor { get; set; } = "red";
+        [GoProperty(PCategory.Control,16)] public string OnIconColor { get; set; } = "lime";
+        [GoProperty(PCategory.Control,17)] public string OffIconColor { get; set; } = "red";
 
         private bool bOnOff = false;
-        [GoProperty(PCategory.Misc,18)]
+        [GoProperty(PCategory.Control,18)]
         public bool OnOff
         {
             get => bOnOff;

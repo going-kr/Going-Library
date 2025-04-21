@@ -74,7 +74,7 @@ namespace Going.UI.Forms.Controls
                     using (new SKAutoCanvasRestore(canvas))
                     {
                         canvas.ClipPath(path, SKClipOperation.Intersect, true);
-                        canvas.DrawBitmap(img, rt);
+                        canvas.DrawImage(img, rt, Util.Sampling);
                     }
                 }
             }

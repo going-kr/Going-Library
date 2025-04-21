@@ -15,11 +15,11 @@ namespace Going.UI.Controls
     public class GoPicture : GoControl
     {
         #region Properties
-        [GoImageProperty(PCategory.Misc, 0)] public string? Image { get; set; }
-        [GoProperty(PCategory.Misc, 1)] public GoImageScaleMode ScaleMode { get; set; } = GoImageScaleMode.Real;
-        [GoProperty(PCategory.Misc, 2)] public GoRoundType Round { get; set; } = GoRoundType.Rect;
+        [GoImageProperty(PCategory.Control, 0)] public string? Image { get; set; }
+        [GoProperty(PCategory.Control, 1)] public GoImageScaleMode ScaleMode { get; set; } = GoImageScaleMode.Real;
+        [GoProperty(PCategory.Control, 2)] public GoRoundType Round { get; set; } = GoRoundType.Rect;
         #endregion
-
+ 
         #region Override
         #region OnDraw
         protected override void OnDraw(SKCanvas canvas)
@@ -66,7 +66,7 @@ namespace Going.UI.Controls
                     using (new SKAutoCanvasRestore(canvas))
                     {
                         canvas.ClipPath(path, SKClipOperation.Intersect, true);
-                        canvas.DrawBitmap(img, rt);
+                        canvas.DrawImage(img, rt, Util.Sampling);
                     }
                 }
             }

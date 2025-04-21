@@ -22,8 +22,8 @@ namespace Going.UI.Datas
     public class GoToolItem
     {
         #region Properties
-        [GoProperty(PCategory.Control, 0)] public string? Text { get; set; }
-        [GoProperty(PCategory.Control, 1)] public string? IconString { get; set; }
+        [GoProperty(PCategory.Basic, 0)] public string? Text { get; set; }
+        [GoProperty(PCategory.Basic, 1)] public string? IconString { get; set; }
         public object? Tag { get; set; }
 
         [JsonIgnore] internal SKRect Bounds { get; set; }
@@ -103,11 +103,11 @@ namespace Going.UI.Datas
     public class GoToolCategory
     {
         #region Properties
-        [GoProperty(PCategory.Control, 0)] public string? Text { get; set; }
-        [GoProperty(PCategory.Control, 1)] public string? IconString { get; set; }
+        [GoProperty(PCategory.Basic, 0)] public string? Text { get; set; }
+        [GoProperty(PCategory.Basic, 1)] public string? IconString { get; set; }
         public object? Tag { get; set; }
-        [GoProperty(PCategory.Control, 2)] public ObservableList<GoToolItem> Items { get; set; } = [];
-        [GoProperty(PCategory.Control, 3)] public bool Expand { get; set; } = true;
+        [GoProperty(PCategory.Basic, 2)] public ObservableList<GoToolItem> Items { get; set; } = [];
+        [GoProperty(PCategory.Basic, 3)] public bool Expand { get; set; } = true;
 
         [JsonIgnore] internal bool Changed { get => Items.Changed; set => Items.Changed = value; }
        

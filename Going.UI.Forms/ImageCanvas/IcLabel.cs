@@ -56,12 +56,12 @@ namespace Going.UI.Forms.ImageCanvas
             var rtBox = Util.FromRect(0, 0, Width, Height);
             var cText = thm.ToColor(TextColor);
 
-            var (ip, img, cBack) = vars();
-            if (ip != null && img != null && Parent != null && img.On != null && img.Off != null)
+            var (ip, off, on, cBack) = vars();
+            if (ip != null && Parent != null && on != null && off != null)
             {
-                var sx = (double)img.On.Width / Parent.Width;
-                var sy = (double)img.On.Height / Parent.Height;
-                canvas.DrawBitmap(img.Off, Util.FromRect(Convert.ToInt16(Left * sx), Convert.ToInt32(Top * sy), Convert.ToInt32(Width * sx), Convert.ToInt32(Height * sy)), rtBox);
+                var sx = on.Width / Parent.Width;
+                var sy = on.Height / Parent.Height;
+                canvas.DrawImage(off, Util.FromRect(Left * sx, Top * sy, Width * sx, Height * sy), rtBox, Util.Sampling);
 
                 Util.DrawTextIcon(canvas, Text, FontName, FontStyle, FontSize, IconString, IconSize, IconDirection, IconGap, rtBox, cText, ContentAlignment);
             }
@@ -95,27 +95,28 @@ namespace Going.UI.Forms.ImageCanvas
 
         #region Method
         #region vars
-        (IcImageFolder? ip, IcOnOffImage? img, SKColor cBack) vars()
+        (IcFolder? ip, SKImage? on, SKImage? off, SKColor cBack) vars()
         {
             var thm = GoTheme.Current;
+            IcFolder? ip = null;
+            SKImage? on = null, off = null;
             SKColor cBack = thm.Back;
-            IcImageFolder? ip = null;
-            IcOnOffImage? img = null;
 
             if (Parent is IcContainer con)
             {
                 ip = IcResources.Get(con.ImageFolder);
                 cBack = thm.ToColor(con.BackgroundColor);
-                img = ip != null && con.ContainerName != null && ip.Containers.TryGetValue(con.ContainerName, out var v) ? v : null;
+                if (ip != null && ip.GetImage(con.OffImage)?.FirstOrDefault() is SKImage ioff && ip.GetImage(con.OnImage)?.FirstOrDefault() is SKImage ion) { on = ion; off = ioff; }
             }
             else if (Parent is TabPage tab && tab.Parent is IcCanvas ic)
             {
                 ip = IcResources.Get(ic.ImageFolder);
                 cBack = thm.ToColor(ic.BackgroundColor);
-                img = ip != null && tab.Name != null && ip.Pages.TryGetValue(tab.Name, out var v) ? v : null;
+                var nm = ic.TabPageImage.FirstOrDefault(x => x.TabPage == ic.SelectedTab);
+                if (ip != null && nm != null && ip.GetImage(nm.OffImage)?.FirstOrDefault() is SKImage ioff && ip.GetImage(nm.OnImage)?.FirstOrDefault() is SKImage ion) { on = ion; off = ioff; }
             }
 
-            return (ip, img, cBack);
+            return (ip, on, off, cBack);
         }
         #endregion
         #endregion

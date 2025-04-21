@@ -23,21 +23,21 @@ namespace Going.UI.Controls
         #endregion
 
         #region Properties
-        [GoProperty(PCategory.Misc, 0)] public string FontName { get; set; } = "나눔고딕";
-        [GoProperty(PCategory.Misc, 1)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
-        [GoProperty(PCategory.Misc, 2)] public float FontSize { get; set; } = 18;
+        [GoProperty(PCategory.Control, 0)] public string FontName { get; set; } = "나눔고딕";
+        [GoProperty(PCategory.Control, 1)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Control, 2)] public float FontSize { get; set; } = 18;
 
-        [GoProperty(PCategory.Misc, 3)] public string Title { get; set; } = "Title";
-        [GoProperty(PCategory.Misc, 4)] public float TitleFontSize { get; set; } = 12;
-        [GoProperty(PCategory.Misc, 5)] public float RemarkFontSize { get; set; } = 10;
+        [GoProperty(PCategory.Control, 3)] public string Title { get; set; } = "Title";
+        [GoProperty(PCategory.Control, 4)] public float TitleFontSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 5)] public float RemarkFontSize { get; set; } = 10;
 
-        [GoProperty(PCategory.Misc, 6)] public string TextColor { get; set; } = "Fore";
-        [GoProperty(PCategory.Misc, 7)] public string NeedleColor { get; set; } = "Fore";
-        [GoProperty(PCategory.Misc, 8)] public string NeedlePointColor { get; set; } = "Red";
-        [GoProperty(PCategory.Misc, 9)] public string RemarkColor { get; set; } = "Base5";
+        [GoProperty(PCategory.Control, 6)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Control, 7)] public string NeedleColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Control, 8)] public string NeedlePointColor { get; set; } = "Red";
+        [GoProperty(PCategory.Control, 9)] public string RemarkColor { get; set; } = "Base5";
 
         private double nValue = 0;
-        [GoProperty(PCategory.Misc, 10)]
+        [GoProperty(PCategory.Control, 10)]
         public double Value
         {
             get => nValue;
@@ -51,14 +51,14 @@ namespace Going.UI.Controls
             }
         }
 
-        [GoProperty(PCategory.Misc, 11)] public double Minimum { get; set; } = 0;
-        [GoProperty(PCategory.Misc, 12)] public double Maximum { get; set; } = 100;
+        [GoProperty(PCategory.Control, 11)] public double Minimum { get; set; } = 0;
+        [GoProperty(PCategory.Control, 12)] public double Maximum { get; set; } = 100;
 
-        [GoProperty(PCategory.Misc, 13)] public int GraduationLarge { get; set; } = 10;
-        [GoProperty(PCategory.Misc, 14)] public int GraduationSmall { get; set; } = 2;
+        [GoProperty(PCategory.Control, 13)] public int GraduationLarge { get; set; } = 10;
+        [GoProperty(PCategory.Control, 14)] public int GraduationSmall { get; set; } = 2;
 
-        [GoProperty(PCategory.Misc, 15)] public string Format { get; set; } = "0";
-        [GoProperty(PCategory.Misc, 16)] public int Gap { get; set; } = 0;
+        [GoProperty(PCategory.Control, 15)] public string Format { get; set; } = "0";
+        [GoProperty(PCategory.Control, 16)] public int Gap { get; set; } = 0;
         #endregion
 
         #region Event

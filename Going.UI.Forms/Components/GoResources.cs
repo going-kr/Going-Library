@@ -36,7 +36,7 @@ namespace Going.UI.Forms.Components
     {
         #region Properties
         public string ImageFolder { get; }
-        public Dictionary<string, List<SKBitmap>> Images { get; } = [];
+        public Dictionary<string, List<SKImage>> Images { get; } = [];
         #endregion
 
         #region Constructor

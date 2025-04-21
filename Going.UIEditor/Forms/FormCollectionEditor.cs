@@ -3,6 +3,7 @@ using Going.UI.Controls;
 using Going.UI.Datas;
 using Going.UI.Enums;
 using Going.UI.Forms.Dialogs;
+using Going.UIEditor.Utils;
 using Going.UIEditor.Windows;
 using GuiLabs.Undo;
 using SkiaSharp;
@@ -28,6 +29,7 @@ namespace Going.UIEditor.Forms
         List<CollectionEditorItem<T>> items = [];
         #endregion
 
+        #region Constructor
         public FormCollectionEditor()
         {
             InitializeComponent();
@@ -64,21 +66,31 @@ namespace Going.UIEditor.Forms
             };
 
             btnAdd.ButtonClicked += (o, s) => AddItem();
+            btnDel.ButtonClicked += (o, s) => DelItem();
             #endregion
 
             TitleIconString = "fa-list";
         }
+        #endregion
 
+        #region Method
+        #region ValidCheck
         bool ValidCheck()
         {
-
             return true;
         }
+        #endregion
 
+        #region ShowCollectionEditor
         public List<T>? ShowCollectionEditor(string title,  IEnumerable<T>? vals)
         {
             this.Title = title;
 
+            btnOK.Text = LM.Ok;
+            btnCancel.Text = LM.Cancel;
+            dg.Columns[0].HeaderText = LM.Item;
+            goLabel1.Text = LM.Items;
+            goLabel2.Text = LM.Properties;
             items.Clear();
             if (vals != null) items.AddRange(vals.Select(x => new CollectionEditorItem<T>(x)) ?? []);
             dg.SetDataSource(items);
@@ -90,23 +102,41 @@ namespace Going.UIEditor.Forms
             }
             return ret;
         }
+        #endregion
 
+        #region AddItem
         void AddItem()
         {
             items.Add(new CollectionEditorItem<T>(Activator.CreateInstance<T>()));
             dg.SetDataSource(items);
             dg.Invalidate();
         }
+        #endregion
+        #region DelItem
+        void DelItem()
+        {
+            var sel = dg.Rows.FirstOrDefault(x => x.Selected)?.Source as CollectionEditorItem<T>;
+            if (sel != null)
+            {
+                items.Remove(sel);
+                dg.SetDataSource(items);
+                dg.Invalidate();
+            }
+        }
+        #endregion
 
         #region IsCollection
         public static bool IsCollection(PropertyInfo? Info) => Info != null && typeof(IEnumerable).IsAssignableFrom(Info.PropertyType) && Info.PropertyType != typeof(string) && !Attribute.IsDefined(Info, typeof(GoSizesPropertyAttribute));
         #endregion
+        #endregion
 
     }
 
+    #region class : CollectionEditorItem
     class CollectionEditorItem<T> (T val)
     {
         public string Text => Value?.ToString() ?? "";
         public T Value => val;
     }
+    #endregion
 }

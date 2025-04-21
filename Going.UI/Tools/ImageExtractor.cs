@@ -9,45 +9,45 @@ namespace Going.UI.Tools
 {
     public class ImageExtractor
     {
-        public static List<SKBitmap> ProcessImageFromMemory(byte[] imageData)
+        public static List<SKImage> ProcessImageFromMemory(byte[] imageData)
         {
-            var frames = new List<SKBitmap>();
+            var frames = new List<SKImage>();
 
             try
             {
-                using (var stream = new SKMemoryStream(imageData))
-                using (var codec = SKCodec.Create(stream))
+                using var stream = new SKMemoryStream(imageData);
+                using var codec = SKCodec.Create(stream);
+
+                if (codec == null)
+                    throw new Exception("제공된 이미지 데이터에서 코덱을 생성할 수 없습니다.");
+
+                var info = codec.Info;
+                var frameCount = codec.FrameCount;
+
+                if (frameCount > 1)
                 {
-                    if (codec == null) throw new Exception("제공된 이미지 데이터에서 코덱을 생성할 수 없습니다.");
-
-                    var info = codec.Info;
-                    var frameCount = codec.FrameCount;
-
-                    if (frameCount > 1)
+                    for (int i = 0; i < frameCount; i++)
                     {
-                        for (int i = 0; i < frameCount; i++)
+                        using var bitmap = new SKBitmap(info);
+                        if (codec.GetFrameInfo(i, out var frameInfo))
                         {
-                            using (var bitmap = new SKBitmap(info))
+                            var options = new SKCodecOptions(i);
+                            var result = codec.GetPixels(info, bitmap.GetPixels(), options);
+                            if (result == SKCodecResult.Success)
                             {
-                                if (codec.GetFrameInfo(i, out var frameInfo))
-                                {
-                                    var options = new SKCodecOptions(i);
-                                    var result = codec.GetPixels(info, bitmap.GetPixels(), options);
-                                    if (result == SKCodecResult.Success)
-                                    {
-                                        frames.Add(bitmap.Copy());
-                                    }
-                                }
+                                var image = SKImage.FromBitmap(bitmap);
+                                if (image != null) frames.Add(image);
                             }
                         }
                     }
-                    else
+                }
+                else
+                {
+                    using var bitmap = new SKBitmap(info);
+                    if (codec.GetPixels(info, bitmap.GetPixels()) == SKCodecResult.Success)
                     {
-                        var bitmap = new SKBitmap(info);
-                        if (codec.GetPixels(info, bitmap.GetPixels()) == SKCodecResult.Success)
-                        {
-                            frames.Add(bitmap);
-                        }
+                        var image = SKImage.FromBitmap(bitmap);
+                        if (image != null) frames.Add(image);
                     }
                 }
             }

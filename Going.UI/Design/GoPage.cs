@@ -1,5 +1,6 @@
 ﻿using Going.UI.Containers;
 using Going.UI.Controls;
+using Going.UI.Utils;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -41,7 +42,7 @@ namespace Going.UI.Design
             if (Design != null && BackgroundImage != null)
             {
                 var bg = Design.GetImage(BackgroundImage);
-                if (bg != null && bg.Count > 0) canvas.DrawBitmap(bg[0], rtContent);
+                if (bg != null && bg.Count > 0) canvas.DrawImage(bg[0], rtContent, Util.Sampling);
             }
         }
         #endregion

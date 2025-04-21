@@ -36,6 +36,9 @@
             lblValue1 = new Going.UI.Forms.ImageCanvas.IcLabel();
             lblValue2 = new Going.UI.Forms.ImageCanvas.IcLabel();
             lblTitle = new Going.UI.Forms.ImageCanvas.IcLabel();
+            icStateImage1 = new Going.UI.Forms.ImageCanvas.IcStateImage();
+            icStateImage2 = new Going.UI.Forms.ImageCanvas.IcStateImage();
+            icStateImage3 = new Going.UI.Forms.ImageCanvas.IcStateImage();
             SuspendLayout();
             // 
             // btnSetting
@@ -110,6 +113,9 @@
             stateIco.Name = "stateIco";
             stateIco.Size = new Size(70, 46);
             stateIco.State = 0;
+            stateIco.StateImages.Add(icStateImage1);
+            stateIco.StateImages.Add(icStateImage2);
+            stateIco.StateImages.Add(icStateImage3);
             stateIco.StateName = "icon";
             stateIco.TabIndex = 4;
             stateIco.Text = "icState1";
@@ -165,10 +171,24 @@
             lblTitle.Text = "A-1";
             lblTitle.TextColor = "Black";
             // 
+            // icStateImage1
+            // 
+            icStateImage1.Image = "icon.state.0";
+            icStateImage1.State = 0;
+            // 
+            // icStateImage2
+            // 
+            icStateImage2.Image = "icon.state.1";
+            icStateImage2.State = 1;
+            // 
+            // icStateImage3
+            // 
+            icStateImage3.Image = "icon.state.2";
+            icStateImage3.State = 2;
+            // 
             // Box
             // 
             BackgroundColor = "white";
-            ContainerName = "box";
             Controls.Add(lblTitle);
             Controls.Add(lblValue2);
             Controls.Add(lblValue1);
@@ -177,8 +197,10 @@
             Controls.Add(ooRun);
             Controls.Add(ooAlm);
             Controls.Add(btnSetting);
-            ImageFolder = "C:\\Users\\hello\\OneDrive\\Desktop\\RiderProjects\\Going-Library\\ImageCanvasSample";
+            ImageFolder = "C:\\Users\\hy752\\Desktop\\ImageCanvasSample";
             Name = "Box";
+            OffImage = "box.container.off";
+            OnImage = "box.container.on";
             Size = new Size(187, 172);
             ResumeLayout(false);
         }
@@ -193,5 +215,8 @@
         private Going.UI.Forms.ImageCanvas.IcLabel lblValue1;
         private Going.UI.Forms.ImageCanvas.IcLabel lblValue2;
         private Going.UI.Forms.ImageCanvas.IcLabel lblTitle;
+        private Going.UI.Forms.ImageCanvas.IcStateImage icStateImage1;
+        private Going.UI.Forms.ImageCanvas.IcStateImage icStateImage2;
+        private Going.UI.Forms.ImageCanvas.IcStateImage icStateImage3;
     }
 }

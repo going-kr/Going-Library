@@ -38,7 +38,7 @@ namespace Going.UI.Containers
         }
 
         [JsonIgnore] public override IEnumerable<IGoControl> Childrens => SelectedPage?.Childrens ?? [];
-        [GoProperty(PCategory.Misc, 0)] public List<GoSubPage> Pages { get; set; } = [];
+        [GoProperty(PCategory.Control, 0)] public List<GoSubPage> Pages { get; set; } = [];
         //[GoProperty(PCategory.Misc, 0), JsonInclude] public List<GoSubPage> Pages { get; } = [];
         #endregion
 

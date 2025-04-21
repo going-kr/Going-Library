@@ -16,8 +16,8 @@ namespace Going.UI.ImageCanvas
     public class IcState : GoControl
     {
         #region Properties
-        public string? StateImage { get; set; }
-        public int State { get; set; }
+        [GoProperty(PCategory.Control, 0)] public List<StateImage> StateImages { get; set; } = [];
+        [GoProperty(PCategory.Control, 1)] public int State { get; set; }
         #endregion
 
         #region Member Variable
@@ -30,44 +30,21 @@ namespace Going.UI.ImageCanvas
             var rts = Areas();
             var rtBox = rts["Content"];
 
-            var (ip, img, cBack) = vars();
-            if (ip != null && img != null && Parent != null && img.On != null && img.Off != null)
+            if (Design != null && Parent != null)
             {
-                if (StateImage != null && ip.States.TryGetValue(StateImage, out var dic) && dic.TryGetValue(State, out var bm) && bm != null)
-                    canvas.DrawBitmap(bm, rtBox);
+                var simg = StateImages.FirstOrDefault(x=>x.State == State);
+                var img = Design.GetImage(simg?.Image)?.FirstOrDefault();
+                if (img != null) canvas.DrawImage(img, rtBox, Util.Sampling);
             }
 
             base.OnDraw(canvas);
         }
         #endregion
+    }
 
-        #region Method
-        #region vars
-        (IcImageFolder? ip, IcOnOffImage? img, SKColor cBack) vars()
-        {
-            var thm = GoTheme.Current;
-            SKColor cBack = thm.Back;
-            IcImageFolder? ip = null;
-            IcOnOffImage? img = null;
-
-            if (Design != null)
-            {
-                ip = Design.GetIC();
-                if (Parent is IcContainer con)
-                {
-                    cBack = thm.ToColor(con.BackgroundColor);
-                    img = ip != null && con.ContainerImage != null && ip.Containers.TryGetValue(con.ContainerImage, out var v) ? v : null;
-                }
-                else if (Parent is IcPage page)
-                {
-                    cBack = thm.ToColor(page.BackgroundColor);
-                    img = ip != null && page.Name != null && ip.Pages.TryGetValue(page.Name, out var v) ? v : null;
-                }
-            }
-
-            return (ip, img, cBack);
-        }
-        #endregion
-        #endregion
+    public class StateImage
+    {
+        [GoProperty(PCategory.Control, 0)] public string? Image { get; set; }
+        [GoProperty(PCategory.Control, 1)] public int State { get; set; }
     }
 }

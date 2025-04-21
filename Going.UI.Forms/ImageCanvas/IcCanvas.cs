@@ -15,6 +15,7 @@ using System.Text.RegularExpressions;
 using Going.UI.Themes;
 using SkiaSharp.Views.Desktop;
 using System.Runtime.InteropServices;
+using Going.UI.Tools;
 
 namespace Going.UI.Forms.ImageCanvas
 {
@@ -37,7 +38,7 @@ namespace Going.UI.Forms.ImageCanvas
                 if (sImageFolder != value)
                 {
                     sImageFolder = value;
-                    IcResources.Load(sImageFolder);
+                    if (sImageFolder != null) IcResources.Load(sImageFolder);
                     Invalidate();
                 }
             }
@@ -45,9 +46,14 @@ namespace Going.UI.Forms.ImageCanvas
 
         public string BackgroundColor { get; set; } = "Back";
 
+        [Editor(typeof(CollectionEditor), typeof(UITypeEditor))]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+        public List<TabPageBackground> TabPageImage { get; } = [];
+
         [Browsable(true)]
         [EditorBrowsable(EditorBrowsableState.Always)]
         public new TabPage SelectedTab { get => base.SelectedTab; set { base.SelectedTab = value; } }
+
         #endregion
 
         #region Member Variable
@@ -96,8 +102,9 @@ namespace Going.UI.Forms.ImageCanvas
                         {
                             using var p = new SKPaint { IsAntialias = true, Color = SKColors.Black.WithAlpha(Convert.ToByte(Enabled ? 255 : 255 - GoTheme.DisableAlpha)) };
                             var sp = canvas.SaveLayer(p);
-                            if (name != null && ip.Pages.TryGetValue(name, out var vp) && vp.On != null && vp.Off != null)
-                                canvas.DrawBitmap(vp.Off, Util.FromRect(0, 0, Width, Height));
+                            var nm = TabPageImage.FirstOrDefault(x => x.TabPage == SelectedTab);
+                            if (name != null && nm != null && ip.GetImage(nm.OffImage)?.FirstOrDefault() is SKImage off && ip.GetImage(nm.OnImage)?.FirstOrDefault() is SKImage on)
+                                canvas.DrawImage(off, Util.FromRect(0, 0, Width, Height), Util.Sampling);
                             canvas.RestoreToCount(sp);
                         }
 
@@ -119,5 +126,12 @@ namespace Going.UI.Forms.ImageCanvas
         }
         #endregion
         #endregion
+    }
+
+    public class TabPageBackground  : Component
+    {
+        public TabPage? TabPage { get; set; }
+        public string? OnImage { get; set; }
+        public string? OffImage { get; set; }
     }
 }

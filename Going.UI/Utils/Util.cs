@@ -23,6 +23,8 @@ namespace Going.UI.Utils
 {
     public class Util
     {
+        public readonly static SKSamplingOptions Sampling = new(SKCubicResampler.Mitchell);
+
         #region Member Variable
         static Dictionary<string, Dictionary<GoFontStyle, SKTypeface>> fontCache = [];
         #endregion
