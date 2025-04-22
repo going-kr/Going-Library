@@ -38,12 +38,15 @@ namespace Going.UIEditor.Windows
 
         public bool CanUndo => actmgr.CanUndo;
         public bool CanRedo => actmgr.CanRedo;
+
+        public int SelectedItemCount => sels.Count;
         #endregion
 
         #region Member Variable
         private Timer tmr;
         ActionManager actmgr;
-        List<IGoControl> sels { get; } = [];
+        //List<IGoControl> sels { get; } = [];
+        List<object> sels { get; } = [];
         bool selDesign = false;
         Anchor? dragAnchor;
 
@@ -60,7 +63,7 @@ namespace Going.UIEditor.Windows
             #region set
             Target = editorTarget;
             AllowDrop = true;
-            if (editorTarget is GoDesign) { Title = "Mater"; TitleIconString = "fa-pager"; }
+            if (editorTarget is GoDesign) { Title = "Master"; TitleIconString = "fa-pager"; }
             else if (editorTarget is GoPage page) { Title = page.Name ?? ""; TitleIconString = "fa-file-image"; }
             else if (editorTarget is GoWindow wnd) { Title = wnd.Name ?? ""; TitleIconString = "fa-window-maximize"; }
             #endregion
@@ -91,19 +94,13 @@ namespace Going.UIEditor.Windows
         }
         #endregion
 
-        #region OnActivated
+        #region GotFocus
         protected override void OnGotFocus(EventArgs e)
         {
             if (DockPanel.Contents.FirstOrDefault(x => x is PropertiesWindow) is PropertiesWindow pw)
             {
-                var (editor, _) = pw.GetSelectedObject();
-                if (editor != this)
-                {
-                    if (sels?.Count() == 0 && Target is GoDesign design2)
-                        pw.SelectDesign(this, design2);
-                    else
-                        pw.SelectObjects(this, sels);
-                }
+                if (pw.SelectedEditor != this)
+                    pw.SelectObjects(this, sels);
             }
             base.OnGotFocus(e);
         }
@@ -286,7 +283,7 @@ namespace Going.UIEditor.Windows
                                 p.PathEffect = null;
                             }
 
-                            foreach (var c in sels)
+                            foreach (var c in sels.Select(x => x as IGoControl).Where(x => x != null))
                             {
                                 if (c is GoControl vc)
                                 {
@@ -372,20 +369,12 @@ namespace Going.UIEditor.Windows
                             #endregion
 
                             #region selected design
-                            if (Target is GoDesign design2)
+                            if (Target is GoDesign design2 && sels.FirstOrDefault() is GoDesign ds)
                             {
-                                if (DockPanel.Contents.FirstOrDefault(x => x is PropertiesWindow) is PropertiesWindow pw)
-                                {
-                                    var (wnd, vsels) = pw.GetSelectedObject();
-                                    if(wnd == this && vsels?.FirstOrDefault() == prj.Design)
-                                    {
-                                        p.IsStroke = true;
-                                        p.Color = SKColors.Red;
-                                        p.StrokeWidth = 1;
-                                        canvas.DrawRect(Util.FromRect(0, 0, prj.Width, prj.Height), p);
-                                    }
-
-                                }
+                                p.IsStroke = true;
+                                p.Color = SKColors.Red;
+                                p.StrokeWidth = 1;
+                                canvas.DrawRect(Util.FromRect(0, 0, prj.Width, prj.Height), p);
                             }
                             #endregion
                         }
@@ -626,11 +615,16 @@ namespace Going.UIEditor.Windows
                         if (ptDown.HasValue)
                         {
                             #region search
-                            List<IGoControl>? vsels = null;
+                            List<object>? vsels = null;
                             if (Math.Abs(MathTool.GetDistance(new SKPoint(x, y), ptDown.Value)) > 3)
-                                vsels = target_control(ptDown.Value, new SKPoint(x, y));
+                                vsels = target_control(ptDown.Value, new SKPoint(x, y)).Cast<object>().ToList();
                             else
-                                vsels = target_control(x, y) is IGoControl c ? [c] : [];
+                            {
+                                if ((vsels == null || vsels?.Count == 0) && Target is GoDesign ds)
+                                    vsels = [ds];
+                                else
+                                    vsels = target_control(x, y) is IGoControl c ? [c] : [];
+                            }
                             #endregion
                             #region select
                             if (vsels != null)
@@ -679,18 +673,15 @@ namespace Going.UIEditor.Windows
                 }
 
                 #region release
-                var clears1 = sels.Where(x => x.Parent is GoTabControl tab && !tab.Childrens.Contains(x)).ToArray();
-                var clears2 = sels.Where(x => x.Parent is GoSwitchPanel swpnl && !swpnl.Childrens.Contains(x)).ToArray();
+                var clears1 = sels.Where(x => x is IGoControl sc && sc.Parent is GoTabControl tab && !tab.Childrens.Contains(sc)).ToArray();
+                var clears2 = sels.Where(x => x is IGoControl sc && sc.Parent is GoSwitchPanel swpnl && !swpnl.Childrens.Contains(sc)).ToArray();
                 foreach (var c in clears1) sels.Remove(c);
                 foreach (var c in clears2) sels.Remove(c);
 
                 changed |= clears1.Count() > 0 || clears2.Count() > 0;
                 if (changed && DockPanel.Contents.FirstOrDefault(x => x is PropertiesWindow) is PropertiesWindow pw)
                 {
-                    if (sels?.Count() == 0 && Target is GoDesign design2)
-                        pw.SelectDesign(this, design2);
-                    else
-                        pw.SelectObjects(this, sels);
+                    pw.SelectObjects(this, sels);
                 }
 
                 downControl = null;
@@ -750,6 +741,8 @@ namespace Going.UIEditor.Windows
 
                         case Keys.Control | Keys.Z: Undo(); break;
                         case Keys.Control | Keys.Y: Redo(); break;
+
+                        case Keys.Control | Keys.A: SelectAll(); break;
 
                         case Keys.Delete: Delete(); break;
 
@@ -964,7 +957,7 @@ namespace Going.UIEditor.Windows
             }
         }
 
-        public void SelectedControl(IEnumerable<IGoControl> olds, IEnumerable<IGoControl> news)
+        public void SelectedControl(IEnumerable<object> olds, IEnumerable<object> news)
         {
             var p = Program.CurrentProject;
             if (p != null)
@@ -977,18 +970,19 @@ namespace Going.UIEditor.Windows
 
         #region Edit
         #region Copy / Cut / Paste / Escape
-        void Copy()
+        public void Copy()
         {
-            var s = JsonSerializer.Serialize(sels, GoJsonConverter.Options);
+            var vsels = sels.Where(x => x is not GoPage && x is not GoTitleBar && x is not GoSideBar && x is not GoFooter && x is not GoDesign).Select(x => x as IGoControl).Where(x => x != null);
+            var s = JsonSerializer.Serialize(vsels, GoJsonConverter.Options);
             Clipboard.SetData("going-control", s);
         }
-        void Cut()
+        public void Cut()
         {
             Copy();
             Delete();
         }
 
-        void Paste()
+        public void Paste()
         {
             var s = Clipboard.GetData("going-control") as string;
             if (s != null)
@@ -1048,6 +1042,20 @@ namespace Going.UIEditor.Windows
         }
         #endregion
 
+        #region SelectAll
+        public void SelectAll()
+        {
+            var p = Program.CurrentProject;
+            if (p != null )
+            {
+                var alls = search_control(container()).Where(xc => xc.Parent is IGoControl vcon ? CollisionTool.Check(xc.Bounds, Util.FromRect(xc.Parent.ViewPosition.X, xc.Parent.ViewPosition.Y, vcon.Width, vcon.Height)) : false);
+                sels.Clear();
+                sels.AddRange(alls);
+                Invalidate();
+            }
+        }
+        #endregion
+
         #region ControlMove
         void ControlMove(float gx, float gy)
         {
@@ -1056,7 +1064,7 @@ namespace Going.UIEditor.Windows
             {
                 TransAction(() =>
                 {
-                    foreach (var c in sels.Where(x => x.Parent is not GoTableLayoutPanel && x.Parent is not GoGridLayoutPanel))
+                    foreach (var c in sels.Select(x => x as IGoControl).Where(x => x != null && x.Parent is not GoTableLayoutPanel && x.Parent is not GoGridLayoutPanel))
                     {
                         var ort = c.Bounds;
                         var nrt = c.Bounds; nrt.Offset(gx, gy);
@@ -1068,7 +1076,7 @@ namespace Going.UIEditor.Windows
         #endregion
 
         #region Delete 
-        void Delete()
+        public void Delete()
         {
             var p = Program.CurrentProject;
             if (p != null)
@@ -1277,7 +1285,7 @@ namespace Going.UIEditor.Windows
         Anchor? selanchor(int x, int y)
         {
             Anchor? a = null;
-            foreach (var c in sels)
+            foreach (var c in sels.Select(x => x as IGoControl).Where(x => x != null))
             {
                 #region rt
                 var vrt = Util.FromRect(c.ScreenX, c.ScreenY, c.Width, c.Height);
@@ -1475,7 +1483,7 @@ namespace Going.UIEditor.Windows
                 }
                 #endregion
 
-                foreach (var vc in sels.Where(x => x.Parent == anc.Control.Parent || anc.Name != "move"))
+                foreach (var vc in sels.Select(x => x as IGoControl).Where(x => x != null && (x.Parent == anc.Control.Parent || anc.Name != "move")))
                 {
                     if (!isTopLevelContainer(vc))
                     {
@@ -1621,7 +1629,13 @@ namespace Going.UIEditor.Windows
         void mag_proc(Anchor anc, SKRect srt, bool loop, Action<Mag> routineX, Action<Mag> routineY)
         {
             var c = anc.Control;
-            var alls = search_control(container()).Where(xc => xc.Parent is IGoControl vcon ? CollisionTool.Check(xc.Bounds, Util.FromRect(xc.Parent.ViewPosition.X, xc.Parent.ViewPosition.Y, vcon.Width, vcon.Height)) : false);
+            var alls = search_control(container()).Where(xc => xc.Parent is IGoControl vcon ? CollisionTool.Check(xc.Bounds, Util.FromRect(xc.Parent.ViewPosition.X, xc.Parent.ViewPosition.Y, vcon.Width, vcon.Height)) : false).ToList();
+
+            if (c is IGoContainer con)
+            {
+                foreach (var vc in alls.ToArray())
+                    if (parent_check(vc, con)) alls.Remove(vc);
+            }
 
             var (xs, ys) = mag_controlpos(srt);
             var tls = alls.Where(tc => tc != c && mag_check(tc, xs, ys)).ToList();
@@ -1659,6 +1673,17 @@ namespace Going.UIEditor.Windows
                         routineY(fy);
                     
                 }
+            }
+        }
+        #endregion
+        #region parent_check
+        bool parent_check(IGoControl c, IGoContainer check_parent)
+        {
+            if (c.Parent == check_parent) return true;
+            else
+            {
+                if (c.Parent != null && c.Parent is IGoControl vc) return parent_check(vc, check_parent);
+                else return false;
             }
         }
         #endregion
@@ -1785,10 +1810,10 @@ namespace Going.UIEditor.Windows
     {
         EditorWindow wnd;
         DockPanel dockPanel;
-        List<IGoControl> sels;
-        IEnumerable<IGoControl> news, olds;
+        List<object> sels;
+        IEnumerable<object> news, olds;
 
-        public SelectedAction(EditorWindow wnd, DockPanel dockPanel, List<IGoControl> sels, IEnumerable<IGoControl> news, IEnumerable<IGoControl> olds)
+        public SelectedAction(EditorWindow wnd, DockPanel dockPanel, List<object> sels, IEnumerable<object> news, IEnumerable<object> olds)
         {
             this.wnd = wnd;
             this.dockPanel = dockPanel;

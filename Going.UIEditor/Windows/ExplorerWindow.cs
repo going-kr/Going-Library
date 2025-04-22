@@ -154,6 +154,9 @@ namespace Going.UIEditor.Windows
                                 p.Design.Pages.Remove(v.Name);
                                 p.Edit = true;
                                 RefreshTreeView();
+
+                                var wnd = DockPanel.Contents.FirstOrDefault(x => x is EditorWindow editor && editor.Target == v) as EditorWindow;
+                                wnd?.Close();
                             }
                         }
                         #endregion

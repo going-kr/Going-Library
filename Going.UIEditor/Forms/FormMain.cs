@@ -26,6 +26,7 @@ namespace Going.UIEditor
         PropertiesWindow? properties;
         List<EditorWindow> editors = [];
         bool bDownSaveAs = false;
+        bool opening = false;
         Timer tmr;
         #endregion
 
@@ -62,6 +63,15 @@ namespace Going.UIEditor
             tsmiClose.Click += (o, s) => CloseFile();
             tsmiExit.Click += (o, s) => Close();
             #endregion
+            #region Edit
+            tsmiUndo.Click += (o, s) => { var wnd = dockPanel.ActiveContent as EditorWindow;  if (wnd != null) wnd.Undo(); };
+            tsmiRedo.Click += (o, s) => { var wnd = dockPanel.ActiveContent as EditorWindow; if (wnd != null) wnd.Redo(); };
+            tsmiCopy.Click += (o, s) => { var wnd = dockPanel.ActiveContent as EditorWindow; if (wnd != null) wnd.Copy(); };
+            tsmiCut.Click += (o, s) => { var wnd = dockPanel.ActiveContent as EditorWindow; if (wnd != null) wnd.Cut(); };
+            tsmiPaste.Click += (o, s) => { var wnd = dockPanel.ActiveContent as EditorWindow; if (wnd != null) wnd.Paste(); };
+            tsmiDelete.Click += (o, s) => { var wnd = dockPanel.ActiveContent as EditorWindow; if (wnd != null) wnd.Delete(); };
+            tsmiSelectAll.Click += (o, s) => { var wnd = dockPanel.ActiveContent as EditorWindow; if (wnd != null) wnd.SelectAll(); };
+            #endregion
             #region View
             tsmiExplorer.Click += (o, s) =>
             {
@@ -96,11 +106,14 @@ namespace Going.UIEditor
                 else explorer?.Focus();
             };
             #endregion
+            #region Project
+            tsmiDeploy.Click += (o, s) => DeployProject();
+            tsmiValidCheck.Click += (o, s) => ValidCheckProject();
+            #endregion
             #region Tools
             tsmiResourceManager.Click += (o, s) => ResourceManager();
-            #endregion
-
             tsmiProgramSetting.Click += (o, s) => ProgramSetting();
+            #endregion
             #endregion
 
             #region ToolBar
@@ -109,7 +122,7 @@ namespace Going.UIEditor
             btnSave.ButtonClicked += (o, s) => SaveFile();
             btnSaveAs.ButtonClicked += (o, s) => SaveAsFile();
             btnProgramSetting.ButtonClicked += (o, s) => ProgramSetting();
-            
+            btnResourceManager.ButtonClicked += (o, s) => ResourceManager();
             valPath.ButtonClicked += (o, s) =>
             {
                 if(s.Button.Name == "select")
@@ -128,6 +141,9 @@ namespace Going.UIEditor
                         }
                 }
             };
+
+            btnValidCheck.ButtonClicked += (o, s) => ValidCheckProject();
+            btnDeploy.ButtonClicked += (o, s) => DeployProject();
             #endregion
 
             #region Language
@@ -139,6 +155,18 @@ namespace Going.UIEditor
                 var p = Program.CurrentProject;
                 this.Title = $"Going UI Editor{(p != null ? $" - {p.Name}{(p.Edit || p.FilePath == null ? "*" : "")}" : "")}";
                 valPath.Value = Util2.EllipsisPath(p?.ProjectFolder ?? "", valPath.FontName, valPath.FontStyle, valPath.FontSize, valPath.Width - (valPath.TitleSize ?? 0) - (valPath.ButtonSize ?? 0) - 20);
+
+                if (p != null)
+                {
+                    var wnd = dockPanel.ActiveContent as EditorWindow;
+                    tsmiUndo.Enabled = wnd != null && wnd.CanUndo;
+                    tsmiRedo.Enabled = wnd != null && wnd.CanRedo;
+                    tsmiCopy.Enabled = wnd != null;
+                    tsmiCut.Enabled = wnd != null;
+                    tsmiPaste.Enabled = wnd != null;
+                    tsmiDelete.Enabled = wnd != null && wnd.SelectedItemCount > 0;
+                    tsmiSelectAll.Enabled = wnd != null;
+                }
             };
             #endregion
             #endregion
@@ -178,7 +206,9 @@ namespace Going.UIEditor
                 tsmiSaveAs.Enabled = btnSaveAs.Enabled = true;
                 tsmiClose.Enabled = true;
 
+                btnResourceManager.Visible = true;
                 valPath.Visible = true;
+                btnValidCheck.Visible = true;
                 btnDeploy.Visible = true;
                 #endregion
 
@@ -237,7 +267,9 @@ namespace Going.UIEditor
                 tsmiSaveAs.Enabled = btnSaveAs.Enabled = false;
                 tsmiClose.Enabled = false;
 
+                btnResourceManager.Visible = false;
                 valPath.Visible = false;
+                btnValidCheck.Visible = false;
                 btnDeploy.Visible = false;
                 #endregion
 
@@ -283,7 +315,7 @@ namespace Going.UIEditor
             #region Project
             tsmiProj.Text = $"{LM.Project}(&P)";
             tsmiValidCheck.Text = $"{LM.Validation}(&V)";
-            tsmiDeploy.Text = $"{LM.ToolBox}(&D)";
+            tsmiDeploy.Text = $"{LM.Deploy}(&D)";
             tsmiProjectProps.Text = $"{LM.ProjectProps}(&P)";
             #endregion
             #region Tool
@@ -342,16 +374,21 @@ namespace Going.UIEditor
         #region OpenFile
         void OpenFile()
         {
-            var r = CloseFile();
-
-            if (r != DialogResult.Cancel)
+            if (!opening)
             {
-                var v = Project.Open();
-                if (v != null)
+                opening = true;
+                var r = CloseFile();
+
+                if (r != DialogResult.Cancel)
                 {
-                    Program.CurrentProject = v;
-                    SetUI();
+                    var v = Project.Open();
+                    if (v != null)
+                    {
+                        Program.CurrentProject = v;
+                        SetUI();
+                    }
                 }
+                opening = false;
             }
         }
         #endregion
@@ -404,13 +441,6 @@ namespace Going.UIEditor
         }
         #endregion
 
-        #region ResourceManager
-        void ResourceManager()
-        {
-            Program.ResourceForm.ShowResourceManager();
-        }
-        #endregion
-
         #region ProgramSetting
         void ProgramSetting()
         {
@@ -420,6 +450,67 @@ namespace Going.UIEditor
                 Program.DataMgr.ProjectFolder = ret.ProjectFolder;
                 Program.DataMgr.Language = ret.Language;
                 Program.DataMgr.SaveSetting();
+            }
+        }
+        #endregion
+        #region ResourceManager
+        void ResourceManager()
+        {
+            Program.ResourceForm.ShowResourceManager();
+        }
+        #endregion
+
+        #region ValidCheckProject
+        void ValidCheckProject()
+        {
+            var prj = Program.CurrentProject;
+            if(prj != null)
+            {
+                if (Code.ValidCode(prj))
+                    Program.MessageBox.ShowMessageBoxOk(LM.Validation, LM.ValidationOK);
+                else
+                    Program.MessageBox.ShowMessageBoxOk(LM.Validation, LM.ValidationFail);
+            }
+        }
+        #endregion
+        #region DeployProject()
+        void DeployProject()
+        {
+            var prj = Program.CurrentProject;
+            if (prj != null)
+            {
+                if (Directory.Exists(prj.ProjectFolder))
+                {
+                    if (Code.ValidCode(prj))
+                    {
+                        var ret = Code.MakeCode(prj);
+                        if (ret != null)
+                        {
+                            foreach (var k1 in ret.Keys)
+                            {
+                                var dic1 = ret[k1];
+                                foreach (var k2 in dic1.Keys)
+                                {
+                                    var r = dic1[k2];
+                                    var path = prj.ProjectFolder;
+                                    var dir = Path.Combine(path, k1);
+                                    if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+                                    var filename = Path.Combine(dir, r.FileName);
+
+                                    if (r.ExistsCheck)
+                                    {
+                                        if (!File.Exists(filename)) File.WriteAllText(filename, r.Code);
+                                    }
+                                    else File.WriteAllText(filename, r.Code);
+                                }
+                            }
+
+                            Program.MessageBox.ShowMessageBoxOk(LM.Deploy, LM.DeployComplete);
+                        }
+                    }
+                    else Program.MessageBox.ShowMessageBoxOk(LM.FaildDeploy, LM.ValidationFail);
+                }
+                else Program.MessageBox.ShowMessageBoxOk(LM.FaildDeploy, LM.InvalidProjectFolder);
             }
         }
         #endregion

@@ -564,6 +564,18 @@ namespace Going.UIEditor.Utils
         }
         #endregion
 
+        #region InvalidProjectFolder
+        public static string InvalidProjectFolder
+        {
+            get
+            {
+                if (lang == Lang.KO) return "프로젝트 폴더 경로가 유효하지 않습니다.";
+                else if (lang == Lang.EN) return "The project folder path is not valid.";
+                else return "";
+            }
+        }
+        #endregion
+
         #region DeployComplete
         public static string DeployComplete
         {
@@ -693,6 +705,17 @@ namespace Going.UIEditor.Utils
             }
         }
         #endregion
+        #region ImageCanvas
+        public static string ImageCanvas
+        {
+            get
+            {
+                if (lang == Lang.KO) return "ImageCanvas";
+                else if (lang == Lang.EN) return "ImageCanvas";
+                else return "";
+            }
+        }
+        #endregion
         #endregion
 
         #region 컬렉션 에디터
@@ -764,6 +787,35 @@ namespace Going.UIEditor.Utils
             {
                 if (lang == Lang.KO) return "페이지 유형";
                 else if (lang == Lang.EN) return "Page Type";
+                else return "";
+            }
+        }
+        #endregion
+        #endregion
+
+        #region 이미지 선택기
+        #region ImageSelector
+        public static string ImageSelector
+        {
+            get
+            {
+                if (lang == Lang.KO) return "이미지 선택기"; 
+                else if (lang == Lang.EN) return "Image Selector";
+                else return "";
+            }
+        }
+        #endregion
+
+        #endregion
+
+        #region 배포
+        #region FaildDeploy
+        public static string FaildDeploy
+        {
+            get
+            {
+                if (lang == Lang.KO) return "배포 실패";
+                else if (lang == Lang.EN) return "Failed to Deploy";
                 else return "";
             }
         }

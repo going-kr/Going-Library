@@ -650,7 +650,7 @@ namespace Going.UIEditor.Controls
             }
             else return false;
         }
-        public static bool IsUseButton(PropertyInfo? Info) => IsCollection(Info) || IsEnum(Info) || IsSizes(Info) ||(Info?.PropertyType.IsEnum ?? false);
+        public static bool IsUseButton(PropertyInfo? Info) => IsCollection(Info) || IsEnum(Info) || IsSizes(Info) || (Info?.PropertyType.IsEnum ?? false) || (Info != null && Attribute.IsDefined(Info, typeof(GoImagePropertyAttribute)));
         public static bool IsCollection(PropertyInfo? Info) => Info != null && typeof(IEnumerable).IsAssignableFrom(Info.PropertyType) && Info.PropertyType != typeof(string) && !Attribute.IsDefined(Info, typeof(GoSizesPropertyAttribute));
         public static bool IsSizes(PropertyInfo? Info) => Info != null && typeof(IEnumerable).IsAssignableFrom(Info.PropertyType) && Info.PropertyType != typeof(string) && Attribute.IsDefined(Info, typeof(GoSizesPropertyAttribute));
         public static bool IsEnum(PropertyInfo? Info) => Info != null && Info.PropertyType.IsEnum;
@@ -1016,7 +1016,18 @@ namespace Going.UIEditor.Controls
         #region Button
         protected override void OnButtonClick(SKRect rtValue, SKRect rtButton)
         {
-            SetInput(rtValue);
+            if (Info != null && Attribute.IsDefined(Info, typeof(GoImagePropertyAttribute)))
+            {
+                var ret = Program.ImageSelector.ShowImageSelect();
+                if(ret != null && Grid.SelectedObjects != null)
+                {
+                    object? vv = ret.Name;
+                    if (vv is string s && s == "{NONE}") vv = null;
+                    foreach (var obj in Grid.SelectedObjects)
+                        SetValue(obj, Info, vv);
+                }
+            }
+            else SetInput(rtValue);
             base.OnButtonClick(rtValue, rtButton);
         }
         #endregion

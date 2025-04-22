@@ -1,6 +1,7 @@
 ﻿using Going.UI.Controls;
 using Going.UI.Datas;
 using Going.UI.Enums;
+using Going.UI.ImageCanvas;
 using Going.UIEditor.Utils;
 using System;
 using System.CodeDom;
@@ -33,6 +34,7 @@ namespace Going.UIEditor.Windows
             toolBox.Round = GoRoundType.Rect;
             toolBox.Categories.Add(new GoToolCategory { Text = LM.Controls });
             toolBox.Categories.Add(new GoToolCategory { Text = LM.Containers });
+            toolBox.Categories.Add(new GoToolCategory { Text = LM.ImageCanvas });
             #endregion
 
             #region LoadItem
@@ -44,6 +46,10 @@ namespace Going.UIEditor.Windows
                                       .Where(x => FindType(x, typeof(Going.UI.Controls.GoControl)) && !x.IsAbstract && !x.IsGenericType).ToList();
                 var lsContainers = types.Where(x => x.FullName?.StartsWith("Going.UI.Containers.") ?? false)
                                         .Where(x => FindType(x, typeof(Going.UI.Containers.GoContainer)) && !x.IsAbstract && !x.IsGenericType).ToList();
+                var lsIcControls = types.Where(x => x.FullName?.StartsWith("Going.UI.ImageCanvas.") ?? false)
+                                        .Where(x => FindType(x, typeof(Going.UI.Controls.GoControl)) && !FindType(x, typeof(Going.UI.Containers.GoContainer)) && !x.IsAbstract && !x.IsGenericType).ToList();
+                var lsIcContainers = types.Where(x => x.FullName?.StartsWith("Going.UI.ImageCanvas.") ?? false)
+                                        .Where(x => FindType(x, typeof(Going.UI.Containers.GoContainer)) && x != typeof(IcPage) && !x.IsAbstract && !x.IsGenericType).ToList();
 
 
                 int ii = lsControls.IndexOf(typeof(GoInputDateTime)) + 1;
@@ -64,6 +70,8 @@ namespace Going.UIEditor.Windows
 
                 toolBox.Categories[0].Items.AddRange(lsControls.Select(x => new GoToolItem { Text = x.IsGenericType ? x.Name.Split('`').FirstOrDefault() + $"<{NumberTypeName(x.GenericTypeArguments[0])}>" : x.Name, Tag = x }));
                 toolBox.Categories[1].Items.AddRange(lsContainers.Select(x => new GoToolItem { Text = x.IsGenericType ? x.Name.Split('`').FirstOrDefault() + $"<{NumberTypeName(x.GenericTypeArguments[0])}>" : x.Name, Tag = x }));
+                toolBox.Categories[2].Items.AddRange(lsIcContainers.Select(x => new GoToolItem { Text = x.IsGenericType ? x.Name.Split('`').FirstOrDefault() + $"<{NumberTypeName(x.GenericTypeArguments[0])}>" : x.Name, Tag = x }));
+                toolBox.Categories[2].Items.AddRange(lsIcControls.Select(x => new GoToolItem { Text = x.IsGenericType ? x.Name.Split('`').FirstOrDefault() + $"<{NumberTypeName(x.GenericTypeArguments[0])}>" : x.Name, Tag = x }));
 
             }
             #endregion

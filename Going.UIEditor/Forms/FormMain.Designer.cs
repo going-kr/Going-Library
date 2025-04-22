@@ -31,6 +31,8 @@
             UI.Datas.GoButtonItem goButtonItem1 = new UI.Datas.GoButtonItem();
             pnlTool = new UI.Forms.Containers.GoContainer();
             goTableLayoutPanel1 = new UI.Forms.Containers.GoTableLayoutPanel();
+            btnValidCheck = new UI.Forms.Controls.GoButton();
+            btnResourceManager = new UI.Forms.Controls.GoButton();
             btnDeploy = new UI.Forms.Controls.GoButton();
             btnSaveAs = new UI.Forms.Controls.GoButton();
             btnSave = new UI.Forms.Controls.GoButton();
@@ -99,19 +101,22 @@
             // 
             goTableLayoutPanel1.BackColor = Color.FromArgb(32, 32, 32);
             goTableLayoutPanel1.BackgroundColor = "window";
-            goTableLayoutPanel1.ColumnCount = 11;
+            goTableLayoutPanel1.ColumnCount = 12;
             goTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 40F));
             goTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 40F));
             goTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 40F));
             goTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 40F));
             goTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
             goTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 40F));
-            goTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 40F));
+            goTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
             goTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             goTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
             goTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 400F));
             goTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 40F));
-            goTableLayoutPanel1.Controls.Add(btnDeploy, 10, 0);
+            goTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 40F));
+            goTableLayoutPanel1.Controls.Add(btnValidCheck, 10, 0);
+            goTableLayoutPanel1.Controls.Add(btnResourceManager, 5, 0);
+            goTableLayoutPanel1.Controls.Add(btnDeploy, 11, 0);
             goTableLayoutPanel1.Controls.Add(btnSaveAs, 3, 0);
             goTableLayoutPanel1.Controls.Add(btnSave, 2, 0);
             goTableLayoutPanel1.Controls.Add(btnOpen, 1, 0);
@@ -124,6 +129,52 @@
             goTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             goTableLayoutPanel1.Size = new Size(1414, 40);
             goTableLayoutPanel1.TabIndex = 1;
+            // 
+            // btnValidCheck
+            // 
+            btnValidCheck.BackColor = Color.FromArgb(32, 32, 32);
+            btnValidCheck.BackgroundColor = "window";
+            btnValidCheck.BackgroundDraw = false;
+            btnValidCheck.BorderOnly = true;
+            btnValidCheck.ButtonColor = "Base3";
+            btnValidCheck.Dock = DockStyle.Fill;
+            btnValidCheck.FontName = "나눔고딕";
+            btnValidCheck.FontSize = 12F;
+            btnValidCheck.FontStyle = UI.Enums.GoFontStyle.Normal;
+            btnValidCheck.IconDirection = UI.Enums.GoDirectionHV.Horizon;
+            btnValidCheck.IconGap = 5F;
+            btnValidCheck.IconSize = 20F;
+            btnValidCheck.IconString = "fa-check";
+            btnValidCheck.Location = new Point(1337, 3);
+            btnValidCheck.Name = "btnValidCheck";
+            btnValidCheck.Round = UI.Enums.GoRoundType.All;
+            btnValidCheck.Size = new Size(34, 34);
+            btnValidCheck.TabIndex = 7;
+            btnValidCheck.TabStop = false;
+            btnValidCheck.TextColor = "Fore";
+            // 
+            // btnResourceManager
+            // 
+            btnResourceManager.BackColor = Color.FromArgb(32, 32, 32);
+            btnResourceManager.BackgroundColor = "window";
+            btnResourceManager.BackgroundDraw = false;
+            btnResourceManager.BorderOnly = true;
+            btnResourceManager.ButtonColor = "Base3";
+            btnResourceManager.Dock = DockStyle.Fill;
+            btnResourceManager.FontName = "나눔고딕";
+            btnResourceManager.FontSize = 12F;
+            btnResourceManager.FontStyle = UI.Enums.GoFontStyle.Normal;
+            btnResourceManager.IconDirection = UI.Enums.GoDirectionHV.Horizon;
+            btnResourceManager.IconGap = 5F;
+            btnResourceManager.IconSize = 20F;
+            btnResourceManager.IconString = "fa-images";
+            btnResourceManager.Location = new Point(183, 3);
+            btnResourceManager.Name = "btnResourceManager";
+            btnResourceManager.Round = UI.Enums.GoRoundType.All;
+            btnResourceManager.Size = new Size(34, 34);
+            btnResourceManager.TabIndex = 6;
+            btnResourceManager.TabStop = false;
+            btnResourceManager.TextColor = "Fore";
             // 
             // btnDeploy
             // 
@@ -260,7 +311,7 @@
             valPath.IconGap = 5F;
             valPath.IconSize = 12F;
             valPath.IconString = null;
-            valPath.Location = new Point(977, 3);
+            valPath.Location = new Point(937, 3);
             valPath.Name = "valPath";
             valPath.Round = UI.Enums.GoRoundType.All;
             valPath.Size = new Size(394, 34);
@@ -553,7 +604,7 @@
             tsmiValidCheck.Font = new Font("나눔고딕", 9F);
             tsmiValidCheck.ForeColor = Color.FromArgb(150, 150, 150);
             tsmiValidCheck.Name = "tsmiValidCheck";
-            tsmiValidCheck.Size = new Size(158, 22);
+            tsmiValidCheck.Size = new Size(180, 22);
             tsmiValidCheck.Text = "유효성 체크(&C)";
             // 
             // tsmiDeploy
@@ -561,21 +612,23 @@
             tsmiDeploy.Font = new Font("나눔고딕", 9F);
             tsmiDeploy.ForeColor = Color.FromArgb(150, 150, 150);
             tsmiDeploy.Name = "tsmiDeploy";
-            tsmiDeploy.Size = new Size(158, 22);
+            tsmiDeploy.Size = new Size(180, 22);
             tsmiDeploy.Text = "배포(&D)";
             // 
             // tsmiProjSep1
             // 
             tsmiProjSep1.Name = "tsmiProjSep1";
-            tsmiProjSep1.Size = new Size(155, 6);
+            tsmiProjSep1.Size = new Size(177, 6);
+            tsmiProjSep1.Visible = false;
             // 
             // tsmiProjectProps
             // 
             tsmiProjectProps.Font = new Font("나눔고딕", 9F);
             tsmiProjectProps.ForeColor = Color.FromArgb(150, 150, 150);
             tsmiProjectProps.Name = "tsmiProjectProps";
-            tsmiProjectProps.Size = new Size(158, 22);
+            tsmiProjectProps.Size = new Size(180, 22);
             tsmiProjectProps.Text = "프로젝트 속성(&P)";
+            tsmiProjectProps.Visible = false;
             // 
             // tsmiTool
             // 
@@ -589,7 +642,7 @@
             tsmiResourceManager.Font = new Font("나눔고딕", 9F);
             tsmiResourceManager.ForeColor = Color.FromArgb(150, 150, 150);
             tsmiResourceManager.Name = "tsmiResourceManager";
-            tsmiResourceManager.Size = new Size(158, 22);
+            tsmiResourceManager.Size = new Size(180, 22);
             tsmiResourceManager.Text = "리소스 관리자(&R)";
             // 
             // tsmiProgramSetting
@@ -597,7 +650,7 @@
             tsmiProgramSetting.Font = new Font("나눔고딕", 9F);
             tsmiProgramSetting.ForeColor = Color.FromArgb(150, 150, 150);
             tsmiProgramSetting.Name = "tsmiProgramSetting";
-            tsmiProgramSetting.Size = new Size(158, 22);
+            tsmiProgramSetting.Size = new Size(180, 22);
             tsmiProgramSetting.Text = "프로그램 설정(&S)";
             // 
             // tsmiHelp
@@ -687,5 +740,7 @@
         private ToolStripMenuItem tsmiResourceManager;
         private ToolStripMenuItem tsmiClose;
         private ToolStripSeparator toolStripSeparator2;
+        private UI.Forms.Controls.GoButton btnResourceManager;
+        private UI.Forms.Controls.GoButton btnValidCheck;
     }
 }

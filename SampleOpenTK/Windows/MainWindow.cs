@@ -1,16 +1,9 @@
 ﻿using Going.UI.Containers;
 using Going.UI.Controls;
 using Going.UI.Datas;
-using Going.UI.Design;
 using Going.UI.OpenTK.Windows;
 using OpenTK.Windowing.Common;
-using OpenTK.Windowing.Desktop;
 using SampleOpenTK.Pages;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SampleOpenTK.Windows
 {
@@ -19,7 +12,7 @@ namespace SampleOpenTK.Windows
         GoTableLayoutPanel tblTitle;
         GoNavigator nav;
 
-        public MainWindow() : base(1024, 768, WindowBorder.Resizable)
+        public MainWindow() : base(1024, 768, WindowBorder.Hidden)
         {
             #region Window Setting
             Title = "Going Library Sample";

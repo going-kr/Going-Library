@@ -20,7 +20,7 @@ namespace Going.UI.Design
         [GoProperty(PCategory.Control, 0)] public float BarSize { get; set; } = 50F;
 
         [GoProperty(PCategory.Control, 1)] public string Title { get; set; } = "Title";
-        [GoProperty(PCategory.Control, 2)] public string? TitleImage { get; set; } = null;
+        [GoImageProperty(PCategory.Control, 2)] public string? TitleImage { get; set; } = null;
 
         [GoProperty(PCategory.Control, 3)] public string LeftExpandIconString { get; set; } = "fa-bars";
         [GoProperty(PCategory.Control, 4)] public string LeftCollapseIconString { get; set; } = "fa-chevron-left";

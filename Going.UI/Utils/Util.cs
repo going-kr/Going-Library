@@ -628,7 +628,6 @@ namespace Going.UI.Utils
                 p.IsStroke = false;
                 p.Color = fillcolor;
                 canvas.DrawPath(path, p);
-
             }
 
             if (borderColor != SKColors.Transparent)

@@ -23,7 +23,7 @@ namespace Going.UIEditor
         public static FormNewFile NewFileForm { get; set; }
         public static FormNewPage NewPageForm { get; set; }
         public static FormResourceManager ResourceForm { get; set; }
-
+        public static FormImageSelector ImageSelector { get; set; }
         [STAThread]
         static void Main()
         {
@@ -42,6 +42,7 @@ namespace Going.UIEditor
             NewFileForm = new FormNewFile();
             NewPageForm = new FormNewPage();
             ResourceForm = new FormResourceManager();
+            ImageSelector = new FormImageSelector();
             MainForm = new FormMain();
 
             Application.Run(MainForm);

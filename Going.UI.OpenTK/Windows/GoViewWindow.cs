@@ -34,6 +34,7 @@ using Going.UI.OpenTK.Input;
 using Going.UI.Managers;
 using System.Security.Cryptography.X509Certificates;
 using Going.UI.Design;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Going.UI.OpenTK.Windows
 {
@@ -43,7 +44,7 @@ namespace Going.UI.OpenTK.Windows
         public int Width => ClientRectangle.Size.X;
         public int Height => ClientRectangle.Size.Y;
 
-        public string? TItleIconString { get; set; }
+        public string? TitleIconString { get; set; }
         public string? TitleIconImage { get; set; }
 
         public bool Debug { get; set; } = false;
@@ -347,17 +348,24 @@ namespace Going.UI.OpenTK.Windows
             if (TitleIconImage != null)
             {
                 var vimg = Design?.GetImage(TitleIconImage)?.FirstOrDefault();
-                if (vimg != null) ret = new WindowIcon(new Image(vimg.Width, vimg.Height, vimg.Bytes));
+                if (vimg != null)
+                {
+                    using (var data = vimg.Encode(SKEncodedImageFormat.Png, 100))
+                    {
+                        byte[] bytes = data.ToArray();
+                        ret = new WindowIcon(new Image(vimg.Width, vimg.Height, bytes));
+                    }
+                }
             }
 
-            if (ret == null && GoIconManager.Contains(TItleIconString ?? ""))
+            if (ret == null && GoIconManager.Contains(TitleIconString ?? ""))
             {
                 var color = GoTheme.Current.Fore;
                 using var surface = SKSurface.Create(new SKImageInfo(iconSize, iconSize, SKColorType.Rgba8888));
                 var canvas = surface.Canvas;
 
                 canvas.Clear(SKColors.Transparent);
-                Util.DrawIcon(canvas, TItleIconString, iconSize, Util.FromRect(0, 0, iconSize, iconSize), color);
+                Util.DrawIcon(canvas, TitleIconString, iconSize, Util.FromRect(0, 0, iconSize, iconSize), color);
 
                 using var img = surface.Snapshot();
                 using var bmp = SKBitmap.FromImage(img);

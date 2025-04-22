@@ -50,11 +50,11 @@
             tpnl1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100F));
             tpnl1.Controls.Add(btnClose, 1, 0);
             tpnl1.Dock = DockStyle.Bottom;
-            tpnl1.Location = new Point(5, 509);
+            tpnl1.Location = new Point(5, 516);
             tpnl1.Name = "tpnl1";
             tpnl1.RowCount = 1;
             tpnl1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tpnl1.Size = new Size(796, 40);
+            tpnl1.Size = new Size(774, 40);
             tpnl1.TabIndex = 3;
             // 
             // btnClose
@@ -72,7 +72,7 @@
             btnClose.IconGap = 5F;
             btnClose.IconSize = 12F;
             btnClose.IconString = null;
-            btnClose.Location = new Point(701, 5);
+            btnClose.Location = new Point(679, 5);
             btnClose.Margin = new Padding(5);
             btnClose.Name = "btnClose";
             btnClose.Round = UI.Enums.GoRoundType.All;
@@ -96,7 +96,7 @@
             tpnl2.RowCount = 2;
             tpnl2.RowStyles.Add(new RowStyle(SizeType.Absolute, 30F));
             tpnl2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tpnl2.Size = new Size(796, 504);
+            tpnl2.Size = new Size(774, 511);
             tpnl2.TabIndex = 4;
             // 
             // goContainer1
@@ -110,7 +110,7 @@
             goContainer1.Location = new Point(5, 5);
             goContainer1.Margin = new Padding(5);
             goContainer1.Name = "goContainer1";
-            goContainer1.Size = new Size(786, 20);
+            goContainer1.Size = new Size(764, 20);
             goContainer1.TabIndex = 0;
             goContainer1.TabStop = false;
             goContainer1.Text = "goContainer1";
@@ -130,7 +130,7 @@
             btnAdd.IconGap = 5F;
             btnAdd.IconSize = 12F;
             btnAdd.IconString = "fa-plus";
-            btnAdd.Location = new Point(726, 0);
+            btnAdd.Location = new Point(704, 0);
             btnAdd.Name = "btnAdd";
             btnAdd.Round = UI.Enums.GoRoundType.All;
             btnAdd.Size = new Size(30, 20);
@@ -153,7 +153,7 @@
             btnDel.IconGap = 5F;
             btnDel.IconSize = 12F;
             btnDel.IconString = "fa-minus";
-            btnDel.Location = new Point(756, 0);
+            btnDel.Location = new Point(734, 0);
             btnDel.Name = "btnDel";
             btnDel.Round = UI.Enums.GoRoundType.All;
             btnDel.Size = new Size(30, 20);
@@ -194,7 +194,7 @@
             // 
             grid.BackColor = Color.FromArgb(50, 50, 50);
             grid.BackgroundColor = "Back";
-            grid.ContentSize = new Size(100, 100);
+            grid.ContentSize = new Size(150, 150);
             grid.Dock = DockStyle.Fill;
             grid.Gap = 3;
             grid.Location = new Point(5, 35);
@@ -202,7 +202,7 @@
             grid.MultiSelect = true;
             grid.Name = "grid";
             grid.Selectable = true;
-            grid.Size = new Size(786, 464);
+            grid.Size = new Size(764, 471);
             grid.TabIndex = 1;
             grid.Text = "goContentGrid1";
             // 
@@ -210,9 +210,10 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(806, 554);
+            ClientSize = new Size(784, 561);
             Controls.Add(tpnl2);
             Controls.Add(tpnl1);
+            MinimumSize = new Size(800, 600);
             Name = "FormResourceManager";
             Padding = new Padding(5);
             Text = "리소스 관리자";

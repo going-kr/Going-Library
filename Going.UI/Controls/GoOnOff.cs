@@ -88,7 +88,7 @@ namespace Going.UI.Controls
             var rtOn = rts["On"];
             var rtOff = rts["Off"];
 
-            Util.DrawBox(canvas, rtContent, cBox, cBorder, GoRoundType.All, rtContent.Height);
+            Util.DrawBox(canvas, rtContent, cBox, SKColors.Transparent, GoRoundType.All, rtContent.Height);
 
             var crt = rtContent; crt.Inflate(-2, -2);
             using var pth = PathTool.Box(crt, GoRoundType.All, rtContent.Height);
@@ -103,6 +103,8 @@ namespace Going.UI.Controls
 
                 Util.DrawIcon(canvas, CursorIconString, rtCursor.Height / 2, rtCursor, OnOff ? cOn : cOff);
             }
+
+            Util.DrawBox(canvas, rtContent, SKColors.Transparent, cBorder, GoRoundType.All, rtContent.Height);
             base.OnDraw(canvas);
         }
 

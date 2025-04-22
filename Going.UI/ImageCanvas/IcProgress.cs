@@ -20,8 +20,8 @@ namespace Going.UI.ImageCanvas
         [GoProperty(PCategory.Control, 2)] public float FontSize { get; set; } = 12;
         [GoProperty(PCategory.Control, 3)] public string TextColor { get; set; } = "Black";
 
-        [GoProperty(PCategory.Control, 4)] public string? OnBarImage { get; set; }
-        [GoProperty(PCategory.Control, 5)] public string? OffBarImage { get; set; }
+        [GoImageProperty(PCategory.Control, 4)] public string? OnBarImage { get; set; }
+        [GoImageProperty(PCategory.Control, 5)] public string? OffBarImage { get; set; }
 
         [GoProperty(PCategory.Control, 6)] public string FormatString { get; set; } = "0";
         [GoProperty(PCategory.Control, 7)] public double Minimum { get; set; } = 0D;

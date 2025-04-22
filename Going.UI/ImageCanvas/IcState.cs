@@ -44,7 +44,7 @@ namespace Going.UI.ImageCanvas
 
     public class StateImage
     {
-        [GoProperty(PCategory.Control, 0)] public string? Image { get; set; }
+        [GoImageProperty(PCategory.Control, 0)] public string? Image { get; set; }
         [GoProperty(PCategory.Control, 1)] public int State { get; set; }
     }
 }

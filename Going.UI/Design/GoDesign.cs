@@ -603,6 +603,13 @@ namespace Going.UI.Design
         #endregion
 
         #region Image
+        public void LoadImagesFromJson(string json)
+        {
+            var imgs = JsonSerializer.Deserialize<Dictionary<string, List<SKImage>>>(json, GoJsonConverter.Options);
+            Images.Clear();
+            foreach (var v in Images) Images.Add(v.Key, v.Value);
+        }
+
         public void AddImage(string name, byte[] data)
         {
             var nm = name.ToLower();

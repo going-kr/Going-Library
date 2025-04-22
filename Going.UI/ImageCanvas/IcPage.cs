@@ -14,8 +14,8 @@ namespace Going.UI.ImageCanvas
     public class IcPage : GoPage
     {
         [GoProperty(PCategory.Control, 0)] public string BackgroundColor { get; set; } = "white";
-        [GoProperty(PCategory.Control, 1)] public string? OffImage { get; set; }
-        [GoProperty(PCategory.Control, 2)] public string? OnImage { get; set; }
+        [GoImageProperty(PCategory.Control, 1)] public string? OffImage { get; set; }
+        [GoImageProperty(PCategory.Control, 2)] public string? OnImage { get; set; }
 
         protected override void OnBackgroundDraw(SKCanvas canvas)
         {

@@ -26,7 +26,8 @@ namespace Going.UIEditor.Windows
     public partial class PropertiesWindow : xWindow
     {
         #region Properties
-        public GoPropertyGrid Grid => pg;
+        public EditorWindow? SelectedEditor => pg.SelectedEditor;
+        public IEnumerable<object> SelectedObjects => pg.SelectedObjects;
         #endregion
 
         #region Constructor
@@ -40,21 +41,12 @@ namespace Going.UIEditor.Windows
         #endregion
 
         #region Method
-        public void SelectObjects(EditorWindow? editor, IEnumerable<IGoControl>? objects)
+        public void SelectObjects(EditorWindow? editor, IEnumerable<object>? objects)
         {
             pg.SelectedEditor = editor;
             pg.SelectedObjects = objects == null ? null : [.. objects];
             pg.Invalidate();
         }
-
-        public void SelectDesign(EditorWindow? editor, GoDesign design)
-        {
-            pg.SelectedEditor = editor;
-            pg.SelectedObjects = design == null ? null : [design];
-            pg.Invalidate();
-        }
-
-        public (EditorWindow? wnd, IEnumerable<object>? sels) GetSelectedObject() => (pg.SelectedEditor, pg.SelectedObjects);
 
         public void RefreshGrid() => pg.Invalidate();
         #endregion

@@ -18,7 +18,7 @@ namespace Going.UIEditor.Controls
     public class GoContentGrid : GoControl
     {
         #region Properties
-        public Size ContentSize { get; set; } = new Size(100, 100);
+        public Size ContentSize { get; set; } = new Size(250, 250);
         public List<GoContentGridItem> SelectedItems { get; } = new List<GoContentGridItem>();
         public List<GoContentGridItem> Items { get; } = new List<GoContentGridItem>();
         public bool MultiSelect { get; set; } = true;
@@ -81,7 +81,7 @@ namespace Going.UIEditor.Controls
                 {
                     if (itm.SelectedDraw && itm.Selected)
                     {
-                        var rtv = Util.FromRect(rt.Left, rt.Top, rt.Width, rt.Height); rtv.Inflate(Gap, Gap);
+                        var rtv = Util.FromRect(rt.Left, rt.Top, rt.Width, rt.Height); rtv.Inflate(Gap+1, Gap+1);
 
                         using (var p = new SKPaint { IsAntialias = true })
                         {
@@ -142,7 +142,7 @@ namespace Going.UIEditor.Controls
                 downPoint = e.Location;
                 movePoint = null;
             }
-
+            Invalidate();
             base.OnMouseDown(e);
         }
 
@@ -154,7 +154,7 @@ namespace Going.UIEditor.Controls
             scroll.MouseMove(e.X, e.Y, rtScroll);
 
             if (Selectable && downPoint.HasValue) movePoint = e.Location;
-
+            Invalidate();
             base.OnMouseMove(e);
         }
 
@@ -233,7 +233,7 @@ namespace Going.UIEditor.Controls
                 if (scroll.ScrollVisible) ((HandledMouseEventArgs)e).Handled = true;
                 scroll.MouseWheel(e.X, e.Y, e.Delta);
             }
-
+            Invalidate();
             base.OnMouseWheel(e);
         }
         #endregion
@@ -387,7 +387,7 @@ namespace Going.UIEditor.Controls
     }
     #endregion
     #region class : ImageContent
-    class ImageContent(GoDesign design, GoContentGrid sc) : GoContentGridItem(sc)
+    public class ImageContent(GoDesign design, GoContentGrid sc) : GoContentGridItem(sc)
     {
         public List<SKImage> Images { get; set; } = [];
         public string? Name { get; set; }
