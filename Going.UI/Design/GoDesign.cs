@@ -23,6 +23,7 @@ using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Going.UI.Design
 {
@@ -143,7 +144,7 @@ namespace Going.UI.Design
             wnd.Design = this;
             wnd.Visible = true;
             stkWindow.Push(wnd);
-
+            wnd.Bounds = MathTool.MakeRectangle(Util.FromRect(0, 0, Width, Height), new SKSize(wnd.Width, wnd.Height));
             CurrentPage?.FireMouseMove(-1, -1);
 
         }
@@ -603,13 +604,6 @@ namespace Going.UI.Design
         #endregion
 
         #region Image
-        public void LoadImagesFromJson(string json)
-        {
-            var imgs = JsonSerializer.Deserialize<Dictionary<string, List<SKImage>>>(json, GoJsonConverter.Options);
-            Images.Clear();
-            foreach (var v in Images) Images.Add(v.Key, v.Value);
-        }
-
         public void AddImage(string name, byte[] data)
         {
             var nm = name.ToLower();
@@ -618,6 +612,16 @@ namespace Going.UI.Design
                 var ls = ImageExtractor.ProcessImageFromMemory(data);
                 if (ls != null && ls.Count > 0)
                     Images.Add(nm, ls);
+            }
+        }
+
+        public void AddImage(string name, List<SKImage> imgs)
+        {
+            var nm = name.ToLower();
+            if (!Images.ContainsKey(nm))
+            {
+                if (imgs != null && imgs.Count > 0)
+                    Images.Add(nm, imgs);
             }
         }
 

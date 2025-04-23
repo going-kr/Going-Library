@@ -24,8 +24,7 @@ namespace Going.UI.Design
         public string BorderColor { get; set; } = "WindowBorder";
         public GoRoundType Round { get; set; } = GoRoundType.All;
 
-        [JsonInclude]
-        public override List<IGoControl> Childrens { get; } = [];
+        [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
 
         [JsonConstructor]
         public GoDropDownWindow(List<IGoControl> childrens) : this() => Childrens = childrens;
@@ -111,7 +110,7 @@ namespace Going.UI.Design
             var ih = itemHeight * Math.Min(maximumViewCount, items.Count) + 1;
             var w = Math.Max(iw, rtValue.Width);
             var bounds = Util.FromRect(rtValue.Left, rtValue.Bottom + 1, w, ih);
-            if (bounds.Bottom > designH) bounds = Util.FromRect(rtValue.Left, rtValue.Top - ih-1, Math.Max(iw, rtValue.Width), ih);
+            if (bounds.Bottom > designH) bounds = Util.FromRect(rtValue.Left, rtValue.Top - ih - 1, Math.Max(iw, rtValue.Width), ih);
 
             Bounds = bounds;
 
@@ -140,7 +139,7 @@ namespace Going.UI.Design
         public GoColorDropDownWindow()
         {
             tbl = new GoTableLayoutPanel { Margin = new GoPadding(5), Fill = true, };
-            tbl.Columns = ["100%","80px", "80px"];
+            tbl.Columns = ["100%", "80px", "80px"];
             tbl.Rows = ["100%", "40px"];
             Childrens.Add(tbl);
 
@@ -180,9 +179,9 @@ namespace Going.UI.Design
             var h = w + 40;
 
             var bounds = Util.FromRect(rtValue.Left, rtValue.Bottom + 1, w, h);
-            if (bounds.Bottom > designH) bounds = Util.FromRect(rtValue.Left, rtValue.Top - h-1, Math.Max(w, rtValue.Width), h);
+            if (bounds.Bottom > designH) bounds = Util.FromRect(rtValue.Left, rtValue.Top - h - 1, Math.Max(w, rtValue.Width), h);
             Bounds = bounds;
-         
+
             Show();
         }
     }
@@ -209,13 +208,13 @@ namespace Going.UI.Design
             inS = new GoInputNumber<int> { Fill = true, Margin = new GoPadding(5), Minimum = 0, Maximum = 59, UnitSize = 30, Unit = "초" };
             btnOK = new GoButton { Fill = true, Margin = new GoPadding(5), Text = "선택" };
             btnCancel = new GoButton { Fill = true, Margin = new GoPadding(5), Text = "취소" };
-          
+
             btnOK.ButtonClicked += (o, s) =>
             {
                 if (cal.SelectedDays.Count > 0)
                 {
                     var dt = cal.SelectedDays.First().Date + new TimeSpan(inH.Value, inM.Value, inS.Value);
-                    
+
                     feedback?.Invoke(dt);
                     Hide();
                 }

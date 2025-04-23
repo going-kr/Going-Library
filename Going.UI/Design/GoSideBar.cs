@@ -33,14 +33,20 @@ namespace Going.UI.Design
         [GoProperty(PCategory.Control, 10)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         [GoProperty(PCategory.Control, 11)] public float FontSize { get; set; } = 16;
 
-        public override SKRect PanelBounds => Areas()["Panel"];
+        [JsonIgnore] public override SKRect PanelBounds => Areas()["Panel"];
 
-        public override List<IGoControl> Childrens { get; } = [];
+        [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
         #endregion
 
         #region Member Variable
         float mx = -1, my = -1;
-        #endregion 
+        #endregion
+
+        #region Constructor
+        [JsonConstructor]
+        public GoTitleBar(List<IGoControl> childrens) : this() => Childrens = childrens;
+        public GoTitleBar() { }
+        #endregion
 
         #region Override
         #region Draw
@@ -159,7 +165,7 @@ namespace Going.UI.Design
         public bool Opening => !Fixed && ani.IsPlaying && ani.Variable == "Expand";
         public bool Closing => !Fixed && ani.IsPlaying && ani.Variable == "Collapse";
 
-        public override List<IGoControl> Childrens { get; } = [];
+        [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
 
         [GoProperty(PCategory.Control, 2)]
         [JsonIgnore]
@@ -195,12 +201,26 @@ namespace Going.UI.Design
         private bool bExpand = false;
         private Animation ani = new();
         #endregion
+
+        #region Constructor
+        [JsonConstructor]
+        public GoSideBar(List<IGoControl> childrens) : this() => Childrens = childrens;
+        public GoSideBar() { }
+        #endregion
     }
 
     public class GoFooter : GoContainer
     {
+        #region Properties
         [GoProperty(PCategory.Control, 0)] public float BarSize { get; set; } = 40F;
 
-        public override List<IGoControl> Childrens { get; } = [];
+        [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
+        #endregion
+
+        #region Constructor
+        [JsonConstructor]
+        public GoFooter(List<IGoControl> childrens) : this() => Childrens = childrens;
+        public GoFooter() { }
+        #endregion
     }
 }

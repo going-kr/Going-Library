@@ -35,9 +35,8 @@ namespace Going.UI.Design
         public string BorderColor { get; set; } = "Base2";
         public GoRoundType Round { get; set; } = GoRoundType.All;
         public float TitleHeight { get; set; } = 40;
-        
-        [JsonInclude]
-        public override List<IGoControl> Childrens { get; } = [];
+
+        [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
 
         [JsonIgnore] public override SKRect PanelBounds => Areas()["Panel"];
         #endregion

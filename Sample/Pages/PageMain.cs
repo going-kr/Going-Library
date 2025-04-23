@@ -13,6 +13,8 @@ namespace test.Pages
         public PageMain()
         {
             InitializeComponent();
+
+            btnTestWindow.ButtonClicked += (o, s) => Design.ShowWindow(MainWindow.Current.TestWindow);
         }
     }
 }

@@ -17,8 +17,7 @@ namespace Going.UI.Containers
         #region Properties
         [GoProperty(PCategory.Control, 0)] public List<GoGridLayoutPanelRow> Rows { get; set; } = [];
 
-        [JsonInclude]
-        public override GoGridLayoutControlCollection Childrens { get; } = [];
+        [JsonInclude] public override GoGridLayoutControlCollection Childrens { get; } = [];
         #endregion
 
         #region Constructor

@@ -149,7 +149,6 @@ namespace Going.UI.Json
 
         public override void Write(Utf8JsonWriter writer, IGoControl value, JsonSerializerOptions options)
         {
-            
             writer.WriteStartObject();
             writer.WritePropertyName("Type");
             writer.WriteStringValue(value.GetType().AssemblyQualifiedName);

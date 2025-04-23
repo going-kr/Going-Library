@@ -1,0 +1,140 @@
+﻿{
+  "Childrens": [
+    {
+      "Type": "Going.UI.Controls.GoPicture, Going.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "Value": {
+        "Image": "logoi",
+        "ScaleMode": 0,
+        "Round": 0,
+        "Id": "0d60498b-4cfc-45ac-9efc-c9e2385360a5",
+        "Name": null,
+        "Visible": true,
+        "Enabled": true,
+        "Selectable": false,
+        "Bounds": "20,20,200,200",
+        "Fill": false,
+        "Margin": {
+          "Left": 3,
+          "Top": 3,
+          "Right": 3,
+          "Bottom": 3
+        }
+      }
+    },
+    {
+      "Type": "Going.UI.Controls.GoLabel, Going.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "Value": {
+        "IconString": null,
+        "IconSize": 12,
+        "IconDirection": 0,
+        "IconGap": 5,
+        "Text": "Going Library Sample Program",
+        "FontName": "\uB098\uB214\uACE0\uB515",
+        "FontStyle": 2,
+        "FontSize": 18,
+        "TextPadding": {
+          "Left": 0,
+          "Top": 0,
+          "Right": 0,
+          "Bottom": 0
+        },
+        "ContentAlignment": 3,
+        "TextColor": "Fore",
+        "LabelColor": "Base2",
+        "Round": 1,
+        "BackgroundDraw": false,
+        "BorderOnly": false,
+        "Id": "736894d2-7473-455c-b210-35e8529bbec9",
+        "Name": null,
+        "Visible": true,
+        "Enabled": true,
+        "Selectable": false,
+        "Bounds": "240,20,530,60",
+        "Fill": false,
+        "Margin": {
+          "Left": 3,
+          "Top": 3,
+          "Right": 3,
+          "Bottom": 3
+        }
+      }
+    },
+    {
+      "Type": "Going.UI.Controls.GoLabel, Going.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "Value": {
+        "IconString": null,
+        "IconSize": 12,
+        "IconDirection": 0,
+        "IconGap": 5,
+        "Text": "Control Count : 20",
+        "FontName": "\uB098\uB214\uACE0\uB515",
+        "FontStyle": 0,
+        "FontSize": 12,
+        "TextPadding": {
+          "Left": 0,
+          "Top": 0,
+          "Right": 0,
+          "Bottom": 0
+        },
+        "ContentAlignment": 3,
+        "TextColor": "Base5",
+        "LabelColor": "Base2",
+        "Round": 1,
+        "BackgroundDraw": false,
+        "BorderOnly": false,
+        "Id": "44f1c609-b291-478a-a22a-e74c14ad4f48",
+        "Name": null,
+        "Visible": true,
+        "Enabled": true,
+        "Selectable": false,
+        "Bounds": "240,60,511,100",
+        "Fill": false,
+        "Margin": {
+          "Left": 3,
+          "Top": 3,
+          "Right": 3,
+          "Bottom": 3
+        }
+      }
+    },
+    {
+      "Type": "Going.UI.Controls.GoLabel, Going.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "Value": {
+        "IconString": null,
+        "IconSize": 12,
+        "IconDirection": 0,
+        "IconGap": 5,
+        "Text": "Container Count : 10",
+        "FontName": "\uB098\uB214\uACE0\uB515",
+        "FontStyle": 0,
+        "FontSize": 12,
+        "TextPadding": {
+          "Left": 0,
+          "Top": 0,
+          "Right": 0,
+          "Bottom": 0
+        },
+        "ContentAlignment": 3,
+        "TextColor": "Base5",
+        "LabelColor": "Base2",
+        "Round": 1,
+        "BackgroundDraw": false,
+        "BorderOnly": false,
+        "Id": "8ad350b8-564f-4030-974b-67fc90792a09",
+        "Name": null,
+        "Visible": true,
+        "Enabled": true,
+        "Selectable": false,
+        "Bounds": "240,100,511,140",
+        "Fill": false,
+        "Margin": {
+          "Left": 3,
+          "Top": 3,
+          "Right": 3,
+          "Bottom": 3
+        }
+      }
+    }
+  ],
+  "Bounds": "0,50,800,440"
+}

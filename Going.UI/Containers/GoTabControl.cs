@@ -344,8 +344,7 @@ namespace Going.UI.Containers
         [GoProperty(PCategory.Basic, 2)] public string? Text { get; set; }
         internal bool Hover { get; set; }
 
-        [JsonInclude]
-        public List<IGoControl> Childrens { get; } = [];
+        [JsonInclude] public List<IGoControl> Childrens { get; } = [];
 
         [JsonConstructor]
         public GoTabPage(List<IGoControl> childrens) : this() => Childrens = childrens;

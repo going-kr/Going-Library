@@ -9,6 +9,7 @@ using Going.UIEditor.Windows;
 using SkiaSharp;
 using System.ComponentModel;
 using System.Security.Cryptography;
+using System.Text;
 using WeifenLuo.WinFormsUI.Docking;
 using Timer = System.Windows.Forms.Timer;
 
@@ -473,7 +474,7 @@ namespace Going.UIEditor
             }
         }
         #endregion
-        #region DeployProject()
+        #region DeployProject
         void DeployProject()
         {
             var prj = Program.CurrentProject;
@@ -499,9 +500,9 @@ namespace Going.UIEditor
 
                                     if (r.ExistsCheck)
                                     {
-                                        if (!File.Exists(filename)) File.WriteAllText(filename, r.Code);
+                                        if (!File.Exists(filename)) File.WriteAllText(filename, r.Code, Encoding.Unicode);
                                     }
-                                    else File.WriteAllText(filename, r.Code);
+                                    else File.WriteAllText(filename, r.Code, Encoding.Unicode);
                                 }
                             }
 

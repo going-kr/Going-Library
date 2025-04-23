@@ -620,10 +620,11 @@ namespace Going.UIEditor.Windows
                                 vsels = target_control(ptDown.Value, new SKPoint(x, y)).Cast<object>().ToList();
                             else
                             {
-                                if ((vsels == null || vsels?.Count == 0) && Target is GoDesign ds)
+                                List<object> msels = target_control(x, y) is IGoControl c ? [c] : [];
+                                if ((msels == null || msels?.Count == 0) && Target is GoDesign ds)
                                     vsels = [ds];
                                 else
-                                    vsels = target_control(x, y) is IGoControl c ? [c] : [];
+                                    vsels = msels;
                             }
                             #endregion
                             #region select

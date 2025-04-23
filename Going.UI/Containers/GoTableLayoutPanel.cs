@@ -22,8 +22,7 @@ namespace Going.UI.Containers
         [GoSizesProperty(PCategory.Control, 0)] public List<string> Columns { get; set; } = [];
         [GoSizesProperty(PCategory.Control, 1)] public List<string> Rows { get; set; } = [];
 
-        [JsonInclude]
-        public override GoTableLayoutControlCollection Childrens { get; } = [];
+        [JsonInclude] public override GoTableLayoutControlCollection Childrens { get; } = [];
         #endregion
 
         #region Constructor

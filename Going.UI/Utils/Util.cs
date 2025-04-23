@@ -73,6 +73,30 @@ namespace Going.UI.Utils
             return ret;
         }
         #endregion
+
+        #region FromImage
+        public static SKImage? FromImage(string path)
+        {
+            SKImage? ret = null;
+            try { if (File.Exists(path)) ret = SKImage.FromEncodedData(File.ReadAllBytes(path)); }
+            catch { }
+            return ret;
+        }
+        public static SKImage? FromImage64(string base64)
+        {
+            SKImage? ret = null;
+            try { ret = SKImage.FromEncodedData(Convert.FromBase64String(base64)); }
+            catch { }
+            return ret;
+        }
+        public static SKImage? FromAssemblyImage(Assembly asm, string name)
+        {
+            SKImage? ret = null;
+            try { using (var ms = asm.GetManifestResourceStream(name)) ret = SKImage.FromEncodedData(ms); }
+            catch { }
+            return ret;
+        }
+        #endregion
         #endregion
 
         #region Text

@@ -14,8 +14,7 @@ namespace Going.UI.Design
     public class GoPage : GoContainer
     {
         #region Properties
-        [JsonInclude]
-        public override List<IGoControl> Childrens { get; } = [];
+        [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
         public string? BackgroundImage { get; set; }
         #endregion
 
