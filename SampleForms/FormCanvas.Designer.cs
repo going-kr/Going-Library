@@ -28,6 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
+            Going.UI.Forms.ImageCanvas.TabPageBackground tabPageBackground1 = new Going.UI.Forms.ImageCanvas.TabPageBackground();
+            Going.UI.Forms.ImageCanvas.TabPageBackground tabPageBackground2 = new Going.UI.Forms.ImageCanvas.TabPageBackground();
+            Going.UI.Forms.ImageCanvas.TabPageBackground tabPageBackground3 = new Going.UI.Forms.ImageCanvas.TabPageBackground();
+            Going.UI.Forms.ImageCanvas.TabPageBackground tabPageBackground4 = new Going.UI.Forms.ImageCanvas.TabPageBackground();
+            Going.UI.Forms.ImageCanvas.TabPageBackground tabPageBackground5 = new Going.UI.Forms.ImageCanvas.TabPageBackground();
             ic = new Going.UI.Forms.ImageCanvas.IcCanvas();
             main = new TabPage();
             box7 = new Box();
@@ -54,10 +59,7 @@
             T_sld = new Going.UI.Forms.ImageCanvas.IcSlider();
             T_prgs = new Going.UI.Forms.ImageCanvas.IcProgress();
             T_btnMain = new Going.UI.Forms.ImageCanvas.IcButton();
-            tabPageBackground1 = new Going.UI.Forms.ImageCanvas.TabPageBackground();
-            tabPageBackground2 = new Going.UI.Forms.ImageCanvas.TabPageBackground();
-            tabPageBackground3 = new Going.UI.Forms.ImageCanvas.TabPageBackground();
-            tabPageBackground4 = new Going.UI.Forms.ImageCanvas.TabPageBackground();
+            hidden = new TabPage();
             ic.SuspendLayout();
             main.SuspendLayout();
             setting.SuspendLayout();
@@ -73,6 +75,7 @@
             ic.Controls.Add(setting);
             ic.Controls.Add(schedule);
             ic.Controls.Add(test);
+            ic.Controls.Add(hidden);
             ic.Dock = DockStyle.Fill;
             ic.ImageFolder = "C:\\Users\\hy752\\Desktop\\ImageCanvasSample";
             ic.ItemSize = new Size(0, 1);
@@ -83,10 +86,26 @@
             ic.Size = new Size(800, 480);
             ic.SizeMode = TabSizeMode.Fixed;
             ic.TabIndex = 0;
+            tabPageBackground1.OffImage = "main.page.off";
+            tabPageBackground1.OnImage = "main.page.on";
+            tabPageBackground1.TabPage = main;
+            tabPageBackground2.OffImage = "setting.page.off";
+            tabPageBackground2.OnImage = "setting.page.on";
+            tabPageBackground2.TabPage = setting;
+            tabPageBackground3.OffImage = "schedule.page.off";
+            tabPageBackground3.OnImage = "schedule.page.on";
+            tabPageBackground3.TabPage = schedule;
+            tabPageBackground4.OffImage = "test.page.off";
+            tabPageBackground4.OnImage = "test.page.on";
+            tabPageBackground4.TabPage = test;
+            tabPageBackground5.OffImage = "main.page.off";
+            tabPageBackground5.OnImage = "main.page.on";
+            tabPageBackground5.TabPage = hidden;
             ic.TabPageImage.Add(tabPageBackground1);
             ic.TabPageImage.Add(tabPageBackground2);
             ic.TabPageImage.Add(tabPageBackground3);
             ic.TabPageImage.Add(tabPageBackground4);
+            ic.TabPageImage.Add(tabPageBackground5);
             ic.TabStop = false;
             ic.Text = "icCanvas1";
             // 
@@ -501,29 +520,13 @@
             T_btnMain.TabIndex = 0;
             T_btnMain.TextColor = "Black";
             // 
-            // tabPageBackground1
+            // hidden
             // 
-            tabPageBackground1.OffImage = "main.page.off";
-            tabPageBackground1.OnImage = "main.page.on";
-            tabPageBackground1.TabPage = main;
-            // 
-            // tabPageBackground2
-            // 
-            tabPageBackground2.OffImage = "setting.page.off";
-            tabPageBackground2.OnImage = "setting.page.on";
-            tabPageBackground2.TabPage = setting;
-            // 
-            // tabPageBackground3
-            // 
-            tabPageBackground3.OffImage = "schedule.page.off";
-            tabPageBackground3.OnImage = "schedule.page.on";
-            tabPageBackground3.TabPage = schedule;
-            // 
-            // tabPageBackground4
-            // 
-            tabPageBackground4.OffImage = "test.page.off";
-            tabPageBackground4.OnImage = "test.page.on";
-            tabPageBackground4.TabPage = test;
+            hidden.Location = new Point(0, 0);
+            hidden.Name = "hidden";
+            hidden.Size = new Size(800, 480);
+            hidden.TabIndex = 4;
+            hidden.UseVisualStyleBackColor = true;
             // 
             // FormCanvas
             // 
@@ -577,5 +580,6 @@
         private Going.UI.Forms.ImageCanvas.TabPageBackground tabPageBackground2;
         private Going.UI.Forms.ImageCanvas.TabPageBackground tabPageBackground3;
         private Going.UI.Forms.ImageCanvas.TabPageBackground tabPageBackground4;
+        private TabPage hidden;
     }
 }

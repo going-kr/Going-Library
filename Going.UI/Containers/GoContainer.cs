@@ -119,16 +119,4 @@ namespace Going.UI.Containers
         #endregion
     }
 
-    public class GoBox : GoContainer
-    { 
-        #region Properties
-        [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
-        #endregion
-
-        #region Constructor
-        [JsonConstructor]
-        public GoBox(List<IGoControl> childrens) : this() => Childrens = childrens;
-        public GoBox() { }
-        #endregion
-    }
 }

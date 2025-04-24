@@ -128,7 +128,7 @@ namespace Going.UI.Forms.ImageCanvas
         #endregion
     }
 
-    public class TabPageBackground  : Component
+    public class TabPageBackground
     {
         public TabPage? TabPage { get; set; }
         public string? OnImage { get; set; }

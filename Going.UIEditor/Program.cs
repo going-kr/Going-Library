@@ -7,6 +7,7 @@ using Going.UIEditor.Forms;
 using Going.UIEditor.Managers;
 using SkiaSharp;
 using System.Security.Cryptography.X509Certificates;
+using System.Security.Policy;
 
 namespace Going.UIEditor
 {
@@ -24,6 +25,8 @@ namespace Going.UIEditor
         public static FormNewPage NewPageForm { get; set; }
         public static FormResourceManager ResourceForm { get; set; }
         public static FormImageSelector ImageSelector { get; set; }
+        public static FormMultiLineString MultiLineInputor { get; set; }
+
         [STAThread]
         static void Main()
         {
@@ -43,6 +46,7 @@ namespace Going.UIEditor
             NewPageForm = new FormNewPage();
             ResourceForm = new FormResourceManager();
             ImageSelector = new FormImageSelector();
+            MultiLineInputor = new FormMultiLineString();
             MainForm = new FormMain();
 
             Application.Run(MainForm);

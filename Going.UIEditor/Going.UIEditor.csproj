@@ -7,17 +7,21 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
+    <Version>1.0.0</Version>
+    <Company>Going</Company>
+    <Product>Going.UIEditor</Product>
+    <ApplicationIcon>ui.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="ui.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="DockPanelSuite" Version="3.1.1" />
     <PackageReference Include="DockPanelSuite.ThemeVS2015" Version="3.1.1" />
+    <PackageReference Include="Going.UI.Forms" Version="1.0.1" />
     <PackageReference Include="GuiLabs.Undo" Version="1.0.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Going.UI.Forms\Going.UI.Forms.csproj" />
-    <ProjectReference Include="..\Going.UI\Going.UI.csproj" />
   </ItemGroup>
 
 </Project>
