@@ -601,33 +601,46 @@ namespace Going.UIEditor.Controls
         {
             if (pg != null && Info != null && c != null)
             {
-                if (pg.SelectedObjects != null)
+                if (pg.SelectedEditor != null)
                 {
-                    if (pg.SelectedEditor != null)
+                    if (c != null && c.GetType().GetProperty(Info.Name) is PropertyInfo info2)
                     {
-                        pg.SelectedEditor.TransAction(() =>
-                        {
-                            foreach (var p in pg.SelectedObjects)
-                            {
-                                var ovalue = Info.GetValue(p);
-                                pg.SelectedEditor.EditObject(p, Info, ovalue, value);
-                            }
-                        });
-                        pg.Invalidate();
-                        pg.SelectedEditor.Invalidate();
+                        var ovalue = info2.GetValue(c);
+                        pg.SelectedEditor.EditObject(c, info2, ovalue, value);
                     }
-                    else
-                    {
-                        foreach (var p in pg.SelectedObjects)
-                        {
-                            var ovalue = Info.GetValue(p);
-                            Info.SetValue(p, value);
-                        }
-
-                        pg.Invalidate();
-                    }
+                    pg.Invalidate();
+                    pg.SelectedEditor.Invalidate();
                 }
-               
+                else
+                {
+                    if (c != null && c.GetType().GetProperty(Info.Name) is PropertyInfo info2)
+                    {
+                        var ovalue = info2.GetValue(c);
+                        Info.SetValue(c, value);
+                    }
+
+                    pg.Invalidate();
+                }
+            }
+        }
+        #endregion
+
+        #region SelectedObjectLoop
+        protected void SelectedObjectLoop(Action < object> loop)
+        {
+            if (Info != null && Grid.SelectedObjects != null)
+            {
+                if (Grid.SelectedEditor != null)
+                {
+                    Grid.SelectedEditor.TransAction(() =>
+                    {
+                        foreach (var obj in Grid.SelectedObjects) loop(obj);
+                    });
+                }
+                else
+                {
+                    foreach (var obj in Grid.SelectedObjects) loop(obj);
+                }
             }
         }
         #endregion
@@ -661,36 +674,32 @@ namespace Going.UIEditor.Controls
         {
             var ret = "";
 
-            if (v != null && Info != null)
+            if (v != null && Info != null && v.GetType().GetProperty(Info.Name) is PropertyInfo info2)
             {
-                try
+                var val = info2.GetValue(v);
+                if (val != null)
                 {
-                    var val = Info.GetValue(v);
-                    if (val != null)
+                    if (val is GoPadding pad) ret = $"{pad.Left}, {pad.Top}, {pad.Right}, {pad.Bottom}";
+                    else if (val is SKRect rt) ret = $"{rt.Left}, {rt.Top}, {rt.Width}, {rt.Height}";
+                    else if (val is SKColor color)
                     {
-                        if (val is GoPadding pad) ret = $"{pad.Left}, {pad.Top}, {pad.Right}, {pad.Bottom}";
-                        else if (val is SKRect rt) ret = $"{rt.Left}, {rt.Top}, {rt.Width}, {rt.Height}";
-                        else if (val is SKColor color)
-                        {
-                            if (color.Alpha == 255)
-                                ret = $"#{color.Red:X2}{color.Green:X2}{color.Blue:X2}";
-                            else
-                                ret = $"#{color.Red:X2}{color.Green:X2}{color.Blue:X2}{color.Alpha:X2}";
-                        }
-                        else if (val is TimeSpan ts) ret = ts.ToString();
-                        else if (val is DateTime time) ret = time.ToString();
-                        else if (IsCollection(Info) && val is IEnumerable<object> ls)
-                        {
-                            ret = $"Count : {ls.Count()}";
-                        }
-                        else if (IsSizes(Info) && val is IEnumerable<object> ls2)
-                        {
-                            ret = $"Count : {ls2.Count()}";
-                        }
-                        else ret = val?.ToString() ?? "";
+                        if (color.Alpha == 255)
+                            ret = $"#{color.Red:X2}{color.Green:X2}{color.Blue:X2}";
+                        else
+                            ret = $"#{color.Red:X2}{color.Green:X2}{color.Blue:X2}{color.Alpha:X2}";
                     }
+                    else if (val is TimeSpan ts) ret = ts.ToString();
+                    else if (val is DateTime time) ret = time.ToString();
+                    else if (IsCollection(Info) && val is IEnumerable<object> ls)
+                    {
+                        ret = $"Count : {ls.Count()}";
+                    }
+                    else if (IsSizes(Info) && val is IEnumerable<object> ls2)
+                    {
+                        ret = $"Count : {ls2.Count()}";
+                    }
+                    else ret = val?.ToString() ?? "";
                 }
-                catch { }
             }
 
             return ret;
@@ -842,8 +851,7 @@ namespace Going.UIEditor.Controls
                 var lk = vs.ToLookup(x => x);
                 var val = lk.Count == 1 ? (lk.FirstOrDefault()?.Key ?? null) : null;
 
-                foreach (var obj in Grid.SelectedObjects)
-                    SetValue(obj, Info, (val is bool b && !b));
+                SelectedObjectLoop((obj) => SetValue(obj, Info, (val is bool b && !b)));
             }
             base.OnValueClick(rtValue, rtButton);
         }
@@ -896,8 +904,7 @@ namespace Going.UIEditor.Controls
                 var ret = Program.SelBox.ShowRadio(Name, (values.Count > 10 ? 4 : (values.Count > 3 ? 3 : 1)), values, values.FirstOrDefault(x => object.Equals(x.Tag, val)));
                 if (ret != null && ret.Tag != null) 
                 {
-                    foreach (var obj in Grid.SelectedObjects)
-                        SetValue(obj, Info, ret.Tag);
+                    SelectedObjectLoop((obj) => SetValue(obj, Info, ret.Tag));
                 }
             }
             base.OnButtonClick(rtValue, rtButton);
@@ -1027,8 +1034,7 @@ namespace Going.UIEditor.Controls
                 {
                     object? vv = ret.Name;
                     if (vv is string s && s == "{NONE}") vv = null;
-                    foreach (var obj in Grid.SelectedObjects)
-                        SetValue(obj, Info, vv);
+                    SelectedObjectLoop((obj) => SetValue(obj, Info, vv));
                 }
             }
             else if (Info != null && Info.PropertyType == typeof(string) && Info.Name == "Text")
@@ -1037,8 +1043,7 @@ namespace Going.UIEditor.Controls
                 if (ret != null && Grid.SelectedObjects != null)
                 {
                     object? vv = ret;
-                    foreach (var obj in Grid.SelectedObjects)
-                        SetValue(obj, Info, vv);
+                    SelectedObjectLoop((obj) => SetValue(obj, Info, vv));
                 }
             }
             else SetInput(rtValue);
@@ -1083,8 +1088,7 @@ namespace Going.UIEditor.Controls
             {
                 object? vv = ValueFromString(txt.Text);
                 if (vv is string s && s == "{NONE}") vv = null;
-                foreach (var obj in Grid.SelectedObjects)
-                    SetValue(obj, Info, vv);
+                SelectedObjectLoop((obj) => SetValue(obj, Info, vv));
             }
             Grid?.BeginInvoke(new Action(() => { txt.Focus(); txt.SelectAll(); }));
         }
@@ -1172,7 +1176,7 @@ namespace Going.UIEditor.Controls
         #endregion
         #endregion
 
-        #region void 
+        #region SetValue 
         void SetValue<T>(PropertyInfo info, IEnumerable<T>? val)
         {
             var tp = info.PropertyType;
@@ -1180,7 +1184,7 @@ namespace Going.UIEditor.Controls
             {
                 var ret = dlg.ShowCollectionEditor($"{info.Name} Editor", val);
                 if (ret != null && Grid?.SelectedObjects != null)
-                    foreach (var obj in Grid.SelectedObjects)
+                    SelectedObjectLoop((obj) =>
                     {
                         if (tp.IsGenericType && tp.GetGenericTypeDefinition() == typeof(List<>))
                         {
@@ -1194,7 +1198,7 @@ namespace Going.UIEditor.Controls
                             va.AddRange(ret);
                             SetValue(obj, info, va);
                         }
-                    }
+                    });
             }
         }
         #endregion
@@ -1255,9 +1259,7 @@ namespace Going.UIEditor.Controls
                         var itms = ret?.Split(',').Select(x => x.Trim()).ToArray();
                         if (itms != null && Util.ValidSizes(itms))
                         {
-                            foreach (var obj in Grid.SelectedObjects)
-                                SetValue(obj, Info, itms.ToList());
-
+                            SelectedObjectLoop((obj) => SetValue(obj, Info, itms.ToList()));
                             Grid.Invalidate();
                         }
                     }

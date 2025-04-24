@@ -1833,12 +1833,14 @@ namespace Going.UIEditor.Windows
         void mag_proc(Anchor anc, SKRect srt, bool loop, Action<Mag> routineX, Action<Mag> routineY)
         {
             var c = anc.Control;
-            var alls = search_control(container()).Where(xc => xc.Parent is IGoControl vcon ? CollisionTool.Check(xc.Bounds, Util.FromRect(xc.Parent.ViewPosition.X, xc.Parent.ViewPosition.Y, vcon.Width, vcon.Height)) : false).ToList();
+            var alls = search_control(container()).Where(xc => (xc.Parent is IGoControl vcon ? CollisionTool.Check(xc.Bounds, Util.FromRect(xc.Parent.ViewPosition.X, xc.Parent.ViewPosition.Y, vcon.Width, vcon.Height)) : false) && !sels.Contains(xc)).ToList();
 
             if (c is IGoContainer con)
             {
                 foreach (var vc in alls.ToArray())
-                    if (parent_check(vc, con)) alls.Remove(vc);
+                    if (parent_check(vc, con)  ) alls.Remove(vc);
+
+
             }
 
             var (xs, ys) = mag_controlpos(srt);
