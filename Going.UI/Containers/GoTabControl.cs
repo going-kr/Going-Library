@@ -169,7 +169,7 @@ namespace Going.UI.Containers
                                     p.IsStroke = false; p.Color = cTab;
                                     canvas.DrawRect(Util.FromRect(rt.Right, rtPage.Top, c2, c2), p);
 
-                                    var n = Convert.ToInt32(rtPage.Left) + 0.5F;
+                                    var n = Convert.ToInt32(rtPage.Top) + 0.5F;
                                     p.IsStroke = true; p.StrokeWidth = 1; p.Color = cBorder;
                                     canvas.DrawLine(rt.Right - c2, n, rt.Right + c2, n, p);
                                 }
@@ -179,7 +179,7 @@ namespace Going.UI.Containers
                                     p.IsStroke = false; p.Color = cTab;
                                     canvas.DrawRect(Util.FromRect(rt.Left - c2, rtPage.Top, c2, c2), p);
 
-                                    var n = Convert.ToInt32(rtPage.Left) + 0.5F;
+                                    var n = Convert.ToInt32(rtPage.Top) + 0.5F;
                                     p.IsStroke = true; p.StrokeWidth = 1; p.Color = cBorder;
                                     canvas.DrawLine(rt.Left + c2, n, rt.Left - c2, n, p);
                                 }
@@ -254,7 +254,7 @@ namespace Going.UI.Containers
                         var rts = Util.Rows(rtContent, [$"{NavSize}px", "100%"]);
                         dic["Nav"] = rts[0];
                         dic["Page"] = rts[1];
-                        dic["Panel"] = Util.FromRect(rts[1], new GoPadding(10));
+                        dic["Panel"] = Util.FromRect(rts[1], new GoPadding(0));
                     }
                     break;
                 case GoDirection.Down:
@@ -262,7 +262,7 @@ namespace Going.UI.Containers
                         var rts = Util.Rows(rtContent, ["100%", $"{NavSize}px"]);
                         dic["Nav"] = rts[1];
                         dic["Page"] = rts[0];
-                        dic["Panel"] = Util.FromRect(rts[0], new GoPadding(10));
+                        dic["Panel"] = Util.FromRect(rts[0], new GoPadding(0));
                     }
                     break;
                 case GoDirection.Left:
@@ -270,7 +270,7 @@ namespace Going.UI.Containers
                         var rts = Util.Columns(rtContent, [$"{NavSize}px", "100%"]);
                         dic["Nav"] = rts[0];
                         dic["Page"] = rts[1];
-                        dic["Panel"] = Util.FromRect(rts[1], new GoPadding(10));
+                        dic["Panel"] = Util.FromRect(rts[1], new GoPadding(0));
                     }
                     break;
                 case GoDirection.Right:
@@ -278,7 +278,7 @@ namespace Going.UI.Containers
                         var rts = Util.Columns(rtContent, ["100%", $"{NavSize}px"]);
                         dic["Nav"] = rts[1];
                         dic["Page"] = rts[0];
-                        dic["Panel"] = Util.FromRect(rts[0], new GoPadding(10));
+                        dic["Panel"] = Util.FromRect(rts[0], new GoPadding(0));
                     }
                     break;
             }

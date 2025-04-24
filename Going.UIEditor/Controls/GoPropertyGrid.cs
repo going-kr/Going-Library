@@ -663,30 +663,34 @@ namespace Going.UIEditor.Controls
 
             if (v != null && Info != null)
             {
-                var val = Info.GetValue(v);
-                if (val != null)
+                try
                 {
-                    if (val is GoPadding pad) ret = $"{pad.Left}, {pad.Top}, {pad.Right}, {pad.Bottom}";
-                    else if (val is SKRect rt) ret = $"{rt.Left}, {rt.Top}, {rt.Width}, {rt.Height}";
-                    else if (val is SKColor color)
+                    var val = Info.GetValue(v);
+                    if (val != null)
                     {
-                        if (color.Alpha == 255)
-                            ret = $"#{color.Red:X2}{color.Green:X2}{color.Blue:X2}";
-                        else
-                            ret = $"#{color.Red:X2}{color.Green:X2}{color.Blue:X2}{color.Alpha:X2}";
+                        if (val is GoPadding pad) ret = $"{pad.Left}, {pad.Top}, {pad.Right}, {pad.Bottom}";
+                        else if (val is SKRect rt) ret = $"{rt.Left}, {rt.Top}, {rt.Width}, {rt.Height}";
+                        else if (val is SKColor color)
+                        {
+                            if (color.Alpha == 255)
+                                ret = $"#{color.Red:X2}{color.Green:X2}{color.Blue:X2}";
+                            else
+                                ret = $"#{color.Red:X2}{color.Green:X2}{color.Blue:X2}{color.Alpha:X2}";
+                        }
+                        else if (val is TimeSpan ts) ret = ts.ToString();
+                        else if (val is DateTime time) ret = time.ToString();
+                        else if (IsCollection(Info) && val is IEnumerable<object> ls)
+                        {
+                            ret = $"Count : {ls.Count()}";
+                        }
+                        else if (IsSizes(Info) && val is IEnumerable<object> ls2)
+                        {
+                            ret = $"Count : {ls2.Count()}";
+                        }
+                        else ret = val?.ToString() ?? "";
                     }
-                    else if (val is TimeSpan ts) ret = ts.ToString();
-                    else if (val is DateTime time) ret = time.ToString();
-                    else if(IsCollection(Info) && val is IEnumerable<object> ls)
-                    {
-                        ret = $"Count : {ls.Count()}";
-                    }
-                    else if (IsSizes(Info) && val is IEnumerable<object> ls2)
-                    {
-                        ret = $"Count : {ls2.Count()}";
-                    }
-                    else ret = val?.ToString() ?? "";
                 }
+                catch { }
             }
 
             return ret;

@@ -1,4 +1,5 @@
-﻿using Going.UI.Containers;
+﻿#define Space
+using Going.UI.Containers;
 using Going.UI.Controls;
 using Going.UI.Datas;
 using Going.UI.Design;
@@ -10,6 +11,7 @@ using Going.UI.Tools;
 using Going.UI.Utils;
 using Going.UIEditor.Utils;
 using GuiLabs.Undo;
+using Microsoft.VisualBasic;
 using SkiaSharp;
 using System.Data;
 using System.Diagnostics;
@@ -18,6 +20,7 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Channels;
 using WeifenLuo.WinFormsUI.Docking;
+using Windows.ApplicationModel.Appointments;
 using Windows.Media.Protection.PlayReady;
 using Cursor = System.Windows.Forms.Cursor;
 using GoControl = Going.UI.Controls.GoControl;
@@ -31,6 +34,7 @@ namespace Going.UIEditor.Windows
         #region Const
         const int ANC_SZ = 4;
         const int MAG_GP = 5;
+        const int MAG_INTERVAL = 10;
         #endregion
 
         #region Properties
@@ -182,14 +186,39 @@ namespace Going.UIEditor.Windows
                                     p.Color = SKColors.Red;
                                     p.StrokeWidth = 1;
 
-                                    var vsrt = calcbox(dragAnchor.Name, c.Bounds, gx, gy);
+                                    var ort = calcbox(dragAnchor.Name, c.Bounds, gx, gy);
                                     var (vx, vy) = containerviewpos(c.Parent);
-                                    vsrt.Offset(-vx, -vy);
-                                    vsrt.Offset(c.ScreenX - c.Left, c.ScreenY - c.Top);
+                                    ort.Offset(-vx, -vy);
+                                    ort.Offset(c.ScreenX - c.Left, c.ScreenY - c.Top);
 
-                                    var y1 = Math.Min(vsrt.Top, mx.PairYs.Min());
-                                    var y2 = Math.Max(vsrt.Bottom, mx.PairYs.Max());
-                                    if (mx.MagX.HasValue) canvas.DrawLine(mx.MagX.Value, y1, mx.MagX.Value, y2, p);
+                                    var trt = new SKRect(mx.PairXs[0], mx.PairYs[0], mx.PairXs[2], mx.PairYs[2]);
+
+                                    if (mx.GapMode == "n")
+                                    {
+                                        var y1 = Math.Min(ort.Top, mx.PairYs.Min());
+                                        var y2 = Math.Max(ort.Bottom, mx.PairYs.Max());
+                                        if (mx.MagX.HasValue) canvas.DrawLine(mx.MagX.Value, y1, mx.MagX.Value, y2, p);
+                                    }
+                                    else if(mx.GapMode == "s")
+                                    {
+                                        var tort = trt; tort.Inflate(-MAG_INTERVAL, -MAG_INTERVAL);
+
+                                        float overlapT = Math.Max(ort.Top, trt.Top);
+                                        float overlapB = Math.Min(ort.Bottom, trt.Bottom);
+                                        var dy = MathTool.Center(overlapT, overlapB);
+
+                                        if (mx.MagX.HasValue) canvas.DrawLine(mx.MagX.Value, dy, mx.MagNameX?.Contains('l') ?? false ? tort.Left : tort.Right, dy, p);
+                                    }
+                                    else if (mx.GapMode == "p")
+                                    {
+                                        var tort = trt; tort.Inflate(MAG_INTERVAL, MAG_INTERVAL);
+
+                                        float overlapT = Math.Max(ort.Top, trt.Top);
+                                        float overlapB = Math.Min(ort.Bottom, trt.Bottom);
+                                        var dy = MathTool.Center(overlapT, overlapB);
+
+                                        if (mx.MagX.HasValue) canvas.DrawLine(mx.MagX.Value, dy, mx.MagNameX?.Contains('l') ?? false ? tort.Left : tort.Right, dy, p);
+                                    }
                                 }, 
                                 (my) =>
                                 {
@@ -197,15 +226,39 @@ namespace Going.UIEditor.Windows
                                     p.Color = SKColors.Red;
                                     p.StrokeWidth = 1;
 
-
-                                    var vsrt = calcbox(dragAnchor.Name, c.Bounds, gx, gy);
+                                    var ort = calcbox(dragAnchor.Name, c.Bounds, gx, gy);
                                     var (vx, vy) = containerviewpos(c.Parent);
-                                    vsrt.Offset(-vx, -vy);
-                                    vsrt.Offset(c.ScreenX - c.Left, c.ScreenY - c.Top);
+                                    ort.Offset(-vx, -vy);
+                                    ort.Offset(c.ScreenX - c.Left, c.ScreenY - c.Top);
 
-                                    var x1 = Math.Min(vsrt.Left, my.PairXs.Min());
-                                    var x2 = Math.Max(vsrt.Right, my.PairXs.Max());
-                                    if (my.MagY.HasValue) canvas.DrawLine(x1, my.MagY.Value, x2, my.MagY.Value, p);
+                                    var trt = new SKRect(my.PairXs[0], my.PairYs[0], my.PairXs[2], my.PairYs[2]);
+
+                                    if (my.GapMode == "n")
+                                    {
+                                        var x1 = Math.Min(ort.Left, my.PairXs.Min());
+                                        var x2 = Math.Max(ort.Right, my.PairXs.Max());
+                                        if (my.MagY.HasValue) canvas.DrawLine(x1, my.MagY.Value, x2, my.MagY.Value, p);
+                                    }
+                                    else if(my.GapMode == "s")
+                                    {
+                                        var tort = trt; tort.Inflate(-MAG_INTERVAL, -MAG_INTERVAL);
+
+                                        float overlapL = Math.Max(ort.Left, trt.Left);
+                                        float overlapR = Math.Min(ort.Right, trt.Right);
+                                        var dx = MathTool.Center(overlapL, overlapR);
+
+                                        if (my.MagY.HasValue) canvas.DrawLine(dx, my.MagY.Value, dx, my.MagNameY?.Contains('t') ?? false ? tort.Top : tort.Bottom, p);
+                                    }
+                                    else if (my.GapMode == "p")
+                                    {
+                                        var tort = trt; tort.Inflate(MAG_INTERVAL, MAG_INTERVAL);
+
+                                        float overlapL = Math.Max(ort.Left, trt.Left);
+                                        float overlapR = Math.Min(ort.Right, trt.Right);
+                                        var dx = MathTool.Center(overlapL, overlapR);
+
+                                        if (my.MagY.HasValue) canvas.DrawLine(dx, my.MagY.Value, dx, my.MagNameY?.Contains('t') ?? false ? tort.Top : tort.Bottom, p);
+                                    }
                                 });
                             }
                             #endregion
@@ -1547,13 +1600,29 @@ namespace Going.UIEditor.Windows
         #endregion
 
         #region mag_controlpos
-        (float[] xs, float[] ys) mag_controlpos(IGoControl c)
+        (float[] xs, float[] ys) mag_controlpos(IGoControl c, float inflate = 0F)
         {
             var (vx, vy) = containerviewpos(c.Parent);
             var xg = c.ScreenX - c.Left - vx;
             var yg = c.ScreenY - c.Top - vy;
-            float[] ys = [c.Bounds.Top + yg, c.Bounds.MidY + yg, c.Bounds.Bottom + yg];
-            float[] xs = [c.Bounds.Left + xg, c.Bounds.MidX + xg, c.Bounds.Right + xg];
+            float[] ys = [c.Bounds.Top + yg - inflate, c.Bounds.MidY + yg, c.Bounds.Bottom + yg + inflate];
+            float[] xs = [c.Bounds.Left + xg - inflate, c.Bounds.MidX + xg, c.Bounds.Right + xg + inflate];
+
+            return (xs, ys);
+        }
+
+        (float[] xs, float[] ys) mag_controlpos(IGoContainer con, float inflate = 0F)
+        {
+            var c = (IGoControl)con;
+            var (vx, vy) = containerviewpos(c.Parent);
+            var xg = c.ScreenX - c.Left - vx;
+            var yg = c.ScreenY - c.Top - vy;
+
+            var vrt = con.PanelBounds;
+            vrt.Offset(c.Left, c.Top);
+
+            float[] ys = [vrt.Top + yg - inflate, vrt.MidY, vrt.Bottom + yg + inflate];
+            float[] xs = [vrt.Left + xg - inflate, vrt.MidX + xg, vrt.Right + xg + inflate];
 
             return (xs, ys);
         }
@@ -1567,17 +1636,38 @@ namespace Going.UIEditor.Windows
         }
         #endregion
         #region mag_check
-        bool mag_check(IGoControl tc, float[] xs, float[] ys)
+        bool mag_check(IGoControl tc, float[] xs, float[] ys, Anchor anc)
         {
             var (txs, tys) = mag_controlpos(tc);
 
+            #region var
+            float mx = xs[1], my = ys[1];
+            switch (anc.Name)
+            {
+                case "move": mx = xs[1]; my = ys[1]; break;
+                case "l": mx = xs[0]; my = ys[1]; break;
+                case "t": mx = xs[1]; my = ys[0]; break;
+                case "r": mx = xs[2]; my = ys[1]; break;
+                case "b": mx = xs[1]; my = ys[2]; break;
+                case "lt": mx = xs[0]; my = ys[0]; break;
+                case "rt": mx = xs[2]; my = ys[0]; break;
+                case "lb": mx = xs[0]; my = ys[2]; break;
+                case "rb": mx = xs[2]; my = ys[2]; break;
+            }
+            var vcon = anc.Name == "move" ? target_container((int)mx, (int)my, anc.Control).con : anc.Control.Parent;
+            #endregion
+
+            var rtO = new SKRect(xs[0], ys[0], xs[2], ys[2]);
+            var rtT = new SKRect(txs[0], tys[0], txs[2], tys[2]);
+
+            
             foreach (var x in xs)
-                foreach (var tx in txs)
+                foreach (var tx in vcon == tc.Parent && CollisionTool.CheckVertical(rtO, rtT) && !CollisionTool.Check(rtO , rtT) ? [txs[0] - MAG_INTERVAL, txs[0], txs[1], txs[2], txs[2] + MAG_INTERVAL] : txs)
                     if (Math.Abs(tx - x) <= MAG_GP) return true;
 
             foreach (var y in ys)
-                foreach (var ty in tys)
-                    if (Math.Abs(ty - y) <= MAG_GP) return true;
+                foreach (var ty in vcon == tc.Parent && CollisionTool.CheckHorizon(rtO, rtT) && !CollisionTool.Check(rtO, rtT) ? [tys[0] - MAG_INTERVAL, tys[0], tys[1], tys[2], tys[2] + MAG_INTERVAL] : tys)
+                    if (Math.Abs(ty - y) <= MAG_GP)  return true;
 
             return false;
         }
@@ -1587,42 +1677,155 @@ namespace Going.UIEditor.Windows
         {
             List<Mag> ret = [];
 
+            #region var
+            float mx = xs[1], my = ys[1];
+            switch (anc.Name)
+            {
+                case "move": mx = xs[1]; my = ys[1]; break;
+                case "l": mx = xs[0]; my = ys[1]; break;
+                case "t": mx = xs[1]; my = ys[0]; break;
+                case "r": mx = xs[2]; my = ys[1]; break;
+                case "b": mx = xs[1]; my = ys[2]; break;
+                case "lt": mx = xs[0]; my = ys[0]; break;
+                case "rt": mx = xs[2]; my = ys[0]; break;
+                case "lb": mx = xs[0]; my = ys[2]; break;
+                case "rb": mx = xs[2]; my = ys[2]; break;
+            }
+            var vcon = anc.Name == "move" ? target_container((int)mx, (int)my, anc.Control).con : anc.Control.Parent;
+            #endregion
+
+            #region parent
+            {
+                if (vcon != null && vcon is IGoControl tc && vcon is not GoGridLayoutPanel && vcon is not GoTableLayoutPanel)
+                {
+                    var (txs, tys) = mag_controlpos(vcon, -MAG_INTERVAL);
+
+                    for (int io = 0; io < xs.Length; io++)
+                        for (int it = 0; it < txs.Length; it++)
+                            if (Math.Abs(txs[it] - xs[io]) <= MAG_GP && ((anc.Name == "move" && io != 1 && it != 1) || (anc.Name.Contains('l') && io == 0) || (anc.Name.Contains('r') && io == 2)))
+                                ret.Add(new Mag
+                                {
+                                    Target = tc,
+                                    Dist = Math.Abs(txs[it] - xs[io]),
+                                    DistR = txs[it] - xs[io],
+                                    OriginX = xs[io],
+                                    OriginNameX = io == 0 ? "l" : (io == 1 ? "c" : "r"),
+                                    MagX = txs[it],
+                                    MagNameX = it == 0 ? "gl" : (it == 1 ? "gc" : "gr"),
+                                    PairXs = txs,
+                                    PairYs = tys,
+                                    GapMode = "p",
+                                });
+
+                    for (int io = 0; io < ys.Length; io++)
+                        for (int it = 0; it < tys.Length; it++)
+                            if (Math.Abs(tys[it] - ys[io]) <= MAG_GP && ((anc.Name == "move" && io != 1 && it != 1) || (anc.Name.Contains('t') && io == 0) || (anc.Name.Contains('b') && io == 2)))
+                                ret.Add(new Mag
+                                {
+                                    Target = tc,
+                                    Dist = Math.Abs(tys[it] - ys[io]),
+                                    DistR = tys[it] - ys[io],
+                                    OriginY = ys[io],
+                                    OriginNameY = io == 0 ? "t" : (io == 1 ? "c" : "b"),
+                                    MagY = tys[it],
+                                    MagNameY = it == 0 ? "gt" : (it == 1 ? "gc" : "gb"),
+                                    PairXs = txs,
+                                    PairYs = tys,
+                                    GapMode = "p",
+                                });
+                }
+            }
+            #endregion
+
+            #region all control
             foreach (var tc in tcs)
             {
-                var (txs, tys) = mag_controlpos(tc);
+                #region Space
+                if(tc.Parent == vcon)
+                {
+                    var (txs, tys) = mag_controlpos(tc, MAG_INTERVAL);
 
-                for (int io = 0; io < xs.Length; io++)
-                    for (int it = 0; it < txs.Length; it++)
-                        if (Math.Abs(txs[it] - xs[io]) <= MAG_GP && (anc.Name == "move" || (anc.Name.Contains('l') && io == 0) || (anc.Name.Contains('r') && io == 2)))
-                            ret.Add(new Mag
-                            {
-                                Target = tc,
-                                Dist = Math.Abs(txs[it] - xs[io]),
-                                DistR = txs[it] - xs[io],
-                                OriginX = xs[io],
-                                OriginNameX = io == 0 ? "l" : (io == 1 ? "c" : "r"),
-                                MagX = txs[it],
-                                MagNameX = it == 0 ? "l" : (it == 1 ? "c" : "r"),
-                                PairXs = txs,
-                                PairYs = tys,
-                            });
+                    var rtO = new SKRect(xs[0], ys[0], xs[2], ys[2]);
+                    var rtT = new SKRect(txs[0], tys[0], txs[2], tys[2]);
 
-                for (int io = 0; io < ys.Length; io++)
-                    for (int it = 0; it < tys.Length; it++)
-                        if (Math.Abs(tys[it] - ys[io]) <= MAG_GP && (anc.Name == "move" || (anc.Name.Contains('t') && io == 0) || (anc.Name.Contains('b') && io == 2)))
-                            ret.Add(new Mag
-                            {
-                                Target = tc,
-                                Dist = Math.Abs(tys[it] - ys[io]),
-                                DistR = tys[it] - ys[io],
-                                OriginY = ys[io],
-                                OriginNameY = io == 0 ? "t" : (io == 1 ? "c" : "b"),
-                                MagY = tys[it],
-                                MagNameY = it == 0 ? "t" : (it == 1 ? "c" : "b"),
-                                PairXs = txs,
-                                PairYs = tys,
-                            });
+                    for (int io = 0; io < xs.Length; io++)
+                        for (int it = 0; it < txs.Length; it++)
+                            if (Math.Abs(txs[it] - xs[io]) <= MAG_GP && ((anc.Name == "move" && io != 1 && it != 1) || (anc.Name.Contains('l') && io == 0) || (anc.Name.Contains('r') && io == 2)) && CollisionTool.CheckVertical(rtO, rtT) )
+                                ret.Add(new Mag
+                                {
+                                    Target = tc,
+                                    Dist = Math.Abs(txs[it] - xs[io]),
+                                    DistR = txs[it] - xs[io],
+                                    OriginX = xs[io],
+                                    OriginNameX = io == 0 ? "l" : (io == 1 ? "c" : "r"),
+                                    MagX = txs[it],
+                                    MagNameX = it == 0 ? "gl" : (it == 1 ? "gc" : "gr"),
+                                    PairXs = txs,
+                                    PairYs = tys,
+                                    GapMode = "s",
+                                });
+
+                    for (int io = 0; io < ys.Length; io++)
+                        for (int it = 0; it < tys.Length; it++)
+                            if (Math.Abs(tys[it] - ys[io]) <= MAG_GP && ((anc.Name == "move" && io != 1 && it != 1) || (anc.Name.Contains('t') && io == 0) || (anc.Name.Contains('b') && io == 2)) && CollisionTool.CheckHorizon(rtO, rtT) )
+                                ret.Add(new Mag
+                                {
+                                    Target = tc,
+                                    Dist = Math.Abs(tys[it] - ys[io]),
+                                    DistR = tys[it] - ys[io],
+                                    OriginY = ys[io],
+                                    OriginNameY = io == 0 ? "t" : (io == 1 ? "c" : "b"),
+                                    MagY = tys[it],
+                                    MagNameY = it == 0 ? "gt" : (it == 1 ? "gc" : "gb"),
+                                    PairXs = txs,
+                                    PairYs = tys,
+                                    GapMode= "s",
+                                });
+                }
+                #endregion
+
+                #region Control
+                {
+                    var (txs, tys) = mag_controlpos(tc);
+
+                    for (int io = 0; io < xs.Length; io++)
+                        for (int it = 0; it < txs.Length; it++)
+                            if (Math.Abs(txs[it] - xs[io]) <= MAG_GP && (anc.Name == "move" || (anc.Name.Contains('l') && io == 0) || (anc.Name.Contains('r') && io == 2)))
+                                ret.Add(new Mag
+                                {
+                                    Target = tc,
+                                    Dist = Math.Abs(txs[it] - xs[io]),
+                                    DistR = txs[it] - xs[io],
+                                    OriginX = xs[io],
+                                    OriginNameX = io == 0 ? "l" : (io == 1 ? "c" : "r"),
+                                    MagX = txs[it],
+                                    MagNameX = it == 0 ? "l" : (it == 1 ? "c" : "r"),
+                                    PairXs = txs,
+                                    PairYs = tys,
+                                    GapMode = "n",
+                                });
+
+                    for (int io = 0; io < ys.Length; io++)
+                        for (int it = 0; it < tys.Length; it++)
+                            if (Math.Abs(tys[it] - ys[io]) <= MAG_GP && (anc.Name == "move" || (anc.Name.Contains('t') && io == 0) || (anc.Name.Contains('b') && io == 2)))
+                                ret.Add(new Mag
+                                {
+                                    Target = tc,
+                                    Dist = Math.Abs(tys[it] - ys[io]),
+                                    DistR = tys[it] - ys[io],
+                                    OriginY = ys[io],
+                                    OriginNameY = io == 0 ? "t" : (io == 1 ? "c" : "b"),
+                                    MagY = tys[it],
+                                    MagNameY = it == 0 ? "t" : (it == 1 ? "c" : "b"),
+                                    PairXs = txs,
+                                    PairYs = tys,
+                                    GapMode = "n",
+                                });
+                }
+                #endregion
             }
+            #endregion
+
             return ret;
         }
         #endregion
@@ -1639,7 +1842,7 @@ namespace Going.UIEditor.Windows
             }
 
             var (xs, ys) = mag_controlpos(srt);
-            var tls = alls.Where(tc => tc != c && mag_check(tc, xs, ys)).ToList();
+            var tls = alls.Where(tc => tc != c && mag_check(tc, xs, ys, anc)).ToList();
             var pts = mag_points(tls, xs, ys, anc);
 
             var lsx = pts.Where(x => x.MagX != null);
@@ -1677,6 +1880,7 @@ namespace Going.UIEditor.Windows
             }
         }
         #endregion
+
         #region parent_check
         bool parent_check(IGoControl c, IGoContainer check_parent)
         {
@@ -1881,6 +2085,7 @@ namespace Going.UIEditor.Windows
 
         public float Dist { get; set; }
         public float DistR { get; set; }
+        public string GapMode { get; set; }
     }
     #endregion
     #endregion
