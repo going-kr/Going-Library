@@ -15,6 +15,7 @@ using Microsoft.VisualBasic;
 using SkiaSharp;
 using System.Data;
 using System.Diagnostics;
+using System.Drawing;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -1694,137 +1695,147 @@ namespace Going.UIEditor.Windows
             var vcon = anc.Name == "move" ? target_container((int)mx, (int)my, anc.Control).con : anc.Control.Parent;
             #endregion
 
-            #region parent
+            if (vcon != null && vcon is not GoGridLayoutPanel && vcon is not GoTableLayoutPanel)
             {
-                if (vcon != null && vcon is IGoControl tc && vcon is not GoGridLayoutPanel && vcon is not GoTableLayoutPanel)
+                #region parent
                 {
-                    var (txs, tys) = mag_controlpos(vcon, -MAG_INTERVAL);
+                    if (vcon is IGoControl tc ) 
+                    {
+                        var (vx, vy) = containerviewpos(vcon);
+                        var rtvcon = Util.FromRect(tc.ScreenX + vx, tc.ScreenY + vy, tc.Width, tc.Height);
+                        var rtdrag = new SKRect(xs[0], ys[0], xs[2], ys[2]);
 
-                    for (int io = 0; io < xs.Length; io++)
-                        for (int it = 0; it < txs.Length; it++)
-                            if (Math.Abs(txs[it] - xs[io]) <= MAG_GP && ((anc.Name == "move" && io != 1 && it != 1) || (anc.Name.Contains('l') && io == 0) || (anc.Name.Contains('r') && io == 2)))
-                                ret.Add(new Mag
-                                {
-                                    Target = tc,
-                                    Dist = Math.Abs(txs[it] - xs[io]),
-                                    DistR = txs[it] - xs[io],
-                                    OriginX = xs[io],
-                                    OriginNameX = io == 0 ? "l" : (io == 1 ? "c" : "r"),
-                                    MagX = txs[it],
-                                    MagNameX = it == 0 ? "gl" : (it == 1 ? "gc" : "gr"),
-                                    PairXs = txs,
-                                    PairYs = tys,
-                                    GapMode = "p",
-                                });
+                        if (rtvcon.Top < rtdrag.Top && rtvcon.Left < rtdrag.Left && rtdrag.Bottom < rtvcon.Bottom && rtdrag.Right < rtvcon.Right)
+                        {
+                            var (txs, tys) = mag_controlpos(vcon, -MAG_INTERVAL);
 
-                    for (int io = 0; io < ys.Length; io++)
-                        for (int it = 0; it < tys.Length; it++)
-                            if (Math.Abs(tys[it] - ys[io]) <= MAG_GP && ((anc.Name == "move" && io != 1 && it != 1) || (anc.Name.Contains('t') && io == 0) || (anc.Name.Contains('b') && io == 2)))
-                                ret.Add(new Mag
-                                {
-                                    Target = tc,
-                                    Dist = Math.Abs(tys[it] - ys[io]),
-                                    DistR = tys[it] - ys[io],
-                                    OriginY = ys[io],
-                                    OriginNameY = io == 0 ? "t" : (io == 1 ? "c" : "b"),
-                                    MagY = tys[it],
-                                    MagNameY = it == 0 ? "gt" : (it == 1 ? "gc" : "gb"),
-                                    PairXs = txs,
-                                    PairYs = tys,
-                                    GapMode = "p",
-                                });
-                }
-            }
-            #endregion
+                            for (int io = 0; io < xs.Length; io++)
+                                for (int it = 0; it < txs.Length; it++)
+                                    if (Math.Abs(txs[it] - xs[io]) <= MAG_GP && ((anc.Name == "move" && io != 1 && it != 1) || (anc.Name.Contains('l') && io == 0) || (anc.Name.Contains('r') && io == 2)))
+                                        ret.Add(new Mag
+                                        {
+                                            Target = tc,
+                                            Dist = Math.Abs(txs[it] - xs[io]),
+                                            DistR = txs[it] - xs[io],
+                                            OriginX = xs[io],
+                                            OriginNameX = io == 0 ? "l" : (io == 1 ? "c" : "r"),
+                                            MagX = txs[it],
+                                            MagNameX = it == 0 ? "gl" : (it == 1 ? "gc" : "gr"),
+                                            PairXs = txs,
+                                            PairYs = tys,
+                                            GapMode = "p",
+                                        });
 
-            #region all control
-            foreach (var tc in tcs)
-            {
-                #region Space
-                if(tc.Parent == vcon)
-                {
-                    var (txs, tys) = mag_controlpos(tc, MAG_INTERVAL);
-
-                    var rtO = new SKRect(xs[0], ys[0], xs[2], ys[2]);
-                    var rtT = new SKRect(txs[0], tys[0], txs[2], tys[2]);
-
-                    for (int io = 0; io < xs.Length; io++)
-                        for (int it = 0; it < txs.Length; it++)
-                            if (Math.Abs(txs[it] - xs[io]) <= MAG_GP && ((anc.Name == "move" && io != 1 && it != 1) || (anc.Name.Contains('l') && io == 0) || (anc.Name.Contains('r') && io == 2)) && CollisionTool.CheckVertical(rtO, rtT) )
-                                ret.Add(new Mag
-                                {
-                                    Target = tc,
-                                    Dist = Math.Abs(txs[it] - xs[io]),
-                                    DistR = txs[it] - xs[io],
-                                    OriginX = xs[io],
-                                    OriginNameX = io == 0 ? "l" : (io == 1 ? "c" : "r"),
-                                    MagX = txs[it],
-                                    MagNameX = it == 0 ? "gl" : (it == 1 ? "gc" : "gr"),
-                                    PairXs = txs,
-                                    PairYs = tys,
-                                    GapMode = "s",
-                                });
-
-                    for (int io = 0; io < ys.Length; io++)
-                        for (int it = 0; it < tys.Length; it++)
-                            if (Math.Abs(tys[it] - ys[io]) <= MAG_GP && ((anc.Name == "move" && io != 1 && it != 1) || (anc.Name.Contains('t') && io == 0) || (anc.Name.Contains('b') && io == 2)) && CollisionTool.CheckHorizon(rtO, rtT) )
-                                ret.Add(new Mag
-                                {
-                                    Target = tc,
-                                    Dist = Math.Abs(tys[it] - ys[io]),
-                                    DistR = tys[it] - ys[io],
-                                    OriginY = ys[io],
-                                    OriginNameY = io == 0 ? "t" : (io == 1 ? "c" : "b"),
-                                    MagY = tys[it],
-                                    MagNameY = it == 0 ? "gt" : (it == 1 ? "gc" : "gb"),
-                                    PairXs = txs,
-                                    PairYs = tys,
-                                    GapMode= "s",
-                                });
+                            for (int io = 0; io < ys.Length; io++)
+                                for (int it = 0; it < tys.Length; it++)
+                                    if (Math.Abs(tys[it] - ys[io]) <= MAG_GP && ((anc.Name == "move" && io != 1 && it != 1) || (anc.Name.Contains('t') && io == 0) || (anc.Name.Contains('b') && io == 2)))
+                                        ret.Add(new Mag
+                                        {
+                                            Target = tc,
+                                            Dist = Math.Abs(tys[it] - ys[io]),
+                                            DistR = tys[it] - ys[io],
+                                            OriginY = ys[io],
+                                            OriginNameY = io == 0 ? "t" : (io == 1 ? "c" : "b"),
+                                            MagY = tys[it],
+                                            MagNameY = it == 0 ? "gt" : (it == 1 ? "gc" : "gb"),
+                                            PairXs = txs,
+                                            PairYs = tys,
+                                            GapMode = "p",
+                                        });
+                        }
+                    }
                 }
                 #endregion
 
-                #region Control
+                #region all control
+                foreach (var tc in tcs)
                 {
-                    var (txs, tys) = mag_controlpos(tc);
+                    #region Space
+                    if (tc.Parent == vcon)
+                    {
+                        var (txs, tys) = mag_controlpos(tc, MAG_INTERVAL);
 
-                    for (int io = 0; io < xs.Length; io++)
-                        for (int it = 0; it < txs.Length; it++)
-                            if (Math.Abs(txs[it] - xs[io]) <= MAG_GP && (anc.Name == "move" || (anc.Name.Contains('l') && io == 0) || (anc.Name.Contains('r') && io == 2)))
-                                ret.Add(new Mag
-                                {
-                                    Target = tc,
-                                    Dist = Math.Abs(txs[it] - xs[io]),
-                                    DistR = txs[it] - xs[io],
-                                    OriginX = xs[io],
-                                    OriginNameX = io == 0 ? "l" : (io == 1 ? "c" : "r"),
-                                    MagX = txs[it],
-                                    MagNameX = it == 0 ? "l" : (it == 1 ? "c" : "r"),
-                                    PairXs = txs,
-                                    PairYs = tys,
-                                    GapMode = "n",
-                                });
+                        var rtO = new SKRect(xs[0], ys[0], xs[2], ys[2]);
+                        var rtT = new SKRect(txs[0], tys[0], txs[2], tys[2]);
 
-                    for (int io = 0; io < ys.Length; io++)
-                        for (int it = 0; it < tys.Length; it++)
-                            if (Math.Abs(tys[it] - ys[io]) <= MAG_GP && (anc.Name == "move" || (anc.Name.Contains('t') && io == 0) || (anc.Name.Contains('b') && io == 2)))
-                                ret.Add(new Mag
-                                {
-                                    Target = tc,
-                                    Dist = Math.Abs(tys[it] - ys[io]),
-                                    DistR = tys[it] - ys[io],
-                                    OriginY = ys[io],
-                                    OriginNameY = io == 0 ? "t" : (io == 1 ? "c" : "b"),
-                                    MagY = tys[it],
-                                    MagNameY = it == 0 ? "t" : (it == 1 ? "c" : "b"),
-                                    PairXs = txs,
-                                    PairYs = tys,
-                                    GapMode = "n",
-                                });
+                        for (int io = 0; io < xs.Length; io++)
+                            for (int it = 0; it < txs.Length; it++)
+                                if (Math.Abs(txs[it] - xs[io]) <= MAG_GP && ((anc.Name == "move" && io != 1 && it != 1) || (anc.Name.Contains('l') && io == 0) || (anc.Name.Contains('r') && io == 2)) && CollisionTool.CheckVertical(rtO, rtT))
+                                    ret.Add(new Mag
+                                    {
+                                        Target = tc,
+                                        Dist = Math.Abs(txs[it] - xs[io]),
+                                        DistR = txs[it] - xs[io],
+                                        OriginX = xs[io],
+                                        OriginNameX = io == 0 ? "l" : (io == 1 ? "c" : "r"),
+                                        MagX = txs[it],
+                                        MagNameX = it == 0 ? "gl" : (it == 1 ? "gc" : "gr"),
+                                        PairXs = txs,
+                                        PairYs = tys,
+                                        GapMode = "s",
+                                    });
+
+                        for (int io = 0; io < ys.Length; io++)
+                            for (int it = 0; it < tys.Length; it++)
+                                if (Math.Abs(tys[it] - ys[io]) <= MAG_GP && ((anc.Name == "move" && io != 1 && it != 1) || (anc.Name.Contains('t') && io == 0) || (anc.Name.Contains('b') && io == 2)) && CollisionTool.CheckHorizon(rtO, rtT))
+                                    ret.Add(new Mag
+                                    {
+                                        Target = tc,
+                                        Dist = Math.Abs(tys[it] - ys[io]),
+                                        DistR = tys[it] - ys[io],
+                                        OriginY = ys[io],
+                                        OriginNameY = io == 0 ? "t" : (io == 1 ? "c" : "b"),
+                                        MagY = tys[it],
+                                        MagNameY = it == 0 ? "gt" : (it == 1 ? "gc" : "gb"),
+                                        PairXs = txs,
+                                        PairYs = tys,
+                                        GapMode = "s",
+                                    });
+                    }
+                    #endregion
+
+                    #region Control
+                    {
+                        var (txs, tys) = mag_controlpos(tc);
+
+                        for (int io = 0; io < xs.Length; io++)
+                            for (int it = 0; it < txs.Length; it++)
+                                if (Math.Abs(txs[it] - xs[io]) <= MAG_GP && (anc.Name == "move" || (anc.Name.Contains('l') && io == 0) || (anc.Name.Contains('r') && io == 2)))
+                                    ret.Add(new Mag
+                                    {
+                                        Target = tc,
+                                        Dist = Math.Abs(txs[it] - xs[io]),
+                                        DistR = txs[it] - xs[io],
+                                        OriginX = xs[io],
+                                        OriginNameX = io == 0 ? "l" : (io == 1 ? "c" : "r"),
+                                        MagX = txs[it],
+                                        MagNameX = it == 0 ? "l" : (it == 1 ? "c" : "r"),
+                                        PairXs = txs,
+                                        PairYs = tys,
+                                        GapMode = "n",
+                                    });
+
+                        for (int io = 0; io < ys.Length; io++)
+                            for (int it = 0; it < tys.Length; it++)
+                                if (Math.Abs(tys[it] - ys[io]) <= MAG_GP && (anc.Name == "move" || (anc.Name.Contains('t') && io == 0) || (anc.Name.Contains('b') && io == 2)))
+                                    ret.Add(new Mag
+                                    {
+                                        Target = tc,
+                                        Dist = Math.Abs(tys[it] - ys[io]),
+                                        DistR = tys[it] - ys[io],
+                                        OriginY = ys[io],
+                                        OriginNameY = io == 0 ? "t" : (io == 1 ? "c" : "b"),
+                                        MagY = tys[it],
+                                        MagNameY = it == 0 ? "t" : (it == 1 ? "c" : "b"),
+                                        PairXs = txs,
+                                        PairYs = tys,
+                                        GapMode = "n",
+                                    });
+                    }
+                    #endregion
                 }
                 #endregion
             }
-            #endregion
 
             return ret;
         }

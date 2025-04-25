@@ -75,9 +75,9 @@ namespace Going.UI.Containers
                     var idx = Childrens.Indexes[c.Id];
                     if (idx != null && CellBounds(rts, idx.Column, idx.Row) is SKRect vrt)
                     {
-                        //c.Bounds = Util.Int(Util.FromRect(vrt, c.Margin));
-                        if (c.Fill) c.Bounds = Util.Int(Util.FromRect(vrt, c.Margin));
-                        else c.Bounds = Util.Int(Util.FromRect(vrt.Left, vrt.Top, c.Bounds.Width, c.Bounds.Height));
+                        c.Bounds = Util.Int(Util.FromRect(vrt, c.Margin));
+                        //if (c.Fill) c.Bounds = Util.Int(Util.FromRect(vrt, c.Margin));
+                        //else c.Bounds = Util.Int(Util.FromRect(vrt.Left, vrt.Top, c.Bounds.Width, c.Bounds.Height));
                     }
                 }
                 catch { }
