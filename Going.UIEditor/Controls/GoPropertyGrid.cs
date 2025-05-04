@@ -2,32 +2,19 @@
 using Going.UI.Containers;
 using Going.UI.Controls;
 using Going.UI.Datas;
-using Going.UI.Dialogs;
+using Going.UI.Design;
 using Going.UI.Enums;
 using Going.UI.Extensions;
 using Going.UI.Forms.Controls;
-using Going.UI.Forms.Input;
 using Going.UI.Themes;
 using Going.UI.Tools;
 using Going.UI.Utils;
 using Going.UIEditor.Forms;
-using Going.UIEditor.Managers;
 using Going.UIEditor.Utils;
 using Going.UIEditor.Windows;
 using SkiaSharp;
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Reflection.Metadata;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Windows.ApplicationModel.Activation;
-using Windows.Storage.Provider;
 
 namespace Going.UIEditor.Controls
 {
@@ -369,11 +356,13 @@ namespace Going.UIEditor.Controls
                     var keys = dic.OrderBy(x => x.Value.FirstOrDefault()?.CategoryOrder ?? int.MaxValue).ThenBy(x => x.Value.FirstOrDefault()?.PropertyOrder ?? int.MaxValue).Select(x => x.Key).ToList();
                     #endregion
 
+                    #region var
                     string? cat = null;
                     float y = 0F;
 
                     pw = Width;
                     ph = Height;
+                    #endregion
 
                     #region Id
                     if (!objs.Any(x => x?.GetType().GetInterface("Going.UI.Controls.IGoControl") == null) && objs.Count() > 0)
@@ -472,6 +461,7 @@ namespace Going.UIEditor.Controls
     #endregion
 
     #region classes : PropertyGridItem
+    #region Base
     public enum PropertyGridItemType { Category, Item }
     public class PropertyGridItem(GoPropertyGrid pg)
     {
@@ -690,14 +680,8 @@ namespace Going.UIEditor.Controls
                     }
                     else if (val is TimeSpan ts) ret = ts.ToString();
                     else if (val is DateTime time) ret = time.ToString();
-                    else if (IsCollection(Info) && val is IEnumerable<object> ls)
-                    {
-                        ret = $"Count : {ls.Count()}";
-                    }
-                    else if (IsSizes(Info) && val is IEnumerable<object> ls2)
-                    {
-                        ret = $"Count : {ls2.Count()}";
-                    }
+                    else if (IsCollection(Info) && val is IEnumerable<object> ls) ret = $"Count : {ls.Count()}";
+                    else if (IsSizes(Info) && val is IEnumerable<object> ls2) ret = $"Count : {ls2.Count()}";
                     else ret = val?.ToString() ?? "";
                 }
             }
@@ -792,6 +776,7 @@ namespace Going.UIEditor.Controls
         #endregion
         #endregion
     }
+    #endregion
 
     #region ID
     public class PropertyGridItemID(GoPropertyGrid pg) : PropertyGridItem(pg)
@@ -1059,7 +1044,7 @@ namespace Going.UIEditor.Controls
         #region SetInput
         void SetInput(SKRect rtValue)
         {
-            if (Info != null && Grid.SelectedObjects != null)
+            if (Info != null && Grid.SelectedObjects != null && ((Info.Name == "Name" && Grid.SelectedObjects.Count() == 1) || Info.Name != "Name"))
             {
                 var vs = Grid.SelectedObjects?.Select(x => ValueToString(x));
                 var lk = vs?.ToLookup(x => x);
@@ -1084,13 +1069,51 @@ namespace Going.UIEditor.Controls
         #region CompleteInput
         public void CompleteInput()
         {
-            if (Info != null && Grid.SelectedObjects != null)
+            if (Info != null && Grid.SelectedObjects != null && ((Info.Name == "Name" && Grid.SelectedObjects.Count() == 1) || Info.Name != "Name"))
             {
                 object? vv = ValueFromString(txt.Text);
                 if (vv is string s && s == "{NONE}") vv = null;
-                SelectedObjectLoop((obj) => SetValue(obj, Info, vv));
+
+                if (Info.Name == "Name")
+                {
+                    var obj = Grid.SelectedObjects.First();
+                    #region Rename
+                    var p = Program.CurrentProject;
+                    if (p != null && obj is GoPage p1 && Info.Name == "Name" && vv is string newname1 && !p.Design.Pages.Values.Any(x => x != p1 && x.Name == newname1))
+                    {
+                        SetValue(obj, Info, vv);
+
+                        var ls = p.Design.Pages.Values.ToList();
+                        p.Design.Pages.Clear();
+                        foreach (var vp in ls) p.Design.AddPage(vp);
+
+                        if (Program.MainForm.DockPanel.Contents.FirstOrDefault(x => x is ExplorerWindow) is ExplorerWindow ew) ew.RefreshTreeView();
+                    }
+                    else if (p != null && obj is GoWindow w2 && Info.Name == "Name" && vv is string newname2 && !p.Design.Windows.Values.Any(x => x != w2 && x.Name == newname2))
+                    {
+                        SetValue(obj, Info, vv);
+
+                        var ls = p.Design.Windows.Values.ToList();
+                        p.Design.Windows.Clear();
+                        foreach (var vp in ls) p.Design.Windows.Add(vp.Name!, vp);
+
+                        if (Program.MainForm.DockPanel.Contents.FirstOrDefault(x => x is ExplorerWindow) is ExplorerWindow ew) ew.RefreshTreeView();
+                    }
+                    #endregion
+                }
+                else SelectedObjectLoop((obj) => SetValue(obj, Info, vv));
             }
-            Grid?.BeginInvoke(new Action(() => { txt.Focus(); txt.SelectAll(); }));
+
+            Grid?.BeginInvoke(new Action(() =>
+            {
+                var vs = Grid.SelectedObjects?.Select(x => ValueToString(x));
+                var lk = vs?.ToLookup(x => x);
+                var s = lk?.Count == 1 ? (lk.FirstOrDefault()?.Key ?? "") : "";
+
+                txt.Text = s;
+                txt.Focus();
+                txt.SelectAll();
+            }));
         }
         #endregion
 
@@ -1102,10 +1125,12 @@ namespace Going.UIEditor.Controls
         }
         #endregion
 
+        #region Dispose
         public void Dispose()
         {
             txt?.Dispose();
         }
+        #endregion
         #endregion
     }
     #endregion

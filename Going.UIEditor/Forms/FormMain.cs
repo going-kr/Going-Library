@@ -21,6 +21,10 @@ namespace Going.UIEditor
         const string PATH_LAYOUT = "layout.xml";
         #endregion
 
+        #region Properties
+        public DockPanel DockPanel => dockPanel;
+        #endregion
+
         #region Member Variable
         ExplorerWindow? explorer;
         ToolBoxWindow? toolBox;
@@ -172,6 +176,7 @@ namespace Going.UIEditor
             #endregion
             #endregion
 
+            SetLayout();
             SetUI();
             SetLang();
         }
@@ -187,32 +192,13 @@ namespace Going.UIEditor
         #endregion
 
         #region Method
-        #region SetUI
-        void SetUI()
+        #region SetLayout
+        void SetLayout()
         {
             var p = Program.CurrentProject;
             if (p != null)
             {
-                #region UI
-                tsmiFile.Visible = true;
-                tsmiEdit.Visible = true;
-                tsmiView.Visible = true;
-                tsmiProj.Visible = true;
-                tsmiTool.Visible = true;
-                tsmiHelp.Visible = true;
-
-                tsmiNew.Enabled = btnNew.Enabled = true;
-                tsmiOpen.Enabled = btnOpen.Enabled = true;
-                tsmiSave.Enabled = btnSave.Enabled = true;
-                tsmiSaveAs.Enabled = btnSaveAs.Enabled = true;
-                tsmiClose.Enabled = true;
-
-                btnResourceManager.Visible = true;
-                valPath.Visible = true;
-                btnValidCheck.Visible = true;
-                btnDeploy.Visible = true;
-                #endregion
-
+                #region Layout
                 if (File.Exists(PATH_LAYOUT))
                 {
                     dockPanel.LoadFromXml(PATH_LAYOUT, new DeserializeDockContent((s) =>
@@ -251,6 +237,47 @@ namespace Going.UIEditor
                     toolBox.Show(explorer.Pane, DockAlignment.Bottom, 0.7);
                     properties.Show(dockPanel, DockState.DockRight);
                 }
+                #endregion
+            }
+            else
+            {
+                #region Layout
+                explorer?.Close();
+                toolBox?.Close();
+                properties?.Close();
+
+                var ls = editors.ToList();
+                editors.Clear();
+                foreach (var w in ls) w.Close();
+                #endregion
+            }
+        }
+        #endregion
+        #region SetUI
+        void SetUI()
+        {
+            var p = Program.CurrentProject;
+            if (p != null)
+            {
+                #region UI
+                tsmiFile.Visible = true;
+                tsmiEdit.Visible = true;
+                tsmiView.Visible = true;
+                tsmiProj.Visible = true;
+                tsmiTool.Visible = true;
+                tsmiHelp.Visible = true;
+
+                tsmiNew.Enabled = btnNew.Enabled = true;
+                tsmiOpen.Enabled = btnOpen.Enabled = true;
+                tsmiSave.Enabled = btnSave.Enabled = true;
+                tsmiSaveAs.Enabled = btnSaveAs.Enabled = true;
+                tsmiClose.Enabled = true;
+
+                btnResourceManager.Visible = true;
+                valPath.Visible = true;
+                btnValidCheck.Visible = true;
+                btnDeploy.Visible = true;
+                #endregion
             }
             else
             {
@@ -273,15 +300,6 @@ namespace Going.UIEditor
                 btnValidCheck.Visible = false;
                 btnDeploy.Visible = false;
                 #endregion
-
-                explorer?.Close();
-                toolBox?.Close();
-                properties?.Close();
-                
-                var ls = editors.ToList();
-                editors.Clear();
-                foreach (var w in ls) w.Close();
-               
             }
         }
         #endregion
@@ -367,8 +385,8 @@ namespace Going.UIEditor
             {
                 Program.CurrentProject = new Datas.Project { Name = r.Name, Width = r.Width, Height = r.Height  };
 
+                SetLayout();
                 SetUI();
-
             }
         }
         #endregion
@@ -387,6 +405,7 @@ namespace Going.UIEditor
                     {
                         Program.CurrentProject = v;
                         SetUI();
+                        SetLayout();
                     }
                 }
                 opening = false;
@@ -413,6 +432,7 @@ namespace Going.UIEditor
                 if (p != null) dockPanel.SaveAsXml(PATH_LAYOUT);
 
                 Program.CurrentProject = null;
+                SetLayout();
                 SetUI();
             }
 

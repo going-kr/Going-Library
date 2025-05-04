@@ -255,7 +255,7 @@ namespace Going.UIEditor.Windows
         #endregion
 
         #region Method
-        void RefreshTreeView()
+        public void RefreshTreeView()
         {
             var ndPages = tvExplorer.Nodes[1];
             var ndWnds = tvExplorer.Nodes[2];

@@ -1,25 +1,13 @@
 ﻿using Going.UI.Datas;
 using Going.UI.Enums;
-using Going.UI.Utils;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.ComponentModel;
-using System.Drawing.Design;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Going.UI.Themes;
+using Going.UI.Forms.Dialogs;
 using Going.UI.Forms.Input;
 using Going.UI.Managers;
-using Going.UI.Controls;
-using System.Windows.Forms;
-using Going.UI.Forms.Dialogs;
 using Going.UI.Tools;
 using SkiaSharp;
-using System.Text.Json.Serialization;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Header;
+using System.ComponentModel;
+using System.ComponentModel.Design;
+using System.Drawing.Design;
 
 namespace Going.UI.Forms.Controls
 {

@@ -32,37 +32,30 @@ namespace Going.UI.Design
         #region Properties
         public static GoDesign? ActiveDesign { get; set; }
 
-        [GoProperty(PCategory.Control, 0)] public bool UseTitleBar { get => TitleBar.Visible; set => TitleBar.Visible = value; }
-        [GoProperty(PCategory.Control, 0)] public bool UseLeftSideBar { get => LeftSideBar.Visible; set => LeftSideBar.Visible = value; }
-        [GoProperty(PCategory.Control, 0)] public bool UseRightSideBar { get => RightSideBar.Visible; set => RightSideBar.Visible = value; }
-        [GoProperty(PCategory.Control, 0)] public bool UseFooter { get => Footer.Visible; set => Footer.Visible = value; }
-        [GoProperty(PCategory.Control, 0)] public string BarColor { get; set; } = "Base2";
-        [GoProperty(PCategory.Control, 0)] public bool OverlaySideBar { get; set; } = false;
-        [GoProperty(PCategory.Control, 0)] public bool ExpandLeftSideBar { get => LeftSideBar.Expand; set { if(UseLeftSideBar) LeftSideBar.Expand = value; } }
-        [GoProperty(PCategory.Control, 0)] public bool ExpandRightSideBar { get => RightSideBar.Expand; set { if(UseRightSideBar) RightSideBar.Expand = value; } }
-        [JsonInclude]
-        public Dictionary<string, GoPage> Pages { get; private set; } = [];
-
-        [JsonInclude]
-        public Dictionary<string, GoWindow> Windows { get; private set; } = [];
-
-        [JsonInclude]
-        private Dictionary<string, List<SKImage>> Images { get; } = [];
-
-        [JsonIgnore] public int Width { get; private set; }
-        [JsonIgnore] public int Height { get; private set; }
-        [JsonIgnore] public IGoControl? SelectedControl { get; private set; }
-        [JsonIgnore] public GoPage? CurrentPage { get; private set; }
-
-        [JsonIgnore] public SKPoint MousePosition { get; private set; }
-
-        [JsonIgnore] public bool IsDrag => dragItem != null;
+        [JsonInclude] public Dictionary<string, GoPage> Pages { get; private set; } = [];
+        [JsonInclude] public Dictionary<string, GoWindow> Windows { get; private set; } = [];
+        [JsonInclude] private Dictionary<string, List<SKImage>> Images { get; } = [];
         [JsonInclude] public GoTitleBar TitleBar { get; private set; } = new() { Visible = false };
         [JsonInclude] public GoSideBar LeftSideBar { get; private set; } = new() { Visible = false };
         [JsonInclude] public GoSideBar RightSideBar { get; private set; } = new() { Visible = false };
         [JsonInclude] public GoFooter Footer { get; private set; } = new() { Visible = false };
 
+        [JsonIgnore] public int Width { get; private set; }
+        [JsonIgnore] public int Height { get; private set; }
+        [JsonIgnore] public IGoControl? SelectedControl { get; private set; }
+        [JsonIgnore] public GoPage? CurrentPage { get; private set; }
+        [JsonIgnore] public SKPoint MousePosition { get; private set; }
+        [JsonIgnore] public bool IsDrag => dragItem != null;
         [JsonIgnore, EditorBrowsable(EditorBrowsableState.Never)] public bool DesignMode { get; set; } = false;
+
+        [GoProperty(PCategory.Control, 0)] public bool UseTitleBar { get => TitleBar.Visible; set => TitleBar.Visible = value; }
+        [GoProperty(PCategory.Control, 1)] public bool UseLeftSideBar { get => LeftSideBar.Visible; set => LeftSideBar.Visible = value; }
+        [GoProperty(PCategory.Control, 2)] public bool UseRightSideBar { get => RightSideBar.Visible; set => RightSideBar.Visible = value; }
+        [GoProperty(PCategory.Control, 3)] public bool UseFooter { get => Footer.Visible; set => Footer.Visible = value; }
+        [GoProperty(PCategory.Control, 4)] public string BarColor { get; set; } = "Base2";
+        [GoProperty(PCategory.Control, 5)] public bool OverlaySideBar { get; set; } = false;
+        [GoProperty(PCategory.Control, 6)] public bool ExpandLeftSideBar { get => LeftSideBar.Expand; set { if (UseLeftSideBar) LeftSideBar.Expand = value; } }
+        [GoProperty(PCategory.Control, 7)] public bool ExpandRightSideBar { get => RightSideBar.Expand; set { if (UseRightSideBar) RightSideBar.Expand = value; } }
         #endregion
 
         #region Member Variable
@@ -189,7 +182,7 @@ namespace Going.UI.Design
                 GUI.Init(this, page);
             }
 
-            foreach(var wnd in Windows.Values)
+            foreach (var wnd in Windows.Values)
             {
                 wnd.Design = this;
                 GUI.Init(this, wnd);
@@ -568,7 +561,7 @@ namespace Going.UI.Design
                 if (UseLeftSideBar) GUI.KeyDown(LeftSideBar, Shift, Control, Alt, key);
                 if (UseRightSideBar) GUI.KeyDown(RightSideBar, Shift, Control, Alt, key);
                 if (UseFooter) GUI.KeyDown(Footer, Shift, Control, Alt, key);
-                
+
                 if (CurrentPage != null) GUI.KeyDown(CurrentPage, Shift, Control, Alt, key);
             }
             #endregion
