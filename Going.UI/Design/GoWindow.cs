@@ -21,20 +21,20 @@ namespace Going.UI.Design
     public class GoWindow : GoContainer
     {
         #region Properties
-        public string? IconString { get; set; }
-        public float IconSize { get; set; } = 12;
-        public float IconGap { get; set; } = 5;
+        [GoProperty(PCategory.Control, 0)] public string? IconString { get; set; }
+        [GoProperty(PCategory.Control, 1)] public float IconSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 2)] public float IconGap { get; set; } = 5;
 
-        public string Text { get; set; } = "Window";
-        public string FontName { get; set; } = "나눔고딕";
-        public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
-        public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 3)] public string Text { get; set; } = "Window";
+        [GoProperty(PCategory.Control, 4)] public string FontName { get; set; } = "나눔고딕";
+        [GoProperty(PCategory.Control, 5)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Control, 6)] public float FontSize { get; set; } = 12;
 
-        public string TextColor { get; set; } = "Fore";
-        public string WindowColor { get; set; } = "Back";
-        public string BorderColor { get; set; } = "Base2";
-        public GoRoundType Round { get; set; } = GoRoundType.All;
-        public float TitleHeight { get; set; } = 40;
+        [GoProperty(PCategory.Control, 7)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Control, 8)] public string WindowColor { get; set; } = "Back";
+        [GoProperty(PCategory.Control, 9)] public string BorderColor { get; set; } = "Base2";
+        [GoProperty(PCategory.Control, 10)] public GoRoundType Round { get; set; } = GoRoundType.All;
+        [GoProperty(PCategory.Control, 11)] public float TitleHeight { get; set; } = 40;
 
         [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
 

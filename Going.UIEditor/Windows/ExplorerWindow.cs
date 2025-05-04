@@ -236,6 +236,9 @@ namespace Going.UIEditor.Windows
                             }
                             #endregion
                         }
+
+                        if (DockPanel.Contents.FirstOrDefault(x => x is PropertiesWindow) is PropertiesWindow pw) pw.RefreshGrid();
+
                     }
                 }
             };
