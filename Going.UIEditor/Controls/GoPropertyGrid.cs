@@ -1099,6 +1099,10 @@ namespace Going.UIEditor.Controls
 
                         if (Program.MainForm.DockPanel.Contents.FirstOrDefault(x => x is ExplorerWindow) is ExplorerWindow ew) ew.RefreshTreeView();
                     }
+                    else
+                    {
+                        SetValue(obj, Info, vv);
+                    }
                     #endregion
                 }
                 else SelectedObjectLoop((obj) => SetValue(obj, Info, vv));
@@ -1273,9 +1277,9 @@ namespace Going.UIEditor.Controls
 
                 if (IsSizes(Info))
                 {
-                    var rs = val is IEnumerable<string> va ? string.Concat(va.Select(x => $"{x}, "))[..^2] : "";
+                    var rs = val is IEnumerable<string> va && va.Count() > 0 ? string.Concat(va.Select(x => $"{x}, "))[..^2] : "";
 
-                    using (var dlg = new Going.UI.Forms.Dialogs.GoInputBox { MinimumWidth = 300  })
+                    using (var dlg = new Going.UI.Forms.Dialogs.GoInputBox { MinimumWidth = 300 })
                     {
                         dlg.OkText = LM.Ok;
                         dlg.CancelText = LM.Cancel;

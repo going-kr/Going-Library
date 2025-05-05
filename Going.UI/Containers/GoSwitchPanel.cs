@@ -95,7 +95,7 @@ namespace Going.UI.Containers
     #region class : GoSubPage
     public class GoSubPage
     {
-        public string Name { get; set; }
+        [GoProperty(PCategory.Control, 0)] public string Name { get; set; }
 
         [JsonInclude] public List<IGoControl> Childrens { get; } = [];
 

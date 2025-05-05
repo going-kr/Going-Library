@@ -9,6 +9,7 @@ using Going.UI.Json;
 using Going.UI.Themes;
 using Going.UI.Tools;
 using Going.UI.Utils;
+using Going.UIEditor.Forms.Dialogs;
 using Going.UIEditor.Utils;
 using GuiLabs.Undo;
 using Microsoft.VisualBasic;
@@ -810,6 +811,8 @@ namespace Going.UIEditor.Windows
                         case Keys.Shift | Keys.Right: ControlMove(10, 0); break;
                         case Keys.Shift | Keys.Up: ControlMove(0, -10); break;
                         case Keys.Shift | Keys.Down: ControlMove(0, 10); break;
+
+                        case Keys.Control | Keys.F10: ShowDesignCode(); break;
                     }
                 }
             }
@@ -1905,6 +1908,17 @@ namespace Going.UIEditor.Windows
             }
         }
         #endregion
+        #endregion
+
+        #region ShowCode
+        void ShowDesignCode()
+        {
+            if(Target is GoPage page)
+            {
+                using var dlg = new FormCode { };
+                dlg.ShowCode(page);
+            }
+        }
         #endregion
         #endregion
     }

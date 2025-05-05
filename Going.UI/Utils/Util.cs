@@ -1,4 +1,6 @@
 ﻿#define MeasureA
+using Going.UI.Containers;
+using Going.UI.Controls;
 using Going.UI.Datas;
 using Going.UI.Enums;
 using Going.UI.Extensions;
@@ -1175,6 +1177,51 @@ namespace Going.UI.Utils
             return new SKColor(Convert.ToByte(r * 255.0), Convert.ToByte(g * 255.0), Convert.ToByte(b * 255.0));
         }
         #endregion
+        #endregion
+
+        #region AllControls
+        public static List<IGoControl> AllControls(IGoContainer? container)
+        {
+            var ls = new List<IGoControl>();
+            if (container != null)
+                foreach (var c in container.Childrens)
+                {
+                    ls.Add(c);
+                    if (c is GoTabControl tab) { foreach (var p in tab.TabPages) ls.AddRange(AllControls(p)); }
+                    else if (c is GoSwitchPanel sw) { foreach (var p in sw.Pages) ls.AddRange(AllControls(p)); }
+                    else if (c is IGoContainer vp) { ls.AddRange(AllControls(vp)); }
+                }
+            return ls;
+        }
+
+        public static List<IGoControl> AllControls(GoTabPage container)
+        {
+            var ls = new List<IGoControl>();
+            if (container != null)
+                foreach (var c in container.Childrens)
+                {
+                    ls.Add(c);
+                    if (c is GoTabControl tab) { foreach (var p in tab.TabPages) ls.AddRange(AllControls(p)); }
+                    else if (c is GoSwitchPanel sw) { foreach (var p in sw.Pages) ls.AddRange(AllControls(p)); }
+                    else if (c is IGoContainer vp) { ls.AddRange(AllControls(vp)); }
+                }
+            return ls;
+        }
+
+        public static List<IGoControl> AllControls(GoSubPage container)
+        {
+            var ls = new List<IGoControl>();
+            if (container != null)
+                foreach (var c in container.Childrens)
+                {
+                    ls.Add(c);
+                    if (c is GoTabControl tab) { foreach (var p in tab.TabPages) ls.AddRange(AllControls(p)); }
+                    else if (c is GoSwitchPanel sw) { foreach (var p in sw.Pages) ls.AddRange(AllControls(p)); }
+                    else if (c is IGoContainer vp) { ls.AddRange(AllControls(vp)); }
+
+                }
+            return ls;
+        }
         #endregion
     }
 }
