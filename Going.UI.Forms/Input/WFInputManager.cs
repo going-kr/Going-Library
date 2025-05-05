@@ -242,6 +242,7 @@ namespace Going.UI.Forms.Input
         {
             txt.Visible = false;
             GoInputEventer.Current.ClearInputControl();
+            InputControl?.Invalidate();
         }
         #endregion
 

@@ -43,6 +43,9 @@
             grpTrend = new Going.UI.Forms.Controls.GoTrendGraph();
             tabPage1 = new TabPage();
             dg = new Going.UI.Forms.Controls.GoDataGrid();
+            goInputString1 = new Going.UI.Forms.Controls.GoInputString();
+            goInputString2 = new Going.UI.Forms.Controls.GoInputString();
+            textBox1 = new TextBox();
             goTabControl1.SuspendLayout();
             tpBar.SuspendLayout();
             tpLine.SuspendLayout();
@@ -259,6 +262,9 @@
             // tabPage1
             // 
             tabPage1.BackColor = Color.FromArgb(60, 60, 60);
+            tabPage1.Controls.Add(textBox1);
+            tabPage1.Controls.Add(goInputString2);
+            tabPage1.Controls.Add(goInputString1);
             tabPage1.Controls.Add(dg);
             tabPage1.Location = new Point(4, 44);
             tabPage1.Name = "tabPage1";
@@ -276,19 +282,84 @@
             dg.FontName = "나눔고딕";
             dg.FontSize = 12F;
             dg.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
-            dg.Location = new Point(68, 53);
+            dg.Location = new Point(15, 16);
             dg.Name = "dg";
             dg.RowColor = "Base2";
             dg.RowHeight = 30F;
             dg.ScrollMode = Going.UI.Utils.ScrollMode.Vertical;
             dg.SelectedRowColor = "Select";
             dg.SelectionMode = Going.UI.Enums.GoDataGridSelectionMode.Single;
-            dg.Size = new Size(814, 465);
+            dg.Size = new Size(930, 351);
             dg.SummaryRowColor = "Base1";
             dg.TabIndex = 0;
             dg.TabStop = false;
             dg.Text = "goDataGrid1";
             dg.TextColor = "Fore";
+            // 
+            // goInputString1
+            // 
+            goInputString1.BackColor = Color.FromArgb(50, 50, 50);
+            goInputString1.BackgroundColor = "Back";
+            goInputString1.BorderColor = "Base3";
+            goInputString1.ButtonSize = null;
+            goInputString1.Direction = Going.UI.Enums.GoDirectionHV.Horizon;
+            goInputString1.FillColor = "Base3";
+            goInputString1.FontName = "나눔고딕";
+            goInputString1.FontSize = 12F;
+            goInputString1.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
+            goInputString1.IconGap = 5F;
+            goInputString1.IconSize = 12F;
+            goInputString1.IconString = null;
+            goInputString1.Location = new Point(15, 392);
+            goInputString1.Name = "goInputString1";
+            goInputString1.Round = Going.UI.Enums.GoRoundType.All;
+            goInputString1.Size = new Size(110, 36);
+            goInputString1.TabIndex = 1;
+            goInputString1.TabStop = false;
+            goInputString1.Text = "goInputString1";
+            goInputString1.TextColor = "Fore";
+            goInputString1.Title = null;
+            goInputString1.TitleSize = null;
+            goInputString1.Value = "";
+            goInputString1.ValueColor = "Base1";
+            // 
+            // goInputString2
+            // 
+            goInputString2.BackColor = Color.FromArgb(50, 50, 50);
+            goInputString2.BackgroundColor = "Back";
+            goInputString2.BorderColor = "Base3";
+            goInputString2.ButtonSize = null;
+            goInputString2.Direction = Going.UI.Enums.GoDirectionHV.Horizon;
+            goInputString2.FillColor = "Base3";
+            goInputString2.FontName = "나눔고딕";
+            goInputString2.FontSize = 12F;
+            goInputString2.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
+            goInputString2.IconGap = 5F;
+            goInputString2.IconSize = 12F;
+            goInputString2.IconString = null;
+            goInputString2.Location = new Point(15, 434);
+            goInputString2.Name = "goInputString2";
+            goInputString2.Round = Going.UI.Enums.GoRoundType.All;
+            goInputString2.Size = new Size(110, 36);
+            goInputString2.TabIndex = 2;
+            goInputString2.TabStop = false;
+            goInputString2.Text = "goInputString2";
+            goInputString2.TextColor = "Fore";
+            goInputString2.Title = null;
+            goInputString2.TitleSize = null;
+            goInputString2.Value = "";
+            goInputString2.ValueColor = "Base1";
+            // 
+            // textBox1
+            // 
+            textBox1.BackColor = Color.FromArgb(30, 30, 30);
+            textBox1.BorderStyle = BorderStyle.None;
+            textBox1.ForeColor = Color.White;
+            textBox1.Location = new Point(131, 392);
+            textBox1.Multiline = true;
+            textBox1.Name = "textBox1";
+            textBox1.Size = new Size(142, 78);
+            textBox1.TabIndex = 3;
             // 
             // FormMain
             // 
@@ -307,6 +378,7 @@
             tpTime.ResumeLayout(false);
             tpTrend.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
+            tabPage1.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -325,5 +397,8 @@
         private Going.UI.Forms.Controls.GoTrendGraph grpTrend;
         private TabPage tabPage1;
         private Going.UI.Forms.Controls.GoDataGrid dg;
+        private TextBox textBox1;
+        private Going.UI.Forms.Controls.GoInputString goInputString2;
+        private Going.UI.Forms.Controls.GoInputString goInputString1;
     }
 }
