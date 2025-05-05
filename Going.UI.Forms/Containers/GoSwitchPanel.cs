@@ -1,4 +1,5 @@
-﻿using Going.UI.Themes;
+﻿using Going.UI.Forms.Tools;
+using Going.UI.Themes;
 using Going.UI.Tools;
 using Going.UI.Utils;
 using System;
@@ -70,7 +71,9 @@ namespace Going.UI.Forms.Containers
         {
             base.OnPaint(e);
 
-            e.Graphics.Clear(GetBackColor());
+            var thm = GoTheme.Current;
+            var vc = Util.FromArgb(ColorTool.EnableColor(this, thm.ToColor(BackgroundColor)));
+            e.Graphics.Clear(vc);
 
             RefreshPages();
         }
@@ -91,7 +94,8 @@ namespace Going.UI.Forms.Containers
         #region RefreshPages
         void RefreshPages()
         {
-            var vc = GetBackColor();
+            var thm = GoTheme.Current;
+            var vc = Util.FromArgb(ColorTool.EnableColor(this, thm.ToColor(BackgroundColor)));
 
             foreach (var v in TabPages.Cast<TabPage>())
             {
@@ -99,47 +103,7 @@ namespace Going.UI.Forms.Containers
                 if (v.BorderStyle != BorderStyle.None) v.BorderStyle = BorderStyle.None;
             }
         }
-        #endregion
-
-        #region GetBackColor
-        Color GetBackColor()
-        {
-            var thm = GoTheme.Current;
-            var c = Util.FromArgb(GoTheme.Current.ToColor(BackgroundColor));
-            var bc = Util.FromArgb(thm.Back);
-
-            if (Parent is GoGroupBox grp)
-                bc = Util.FromArgb(thm.ToColor(grp.BackgroundColor));
-            else if (Parent is GoPanel pnl)
-                bc = Enabled ? Util.FromArgb(thm.ToColor(pnl.PanelColor)) : MixColorAlpha(Util.FromArgb(thm.ToColor(pnl.BackgroundColor)), Util.FromArgb(thm.ToColor(pnl.PanelColor)), 255 - GoTheme.DisableAlpha);
-            else if (Parent is GoScrollablePanel spnl)
-                bc = Util.FromArgb(thm.ToColor(spnl.BackgroundColor));
-            else if (Parent is TabPage page1 && page1.Parent is GoSwitchPanel sw)
-                bc = Util.FromArgb(thm.ToColor(sw.BackgroundColor));
-            else if (Parent is TabPage page2 && page2.Parent is GoTabControl tab)
-                bc = Enabled ? Util.FromArgb(thm.ToColor(tab.TabColor)) : MixColorAlpha(Util.FromArgb(thm.ToColor(tab.BackgroundColor)), Util.FromArgb(thm.ToColor(tab.TabColor)), 255 - GoTheme.DisableAlpha);
-            else if (Parent is GoTableLayoutPanel tpnl)
-                bc = Util.FromArgb(thm.ToColor(tpnl.BackgroundColor));
-            else if (Parent is GoContainer con)
-                bc = Util.FromArgb(thm.ToColor(con.BackgroundColor));
-            else
-                bc = Parent?.BackColor ?? Util.FromArgb(thm.Back);
-
-            var vc = Enabled ? c : bc;
-
-            return vc;
-        }
-        #endregion
-
-        #region MixColorAlpha
-        Color MixColorAlpha(Color dest, Color src, int srcAlpha)
-        {
-            byte red = Convert.ToByte(MathTool.Constrain(MathTool.Map(srcAlpha, 0, 255, (int)dest.R, (int)src.R), 0.0, 255.0));
-            byte green = Convert.ToByte(MathTool.Constrain(MathTool.Map(srcAlpha, 0, 255, (int)dest.G, (int)src.G), 0.0, 255.0));
-            byte blue = Convert.ToByte(MathTool.Constrain(MathTool.Map(srcAlpha, 0, 255, (int)dest.B, (int)src.B), 0.0, 255.0));
-            return Color.FromArgb(red, green, blue);
-        }
-        #endregion
+        #endregion 
         #endregion
     }
 }

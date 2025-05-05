@@ -120,6 +120,8 @@ namespace SampleForms
             dg.Columns.Add(new GoDataGridInputNumberColumn<double> { Name = "Number3", HeaderText = "값3", Size = "20%" });
 
             dg.SetDataSource(vls);
+
+            goButton3.ButtonClicked += (o, s) => goPanel1.Enabled = !goPanel1.Enabled;
         }
 
 

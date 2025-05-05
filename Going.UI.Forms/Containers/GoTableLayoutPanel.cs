@@ -1,5 +1,6 @@
 ﻿using Going.UI.Enums;
 using Going.UI.Forms.Controls;
+using Going.UI.Forms.Tools;
 using Going.UI.Themes;
 using SkiaSharp;
 using SkiaSharp.Views.Desktop;
@@ -69,7 +70,7 @@ namespace Going.UI.Forms.Containers
             using (var surface = SKSurface.Create(bitmap.Info))
             {
                 var cBack = GoTheme.Current.ToColor(BackgroundColor);
-                canvas.Clear(cBack);
+                canvas.Clear(ColorTool.EnableColor(this, cBack));
 
                 using var p = new SKPaint { IsAntialias = true, Color = SKColors.Black.WithAlpha(Convert.ToByte(Enabled ? 255 : 255 - GoTheme.DisableAlpha)) };
                 var sp = canvas.SaveLayer(p);
