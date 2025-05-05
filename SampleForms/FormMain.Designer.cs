@@ -41,28 +41,12 @@
             grpTime = new Going.UI.Forms.Controls.GoTimeGraph();
             tpTrend = new TabPage();
             grpTrend = new Going.UI.Forms.Controls.GoTrendGraph();
-            tabPage1 = new TabPage();
-            textBox1 = new TextBox();
-            goInputString2 = new Going.UI.Forms.Controls.GoInputString();
-            goInputString1 = new Going.UI.Forms.Controls.GoInputString();
-            dg = new Going.UI.Forms.Controls.GoDataGrid();
-            tabPage2 = new TabPage();
-            goButton3 = new Going.UI.Forms.Controls.GoButton();
-            goPanel1 = new Going.UI.Forms.Containers.GoPanel();
-            goTableLayoutPanel1 = new Going.UI.Forms.Containers.GoTableLayoutPanel();
-            goButton1 = new Going.UI.Forms.Controls.GoButton();
-            goButton2 = new Going.UI.Forms.Controls.GoButton();
-            goCheckBox1 = new Going.UI.Forms.Controls.GoCheckBox();
             goTabControl1.SuspendLayout();
             tpBar.SuspendLayout();
             tpLine.SuspendLayout();
             tpCircle.SuspendLayout();
             tpTime.SuspendLayout();
             tpTrend.SuspendLayout();
-            tabPage1.SuspendLayout();
-            tabPage2.SuspendLayout();
-            goPanel1.SuspendLayout();
-            goTableLayoutPanel1.SuspendLayout();
             SuspendLayout();
             // 
             // rm
@@ -77,8 +61,6 @@
             goTabControl1.Controls.Add(tpCircle);
             goTabControl1.Controls.Add(tpTime);
             goTabControl1.Controls.Add(tpTrend);
-            goTabControl1.Controls.Add(tabPage1);
-            goTabControl1.Controls.Add(tabPage2);
             goTabControl1.Dock = DockStyle.Fill;
             goTabControl1.FontName = "나눔고딕";
             goTabControl1.FontSize = 12F;
@@ -270,255 +252,6 @@
             grpTrend.XScale = TimeSpan.Parse("00:00:01");
             grpTrend.YAxisGraduationCount = 10;
             // 
-            // tabPage1
-            // 
-            tabPage1.BackColor = Color.FromArgb(60, 60, 60);
-            tabPage1.Controls.Add(textBox1);
-            tabPage1.Controls.Add(goInputString2);
-            tabPage1.Controls.Add(goInputString1);
-            tabPage1.Controls.Add(dg);
-            tabPage1.Location = new Point(4, 44);
-            tabPage1.Name = "tabPage1";
-            tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(965, 597);
-            tabPage1.TabIndex = 5;
-            tabPage1.Text = "tabPage1";
-            // 
-            // textBox1
-            // 
-            textBox1.BackColor = Color.FromArgb(30, 30, 30);
-            textBox1.BorderStyle = BorderStyle.None;
-            textBox1.ForeColor = Color.White;
-            textBox1.Location = new Point(131, 392);
-            textBox1.Multiline = true;
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(142, 78);
-            textBox1.TabIndex = 3;
-            // 
-            // goInputString2
-            // 
-            goInputString2.BackColor = Color.FromArgb(50, 50, 50);
-            goInputString2.BackgroundColor = "Back";
-            goInputString2.BorderColor = "Base3";
-            goInputString2.ButtonSize = null;
-            goInputString2.Direction = Going.UI.Enums.GoDirectionHV.Horizon;
-            goInputString2.FillColor = "Base3";
-            goInputString2.FontName = "나눔고딕";
-            goInputString2.FontSize = 12F;
-            goInputString2.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
-            goInputString2.IconGap = 5F;
-            goInputString2.IconSize = 12F;
-            goInputString2.IconString = null;
-            goInputString2.Location = new Point(15, 434);
-            goInputString2.Name = "goInputString2";
-            goInputString2.Round = Going.UI.Enums.GoRoundType.All;
-            goInputString2.Size = new Size(110, 36);
-            goInputString2.TabIndex = 2;
-            goInputString2.TabStop = false;
-            goInputString2.Text = "goInputString2";
-            goInputString2.TextColor = "Fore";
-            goInputString2.Title = null;
-            goInputString2.TitleSize = null;
-            goInputString2.Value = "";
-            goInputString2.ValueColor = "Base1";
-            // 
-            // goInputString1
-            // 
-            goInputString1.BackColor = Color.FromArgb(50, 50, 50);
-            goInputString1.BackgroundColor = "Back";
-            goInputString1.BorderColor = "Base3";
-            goInputString1.ButtonSize = null;
-            goInputString1.Direction = Going.UI.Enums.GoDirectionHV.Horizon;
-            goInputString1.FillColor = "Base3";
-            goInputString1.FontName = "나눔고딕";
-            goInputString1.FontSize = 12F;
-            goInputString1.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
-            goInputString1.IconGap = 5F;
-            goInputString1.IconSize = 12F;
-            goInputString1.IconString = null;
-            goInputString1.Location = new Point(15, 392);
-            goInputString1.Name = "goInputString1";
-            goInputString1.Round = Going.UI.Enums.GoRoundType.All;
-            goInputString1.Size = new Size(110, 36);
-            goInputString1.TabIndex = 1;
-            goInputString1.TabStop = false;
-            goInputString1.Text = "goInputString1";
-            goInputString1.TextColor = "Fore";
-            goInputString1.Title = null;
-            goInputString1.TitleSize = null;
-            goInputString1.Value = "";
-            goInputString1.ValueColor = "Base1";
-            // 
-            // dg
-            // 
-            dg.BackColor = Color.FromArgb(50, 50, 50);
-            dg.BackgroundColor = "Back";
-            dg.ColumnColor = "Base1";
-            dg.ColumnHeight = 30F;
-            dg.FontName = "나눔고딕";
-            dg.FontSize = 12F;
-            dg.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
-            dg.Location = new Point(15, 16);
-            dg.Name = "dg";
-            dg.RowColor = "Base2";
-            dg.RowHeight = 30F;
-            dg.ScrollMode = Going.UI.Utils.ScrollMode.Vertical;
-            dg.SelectedRowColor = "Select";
-            dg.SelectionMode = Going.UI.Enums.GoDataGridSelectionMode.Single;
-            dg.Size = new Size(930, 351);
-            dg.SummaryRowColor = "Base1";
-            dg.TabIndex = 0;
-            dg.TabStop = false;
-            dg.Text = "goDataGrid1";
-            dg.TextColor = "Fore";
-            // 
-            // tabPage2
-            // 
-            tabPage2.BackColor = Color.FromArgb(60, 60, 60);
-            tabPage2.Controls.Add(goButton3);
-            tabPage2.Controls.Add(goPanel1);
-            tabPage2.Location = new Point(4, 44);
-            tabPage2.Name = "tabPage2";
-            tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(965, 597);
-            tabPage2.TabIndex = 6;
-            tabPage2.Text = "tabPage2";
-            // 
-            // goButton3
-            // 
-            goButton3.BackColor = Color.FromArgb(50, 50, 50);
-            goButton3.BackgroundColor = "Back";
-            goButton3.BackgroundDraw = true;
-            goButton3.BorderOnly = false;
-            goButton3.ButtonColor = "Base3";
-            goButton3.FontName = "나눔고딕";
-            goButton3.FontSize = 12F;
-            goButton3.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
-            goButton3.IconDirection = Going.UI.Enums.GoDirectionHV.Horizon;
-            goButton3.IconGap = 5F;
-            goButton3.IconSize = 12F;
-            goButton3.IconString = null;
-            goButton3.Location = new Point(450, 120);
-            goButton3.Name = "goButton3";
-            goButton3.Round = Going.UI.Enums.GoRoundType.All;
-            goButton3.Size = new Size(75, 23);
-            goButton3.TabIndex = 7;
-            goButton3.TabStop = false;
-            goButton3.Text = "goButton3";
-            goButton3.TextColor = "Fore";
-            // 
-            // goPanel1
-            // 
-            goPanel1.BackColor = Color.FromArgb(60, 60, 60);
-            goPanel1.BackgroundColor = "base2";
-            goPanel1.BackgroundDraw = true;
-            goPanel1.BorderOnly = false;
-            goPanel1.ButtonWidth = null;
-            goPanel1.Controls.Add(goTableLayoutPanel1);
-            goPanel1.Enabled = false;
-            goPanel1.FontName = "나눔고딕";
-            goPanel1.FontSize = 12F;
-            goPanel1.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
-            goPanel1.IconGap = 5F;
-            goPanel1.IconSize = 12F;
-            goPanel1.IconString = null;
-            goPanel1.Location = new Point(44, 33);
-            goPanel1.Name = "goPanel1";
-            goPanel1.Padding = new Padding(10, 50, 10, 10);
-            goPanel1.PanelColor = "60,65,70";
-            goPanel1.Round = Going.UI.Enums.GoRoundType.All;
-            goPanel1.Size = new Size(346, 205);
-            goPanel1.TabIndex = 6;
-            goPanel1.TabStop = false;
-            goPanel1.Text = "goPanel1";
-            goPanel1.TextColor = "Fore";
-            goPanel1.TitleHeight = 40F;
-            // 
-            // goTableLayoutPanel1
-            // 
-            goTableLayoutPanel1.BackColor = Color.FromArgb(60, 65, 70);
-            goTableLayoutPanel1.BackgroundColor = "60,65,70";
-            goTableLayoutPanel1.ColumnCount = 2;
-            goTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            goTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            goTableLayoutPanel1.Controls.Add(goButton1, 0, 0);
-            goTableLayoutPanel1.Controls.Add(goButton2, 1, 0);
-            goTableLayoutPanel1.Controls.Add(goCheckBox1, 0, 1);
-            goTableLayoutPanel1.Dock = DockStyle.Fill;
-            goTableLayoutPanel1.Location = new Point(10, 50);
-            goTableLayoutPanel1.Name = "goTableLayoutPanel1";
-            goTableLayoutPanel1.RowCount = 2;
-            goTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            goTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            goTableLayoutPanel1.Size = new Size(326, 145);
-            goTableLayoutPanel1.TabIndex = 0;
-            // 
-            // goButton1
-            // 
-            goButton1.BackColor = Color.FromArgb(60, 65, 70);
-            goButton1.BackgroundColor = "60,65,70";
-            goButton1.BackgroundDraw = true;
-            goButton1.BorderOnly = false;
-            goButton1.ButtonColor = "Base3";
-            goButton1.FontName = "나눔고딕";
-            goButton1.FontSize = 12F;
-            goButton1.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
-            goButton1.IconDirection = Going.UI.Enums.GoDirectionHV.Horizon;
-            goButton1.IconGap = 5F;
-            goButton1.IconSize = 12F;
-            goButton1.IconString = null;
-            goButton1.Location = new Point(3, 3);
-            goButton1.Name = "goButton1";
-            goButton1.Round = Going.UI.Enums.GoRoundType.All;
-            goButton1.Size = new Size(157, 66);
-            goButton1.TabIndex = 0;
-            goButton1.TabStop = false;
-            goButton1.Text = "goButton1";
-            goButton1.TextColor = "Fore";
-            // 
-            // goButton2
-            // 
-            goButton2.BackColor = Color.FromArgb(60, 65, 70);
-            goButton2.BackgroundColor = "60,65,70";
-            goButton2.BackgroundDraw = true;
-            goButton2.BorderOnly = false;
-            goButton2.ButtonColor = "Base3";
-            goButton2.FontName = "나눔고딕";
-            goButton2.FontSize = 12F;
-            goButton2.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
-            goButton2.IconDirection = Going.UI.Enums.GoDirectionHV.Horizon;
-            goButton2.IconGap = 5F;
-            goButton2.IconSize = 12F;
-            goButton2.IconString = null;
-            goButton2.Location = new Point(166, 3);
-            goButton2.Name = "goButton2";
-            goButton2.Round = Going.UI.Enums.GoRoundType.All;
-            goButton2.Size = new Size(157, 66);
-            goButton2.TabIndex = 1;
-            goButton2.TabStop = false;
-            goButton2.Text = "goButton2";
-            goButton2.TextColor = "Fore";
-            // 
-            // goCheckBox1
-            // 
-            goCheckBox1.BackColor = Color.FromArgb(60, 65, 70);
-            goCheckBox1.BackgroundColor = "60,65,70";
-            goCheckBox1.BoxColor = "Base1";
-            goCheckBox1.BoxSize = 24;
-            goCheckBox1.Checked = false;
-            goCheckBox1.ContentAlignment = Going.UI.Enums.GoContentAlignment.MiddleCenter;
-            goCheckBox1.FontName = "나눔고딕";
-            goCheckBox1.FontSize = 12F;
-            goCheckBox1.FontStyle = Going.UI.Enums.GoFontStyle.Normal;
-            goCheckBox1.Gap = 10;
-            goCheckBox1.Location = new Point(3, 75);
-            goCheckBox1.Name = "goCheckBox1";
-            goCheckBox1.Size = new Size(157, 67);
-            goCheckBox1.TabIndex = 2;
-            goCheckBox1.TabStop = false;
-            goCheckBox1.Text = "goCheckBox1";
-            goCheckBox1.TextColor = "Fore";
-            // 
             // FormMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -535,11 +268,6 @@
             tpCircle.ResumeLayout(false);
             tpTime.ResumeLayout(false);
             tpTrend.ResumeLayout(false);
-            tabPage1.ResumeLayout(false);
-            tabPage1.PerformLayout();
-            tabPage2.ResumeLayout(false);
-            goPanel1.ResumeLayout(false);
-            goTableLayoutPanel1.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -556,17 +284,5 @@
         private Going.UI.Forms.Controls.GoCircleGraph grpCircle;
         private Going.UI.Forms.Controls.GoTimeGraph grpTime;
         private Going.UI.Forms.Controls.GoTrendGraph grpTrend;
-        private TabPage tabPage1;
-        private Going.UI.Forms.Controls.GoDataGrid dg;
-        private TextBox textBox1;
-        private Going.UI.Forms.Controls.GoInputString goInputString2;
-        private Going.UI.Forms.Controls.GoInputString goInputString1;
-        private TabPage tabPage2;
-        private Going.UI.Forms.Controls.GoButton goButton3;
-        private Going.UI.Forms.Containers.GoPanel goPanel1;
-        private Going.UI.Forms.Containers.GoTableLayoutPanel goTableLayoutPanel1;
-        private Going.UI.Forms.Controls.GoButton goButton1;
-        private Going.UI.Forms.Controls.GoButton goButton2;
-        private Going.UI.Forms.Controls.GoCheckBox goCheckBox1;
     }
 }

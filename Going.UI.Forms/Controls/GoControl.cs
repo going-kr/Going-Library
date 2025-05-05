@@ -213,6 +213,7 @@ namespace Going.UI.Forms.Controls
         #region OnEnabledChanged
         protected override void OnEnabledChanged(EventArgs e)
         {
+            //Control.Enabled = Enabled;
             Invalidate();
             base.OnEnabledChanged(e);
         }
@@ -220,6 +221,7 @@ namespace Going.UI.Forms.Controls
         #region OnVisibleChanged
         protected override void OnVisibleChanged(EventArgs e)
         {
+            //Control.Visible = Visible;
             Invalidate();
             base.OnVisibleChanged(e);
         }
