@@ -40,12 +40,13 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 5)] public string SummaryRowColor { get; set; } = "Base1";
         [GoProperty(PCategory.Control, 6)] public string ColumnColor { get; set; } = "Base1";
         [GoProperty(PCategory.Control, 7)] public string SelectedRowColor { get; set; } = "Select";
+        [GoProperty(PCategory.Control, 8)] public string BoxColor { get; set; } = "Base2";
 
-        [GoProperty(PCategory.Control, 8)] public float RowHeight { get; set; } = 30F;
-        [GoProperty(PCategory.Control, 9)] public float ColumnHeight { get; set; } = 30F;
+        [GoProperty(PCategory.Control, 9)] public float RowHeight { get; set; } = 30F;
+        [GoProperty(PCategory.Control, 10)] public float ColumnHeight { get; set; } = 30F;
 
-        [GoProperty(PCategory.Control, 10)] public ScrollMode ScrollMode { get; set; } = ScrollMode.Vertical;
-        [GoProperty(PCategory.Control, 11)] public GoDataGridSelectionMode SelectionMode { get; set; } = GoDataGridSelectionMode.Single;
+        [GoProperty(PCategory.Control, 11)] public ScrollMode ScrollMode { get; set; } = ScrollMode.Vertical;
+        [GoProperty(PCategory.Control, 12)] public GoDataGridSelectionMode SelectionMode { get; set; } = GoDataGridSelectionMode.Single;
 
         public ObservableList<GoDataGridColumn> ColumnGroups { get; private set; } = [];
         public ObservableList<GoDataGridColumn> Columns { get; private set; } = [];
@@ -143,6 +144,7 @@ namespace Going.UI.Controls
             var cSum = thm.ToColor(SummaryRowColor);
             var cCol = thm.ToColor(ColumnColor);
             var cSel = thm.ToColor(SelectedRowColor);
+            var cBox = thm.ToColor(BoxColor);
             #endregion
             #region bounds
             var rts = Areas();
@@ -257,7 +259,7 @@ namespace Going.UI.Controls
             #endregion
             #region Rows
             {
-                Util.DrawBox(canvas, rtRow, SKColors.Transparent, cRow, SummaryRows.Count > 0 ? GoRoundType.Rect : GoRoundType.B, thm.Corner);
+                Util.DrawBox(canvas, rtRow, cBox, cRow, SummaryRows.Count > 0 ? GoRoundType.Rect : GoRoundType.B, thm.Corner);
 
                 using (new SKAutoCanvasRestore(canvas))
                 {
