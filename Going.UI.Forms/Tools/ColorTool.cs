@@ -13,6 +13,7 @@ namespace Going.UI.Forms.Tools
 {
     public class ColorTool
     {
+        #region EnableColor
         public static SKColor EnableColor(Control c, SKColor backgroundColor)
         {
             var thm = GoTheme.Current;
@@ -26,7 +27,8 @@ namespace Going.UI.Forms.Tools
 
             return ret;
         }
-
+        #endregion
+        #region ParentColor
         static SKColor ParentColor(Control c)
         {
             var thm = GoTheme.Current;
@@ -43,7 +45,7 @@ namespace Going.UI.Forms.Tools
             
             return ret;
         }
-
+        #endregion
         #region MixColorAlpha
         public static SKColor MixColorAlpha(SKColor dest, SKColor src, int srcAlpha)
         {

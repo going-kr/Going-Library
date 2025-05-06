@@ -85,7 +85,8 @@ namespace Going.UIEditor.Datas
 
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
-                    ret = JsonSerializer.Deserialize<Project>(File.ReadAllText(ofd.FileName), JsonOpt.Options);
+                    var s = File.ReadAllText(ofd.FileName);
+                    ret = JsonSerializer.Deserialize<Project>(s, JsonOpt.Options);
                     if (ret != null) ret.FilePath = ofd.FileName;
                 }
             }

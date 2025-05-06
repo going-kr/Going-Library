@@ -7,20 +7,10 @@ using Going.UI.ImageCanvas;
 using Going.UI.Json;
 using Going.UIEditor.Datas;
 using SkiaSharp;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.Metrics;
-using System.Drawing;
-using System.Linq;
 using System.Reflection;
-using System.Reflection.Emit;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using Windows.ApplicationModel.Contacts.DataProvider;
-using static System.Net.Mime.MediaTypeNames;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Going.UIEditor.Utils
 {
@@ -749,7 +739,7 @@ namespace Going.UIEditor.Utils
             sb.AppendLine($"{space}{varname}.Childrens.AddRange(c.Childrens);");
             sb.AppendLine($"");
             sb.AppendLine($"{space}var dic = Util.AllControls({varname}).ToDictionary(x => x.Id.ToString(), y => y);");
-            foreach (var c in ls) sb.AppendLine($"{space}{c.Name} = dic[\"{c.Id}\"] as {TypeName(c)};");
+            foreach (var c in ls) sb.AppendLine($"{space}{c.Name} = ({TypeName(c)})dic[\"{c.Id}\"];");
         }
         #endregion
         #region MakePageCode
@@ -786,33 +776,13 @@ namespace Going.UIEditor.Utils
                 var ls = All(page).Where(x => x is IGoControl c && !string.IsNullOrWhiteSpace(c.Name)).Select(x => (IGoControl)x).ToList();
 
                 var sb = new StringBuilder();
-                sb.AppendLine($"using System.Text;");
-                sb.AppendLine($"using System.Text.Json;");
-                sb.AppendLine($"using Going.UI.Containers;");
-                sb.AppendLine($"using Going.UI.Controls;");
-                sb.AppendLine($"using Going.UI.Datas;");
-                sb.AppendLine($"using Going.UI.Design;");
-                sb.AppendLine($"using Going.UI.Json;");
-                sb.AppendLine($"using Going.UI.OpenTK.Windows;");
-                sb.AppendLine($"using Going.UI.Utils;");
-                sb.AppendLine($"using OpenTK.Windowing.Common;");
+                sb.AppendLine($"#region declare");
+                foreach (var v in ls) sb.AppendLine($"{TypeName(v)} {v.Name};");
+                sb.AppendLine($"#endregion");
                 sb.AppendLine($"");
-                sb.AppendLine($"namespace {projecjtName}.Pages");
-                sb.AppendLine($"{{");
-                sb.AppendLine($"    partial class {page.Name}");
-                sb.AppendLine($"    {{");
-                sb.AppendLine($"        #region declare");
-                foreach (var v in ls) sb.AppendLine($"        {TypeName(v)} {v.Name};");
-                sb.AppendLine($"        #endregion");
-                sb.AppendLine($"");
-                sb.AppendLine($"        public void InitializeSkiaComponent()");
-                sb.AppendLine($"        {{");
-                sb.AppendLine($"            #region base");
-                MakeDesignBarCode(sb, "            ", "Page", page, ls);
-                sb.AppendLine($"            #endregion");
-                sb.AppendLine($"        }}");
-                sb.AppendLine($"    }}");
-                sb.AppendLine($"}}");
+                sb.AppendLine($"#region initialize");
+                MakeDesignBarCode(sb, "", "Page", page, ls);
+                sb.AppendLine($"#endregion");
 
                 designCode = sb.ToString();
             }

@@ -1,4 +1,5 @@
 ﻿using Going.UI.Controls;
+using Going.UI.Datas;
 using Going.UI.Design;
 using Going.UI.Enums;
 using System;
@@ -25,7 +26,8 @@ namespace SampleOpenTK.Pages
             Childrens.Add(pg4);
             Childrens.Add(slider);
 
-            Childrens.Add(new GoInputCombo { Left = 10, Top = 500, Width = 200, Height = 40 });
+            Childrens.Add(new GoInputCombo { Left = 10, Top = 500, Width = 200, Height = 40, Items = [.. Enum.GetValues<DayOfWeek>().Select(x => new GoListItem { Text = x.ToString() })] });
+            Childrens.Add(new GoListBox { Left = 300, Top = 300, Width = 200, Height = 150, Items = [.. Enum.GetValues<DayOfWeek>().Select(x => new GoListItem { Text = x.ToString() })] });
         }
     }
 }

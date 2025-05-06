@@ -11,12 +11,14 @@ using System.Threading.Tasks;
 using System.Buffers.Text;
 using Going.UI.ImageCanvas;
 using Going.UI.Design;
+using System.Reflection;
 
 namespace Going.UI.Json
 {
     public class GoJsonConverter
     {
         public static JsonSerializerOptions Options { get; } = new JsonSerializerOptions();
+        public static Dictionary<string, Type> ControlTypes { get; } = [];
         static GoJsonConverter()
         {
             Options.PropertyNameCaseInsensitive = true;
@@ -28,7 +30,44 @@ namespace Going.UI.Json
             Options.Converters.Add(new GoPagesConverter());
             Options.Converters.Add(new GoTableLayoutControlCollectionConverter());
             Options.Converters.Add(new GoGridLayoutControlCollectionConverter());
+
+            try
+            {
+                var tps = typeof(GoControl).Assembly.GetTypes();
+                ControlTypes = tps.Where(x => x.GetInterface("IGoControl") != null).ToDictionary(x => ControlName(x), y => y);
+            }
+            catch { }
         }
+
+        #region NumberTypeName
+        static string NumberTypeName(Type t)
+        {
+            var s = "";
+            if (t == typeof(byte)) s = "byte";
+            else if (t == typeof(ushort)) s = "ushort";
+            else if (t == typeof(uint)) s = "uint";
+            else if (t == typeof(ulong)) s = "ulong";
+            else if (t == typeof(sbyte)) s = "sbyte";
+            else if (t == typeof(short)) s = "short";
+            else if (t == typeof(int)) s = "int";
+            else if (t == typeof(long)) s = "long";
+            else if (t == typeof(float)) s = "float";
+            else if (t == typeof(double)) s = "double";
+            else if (t == typeof(decimal)) s = "decimal";
+            return s;
+        }
+        #endregion
+        #region ControlName
+        internal static string ControlName(Type x)
+        {
+            var ret = x.Name;
+            if(x.IsGenericType)
+            {
+                ret = x.Name.Split('`').FirstOrDefault() + $"<T>";
+            }
+            return ret;
+        }
+        #endregion
     }
 
     #region SKColorConverter
@@ -135,7 +174,7 @@ namespace Going.UI.Json
                         if (typeName == null)
                             throw new JsonException("Type information is missing.");
 
-                        var type = Type.GetType(typeName);
+                        var type = GoJsonConverter.ControlTypes.TryGetValue(typeName, out var tp) ? tp : null;
                         if (type == null)
                             throw new JsonException($"Unknown type: {typeName}");
 
@@ -149,12 +188,18 @@ namespace Going.UI.Json
 
         public override void Write(Utf8JsonWriter writer, IGoControl value, JsonSerializerOptions options)
         {
-            writer.WriteStartObject();
-            writer.WritePropertyName("Type");
-            writer.WriteStringValue(value.GetType().AssemblyQualifiedName);
-            writer.WritePropertyName("Value");
-            JsonSerializer.Serialize(writer, value, value.GetType(), options);
-            writer.WriteEndObject();
+            var tp = value.GetType();
+            var mp = GoJsonConverter.ControlTypes.FirstOrDefault(x => x.Value == tp);
+
+            if (!string.IsNullOrWhiteSpace(mp.Key))
+            {
+                writer.WriteStartObject();
+                writer.WritePropertyName("Type");
+                writer.WriteStringValue(mp.Key);
+                writer.WritePropertyName("Value");
+                JsonSerializer.Serialize(writer, value, tp, options);
+                writer.WriteEndObject();
+            }
         }
     }
     #endregion
@@ -202,7 +247,7 @@ namespace Going.UI.Json
                         if (typeName == null)
                             throw new JsonException("Type is missing in GoPage entry");
 
-                        var type = Type.GetType(typeName);
+                        var type = GoJsonConverter.ControlTypes.TryGetValue(typeName, out var tp) ? tp : null;
                         if (type == null)
                             throw new JsonException($"Unknown GoPage type: {typeName}");
 
@@ -225,13 +270,18 @@ namespace Going.UI.Json
 
             foreach (var kvp in value)
             {
-                writer.WritePropertyName(kvp.Key);
+                var tp = kvp.Value.GetType();
+                var mp = GoJsonConverter.ControlTypes.FirstOrDefault(x => x.Value == tp);
 
-                writer.WriteStartObject();
-                writer.WriteString("Type", kvp.Value.GetType().AssemblyQualifiedName);
-                writer.WritePropertyName("Value");
-                JsonSerializer.Serialize(writer, kvp.Value, kvp.Value.GetType(), options);
-                writer.WriteEndObject();
+                if (!string.IsNullOrWhiteSpace(mp.Key))
+                {
+                    writer.WritePropertyName(kvp.Key);
+                    writer.WriteStartObject();
+                    writer.WriteString("Type", mp.Key);
+                    writer.WritePropertyName("Value");
+                    JsonSerializer.Serialize(writer, kvp.Value, tp, options);
+                    writer.WriteEndObject();
+                }
             }
 
             writer.WriteEndObject();
