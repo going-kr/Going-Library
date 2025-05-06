@@ -60,6 +60,11 @@ namespace Going.UI.Containers
 
         protected override void OnLayout()
         {
+            if(this.Name == "tpnlSetVar")
+            {
+
+            }
+
             var rt = Areas()["Content"];
             var rts = Util.Grid(rt, Columns.ToArray(), Rows.ToArray());
             foreach (var c in Childrens)

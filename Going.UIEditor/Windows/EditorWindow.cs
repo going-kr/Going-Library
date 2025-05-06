@@ -12,18 +12,14 @@ using Going.UI.Utils;
 using Going.UIEditor.Forms.Dialogs;
 using Going.UIEditor.Utils;
 using GuiLabs.Undo;
-using Microsoft.VisualBasic;
+using OpenTK.Graphics.OpenGL;
 using SkiaSharp;
 using System.Data;
 using System.Diagnostics;
-using System.Drawing;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using System.Threading.Channels;
 using WeifenLuo.WinFormsUI.Docking;
-using Windows.ApplicationModel.Appointments;
-using Windows.Media.Protection.PlayReady;
 using Cursor = System.Windows.Forms.Cursor;
 using GoControl = Going.UI.Controls.GoControl;
 using Keys = System.Windows.Forms.Keys;
@@ -465,8 +461,9 @@ namespace Going.UIEditor.Windows
                     #region spcial container (spnl/tab/swpnl) mouse event 
                     if (a == null)
                     {
-                        var tc2 = target_control(x, y + 20);
-                        if (tc2 is GoSwitchPanel sw && sels.Contains(sw))
+                        var tc2 = target_controlstack(x, y + 20).LastOrDefault(xc => xc is GoSwitchPanel);
+                        var tc3 = sels.LastOrDefault(xc => xc is GoSwitchPanel);
+                        if (tc2 is GoSwitchPanel sw && tc3 is GoSwitchPanel sw2 && sw == sw2)
                         {
                             #region swpnl
                             var (rtA, rtT, rtP, rtN) = swpnl_toolbounds(sw, Util.FromRect(0, 0, sw.Width, sw.Height));
@@ -1045,9 +1042,17 @@ namespace Going.UIEditor.Windows
             var s = Clipboard.GetData("going-control") as string;
             if (s != null)
             {
-                var r = Regex.Replace(s, @"""Id""\s*:\s*""[^""]+""", match => $@"""Id"": ""{Guid.NewGuid()}""");
-                var lso = JsonSerializer.Deserialize<List<IGoControl>>(s, GoJsonConverter.Options);
+                var pcids = new List<(string, string)>();
+                var r = Regex.Replace(s, @"""Id""\s*:\s*""[^""]+""", match =>
+                {
+                    var sold = match.Value.Substring(6, 36);
+                    var snew = Guid.NewGuid().ToString();
+                    pcids.Add((sold, snew));
+                    return $@"""Id"": ""{snew}""";
+                });
+                foreach (var v in pcids) r = r.Replace(v.Item1, v.Item2);
                 var ls = JsonSerializer.Deserialize<List<IGoControl>>(r, GoJsonConverter.Options);
+                if (ls != null && Program.CurrentProject != null) foreach (var c in ls) c.FireInit(Program.CurrentProject.Design);
 
                 var (con, _, _) = container(0, 0);
                 var vcon = sels.FirstOrDefault() as IGoContainer ?? con;
