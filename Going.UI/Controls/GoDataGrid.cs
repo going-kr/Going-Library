@@ -71,13 +71,13 @@ namespace Going.UI.Controls
         private GoDataGridRow? first;
 
         private GoDateTimeDropDownWindow dwndTime = new GoDateTimeDropDownWindow();
-        private GoDataGridInputTimeCell? dwndTimeCell;
+        private GoDataGridCell? dwndTimeCell;
 
         private GoColorDropDownWindow dwndColor = new GoColorDropDownWindow();
-        private GoDataGridInputColorCell? dwndColorCell;
+        private GoDataGridCell? dwndColorCell;
 
         private GoComboBoxDropDownWindow dwndCombo = new GoComboBoxDropDownWindow();
-        private GoDataGridInputComboCell? dwndComboCell;
+        private GoDataGridCell? dwndComboCell;
         #endregion
 
         #region Event
@@ -94,9 +94,9 @@ namespace Going.UI.Controls
         public event EventHandler<GoDataGridDateTimeDropDownOpeningEventArgs>? DateTimeDropDownOpening;
         public event EventHandler<GoDataGridColorDropDownOpeningEventArgs>? ColorDropDownOpening;
         public event EventHandler<GoDataGridComboDropDownOpeningEventArgs>? ComboDropDownOpening;
-        public event Func<GoDataGridInputTimeCell, bool>? GetDateTimeDropDownVisible;
-        public event Func<GoDataGridInputColorCell, bool>? GetColorDropDownVisible;
-        public event Func<GoDataGridInputComboCell, bool>? GetComboDropDownVisible;
+        public event Func<GoDataGridCell, bool>? GetDateTimeDropDownVisible;
+        public event Func<GoDataGridCell, bool>? GetColorDropDownVisible;
+        public event Func<GoDataGridCell, bool>? GetComboDropDownVisible;
         #endregion
 
         #region Constructor
@@ -968,10 +968,12 @@ namespace Going.UI.Controls
         #endregion
 
         #region Internal
-        internal void InvokeButtonClick(GoDataGridButtonCell cell) => CellButtonClick?.Invoke(this, new GoDataGridCellButtonClickEventArgs(cell));
-        internal void InvokeValueChange(GoDataGridCell cell, object? oldValue, object? newValue) => ValueChanged?.Invoke(this, new GoDataGridCellValueChangedEventArgs(cell, oldValue, newValue));
-
-        internal void InvokeEditText(GoDataGridInputTextCell cell, string? value)
+        [EditorBrowsable( EditorBrowsableState.Never), Browsable(false)]
+        public void InvokeButtonClick(GoDataGridCell cell) => CellButtonClick?.Invoke(this, new GoDataGridCellButtonClickEventArgs(cell));
+        [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
+        public void InvokeValueChange(GoDataGridCell cell, object? oldValue, object? newValue) => ValueChanged?.Invoke(this, new GoDataGridCellValueChangedEventArgs(cell, oldValue, newValue));
+        [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
+        public void InvokeEditText(GoDataGridCell cell, string? value)
         {
             var rts = Areas();
             var rtColumn = rts["Column"];
@@ -992,7 +994,8 @@ namespace Going.UI.Controls
             }, value);
         }
 
-        internal void InvokeEditNumber<T>(GoDataGridInputNumberCell<T> cell, T value, T? min, T? max) where T : struct
+        [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
+        public void InvokeEditNumber<T>(GoDataGridCell cell, T value, T? min, T? max) where T : struct
         {
             var rts = Areas();
             var rtColumn = rts["Column"];
@@ -1013,7 +1016,28 @@ namespace Going.UI.Controls
             }, value, min, max);
         }
 
-        internal SKPoint RowToScreen(bool fix, float x, float y)
+        [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
+        public void InvokeEditText(GoDataGridCell cell, string? value, SKRect rt, Action<string> act)
+        {
+            var pt = RowToScreen(cell.Column.Fixed, rt.Left, rt.Top);
+            var vrt = Util.FromRect(pt.X, pt.Y, rt.Width, rt.Height);
+
+            InputObject = cell;
+            GoInputEventer.Current.FireInputString(this, vrt, act, value);
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
+        public void InvokeEditNumber<T>(GoDataGridCell cell, T value, T? min, T? max, SKRect rt, Action<string> act) where T : struct
+        {
+            var pt = RowToScreen(cell.Column.Fixed, rt.Left, rt.Top);
+            var vrt = Util.FromRect(pt.X, pt.Y, rt.Width, rt.Height);
+
+            InputObject = cell;
+            GoInputEventer.Current.FireInputNumber(this, vrt, act, value, min, max);
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
+        public SKPoint RowToScreen(bool fix, float x, float y)
         {
             var rts = Areas();
             var rtColumn = rts["Column"];
@@ -1027,8 +1051,10 @@ namespace Going.UI.Controls
             return new SKPoint(x, y);
         }
 
-        internal bool DateTimeDropDownVisible(GoDataGridInputTimeCell cell) => GetDateTimeDropDownVisible != null ? GetDateTimeDropDownVisible(cell) : dwndTime.Visible && dwndTimeCell == cell;
-        internal void DateTimeDropDownOpen(GoDataGridInputTimeCell cell, SKRect rt, DateTime value, GoDateTimeKind style,  Action<DateTime?> action)
+        [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
+        public bool DateTimeDropDownVisible(GoDataGridCell cell) => GetDateTimeDropDownVisible != null ? GetDateTimeDropDownVisible(cell) : dwndTime.Visible && dwndTimeCell == cell;
+        [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
+        public void DateTimeDropDownOpen(GoDataGridCell cell, SKRect rt, DateTime value, GoDateTimeKind style,  Action<DateTime?> action)
         {
             var pt = RowToScreen(cell.Column.Fixed, rt.Left, rt.Top);
             var vrt = Util.FromRect(pt.X, pt.Y, rt.Width, rt.Height);
@@ -1041,9 +1067,10 @@ namespace Going.UI.Controls
                 dwndTime.Show(vrt, FontName, FontStyle, FontSize, value, style, action);
             }
         }
-
-        internal bool ColorDropDownVisible(GoDataGridInputColorCell cell) => GetColorDropDownVisible != null ? GetColorDropDownVisible(cell) : dwndColor.Visible && dwndColorCell == cell;
-        internal void ColorDropDownOpen(GoDataGridInputColorCell cell, SKRect rt, SKColor value, Action<SKColor?> action)
+        [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
+        public bool ColorDropDownVisible(GoDataGridCell cell) => GetColorDropDownVisible != null ? GetColorDropDownVisible(cell) : dwndColor.Visible && dwndColorCell == cell;
+        [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
+        public void ColorDropDownOpen(GoDataGridCell cell, SKRect rt, SKColor value, Action<SKColor?> action)
         {
             var pt = RowToScreen(cell.Column.Fixed, rt.Left, rt.Top);
             var vrt = Util.FromRect(pt.X, pt.Y, rt.Width, rt.Height);
@@ -1056,9 +1083,10 @@ namespace Going.UI.Controls
                 dwndColor.Show(vrt, FontName, FontStyle, FontSize, value, action);
             }
         }
-
-        internal bool ComboDropDownVisible(GoDataGridInputComboCell cell) => GetComboDropDownVisible != null ? GetComboDropDownVisible(cell) : dwndCombo.Visible && dwndComboCell == cell;
-        internal void ComboDropDownOpen(GoDataGridInputComboCell cell, SKRect rt, float itemHeight, int maximumViewCount, List<GoDataGridInputComboItem> items, GoDataGridInputComboItem? selectedItem, Action<GoDataGridInputComboItem?> action)
+        [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
+        public bool ComboDropDownVisible(GoDataGridCell cell) => GetComboDropDownVisible != null ? GetComboDropDownVisible(cell) : dwndCombo.Visible && dwndComboCell == cell;
+        [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
+        public void ComboDropDownOpen(GoDataGridCell cell, SKRect rt, float itemHeight, int maximumViewCount, List<GoDataGridInputComboItem> items, GoDataGridInputComboItem? selectedItem, Action<GoDataGridInputComboItem?> action)
         {
             var pt = RowToScreen(cell.Column.Fixed, rt.Left, rt.Top);
             var vrt = Util.FromRect(pt.X, pt.Y, rt.Width, rt.Height);

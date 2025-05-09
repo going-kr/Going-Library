@@ -204,7 +204,7 @@ namespace Going.UI.Forms.Controls
         #region DropDowns
         #region DateTime
         GoDateTimeDropDownWindow? dwnd_DT;
-        GoDataGridInputTimeCell? dwndCell_DT;
+        GoDataGridCell? dwndCell_DT;
 
         void Opened_DT(GoDataGridDateTimeDropDownOpeningEventArgs args)
         {
@@ -313,7 +313,7 @@ namespace Going.UI.Forms.Controls
         #endregion
         #region Color
         GoColorDropDownWindow? dwnd_C;
-        GoDataGridInputColorCell? dwndCell_C;
+        GoDataGridCell? dwndCell_C;
 
         void Opened_C(GoDataGridColorDropDownOpeningEventArgs args)
         {
@@ -422,7 +422,7 @@ namespace Going.UI.Forms.Controls
         #endregion
         #region Combo
         GoComboBoxDropDownWindow? dwnd_CB;
-        GoDataGridInputComboCell? dwndCell_CB;
+        GoDataGridCell? dwndCell_CB;
 
         void Opened_CB(GoDataGridComboDropDownOpeningEventArgs args)
         {
