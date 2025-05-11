@@ -32,6 +32,7 @@ namespace Going.UI.Controls
 
         [GoProperty(PCategory.Control, 11)] public bool BackgroundDraw { get; set; } = true;
         [GoProperty(PCategory.Control, 12)] public bool BorderOnly { get; set; } = false;
+        [GoProperty(PCategory.Control, 13)] public GoContentAlignment ContentAlignment { get; set; } = GoContentAlignment.MiddleCenter;
         #endregion
 
         #region Event
@@ -62,7 +63,7 @@ namespace Going.UI.Controls
             if (BackgroundDraw) Util.DrawBox(canvas, rtBox, (BorderOnly ? SKColors.Transparent : cBtn.BrightnessTransmit(bHover ? thm.HoverFillBrightness : 0)), cBtn.BrightnessTransmit(bHover ? thm.HoverBorderBrightness : 0), Round, thm.Corner);
 
             if (bDown) rtBox.Offset(0, 1);
-            Util.DrawTextIcon(canvas, Text, FontName, FontStyle, FontSize, IconString, IconSize, IconDirection, IconGap, rtBox, cText, GoContentAlignment.MiddleCenter);
+            Util.DrawTextIcon(canvas, Text, FontName, FontStyle, FontSize, IconString, IconSize, IconDirection, IconGap, rtBox, cText, ContentAlignment);
 
             base.OnDraw(canvas);
         }

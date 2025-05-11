@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Going.UI.ImageCanvas
@@ -16,6 +17,12 @@ namespace Going.UI.ImageCanvas
         [GoProperty(PCategory.Control, 0)] public string BackgroundColor { get; set; } = "white";
         [GoImageProperty(PCategory.Control, 1)] public string? OffImage { get; set; }
         [GoImageProperty(PCategory.Control, 2)] public string? OnImage { get; set; }
+
+        #region Constructor
+        [JsonConstructor]
+        public IcPage(List<IGoControl> childrens) : base(childrens) { }
+        public IcPage() { }
+        #endregion
 
         protected override void OnBackgroundDraw(SKCanvas canvas)
         {
