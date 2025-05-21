@@ -49,7 +49,7 @@ namespace Going.UI.OpenTK.Windows
 
         public bool Debug { get; set; } = false;
 
-        public GoDesign Design { get; private set; } = new GoDesign();
+        public GoDesign Design { get; set; } = new GoDesign();
         #endregion
 
         #region Member Variable
