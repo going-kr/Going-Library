@@ -26,6 +26,7 @@ namespace Going.UI.Forms.Controls
         public float FontSize { get => Control.FontSize; set { if (Control.FontSize != value) { Control.FontSize = value; Invalidate(); } } }
         
         public string TextColor { get => Control.TextColor; set { if (Control.TextColor != value) { Control.TextColor = value; Invalidate(); } } }
+        public string BoxColor { get => Control.BoxColor; set { if (Control.BoxColor != value) { Control.BoxColor = value; Invalidate(); } } }
         public string RowColor { get => Control.RowColor; set { if (Control.RowColor != value) { Control.RowColor = value; Invalidate(); } } }
         public string SummaryRowColor { get => Control.SummaryRowColor; set { if (Control.SummaryRowColor != value) { Control.SummaryRowColor = value; Invalidate(); } } }
         public string ColumnColor { get => Control.ColumnColor; set { if (Control.ColumnColor != value) { Control.ColumnColor = value; Invalidate(); } } }

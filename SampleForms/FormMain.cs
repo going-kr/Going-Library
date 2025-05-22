@@ -113,6 +113,12 @@ namespace SampleForms
             for (int i = 0; i < 100; i++)
                 vls.Add(new DGI { Name = $"Item{i + 1}", Text = "" });
 
+            goButton1.ButtonClicked += (o, s) =>
+            {
+                var f = new Form1();
+
+                f.Show();
+            };
         }
 
 
