@@ -30,7 +30,10 @@ namespace Going.UI.Containers
 
                     if (!args.Cancel)
                     {
+                        if (selPage != null) foreach (var c in selPage.Childrens) c.FireHide();
                         selPage = value;
+                        if (selPage != null) foreach (var c in selPage.Childrens) c.FireShow();
+
                         PageCnanged?.Invoke(this, EventArgs.Empty);
                     }
                 }

@@ -115,7 +115,7 @@ namespace SampleForms
 
             goButton1.ButtonClicked += (o, s) =>
             {
-                var f = new Form1();
+                var f = new FormDG();
 
                 f.Show();
             };

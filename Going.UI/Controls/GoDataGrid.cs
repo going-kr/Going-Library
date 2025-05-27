@@ -1010,7 +1010,22 @@ namespace Going.UI.Controls
             GoInputEventer.Current.FireInputNumber(this, rt, (s) =>
             {
                 var old = cell.Value;
-                cell.Value = ValueTool.FromString<T>(s);
+                var v = ValueTool.FromString<T>(s);
+
+                var type = typeof(T);
+                if (type == typeof(sbyte)) { var vmax = ((sbyte?)(object?)max ?? sbyte.MaxValue); var vmin = ((sbyte?)(object?)min ?? sbyte.MinValue); var vv = ((sbyte?)(object?)v ?? 0); v = (T?)(object?)MathTool.Constrain(vv, vmin, vmax); }
+                else if (type == typeof(short)) { var vmax = ((short?)(object?)max ?? short.MaxValue); var vmin = ((short?)(object?)min ?? short.MinValue); var vv = ((short?)(object?)v ?? 0); v = (T?)(object?)MathTool.Constrain(vv, vmin, vmax); }
+                else if (type == typeof(int)) { var vmax = ((int?)(object?)max ?? int.MaxValue); var vmin = ((int?)(object?)min ?? int.MinValue); var vv = ((int?)(object?)v ?? 0); v = (T?)(object?)MathTool.Constrain(vv, vmin, vmax); }
+                else if (type == typeof(long)) { var vmax = ((long?)(object?)max ?? long.MaxValue); var vmin = ((long?)(object?)min ?? long.MinValue); var vv = ((long?)(object?)v ?? 0); v = (T?)(object?)MathTool.Constrain(vv, vmin, vmax); }
+                else if (type == typeof(byte)) { var vmax = ((byte?)(object?)max ?? byte.MaxValue); var vmin = ((byte?)(object?)min ?? byte.MinValue); var vv = ((byte?)(object?)v ?? 0); v = (T?)(object?)MathTool.Constrain(vv, vmin, vmax); }
+                else if (type == typeof(ushort)) { var vmax = ((ushort?)(object?)max ?? ushort.MaxValue); var vmin = ((ushort?)(object?)min ?? ushort.MinValue); var vv = ((ushort?)(object?)v ?? 0); v = (T?)(object?)MathTool.Constrain(vv, vmin, vmax); }
+                else if (type == typeof(uint)) { var vmax = ((uint?)(object?)max ?? uint.MaxValue); var vmin = ((uint?)(object?)min ?? uint.MinValue); var vv = ((uint?)(object?)v ?? 0); v = (T?)(object?)MathTool.Constrain(vv, vmin, vmax); }
+                else if (type == typeof(ulong)) { var vmax = ((ulong?)(object?)max ?? ulong.MaxValue); var vmin = ((ulong?)(object?)min ?? ulong.MinValue); var vv = ((ulong?)(object?)v ?? 0); v = (T?)(object?)MathTool.Constrain(vv, vmin, vmax); }
+                else if (type == typeof(float)) { var vmax = ((float?)(object?)max ?? float.MaxValue); var vmin = ((float?)(object?)min ?? float.MinValue); var vv = ((float?)(object?)v ?? 0); v = (T?)(object?)MathTool.Constrain(vv, vmin, vmax); }
+                else if (type == typeof(double)) { var vmax = ((double?)(object?)max ?? double.MaxValue); var vmin = ((double?)(object?)min ?? double.MinValue); var vv = ((double?)(object?)v ?? 0); v = (T?)(object?)MathTool.Constrain(vv, vmin, vmax); }
+                else if (type == typeof(decimal)) { var vmax = ((decimal?)(object?)max ?? decimal.MaxValue); var vmin = ((decimal?)(object?)min ?? decimal.MinValue); var vv = ((decimal?)(object?)v ?? 0); v = (T?)(object?)MathTool.Constrain(vv, vmin, vmax); }
+                cell.Value = v;
+
                 if ((old != null && !old.Equals(cell.Value)) || old == null) InvokeValueChange(cell, old, cell.Value);
 
             }, value, min, max);
@@ -1335,7 +1350,7 @@ namespace Going.UI.Controls
         {
             var tp = cell.GetType();
             var rt = Areas()["Row"];
-            if (cell is GoDataGridInputTextCell || tp.IsGenericType && (tp.GetGenericTypeDefinition() == typeof(GoDataGridInputNumberCell<>)))
+            if (cell.IsKeyboardInput)
             {
                 if (s == "u" && (cell.Bounds.Top + vscroll.ScrollPositionWithOffset) < 0) vscroll.ScrollPosition -= RowHeight;
                 else if (s == "d" && (cell.Bounds.Bottom + vscroll.ScrollPositionWithOffset) > rt.Height) vscroll.ScrollPosition += RowHeight;

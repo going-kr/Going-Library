@@ -33,6 +33,20 @@ namespace Going.UI.Containers
             GUI.Init(design, this);
         }
 
+        protected override void OnShow()
+        {
+            base.OnShow();
+
+            GUI.Show(this);
+        }
+
+        protected override void OnHide()
+        {
+            base.OnHide();
+
+            GUI.Hide(this);
+        }
+
         protected override void OnDraw(SKCanvas canvas)
         {
             base.OnDraw(canvas);

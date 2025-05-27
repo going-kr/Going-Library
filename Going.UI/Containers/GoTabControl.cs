@@ -49,7 +49,9 @@ namespace Going.UI.Containers
 
                     if (!args.Cancel)
                     {
+                        if (selTab != null) foreach (var c in selTab.Childrens) c.FireHide();
                         selTab = value;
+                        if (selTab != null) foreach (var c in selTab.Childrens) c.FireShow();
                         TabCnanged?.Invoke(this, EventArgs.Empty);
                     }
                 }

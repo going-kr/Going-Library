@@ -11,9 +11,9 @@ using System.Windows.Forms;
 
 namespace SampleForms
 {
-    public partial class Form1 : GoForm
+    public partial class FormDG : GoForm
     {
-        public Form1()
+        public FormDG()
         {
             InitializeComponent();
         }

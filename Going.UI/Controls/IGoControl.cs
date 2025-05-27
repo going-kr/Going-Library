@@ -40,6 +40,8 @@ namespace Going.UI.Controls
         void FireInit(GoDesign? design);
         void FireDraw(SKCanvas canvas);
         void FireUpdate();
+        void FireShow();
+        void FireHide();
         void FireMouseDown(float x, float y, GoMouseButton button);
         void FireMouseUp(float x, float y, GoMouseButton button);
         void FireMouseDoubleClick(float x, float y, GoMouseButton button);

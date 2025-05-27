@@ -63,6 +63,7 @@ namespace Going.UI.Design
         private GoDropDownWindow? dropdownWindow;
         private object? dragItem = null;
         private bool bPageDown = false;
+        private bool bFirst = false;
         #endregion
 
         #region Constructor
@@ -96,7 +97,9 @@ namespace Going.UI.Design
         {
             if (Pages.TryGetValue(pageName, out var page))
             {
+                CurrentPage?.FireHide();
                 CurrentPage = page;
+                CurrentPage.FireShow();
                 CurrentPage.FireMouseMove(-1, -1);
             }
         }
@@ -111,6 +114,7 @@ namespace Going.UI.Design
                 wnd.Design = this;
                 dropdownWindow = wnd;
                 dropdownWindow.Visible = true;
+                dropdownWindow.FireShow();
 
                 CurrentPage?.FireMouseMove(-1, -1);
             }
@@ -120,6 +124,7 @@ namespace Going.UI.Design
             if (dropdownWindow == wnd)
             {
                 dropdownWindow.Visible = false;
+                dropdownWindow.FireHide();
                 dropdownWindow = null;
             }
         }
@@ -139,7 +144,7 @@ namespace Going.UI.Design
             stkWindow.Push(wnd);
             wnd.Bounds = MathTool.MakeRectangle(Util.FromRect(0, 0, Width, Height), new SKSize(wnd.Width, wnd.Height));
             CurrentPage?.FireMouseMove(-1, -1);
-
+            CurrentPage?.FireShow();
         }
         public void HideWindow(GoWindow wnd)
         {
@@ -147,6 +152,7 @@ namespace Going.UI.Design
             {
                 var w = stkWindow.Pop();
                 w.Visible = false;
+                w.FireHide();
             }
         }
         #endregion
@@ -176,17 +182,8 @@ namespace Going.UI.Design
         #region Init
         public void Init()
         {
-            foreach (var page in Pages.Values)
-            {
-                page.Design = this;
-                GUI.Init(this, page);
-            }
-
-            foreach (var wnd in Windows.Values)
-            {
-                wnd.Design = this;
-                GUI.Init(this, wnd);
-            }
+            foreach (var page in Pages.Values) page.FireInit(this);
+            foreach (var wnd in Windows.Values) wnd.FireInit(this);
 
             TitleBar.FireInit(this);
             LeftSideBar.FireInit(this);
@@ -201,6 +198,18 @@ namespace Going.UI.Design
             // Drawing : Page > Window > DropDownWindow 순으로 처리
             // 화면은 다 띄워야해서 else 처리 안함
             // MouseEvent : DropDownWindow > Window > Page 순으로 처리
+
+            #region First Draw
+            if (bFirst)
+            {
+                LeftSideBar.FireShow();
+                RightSideBar.FireShow();
+                TitleBar.FireShow();
+                Footer.FireShow();
+                bFirst = false;
+            }
+            #endregion
+
             #region Page
             DrawPage(canvas, CurrentPage);
             #endregion

@@ -115,6 +115,8 @@ namespace Going.UI.Controls
         #region virtual
         protected virtual void OnInit(GoDesign? design) { }
         protected virtual void OnDraw(SKCanvas canvas) { Drawn?.Invoke(this, canvas); }
+        protected virtual void OnShow() { }
+        protected virtual void OnHide() { }
         protected virtual void OnUpdate() { }
         protected virtual void OnMouseDown(float x, float y, GoMouseButton button) { MouseDown?.Invoke(this, new GoMouseClickEventArgs(x, y, button)); }
         protected virtual void OnMouseUp(float x, float y, GoMouseButton button) { MouseUp?.Invoke(this, new GoMouseClickEventArgs(x, y, button)); }
@@ -150,8 +152,10 @@ namespace Going.UI.Controls
             }
         }
 
-        public void FireUpdate() { OnUpdate(); }
+        public void FireShow() { OnShow(); }
+        public void FireHide() { OnHide(); }
 
+        public void FireUpdate() { OnUpdate(); }
         public void FireMouseDown(float x, float y, GoMouseButton button)
         {
             var rts = Areas();

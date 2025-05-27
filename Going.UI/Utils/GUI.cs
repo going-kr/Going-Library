@@ -21,6 +21,18 @@ namespace Going.UI.Utils
                 c.FireInit(design);
         }
 
+        public static void Show(IGoContainer container)
+        {
+            foreach (var c in container.Childrens)
+                c.FireShow();
+        }
+
+        public static void Hide(IGoContainer container)
+        {
+            foreach (var c in container.Childrens)
+                c.FireHide();
+        }
+
         public static void Draw(SKCanvas canvas, IGoContainer container)
         {
             foreach (var c in container.Childrens)

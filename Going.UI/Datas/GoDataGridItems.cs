@@ -36,6 +36,7 @@ namespace Going.UI.Datas
 
         #region Properties
         public string? Name { get; set; }
+        public virtual bool IsKeyboardInput { get; } = false;
 
         public int ColSpan { get; set; } = 1;
         public int RowSpan { get; set; } = 1;
@@ -875,6 +876,7 @@ namespace Going.UI.Datas
     public class GoDataGridInputTextCell : GoDataGridCell
     {
         #region Properties
+        public override bool IsKeyboardInput => true;
         #endregion
 
         #region Member Variable
@@ -925,9 +927,6 @@ namespace Going.UI.Datas
 
     public class GoDataGridInputTextColumn : GoDataGridColumn
     {
-        #region Properties
-        #endregion 
-
         #region Constructor
         public GoDataGridInputTextColumn()
         {
@@ -943,6 +942,7 @@ namespace Going.UI.Datas
         public T? Minimum { get; set; }
         public T? Maximum { get; set; }
         public string? FormatString { get; set; }
+        public override bool IsKeyboardInput => true;
         #endregion
 
         #region Member Variable
