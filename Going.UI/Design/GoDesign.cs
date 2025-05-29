@@ -1,6 +1,7 @@
 ﻿using Going.UI.Containers;
 using Going.UI.Controls;
 using Going.UI.Datas;
+using Going.UI.Dialogs;
 using Going.UI.Enums;
 using Going.UI.Extensions;
 using Going.UI.ImageCanvas;
@@ -135,6 +136,8 @@ namespace Going.UI.Design
         {
             if (Windows.TryGetValue(name, out var wnd))
                 ShowWindow(wnd);
+            else if (GoDiaglos.SystemWindows.TryGetValue(name, out var wnd2))
+                ShowWindow(wnd2);
         }
 
         public void ShowWindow(GoWindow wnd)

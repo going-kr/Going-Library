@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Going.UI.Design;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,10 +7,19 @@ using System.Threading.Tasks;
 
 namespace Going.UI.Dialogs
 {
-    internal class GoDiaglos
+    public static class GoDiaglos
     {
-        internal static GoMessageBox MessageBox { get; private set; } = new GoMessageBox();
-        internal static GoSelectorBox SelectorBox { get; private set; } = new GoSelectorBox();
-        internal static GoInputBox InputBox { get; private set; } = new GoInputBox();
+        public static Dictionary<string, GoWindow> SystemWindows { get; } = [];
+
+        static GoDiaglos()
+        {
+            SystemWindows.Add("MessageBox", MessageBox);
+            SystemWindows.Add("SelectorBox", SelectorBox);
+            SystemWindows.Add("InputBox", InputBox);
+        }
+
+        public static GoMessageBox MessageBox { get; private set; } = new GoMessageBox();
+        public static GoSelectorBox SelectorBox { get; private set; } = new GoSelectorBox();
+        public static GoInputBox InputBox { get; private set; } = new GoInputBox();
     }
 }
