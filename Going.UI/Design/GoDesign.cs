@@ -136,7 +136,7 @@ namespace Going.UI.Design
         {
             if (Windows.TryGetValue(name, out var wnd))
                 ShowWindow(wnd);
-            else if (GoDiaglos.SystemWindows.TryGetValue(name, out var wnd2))
+            else if (GoDialogs.SystemWindows.TryGetValue(name, out var wnd2))
                 ShowWindow(wnd2);
         }
 

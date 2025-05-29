@@ -655,7 +655,7 @@ namespace Going.UI.Controls
             {
                 var ls = Series.Select(x => new GoListItem { Text = x.Alias, Tag = x }).ToList();
                 var sels = ls.Where(x => ((GoGraphSeries)x.Tag!).Visible).ToList();
-                GoDiaglos.SelectorBox.ShowCheck("Graph Series", 1, ls, sels, (vs) =>
+                GoDialogs.SelectorBox.ShowCheck("Graph Series", 1, ls, sels, (vs) =>
                 {
                     if (vs != null)
                     {

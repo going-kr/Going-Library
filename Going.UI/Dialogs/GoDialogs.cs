@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace Going.UI.Dialogs
 {
-    public static class GoDiaglos
+    public static class GoDialogs
     {
         public static Dictionary<string, GoWindow> SystemWindows { get; } = [];
 
-        static GoDiaglos()
+        static GoDialogs()
         {
             SystemWindows.Add("MessageBox", MessageBox);
             SystemWindows.Add("SelectorBox", SelectorBox);

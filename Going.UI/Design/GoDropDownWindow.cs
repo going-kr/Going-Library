@@ -279,8 +279,9 @@ namespace Going.UI.Design
             }
 
             #region bounds
-            var bounds = Util.FromRect(rtValue.Left, rtValue.Bottom + 1, w, h);
+            var bounds = Util.FromRect(rtValue.Left, rtValue.Bottom + 1, Math.Max(w, rtValue.Width), h);
             if (bounds.Bottom > designH) bounds = Util.FromRect(rtValue.Left, rtValue.Top - h - 1, Math.Max(w, rtValue.Width), h);
+            if(bounds.Top < 0) bounds = Util.FromRect(rtValue.Left, rtValue.MidY - (h/2F), Math.Max(w, rtValue.Width), h);
             Bounds = bounds;
             #endregion
 
