@@ -21,7 +21,7 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 1)] public float IconSize { get; set; } = 12;
         [GoProperty(PCategory.Control, 2)] public GoDirectionHV IconDirection { get; set; }
         [GoProperty(PCategory.Control, 3)] public float IconGap { get; set; } = 5;
-        [GoProperty(PCategory.Control, 4)] public string Text { get; set; } = "button";
+        [GoMultiLineProperty(PCategory.Control, 4)] public string Text { get; set; } = "button";
         [GoProperty(PCategory.Control, 5)] public string FontName { get; set; } = "나눔고딕";
         [GoProperty(PCategory.Control, 6)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         [GoProperty(PCategory.Control, 7)] public float FontSize { get; set; } = 12;

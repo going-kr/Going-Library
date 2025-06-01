@@ -16,7 +16,7 @@ namespace Going.UI.Controls
     public class GoLampButton : GoControl
     {
         #region Properties
-        [GoProperty(PCategory.Control, 0)] public string Text { get; set; } = "label";
+        [GoMultiLineProperty(PCategory.Control, 0)] public string Text { get; set; } = "button";
         [GoProperty(PCategory.Control, 1)] public string FontName { get; set; } = "나눔고딕";
         [GoProperty(PCategory.Control, 2)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         [GoProperty(PCategory.Control, 3)] public float FontSize { get; set; } = 12;

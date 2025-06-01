@@ -653,11 +653,13 @@ namespace Going.UIEditor.Controls
             }
             else return false;
         }
-        public static bool IsUseButton(PropertyInfo? Info) => IsCollection(Info) || IsEnum(Info) || IsSizes(Info) || (Info?.PropertyType.IsEnum ?? false) || (Info != null && Attribute.IsDefined(Info, typeof(GoImagePropertyAttribute))) || (Info != null && Info.PropertyType == typeof(string) && Info.Name == "Text");
+        public static bool IsUseButton(PropertyInfo? Info) => IsCollection(Info) || IsEnum(Info) || IsSizes(Info) || IsEnum(Info) || IsImage(Info) || IsMultiLine(Info);
         public static bool IsCollection(PropertyInfo? Info) => Info != null && typeof(IEnumerable).IsAssignableFrom(Info.PropertyType) && Info.PropertyType != typeof(string) && !Attribute.IsDefined(Info, typeof(GoSizesPropertyAttribute));
         public static bool IsSizes(PropertyInfo? Info) => Info != null && typeof(IEnumerable).IsAssignableFrom(Info.PropertyType) && Info.PropertyType != typeof(string) && Attribute.IsDefined(Info, typeof(GoSizesPropertyAttribute));
         public static bool IsEnum(PropertyInfo? Info) => Info != null && Info.PropertyType.IsEnum;
         public static bool IsBool(PropertyInfo? Info) => Info != null && Info.PropertyType == typeof(bool);
+        public static bool IsImage(PropertyInfo? Info) => Info != null && Attribute.IsDefined(Info, typeof(GoImagePropertyAttribute));
+        public static bool IsMultiLine(PropertyInfo? Info) => Info != null && Attribute.IsDefined(Info, typeof(GoMultiLinePropertyAttribute));
 
         #region ValueToString
         protected string ValueToString(object? v)
@@ -1012,7 +1014,7 @@ namespace Going.UIEditor.Controls
         #region Button
         protected override void OnButtonClick(SKRect rtValue, SKRect rtButton)
         {
-            if (Info != null && Attribute.IsDefined(Info, typeof(GoImagePropertyAttribute)))
+            if (IsImage(Info) && Info != null)
             {
                 var ret = Program.ImageSelector.ShowImageSelect();
                 if (ret != null && Grid.SelectedObjects != null)
@@ -1022,7 +1024,7 @@ namespace Going.UIEditor.Controls
                     SelectedObjectLoop((obj) => SetValue(obj, Info, vv));
                 }
             }
-            else if (Info != null && Info.PropertyType == typeof(string) && Info.Name == "Text")
+            else if (IsMultiLine(Info) && Info != null)
             {
                 var ret = Program.MultiLineInputor.ShowString(Info.Name, (Grid.SelectedObjects?.Count() == 1 ? Info.GetValue(Grid.SelectedObjects.First()) as string : null));
                 if (ret != null && Grid.SelectedObjects != null)
@@ -1279,7 +1281,7 @@ namespace Going.UIEditor.Controls
                 {
                     var rs = val is IEnumerable<string> va && va.Count() > 0 ? string.Concat(va.Select(x => $"{x}, "))[..^2] : "";
 
-                    using (var dlg = new Going.UI.Forms.Dialogs.GoInputBox { MinimumWidth = 300 })
+                    using (var dlg = new Going.UI.Forms.Dialogs.GoInputBox { MinimumWidth = 400 })
                     {
                         dlg.OkText = LM.Ok;
                         dlg.CancelText = LM.Cancel;

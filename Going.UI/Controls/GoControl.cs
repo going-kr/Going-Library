@@ -32,6 +32,7 @@ namespace Going.UI.Controls
     public class GoSizePropertyAttribute(string category, int order) : GoPropertyAttribute(category, order) { }
     public class GoSizesPropertyAttribute(string category, int order) : GoPropertyAttribute(category, order) { }
     public class GoImagePropertyAttribute(string category, int order) : GoPropertyAttribute(category, order) { }
+    public class GoMultiLinePropertyAttribute(string category, int order) : GoPropertyAttribute(category, order) { }
 
     public class GoControl : IGoControl
     {

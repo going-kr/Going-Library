@@ -723,6 +723,7 @@ namespace Going.UI.Utils
 
         #region Grid
         #region Devide
+        #region Base
         #region Grid
         public static SKRect[,] Grid(SKRect bounds, string[] cols, string[] rows)
         {
@@ -838,6 +839,121 @@ namespace Going.UI.Utils
             }
             return ret.Count == sizes.Length;
         }
+        #endregion
+        #endregion
+
+        #region MinimumSize
+        #region Grid
+        public static SKRect[,] Grid(SKRect bounds, string[] cols, string[] rows, float[] minCols, float[] minRows)
+        {
+            if (cols.Length != minCols.Length) throw new ArgumentException("cols와 minCols 길이는 같아야 합니다.");
+            if (rows.Length != minRows.Length) throw new ArgumentException("rows와 minRows 길이는 같아야 합니다.");
+
+            int colCount = cols.Length;
+            int rowCount = rows.Length;
+            SKRect[,] grid = new SKRect[rowCount, colCount];
+
+            float[] colWidths = ParseSizes(cols, bounds.Width, minCols);
+            float[] rowHeights = ParseSizes(rows, bounds.Height, minRows);
+
+            float y = bounds.Top;
+            for (int r = 0; r < rowCount; r++)
+            {
+                float x = bounds.Left;
+                for (int c = 0; c < colCount; c++)
+                {
+                    grid[r, c] = new SKRect(x, y, x + colWidths[c], y + rowHeights[r]);
+                    x += colWidths[c];
+                }
+                y += rowHeights[r];
+            }
+
+            return grid;
+        }
+        #endregion
+        #region Columns
+        public static SKRect[] Columns(SKRect bounds, string[] cols, float[] minCols)
+        {
+            if (cols.Length != minCols.Length) throw new ArgumentException("cols와 minCols 길이는 같아야 합니다.");
+
+            int colCount = cols.Length;
+            SKRect[] grid = new SKRect[colCount];
+
+            float[] colWidths = ParseSizes(cols, bounds.Width, minCols);
+
+            float x = bounds.Left;
+            for (int c = 0; c < colCount; c++)
+            {
+                grid[c] = new SKRect(x, bounds.Top, x + colWidths[c], bounds.Bottom);
+                x += colWidths[c];
+            }
+
+            return grid;
+        }
+        #endregion
+        #region Rows
+        public static SKRect[] Rows(SKRect bounds, string[] rows, float[] minRows)
+        {
+            if (rows.Length != minRows.Length) throw new ArgumentException("rows와 minRows 길이는 같아야 합니다.");
+
+            int rowCount = rows.Length;
+            SKRect[] grid = new SKRect[rowCount];
+
+            float[] rowHeights = ParseSizes(rows, bounds.Height, minRows);
+
+            float y = bounds.Top;
+            for (int r = 0; r < rowCount; r++)
+            {
+                grid[r] = new SKRect(bounds.Left, y, bounds.Right, y + rowHeights[r]);
+                y += rowHeights[r];
+            }
+
+            return grid;
+        }
+        #endregion
+        #region ParseSizes
+        public static float[] ParseSizes(string[] sizes, float totalSize, float[] minimumSizes)
+        {
+            List<float> result = new List<float>();
+            float totalPercentage = 0;
+            float fixedTotal = 0;
+
+            for (int i = 0; i < sizes.Length; i++)
+            {
+                string size = sizes[i];
+                if (size.EndsWith("px") && float.TryParse(size.Replace("px", ""), out var val1))
+                {
+                    float px = Math.Max(val1, minimumSizes[i]);
+                    result.Add(px);
+                    fixedTotal += px;
+                }
+                else if (size.EndsWith("%") && float.TryParse(size.Replace("%", ""), out var val2))
+                {
+                    float percent = val2 / 100f;
+                    result.Add(-percent);
+                    totalPercentage += percent;
+                }
+                else
+                {
+                    result.Add(minimumSizes[i]);
+                    fixedTotal += minimumSizes[i];
+                }
+            }
+
+            float remainingSize = totalSize - fixedTotal;
+
+            for (int i = 0; i < result.Count; i++)
+            {
+                if (result[i] < 0)
+                {
+                    float desired = remainingSize * -result[i];
+                    result[i] = Math.Max(desired, minimumSizes[i]);
+                }
+            }
+
+            return result.ToArray();
+        }
+        #endregion
         #endregion
         #endregion
 

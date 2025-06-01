@@ -20,7 +20,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region 슬라이더 라벨 설정
-        [GoProperty(PCategory.Control, 4)] public string Text { get; set; } = "label";
+        [GoMultiLineProperty(PCategory.Control, 4)] public string Text { get; set; } = "slider";
         [GoProperty(PCategory.Control, 5)] public string FontName { get; set; } = "나눔고딕";
         [GoProperty(PCategory.Control, 6)] public float FontSize { get; set; } = 12;
         #endregion
