@@ -12,7 +12,7 @@ namespace SampleOpenTK.Windows
         GoTableLayoutPanel tblTitle;
         GoNavigator nav;
 
-        public MainWindow() : base(800, 480, WindowBorder.Hidden)
+        public MainWindow() : base(1024, 768, WindowBorder.Hidden)
         {
             #region Window Setting
             Title = "Going Library Sample";

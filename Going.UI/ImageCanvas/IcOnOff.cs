@@ -71,7 +71,7 @@ namespace Going.UI.ImageCanvas
 
                     var sx = (double)on.Width / Parent.Bounds.Width;
                     var sy = (double)on.Height / Parent.Bounds.Height;
-                    canvas.DrawImage(OnOff ? on : off, Util.FromRect(Convert.ToInt16(Left * sx), Convert.ToInt32(Top * sy), Convert.ToInt32(Width * sx), Convert.ToInt32(Height * sy)), rtBox, Util.Sampling);
+                    canvas.DrawImage(OnOff ? on : off, Util.FromRect(Convert.ToInt32(Left * sx), Convert.ToInt32(Top * sy), Convert.ToInt32(Width * sx), Convert.ToInt32(Height * sy)), rtBox, Util.Sampling);
 
                     Util.DrawTextIcon(canvas, Text, FontName, FontStyle, FontSize, IconString, IconSize, IconDirection, IconGap, rtBox, cText, GoContentAlignment.MiddleCenter);
                 }

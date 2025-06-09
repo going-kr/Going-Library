@@ -55,6 +55,9 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 12)] public string Format { get; set; } = "0";
         [GoProperty(PCategory.Control, 13)] public int Gap { get; set; } = 5;
         [GoProperty(PCategory.Control, 14)] public int CornerRadius { get; set; } = 5;
+        [GoProperty(PCategory.Control, 15)] public int? BarSize { get; set; }
+        [GoProperty(PCategory.Control, 16)] public bool ShowValueLabel { get; set; } = false;
+
         #endregion
 
         #region Event
@@ -91,12 +94,16 @@ namespace Going.UI.Controls
                 canvas.DrawRoundRect(rtFill, CornerRadius, CornerRadius, p);
             }
 
-            using (new SKAutoCanvasRestore(canvas))
+            if (ShowValueLabel)
             {
-                canvas.ClipRect(rtFill);
-                var txt = string.IsNullOrWhiteSpace(Format) ? Value.ToString() : Value.ToString(Format);
-                Util.DrawText(canvas, txt, FontName, FontStyle, ValueFontSize, rtValueText, cText);
+                using (new SKAutoCanvasRestore(canvas))
+                {
+                    canvas.ClipRect(rtFill);
+                    var txt = string.IsNullOrWhiteSpace(Format) ? Value.ToString() : Value.ToString(Format);
+                    Util.DrawText(canvas, txt, FontName, FontStyle, ValueFontSize, rtValueText, cText);
+                }
             }
+
             base.OnDraw(canvas);
         }
 
@@ -105,12 +112,17 @@ namespace Going.UI.Controls
             var rts = base.Areas();
             var rt = rts["Content"];
 
-            float x = rt.Left;
-            float y = rt.Top;
             float barWidth = Width;
             float barHeight = Height;
+            if(BarSize.HasValue)
+            {
+                if (Direction == ProgressDirection.LeftToRight || Direction == ProgressDirection.RightToLeft)
+                    barHeight = BarSize.Value;
+                else
+                    barWidth = BarSize.Value;
+            }
 
-            SKRect rtBar = new SKRect(x, y, x + barWidth, y + barHeight);
+            SKRect rtBar = MathTool.MakeRectangle(rt, new SKSize(barWidth, barHeight));
             rts["Gauge"] = rtBar;
 
             float usableWidth = barWidth - Gap * 2;
@@ -129,6 +141,9 @@ namespace Going.UI.Controls
 
             SKRect rtFill;
             SKRect rtValueText;
+
+            float x = rtBar.Left;
+            float y = rtBar.Top;
 
             switch (Direction)
             {

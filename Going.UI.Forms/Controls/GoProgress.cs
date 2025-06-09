@@ -32,6 +32,7 @@ namespace Going.UI.Forms.Controls
         public string Format { get => Control.Format; set { Control.Format = value; Invalidate(); } }
         public int Gap { get => Control.Gap; set { Control.Gap = value; Invalidate(); } }
         public int CornerRadius { get => Control.CornerRadius; set { Control.CornerRadius = value; Invalidate(); } }
+        public int? BarSize { get => Control.BarSize; set { Control.BarSize = value; Invalidate(); } }
         #endregion
 
         #region Event
