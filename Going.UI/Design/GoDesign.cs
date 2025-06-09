@@ -650,6 +650,8 @@ namespace Going.UI.Design
             }
         }
 
+        public bool RemoveImage(string name) => Images.Remove(name);
+
         public List<(string name, List<SKImage> images)> GetImages() => Images.Select(x => (x.Key, x.Value)).ToList();
         public List<SKImage> GetImage(string? name) => name != null && Images.TryGetValue(name.ToLower(), out var ls) ? ls : [];
         #endregion

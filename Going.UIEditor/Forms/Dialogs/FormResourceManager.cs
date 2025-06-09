@@ -11,7 +11,9 @@ using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using Windows.Services.Maps;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Going.UIEditor.Forms
 {
@@ -56,6 +58,21 @@ namespace Going.UIEditor.Forms
                             }
                         }
                     }
+                }
+            };
+            #endregion
+            #region btnDel
+            btnDel.ButtonClicked += (s, e) =>
+            {
+                var prj = Program.CurrentProject;
+                if (prj != null && grid.SelectedItems.Count > 0)
+                {
+                    foreach (var item in grid.SelectedItems)
+                        if (item is ImageContent c)
+                            prj.Design.RemoveImage(c.Name);
+                    prj.Edit = true;
+
+                    RefreshGrid();
                 }
             };
             #endregion
