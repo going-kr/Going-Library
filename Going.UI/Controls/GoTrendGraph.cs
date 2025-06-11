@@ -330,15 +330,16 @@ namespace Going.UI.Controls
 
                                 #region time
                                 var s = ValueTool.ToString(tmSel, TimeFormatString ?? "yyyy.MM.dd HH:mm:ss");
-                                var tw = Util.MeasureText(s, FontName, FontStyle, FontSize).Width;
+                                var tsz = Util.MeasureText(s, FontName, FontStyle, FontSize);
+                                var tw = tsz.Width;
                                 var mvw = Series.Where(x => x.Visible).Select(x => Util.MeasureText($"{x.Alias} : {ValueTool.ToString(x.Maximum, ValueFormatString ?? "0.0")}", FontName, FontStyle, FontSize).Width + 20).Max();
                                 var gp = 15;
                                 var bdir = tmx + gp + Math.Max(tw, mvw) < rtGraph.Width - sposw;
                                 var tx = bdir ? tmx + gp : tmx - gp;
                                 var ty = gp;
 
-                                Util.DrawText(canvas, s, FontName, FontStyle, FontSize, Util.FromRect(tx - (bdir ? 0 : tw), ty, tw, 30), cText, GoContentAlignment.MiddleLeft);
-                                ty += 30;
+                                Util.DrawText(canvas, s, FontName, FontStyle, FontSize, Util.FromRect(tx - (bdir ? 0 : tw), ty, tw, 30), cText, bdir ? GoContentAlignment.MiddleLeft : GoContentAlignment.MiddleRight);
+                                ty += Math.Max(30, Convert.ToInt32(tsz.Height + 10));
                                 #endregion
 
                                 foreach (var ser in Series.Where(x => x.Visible))
