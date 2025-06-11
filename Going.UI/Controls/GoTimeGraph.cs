@@ -31,8 +31,8 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 7)] public TimeSpan XScale { get; set; } = new TimeSpan(1, 0, 0);
         [GoProperty(PCategory.Control, 8)] public TimeSpan XAxisGraduationTime { get; set; } = new TimeSpan(0, 10, 0);
         [GoProperty(PCategory.Control, 9)] public int YAxisGraduationCount { get; set; } = 10;
-        [GoProperty(PCategory.Control, 10)] public string? TimeFormatString { get; set; } = null;
-        [GoProperty(PCategory.Control, 11)] public string? ValueFormatString { get; set; } = null;
+        [GoMultiLineProperty(PCategory.Control, 10)] public string? TimeFormatString { get; set; } = null;
+        [GoMultiLineProperty(PCategory.Control, 11)] public string? ValueFormatString { get; set; } = null;
 
         [GoProperty(PCategory.Control, 12)] public List<GoLineGraphSeries> Series { get; set; } = [];
         #endregion
