@@ -256,8 +256,12 @@ namespace Going.UI.Forms.Dialogs
                 var sel = cmb.SelectedIndex >= 0 && cmb.SelectedIndex < cmb.Items.Count ? cmb.Items[cmb.SelectedIndex] : null;
                 dwnd.Set(FontName, FontStyle, FontSize, cmb.ItemHeight, cmb.MaximumViewCount, cmb.Items, sel, (item) =>
                 {
-                    if (item != null)
-                        cmb.SelectedIndex = cmb.Items.IndexOf(item);
+                    try
+                    {
+                        if (item != null) cmb.SelectedIndex = cmb.Items.IndexOf(item);
+                        Invoke(Invalidate);
+                    }
+                    catch { };
                 });
             }
         }
