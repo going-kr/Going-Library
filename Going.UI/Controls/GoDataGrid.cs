@@ -994,6 +994,23 @@ namespace Going.UI.Controls
             }, value);
         }
 
+
+        [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
+        public void InvokeEditText(GoDataGridCell cell, string? value, Action<string> act)
+        {
+            var rts = Areas();
+            var rtColumn = rts["Column"];
+            var rtRow = rts["Row"];
+
+            var hspos = Convert.ToSingle(hscroll.ScrollPositionWithOffset);
+            var vspos = Convert.ToSingle(vscroll.ScrollPositionWithOffset);
+
+            InputObject = cell;
+            var rt = cell.Bounds;
+            rt.Offset(rtRow.Left + (cell.Column.Fixed ? 0 : hspos), rtRow.Top + vspos);
+            GoInputEventer.Current.FireInputString(this, rt, act, value);
+        }
+
         [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
         public void InvokeEditNumber<T>(GoDataGridCell cell, T value, T? min, T? max) where T : struct
         {
@@ -1029,6 +1046,22 @@ namespace Going.UI.Controls
                 if ((old != null && !old.Equals(cell.Value)) || old == null) InvokeValueChange(cell, old, cell.Value);
 
             }, value, min, max);
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
+        public void InvokeEditNumber<T>(GoDataGridCell cell, T value, T? min, T? max, Action<string> act) where T : struct
+        {
+            var rts = Areas();
+            var rtColumn = rts["Column"];
+            var rtRow = rts["Row"];
+
+            var hspos = Convert.ToSingle(hscroll.ScrollPositionWithOffset);
+            var vspos = Convert.ToSingle(vscroll.ScrollPositionWithOffset);
+
+            InputObject = cell;
+            var rt = cell.Bounds;
+            rt.Offset(rtRow.Left + (cell.Column.Fixed ? 0 : hspos), rtRow.Top + vspos);
+            GoInputEventer.Current.FireInputNumber(this, rt, act, value, min, max);
         }
 
         [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
