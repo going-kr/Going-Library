@@ -21,7 +21,14 @@ namespace Going.UI.Utils
 
         #region Properties
         public double TotalMillls { get; private set; }
-        public double PlayMillis => tmStart.HasValue ? (DateTime.Now - tmStart.Value).TotalMilliseconds : 0;
+        public double PlayMillis
+        {
+            get
+            {
+                DateTime? tm = tmStart;
+                return tm.HasValue ? (DateTime.Now - tm.Value).TotalMilliseconds : 0;
+            }
+        }
         public bool IsPlaying { get; private set; }
         public string? Variable { get; private set; }
         public Action? Refresh;

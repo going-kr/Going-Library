@@ -19,7 +19,7 @@ namespace Going.UI.Controls
         #region Properties
         [GoProperty(PCategory.Control, 0)] public float IconSize { get; set; } = 12;
         [GoProperty(PCategory.Control, 1)] public float IconGap { get; set; } = 5;
-        [GoProperty(PCategory.Control, 2)] public string FontName { get; set; } = "나눔고딕";
+        [GoFontNameProperty(PCategory.Control, 2)] public string FontName { get; set; } = "나눔고딕";
         [GoProperty(PCategory.Control, 3)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         [GoProperty(PCategory.Control, 4)] public float FontSize { get; set; } = 12;
 

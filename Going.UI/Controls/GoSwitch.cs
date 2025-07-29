@@ -27,7 +27,7 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 1)] public string OffText { get; set; } = "Off";
         [GoProperty(PCategory.Control, 2)] public string? OnIconString { get; set; }
         [GoProperty(PCategory.Control, 3)] public string? OffIconString { get; set; }
-        [GoProperty(PCategory.Control, 4)] public string FontName { get; set; } = "나눔고딕";
+        [GoFontNameProperty(PCategory.Control, 4)] public string FontName { get; set; } = "나눔고딕";
         [GoProperty(PCategory.Control, 5)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         [GoProperty(PCategory.Control, 6)] public float FontSize { get; set; } = 12;
         [GoProperty(PCategory.Control, 7)] public float IconSize { get; set; } = 12;

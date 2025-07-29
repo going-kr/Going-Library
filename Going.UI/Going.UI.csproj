@@ -9,13 +9,14 @@
 	<PackageIconUrl>https://raw.githubusercontent.com/Going-kr/Going-Library/master/icon/Going_logo_blue.png</PackageIconUrl>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Description>Skia based ui libary</Description>
-    <Version>1.0.2.14</Version>
+    <Version>1.0.2.22</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="Resources\fab.otf" />
     <None Remove="Resources\far.otf" />
     <None Remove="Resources\fas.otf" />
+    <None Remove="Resources\NanumGothicBold.ttf" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,10 +29,20 @@
     <EmbeddedResource Include="Resources\fas.otf">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\NanumGothicBold.ttf" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="SkiaSharp" Version="3.116.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\NanumGothic.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <ApplicationDefinition Include="Resources\NanumGothicBold.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ApplicationDefinition>
   </ItemGroup>
 
 </Project>

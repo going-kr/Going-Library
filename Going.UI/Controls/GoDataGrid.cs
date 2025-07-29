@@ -19,6 +19,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using System.Xml.Schema;
 
 namespace Going.UI.Controls
 {
@@ -31,7 +32,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Properties
-        [GoProperty(PCategory.Control, 0)] public string FontName { get; set; } = "나눔고딕";
+        [GoFontNameProperty(PCategory.Control, 0)] public string FontName { get; set; } = "나눔고딕";
         [GoProperty(PCategory.Control, 1)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         [GoProperty(PCategory.Control, 2)] public float FontSize { get; set; } = 12;
 
@@ -41,12 +42,13 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 6)] public string ColumnColor { get; set; } = "Base1";
         [GoProperty(PCategory.Control, 7)] public string SelectedRowColor { get; set; } = "Select";
         [GoProperty(PCategory.Control, 8)] public string BoxColor { get; set; } = "Base2";
+        [GoProperty(PCategory.Control, 9)] public string ScrollBarColor { get; set; } = "Base1";
 
-        [GoProperty(PCategory.Control, 9)] public float RowHeight { get; set; } = 30F;
-        [GoProperty(PCategory.Control, 10)] public float ColumnHeight { get; set; } = 30F;
+        [GoProperty(PCategory.Control, 10)] public float RowHeight { get; set; } = 30F;
+        [GoProperty(PCategory.Control, 11)] public float ColumnHeight { get; set; } = 30F;
 
-        [GoProperty(PCategory.Control, 11)] public ScrollMode ScrollMode { get; set; } = ScrollMode.Vertical;
-        [GoProperty(PCategory.Control, 12)] public GoDataGridSelectionMode SelectionMode { get; set; } = GoDataGridSelectionMode.Single;
+        [GoProperty(PCategory.Control, 12)] public ScrollMode ScrollMode { get; set; } = ScrollMode.Vertical;
+        [GoProperty(PCategory.Control, 13)] public GoDataGridSelectionMode SelectionMode { get; set; } = GoDataGridSelectionMode.Single;
 
         public ObservableList<GoDataGridColumn> ColumnGroups { get; private set; } = [];
         public ObservableList<GoDataGridColumn> Columns { get; private set; } = [];
@@ -145,6 +147,7 @@ namespace Going.UI.Controls
             var cCol = thm.ToColor(ColumnColor);
             var cSel = thm.ToColor(SelectedRowColor);
             var cBox = thm.ToColor(BoxColor);
+            var cVScroll = thm.ToColor(ScrollBarColor);
             #endregion
             #region bounds
             var rts = Areas();
@@ -170,16 +173,16 @@ namespace Going.UI.Controls
             var br = thm.Dark ? 1F : -1F;
             #endregion
             #endregion
-
-            #region Column
+            using (var path = PathTool.Box(rtContent, GoRoundType.All, thm.Corner))
             {
-                using (var path = PathTool.Box(rtColumn, GoRoundType.T, thm.Corner))
+                canvas.ClipPath(path, SKClipOperation.Intersect, true);
+
+                #region Column
                 {
                     using (new SKAutoCanvasRestore(canvas))
                     {
-                        canvas.ClipPath(path, SKClipOperation.Intersect, true);
 
-                        Util.DrawBox(canvas, rtColumn, cCol, GoRoundType.T, thm.Corner);
+                        Util.DrawBox(canvas, rtColumn, cCol, GoRoundType.Rect, thm.Corner);
                         using (new SKAutoCanvasRestore(canvas))
                         {
                             canvas.ClipRect(new SKRect(cl, rtColumn.Top, cr, rtColumn.Bottom));
@@ -203,94 +206,34 @@ namespace Going.UI.Controls
                         }
 
                     }
-                }
-            }
-            #endregion
-            #region Summary
-            if (SummaryRows.Count > 0)
-            {
-                Util.DrawBox(canvas, rtSummary, cSum, GoRoundType.B, thm.Corner);
 
-                using (new SKAutoCanvasRestore(canvas))
+                }
+                #endregion
+                #region Summary
+                if (SummaryRows.Count > 0)
                 {
-                    canvas.ClipRect(Util.FromRect(rtSummary.Left, rtSummary.Top, rtSummary.Width + 1, rtSummary.Height + 1));
-                    canvas.Translate(0, rtSummary.Top);
+                    Util.DrawBox(canvas, rtSummary, cSum, GoRoundType.Rect, thm.Corner);
 
                     using (new SKAutoCanvasRestore(canvas))
                     {
-                        canvas.ClipRect(new SKRect(cl, 0, cr + 1, rtSummary.Height));
-                        canvas.Translate(rtSummary.Left + Convert.ToInt64(hspos), 0);
+                        canvas.ClipRect(Util.FromRect(rtSummary.Left, rtSummary.Top, rtSummary.Width + 1, rtSummary.Height + 1));
+                        canvas.Translate(0, rtSummary.Top);
 
-                        foreach (var r in SummaryRows)
-                            foreach (var c in r.Cells.Where(x => !x.Column.Fixed && x.Bounds.Right > vsx && x.Bounds.Left < vex))
-                                if (c.Visible) c.Draw(canvas);
-                    }
-
-                    var bsel = SelectionMode == GoDataGridSelectionMode.Selector;
-                    p.IsStroke = true; p.StrokeWidth = 1;
-                    p.PathEffect = pe;
-                    foreach (var r in SummaryRows)
-                    {
-                        foreach (var c in r.Cells.Where(x => x.Column.Fixed))
-                            if (c.Visible) c.Draw(canvas);
-
-                        #region Selector
-                        if (bsel)
-                        {
-                            var rtSel = Util.FromRect(r.Bounds.Left, r.Bounds.Top, 30, r.Bounds.Height);
-
-                            var cF = cSum;
-                            var cV = cF.BrightnessTransmit(r.RowIndex % 2 == 0 ? 0.05F : -0.05F);
-                            var cB = cV.BrightnessTransmit(BorderBright * br);
-
-                            var rx = Convert.ToInt32(rtSel.Right) + 0.5F;
-                            p.Color = cB;
-                            canvas.DrawLine(rx, rtSel.Top, rx, rtSel.Bottom, p);
-                        }
-                        #endregion
-                    }
-                    p.PathEffect = null;
-                }
-            }
-            #endregion
-            #region Border
-            Util.DrawBox(canvas, rtColumn, SKColors.Transparent, cCol, GoRoundType.T, thm.Corner);
-            if (SummaryRows.Count > 0) Util.DrawBox(canvas, rtSummary, SKColors.Transparent, cSum, GoRoundType.B, thm.Corner);
-            #endregion
-            #region Rows
-            {
-                Util.DrawBox(canvas, rtRow, cBox, cRow, SummaryRows.Count > 0 ? GoRoundType.Rect : GoRoundType.B, thm.Corner);
-
-                using (new SKAutoCanvasRestore(canvas))
-                {
-                    canvas.ClipRect(Util.FromRect(rtRow.Left, rtRow.Top, rtRow.Width + 1, rtRow.Height + 1));
-                    canvas.Translate(0, rtRow.Top + Convert.ToInt32(vspos));
-
-                    var rt = Util.FromRect(0, 0, rtRow.Width, rtRow.Height);
-                    rt.Offset(0, -Convert.ToSingle(vscroll.ScrollPositionWithOffset));
-                    var (si, ei) = Util.FindRect(mrows.Select(x => x.Bounds).ToList(), rt);
-
-                    if (si >= 0 && si < mrows.Count && ei >= 0 && ei < mrows.Count)
-                    {
                         using (new SKAutoCanvasRestore(canvas))
                         {
-                            canvas.ClipRect(new SKRect(cl, rt.Top, cr + 1, rt.Bottom));
-                            canvas.Translate(rtRow.Left + Convert.ToInt64(hspos), 0);
+                            canvas.ClipRect(new SKRect(cl, 0, cr + 1, rtSummary.Height));
+                            canvas.Translate(rtSummary.Left + Convert.ToInt64(hspos), 0);
 
-                            for (int i = si; i <= ei; i++)
-                            {
-                                var r = mrows[i];
+                            foreach (var r in SummaryRows)
                                 foreach (var c in r.Cells.Where(x => !x.Column.Fixed && x.Bounds.Right > vsx && x.Bounds.Left < vex))
                                     if (c.Visible) c.Draw(canvas);
-                            }
                         }
 
                         var bsel = SelectionMode == GoDataGridSelectionMode.Selector;
                         p.IsStroke = true; p.StrokeWidth = 1;
                         p.PathEffect = pe;
-                        for (int i = si; i <= ei; i++)
+                        foreach (var r in SummaryRows)
                         {
-                            var r = mrows[i];
                             foreach (var c in r.Cells.Where(x => x.Column.Fixed))
                                 if (c.Visible) c.Draw(canvas);
 
@@ -298,15 +241,10 @@ namespace Going.UI.Controls
                             if (bsel)
                             {
                                 var rtSel = Util.FromRect(r.Bounds.Left, r.Bounds.Top, 30, r.Bounds.Height);
-                                var rtChk = MathTool.MakeRectangle(rtSel, new SKSize(20, 20));
 
-                                var cF = r.Selected ? cSel : cRow;
+                                var cF = cSum;
                                 var cV = cF.BrightnessTransmit(r.RowIndex % 2 == 0 ? 0.05F : -0.05F);
                                 var cB = cV.BrightnessTransmit(BorderBright * br);
-
-                                Util.DrawBox(canvas, rtSel, cV, GoRoundType.Rect, thm.Corner);
-                                Util.DrawBox(canvas, rtChk, cV.BrightnessTransmit(InputBright * br), cB, GoRoundType.Rect, thm.Corner);
-                                if (r.Selected) Util.DrawIcon(canvas, "fa-check", 12, rtChk, cText);
 
                                 var rx = Convert.ToInt32(rtSel.Right) + 0.5F;
                                 p.Color = cB;
@@ -317,13 +255,81 @@ namespace Going.UI.Controls
                         p.PathEffect = null;
                     }
                 }
+                #endregion
+                #region Border
+                Util.DrawBox(canvas, rtColumn, SKColors.Transparent, cCol, GoRoundType.Rect, thm.Corner);
+                if (SummaryRows.Count > 0) Util.DrawBox(canvas, rtSummary, SKColors.Transparent, cSum, GoRoundType.Rect, thm.Corner);
+                #endregion
+                #region Rows
+                {
+                    Util.DrawBox(canvas, rtRow, cBox, cRow, GoRoundType.Rect, thm.Corner);
 
+                    using (new SKAutoCanvasRestore(canvas))
+                    {
+                        canvas.ClipRect(Util.FromRect(rtRow.Left, rtRow.Top, rtRow.Width + 1, rtRow.Height + 1));
+                        canvas.Translate(0, rtRow.Top + Convert.ToInt32(vspos));
+
+                        var rt = Util.FromRect(0, 0, rtRow.Width, rtRow.Height);
+                        rt.Offset(0, -Convert.ToSingle(vscroll.ScrollPositionWithOffset));
+                        var (si, ei) = Util.FindRect(mrows.Select(x => x.Bounds).ToList(), rt);
+
+                        if (si >= 0 && si < mrows.Count && ei >= 0 && ei < mrows.Count)
+                        {
+                            using (new SKAutoCanvasRestore(canvas))
+                            {
+                                canvas.ClipRect(new SKRect(cl, rt.Top, cr + 1, rt.Bottom));
+                                canvas.Translate(rtRow.Left + Convert.ToInt64(hspos), 0);
+
+                                for (int i = si; i <= ei; i++)
+                                {
+                                    var r = mrows[i];
+                                    foreach (var c in r.Cells.Where(x => !x.Column.Fixed && x.Bounds.Right > vsx && x.Bounds.Left < vex))
+                                        if (c.Visible) c.Draw(canvas);
+                                }
+                            }
+
+                            var bsel = SelectionMode == GoDataGridSelectionMode.Selector;
+                            p.IsStroke = true; p.StrokeWidth = 1;
+                            p.PathEffect = pe;
+                            for (int i = si; i <= ei; i++)
+                            {
+                                var r = mrows[i];
+                                foreach (var c in r.Cells.Where(x => x.Column.Fixed))
+                                    if (c.Visible) c.Draw(canvas);
+
+                                #region Selector
+                                if (bsel)
+                                {
+                                    var rtSel = Util.FromRect(r.Bounds.Left, r.Bounds.Top, 30, r.Bounds.Height);
+                                    var rtChk = MathTool.MakeRectangle(rtSel, new SKSize(20, 20));
+
+                                    var cF = r.Selected ? cSel : cRow;
+                                    var cV = cF.BrightnessTransmit(r.RowIndex % 2 == 0 ? 0.05F : -0.05F);
+                                    var cB = cV.BrightnessTransmit(BorderBright * br);
+
+                                    Util.DrawBox(canvas, rtSel, cV, GoRoundType.Rect, thm.Corner);
+                                    Util.DrawBox(canvas, rtChk, cV.BrightnessTransmit(InputBright * br), cB, GoRoundType.Rect, thm.Corner);
+                                    if (r.Selected) Util.DrawIcon(canvas, "fa-check", 12, rtChk, cText);
+
+                                    var rx = Convert.ToInt32(rtSel.Right) + 0.5F;
+                                    p.Color = cB;
+                                    canvas.DrawLine(rx, rtSel.Top, rx, rtSel.Bottom, p);
+                                }
+                                #endregion
+                            }
+                            p.PathEffect = null;
+                        }
+                    }
+
+                }
+                #endregion
+                #region Scroll
+                Util.DrawBox(canvas, rtScrollV, cVScroll, GoRoundType.Rect, thm.Corner);
+                #endregion
+
+                hscroll.Draw(canvas, rtScrollH);
+                vscroll.Draw(canvas, rtScrollV);
             }
-            #endregion
-         
-            hscroll.Draw(canvas, rtScrollH);
-            vscroll.Draw(canvas, rtScrollV);
-
             base.OnDraw(canvas);
         }
         #endregion
@@ -769,10 +775,11 @@ namespace Going.UI.Controls
             var usv = ScrollMode == ScrollMode.Both || ScrollMode == ScrollMode.Vertical;
             #endregion
 
-            var rtScrollContent = Util.FromRect(rtContent.Left, rtContent.Top, rtContent.Width - (usv ? scwh : 0), rtContent.Height - (ush ? scwh : 0));
+            //var rtScrollContent = Util.FromRect(rtContent.Left, rtContent.Top, rtContent.Width - (usv ? scwh : 0), rtContent.Height - (ush ? scwh : 0));
+            var rtScrollContent = Util.FromRect(rtContent.Left, rtContent.Top, rtContent.Width, rtContent.Height - (ush ? scwh : 0));
             var rts = Util.Rows(rtScrollContent, [$"{colH}px", $"100%", $"{sumH}px"]);
             var rtColumn = rts[0];
-            var rtRow = rts[1];
+            var rtRow = Util.FromRect(rts[1].Left, rts[1].Top, rts[1].Width - (usv ? scwh : 0), rts[1].Height);
             var rtSummary = rts[2];
             var rtScrollV = Util.FromRect(rtRow.Right, rtRow.Top, usv ? scwh : 0, rtRow.Height);
             var tl = Columns.FirstOrDefault(x => !x.Fixed)?.Bounds.Left ?? rtSummary.Left;
@@ -791,7 +798,7 @@ namespace Going.UI.Controls
                 var uf = Columns.Any(x => x.UseFilter);
                 var bsel = SelectionMode == GoDataGridSelectionMode.Selector;
                 var rtcol = Util.FromRect(rtColumn.Left + (bsel ? 30 : 0), rtColumn.Bottom - ColumnHeight - (uf ? ColumnHeight : 0), rtColumn.Width - (bsel ? 30 : 0), ColumnHeight);
-                var rtsCol = Util.Columns(rtcol, Columns.Select(x => x.Size ?? "").ToArray());
+                var rtsCol = Util.Columns(rtcol, [.. Columns.Select(x => x.Size ?? ""), $"{(usv ? scwh : 0)}px"]);
                 
                 for (int i = 0; i < Columns.Count; i++)
                 {

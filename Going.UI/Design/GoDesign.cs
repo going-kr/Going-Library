@@ -35,7 +35,8 @@ namespace Going.UI.Design
 
         [JsonInclude] public Dictionary<string, GoPage> Pages { get; private set; } = [];
         [JsonInclude] public Dictionary<string, GoWindow> Windows { get; private set; } = [];
-        [JsonInclude] private Dictionary<string, List<SKImage>> Images { get; } = [];
+        [JsonInclude] private Dictionary<string, List<SKImage>> Images { get; } = new(StringComparer.OrdinalIgnoreCase);
+        [JsonInclude] private Dictionary<string, List<byte[]>> Fonts { get; } = new(StringComparer.OrdinalIgnoreCase);
         [JsonInclude] public GoTitleBar TitleBar { get; private set; } = new() { Visible = false };
         [JsonInclude] public GoSideBar LeftSideBar { get; private set; } = new() { Visible = false };
         [JsonInclude] public GoSideBar RightSideBar { get; private set; } = new() { Visible = false };
@@ -71,10 +72,13 @@ namespace Going.UI.Design
         public GoDesign() => ActiveDesign = this;
 
         [JsonConstructor]
-        public GoDesign(Dictionary<string, GoPage> pages, Dictionary<string, List<SKImage>> images, GoTitleBar titleBar, GoSideBar leftSideBar, GoSideBar rightSideBar, GoFooter footer) : this()
+        public GoDesign(Dictionary<string, GoPage> pages, 
+                        Dictionary<string, List<SKImage>> images, Dictionary<string, List<byte[]>> fonts,
+                        GoTitleBar titleBar, GoSideBar leftSideBar, GoSideBar rightSideBar, GoFooter footer) : this()
         {
             Pages = pages;
             Images = images;
+            Fonts = fonts;
 
             TitleBar = titleBar;
             LeftSideBar = leftSideBar;
@@ -192,6 +196,8 @@ namespace Going.UI.Design
             LeftSideBar.FireInit(this);
             RightSideBar.FireInit(this);
             Footer.FireInit(this);
+
+            Util.SetExternalFonts(Fonts);
         }
         #endregion
 
@@ -610,15 +616,7 @@ namespace Going.UI.Design
 
         #region Image
         public void AddImage(string name, byte[] data)
-        {
-            var nm = name.ToLower();
-            if (!Images.ContainsKey(nm))
-            {
-                var ls = ImageExtractor.ProcessImageFromMemory(data);
-                if (ls != null && ls.Count > 0)
-                    Images.Add(nm, ls);
-            }
-        }
+            => Images[name] = ImageExtractor.ProcessImageFromMemory(data);
 
         public void AddImage(string name, List<SKImage> imgs)
         {
@@ -652,8 +650,45 @@ namespace Going.UI.Design
 
         public bool RemoveImage(string name) => Images.Remove(name);
 
-        public List<(string name, List<SKImage> images)> GetImages() => Images.Select(x => (x.Key, x.Value)).ToList();
+        public List<(string name, List<SKImage> images)> GetImages() => [.. Images.Select(x => (x.Key, x.Value))];
         public List<SKImage> GetImage(string? name) => name != null && Images.TryGetValue(name.ToLower(), out var ls) ? ls : [];
+        #endregion
+
+        #region Font
+        public void AddFont(string name, byte[] data)
+        {
+            if (Fonts.TryGetValue(name, out var imgs)) imgs.Add(data);
+            else Fonts.Add(name, [data]);
+        }
+
+        public void AddFontFolder(string directory)
+        {
+            if (Directory.Exists(directory))
+            {
+                var paths = new List<string>();
+                paths.AddRange(Directory.GetFiles(directory, "*.ttf"));
+                paths.AddRange(Directory.GetFiles(directory, "*.otf"));
+
+                foreach (var path in paths)
+                {
+                    var data = File.ReadAllBytes(path);
+                    var name = Path.GetFileNameWithoutExtension(path);
+                    if (Fonts.ContainsKey(name))
+                    {
+                        var ls = Fonts.Keys.Where(x => x.StartsWith(name));
+                        var ls2 = ls.Where(x => x.Split('_').Length == 2);
+                        var max = ls2.Count() > 0 ? ls2.Max(x => int.TryParse(x.Split('_')[1], out var n) ? n : 0) : 0;
+                        AddFont($"{name}_{max + 1}", data);
+                    }
+                    else AddFont(name, data);
+                }
+            }
+        }
+
+        public void RemoveFont(string name) => Fonts.Remove(name);
+
+        public List<(string name, List<byte[]> fonts)> GetFonts() => [.. Fonts.Select(x => (x.Key, x.Value))];
+        public List<byte[]> GetFont(string? name) => name != null && Fonts.TryGetValue(name, out var ls) ? ls : [];
         #endregion
 
         #region Drag

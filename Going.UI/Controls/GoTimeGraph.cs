@@ -24,7 +24,7 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 2)] public string RemarkColor { get; set; } = "Base2";
         [GoProperty(PCategory.Control, 3)] public string GraphColor { get; set; } = "Back";
 
-        [GoProperty(PCategory.Control, 4)] public string FontName { get; set; } = "나눔고딕";
+        [GoFontNameProperty(PCategory.Control, 4)] public string FontName { get; set; } = "나눔고딕";
         [GoProperty(PCategory.Control, 5)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         [GoProperty(PCategory.Control, 6)] public float FontSize { get; set; } = 12;
 

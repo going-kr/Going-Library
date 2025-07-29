@@ -26,9 +26,29 @@ namespace Going.UI.Utils
     public class Util
     {
         public readonly static SKSamplingOptions Sampling = new(SKCubicResampler.Mitchell);
+        public static Dictionary<string, Dictionary<GoFontStyle, SKTypeface>> FontCache { get; } = new(StringComparer.OrdinalIgnoreCase);
+        public static Dictionary<string, Dictionary<GoFontStyle, SKTypeface>> ExternalFonts { get; } = new(StringComparer.OrdinalIgnoreCase);
+
+        private static SKTypeface DefaultFontR;
+        private static SKTypeface DefaultFontB;
+
+        static Util()
+        {
+            #region DefaultFont
+            {
+                var asm = typeof(Util).Assembly;
+                var names = asm.GetManifestResourceNames();
+                using (var ms = asm.GetManifestResourceStream("Going.UI.Resources.NanumGothic.ttf")) DefaultFontR = SKTypeface.FromStream(ms);
+                using (var ms = asm.GetManifestResourceStream("Going.UI.Resources.NanumGothicBold.ttf")) DefaultFontB = SKTypeface.FromStream(ms);
+
+                ExternalFonts["나눔고딕"] = [];
+                ExternalFonts["나눔고딕"][GoFontStyle.Normal] = DefaultFontR;
+                ExternalFonts["나눔고딕"][GoFontStyle.Bold] = DefaultFontB;
+            }
+            #endregion
+        }
 
         #region Member Variable
-        static Dictionary<string, Dictionary<GoFontStyle, SKTypeface>> fontCache = [];
         #endregion
 
         #region Method
@@ -102,26 +122,92 @@ namespace Going.UI.Utils
         #endregion
 
         #region Text
-        #region GetTypeface
-        public static SKTypeface? GetTypeface(string fontName, GoFontStyle fontStyle)
+        #region SetExternalFonts
+        public static void SetExternalFonts(Dictionary<string, List<byte[]>> fonts)
         {
-            SKTypeface? typeface = null;
-            if (!fontCache.TryGetValue(fontName, out var typefaces)) fontCache[fontName] = [];
-            if (!fontCache[fontName].TryGetValue(fontStyle, out typeface)) 
-            {
-                var r = SKFontStyle.Normal;
-                switch(fontStyle)
-                {
-                    case GoFontStyle.Normal: r = SKFontStyle.Normal; break;
-                    case GoFontStyle.Bold: r = SKFontStyle.Bold; break;
-                    case GoFontStyle.Italic: r = SKFontStyle.Italic; break;
-                    case GoFontStyle.BoldItalic: r = SKFontStyle.BoldItalic; break;
-                }
+            List<SKTypeface> disposeItems = [];
+            foreach(var fontName in ExternalFonts.Keys)
+                if(fontName != "나눔고딕")
+                    disposeItems.AddRange(ExternalFonts[fontName].Values);
 
-                typeface = SKFontManager.Default.MatchFamily(fontName, r);
-                fontCache[fontName][fontStyle] = typeface;
+            ExternalFonts.Clear();
+            ExternalFonts["나눔고딕"] = [];
+            ExternalFonts["나눔고딕"][GoFontStyle.Normal] = DefaultFontR;
+            ExternalFonts["나눔고딕"][GoFontStyle.Bold] = DefaultFontB;
+
+            foreach (var fontName in fonts.Keys)
+            {
+                if (!ExternalFonts.TryGetValue(fontName, out var typefaces)) ExternalFonts[fontName] = [];
+                foreach (var fs in fonts[fontName])
+                {
+                    try
+                    {
+                        using var ms = new MemoryStream(fs);
+                        var typeface = SKTypeface.FromStream(ms);
+                        if (typeface != null)
+                        {
+                            if(typeface.IsBold && typeface.IsItalic)
+                                ExternalFonts[fontName].Add(GoFontStyle.BoldItalic, typeface);
+                            else if (typeface.IsBold)
+                                ExternalFonts[fontName].Add(GoFontStyle.Bold, typeface);
+                            else if (typeface.IsItalic)
+                                ExternalFonts[fontName].Add(GoFontStyle.Italic, typeface);
+                            else
+                                ExternalFonts[fontName].Add(GoFontStyle.Normal, typeface);
+                        }
+                    }
+                    catch { }
+                }
             }
-            return typeface;
+
+            foreach (var v in disposeItems) v.Dispose();
+        }
+        #endregion
+
+        #region GetFontStyle
+        static SKFontStyle GetFontStyle(GoFontStyle fontStyle)
+        {
+            var r = SKFontStyle.Normal;
+            switch (fontStyle)
+            {
+                case GoFontStyle.Normal: r = SKFontStyle.Normal; break;
+                case GoFontStyle.Bold: r = SKFontStyle.Bold; break;
+                case GoFontStyle.Italic: r = SKFontStyle.Italic; break;
+                case GoFontStyle.BoldItalic: r = SKFontStyle.BoldItalic; break;
+            }
+            return r;
+        }
+        #endregion
+
+        #region GetTypeface
+        public static SKTypeface GetTypeface(string fontName, GoFontStyle fontStyle)
+        {
+            SKTypeface ret = DefaultFontR;
+
+            try
+            {
+                if (ExternalFonts.TryGetValue(fontName, out var typefaces) && typefaces.Count > 0)
+                {
+                    if (typefaces.TryGetValue(fontStyle, out var tp1)) ret = tp1;
+                    else ret = typefaces.TryGetValue(GoFontStyle.Normal, out var tp2) ? tp2 : typefaces.Values.First();
+                }
+                else
+                {
+                    if (!FontCache.ContainsKey(fontName)) FontCache[fontName] = [];
+                    if (FontCache.TryGetValue(fontName, out var ls))
+                    {
+                        if (ls.TryGetValue(fontStyle, out var tp)) ret = tp;
+                        else
+                        {
+                            ret = SKFontManager.Default.MatchFamily(fontName, GetFontStyle(fontStyle));
+                            FontCache[fontName][fontStyle] = ret;
+                        }
+                    }
+                }
+            }
+            catch { }
+
+            return ret;
         }
         #endregion
 

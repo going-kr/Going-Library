@@ -29,7 +29,7 @@ namespace Going.UI.Design
         [GoProperty(PCategory.Control, 7)] public float IconSize { get; set; } = 16;
 
         [GoProperty(PCategory.Control, 8)] public string TextColor { get; set; } = "Fore";
-        [GoProperty(PCategory.Control, 9)] public string FontName { get; set; } = "나눔고딕";
+        [GoFontNameProperty(PCategory.Control, 9)] public string FontName { get; set; } = "나눔고딕";
         [GoProperty(PCategory.Control, 10)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         [GoProperty(PCategory.Control, 11)] public float FontSize { get; set; } = 16;
 

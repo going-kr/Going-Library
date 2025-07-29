@@ -99,10 +99,13 @@ namespace Going.UI.OpenTK.Windows
 
             base.OnLoad();
 
-            unsafe
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
             {
-                Handle = GLFW.GetWin32Window(WindowPtr);
-                DarkMode(Handle, true);
+                unsafe
+                {
+                    Handle = GLFW.GetWin32Window(WindowPtr);
+                    DarkMode(Handle, true);
+                }
             }
         }
         #endregion
