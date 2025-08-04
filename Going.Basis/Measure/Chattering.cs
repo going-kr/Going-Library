@@ -130,6 +130,13 @@ namespace Going.Basis.Measure
             }
         }
         #endregion
+
+        #region Reset
+        public void Reset()
+        {
+            prevTime = DateTime.Now;
+        }
+        #endregion
         #endregion
     }
 
