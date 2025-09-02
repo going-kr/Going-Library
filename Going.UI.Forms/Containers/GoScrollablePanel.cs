@@ -26,7 +26,7 @@ namespace Going.UI.Forms.Containers
         {
             AutoScroll = true;
 
-            DwmTool.SetDarkMode(Handle, GoTheme.Current.Dark);
+            DwmTool.SetDarkMode(Handle, GoThemeW.Current.Dark);
         }
         #endregion
 
@@ -36,7 +36,7 @@ namespace Going.UI.Forms.Containers
         {
             if (bFirst)
             {
-                DwmTool.SetDarkMode(Handle, GoTheme.Current.Dark);
+                DwmTool.SetDarkMode(Handle, GoThemeW.Current.Dark);
 
                 bFirst = false;
             }
@@ -46,7 +46,7 @@ namespace Going.UI.Forms.Containers
         #region OnVisibleChanged
         protected override void OnVisibleChanged(EventArgs e)
         {
-            DwmTool.SetDarkMode(this.Handle, GoTheme.Current.Dark);
+            DwmTool.SetDarkMode(this.Handle, GoThemeW.Current.Dark);
             base.OnVisibleChanged(e);
         }
         #endregion

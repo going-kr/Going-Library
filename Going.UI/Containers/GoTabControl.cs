@@ -97,9 +97,8 @@ namespace Going.UI.Containers
         #endregion
 
         #region Draw
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
-            var thm = GoTheme.Current;
             var cText = thm.ToColor(TextColor);
             var cTab = thm.ToColor(TabColor);
             var cBorder = thm.ToColor(TabBorderColor);
@@ -197,7 +196,7 @@ namespace Going.UI.Containers
                 Util.DrawTextIcon(canvas, tab.Text, FontName, FontStyle, FontSize, tab.IconString, IconSize, IconDirection, IconGap, rt, Util.FromArgb(Convert.ToByte(bSel ? 255 : (tab.Hover ? 150 : 60)), cText));
             });
 
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
         }
         #endregion
 

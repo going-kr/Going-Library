@@ -68,8 +68,8 @@ namespace Going.UI.Forms.Dialogs
             using (var canvas = new SKCanvas(bitmap))
             using (var surface = SKSurface.Create(bitmap.Info))
             {
-                var cBack = GoTheme.Current.ToColor(WindowColor);
-                var cBorder = GoTheme.Current.ToColor(BorderColor);
+                var cBack = GoThemeW.Current.ToColor(WindowColor);
+                var cBorder = GoThemeW.Current.ToColor(BorderColor);
                 canvas.Clear(cBack);
 
                 using var p = new SKPaint { IsAntialias = false };
@@ -164,7 +164,7 @@ namespace Going.UI.Forms.Dialogs
         protected override void OnContentDraw(ContentDrawEventArgs e)
         {
             control.Bounds = Util.FromRect(0, 0, Width, Height);
-            control.FireDraw(e.Canvas);
+            control.FireDraw(e.Canvas, GoThemeW.Current);
             base.OnContentDraw(e);
         }
         #endregion
@@ -334,7 +334,7 @@ namespace Going.UI.Forms.Dialogs
                 using (new SKAutoCanvasRestore(e.Canvas))
                 {
                     e.Canvas.Translate(control.Left, control.Top);
-                    control.FireDraw(e.Canvas);
+                    control.FireDraw(e.Canvas, GoThemeW.Current);
                 }
             }
             base.OnContentDraw(e);
@@ -555,7 +555,7 @@ namespace Going.UI.Forms.Dialogs
                 using (new SKAutoCanvasRestore(e.Canvas))
                 {
                     e.Canvas.Translate(control.Left, control.Top);
-                    control.FireDraw(e.Canvas);
+                    control.FireDraw(e.Canvas, GoThemeW.Current);
                 }
             }
             base.OnContentDraw(e);

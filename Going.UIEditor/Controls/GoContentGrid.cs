@@ -1,5 +1,6 @@
 ﻿using Going.UI.Design;
 using Going.UI.Enums;
+using Going.UI.Forms;
 using Going.UI.Forms.Controls;
 using Going.UI.Themes;
 using Going.UI.Tools;
@@ -63,7 +64,7 @@ namespace Going.UIEditor.Controls
         #region OnContentDraw
         protected override void OnContentDraw(ContentDrawEventArgs e)
         {
-            var thm = GoTheme.Current;
+            var thm = GoThemeW.Current;
             var canvas = e.Canvas;
 
             var SelectedColor = thm.Select;
@@ -100,7 +101,7 @@ namespace Going.UIEditor.Controls
 
             #region Scroll
             {
-                if (scroll.ScrollVisible) scroll.Draw(canvas, rtScroll);
+                if (scroll.ScrollVisible) scroll.Draw(canvas, thm, rtScroll);
             }
             #endregion
 
@@ -399,7 +400,7 @@ namespace Going.UIEditor.Controls
         public override void Draw(SKCanvas canvas, SKRect Bounds)
         {
             var nmh = 24;
-            var thm = GoTheme.Current;
+            var thm = GoThemeW.Current;
             var rtImage = Util.FromRect(Bounds.Left, Bounds.Top, Bounds.Width, Bounds.Height - nmh);
             var rtName = Util.FromRect(Bounds.Left, rtImage.Bottom, Bounds.Width, nmh);
 

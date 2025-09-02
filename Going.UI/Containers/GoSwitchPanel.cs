@@ -73,10 +73,10 @@ namespace Going.UI.Containers
         #endregion
 
         #region Draw
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             if (FirstRender && SelectedPage == null) SelectedPage = Pages.FirstOrDefault();
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
         }
         #endregion
         #endregion

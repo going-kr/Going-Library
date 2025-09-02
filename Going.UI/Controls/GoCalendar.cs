@@ -51,9 +51,8 @@ namespace Going.UI.Controls
 
         #region Override
         #region Draw
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
-            var thm = GoTheme.Current;
             var rts = Areas();
             var rtContent = rts["Content"];
             var cText = thm.ToColor(TextColor);
@@ -97,7 +96,7 @@ namespace Going.UI.Controls
             }
             #endregion
              
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
         }
         #endregion
         #region Mouse

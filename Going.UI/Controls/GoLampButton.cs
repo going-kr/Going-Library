@@ -64,9 +64,8 @@ namespace Going.UI.Controls
         #endregion
 
         #region Override
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
-            var thm = GoTheme.Current;
             var cText = thm.ToColor(TextColor).BrightnessTransmit(bDown ? thm.DownBrightness : 0);
             var cBtn = thm.ToColor(ButtonColor).BrightnessTransmit(bDown ? thm.DownBrightness : 0);
             var cOff = thm.ToColor(OffColor);
@@ -100,7 +99,7 @@ namespace Going.UI.Controls
             p.IsStroke = false;
             p.Color = cBtn.BrightnessTransmit(-0.5F);
             canvas.DrawOval(rtb, p);
-            Util.DrawLamp(canvas, rtl, cOn, cOff, OnOff, false);
+            Util.DrawLamp(canvas, thm, rtl, cOn, cOff, OnOff, false);
 #else
             var rtb = rtBox; rtb.Inflate(1.5F, 1.5F);
             var cLT = cLmp.BrightnessTransmit(0.1F);
@@ -126,7 +125,7 @@ namespace Going.UI.Controls
             Util.DrawText(canvas, Text, FontName, FontStyle, FontSize, rtText, cText, GoContentAlignment.MiddleCenter);
 
 
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
         }
 
         protected override void OnMouseDown(float x, float y, GoMouseButton button)

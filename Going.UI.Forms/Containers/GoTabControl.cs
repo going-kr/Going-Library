@@ -48,7 +48,7 @@ namespace Going.UI.Forms.Containers
                 {
                     sBackgroundColor = value;
 
-                    var c = GoTheme.Current.ToColor(BackgroundColor);
+                    var c = GoThemeW.Current.ToColor(BackgroundColor);
                     this.BackColor = Color.FromArgb(c.Alpha, c.Red, c.Green, c.Blue);
 
                     Invalidate();
@@ -97,7 +97,7 @@ namespace Going.UI.Forms.Containers
             using (var canvas = new SKCanvas(bitmap))
             using (var surface = SKSurface.Create(bitmap.Info))
             {
-                var cBack = GoTheme.Current.ToColor(BackgroundColor);
+                var cBack = GoThemeW.Current.ToColor(BackgroundColor);
                 canvas.Clear(ColorTool.EnableColor(this, cBack));
 
                 using var p = new SKPaint { IsAntialias = true, Color = SKColors.Black.WithAlpha(Convert.ToByte(Enabled ? 255 : 255 - GoTheme.DisableAlpha)) };
@@ -116,7 +116,7 @@ namespace Going.UI.Forms.Containers
         #region Draw
         protected virtual void OnContentDraw(ContentDrawEventArgs e)
         {
-            var thm = GoTheme.Current;
+            var thm = GoThemeW.Current;
             var canvas = e.Canvas;
             var cBack = thm.ToColor(BackgroundColor);
             var cText = thm.ToColor(TextColor);
@@ -234,7 +234,7 @@ namespace Going.UI.Forms.Containers
         #region OnEnabledChanged
         protected override void OnEnabledChanged(EventArgs e)
         {
-            var thm = GoTheme.Current;
+            var thm = GoThemeW.Current;
             var cBack = thm.ToColor(BackgroundColor);
             var cTab = thm.ToColor(TabColor);
             var vcTab = Enabled ? Util.FromArgb(cTab) : MixColorAlpha(Util.FromArgb(cBack), Util.FromArgb(cTab), 255 - GoTheme.DisableAlpha);

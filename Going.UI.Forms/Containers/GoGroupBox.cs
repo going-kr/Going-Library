@@ -56,7 +56,7 @@ namespace Going.UI.Forms.Containers
         protected override void OnContentDraw(ContentDrawEventArgs e)
         {
             control.Bounds = Util.FromRect(0, 0, Width, Height);
-            control.FireDraw(e.Canvas);
+            control.FireDraw(e.Canvas, GoThemeW.Current);
             base.OnContentDraw(e);
         }
         #endregion

@@ -2,6 +2,7 @@
 using Going.UI.Controls;
 using Going.UI.Design;
 using Going.UI.Enums;
+using Going.UI.Themes;
 using Going.UI.Tools;
 using SkiaSharp;
 using System;
@@ -36,7 +37,7 @@ namespace Going.UI.Utils
                 c.FireHide();
         }
 
-        public static void Draw(SKCanvas canvas, IGoContainer container)
+        public static void Draw(SKCanvas canvas, GoTheme thm, IGoContainer container)
         {
             foreach (var c in container.Childrens)
             {
@@ -49,7 +50,7 @@ namespace Going.UI.Utils
                     {
                         canvas.ClipRect(c.Bounds);
                         canvas.Translate(c.Left, c.Top);
-                        c.FireDraw(canvas);
+                        c.FireDraw(canvas, thm);
                     }
                 }
 

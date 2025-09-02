@@ -82,7 +82,7 @@ namespace Going.UI.Forms.Controls
         protected override void OnContentDraw(ContentDrawEventArgs e)
         {
             var canvas = e.Canvas;
-            var thm = GoTheme.Current;
+            var thm = GoThemeW.Current;
             var rtContent = Util.FromRect(0, 0, Width - 1, Height - 1);
 
             if (OnImage != null && OffImage != null && rm != null)

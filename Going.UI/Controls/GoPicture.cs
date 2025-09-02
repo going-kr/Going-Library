@@ -22,9 +22,8 @@ namespace Going.UI.Controls
  
         #region Override
         #region OnDraw
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
-            var thm = GoTheme.Current;
             var rts = Areas();
             var rtContent = rts["Content"];
 
@@ -70,7 +69,7 @@ namespace Going.UI.Controls
                     }
                 }
             }
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
         }
         #endregion
         #endregion

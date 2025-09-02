@@ -1,4 +1,5 @@
 using Going.UI.Extensions;
+using Going.UI.Forms;
 using Going.UI.Forms.Dialogs;
 using Going.UI.Themes;
 using Going.UI.Tools;
@@ -51,7 +52,7 @@ namespace Going.UIEditor
             btnSaveAs.MouseUp += (o, s) => bDownSaveAs = false;
             btnSaveAs.ContentDraw += (o, s) =>
             {
-                var thm = GoTheme.Current;
+                var thm = GoThemeW.Current;
                 var cT = thm.ToColor(btnSaveAs.TextColor);
                 var rt = MathTool.MakeRectangle(Util.FromRect(0, 0, btnSaveAs.Width, btnSaveAs.Height), new SKSize(9, 9));
                 rt.Offset(7, 7 + (bDownSaveAs ? 1 : 0));
@@ -174,6 +175,18 @@ namespace Going.UIEditor
                 }
             };
             #endregion
+            #region Theme
+            btnTheme.ButtonClicked += (o, s) =>
+            {
+                var p = Program.CurrentProject;
+                if (p != null && p.Design != null)
+                {
+                    var (nouse, thm) = Program.ThemeForm.ShowTheme(p.Design.Theme ?? GoTheme.DarkTheme);
+                    if (nouse) { p.Design.CustomTheme = null; p.Edit = true; }
+                    else if (thm != null) { p.Design.CustomTheme = thm; p.Edit = true; }
+                }
+            };
+            #endregion
             #endregion
 
             SetLayout();
@@ -273,7 +286,7 @@ namespace Going.UIEditor
                 tsmiSaveAs.Enabled = btnSaveAs.Enabled = true;
                 tsmiClose.Enabled = true;
 
-                btnResourceManager.Visible = true;
+                btnTheme.Visible = btnResourceManager.Visible = true;
                 valPath.Visible = true;
                 btnValidCheck.Visible = true;
                 btnDeploy.Visible = true;
@@ -295,7 +308,7 @@ namespace Going.UIEditor
                 tsmiSaveAs.Enabled = btnSaveAs.Enabled = false;
                 tsmiClose.Enabled = false;
 
-                btnResourceManager.Visible = false;
+                btnTheme.Visible = btnResourceManager.Visible = false;
                 valPath.Visible = false;
                 btnValidCheck.Visible = false;
                 btnDeploy.Visible = false;

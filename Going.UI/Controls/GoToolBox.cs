@@ -73,11 +73,9 @@ namespace Going.UI.Controls
 
         #region Override
         #region Draw
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             #region var
-            var thm = GoTheme.Current;
-
             var cText = thm.ToColor(TextColor);
             var cBorder = thm.ToColor(BorderColor);
             var cBox = thm.ToColor(BoxColor);
@@ -107,11 +105,11 @@ namespace Going.UI.Controls
                 canvas.Translate(rtContent.Left, Convert.ToInt64(spos) + rtContent.Top);
                 itemLoop((i, category) =>
                 {
-                    category.Draw(canvas);
+                    category.Draw(canvas, thm);
                 });
             }
 
-            scroll.Draw(canvas, rtScroll);
+            scroll.Draw(canvas, thm, rtScroll);
 
             #region Border
             if (BackgroundDraw)
@@ -122,7 +120,7 @@ namespace Going.UI.Controls
             #endregion
 
 
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
         }
         #endregion
 
@@ -148,7 +146,7 @@ namespace Going.UI.Controls
                 if (CollisionTool.Check(rts["Content"], x, y))
                 {
                     scroll.MouseDown(x, y, rts["Scroll"]);
-                    if (scroll.TouchMode && CollisionTool.Check(rts["Box"], x, y)) scroll.TouchDown(x, y);
+                    if (Scroll.TouchMode && CollisionTool.Check(rts["Box"], x, y)) scroll.TouchDown(x, y);
                 }
                 #endregion
             }
@@ -166,8 +164,9 @@ namespace Going.UI.Controls
 
             #region Scroll
             scroll.MouseMove(x, y, rts["Scroll"]);
-            if (scroll.TouchMode) scroll.TouchMove(x, y);
+            if (Scroll.TouchMode) scroll.TouchMove(x, y);
             #endregion
+
             base.OnMouseMove(x, y);
         }
 
@@ -179,8 +178,9 @@ namespace Going.UI.Controls
 
             #region Scroll
             scroll.MouseUp(x, y);
-            if (scroll.TouchMode) scroll.TouchUp(x, y);
+            if (Scroll.TouchMode) scroll.TouchUp(x, y);
             #endregion
+
             base.OnMouseUp(x, y, button);
         }
 

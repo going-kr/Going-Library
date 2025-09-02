@@ -82,9 +82,8 @@ namespace Going.UI.Datas
         #region Method
         #region Fire
         #region Draw
-        internal void Draw(SKCanvas canvas)
+        internal void Draw(SKCanvas canvas, GoTheme thm)
         {
-            var thm = GoTheme.Current;
             var tv = TreeView;
             if (tv != null)
             {
@@ -111,7 +110,7 @@ namespace Going.UI.Datas
                 Util.DrawIcon(canvas, Nodes.Count == 0 ? "fa-circle" : (Expand ? "far fa-square-minus" : "fa-square-plus"), Nodes.Count == 0 ? 2 : 10, rtIco, cText);
                 Util.DrawTextIcon(canvas, Text, tv.FontName, tv.FontStyle, tv.FontSize, IconString, tv.IconSize, GoDirectionHV.Horizon, tv.IconGap, rtItem, cText, GoContentAlignment.MiddleCenter);
 
-                itemLoop((i, item) => item.Draw(canvas));
+                itemLoop((i, item) => item.Draw(canvas, thm));
             }
         }
         #endregion

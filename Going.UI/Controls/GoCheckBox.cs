@@ -60,9 +60,8 @@ namespace Going.UI.Controls
         #endregion
 
         #region Override
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
-            var thm = GoTheme.Current;
             var cText = thm.ToColor(TextColor);
             var cBox = thm.ToColor(BoxColor);
             var cChk = thm.ToColor(CheckColor);
@@ -75,7 +74,7 @@ namespace Going.UI.Controls
             if (Checked) Util.DrawIcon(canvas, "fa-check", BoxSize * 0.65F, rtBox, cChk);
             Util.DrawText(canvas, Text, FontName, FontStyle, FontSize, rtText, cText, GoContentAlignment.MiddleCenter);
 
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
         }
 
         protected override void OnMouseDown(float x, float y, GoMouseButton button)

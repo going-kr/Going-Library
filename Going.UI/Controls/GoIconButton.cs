@@ -38,9 +38,8 @@ namespace Going.UI.Controls
         #endregion
 
         #region Override
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
-            var thm = GoTheme.Current;
             var cBtn = thm.ToColor(ButtonColor).BrightnessTransmit(bDown ? thm.DownBrightness : 0);
             var rts = Areas();
             var rtBox = rts["Content"];
@@ -49,7 +48,7 @@ namespace Going.UI.Controls
             if (bDown) rtBox.Offset(0, 1);
             Util.DrawIcon(canvas, IconString, icosz, Rotate, rtBox, cBtn.BrightnessTransmit(bHover ? thm.HoverFillBrightness : 0), cBtn.BrightnessTransmit(bHover ? thm.HoverBorderBrightness : 0));
 
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
         }
 
         protected override void OnMouseDown(float x, float y, GoMouseButton button)

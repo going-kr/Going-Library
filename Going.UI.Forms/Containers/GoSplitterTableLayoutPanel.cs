@@ -139,7 +139,7 @@ namespace Going.UI.Forms.Containers
 
             if (downSplitter != null)
             {
-                var SplitterColor = Util.FromArgb(GoTheme.Current.ToColor(this.SplitterColor));
+                var SplitterColor = Util.FromArgb(GoThemeW.Current.ToColor(this.SplitterColor));
 
                 if (downSplitter.SplitterType == GoSplitterType.HORIZON)
                 {

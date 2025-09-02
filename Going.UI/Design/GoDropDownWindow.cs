@@ -30,9 +30,8 @@ namespace Going.UI.Design
         public GoDropDownWindow(List<IGoControl> childrens) : this() => Childrens = childrens;
         public GoDropDownWindow() { Visible = false; }
 
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
-            var thm = GoTheme.Current;
             var rts = Areas();
             var rtWnd = rts["Content"];
             rtWnd = Util.Int(rtWnd);
@@ -63,7 +62,7 @@ namespace Going.UI.Design
                 canvas.DrawRoundRect(rtrWnd, p);
             }
 
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
 
         }
 

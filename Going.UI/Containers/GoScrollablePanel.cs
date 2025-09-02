@@ -55,9 +55,8 @@ namespace Going.UI.Containers
 
         #region Override
         #region Draw
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
-            var thm = GoTheme.Current;
             var rts = Areas();
             var rtPanel = rts["Panel"];
             var rtScrollV = rts["ScrollV"];
@@ -65,14 +64,14 @@ namespace Going.UI.Containers
             var vspos = Convert.ToSingle(vscroll.ScrollPositionWithOffset);
             var hspos = Convert.ToSingle(hscroll.ScrollPositionWithOffset);
 
-            vscroll.Draw(canvas, rtScrollV);
-            hscroll.Draw(canvas, rtScrollH);
+            vscroll.Draw(canvas, thm, rtScrollV);
+            hscroll.Draw(canvas, thm, rtScrollH);
 
             using (new SKAutoCanvasRestore(canvas))
             {
                 canvas.Translate(hspos, vspos);
                 canvas.ClipRect(Util.FromRect(ViewPosition.X, ViewPosition.Y, rtPanel.Width, rtPanel.Height));
-                base.OnDraw(canvas);
+                base.OnDraw(canvas, thm);
             }
         }
         #endregion
@@ -93,10 +92,10 @@ namespace Going.UI.Containers
                 {
                     #region Scroll
                     vscroll.MouseDown(x, y, rtScrollV);
-                    if (vscroll.TouchMode && CollisionTool.Check(rtPanel, x, y)) vscroll.TouchDown(x, y);
+                    if (Scroll.TouchMode && CollisionTool.Check(rtPanel, x, y)) vscroll.TouchDown(x, y);
 
                     hscroll.MouseDown(x, y, rtScrollH);
-                    if (hscroll.TouchMode && CollisionTool.Check(rtPanel, x, y)) hscroll.TouchDown(x, y);
+                    if (Scroll.TouchMode && CollisionTool.Check(rtPanel, x, y)) hscroll.TouchDown(x, y);
                     #endregion
                 }
             }
@@ -120,10 +119,10 @@ namespace Going.UI.Containers
 
                 #region Scroll
                 vscroll.MouseMove(x, y, rtScrollV);
-                if (vscroll.TouchMode) vscroll.TouchMove(x, y);
+                if (Scroll.TouchMode) vscroll.TouchMove(x, y);
 
                 hscroll.MouseMove(x, y, rtScrollH);
-                if (hscroll.TouchMode) hscroll.TouchMove(x, y);
+                if (Scroll.TouchMode) hscroll.TouchMove(x, y);
                 #endregion
             }
             else
@@ -142,10 +141,10 @@ namespace Going.UI.Containers
 
                 #region Scroll
                 vscroll.MouseUp(x, y);
-                if (vscroll.TouchMode) vscroll.TouchUp(x, y);
+                if (Scroll.TouchMode) vscroll.TouchUp(x, y);
 
                 hscroll.MouseUp(x, y);
-                if (hscroll.TouchMode) hscroll.TouchUp(x, y);
+                if (Scroll.TouchMode) hscroll.TouchUp(x, y);
                 #endregion
             }
             else

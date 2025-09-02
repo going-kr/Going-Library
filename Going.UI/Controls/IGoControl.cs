@@ -2,6 +2,7 @@
 using Going.UI.Datas;
 using Going.UI.Design;
 using Going.UI.Enums;
+using Going.UI.Themes;
 using Going.UI.Utils;
 using SkiaSharp;
 using System;
@@ -39,7 +40,7 @@ namespace Going.UI.Controls
 
 
         void FireInit(GoDesign? design);
-        void FireDraw(SKCanvas canvas);
+        void FireDraw(SKCanvas canvas, GoTheme thm);
         void FireUpdate();
         void FireShow();
         void FireHide();

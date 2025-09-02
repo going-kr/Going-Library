@@ -27,16 +27,15 @@ namespace Going.UI.ImageCanvas
         #endregion
 
         #region OnDraw
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
-            var thm = GoTheme.Current;
             var rtBox = Util.FromRect(0, 0, Width, Height);
             var cText = thm.ToColor(TextColor);
 
             if (Design != null && Parent != null && (Parent is IcPage || Parent is IcContainer))
                 Util.DrawTextIcon(canvas, Text, FontName, FontStyle, FontSize, IconString, IconSize, IconDirection, IconGap, rtBox, cText, ContentAlignment);
 
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
         }
         #endregion
     }

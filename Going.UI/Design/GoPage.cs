@@ -1,5 +1,6 @@
 ﻿using Going.UI.Containers;
 using Going.UI.Controls;
+using Going.UI.Themes;
 using Going.UI.Utils;
 using SkiaSharp;
 using System;
@@ -26,14 +27,14 @@ namespace Going.UI.Design
 
         #region Override
         #region Draw
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
-            OnBackgroundDraw(canvas);
+            OnBackgroundDraw(canvas, thm);
 
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
         }
 
-        protected virtual void OnBackgroundDraw(SKCanvas canvas)
+        protected virtual void OnBackgroundDraw(SKCanvas canvas, GoTheme thm)
         {
             var rts = Areas();
             var rtContent = rts["Content"];

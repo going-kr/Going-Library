@@ -5,12 +5,16 @@ using Going.UI.Datas;
 using Going.UI.Design;
 using Going.UI.ImageCanvas;
 using Going.UI.Json;
+using Going.UI.Themes;
+using Going.UI.Utils;
 using Going.UIEditor.Datas;
 using SkiaSharp;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Windows.UI.Input.Inking;
 
 namespace Going.UIEditor.Utils
 {
@@ -88,7 +92,9 @@ namespace Going.UIEditor.Utils
                     sb.AppendLine($"using Going.UI.Json;");
                     sb.AppendLine($"using Going.UI.OpenTK.Windows;");
                     sb.AppendLine($"using Going.UI.Utils;");
+                    sb.AppendLine($"using Going.UI.Themes;");
                     sb.AppendLine($"using OpenTK.Windowing.Common;");
+
                     if (prj.Design.Pages.Count > 0) sb.AppendLine($"using {prj.Name}.Pages;");
                     if (prj.Design.Windows.Count > 0) sb.AppendLine($"using {prj.Name}.Windows;");
                     sb.AppendLine($"");
@@ -138,6 +144,58 @@ namespace Going.UIEditor.Utils
                     sb.AppendLine($"            Design.ExpandRightSideBar = {(prj.Design.ExpandRightSideBar ? "true" : "false")};");
                     sb.AppendLine($"            #endregion");
                     sb.AppendLine($"");
+                    #endregion
+                    #region Theme Setting
+                    if (prj.Design.CustomTheme != null)
+                    {
+                        var v = prj.Design.CustomTheme;
+                        sb.AppendLine($"            #region Theme Setting");
+                        sb.AppendLine($"            Design.CustomTheme = new GoTheme();");
+                        sb.AppendLine($"            Design.CustomTheme.Dark = {(v.Dark ? "true" : "false")};");
+
+                        sb.AppendLine($"            Design.CustomTheme.Fore = {color(v.Fore)};");
+                        sb.AppendLine($"            Design.CustomTheme.Back = {color(v.Back)};");
+                        sb.AppendLine($"            Design.CustomTheme.Window = {color(v.Window)};");
+                        sb.AppendLine($"            Design.CustomTheme.WindowBorder = {color(v.WindowBorder)};");
+                        sb.AppendLine($"            Design.CustomTheme.Point = {color(v.Point)};");
+                        sb.AppendLine($"            Design.CustomTheme.Title = {color(v.Title)};");
+
+                        sb.AppendLine($"            Design.CustomTheme.ScrollBar = {color(v.ScrollBar)};");
+                        sb.AppendLine($"            Design.CustomTheme.ScrollCursor = {color(v.ScrollCursor)};");
+                        sb.AppendLine($"            Design.CustomTheme.Good = {color(v.Good)};");
+                        sb.AppendLine($"            Design.CustomTheme.Warning = {color(v.Warning)};");
+                        sb.AppendLine($"            Design.CustomTheme.Danger = {color(v.Danger)};");
+                        sb.AppendLine($"            Design.CustomTheme.Error = {color(v.Error)};");
+                        sb.AppendLine($"            Design.CustomTheme.Highlight = {color(v.Highlight)};");
+                        sb.AppendLine($"            Design.CustomTheme.Select = {color(v.Select)};");
+
+                        sb.AppendLine($"            Design.CustomTheme.Base0 = {color(v.Base0)};");
+                        sb.AppendLine($"            Design.CustomTheme.Base1 = {color(v.Base1)};");
+                        sb.AppendLine($"            Design.CustomTheme.Base2 = {color(v.Base2)};");
+                        sb.AppendLine($"            Design.CustomTheme.Base3 = {color(v.Base3)};");
+                        sb.AppendLine($"            Design.CustomTheme.Base4 = {color(v.Base4)};");
+                        sb.AppendLine($"            Design.CustomTheme.Base5 = {color(v.Base5)};");
+
+                        sb.AppendLine($"            Design.CustomTheme.User1 = {color(v.User1)};");
+                        sb.AppendLine($"            Design.CustomTheme.User2 = {color(v.User2)};");
+                        sb.AppendLine($"            Design.CustomTheme.User3 = {color(v.User3)};");
+                        sb.AppendLine($"            Design.CustomTheme.User4 = {color(v.User4)};");
+                        sb.AppendLine($"            Design.CustomTheme.User5 = {color(v.User5)};");
+                        sb.AppendLine($"            Design.CustomTheme.User6 = {color(v.User6)};");
+                        sb.AppendLine($"            Design.CustomTheme.User7 = {color(v.User7)};");
+                        sb.AppendLine($"            Design.CustomTheme.User8 = {color(v.User8)};");
+                        sb.AppendLine($"            Design.CustomTheme.User9 = {color(v.User9)};");
+
+                        sb.AppendLine($"            Design.CustomTheme.Corner = {v.Corner};");
+                        sb.AppendLine($"            Design.CustomTheme.DownBrightness = {v.DownBrightness:0.0##}F;");
+                        sb.AppendLine($"            Design.CustomTheme.BorderBrightness = {v.BorderBrightness:0.0##}F;");
+                        sb.AppendLine($"            Design.CustomTheme.HoverBorderBrightness = {v.HoverBorderBrightness:0.0##}F;");
+                        sb.AppendLine($"            Design.CustomTheme.HoverFillBrightness = {v.HoverFillBrightness:0.0##}F;");
+                        sb.AppendLine($"            Design.CustomTheme.ShadowAlpha = {v.ShadowAlpha};");
+
+                        sb.AppendLine($"            #endregion");
+                        sb.AppendLine($"");
+                    }
                     #endregion
                     #region Resources
                     sb.AppendLine($"            #region Resources");
@@ -227,6 +285,7 @@ namespace Going.UIEditor.Utils
                     sb.AppendLine($"}}");
 
                     ret[""].Add("MainWindow.Designer.cs", new UICode("MainWindow.Designer.cs", sb.ToString(), false));
+                    
                 }
                 #endregion
                 #region Pages
@@ -880,6 +939,9 @@ namespace Going.UIEditor.Utils
 
         #region val
         static string strval(string? v) => (v != null ? $"\"{v}\"" : "null");
+        #endregion
+        #region color
+        static string color(SKColor c) => $"Util.FromArgb({c.Alpha}, {c.Red}, {c.Green}, {c.Blue});";
         #endregion
     }
 

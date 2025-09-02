@@ -29,22 +29,22 @@
         private void InitializeComponent()
         {
             UI.Datas.GoButtonItem goButtonItem1 = new UI.Datas.GoButtonItem();
-            pnlTool = new UI.Forms.Containers.GoContainer();
-            goTableLayoutPanel1 = new UI.Forms.Containers.GoTableLayoutPanel();
-            btnValidCheck = new UI.Forms.Controls.GoButton();
-            btnResourceManager = new UI.Forms.Controls.GoButton();
-            btnDeploy = new UI.Forms.Controls.GoButton();
-            btnSaveAs = new UI.Forms.Controls.GoButton();
-            btnSave = new UI.Forms.Controls.GoButton();
-            btnOpen = new UI.Forms.Controls.GoButton();
-            btnNew = new UI.Forms.Controls.GoButton();
-            valPath = new UI.Forms.Controls.GoValueString();
-            pnlStatus = new UI.Forms.Containers.GoContainer();
-            lblStatus = new UI.Forms.Controls.GoLabel();
-            goControl1 = new UI.Forms.Controls.GoControl();
-            btnProgramSetting = new UI.Forms.Controls.GoButton();
+            pnlTool = new Going.UI.Forms.Containers.GoContainer();
+            goTableLayoutPanel1 = new Going.UI.Forms.Containers.GoTableLayoutPanel();
+            btnValidCheck = new Going.UI.Forms.Controls.GoButton();
+            btnResourceManager = new Going.UI.Forms.Controls.GoButton();
+            btnDeploy = new Going.UI.Forms.Controls.GoButton();
+            btnSaveAs = new Going.UI.Forms.Controls.GoButton();
+            btnSave = new Going.UI.Forms.Controls.GoButton();
+            btnOpen = new Going.UI.Forms.Controls.GoButton();
+            btnNew = new Going.UI.Forms.Controls.GoButton();
+            valPath = new Going.UI.Forms.Controls.GoValueString();
+            pnlStatus = new Going.UI.Forms.Containers.GoContainer();
+            lblStatus = new Going.UI.Forms.Controls.GoLabel();
+            goControl1 = new Going.UI.Forms.Controls.GoControl();
+            btnProgramSetting = new Going.UI.Forms.Controls.GoButton();
             dockPanel = new WeifenLuo.WinFormsUI.Docking.DockPanel();
-            goMenuStrip1 = new UI.Forms.Menus.GoMenuStrip();
+            goMenuStrip1 = new Going.UI.Forms.Menus.GoMenuStrip();
             tsmiFile = new ToolStripMenuItem();
             tsmiNew = new ToolStripMenuItem();
             tsmiOpen = new ToolStripMenuItem();
@@ -77,6 +77,7 @@
             tsmiProgramSetting = new ToolStripMenuItem();
             tsmiHelp = new ToolStripMenuItem();
             tsmiProgramInfo = new ToolStripMenuItem();
+            btnTheme = new Going.UI.Forms.Controls.GoButton();
             pnlTool.SuspendLayout();
             goTableLayoutPanel1.SuspendLayout();
             pnlStatus.SuspendLayout();
@@ -101,12 +102,13 @@
             // 
             goTableLayoutPanel1.BackColor = Color.FromArgb(32, 32, 32);
             goTableLayoutPanel1.BackgroundColor = "window";
-            goTableLayoutPanel1.ColumnCount = 12;
+            goTableLayoutPanel1.ColumnCount = 13;
             goTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 40F));
             goTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 40F));
             goTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 40F));
             goTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 40F));
             goTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+            goTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 40F));
             goTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 40F));
             goTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
             goTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
@@ -114,14 +116,15 @@
             goTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 400F));
             goTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 40F));
             goTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 40F));
-            goTableLayoutPanel1.Controls.Add(btnValidCheck, 10, 0);
+            goTableLayoutPanel1.Controls.Add(btnTheme, 6, 0);
+            goTableLayoutPanel1.Controls.Add(btnValidCheck, 11, 0);
             goTableLayoutPanel1.Controls.Add(btnResourceManager, 5, 0);
-            goTableLayoutPanel1.Controls.Add(btnDeploy, 11, 0);
+            goTableLayoutPanel1.Controls.Add(btnDeploy, 12, 0);
             goTableLayoutPanel1.Controls.Add(btnSaveAs, 3, 0);
             goTableLayoutPanel1.Controls.Add(btnSave, 2, 0);
             goTableLayoutPanel1.Controls.Add(btnOpen, 1, 0);
             goTableLayoutPanel1.Controls.Add(btnNew, 0, 0);
-            goTableLayoutPanel1.Controls.Add(valPath, 9, 0);
+            goTableLayoutPanel1.Controls.Add(valPath, 10, 0);
             goTableLayoutPanel1.Dock = DockStyle.Fill;
             goTableLayoutPanel1.Location = new Point(5, 5);
             goTableLayoutPanel1.Name = "goTableLayoutPanel1";
@@ -137,6 +140,7 @@
             btnValidCheck.BackgroundDraw = false;
             btnValidCheck.BorderOnly = true;
             btnValidCheck.ButtonColor = "Base3";
+            btnValidCheck.ContentAlignment = UI.Enums.GoContentAlignment.MiddleCenter;
             btnValidCheck.Dock = DockStyle.Fill;
             btnValidCheck.FontName = "나눔고딕";
             btnValidCheck.FontSize = 12F;
@@ -160,6 +164,7 @@
             btnResourceManager.BackgroundDraw = false;
             btnResourceManager.BorderOnly = true;
             btnResourceManager.ButtonColor = "Base3";
+            btnResourceManager.ContentAlignment = UI.Enums.GoContentAlignment.MiddleCenter;
             btnResourceManager.Dock = DockStyle.Fill;
             btnResourceManager.FontName = "나눔고딕";
             btnResourceManager.FontSize = 12F;
@@ -183,6 +188,7 @@
             btnDeploy.BackgroundDraw = false;
             btnDeploy.BorderOnly = true;
             btnDeploy.ButtonColor = "Base3";
+            btnDeploy.ContentAlignment = UI.Enums.GoContentAlignment.MiddleCenter;
             btnDeploy.Dock = DockStyle.Fill;
             btnDeploy.FontName = "나눔고딕";
             btnDeploy.FontSize = 12F;
@@ -206,6 +212,7 @@
             btnSaveAs.BackgroundDraw = false;
             btnSaveAs.BorderOnly = true;
             btnSaveAs.ButtonColor = "Base3";
+            btnSaveAs.ContentAlignment = UI.Enums.GoContentAlignment.MiddleCenter;
             btnSaveAs.Dock = DockStyle.Fill;
             btnSaveAs.FontName = "나눔고딕";
             btnSaveAs.FontSize = 12F;
@@ -229,6 +236,7 @@
             btnSave.BackgroundDraw = false;
             btnSave.BorderOnly = true;
             btnSave.ButtonColor = "Base3";
+            btnSave.ContentAlignment = UI.Enums.GoContentAlignment.MiddleCenter;
             btnSave.Dock = DockStyle.Fill;
             btnSave.FontName = "나눔고딕";
             btnSave.FontSize = 12F;
@@ -252,6 +260,7 @@
             btnOpen.BackgroundDraw = false;
             btnOpen.BorderOnly = true;
             btnOpen.ButtonColor = "Base3";
+            btnOpen.ContentAlignment = UI.Enums.GoContentAlignment.MiddleCenter;
             btnOpen.Dock = DockStyle.Fill;
             btnOpen.FontName = "나눔고딕";
             btnOpen.FontSize = 12F;
@@ -275,6 +284,7 @@
             btnNew.BackgroundDraw = false;
             btnNew.BorderOnly = true;
             btnNew.ButtonColor = "Base3";
+            btnNew.ContentAlignment = UI.Enums.GoContentAlignment.MiddleCenter;
             btnNew.Dock = DockStyle.Fill;
             btnNew.FontName = "나눔고딕";
             btnNew.FontSize = 12F;
@@ -387,6 +397,7 @@
             btnProgramSetting.BackgroundDraw = false;
             btnProgramSetting.BorderOnly = true;
             btnProgramSetting.ButtonColor = "Base3";
+            btnProgramSetting.ContentAlignment = UI.Enums.GoContentAlignment.MiddleCenter;
             btnProgramSetting.Dock = DockStyle.Left;
             btnProgramSetting.FontName = "나눔고딕";
             btnProgramSetting.FontSize = 12F;
@@ -604,7 +615,7 @@
             tsmiValidCheck.Font = new Font("나눔고딕", 9F);
             tsmiValidCheck.ForeColor = Color.FromArgb(150, 150, 150);
             tsmiValidCheck.Name = "tsmiValidCheck";
-            tsmiValidCheck.Size = new Size(180, 22);
+            tsmiValidCheck.Size = new Size(158, 22);
             tsmiValidCheck.Text = "유효성 체크(&C)";
             // 
             // tsmiDeploy
@@ -612,13 +623,13 @@
             tsmiDeploy.Font = new Font("나눔고딕", 9F);
             tsmiDeploy.ForeColor = Color.FromArgb(150, 150, 150);
             tsmiDeploy.Name = "tsmiDeploy";
-            tsmiDeploy.Size = new Size(180, 22);
+            tsmiDeploy.Size = new Size(158, 22);
             tsmiDeploy.Text = "배포(&D)";
             // 
             // tsmiProjSep1
             // 
             tsmiProjSep1.Name = "tsmiProjSep1";
-            tsmiProjSep1.Size = new Size(177, 6);
+            tsmiProjSep1.Size = new Size(155, 6);
             tsmiProjSep1.Visible = false;
             // 
             // tsmiProjectProps
@@ -626,7 +637,7 @@
             tsmiProjectProps.Font = new Font("나눔고딕", 9F);
             tsmiProjectProps.ForeColor = Color.FromArgb(150, 150, 150);
             tsmiProjectProps.Name = "tsmiProjectProps";
-            tsmiProjectProps.Size = new Size(180, 22);
+            tsmiProjectProps.Size = new Size(158, 22);
             tsmiProjectProps.Text = "프로젝트 속성(&P)";
             tsmiProjectProps.Visible = false;
             // 
@@ -642,7 +653,7 @@
             tsmiResourceManager.Font = new Font("나눔고딕", 9F);
             tsmiResourceManager.ForeColor = Color.FromArgb(150, 150, 150);
             tsmiResourceManager.Name = "tsmiResourceManager";
-            tsmiResourceManager.Size = new Size(180, 22);
+            tsmiResourceManager.Size = new Size(158, 22);
             tsmiResourceManager.Text = "리소스 관리자(&R)";
             // 
             // tsmiProgramSetting
@@ -650,7 +661,7 @@
             tsmiProgramSetting.Font = new Font("나눔고딕", 9F);
             tsmiProgramSetting.ForeColor = Color.FromArgb(150, 150, 150);
             tsmiProgramSetting.Name = "tsmiProgramSetting";
-            tsmiProgramSetting.Size = new Size(180, 22);
+            tsmiProgramSetting.Size = new Size(158, 22);
             tsmiProgramSetting.Text = "프로그램 설정(&S)";
             // 
             // tsmiHelp
@@ -667,6 +678,30 @@
             tsmiProgramInfo.Name = "tsmiProgramInfo";
             tsmiProgramInfo.Size = new Size(154, 22);
             tsmiProgramInfo.Text = "프로그램 정보(&I)";
+            // 
+            // btnTheme
+            // 
+            btnTheme.BackColor = Color.FromArgb(32, 32, 32);
+            btnTheme.BackgroundColor = "window";
+            btnTheme.BackgroundDraw = false;
+            btnTheme.BorderOnly = true;
+            btnTheme.ButtonColor = "Base3";
+            btnTheme.ContentAlignment = UI.Enums.GoContentAlignment.MiddleCenter;
+            btnTheme.Dock = DockStyle.Fill;
+            btnTheme.FontName = "나눔고딕";
+            btnTheme.FontSize = 12F;
+            btnTheme.FontStyle = UI.Enums.GoFontStyle.Normal;
+            btnTheme.IconDirection = UI.Enums.GoDirectionHV.Horizon;
+            btnTheme.IconGap = 5F;
+            btnTheme.IconSize = 20F;
+            btnTheme.IconString = "fa-palette";
+            btnTheme.Location = new Point(223, 3);
+            btnTheme.Name = "btnTheme";
+            btnTheme.Round = UI.Enums.GoRoundType.All;
+            btnTheme.Size = new Size(34, 34);
+            btnTheme.TabIndex = 8;
+            btnTheme.TabStop = false;
+            btnTheme.TextColor = "Fore";
             // 
             // FormMain
             // 
@@ -742,5 +777,6 @@
         private ToolStripSeparator toolStripSeparator2;
         private UI.Forms.Controls.GoButton btnResourceManager;
         private UI.Forms.Controls.GoButton btnValidCheck;
+        private UI.Forms.Controls.GoButton btnTheme;
     }
 }

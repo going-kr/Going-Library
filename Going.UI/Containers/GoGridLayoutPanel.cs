@@ -28,7 +28,7 @@ namespace Going.UI.Containers
 
         #region Override
         #region OnDraw
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             if (Design != null && Design.DesignMode)
             {
@@ -50,7 +50,7 @@ namespace Going.UI.Containers
 
                             p.IsStroke = true;
                             p.StrokeWidth = 1;
-                            p.Color = GoTheme.Current.Base3;
+                            p.Color = thm.Base3;
                             p.PathEffect = pe;
                             canvas.DrawRect(mrt, p);
                             p.PathEffect = null;
@@ -60,7 +60,7 @@ namespace Going.UI.Containers
  
             }
 
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
         }
         #endregion
         #region OnLayout

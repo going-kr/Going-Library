@@ -75,7 +75,7 @@ namespace Going.UI.Forms.Dialogs
                 {
                     cBackColor = value;
 
-                    var thm = GoTheme.Current;
+                    var thm = GoThemeW.Current;
                     BackColor = Util.FromArgb(thm.ToColor(this.BackgroundColor));
 
                     Invalidate();
@@ -153,12 +153,12 @@ namespace Going.UI.Forms.Dialogs
             #region Properties
             StartPosition = FormStartPosition.CenterScreen;
             DoubleBuffered = true;
-            BackColor = Util.FromArgb(GoTheme.Current.Back);
+            BackColor = Util.FromArgb(GoThemeW.Current.Back);
             Font = new Font("나눔고딕", 9);
             ResizeRedraw = true;
             #endregion
 
-            var thm = GoTheme.Current;
+            var thm = GoThemeW.Current;
             BackColor = Util.FromArgb(thm.ToColor(this.BackgroundColor));
         }
         #endregion
@@ -167,13 +167,13 @@ namespace Going.UI.Forms.Dialogs
         #region OnPaint
         protected override void OnPaint(PaintEventArgs e)
         {
-            var thm = GoTheme.Current;
+            var thm = GoThemeW.Current;
 
             using (var bitmap = new SKBitmap(this.Width, this.Height))
             using (var canvas = new SKCanvas(bitmap))
             using (var surface = SKSurface.Create(bitmap.Info))
             {
-                var cBack = GoTheme.Current.ToColor(BackgroundColor);
+                var cBack = GoThemeW.Current.ToColor(BackgroundColor);
                 canvas.Clear(cBack);
 
                 using var p2 = new SKPaint { IsAntialias = true, Color = SKColors.Black.WithAlpha(Convert.ToByte(Enabled ? 255 : 255 - GoTheme.DisableAlpha)) };
@@ -193,7 +193,7 @@ namespace Going.UI.Forms.Dialogs
         #region OnShown
         protected override void OnShown(EventArgs e)
         {
-            if (!DesignMode) DarkMode(this.Handle, GoTheme.Current.Dark);
+            if (!DesignMode) DarkMode(this.Handle, GoThemeW.Current.Dark);
             base.OnShown(e);
         }
         #endregion
@@ -202,8 +202,8 @@ namespace Going.UI.Forms.Dialogs
         {
             if (!DesignMode)
             {
-                DarkMode(this.Handle, GoTheme.Current.Dark);
-                Icon = IconTool.GetIcon(TitleIconString, GoTheme.Current.Fore);
+                DarkMode(this.Handle, GoThemeW.Current.Dark);
+                Icon = IconTool.GetIcon(TitleIconString, GoThemeW.Current.Fore);
             }
             base.OnLoad(e);
         }

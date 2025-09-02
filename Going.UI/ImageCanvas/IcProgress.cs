@@ -52,9 +52,8 @@ namespace Going.UI.ImageCanvas
         #endregion
 
         #region Override
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
-            var thm = GoTheme.Current;
             var rts = Areas();
             var rtBox = rts["Content"];
             var cText = thm.ToColor(TextColor);
@@ -75,7 +74,7 @@ namespace Going.UI.ImageCanvas
                 }
             }
 
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
         }
         #endregion
 

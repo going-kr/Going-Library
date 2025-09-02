@@ -108,11 +108,10 @@ namespace Going.UI.Datas
         #region Method
         #region Fire
         #region Draw
-        internal void Draw(SKCanvas canvas)
+        internal void Draw(SKCanvas canvas, GoTheme thm)
         {
             if (Grid != null)
             {
-                var thm = GoTheme.Current;
                 var cText = thm.ToColor(CellTextColor ?? Grid.TextColor);
                 var cBack = thm.ToColor(CellBackColor ?? Grid.RowColor);
                 var cSel = thm.ToColor(SelectedCellBackColor ?? Grid.SelectedRowColor);
@@ -130,7 +129,7 @@ namespace Going.UI.Datas
                 if (ci > 0) canvas.DrawLine(l, Bounds.Top, l, Bounds.Bottom, p);
                 if (ci < Grid.Columns.Count-1) canvas.DrawLine(r, Bounds.Top, r, Bounds.Bottom, p);
                 p.PathEffect = null;
-                OnDraw(canvas);
+                OnDraw(canvas, thm);
             }
         }
         #endregion
@@ -167,7 +166,7 @@ namespace Going.UI.Datas
         #endregion
 
         #region Virtual
-        protected virtual void OnDraw(SKCanvas canvas) { }
+        protected virtual void OnDraw(SKCanvas canvas, GoTheme thm) { }
         protected virtual void OnMouseDown(float x, float y, GoMouseButton button) { }
         protected virtual void OnMouseUp(float x, float y, GoMouseButton button) { }
         protected virtual void OnMouseMove(float x, float y) { }
@@ -214,16 +213,15 @@ namespace Going.UI.Datas
         #region Method
         #region Fire
         #region Draw
-        internal void Draw(SKCanvas canvas)
+        internal void Draw(SKCanvas canvas, GoTheme thm)
         {
             if (Grid != null)
             {
-                var thm = GoTheme.Current;
                 var cText = thm.ToColor(TextColor ?? Grid.TextColor);
                 var cBack = thm.ToColor(Grid.ColumnColor);
                 var cBorder = cBack.BrightnessTransmit(thm.Dark ? GoDataGrid.BorderBright : -GoDataGrid.BorderBright);
                 var cIF = cBack.BrightnessTransmit(thm.Dark ? GoDataGrid.InputBright : -GoDataGrid.InputBright);
-                var cIB = GoInputEventer.Current.InputControl == Grid && Grid.InputObject == this ? thm.Hignlight : cBorder;
+                var cIB = GoInputEventer.Current.InputControl == Grid && Grid.InputObject == this ? thm.Highlight : cBorder;
                 var isCol = Grid.Columns.Contains(this);
                 var (rtText, rtSort) = bounds();
 
@@ -396,11 +394,10 @@ namespace Going.UI.Datas
         #region Method
         #region Fire
         #region Draw
-        internal void Draw(SKCanvas canvas)
+        internal void Draw(SKCanvas canvas, GoTheme thm)
         {
             if (Grid != null)
             {
-                var thm = GoTheme.Current;
                 var cText = thm.ToColor(CellTextColor ?? Grid.TextColor);
                 var cBack = thm.ToColor(CellBackColor ?? Grid.SummaryRowColor);
                 var cF = cBack;
@@ -414,7 +411,7 @@ namespace Going.UI.Datas
                 var r = Convert.ToInt32(Bounds.Right) + 0.5F;
                 canvas.DrawLine(l, Bounds.Top, l, Bounds.Bottom, p);
                 canvas.DrawLine(r, Bounds.Top, r, Bounds.Bottom, p);
-                OnDraw(canvas);
+                OnDraw(canvas, thm);
             }
         }
         #endregion
@@ -449,7 +446,7 @@ namespace Going.UI.Datas
         #endregion
 
         #region Virtual
-        protected virtual void OnDraw(SKCanvas canvas) { }
+        protected virtual void OnDraw(SKCanvas canvas, GoTheme thm) { }
         protected virtual void OnMouseDown(float x, float y, GoMouseButton button) { }
         protected virtual void OnMouseUp(float x, float y, GoMouseButton button) { }
         protected virtual void OnMouseMove(float x, float y) { }
@@ -499,11 +496,10 @@ namespace Going.UI.Datas
         #endregion
 
         #region Draw
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
 
-            var thm = GoTheme.Current;
             var cText = thm.ToColor(CellTextColor ?? Grid.TextColor);
             Util.DrawText(canvas, Text, Grid.FontName, Grid.FontStyle, Grid.FontSize, Bounds, cText);
         }
@@ -526,11 +522,10 @@ namespace Going.UI.Datas
         #endregion
 
         #region Draw
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
             
-            var thm = GoTheme.Current;
             var cText = thm.ToColor(CellTextColor ?? Grid.TextColor);
             var text = ValueTool.ToString(Value, FormatString);
             Util.DrawText(canvas, text, Grid.FontName, Grid.FontStyle, Grid.FontSize, Bounds, cText);
@@ -562,11 +557,10 @@ namespace Going.UI.Datas
         #endregion
          
         #region Draw
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
          
-            var thm = GoTheme.Current;
             var cText = thm.ToColor(CellTextColor ?? Grid.TextColor);
             var text = ValueTool.ToString(Value, FormatString);
             Util.DrawText(canvas, text, Grid.FontName, Grid.FontStyle, Grid.FontSize, Bounds, cText);
@@ -595,11 +589,10 @@ namespace Going.UI.Datas
         #endregion
 
         #region Draw
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
 
-            var thm = GoTheme.Current;
             var cText = thm.ToColor(CellTextColor ?? Grid.TextColor);
             var text = "";
             if (Column is GoDataGridLabelColumn col)
@@ -639,11 +632,10 @@ namespace Going.UI.Datas
         #endregion
 
         #region Draw
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
 
-            var thm = GoTheme.Current;
             var cText = thm.ToColor(CellTextColor ?? Grid.TextColor);
             var text = ValueTool.ToString(Value, (Column is GoDataGridNumberColumn<T> col ? col.FormatString : null));
             Util.DrawText(canvas, text, Grid.FontName, Grid.FontStyle, Grid.FontSize, Bounds, cText);
@@ -694,11 +686,10 @@ namespace Going.UI.Datas
         #endregion
 
         #region Override
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
 
-            var thm = GoTheme.Current;
             var cText = thm.ToColor(CellTextColor ?? Grid.TextColor).BrightnessTransmit(bDown ? thm.DownBrightness : 0);
             var cButton = thm.ToColor(Row.Selected ? SelectButtonColor : ButtonColor).BrightnessTransmit(RowIndex % 2 == 0 ? 0.05F : -0.05F).BrightnessTransmit(bDown ? thm.DownBrightness : 0);
 
@@ -774,11 +765,10 @@ namespace Going.UI.Datas
         #endregion
 
         #region Draw
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
 
-            var thm = GoTheme.Current;
             var val = Value is bool b ? b : false;
             var cText = thm.ToColor(CellTextColor ?? Grid.TextColor);
             var cOn = thm.ToColor(OnColor);
@@ -788,7 +778,7 @@ namespace Going.UI.Datas
 
             var sz = Math.Min(Convert.ToInt32(Grid.RowHeight * 0.75), 24);
             var rt = MathTool.MakeRectangle(Bounds, new SKSize(sz, sz));
-            Util.DrawLamp(canvas, rt, cOn, cOff, val);
+            Util.DrawLamp(canvas, thm, rt, cOn, cOff, val);
 
         }
         #endregion
@@ -824,12 +814,11 @@ namespace Going.UI.Datas
         #endregion
 
         #region Draw
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
 
-            var thm = GoTheme.Current;
-            var br = GoTheme.Current.Dark ? 1F : -1F;
+            var br = thm.Dark ? 1F : -1F;
             var cText = thm.ToColor(CellTextColor ?? Grid.TextColor);
             var cRow = thm.ToColor(CellBackColor ?? Grid.RowColor);
             var cSel = thm.ToColor(SelectedCellBackColor ?? Grid.SelectedRowColor);
@@ -893,18 +882,17 @@ namespace Going.UI.Datas
         #endregion
 
         #region Draw
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
 
-            var thm = GoTheme.Current;
-            var br = GoTheme.Current.Dark ? 1F : -1F;
+            var br = thm.Dark ? 1F : -1F;
             var cText = thm.ToColor(CellTextColor ?? Grid.TextColor);
             var cRow = thm.ToColor(CellBackColor ?? Grid.RowColor);
             var cSel = thm.ToColor(SelectedCellBackColor ?? Grid.SelectedRowColor);
             var cF = Row.Selected ? cSel : cRow;
             var cV = cF.BrightnessTransmit(Row.RowIndex % 2 == 0 ? 0.05F : -0.05F);
-            var cB = GoInputEventer.Current.InputControl == Grid && Grid.InputObject == this ? thm.Hignlight : cV.BrightnessTransmit(GoDataGrid.BorderBright * br);
+            var cB = GoInputEventer.Current.InputControl == Grid && Grid.InputObject == this ? thm.Highlight : cV.BrightnessTransmit(GoDataGrid.BorderBright * br);
             
             var rt = Bounds; rt.Inflate(InputInflateW, InputInflateH);
             Util.DrawBox(canvas, rt, cV.BrightnessTransmit(GoDataGrid.InputBright * br), cB, GoRoundType.Rect, thm.Corner);
@@ -962,18 +950,17 @@ namespace Going.UI.Datas
         #endregion
 
         #region Draw
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
 
-            var thm = GoTheme.Current;
-            var br = GoTheme.Current.Dark ? 1F : -1F;
+            var br = thm.Dark ? 1F : -1F;
             var cText = thm.ToColor(CellTextColor ?? Grid.TextColor);
             var cRow = thm.ToColor(CellBackColor ?? Grid.RowColor);
             var cSel = thm.ToColor(SelectedCellBackColor ?? Grid.SelectedRowColor);
             var cF = Row.Selected ? cSel : cRow;
             var cV = cF.BrightnessTransmit(Row.RowIndex % 2 == 0 ? 0.05F : -0.05F);
-            var cB = GoInputEventer.Current.InputControl == Grid && Grid.InputObject == this ? thm.Hignlight : cV.BrightnessTransmit(GoDataGrid.BorderBright * br);
+            var cB = GoInputEventer.Current.InputControl == Grid && Grid.InputObject == this ? thm.Highlight : cV.BrightnessTransmit(GoDataGrid.BorderBright * br);
 
             var rt = Bounds; rt.Inflate(InputInflateW, InputInflateH);
             if (Convert.ToInt32(rt.Right) + 0.5F == Bounds.Right) rt.Right -= 1;
@@ -1031,18 +1018,17 @@ namespace Going.UI.Datas
         #endregion
 
         #region Draw
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
 
-            var thm = GoTheme.Current;
-            var br = GoTheme.Current.Dark ? 1F : -1F;
+            var br = thm.Dark ? 1F : -1F;
             var cText = thm.ToColor(CellTextColor ?? Grid.TextColor);
             var cRow = thm.ToColor(CellBackColor ?? Grid.RowColor);
             var cSel = thm.ToColor(SelectedCellBackColor ?? Grid.SelectedRowColor);
             var cF = Row.Selected ? cSel : cRow;
             var cV = cF.BrightnessTransmit(Row.RowIndex % 2 == 0 ? 0.05F : -0.05F);
-            var cB = GoInputEventer.Current.InputControl == Grid && Grid.InputObject == this ? thm.Hignlight : cV.BrightnessTransmit(GoDataGrid.BorderBright * br);
+            var cB = GoInputEventer.Current.InputControl == Grid && Grid.InputObject == this ? thm.Highlight : cV.BrightnessTransmit(GoDataGrid.BorderBright * br);
 
             var rt = Bounds; rt.Inflate(InputInflateW, InputInflateH);
             var rts = Util.Columns(rt, ["50%", "50%"]);
@@ -1125,19 +1111,18 @@ namespace Going.UI.Datas
         #endregion
 
         #region Draw
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
 
-            var thm = GoTheme.Current;
-            var br = GoTheme.Current.Dark ? 1F : -1F;
+            var br = thm.Dark ? 1F : -1F;
             var dwndVisible = Grid.DateTimeDropDownVisible(this);
             var cText = thm.ToColor(CellTextColor ?? Grid.TextColor);
             var cRow = thm.ToColor(CellBackColor ?? Grid.RowColor);
             var cSel = thm.ToColor(SelectedCellBackColor ?? Grid.SelectedRowColor);
             var cF = Row.Selected ? cSel : cRow;
             var cV = cF.BrightnessTransmit(Row.RowIndex % 2 == 0 ? 0.05F : -0.05F);
-            var cB = dwndVisible ? thm.Hignlight : cV.BrightnessTransmit(GoDataGrid.BorderBright * br);
+            var cB = dwndVisible ? thm.Highlight : cV.BrightnessTransmit(GoDataGrid.BorderBright * br);
 
             var rt = Bounds; rt.Inflate(InputInflateW, InputInflateH);
             Util.DrawBox(canvas, rt, cV.BrightnessTransmit(GoDataGrid.InputBright * br), cB, GoRoundType.Rect, thm.Corner);
@@ -1245,19 +1230,18 @@ namespace Going.UI.Datas
         #endregion
 
         #region Draw
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
 
-            var thm = GoTheme.Current;
-            var br = GoTheme.Current.Dark ? 1F : -1F;
+            var br = thm.Dark ? 1F : -1F;
             var dwndVisible = Grid.ColorDropDownVisible(this);
             var cText = thm.ToColor(CellTextColor ?? Grid.TextColor);
             var cRow = thm.ToColor(CellBackColor ?? Grid.RowColor);
             var cSel = thm.ToColor(SelectedCellBackColor ?? Grid.SelectedRowColor);
             var cF = Row.Selected ? cSel : cRow;
             var cV = cF.BrightnessTransmit(Row.RowIndex % 2 == 0 ? 0.05F : -0.05F);
-            var cB = dwndVisible ? thm.Hignlight : cV.BrightnessTransmit(GoDataGrid.BorderBright * br);
+            var cB = dwndVisible ? thm.Highlight : cV.BrightnessTransmit(GoDataGrid.BorderBright * br);
 
             var rt = Bounds; rt.Inflate(InputInflateW, InputInflateH);
             Util.DrawBox(canvas, rt, cV.BrightnessTransmit(GoDataGrid.InputBright * br), cB, GoRoundType.Rect, thm.Corner);
@@ -1354,19 +1338,18 @@ namespace Going.UI.Datas
         #endregion
 
         #region Draw
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
 
-            var thm = GoTheme.Current;
-            var br = GoTheme.Current.Dark ? 1F : -1F;
+            var br = thm.Dark ? 1F : -1F;
             var dwndVisible = Grid.ComboDropDownVisible(this);
             var cText = thm.ToColor(CellTextColor ?? Grid.TextColor);
             var cRow = thm.ToColor(CellBackColor ?? Grid.RowColor);
             var cSel = thm.ToColor(SelectedCellBackColor ?? Grid.SelectedRowColor);
             var cF = Row.Selected ? cSel : cRow;
             var cV = cF.BrightnessTransmit(Row.RowIndex % 2 == 0 ? 0.05F : -0.05F);
-            var cB = dwndVisible ? thm.Hignlight : cV.BrightnessTransmit(GoDataGrid.BorderBright * br);
+            var cB = dwndVisible ? thm.Highlight : cV.BrightnessTransmit(GoDataGrid.BorderBright * br);
 
             var rt = Bounds; rt.Inflate(InputInflateW, InputInflateH);
             Util.DrawBox(canvas, rt, cV.BrightnessTransmit(GoDataGrid.InputBright * br), cB, GoRoundType.Rect, thm.Corner);

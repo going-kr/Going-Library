@@ -64,7 +64,7 @@ namespace Going.UI.Forms.Dialogs
             using (new SKAutoCanvasRestore(e.Canvas))
             {
                 e.Canvas.Translate(tpnl.Left, tpnl.Top);
-                tpnl.FireDraw(e.Canvas);
+                tpnl.FireDraw(e.Canvas, GoThemeW.Current);
             }
             base.OnContentDraw(e);
         }

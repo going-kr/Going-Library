@@ -1,4 +1,6 @@
 ﻿using Going.UI.Enums;
+using Going.UI.Themes;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,5 +35,11 @@ namespace Going.UI.Datas
         public float X { get; private set; } = x;
         public float Y { get; private set; } = y;
         public object DragItem { get; private set; } = dragItem;
+    }
+
+    public class GoDrawnEventArgs(SKCanvas canvas, GoTheme thm) : EventArgs
+    {
+        public GoTheme Theme { get; private set; } = thm;
+        public SKCanvas Canvas { get; private set; } = canvas;
     }
 }

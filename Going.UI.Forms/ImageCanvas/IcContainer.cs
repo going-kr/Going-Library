@@ -81,7 +81,7 @@ namespace Going.UI.Forms.ImageCanvas
             using (var canvas = new SKCanvas(bitmap))
             using (var surface = SKSurface.Create(bitmap.Info))
             {
-                var cBack = GoTheme.Current.ToColor(BackgroundColor);
+                var cBack = GoThemeW.Current.ToColor(BackgroundColor);
                 canvas.Clear(cBack);
 
                 using var p = new SKPaint { IsAntialias = true, Color = SKColors.Black.WithAlpha(Convert.ToByte(Enabled ? 255 : 255 - GoTheme.DisableAlpha)) };
@@ -100,7 +100,7 @@ namespace Going.UI.Forms.ImageCanvas
         #region OnPaintSurface
         protected virtual void OnPaintSurface(SKCanvas canvas)
         {
-            var thm = GoTheme.Current;
+            var thm = GoThemeW.Current;
             var rtBox = Util.FromRect(0, 0, Width, Height);
 
             var ip = IcResources.Get(ImageFolder);

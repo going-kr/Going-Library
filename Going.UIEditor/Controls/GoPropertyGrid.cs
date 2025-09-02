@@ -5,6 +5,7 @@ using Going.UI.Datas;
 using Going.UI.Design;
 using Going.UI.Enums;
 using Going.UI.Extensions;
+using Going.UI.Forms;
 using Going.UI.Forms.Controls;
 using Going.UI.Themes;
 using Going.UI.Tools;
@@ -90,7 +91,7 @@ namespace Going.UIEditor.Controls
         {
             #region var 
             var canvas = e.Canvas;
-            var thm = GoTheme.Current;
+            var thm = GoThemeW.Current;
             var prj = Program.CurrentProject;
             using var p = new SKPaint { IsAntialias = true };
             using var pe = SKPathEffect.CreateDash([2, 2,], 2);
@@ -175,7 +176,7 @@ namespace Going.UIEditor.Controls
                     p.IsAntialias = true;
                 }
 
-                scroll.Draw(canvas, rtScroll);
+                scroll.Draw(canvas, thm, rtScroll);
             }
 
             base.OnContentDraw(e);
@@ -195,7 +196,7 @@ namespace Going.UIEditor.Controls
 
             #region Scroll
             scroll.MouseDown(x, y, rtScroll);
-            if (scroll.TouchMode && CollisionTool.Check(rtContent, x, y)) scroll.TouchDown(x, y);
+            if (Scroll.TouchMode && CollisionTool.Check(rtContent, x, y)) scroll.TouchDown(x, y);
             #endregion
 
             Invalidate();
@@ -214,7 +215,7 @@ namespace Going.UIEditor.Controls
 
             #region Scroll
             scroll.MouseMove(x, y, rtScroll);
-            if (scroll.TouchMode) scroll.TouchMove(x, y);
+            if (Scroll.TouchMode) scroll.TouchMove(x, y);
             #endregion
 
             Invalidate();
@@ -233,7 +234,7 @@ namespace Going.UIEditor.Controls
 
             #region Scroll
             scroll.MouseUp(x, y);
-            if (scroll.TouchMode) scroll.TouchUp(x, y);
+            if (Scroll.TouchMode) scroll.TouchUp(x, y);
             #endregion
             base.OnMouseUp(e);
         }
@@ -485,7 +486,7 @@ namespace Going.UIEditor.Controls
         #region Draw
         public void Draw(SKCanvas canvas, SKRect[] rtsCol)
         {
-            var thm = GoTheme.Current;
+            var thm = GoThemeW.Current;
             if (Type == PropertyGridItemType.Category)
             {
                 var rt = Util.FromRect(Bounds.Left + 10, Bounds.Top, Bounds.Width - 10, Bounds.Height);
@@ -725,7 +726,7 @@ namespace Going.UIEditor.Controls
                 #region SKColor
                 else if (tp == typeof(SKColor))
                 {
-                    ret = GoTheme.Current.ToColor(text);
+                    ret = GoThemeW.Current.ToColor(text);
                 }
                 #endregion
                 #region TimeSpan
@@ -788,7 +789,7 @@ namespace Going.UIEditor.Controls
         {
             base.OnDrawValue(canvas, rtTitle, rtValue, rtButton);
 
-            var thm = GoTheme.Current;
+            var thm = GoThemeW.Current;
             var s = Util2.EllipsisPath(Grid.SelectedObjects?.Count() == 1 && Grid.SelectedObjects?.FirstOrDefault() is IGoControl c ? c.Id.ToString() : "", Grid.FontName, Grid.FontStyle, Grid.FontSize, rtValue.Width - 20);
             Util.DrawText(canvas, s, Grid.FontName, Grid.FontStyle, Grid.FontSize, rtValue, thm.Base5);
         }
@@ -803,7 +804,7 @@ namespace Going.UIEditor.Controls
         {
             base.OnDrawValue(canvas, rtTitle, rtValue, rtButton);
 
-            var thm = GoTheme.Current;
+            var thm = GoThemeW.Current;
             var s = Grid.SelectedObjects?.Count() == 1 && Grid.SelectedObjects?.FirstOrDefault() is IGoControl c ? c.GetType().Name : "";
             Util.DrawText(canvas, s, Grid.FontName, Grid.FontStyle, Grid.FontSize, rtValue, thm.Base5);
         }
@@ -819,7 +820,7 @@ namespace Going.UIEditor.Controls
         {
             base.OnDrawValue(canvas, rtTitle, rtValue, rtButton);
 
-            var thm = GoTheme.Current;
+            var thm = GoThemeW.Current;
 
             var vs = Grid.SelectedObjects?.Select(x => ValueToString(x));
             var lk = vs?.ToLookup(x => x);
@@ -855,7 +856,7 @@ namespace Going.UIEditor.Controls
         {
             base.OnDrawValue(canvas, rtTitle, rtValue, rtButton);
 
-            var thm = GoTheme.Current;
+            var thm = GoThemeW.Current;
 
             #region Value
             var vs = Grid.SelectedObjects?.Select(x => ValueToString(x));
@@ -885,7 +886,15 @@ namespace Going.UIEditor.Controls
                 var tp = Info.PropertyType;
                 var values = Enum.GetValues(tp).Cast<object>().Select(x => new GoListItem { Text = x.ToString(), Tag = x }).ToList();
 
-                var vs = Grid.SelectedObjects.Select(x => Info?.GetValue(x));
+                IEnumerable<object?>? vs = null;
+                    vs = Grid.SelectedObjects.Select(x =>
+                    {
+                        try
+                        {
+                            return Info?.GetValue(x);
+                        }
+                        catch { return null; }
+                    });
                 var lk = vs.ToLookup(x => x);
                 var val = lk.Count == 1 ? (lk.FirstOrDefault()?.Key ?? null) : null;
                 var ret = Program.SelBox.ShowRadio(Name, (values.Count > 10 ? 4 : (values.Count > 3 ? 3 : 1)), values, values.FirstOrDefault(x => object.Equals(x.Tag, val)));
@@ -977,7 +986,7 @@ namespace Going.UIEditor.Controls
         {
             base.OnDrawValue(canvas, rtTitle, rtValue, rtButton);
 
-            var thm = GoTheme.Current;
+            var thm = GoThemeW.Current;
 
             #region Value
             if (!txt.Visible)
@@ -1052,7 +1061,7 @@ namespace Going.UIEditor.Controls
                 var lk = vs?.ToLookup(x => x);
                 var s = lk?.Count == 1 ? (lk.FirstOrDefault()?.Key ?? "") : "";
 
-                var thm = GoTheme.Current;
+                var thm = GoThemeW.Current;
                 txt.ForeColor = Util.FromArgb(thm.Base5);
                 txt.BackColor = Util.FromArgb(thm.Back);
                 txt.Text = s;
@@ -1149,7 +1158,7 @@ namespace Going.UIEditor.Controls
         {
             base.OnDrawValue(canvas, rtTitle, rtValue, rtButton);
 
-            var thm = GoTheme.Current;
+            var thm = GoThemeW.Current;
         
             #region Value
             var vs = Grid.SelectedObjects?.Select(x => ValueToString(x));
@@ -1244,7 +1253,7 @@ namespace Going.UIEditor.Controls
         {
             base.OnDrawValue(canvas, rtTitle, rtValue, rtButton);
 
-            var thm = GoTheme.Current;
+            var thm = GoThemeW.Current;
 
             #region Value
             var vs = Grid.SelectedObjects?.Select(x => ValueToString(x));

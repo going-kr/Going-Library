@@ -94,7 +94,7 @@ namespace Going.UI.Forms.ImageCanvas
                     using (var canvas = new SKCanvas(bitmap))
                     using (var surface = SKSurface.Create(bitmap.Info))
                     {
-                        var cBack = GoTheme.Current.ToColor(BackgroundColor);
+                        var cBack = GoThemeW.Current.ToColor(BackgroundColor);
                         canvas.Clear(cBack);
 
                         var ip = IcResources.Get(ImageFolder);

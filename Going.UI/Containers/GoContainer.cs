@@ -47,16 +47,16 @@ namespace Going.UI.Containers
             GUI.Hide(this);
         }
 
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
 
             OnLayout();
-         
+
             using (new SKAutoCanvasRestore(canvas))
             {
                 canvas.Translate(PanelBounds.Left, PanelBounds.Top);
-                GUI.Draw(canvas, this);
+                GUI.Draw(canvas, thm, this);
             }
         }
 

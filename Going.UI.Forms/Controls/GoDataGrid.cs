@@ -77,8 +77,8 @@ namespace Going.UI.Forms.Controls
             {
                 if (c == Control && Control.InputObject is GoDataGridCell cell)
                 {
-                    var thm = GoTheme.Current;
-                    var br = GoTheme.Current.Dark ? 1F : -1F;
+                    var thm = GoThemeW.Current;
+                    var br = thm.Dark ? 1F : -1F;
                     var cSel = thm.ToColor(SelectedRowColor);
                     var cRow = thm.ToColor(RowColor);
                     var cF = cell.Row.Selected ? cSel : cRow;
@@ -105,8 +105,8 @@ namespace Going.UI.Forms.Controls
                 {
                     if (Control.InputObject is GoDataGridCell cell)
                     {
-                        var thm = GoTheme.Current;
-                        var br = GoTheme.Current.Dark ? 1F : -1F;
+                        var thm = GoThemeW.Current;
+                        var br = thm.Dark ? 1F : -1F;
                         var cSel = thm.ToColor(SelectedRowColor);
                         var cRow = thm.ToColor(RowColor);
                         var cF = cell.Row.Selected ? cSel : cRow;
@@ -116,8 +116,8 @@ namespace Going.UI.Forms.Controls
                     }
                     else if(Control.InputObject is GoDataGridColumn col)
                     {
-                        var thm = GoTheme.Current;
-                        var br = GoTheme.Current.Dark ? 1F : -1F;
+                        var thm = GoThemeW.Current;
+                        var br = thm.Dark ? 1F : -1F;
                         var cF = thm.ToColor(ColumnColor);
                         var cV = cF.BrightnessTransmit(GoDataGrid.InputBright * br);
 

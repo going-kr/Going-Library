@@ -133,10 +133,9 @@ namespace Going.UI.Controls
 
         #region Override
         #region Draw
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             #region var
-            var thm = GoTheme.Current;
             using var p = new SKPaint { IsAntialias = true, };
             using var pe = SKPathEffect.CreateDash([2, 2,], 3);
 
@@ -187,12 +186,12 @@ namespace Going.UI.Controls
                         {
                             canvas.ClipRect(new SKRect(cl, rtColumn.Top, cr, rtColumn.Bottom));
                             canvas.Translate(Convert.ToInt64(hspos), 0);
-                            foreach (var c in Columns.Where(x => !x.Fixed && x.Bounds.Right > vsx && x.Bounds.Left < vex)) c.Draw(canvas);
-                            foreach (var c in ColumnGroups.Where(x => !x.Fixed && x.Bounds.Right > vsx && x.Bounds.Left < vex)) c.Draw(canvas);
+                            foreach (var c in Columns.Where(x => !x.Fixed && x.Bounds.Right > vsx && x.Bounds.Left < vex)) c.Draw(canvas, thm);
+                            foreach (var c in ColumnGroups.Where(x => !x.Fixed && x.Bounds.Right > vsx && x.Bounds.Left < vex)) c.Draw(canvas, thm);
                         }
 
-                        foreach (var c in Columns.Where(x => x.Fixed)) c.Draw(canvas);
-                        foreach (var c in ColumnGroups.Where(x => x.Fixed)) c.Draw(canvas);
+                        foreach (var c in Columns.Where(x => x.Fixed)) c.Draw(canvas, thm);
+                        foreach (var c in ColumnGroups.Where(x => x.Fixed)) c.Draw(canvas, thm);
 
                         if (SelectionMode == GoDataGridSelectionMode.Selector)
                         {
@@ -226,7 +225,7 @@ namespace Going.UI.Controls
 
                             foreach (var r in SummaryRows)
                                 foreach (var c in r.Cells.Where(x => !x.Column.Fixed && x.Bounds.Right > vsx && x.Bounds.Left < vex))
-                                    if (c.Visible) c.Draw(canvas);
+                                    if (c.Visible) c.Draw(canvas, thm);
                         }
 
                         var bsel = SelectionMode == GoDataGridSelectionMode.Selector;
@@ -235,7 +234,7 @@ namespace Going.UI.Controls
                         foreach (var r in SummaryRows)
                         {
                             foreach (var c in r.Cells.Where(x => x.Column.Fixed))
-                                if (c.Visible) c.Draw(canvas);
+                                if (c.Visible) c.Draw(canvas, thm);
 
                             #region Selector
                             if (bsel)
@@ -284,7 +283,7 @@ namespace Going.UI.Controls
                                 {
                                     var r = mrows[i];
                                     foreach (var c in r.Cells.Where(x => !x.Column.Fixed && x.Bounds.Right > vsx && x.Bounds.Left < vex))
-                                        if (c.Visible) c.Draw(canvas);
+                                        if (c.Visible) c.Draw(canvas, thm);
                                 }
                             }
 
@@ -295,7 +294,7 @@ namespace Going.UI.Controls
                             {
                                 var r = mrows[i];
                                 foreach (var c in r.Cells.Where(x => x.Column.Fixed))
-                                    if (c.Visible) c.Draw(canvas);
+                                    if (c.Visible) c.Draw(canvas, thm);
 
                                 #region Selector
                                 if (bsel)
@@ -327,10 +326,10 @@ namespace Going.UI.Controls
                 Util.DrawBox(canvas, rtScrollV, cVScroll, GoRoundType.Rect, thm.Corner);
                 #endregion
 
-                hscroll.Draw(canvas, rtScrollH);
-                vscroll.Draw(canvas, rtScrollV);
+                hscroll.Draw(canvas, thm, rtScrollH);
+                vscroll.Draw(canvas, thm, rtScrollV);
             }
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
         }
         #endregion
 
@@ -360,14 +359,14 @@ namespace Going.UI.Controls
                 if (ush)
                 {
                     hscroll.MouseDown(x, y, rts["ScrollH"]);
-                    if (hscroll.TouchMode && CollisionTool.Check(rts["Row"], x, y)) hscroll.TouchDown(x, y);
+                    if (Scroll.TouchMode && CollisionTool.Check(rts["Row"], x, y)) hscroll.TouchDown(x, y);
                 }
                 #endregion
                 #region ScrollV
                 if (usv)
                 {
                     vscroll.MouseDown(x, y, rts["ScrollV"]);
-                    if (vscroll.TouchMode && CollisionTool.Check(rts["Row"], x, y)) vscroll.TouchDown(x, y);
+                    if (Scroll.TouchMode && CollisionTool.Check(rts["Row"], x, y)) vscroll.TouchDown(x, y);
                 }
                 #endregion
             }
@@ -428,14 +427,14 @@ namespace Going.UI.Controls
             if (ush)
             {
                 hscroll.MouseUp(x, y);
-                if (hscroll.TouchMode) hscroll.TouchUp(x, y);
+                if (Scroll.TouchMode) hscroll.TouchUp(x, y);
             }
             #endregion
             #region ScrollV
             if (usv)
             {
                 vscroll.MouseUp(x, y);
-                if (vscroll.TouchMode) vscroll.TouchUp(x, y);
+                if (Scroll.TouchMode) vscroll.TouchUp(x, y);
             }
             #endregion
 
@@ -495,14 +494,14 @@ namespace Going.UI.Controls
             if (ush)
             {
                 hscroll.MouseMove(x, y, rts["ScrollH"]);
-                if (hscroll.TouchMode) hscroll.TouchMove(x, y);
+                if (Scroll.TouchMode) hscroll.TouchMove(x, y);
             }
             #endregion
             #region ScrollV
             if (usv)
             {
                 vscroll.MouseMove(x, y, rts["ScrollV"]);
-                if (vscroll.TouchMode) vscroll.TouchMove(x, y);
+                if (Scroll.TouchMode) vscroll.TouchMove(x, y);
             }
             #endregion
 

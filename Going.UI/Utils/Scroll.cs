@@ -29,7 +29,7 @@ namespace Going.UI.Utils
         public bool IsScrolling => scDown != null;
         public bool IsTouchScrolling => tcDown != null;
         public bool IsTouchMoving => IsTouchStart;
-        public bool TouchMode => GoTheme.Current.TouchMode;
+        public static bool TouchMode { get; set; } = true;
 
         public ScrollDirection Direction { get; set; } = ScrollDirection.Vertical;
 
@@ -576,11 +576,10 @@ namespace Going.UI.Utils
         #endregion
 
         #region Draw
-        public void Draw(SKCanvas canvas, SKRect rtScroll, GoRoundType round = GoRoundType.All)
+        public void Draw(SKCanvas canvas, GoTheme thm, SKRect rtScroll, GoRoundType round = GoRoundType.All)
         {
             if (ScrollVisible)
             {
-                var thm = GoTheme.Current;
                 var sp = canvas.Save();
                 canvas.ClipRect(rtScroll);
                 var cCur = (IsScrolling || IsTouchMoving) ? thm.ScrollCursor : Util.FromArgb(120, thm.ScrollCursor);
@@ -592,11 +591,10 @@ namespace Going.UI.Utils
             if (!ScrollVisible) _ScrollPosition = 0;
         }
 
-        public void DrawR(SKCanvas canvas, SKRect rtScroll, GoRoundType round = GoRoundType.All)
+        public void DrawR(SKCanvas canvas, GoTheme thm, SKRect rtScroll, GoRoundType round = GoRoundType.All)
         {
             if (ScrollVisible)
             {
-                var thm = GoTheme.Current;
                 var sp = canvas.Save();
                 canvas.ClipRect(rtScroll);
                 var cCur = (IsScrolling || IsTouchMoving) ? thm.ScrollCursor : Util.FromArgb(120, thm.ScrollCursor);

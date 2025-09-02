@@ -139,11 +139,10 @@ namespace Going.UI.OpenTK.Input
 
         #region Method
         #region Draw
-        public void Draw(SKCanvas canvas)
+        public void Draw(SKCanvas canvas, GoTheme thm)
         {
             using var p = new SKPaint { IsAntialias = true };
 
-            var thm = GoTheme.DarkTheme;
             Areas();
 
             p.IsStroke = false;

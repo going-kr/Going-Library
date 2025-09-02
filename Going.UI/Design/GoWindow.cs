@@ -53,10 +53,9 @@ namespace Going.UI.Design
 
         #region Override
         #region Draw
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             #region var
-            var thm = GoTheme.Current;
             var rts = Areas();
             var rtWnd = rts["Content"]; rtWnd = Util.Int(rtWnd); rtWnd.Offset(0.5F, 0.5F);
             var rtrWnd = new SKRoundRect(rtWnd, thm.Corner); Util.SetRound(rtrWnd, Round, thm.Corner);
@@ -110,7 +109,7 @@ namespace Going.UI.Design
             canvas.DrawLine(rtTitle.Left + 10, sy, rtTitle.Right - 10, sy, p);
             #endregion
 
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
         }
         #endregion
 

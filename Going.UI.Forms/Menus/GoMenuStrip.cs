@@ -42,9 +42,9 @@ namespace Going.UI.Forms.Menus
         #region SetRenderer
         private void SetRenderer()
         {
-            if (GoTheme.Current != thm)
+            if (GoThemeW.Current != thm)
             {
-                thm = GoTheme.Current;
+                thm = GoThemeW.Current;
                 var c = new ThemeMenuColorTable(thm);
                 Renderer = new GoToolStripProfessionalRenderer(c);
                 this.BackColor = c.MenuStripColor;
@@ -84,9 +84,9 @@ namespace Going.UI.Forms.Menus
         #region SetRenderer
         private void SetRenderer()
         {
-            if (GoTheme.Current != thm)
+            if (GoThemeW.Current != thm)
             {
-                thm = GoTheme.Current;
+                thm = GoThemeW.Current;
                 var c = new ThemeMenuColorTable(thm);
                 Renderer = new GoToolStripProfessionalRenderer(c);
                 this.BackColor = c.MenuStripColor;

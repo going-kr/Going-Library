@@ -146,7 +146,7 @@ namespace Going.UI.OpenTK.Input
         #endregion
 
         #region Draw / Mouse
-        public void Draw(SKCanvas canvas)
+        public void Draw(SKCanvas canvas, GoTheme thm)
         {
             if (InputControl != null)
             {
@@ -162,8 +162,8 @@ namespace Going.UI.OpenTK.Input
                                 keyboard.Bounds = ani.IsPlaying ? ani.Value(AnimationAccel.DCL, rtH, rtS) : rtS;
                             else
                                 keyboard.Bounds = ani.IsPlaying ? ani.Value(AnimationAccel.DCL, rtS, rtH) : rtH;
-                         
-                            keyboard.Draw(canvas);
+
+                            keyboard.Draw(canvas, thm);
                         }
                         break;
 
@@ -178,7 +178,7 @@ namespace Going.UI.OpenTK.Input
                             else
                                 keypad.Bounds = ani.IsPlaying ? ani.Value(AnimationAccel.DCL, rtS, rtH) : rtH;
 
-                            keypad.Draw(canvas);
+                            keypad.Draw(canvas, thm);
                         }
                         break;
                 }

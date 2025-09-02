@@ -79,17 +79,16 @@ namespace SampleForms
         #endregion
 
         #region Draw
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
 
             #region var
             float InputBright = -0.2F;
             float CheckBoxBright = -0.2F;
             float BorderBright = 0.35F;
 
-            var thm = GoTheme.Current;
-            var br = GoTheme.Current.Dark ? 1F : -1F;
+            var br = thm.Dark ? 1F : -1F;
             var cText = thm.ToColor(CellTextColor ?? Grid.TextColor);
             var cRow = thm.ToColor(CellBackColor ?? Grid.RowColor);
             var cSel = thm.ToColor(SelectedCellBackColor ?? Grid.SelectedRowColor);

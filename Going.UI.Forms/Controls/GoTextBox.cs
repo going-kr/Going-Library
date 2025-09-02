@@ -109,7 +109,7 @@ namespace Going.UI.Forms.Controls
             txt = new TextBox { Text = base.Text, TextAlign = HorizontalAlignment.Center, BorderStyle = BorderStyle.None };
             Controls.Add(txt);
 
-            var thm = GoTheme.Current;
+            var thm = GoThemeW.Current;
             txt.BackColor = Util.FromArgb(thm.ToColor(BoxColor));
             txt.ForeColor = Util.FromArgb(thm.ToColor(TextColor));
         }
@@ -126,7 +126,7 @@ namespace Going.UI.Forms.Controls
         protected override void OnContentDraw(ContentDrawEventArgs e)
         {
             var canvas = e.Canvas;
-            var thm = GoTheme.Current;
+            var thm = GoThemeW.Current;
             var cBack = thm.ToColor(BackgroundColor);
             var cBox = thm.ToColor(BoxColor);
             var cBorder = thm.ToColor(BorderColor);
@@ -305,7 +305,7 @@ namespace Going.UI.Forms.Controls
         protected override void OnContentDraw(ContentDrawEventArgs e)
         {
             var canvas = e.Canvas;
-            var thm = GoTheme.Current;
+            var thm = GoThemeW.Current;
             var cBox = thm.ToColor(BoxColor);
             var cBorder = thm.ToColor(BorderColor);
             var cText = thm.ToColor(TextColor);

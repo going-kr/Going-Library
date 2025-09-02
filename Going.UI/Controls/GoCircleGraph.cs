@@ -46,10 +46,9 @@ namespace Going.UI.Controls
 
         #region Override
         #region Draw
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             #region var
-            var thm = GoTheme.Current;
             var cGrid = thm.ToColor(GridColor);
             var cText = thm.ToColor(TextColor);
             var cRemark = thm.ToColor(RemarkColor);
@@ -97,7 +96,7 @@ namespace Going.UI.Controls
 
                         var rt = Util.FromRect(rtF);
                         var rtv = Util.FromRect(rtS);
-                        var gp = thm.Animation ? Math.Abs(DateTime.Now.Millisecond % 500 - 250) / 25.0F : 10;
+                        var gp = Animation.UseAnimation ? Math.Abs(DateTime.Now.Millisecond % 500 - 250) / 25.0F : 10;
                         var hp = MathTool.GetPointWithAngle(new SKPoint(0, 0), a + vang / 2f, bSel ? gp : 0);
                         var tpt = MathTool.GetPointWithAngle(cp, a + vang / 2f, wh * 0.75F / 2F);
                         var opt = MathTool.GetPointWithAngle(cp, a + vang / 2f, wh / 2F + 20);
@@ -210,7 +209,7 @@ namespace Going.UI.Controls
             }
             #endregion
              
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
         }
         #endregion
 

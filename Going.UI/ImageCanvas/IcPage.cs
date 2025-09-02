@@ -24,11 +24,10 @@ namespace Going.UI.ImageCanvas
         public IcPage() { }
         #endregion
 
-        protected override void OnBackgroundDraw(SKCanvas canvas)
+        protected override void OnBackgroundDraw(SKCanvas canvas, GoTheme thm)
         {
             using var p = new SKPaint {  };
 
-            var thm = GoTheme.Current;
             var rts = Areas();
             var rtContent = rts["Content"];
 

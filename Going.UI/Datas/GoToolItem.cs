@@ -34,9 +34,8 @@ namespace Going.UI.Datas
         #region Method
         #region Fire
         #region Draw
-        internal void Draw(SKCanvas canvas)
+        internal void Draw(SKCanvas canvas, GoTheme thm)
         {
-            var thm = GoTheme.Current;
             var tb = ToolBox;
             if (tb != null)
             {
@@ -162,9 +161,8 @@ namespace Going.UI.Datas
         #region Method
         #region Fire
         #region Draw
-        internal void Draw(SKCanvas canvas)
+        internal void Draw(SKCanvas canvas, GoTheme thm)
         {
-            var thm = GoTheme.Current;
             var tb = ToolBox;
             if (tb != null)
             {
@@ -182,7 +180,7 @@ namespace Going.UI.Datas
                 Util.DrawIcon(canvas, Expand ? "fa-minus" : "fa-plus", 12, rtIco, cText);
                 Util.DrawTextIcon(canvas, Text, tb.FontName, tb.FontStyle, tb.FontSize, IconString, tb.IconSize, GoDirectionHV.Horizon, tb.IconGap, rtText, cText, GoContentAlignment.MiddleLeft);
 
-                itemLoop((i, item) => item.Draw(canvas));
+                itemLoop((i, item) => item.Draw(canvas, thm));
             }
         }
         #endregion

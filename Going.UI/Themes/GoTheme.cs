@@ -12,10 +12,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Going.UI.Extensions;
+using Going.UI.Design;
+using System.Reflection;
 
 namespace Going.UI.Themes
 {
-    public abstract class GoTheme
+    public class GoTheme
     {
         #region Const
         public const int DisableAlpha = 180;
@@ -38,15 +40,25 @@ namespace Going.UI.Themes
         public SKColor Base4 { get; set; }
         public SKColor Base5 { get; set; }
 
+        public SKColor User1 { get; set; } = SKColors.Red;
+        public SKColor User2 { get; set; } = SKColors.Green;
+        public SKColor User3 { get; set; } = SKColors.Blue;
+        public SKColor User4 { get; set; } = SKColors.Magenta;
+        public SKColor User5 { get; set; } = SKColors.Yellow;
+        public SKColor User6 { get; set; } = SKColors.Cyan;
+        public SKColor User7 { get; set; } = SKColors.Teal;
+        public SKColor User8 { get; set; } = SKColors.DeepSkyBlue;
+        public SKColor User9 { get; set; } = SKColors.DarkRed;
+
         public SKColor ScrollBar { get; set; }
         public SKColor ScrollCursor { get; set; }
 
         public SKColor Danger { get; set; }
         public SKColor Warning { get; set; }
         public SKColor Good { get; set; }
-
-        public SKColor Hignlight { get; set; }
         public SKColor Error { get; set; }
+
+        public SKColor Highlight { get; set; }
         public SKColor Select { get; set; }
 
         public int Corner { get; set; } = 5;
@@ -57,15 +69,10 @@ namespace Going.UI.Themes
         public float HoverBorderBrightness { get; set; }
         public float HoverFillBrightness { get; set; }
         public float StageLineBrightness { get; set; }
-
-        public bool TouchMode { get; set; } = true;
-        public bool Animation { get; set; } = true;
         #endregion
 
         #region Static
-        public static GoTheme DarkTheme = new DarkTheme();
-
-        public static GoTheme Current { get; set; } = DarkTheme;
+        public static GoTheme DarkTheme { get; } = new DarkTheme();
         #endregion
 
         #region Color(string)
@@ -94,11 +101,21 @@ namespace Going.UI.Themes
                         case "base4": ret = Base4; break;
                         case "base5": ret = Base5; break;
 
+                        case "user1": ret = User1; break;
+                        case "user2": ret = User2; break;
+                        case "user3": ret = User3; break;
+                        case "user4": ret = User4; break;
+                        case "user5": ret = User5; break;
+                        case "user6": ret = User6; break;
+                        case "user7": ret = User7; break;
+                        case "user8": ret = User8; break;
+                        case "user9": ret = User9; break;
+
                         case "danger": ret = Danger; break;
                         case "warning": ret = Warning; break;
                         case "good": ret = Good; break;
 
-                        case "hignlight": ret = Hignlight; break;
+                        case "hignlight": ret = Highlight; break;
                         case "error": ret = Error; break;
                         case "select": ret = Select; break;
 
@@ -181,12 +198,12 @@ namespace Going.UI.Themes
             Base4 = Util.FromArgb(120, 120, 120);
             Base5 = Util.FromArgb(150, 150, 150);
 
-            Danger = SKColors.DarkRed;
-            Warning = SKColors.DarkOrange;
             Good = SKColors.Green;
-
-            Hignlight = SKColors.Cyan;
+            Warning = SKColors.DarkOrange;
+            Danger = SKColors.DarkRed;
             Error = SKColors.Red;
+
+            Highlight = SKColors.Cyan;
             Select = SKColors.Teal;
 
             ScrollBar = Base1;

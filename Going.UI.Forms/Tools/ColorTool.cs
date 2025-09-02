@@ -16,7 +16,7 @@ namespace Going.UI.Forms.Tools
         #region EnableColor
         public static SKColor EnableColor(Control c, SKColor backgroundColor)
         {
-            var thm = GoTheme.Current;
+            var thm = GoThemeW.Current;
             SKColor ret = backgroundColor;
 
             if (!c.Enabled && c.Parent != null)
@@ -31,7 +31,7 @@ namespace Going.UI.Forms.Tools
         #region ParentColor
         static SKColor ParentColor(Control c)
         {
-            var thm = GoTheme.Current;
+            var thm = GoThemeW.Current;
             var cBack = Util.FromArgb(c.BackColor);
 
             var ret = c switch

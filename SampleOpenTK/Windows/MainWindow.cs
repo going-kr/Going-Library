@@ -88,8 +88,6 @@ namespace SampleOpenTK.Windows
             Design.AddPage(new PageDataGrid());
             Design.SetPage("PageMain");
             #endregion
-
-            GoTheme.Current.Animation = true;
         }
     }
 }

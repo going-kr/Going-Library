@@ -166,8 +166,8 @@ namespace Going.UI.Forms.Input
                 var h = txt.Height;
                 var ass = 1;
                 txt.Bounds = new Rectangle((int)rt.Left + 5, (int)rt.MidY - h / 2 + ass, (int)rt.Width - 10, h);
-                txt.BackColor = Util.FromArgb(GoTheme.Current.ToColor(backColor));
-                txt.ForeColor = Util.FromArgb(GoTheme.Current.ToColor(textColor));
+                txt.BackColor = Util.FromArgb(GoThemeW.Current.ToColor(backColor));
+                txt.ForeColor = Util.FromArgb(GoThemeW.Current.ToColor(textColor));
                 txt.Text = value;
                 txt.Visible = true;
                 txt.Focus();
@@ -226,8 +226,8 @@ namespace Going.UI.Forms.Input
                 var h = txt.Height;
                 var ass = 0;
                 txt.Bounds = new Rectangle((int)rt.Left + 5, (int)rt.MidY - h / 2 + ass, (int)rt.Width - 10, h);
-                txt.BackColor = Util.FromArgb(GoTheme.Current.ToColor(backColor));
-                txt.ForeColor = Util.FromArgb(GoTheme.Current.ToColor(textColor));
+                txt.BackColor = Util.FromArgb(GoThemeW.Current.ToColor(backColor));
+                txt.ForeColor = Util.FromArgb(GoThemeW.Current.ToColor(textColor));
                 txt.Text = ValueTool.ToString(value, null);
                 txt.Visible = true;
                 txt.Focus();

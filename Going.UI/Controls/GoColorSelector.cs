@@ -74,14 +74,13 @@ namespace Going.UI.Controls
 
         #region Override
         #region Draw
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             #region var
-            var thm = GoTheme.Current;
             var cBorder = thm.ToColor(BorderColor);
             var cText = thm.ToColor(TextColor);
             var cInput = thm.ToColor(InputColor);
-            var cInputBorder = !bValid ? thm.Error : thm.Hignlight;
+            var cInputBorder = !bValid ? thm.Error : thm.Highlight;
 
             var rts = Areas();
             var rtColor = rts["Color"];
@@ -229,7 +228,7 @@ namespace Going.UI.Controls
                 #endregion
             }
 
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
         }
         #endregion
 

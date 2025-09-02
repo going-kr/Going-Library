@@ -65,9 +65,8 @@ namespace Going.UI.Controls
         #endregion
 
         #region Override
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
-            var thm = GoTheme.Current;
             var cText = thm.ToColor(TextColor);
             var cEmpty = thm.ToColor(EmptyColor);
             var cFill= thm.ToColor(FillColor);
@@ -114,7 +113,7 @@ namespace Going.UI.Controls
 
             Util.DrawText(canvas, Title, FontName, FontStyle, TitleFontSize, rtTitle, cText);
 
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
         }
 
         public override Dictionary<string, SKRect> Areas()

@@ -27,7 +27,7 @@ namespace Going.UI.Forms.Containers
                 {
                     sBackgroundColor = value;
 
-                    var c = GoTheme.Current.ToColor(BackgroundColor);
+                    var c = GoThemeW.Current.ToColor(BackgroundColor);
                     this.BackColor = Color.FromArgb(c.Alpha, c.Red, c.Green, c.Blue);
 
                     Invalidate();
@@ -53,7 +53,7 @@ namespace Going.UI.Forms.Containers
 
             this.TabStop = false;
 
-            var c = GoTheme.Current.ToColor(BackgroundColor); ;
+            var c = GoThemeW.Current.ToColor(BackgroundColor); ;
             this.BackColor = Color.FromArgb(c.Red, c.Green, c.Blue);
         }
         #endregion
@@ -71,7 +71,7 @@ namespace Going.UI.Forms.Containers
             using (var canvas = new SKCanvas(bitmap))
             using (var surface = SKSurface.Create(bitmap.Info))
             {
-                var cBack = GoTheme.Current.ToColor(BackgroundColor);
+                var cBack = GoThemeW.Current.ToColor(BackgroundColor);
 
                 canvas.Clear(ColorTool.EnableColor(this, cBack));
 

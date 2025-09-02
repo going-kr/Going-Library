@@ -61,10 +61,9 @@ namespace Going.UI.Controls
 
         #region Override
         #region OnDraw
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             #region var
-            var thm = GoTheme.Current;
             #region color
             var cText = thm.ToColor(TextColor);
             var cBorder = thm.ToColor(BorderColor);
@@ -101,7 +100,7 @@ namespace Going.UI.Controls
             #region Value
             Util.DrawBox(canvas, rtValue, cValue, rndValue, thm.Corner);
 
-            OnDrawValue(canvas, rtValue);
+            OnDrawValue(canvas, thm, rtValue);
             #endregion
 
             #region Button
@@ -149,7 +148,7 @@ namespace Going.UI.Controls
             }
             #endregion
 
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
         }
         #endregion
 
@@ -237,7 +236,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Abstract
-        protected abstract void OnDrawValue(SKCanvas canvas, SKRect valueBounds);
+        protected abstract void OnDrawValue(SKCanvas canvas, GoTheme thm, SKRect valueBounds);
         #endregion
 
         #region Method
@@ -265,9 +264,8 @@ namespace Going.UI.Controls
         #endregion
 
         #region OnDrawValue
-        protected override void OnDrawValue(SKCanvas canvas, SKRect rtValue)
+        protected override void OnDrawValue(SKCanvas canvas, GoTheme thm, SKRect rtValue)
         {
-            var thm = GoTheme.Current;
             var cText = thm.ToColor(TextColor);
 
             Util.DrawText(canvas, Value, FontName, FontStyle, FontSize, rtValue, cText);
@@ -304,9 +302,8 @@ namespace Going.UI.Controls
         #endregion
 
         #region OnDrawValue
-        protected override void OnDrawValue(SKCanvas canvas, SKRect rtValue)
+        protected override void OnDrawValue(SKCanvas canvas, GoTheme thm, SKRect rtValue)
         {
-            var thm = GoTheme.Current;
             using var p = new SKPaint { IsAntialias = false };
 
             var cBorder = thm.ToColor(BorderColor);
@@ -350,11 +347,10 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 19)] public string? OnIconString { get; set; }
         [GoProperty(PCategory.Control, 20)] public string? OffIconString { get; set; }
         #endregion
-         
+
         #region OnDrawValue
-        protected override void OnDrawValue(SKCanvas canvas, SKRect rtValue)
+        protected override void OnDrawValue(SKCanvas canvas, GoTheme thm, SKRect rtValue)
         {
-            var thm = GoTheme.Current;
             using var p = new SKPaint { IsAntialias = false };
 
             var cBorder = thm.ToColor(BorderColor);

@@ -204,10 +204,10 @@ namespace Going.UI.Controls
         #region Override
 
         #region OnDraw
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
-            DrawSlider(canvas);
-            base.OnDraw(canvas);
+            DrawSlider(canvas, thm);
+            base.OnDraw(canvas, thm);
         }
         #endregion
         #region OnMouseDown
@@ -295,9 +295,8 @@ namespace Going.UI.Controls
         #region Draw
 
         #region DrawSlider
-        private void DrawSlider(SKCanvas canvas)
+        private void DrawSlider(SKCanvas canvas, GoTheme thm)
         {
-            var thm = GoTheme.Current;
             var colors = GetThemeColors(thm);
             var areas = Areas();
             var contentBox = areas["Content"];

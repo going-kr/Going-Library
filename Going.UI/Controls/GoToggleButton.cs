@@ -20,6 +20,8 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 2)] public GoDirectionHV IconDirection { get; set; }
         [GoProperty(PCategory.Control, 3)] public float IconGap { get; set; } = 5;
         [GoMultiLineProperty(PCategory.Control, 4)] public string Text { get; set; } = "button";
+        [GoMultiLineProperty(PCategory.Control, 4)] public string CheckedText { get; set; } = "button";
+
         [GoFontNameProperty(PCategory.Control, 5)] public string FontName { get; set; } = "나눔고딕";
         [GoProperty(PCategory.Control, 6)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         [GoProperty(PCategory.Control, 7)] public float FontSize { get; set; } = 12;
@@ -64,20 +66,19 @@ namespace Going.UI.Controls
         #endregion
 
         #region Override
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
-            var thm = GoTheme.Current;
             var cText = thm.ToColor(TextColor).BrightnessTransmit(bDown ? thm.DownBrightness : 0);
             var cBtn = thm.ToColor(Checked ? CheckedButtonColor : ButtonColor).BrightnessTransmit(bDown ? thm.DownBrightness : 0);
             var rts = Areas();
             var rtBox = rts["Content"];
-
+            var t = Checked ? CheckedText : Text;
             Util.DrawBox(canvas, rtBox, cBtn.BrightnessTransmit(bHover ? thm.HoverFillBrightness : 0), cBtn.BrightnessTransmit(bHover ? thm.HoverBorderBrightness : 0), Round, thm.Corner);
 
             if (bDown) rtBox.Offset(0, 1);
-            Util.DrawTextIcon(canvas, Text, FontName, FontStyle, FontSize, IconString, IconSize, IconDirection, IconGap, rtBox, cText, GoContentAlignment.MiddleCenter);
+            Util.DrawTextIcon(canvas, t, FontName, FontStyle, FontSize, IconString, IconSize, IconDirection, IconGap, rtBox, cText, GoContentAlignment.MiddleCenter);
 
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
         }
 
         protected override void OnMouseDown(float x, float y, GoMouseButton button)

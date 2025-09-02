@@ -66,10 +66,9 @@ namespace Going.UI.Controls
 
         #region Override
         #region Draw
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             #region var
-            var thm = GoTheme.Current;
             var cGraph = thm.ToColor(GraphColor);
             var cGrid = thm.ToColor(GridColor);
             var cText = thm.ToColor(TextColor);
@@ -334,9 +333,9 @@ namespace Going.UI.Controls
             }
             #endregion
 
-            scroll.Draw(canvas, rtScroll);
+            scroll.Draw(canvas, thm, rtScroll);
 
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
         }
         #endregion
 
@@ -354,7 +353,7 @@ namespace Going.UI.Controls
             #endregion
 
             scroll.MouseDown(x, y, rtScroll);
-            if (scroll.TouchMode && CollisionTool.Check(rtGraph, x, y)) scroll.TouchDown(x, y);
+            if (Scroll.TouchMode && CollisionTool.Check(rtGraph, x, y)) scroll.TouchDown(x, y);
 
             if (CollisionTool.Check(rtViewBox, x, y)) bView = !bView;
 
@@ -375,7 +374,7 @@ namespace Going.UI.Controls
             #endregion
 
             scroll.MouseMove(x, y, rtScroll);
-            if (scroll.TouchMode) scroll.TouchMove(x, y);
+            if (Scroll.TouchMode) scroll.TouchMove(x, y);
             base.OnMouseMove(x, y);
         }
 
@@ -391,7 +390,7 @@ namespace Going.UI.Controls
             #endregion
 
             scroll.MouseUp(x, y);
-            if (scroll.TouchMode) scroll.TouchUp(x, y);
+            if (Scroll.TouchMode) scroll.TouchUp(x, y);
 
             base.OnMouseUp(x, y, button);
         }

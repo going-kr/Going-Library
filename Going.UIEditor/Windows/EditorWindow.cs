@@ -4,6 +4,7 @@ using Going.UI.Controls;
 using Going.UI.Datas;
 using Going.UI.Design;
 using Going.UI.Enums;
+using Going.UI.Forms;
 using Going.UI.Forms.Controls;
 using Going.UI.Json;
 using Going.UI.Themes;
@@ -112,7 +113,7 @@ namespace Going.UIEditor.Windows
         public override void OnContentDraw(ContentDrawEventArgs e)
         {
             var prj = Program.CurrentProject;
-            var thm = GoTheme.Current;
+            //var thm = GoThemeW.Current;
             var canvas = e.Canvas;
 
             if (prj != null)
@@ -129,7 +130,7 @@ namespace Going.UIEditor.Windows
                     using var imgf = SKImageFilter.CreateDropShadow(2, 2, 2, 2, Util.FromArgb(128, SKColors.Black));
                     p.ImageFilter = imgf;
                     p.IsStroke = false;
-                    p.Color = thm.Back;
+                    p.Color = GoThemeW.Current.Back;
                     canvas.DrawRect(rt.Value, p);
                     p.ImageFilter = null;
                 }
@@ -143,15 +144,15 @@ namespace Going.UIEditor.Windows
                         var crt = rt.Value; crt.Inflate(1, 1);
                         canvas.ClipRect(crt);
                         canvas.Translate(rt.Value.Left, rt.Value.Top);
-                        canvas.Clear(thm.Back);
+                        canvas.Clear(prj.Design.Theme.Back);
                         #endregion
 
                         #region draw
                         prj.Design.SetSize(Convert.ToInt32(rt.Value.Width), Convert.ToInt32(rt.Value.Height));
 
-                        if (Target is GoDesign design2) prj.Design.DrawPage(canvas, null);
-                        else if (Target is GoPage page2) prj.Design.DrawPage(canvas, page2);
-                        else if (Target is GoWindow wnd2) wnd2.FireDraw(canvas);
+                        if (Target is GoDesign design2) prj.Design.DrawPage(canvas, prj.Design.Theme, null);
+                        else if (Target is GoPage page2) prj.Design.DrawPage(canvas, prj.Design.Theme, page2);
+                        else if (Target is GoWindow wnd2) wnd2.FireDraw(canvas, prj.Design.Theme);
                         #endregion
                     }
                 }
@@ -403,9 +404,9 @@ namespace Going.UIEditor.Windows
                                     int idx = sw.SelectedPage != null ? sw.Pages.IndexOf(sw.SelectedPage) : -1;
                                     var s = sw.SelectedPage != null ? sw.SelectedPage.Name : $"Page {idx}";
 
-                                    Util.DrawText(canvas, s, "나눔고딕", GoFontStyle.Normal, 12, rtT, thm.Base5);
-                                    Util.DrawIcon(canvas, "fa-angle-left", 12, rtP, idx - 1 >= 0 ? thm.Base5 : thm.Base3);
-                                    Util.DrawIcon(canvas, "fa-angle-right", 12, rtN, idx + 1 < sw.Pages.Count ? thm.Base5 : thm.Base3);
+                                    Util.DrawText(canvas, s, "나눔고딕", GoFontStyle.Normal, 12, rtT, prj.Design.Theme.Base5);
+                                    Util.DrawIcon(canvas, "fa-angle-left", 12, rtP, idx - 1 >= 0 ? prj.Design.Theme.Base5 : prj.Design.Theme.Base3);
+                                    Util.DrawIcon(canvas, "fa-angle-right", 12, rtN, idx + 1 < sw.Pages.Count ? prj.Design.Theme.Base5 : prj.Design.Theme.Base3);
                                     #region box
                                     p.IsStroke = true;
                                     p.Color = SKColors.Red;

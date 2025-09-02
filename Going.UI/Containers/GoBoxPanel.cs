@@ -30,9 +30,8 @@ namespace Going.UI.Containers
         #endregion
 
         #region Override
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
-            var thm = GoTheme.Current;
             var cBox = thm.ToColor(BoxColor);
             var cBorder = thm.ToColor(BorderColor);
             var rts = Areas();
@@ -40,7 +39,7 @@ namespace Going.UI.Containers
 
             if (BackgroundDraw) Util.DrawBox(canvas, rtBox, cBox, cBorder, Round, thm.Corner);
 
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
         }
         #endregion
     }

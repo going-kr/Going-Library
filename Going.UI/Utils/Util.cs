@@ -1165,13 +1165,13 @@ namespace Going.UI.Utils
         #endregion
 
         #region Lamp
-        public static void DrawLamp(SKCanvas canvas, SKRect bounds, SKColor OnLampColor, SKColor OffLampColor, bool OnOff, bool Shadow = true)
+        public static void DrawLamp(SKCanvas canvas, GoTheme thm, SKRect bounds, SKColor OnLampColor, SKColor OffLampColor, bool OnOff, bool Shadow = true)
         {
             #region Brightness
             var vS = 0.2F;
             var vE = -0.2F;
 
-            if (GoTheme.Current.Dark)
+            if (thm.Dark)
             {
                 vS = 0.2F;
                 vE = -0.2F;
@@ -1198,7 +1198,7 @@ namespace Going.UI.Utils
             var cM = OnOff ? OnLampColor : OffLampColor;
             var cS = cM.BrightnessTransmit(vS);
             var cE = cM.BrightnessTransmit(vE);
-            var cB = cE.BrightnessTransmit(GoTheme.Current.BorderBrightness);
+            var cB = cE.BrightnessTransmit(thm.BorderBrightness);
 
             using var p = new SKPaint { IsAntialias = true };
             p.IsStroke = false;
@@ -1209,7 +1209,7 @@ namespace Going.UI.Utils
 
             var cx = Convert.ToSingle(MathTool.Map(0.25, 0, 1, rt.Left, rt.Right));
             var cy = Convert.ToSingle(MathTool.Map(0.25, 0, 1, rt.Top, rt.Bottom));
-            using var imgf = SKImageFilter.CreateDropShadow(1, 1, 2, 2, Util.FromArgb(Convert.ToByte(GoTheme.Current.ShadowAlpha / (OnOff ? 1 : 5)), SKColors.Black));
+            using var imgf = SKImageFilter.CreateDropShadow(1, 1, 2, 2, Util.FromArgb(Convert.ToByte(thm.ShadowAlpha / (OnOff ? 1 : 5)), SKColors.Black));
             using var sh = SKShader.CreateRadialGradient(new SKPoint(cx, cy), rt.Width / 2F, [cS, cE], SKShaderTileMode.Clamp);
 
             p.Shader = sh;

@@ -133,11 +133,11 @@ namespace Going.UI.OpenTK.Windows
                 using (new SKAutoCanvasRestore(canvas))
                 {
                     //canvas.Scale(DPI_H, DPI_V);
-
+                    var thm = Design.Theme;
                     if (IsFirstRender) Design.Init();
 
                     #region Draw
-                    canvas.Clear(GoTheme.Current.Back);
+                    canvas.Clear(thm.Back);
 
                     var topMargin = 0;
                     var borderWidth = 0;
@@ -166,7 +166,7 @@ namespace Going.UI.OpenTK.Windows
                             Design.Draw(canvas);
                         }
 
-                        TKInputManager.Current.Draw(canvas);
+                        TKInputManager.Current.Draw(canvas, thm);
                         #endregion
 
                         #region Debug
@@ -190,7 +190,7 @@ namespace Going.UI.OpenTK.Windows
 
                     if (IsFirstRender)
                     {
-                        var ico = CreateTitleIcon();
+                        var ico = CreateTitleIcon(thm);
                         if (ico != null) Icon = ico;
                         IsFirstRender = false;
                         IsVisible = true;
@@ -342,7 +342,7 @@ namespace Going.UI.OpenTK.Windows
         #endregion
 
         #region CreateTitleIcon
-        WindowIcon? CreateTitleIcon()
+        WindowIcon? CreateTitleIcon(GoTheme thm)
         {
             WindowIcon? ret = null;
 
@@ -363,7 +363,7 @@ namespace Going.UI.OpenTK.Windows
 
             if (ret == null && GoIconManager.Contains(TitleIconString ?? ""))
             {
-                var color = GoTheme.Current.Fore;
+                var color = thm.Fore;
                 using var surface = SKSurface.Create(new SKImageInfo(iconSize, iconSize, SKColorType.Rgba8888));
                 var canvas = surface.Canvas;
 

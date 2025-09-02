@@ -29,7 +29,7 @@ namespace Going.UI.Forms.Containers
                 {
                     sBackgroundColor = value;
 
-                    var c = GoTheme.Current.ToColor(BackgroundColor);
+                    var c = GoThemeW.Current.ToColor(BackgroundColor);
                     this.BackColor = Color.FromArgb(c.Alpha, c.Red, c.Green, c.Blue);
 
                     Invalidate();
@@ -71,7 +71,7 @@ namespace Going.UI.Forms.Containers
         {
             base.OnPaint(e);
 
-            var thm = GoTheme.Current;
+            var thm = GoThemeW.Current;
             var vc = Util.FromArgb(ColorTool.EnableColor(this, thm.ToColor(BackgroundColor)));
             e.Graphics.Clear(vc);
 
@@ -94,7 +94,7 @@ namespace Going.UI.Forms.Containers
         #region RefreshPages
         void RefreshPages()
         {
-            var thm = GoTheme.Current;
+            var thm = GoThemeW.Current;
             var vc = Util.FromArgb(ColorTool.EnableColor(this, thm.ToColor(BackgroundColor)));
 
             foreach (var v in TabPages.Cast<TabPage>())

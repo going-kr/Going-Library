@@ -50,10 +50,9 @@ namespace Going.UI.Design
 
         #region Override
         #region Draw
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             #region var
-            var thm = GoTheme.Current;
             var cText = thm.ToColor(TextColor);
             var rts = Areas();
             var rtExpandL = rts["ExpandL"];
@@ -81,7 +80,7 @@ namespace Going.UI.Design
                 Util.DrawIcon(canvas, (Design?.RightSideBar.Expand ?? false) ? RightCollapseIconString : RightExpandIconString, IconSize, rtExpandR, cText.WithAlpha(Convert.ToByte(hover ? 255 : 60)));
             }
 
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
         }
         #endregion
 
@@ -183,6 +182,7 @@ namespace Going.UI.Design
                     }
                     else
                     {
+                        var thm = Design?.Theme ?? GoTheme.DarkTheme;
                         if (bExpand != value)
                         {
                             ani.Stop();

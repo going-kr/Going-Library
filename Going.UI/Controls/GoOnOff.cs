@@ -73,9 +73,8 @@ namespace Going.UI.Controls
         #endregion
 
         #region Override
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
-            var thm = GoTheme.Current;
             var cText = thm.ToColor(TextColor);
             var cBox = thm.ToColor(BoxColor);
             var cBorder = thm.ToColor(BorderColor);
@@ -105,7 +104,7 @@ namespace Going.UI.Controls
             }
 
             Util.DrawBox(canvas, rtContent, SKColors.Transparent, cBorder, GoRoundType.All, rtContent.Height);
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
         }
 
 
@@ -178,7 +177,7 @@ namespace Going.UI.Controls
             }
             else
             {
-                if (GoTheme.Current.Animation && ani.IsPlaying)
+                if (Animation.UseAnimation && ani.IsPlaying)
                 {
                     var sv = ani.Variable == "ON" ? -ow : 0;
                     var ev = ani.Variable == "ON" ? 0 : -ow;

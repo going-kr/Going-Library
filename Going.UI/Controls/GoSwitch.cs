@@ -84,9 +84,8 @@ namespace Going.UI.Controls
         #endregion
 
         #region Override
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
-            var thm = GoTheme.Current;
             var cOnText = thm.ToColor(OnTextColor);
             var cOffText = thm.ToColor(OffTextColor);
             var cBox = thm.ToColor(BoxColor);
@@ -120,7 +119,7 @@ namespace Going.UI.Controls
             var va3 = !OnOff ? EO : 0.5F;
             var va4 = !OnOff ? 1 : 1;
 
-            if (thm.Animation && ani.IsPlaying)
+            if (Animation.UseAnimation && ani.IsPlaying)
             {
                 if (ani.Variable == "ON")
                 {
@@ -162,7 +161,7 @@ namespace Going.UI.Controls
                 var gp = rtSwitch.Width * SO - (thm.Corner / 2F);
                 var rtvon = Util.FromRect(rtSwitch.Left + gp, rtSwitch.Top, rtSwitch.Width - gp, rtSwitch.Height);
                 var rtvoff = Util.FromRect(rtSwitch.Left, rtSwitch.Top, rtSwitch.Width - gp, rtSwitch.Height);
-                if (thm.Animation && ani.IsPlaying)
+                if (Animation.UseAnimation && ani.IsPlaying)
                 {
                     using (var lg = SKShader.CreateLinearGradient(new SKPoint(rtSwitch.Left, rtSwitch.Top), new SKPoint(rtSwitch.Right, rtSwitch.Top),
                                                            [ca1.BrightnessTransmit(hb), ca2.BrightnessTransmit(hb), ca3.BrightnessTransmit(hb), ca4.BrightnessTransmit(hb)], [va1, va2, va3, va4], SKShaderTileMode.Clamp))
@@ -201,7 +200,7 @@ namespace Going.UI.Controls
             var cTL = cOnText;
             var cTD = cOffText;
 
-            if (thm.Animation && ani.IsPlaying)
+            if (Animation.UseAnimation && ani.IsPlaying)
             {
                 var cton = ani.Variable == "ON" ? ani.Value(AnimationAccel.DCL, cTD, cTL) : ani.Value(AnimationAccel.DCL, cTL, cTD);
                 var ctoff = ani.Variable == "ON" ? ani.Value(AnimationAccel.DCL, cTL, cTD) : ani.Value(AnimationAccel.DCL, cTD, cTL);
@@ -223,7 +222,8 @@ namespace Going.UI.Controls
 
             }
             #endregion
-            base.OnDraw(canvas);
+
+            base.OnDraw(canvas, thm);
         }
 
 
@@ -257,7 +257,7 @@ namespace Going.UI.Controls
         #region Areas
         public override Dictionary<string, SKRect> Areas()
         {
-            var thm = GoTheme.Current;
+            var thm = Design?.Theme ?? GoTheme.DarkTheme;
             var rts = base.Areas();
             var rtContent = rts["Content"];
             var SwitchPadding = 5;
@@ -274,7 +274,7 @@ namespace Going.UI.Controls
             var rtOffText = rtOff;
             var n = rtSwitch.Width * SO - (thm.Corner / 2F);
 
-            if (GoTheme.Current.Animation && ani.IsPlaying)
+            if (Animation.UseAnimation && ani.IsPlaying)
             {
                 if (ani.Variable == "ON")
                 {

@@ -37,9 +37,8 @@ namespace Going.UI.Controls
         #endregion
 
         #region Override
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
-            var thm = GoTheme.Current;
             var cText = thm.ToColor(TextColor);
             var cLabel = thm.ToColor(LabelColor);
             var rts = Areas();
@@ -49,7 +48,7 @@ namespace Going.UI.Controls
             if (BackgroundDraw) Util.DrawBox(canvas, rtBox, BorderOnly ? SKColors.Transparent : cLabel, cLabel, Round, thm.Corner);
             Util.DrawTextIcon(canvas, Text, FontName, FontStyle, FontSize, IconString, IconSize, IconDirection, IconGap, rtText, cText, ContentAlignment);
 
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
         }
 
         public override Dictionary<string, SKRect> Areas()

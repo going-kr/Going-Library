@@ -1,4 +1,5 @@
-﻿using Going.UI.Themes;
+﻿using Going.UI.Design;
+using Going.UI.Themes;
 using Going.UI.Tools;
 using SkiaSharp;
 using System;
@@ -20,6 +21,8 @@ namespace Going.UI.Utils
         #endregion
 
         #region Properties
+        public static bool UseAnimation { get; private set; } = true;
+
         public double TotalMillls { get; private set; }
         public double PlayMillis
         {
@@ -59,7 +62,7 @@ namespace Going.UI.Utils
         #region Start
         public void Start(double totalMillis, string? variable = null, Action? act = null)
         {
-            if (GoTheme.Current.Animation)
+            if (UseAnimation)
             {
                 if (!IsPlaying)
                 {

@@ -103,7 +103,7 @@ namespace Going.UI.Controls
         public event EventHandler<GoMouseClickEventArgs>? MouseDoubleClicked;
         public event EventHandler<GoMouseEventArgs>? MouseMove;
         public event EventHandler<GoMouseEventArgs>? MouseWheel;
-        public event EventHandler<SKCanvas>? Drawn;
+        public event EventHandler<GoDrawnEventArgs>? Drawn;
 
         public event EventHandler<GoDragEventArgs>? DragDrop;
         #endregion
@@ -118,7 +118,7 @@ namespace Going.UI.Controls
         #region Method
         #region virtual
         protected virtual void OnInit(GoDesign? design) { }
-        protected virtual void OnDraw(SKCanvas canvas) { Drawn?.Invoke(this, canvas); }
+        protected virtual void OnDraw(SKCanvas canvas, GoTheme thm) { Drawn?.Invoke(this, new GoDrawnEventArgs(canvas, thm)); }
         protected virtual void OnShow() { View = true; }
         protected virtual void OnHide() { View = false; }
         protected virtual void OnUpdate() { }
@@ -143,14 +143,14 @@ namespace Going.UI.Controls
             OnInit(design);
         }
 
-        public void FireDraw(SKCanvas canvas)
+        public void FireDraw(SKCanvas canvas, GoTheme thm)
         {
             if (Visible)
             {
                 using var p = new SKPaint { IsAntialias = true, Color = SKColors.Black.WithAlpha(Convert.ToByte(Enabled ? 255 : 255 - GoTheme.DisableAlpha)) };
                 var sp = canvas.SaveLayer(p);
 
-                OnDraw(canvas);
+                OnDraw(canvas, thm);
 
                 canvas.RestoreToCount(sp);
             }
@@ -209,16 +209,19 @@ namespace Going.UI.Controls
         public virtual Dictionary<string, SKRect> Areas() => new() { { "Content", Util.FromRect(0, 0, Width - 1, Height - 1) } };
         #endregion
 
+        #region Etc
         public void SetView(bool view) => View = view;
         public void SetInvalidate(Action? method) => actInv = method;
+
         protected void Invalidate()
         {
             if (actInv != null) actInv?.Invoke();
             else if (View) Design?.Invalidate();
         }
-
+        
         internal void InvokeDragDrop(float x, float y, object item) => DragDrop?.Invoke(this, new GoDragEventArgs(x, y, item));
         internal void Leave() => OnMouseLeave();
+        #endregion
         #endregion
     }
 }

@@ -78,9 +78,8 @@ namespace Going.UI.Controls
         #endregion
 
         #region Override
-        protected override void OnDraw(SKCanvas canvas)
+        protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
-            var thm = GoTheme.Current;
             var cText = thm.ToColor(TextColor);
             var cKnob = thm.ToColor(KnobColor).BrightnessTransmit(bHover | bDown ? thm.HoverFillBrightness : 0);
             var cBorder = thm.ToColor(KnobColor).BrightnessTransmit(bHover | bDown ? thm.HoverBorderBrightness : 0);
@@ -141,7 +140,7 @@ namespace Going.UI.Controls
             }
             #endregion
 
-            base.OnDraw(canvas);
+            base.OnDraw(canvas, thm);
         }
 
         protected override void OnMouseDown(float x, float y, GoMouseButton button)

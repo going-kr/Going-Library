@@ -70,7 +70,7 @@ namespace Going.UI.Forms.ImageCanvas
         protected override void OnPaintSurface(SKPaintSurfaceEventArgs e)
         {
             var canvas = e.Surface.Canvas;
-            var thm = GoTheme.Current;
+            var thm = GoThemeW.Current;
             var rtBox = Util.FromRect(0, 0, Width, Height);
             var cText = thm.ToColor(TextColor);
 
@@ -121,7 +121,7 @@ namespace Going.UI.Forms.ImageCanvas
         #region vars
         (IcFolder? ip, SKImage? on, SKImage? off, SKColor cBack) vars()
         {
-            var thm = GoTheme.Current;
+            var thm = GoThemeW.Current;
             IcFolder? ip = null;
             SKImage? on = null, off = null;
             SKColor cBack = thm.Back;

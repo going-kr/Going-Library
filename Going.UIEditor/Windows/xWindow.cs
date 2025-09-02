@@ -1,4 +1,5 @@
 ﻿using Going.UI.Enums;
+using Going.UI.Forms;
 using Going.UI.Forms.Controls;
 using Going.UI.Forms.Tools;
 using Going.UI.Themes;
@@ -71,7 +72,7 @@ namespace Going.UIEditor.Windows
                 {
                     cBackColor = value;
 
-                    var thm = GoTheme.Current;
+                    var thm = GoThemeW.Current;
                     BackColor = Util.FromArgb(thm.ToColor(this.BackgroundColor));
 
                     Invalidate();
@@ -145,12 +146,12 @@ namespace Going.UIEditor.Windows
             #region Properties
             StartPosition = FormStartPosition.CenterScreen;
             DoubleBuffered = true;
-            BackColor = Util.FromArgb(GoTheme.Current.Back);
+            BackColor = Util.FromArgb(GoThemeW.Current.Back);
             Font = new Font("나눔고딕", 9);
             ResizeRedraw = true;
             #endregion
 
-            var thm = GoTheme.Current;
+            var thm = GoThemeW.Current;
             BackColor = Util.FromArgb(thm.ToColor(this.BackgroundColor));
             
         }
@@ -162,13 +163,13 @@ namespace Going.UIEditor.Windows
         {
             base.OnPaint(e);
  
-            var thm = GoTheme.Current;
+            var thm = GoThemeW.Current;
 
             using (var bitmap = new SKBitmap(this.Width, this.Height))
             using (var canvas = new SKCanvas(bitmap))
             using (var surface = SKSurface.Create(bitmap.Info))
             {
-                var cBack = GoTheme.Current.ToColor(BackgroundColor);
+                var cBack = GoThemeW.Current.ToColor(BackgroundColor);
                 canvas.Clear(cBack);
 
                 using var p2 = new SKPaint { IsAntialias = true, Color = SKColors.Black.WithAlpha(Convert.ToByte(Enabled ? 255 : 255 - GoTheme.DisableAlpha)) };
@@ -188,8 +189,8 @@ namespace Going.UIEditor.Windows
         {
             if (!DesignMode)
             {
-                DarkMode(this.Handle, GoTheme.Current.Dark);
-                if (this.ParentForm != null) DarkMode(this.ParentForm.Handle, GoTheme.Current.Dark);
+                DarkMode(this.Handle, GoThemeW.Current.Dark);
+                if (this.ParentForm != null) DarkMode(this.ParentForm.Handle, GoThemeW.Current.Dark);
             }
             base.OnShown(e);
         }
@@ -199,9 +200,9 @@ namespace Going.UIEditor.Windows
         {
             if (!DesignMode)
             {
-                DarkMode(this.Handle, GoTheme.Current.Dark);
-                if (this.ParentForm != null) DarkMode(this.ParentForm.Handle, GoTheme.Current.Dark);
-                Icon = IconTool.GetIcon(TitleIconString, GoTheme.Current.Fore);
+                DarkMode(this.Handle, GoThemeW.Current.Dark);
+                if (this.ParentForm != null) DarkMode(this.ParentForm.Handle, GoThemeW.Current.Dark);
+                Icon = IconTool.GetIcon(TitleIconString, GoThemeW.Current.Fore);
             }
             base.OnLoad(e);
         }
@@ -211,8 +212,8 @@ namespace Going.UIEditor.Windows
         {
             if (!DesignMode)
             {
-                DarkMode(this.Handle, GoTheme.Current.Dark);
-                if (this.ParentForm != null) DarkMode(this.ParentForm.Handle, GoTheme.Current.Dark);
+                DarkMode(this.Handle, GoThemeW.Current.Dark);
+                if (this.ParentForm != null) DarkMode(this.ParentForm.Handle, GoThemeW.Current.Dark);
             }
             base.OnDockStateChanged(e);
         }
@@ -251,7 +252,7 @@ namespace Going.UIEditor.Windows
     {
         public xTheme()
         {
-            var thm = GoTheme.Current;
+            var thm = GoThemeW.Current;
             var cinactBg = Util.FromArgb(thm.ToColor("#2d2d30"));
             var cActBg = Util.FromArgb(thm.ToColor("#007acc"));
 

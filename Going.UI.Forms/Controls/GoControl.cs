@@ -26,7 +26,7 @@ namespace Going.UI.Forms.Controls
                 {
                     sBackgroundColor = value;
 
-                    var c = GoTheme.Current.ToColor(BackgroundColor);
+                    var c = GoThemeW.Current.ToColor(BackgroundColor);
                     this.BackColor = Color.FromArgb(c.Alpha, c.Red, c.Green, c.Blue);
 
                     Invalidate();
@@ -52,7 +52,7 @@ namespace Going.UI.Forms.Controls
 
             this.TabStop = false;
 
-            var c = GoTheme.Current.ToColor(BackgroundColor); ;
+            var c = GoThemeW.Current.ToColor(BackgroundColor); ;
             this.BackColor = Color.FromArgb(c.Red, c.Green, c.Blue);
         }
         #endregion
@@ -65,7 +65,7 @@ namespace Going.UI.Forms.Controls
         protected override void OnPaintSurface(SKPaintSurfaceEventArgs e)
         {
             var canvas = e.Surface.Canvas;
-            var cBack = GoTheme.Current.ToColor(BackgroundColor);
+            var cBack = GoThemeW.Current.ToColor(BackgroundColor);
             canvas.Clear(ColorTool.EnableColor(this, cBack));
 
             using var p = new SKPaint { IsAntialias = true, Color = SKColors.Black.WithAlpha(Convert.ToByte(Enabled ? 255 : 255 - GoTheme.DisableAlpha)) };
@@ -132,7 +132,7 @@ namespace Going.UI.Forms.Controls
         protected override void OnContentDraw(ContentDrawEventArgs e)
         {
             Control.Bounds = Util.FromRect(0, 0, Width, Height);
-            Control.FireDraw(e.Canvas);
+            Control.FireDraw(e.Canvas, GoThemeW.Current);
             base.OnContentDraw(e);
         }
         #endregion

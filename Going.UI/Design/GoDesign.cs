@@ -42,6 +42,7 @@ namespace Going.UI.Design
         [JsonInclude] public GoSideBar RightSideBar { get; private set; } = new() { Visible = false };
         [JsonInclude] public GoFooter Footer { get; private set; } = new() { Visible = false };
 
+        [JsonIgnore] internal string Id { get; } = Guid.NewGuid().ToString();
         [JsonIgnore] public int Width { get; private set; }
         [JsonIgnore] public int Height { get; private set; }
         [JsonIgnore] public IGoControl? SelectedControl { get; private set; }
@@ -58,6 +59,9 @@ namespace Going.UI.Design
         [GoProperty(PCategory.Control, 5)] public bool OverlaySideBar { get; set; } = false;
         [GoProperty(PCategory.Control, 6)] public bool ExpandLeftSideBar { get => LeftSideBar.Expand; set { if (UseLeftSideBar) LeftSideBar.Expand = value; } }
         [GoProperty(PCategory.Control, 7)] public bool ExpandRightSideBar { get => RightSideBar.Expand; set { if (UseRightSideBar) RightSideBar.Expand = value; } }
+
+        public GoTheme? CustomTheme { get; set; }
+        [JsonIgnore] public GoTheme Theme => CustomTheme ?? GoTheme.DarkTheme;
 
         public event Action? RequestInvalidate;
         #endregion
@@ -79,8 +83,8 @@ namespace Going.UI.Design
                         GoTitleBar titleBar, GoSideBar leftSideBar, GoSideBar rightSideBar, GoFooter footer) : this()
         {
             Pages = pages;
-            Images = images;
-            Fonts = fonts;
+            Images = images ?? new(StringComparer.OrdinalIgnoreCase);
+            Fonts = fonts ?? new(StringComparer.OrdinalIgnoreCase);
 
             TitleBar = titleBar;
             LeftSideBar = leftSideBar;
@@ -215,6 +219,8 @@ namespace Going.UI.Design
             // 화면은 다 띄워야해서 else 처리 안함
             // MouseEvent : DropDownWindow > Window > Page 순으로 처리
 
+            var thm = Theme;
+
             #region First Draw
             if (bFirst)
             {
@@ -227,7 +233,7 @@ namespace Going.UI.Design
             #endregion
 
             #region Page
-            DrawPage(canvas, CurrentPage);
+            DrawPage(canvas, thm, CurrentPage);
             #endregion
 
             #region Window
@@ -244,7 +250,7 @@ namespace Going.UI.Design
                     using (new SKAutoCanvasRestore(canvas))
                     {
                         canvas.Translate(w.Bounds.Left, w.Bounds.Top);
-                        w.FireDraw(canvas);
+                        w.FireDraw(canvas, thm);
                     }
                 }
             }
@@ -256,7 +262,7 @@ namespace Going.UI.Design
                 using (new SKAutoCanvasRestore(canvas))
                 {
                     canvas.Translate(dropdownWindow.Bounds.Left, dropdownWindow.Bounds.Top);
-                    dropdownWindow.FireDraw(canvas);
+                    dropdownWindow.FireDraw(canvas, thm);
                 }
             }
             #endregion
@@ -266,13 +272,13 @@ namespace Going.UI.Design
             {
                 var rt = Util.FromRect(MousePosition.X - 12, MousePosition.Y - 12, 24, 24);
                 rt.Offset(5, 10);
-                Util.DrawIcon(canvas, "fa-hand-pointer", 24, rt, GoTheme.Current.Fore);
+                Util.DrawIcon(canvas, "fa-hand-pointer", 24, rt, thm.Fore);
             }
             #endregion
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public void DrawPage(SKCanvas canvas, GoPage? page = null)
+        public void DrawPage(SKCanvas canvas, GoTheme thm, GoPage? page = null)
         {
             #region bounds
             var (rtL, rtT, rtR, rtB, rtF, rtFR) = bounds();
@@ -286,11 +292,10 @@ namespace Going.UI.Design
             #region Background
             if (UseTitleBar || UseLeftSideBar || UseRightSideBar || UseFooter)
             {
-                var thm = GoTheme.Current;
                 canvas.Clear(thm.ToColor(BarColor));
 
                 var vrt = Util.Int(Util.FromRect(rtF.Left, rtF.Top, rtF.Width - 1, rtF.Height - 1)); vrt.Offset(0.5F, 0.5F);
-                var rtP = roundPage(vrt);
+                var rtP = roundPage(vrt, thm.Corner);
                 Util.DrawBox(canvas, rtP, thm.Back, thm.Back);
             }
             #endregion
@@ -302,7 +307,7 @@ namespace Going.UI.Design
                 {
                     canvas.ClipRect(rtF);
                     canvas.Translate(page.Bounds.Left, page.Bounds.Top);
-                    page.FireDraw(canvas);
+                    page.FireDraw(canvas, thm);
                 }
             }
             #endregion
@@ -314,7 +319,7 @@ namespace Going.UI.Design
                 {
                     canvas.ClipRect(TitleBar.Bounds);
                     canvas.Translate(TitleBar.Bounds.Left, TitleBar.Bounds.Top);
-                    TitleBar.FireDraw(canvas);
+                    TitleBar.FireDraw(canvas, thm);
                 }
             }
             #endregion
@@ -325,7 +330,7 @@ namespace Going.UI.Design
                 {
                     canvas.ClipRect(LeftSideBar.Bounds);
                     canvas.Translate(LeftSideBar.Bounds.Left, LeftSideBar.Bounds.Top);
-                    LeftSideBar.FireDraw(canvas);
+                    LeftSideBar.FireDraw(canvas, thm);
                 }
             }
             #endregion
@@ -336,7 +341,7 @@ namespace Going.UI.Design
                 {
                     canvas.ClipRect(RightSideBar.Bounds);
                     canvas.Translate(RightSideBar.Bounds.Left, RightSideBar.Bounds.Top);
-                    RightSideBar.FireDraw(canvas);
+                    RightSideBar.FireDraw(canvas, thm);
                 }
             }
             #endregion
@@ -347,7 +352,7 @@ namespace Going.UI.Design
                 {
                     canvas.ClipRect(Footer.Bounds);
                     canvas.Translate(Footer.Bounds.Left, Footer.Bounds.Top);
-                    Footer.FireDraw(canvas);
+                    Footer.FireDraw(canvas, thm);
                 }
             }
             #endregion
@@ -777,9 +782,8 @@ namespace Going.UI.Design
         #endregion
 
         #region roundPage
-        SKRoundRect roundPage(SKRect rtF)
+        SKRoundRect roundPage(SKRect rtF, int corner)
         {
-            var corner = GoTheme.Current.Corner;
             var ret = new SKRoundRect(rtF, corner);
 
             #region var
