@@ -28,7 +28,7 @@ namespace Going.UI.OpenTK.Input
         public InputType InputType { get; private set; }
 
         public SKSize ScreenSize { get; set; }
-
+        public bool IsPlaying => ani.IsPlaying;
         #region TranslateY
         public float TranslateY
         {
@@ -89,6 +89,7 @@ namespace Going.UI.OpenTK.Input
         private SKRect InputBounds;
         private Action<string>? InputCallback;
         private Animation ani = new();
+        private Action? actInv;
         #endregion
 
         #region Constructor

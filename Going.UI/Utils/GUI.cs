@@ -18,7 +18,10 @@ namespace Going.UI.Utils
         public static void Init(GoDesign? design, IGoContainer container )
         {
             foreach (var c in container.Childrens)
+            {
                 c.FireInit(design);
+                if (c.Parent != container && c is GoControl c2) c2.Parent = container;
+            }
         }
 
         public static void Show(IGoContainer container)

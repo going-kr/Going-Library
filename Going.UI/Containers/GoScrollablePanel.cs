@@ -40,7 +40,7 @@ namespace Going.UI.Containers
                 var t = PanelWidth.HasValue ? PanelWidth.Value : (Childrens.Count() > 0 ? Childrens.Max(x => x.Right) : 0);
                 return Width - 1 - (t > Width ? Scroll.SC_WH : 0);
             };
-            hscroll.Refresh = () => Invalidate?.Invoke();
+            hscroll.Refresh = () => Invalidate();
 
             vscroll.GetScrollTotal = () => PanelHeight.HasValue ? PanelHeight.Value : (Childrens.Count() > 0 ? Childrens.Max(x => x.Bottom) : 0);
             vscroll.GetScrollTick = () => 10;
@@ -49,7 +49,7 @@ namespace Going.UI.Containers
                 var t = PanelHeight.HasValue ? PanelHeight.Value : (Childrens.Count() > 0 ? Childrens.Max(x => x.Bottom) : 0);
                 return Height - 1 - (t > Height ? Scroll.SC_WH : 0);
             };
-            vscroll.Refresh = () => Invalidate?.Invoke();
+            vscroll.Refresh = () => Invalidate();
         }
         #endregion
 

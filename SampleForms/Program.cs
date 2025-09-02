@@ -15,8 +15,8 @@ namespace SampleForms
             //ApplicationConfiguration.Initialize();
             Application.EnableVisualStyles();
             Application.SetHighDpiMode(HighDpiMode.DpiUnaware);
-            //Application.Run(new FormCanvas());
-            Application.Run(new FormDG());
+            Application.Run(new FormMain());
+            //Application.Run(new FormDG());
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Going.UI.Datas;
+﻿using Going.UI.Containers;
+using Going.UI.Datas;
 using Going.UI.Dialogs;
 using Going.UI.Enums;
 using Going.UI.Themes;
@@ -101,7 +102,7 @@ namespace Going.UI.Controls
                 var rtGraph = Areas()["Graph"];
                 return XScale.TotalMilliseconds / (double)rtGraph.Width;
             };
-            scroll.Refresh = () => Invalidate?.Invoke();
+            scroll.Refresh = () => Invalidate();
         }
         #endregion
 
@@ -558,13 +559,21 @@ namespace Going.UI.Controls
 
                                 startTime = DateTime.Now;
                                 IsStart = true;
-                                while (!token.IsCancellationRequested && IsStart)
+                                try
                                 {
-                                    AddData();
-                                    Invalidate?.Invoke();
-                                    await Task.Delay(Interval);
+                                    
+                                    while (!token.IsCancellationRequested && IsStart)
+                                    {
+                                        AddData();
+                                        if (View) Invalidate();
+                                        await Task.Delay(Interval);
+                                    }
                                 }
-                                IsStart = false;
+                                catch (OperationCanceledException ex) { }
+                                finally
+                                {
+                                    IsStart = false;
+                                }
 
                             }, cancel.Token);
                         }

@@ -46,7 +46,6 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Basic, 2)] public virtual bool Enabled { get; set; } = true;
         public bool Selectable { get; protected set; } = false;
         [JsonIgnore] public object? Tag { get; set; }
-
         [JsonIgnore] public float ScreenX => Parent != null && Parent is GoControl pc ? pc.ScreenX + Parent.PanelBounds.Left + X : X;
         [JsonIgnore] public float ScreenY => Parent != null && Parent is GoControl pc ? pc.ScreenY + Parent.PanelBounds.Top + Y : Y;
 
@@ -63,6 +62,7 @@ namespace Going.UI.Controls
                 bounds = rt;
             }
         }
+
         [GoProperty(PCategory.Bounds, 2), JsonIgnore]
         public float Y
         {
@@ -75,6 +75,7 @@ namespace Going.UI.Controls
                 bounds = rt;
             }
         }
+
         [GoProperty(PCategory.Bounds, 3), JsonIgnore] public float Width { get => bounds.Width; set => bounds.Right = value + bounds.Left; }
         [GoProperty(PCategory.Bounds, 4), JsonIgnore] public float Height { get => bounds.Height; set => bounds.Bottom = value + bounds.Top; }
         [GoProperty(PCategory.Bounds, 5), JsonIgnore] public float Left { get => bounds.Left; set => bounds.Left = value; }
@@ -85,12 +86,13 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Bounds, 10)] public GoPadding Margin { get; set; } = new(3, 3, 3, 3);
 
         [JsonIgnore] public bool FirstRender { get; internal set; } = true;
+        [JsonIgnore] public bool View { get; internal set; } = true;
         [JsonIgnore] public IGoContainer? Parent { get; internal set; }
         [JsonIgnore] public GoDesign? Design { get; internal set; }
 
         [JsonIgnore] internal bool _MouseDown_ => bDown;
 
-        protected Action? Invalidate;
+        private Action? actInv;
         #endregion
 
         #region Event
@@ -117,8 +119,8 @@ namespace Going.UI.Controls
         #region virtual
         protected virtual void OnInit(GoDesign? design) { }
         protected virtual void OnDraw(SKCanvas canvas) { Drawn?.Invoke(this, canvas); }
-        protected virtual void OnShow() { }
-        protected virtual void OnHide() { }
+        protected virtual void OnShow() { View = true; }
+        protected virtual void OnHide() { View = false; }
         protected virtual void OnUpdate() { }
         protected virtual void OnMouseDown(float x, float y, GoMouseButton button) { MouseDown?.Invoke(this, new GoMouseClickEventArgs(x, y, button)); }
         protected virtual void OnMouseUp(float x, float y, GoMouseButton button) { MouseUp?.Invoke(this, new GoMouseClickEventArgs(x, y, button)); }
@@ -207,7 +209,13 @@ namespace Going.UI.Controls
         public virtual Dictionary<string, SKRect> Areas() => new() { { "Content", Util.FromRect(0, 0, Width - 1, Height - 1) } };
         #endregion
 
-        public void SetInvalidate(Action? method) => Invalidate = method;
+        public void SetView(bool view) => View = view;
+        public void SetInvalidate(Action? method) => actInv = method;
+        protected void Invalidate()
+        {
+            if (actInv != null) actInv?.Invoke();
+            else if (View) Design?.Invalidate();
+        }
 
         internal void InvokeDragDrop(float x, float y, object item) => DragDrop?.Invoke(this, new GoDragEventArgs(x, y, item));
         internal void Leave() => OnMouseLeave();

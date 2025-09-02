@@ -205,7 +205,10 @@ namespace Going.UI.Design
         #region Constructor
         [JsonConstructor]
         public GoSideBar(List<IGoControl> childrens) : this() => Childrens = childrens;
-        public GoSideBar() { }
+        public GoSideBar()
+        {
+            ani.Refresh = () => Invalidate();
+        }
         #endregion
     }
 

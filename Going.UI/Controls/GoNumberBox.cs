@@ -204,7 +204,7 @@ namespace Going.UI.Controls
                             await Task.Delay(delay);
                         }
                         else await Task.Delay(100);
-                        Invalidate?.Invoke();
+                        Invalidate();
                     }
                 });
             }
@@ -226,7 +226,7 @@ namespace Going.UI.Controls
                             await Task.Delay(delay);
                         }
                         else await Task.Delay(100);
-                        Invalidate?.Invoke();
+                        Invalidate();
                     }
                 });
             }

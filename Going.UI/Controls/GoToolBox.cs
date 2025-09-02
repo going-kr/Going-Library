@@ -67,7 +67,7 @@ namespace Going.UI.Controls
             scroll.GetScrollTotal = () => Categories.LastOrDefault()?.Bounds.Bottom ?? 0;
             scroll.GetScrollTick = () => ItemHeight;
             scroll.GetScrollView = () => Height;
-            scroll.Refresh = () => Invalidate?.Invoke();
+            scroll.Refresh = () => Invalidate();
         }
         #endregion
 

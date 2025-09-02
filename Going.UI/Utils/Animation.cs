@@ -29,9 +29,23 @@ namespace Going.UI.Utils
                 return tm.HasValue ? (DateTime.Now - tm.Value).TotalMilliseconds : 0;
             }
         }
-        public bool IsPlaying { get; private set; }
+        public bool IsPlaying
+        {
+            get => isPlaying; 
+            private set
+            {
+                isPlaying = value;
+                States[Id] = isPlaying;
+                IsAnimationPlaying = States.Values.Any(x => x);
+            }
+        }
         public string? Variable { get; private set; }
         public Action? Refresh;
+
+        private string Id { get; } = Guid.NewGuid().ToString();
+        private bool isPlaying = false;
+        internal static Dictionary<string, bool> States = [];
+        public static bool IsAnimationPlaying { get; private set; }
         #endregion
 
         #region Member Variable
@@ -59,24 +73,32 @@ namespace Going.UI.Utils
                         var token = cancel.Token;
 
                         this.IsPlaying = true;
-                        while (!token.IsCancellationRequested && this.IsPlaying && (tmStart.HasValue && (DateTime.Now - tmStart.Value).TotalMilliseconds < TotalMillls))
+
+                        try
                         {
-                            Refresh?.Invoke();
-                            await Task.Delay(10);
+                            while (!token.IsCancellationRequested && this.IsPlaying && (tmStart.HasValue && (DateTime.Now - tmStart.Value).TotalMilliseconds < TotalMillls))
+                            {
+                                Refresh?.Invoke();
+                                await Task.Delay(10);
+                            }
                         }
-                        act?.Invoke();
-                        this.tmStart = null;
-                        this.IsPlaying = false;
-                        this.TotalMillls = 0;
-                        Refresh?.Invoke();
+                        catch (OperationCanceledException ex) { }
+                        finally
+                        {
+                            act?.Invoke();
+                            this.tmStart = null;
+                            this.IsPlaying = false;
+                            this.TotalMillls = 0;
+                            Refresh?.Invoke();
+                        }
 
                     }, cancel.Token);
                 }
-              
             }
             else
             {
                 act?.Invoke();
+                Refresh?.Invoke();
             }
         }
         #endregion
@@ -95,6 +117,8 @@ namespace Going.UI.Utils
                 Task.WhenAny(task);
                 task = null;
             }
+
+            Refresh?.Invoke();
         }
         #endregion
         #region Linear / Accel / Decel
@@ -290,3 +314,4 @@ namespace Going.UI.Utils
     public enum AnimationType { SlideV, SlideH, Drill, Fade, None }
     #endregion
 }
+ 

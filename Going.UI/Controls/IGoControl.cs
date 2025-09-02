@@ -37,6 +37,7 @@ namespace Going.UI.Controls
         [JsonIgnore] float ScreenX { get; }
         [JsonIgnore] float ScreenY { get; }
 
+
         void FireInit(GoDesign? design);
         void FireDraw(SKCanvas canvas);
         void FireUpdate();

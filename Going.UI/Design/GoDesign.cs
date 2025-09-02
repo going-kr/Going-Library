@@ -58,6 +58,8 @@ namespace Going.UI.Design
         [GoProperty(PCategory.Control, 5)] public bool OverlaySideBar { get; set; } = false;
         [GoProperty(PCategory.Control, 6)] public bool ExpandLeftSideBar { get => LeftSideBar.Expand; set { if (UseLeftSideBar) LeftSideBar.Expand = value; } }
         [GoProperty(PCategory.Control, 7)] public bool ExpandRightSideBar { get => RightSideBar.Expand; set { if (UseRightSideBar) RightSideBar.Expand = value; } }
+
+        public event Action? RequestInvalidate;
         #endregion
 
         #region Member Variable
@@ -146,12 +148,14 @@ namespace Going.UI.Design
 
         public void ShowWindow(GoWindow wnd)
         {
-            wnd.Design = this;
+            wnd.FireInit(this);
             wnd.Visible = true;
             stkWindow.Push(wnd);
             wnd.Bounds = MathTool.MakeRectangle(Util.FromRect(0, 0, Width, Height), new SKSize(wnd.Width, wnd.Height));
             CurrentPage?.FireMouseMove(-1, -1);
             CurrentPage?.FireShow();
+
+            wnd.FireShow();
         }
         public void HideWindow(GoWindow wnd)
         {
@@ -191,6 +195,7 @@ namespace Going.UI.Design
         {
             foreach (var page in Pages.Values) page.FireInit(this);
             foreach (var wnd in Windows.Values) wnd.FireInit(this);
+            foreach (var wnd in GoDialogs.SystemWindows.Values) wnd.FireInit(this);
 
             TitleBar.FireInit(this);
             LeftSideBar.FireInit(this);
@@ -199,6 +204,8 @@ namespace Going.UI.Design
 
             Util.SetExternalFonts(Fonts);
         }
+
+        public void Invalidate() => RequestInvalidate?.Invoke();
         #endregion
 
         #region Draw / Update

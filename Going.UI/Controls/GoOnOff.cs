@@ -68,7 +68,7 @@ namespace Going.UI.Controls
         public GoOnOff()
         {
             Selectable = true;
-            ani.Refresh = () => Invalidate?.Invoke();
+            ani.Refresh = () => Invalidate();
         }
         #endregion
 

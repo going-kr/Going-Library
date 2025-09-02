@@ -97,7 +97,7 @@ namespace Going.UI.Controls
 
                         var rt = Util.FromRect(rtF);
                         var rtv = Util.FromRect(rtS);
-                        var gp = Math.Abs(DateTime.Now.Millisecond % 500 - 250) / 25.0F;
+                        var gp = thm.Animation ? Math.Abs(DateTime.Now.Millisecond % 500 - 250) / 25.0F : 10;
                         var hp = MathTool.GetPointWithAngle(new SKPoint(0, 0), a + vang / 2f, bSel ? gp : 0);
                         var tpt = MathTool.GetPointWithAngle(cp, a + vang / 2f, wh * 0.75F / 2F);
                         var opt = MathTool.GetPointWithAngle(cp, a + vang / 2f, wh / 2F + 20);

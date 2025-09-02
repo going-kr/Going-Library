@@ -60,7 +60,7 @@ namespace Going.UI.Controls
                 var rtGraph = Areas()["Graph"];
                 return (XScale.TotalMilliseconds / (double)rtGraph.Width);
             };
-            scroll.Refresh = () => Invalidate?.Invoke();
+            scroll.Refresh = () => Invalidate();
         }
         #endregion
 
@@ -507,7 +507,7 @@ namespace Going.UI.Controls
                         vst = start;
                         ved = end;
 
-                        Invalidate?.Invoke();
+                        Invalidate();
                     }
                     else throw new Exception("잘못된 데이터 입니다.");
                 }

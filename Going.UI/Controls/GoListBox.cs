@@ -65,7 +65,7 @@ namespace Going.UI.Controls
             scroll.GetScrollTotal = () => ItemHeight * Items.Count;
             scroll.GetScrollTick = () => ItemHeight; // 휠 틱(한번에 이동하는 양)
             scroll.GetScrollView = () => Height;     // 스크롤 뷰(보이는 화면을 얼마나 보여주는지)
-            scroll.Refresh = () => Invalidate?.Invoke();
+            scroll.Refresh = () => Invalidate();
         }
         #endregion
 

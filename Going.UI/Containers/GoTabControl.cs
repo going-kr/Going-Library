@@ -35,7 +35,7 @@ namespace Going.UI.Containers
         [GoProperty(PCategory.Control, 9)] public GoDirection TabPosition { get; set; } = GoDirection.Up;
 
         [GoProperty(PCategory.Control, 10)] public float NavSize { get; set; } = 40;
-
+        
         [JsonIgnore]
         public GoTabPage? SelectedTab
         {
@@ -89,7 +89,10 @@ namespace Going.UI.Containers
 
             foreach (var tab in TabPages)
                 foreach (var c in tab.Childrens)
+                {
                     c.FireInit(design);
+                    if (c is GoControl c2) c2.Parent = this;
+                }
         }
         #endregion
 

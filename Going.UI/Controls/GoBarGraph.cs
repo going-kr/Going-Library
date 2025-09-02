@@ -74,7 +74,7 @@ namespace Going.UI.Controls
                 var rt = Areas()["Graph"];
                 return Direction == GoDirectionHV.Horizon ? rt.Height : rt.Width;
             };
-            scroll.Refresh = () => Invalidate?.Invoke();
+            scroll.Refresh = () => Invalidate();
         }
         #endregion
 
@@ -797,7 +797,7 @@ namespace Going.UI.Controls
                             }
                         }
 
-                        Invalidate?.Invoke();
+                        Invalidate();
                     }
                     else throw new Exception("잘못된 데이터 입니다.");
                 }

@@ -115,7 +115,7 @@ namespace Going.UI.Controls
             };
             hscroll.GetScrollTick = () => 10;
             hscroll.GetScrollView = () => hsV;
-            hscroll.Refresh = () => Invalidate?.Invoke();
+            hscroll.Refresh = () => Invalidate();
             #endregion
             #region vscroll
             vscroll.GetScrollTotal = () =>
@@ -126,7 +126,7 @@ namespace Going.UI.Controls
             };
             vscroll.GetScrollTick = () => RowHeight;
             vscroll.GetScrollView = () => vsV;
-            vscroll.Refresh = () => Invalidate?.Invoke();
+            vscroll.Refresh = () => Invalidate();
             #endregion
         }
         #endregion

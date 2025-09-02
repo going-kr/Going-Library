@@ -41,7 +41,7 @@ namespace SampleOpenTK.Pages
             Childrens.Add(tab);
 
             #region Bar
-            grpBar = new GoBarGraph { Fill = true, Margin = new GoPadding(0), Minimum = 0, Maximum = 10000, Direction = GoDirectionHV.Vertical, Mode = GoBarGraphMode.Stack };
+            grpBar = new GoBarGraph { Fill = true, Margin = new GoPadding(10), Minimum = 0, Maximum = 10000, Direction = GoDirectionHV.Vertical, Mode = GoBarGraphMode.Stack };
             grpBar.Series.Add(new GoGraphSeries { Name = "Controller", Alias = "제어기", Color = "red" });
             grpBar.Series.Add(new GoGraphSeries { Name = "Touch", Alias = "터치", Color = "GreenYellow" });
             grpBar.Series.Add(new GoGraphSeries { Name = "Cloud", Alias = "클라우드", Color = "DeepSkyBlue", Visible = true });
@@ -49,7 +49,7 @@ namespace SampleOpenTK.Pages
             tab.TabPages[0].Childrens.Add(grpBar);
             #endregion
             #region Line
-            grpLine = new GoLineGraph { Fill = true, Margin = new GoPadding(0) };
+            grpLine = new GoLineGraph { Fill = true, Margin = new GoPadding(10) };
             grpLine.Series.Add(new GoLineGraphSeries { Name = "Controller", Alias = "제어기", Color = "red", Minimum = 0, Maximum = 10000 });
             grpLine.Series.Add(new GoLineGraphSeries { Name = "Touch", Alias = "터치", Color = "GreenYellow", Minimum = 0, Maximum = 10000 });
             grpLine.Series.Add(new GoLineGraphSeries { Name = "Cloud", Alias = "클라우드", Color = "DeepSkyBlue", Minimum = 0, Maximum = 10000, Visible = true });
@@ -57,7 +57,7 @@ namespace SampleOpenTK.Pages
             tab.TabPages[1].Childrens.Add(grpLine);
             #endregion
             #region Circle
-            grpCircle = new GoCircleGraph { Fill = true, Margin = new GoPadding(0), FontSize = 14  };
+            grpCircle = new GoCircleGraph { Fill = true, Margin = new GoPadding(10), FontSize = 14  };
             /*
             grpCircle.Series.Add(new GoGraphSeries { Name = "Controller", Alias = "제어기", Color = "red" });
             grpCircle.Series.Add(new GoGraphSeries { Name = "Touch", Alias = "터치", Color = "GreenYellow"  });
@@ -80,7 +80,7 @@ namespace SampleOpenTK.Pages
             tab.TabPages[2].Childrens.Add(grpCircle);
             #endregion
             #region Time
-            grpTime = new GoTimeGraph { Fill = true, Margin = new GoPadding(0) };
+            grpTime = new GoTimeGraph { Fill = true, Margin = new GoPadding(10) };
             grpTime.Series.Add(new GoLineGraphSeries { Name = "Temp", Alias = "온도", Color = "red", Minimum = 0, Maximum = 200 });
             grpTime.Series.Add(new GoLineGraphSeries { Name = "Hum", Alias = "습도", Color = "GreenYellow", Minimum = 0, Maximum = 100 });
             grpTime.Series.Add(new GoLineGraphSeries { Name = "Noise", Alias = "소음", Color = "DeepSkyBlue", Minimum = 0, Maximum = 400, Visible = true });
@@ -91,7 +91,7 @@ namespace SampleOpenTK.Pages
             grpTrend = new GoTrendGraph
             {
                 Fill = true,
-                Margin = new GoPadding(0),
+                Margin = new GoPadding(10),
                 MaximumXScale = TimeSpan.FromSeconds(10),
                 XScale = TimeSpan.FromSeconds(1),
                 XAxisGraduationTime = TimeSpan.FromSeconds(0.25),

@@ -2,18 +2,21 @@
 using Going.UI.Controls;
 using Going.UI.Datas;
 using Going.UI.OpenTK.Windows;
+using Going.UI.Themes;
 using OpenTK.Windowing.Common;
 using SampleOpenTK.Pages;
 
 namespace SampleOpenTK.Windows
 {
-    public class MainWindow : GoViewWindow
+    public class MainWindow : GoManualWindow
     {
         GoTableLayoutPanel tblTitle;
         GoNavigator nav;
 
         public MainWindow() : base(1024, 768, WindowBorder.Hidden)
         {
+            Interval = 10;
+
             #region Window Setting
             Title = "Going Library Sample";
             TitleIconImage = "logos";
@@ -85,6 +88,8 @@ namespace SampleOpenTK.Windows
             Design.AddPage(new PageDataGrid());
             Design.SetPage("PageMain");
             #endregion
+
+            GoTheme.Current.Animation = true;
         }
     }
 }

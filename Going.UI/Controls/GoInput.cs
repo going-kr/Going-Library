@@ -470,7 +470,8 @@ namespace Going.UI.Controls
         #region Constructor
         public GoInputBoolean()
         {
-            ani.Refresh = () => Invalidate?.Invoke();
+            ani.Refresh = () => 
+            Invalidate();
         }
         #endregion
 
@@ -670,7 +671,7 @@ namespace Going.UI.Controls
         #region Constructor
         public GoInputSelector()
         {
-            ani.Refresh = () => Invalidate?.Invoke();
+            ani.Refresh = () => Invalidate();
         }
         #endregion
 

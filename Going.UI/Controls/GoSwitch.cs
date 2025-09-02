@@ -79,7 +79,7 @@ namespace Going.UI.Controls
         public GoSwitch()
         {
             Selectable = true;
-            ani.Refresh = () => Invalidate?.Invoke();
+            ani.Refresh = () => Invalidate();
         }
         #endregion
 

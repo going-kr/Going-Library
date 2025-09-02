@@ -337,29 +337,34 @@ namespace Going.UI.Utils
                         {
                             IsTouchStart = true;
 
-                            var stime = DateTime.Now;
-                            var time = 0.0;
-                            var tot = (ScrollTotal - ScrollView);
-                            while (IsTouchStart && time < destTime * 1000 && Convert.ToInt32(ScrollPosition / ScrollScaleFactor) != Convert.ToInt32(destPos / ScrollScaleFactor))
-                            {
-                                time = (DateTime.Now - stime).TotalMilliseconds;
-                                var oldV = ScrollPosition;
-                                var newV = (MathTool.Constrain((initPos + (Math.Pow(DecelerationRate, time) - 1) / dCoeff * initVel), 0, tot));
-                                if (oldV != newV) { ScrollPosition = (newV); try { ScrollChanged?.Invoke(); } catch { } }
-
-                                await Task.Delay(TaskInterval);
-
-                                Refresh?.Invoke();
-                            }
-
-                            IsTouchStart = false;
                             try
                             {
-                                ScrollChanged?.Invoke();
-                                ScrollEnded?.Invoke();
-                            }
-                            catch { }
+                                var stime = DateTime.Now;
+                                var time = 0.0;
+                                var tot = (ScrollTotal - ScrollView);
+                                while (IsTouchStart && time < destTime * 1000 && Convert.ToInt32(ScrollPosition / ScrollScaleFactor) != Convert.ToInt32(destPos / ScrollScaleFactor))
+                                {
+                                    time = (DateTime.Now - stime).TotalMilliseconds;
+                                    var oldV = ScrollPosition;
+                                    var newV = (MathTool.Constrain((initPos + (Math.Pow(DecelerationRate, time) - 1) / dCoeff * initVel), 0, tot));
+                                    if (oldV != newV) { ScrollPosition = (newV); try { ScrollChanged?.Invoke(); } catch { } }
 
+                                    await Task.Delay(TaskInterval);
+
+                                    Refresh?.Invoke();
+                                }
+                            }
+                            catch (OperationCanceledException ex) { }
+                            finally
+                            {
+                                IsTouchStart = false;
+                                try
+                                {
+                                    ScrollChanged?.Invoke();
+                                    ScrollEnded?.Invoke();
+                                }
+                                catch { }
+                            }
                         });
                     }
                     else
@@ -518,29 +523,34 @@ namespace Going.UI.Utils
                         {
                             IsTouchStart = true;
 
-                            var stime = DateTime.Now;
-                            var time = 0.0;
-                            var tot = (ScrollTotal - ScrollView);
-                            while (IsTouchStart && time < destTime * 1000 && Convert.ToInt32(ScrollPosition / ScrollScaleFactor) != Convert.ToInt32(destPos / ScrollScaleFactor))
-                            {
-                                time = (DateTime.Now - stime).TotalMilliseconds;
-                                var oldV = ScrollPosition;
-                                var newV = (MathTool.Constrain((initPos + (Math.Pow(DecelerationRate, time) - 1) / dCoeff * initVel), 0, tot));
-                                if (oldV != newV) { ScrollPosition = (newV); try { ScrollChanged?.Invoke(); } catch { } }
-
-                                await Task.Delay(TaskInterval);
-
-                                Refresh?.Invoke();
-                            }
-
-                            IsTouchStart = false;
                             try
                             {
-                                ScrollChanged?.Invoke();
-                                ScrollEnded?.Invoke();
-                            }
-                            catch { }
+                                var stime = DateTime.Now;
+                                var time = 0.0;
+                                var tot = (ScrollTotal - ScrollView);
+                                while (IsTouchStart && time < destTime * 1000 && Convert.ToInt32(ScrollPosition / ScrollScaleFactor) != Convert.ToInt32(destPos / ScrollScaleFactor))
+                                {
+                                    time = (DateTime.Now - stime).TotalMilliseconds;
+                                    var oldV = ScrollPosition;
+                                    var newV = (MathTool.Constrain((initPos + (Math.Pow(DecelerationRate, time) - 1) / dCoeff * initVel), 0, tot));
+                                    if (oldV != newV) { ScrollPosition = (newV); try { ScrollChanged?.Invoke(); } catch { } }
 
+                                    await Task.Delay(TaskInterval);
+
+                                    Refresh?.Invoke();
+                                }
+                            }
+                            catch (OperationCanceledException ex) { }
+                            finally
+                            {
+                                IsTouchStart = false;
+                                try
+                                {
+                                    ScrollChanged?.Invoke();
+                                    ScrollEnded?.Invoke();
+                                }
+                                catch { }
+                            }
                         });
                     }
                     else
