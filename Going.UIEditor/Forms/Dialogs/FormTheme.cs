@@ -1,5 +1,6 @@
 ﻿using Going.UI.Forms.Dialogs;
 using Going.UI.Themes;
+using Going.UIEditor.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -30,6 +31,11 @@ namespace Going.UIEditor.Forms.Dialogs
         {
             nouse = false;
             GoTheme? ret = null;
+
+            Title = LM.ThemeEditor;
+            btnOK.Text = LM.Ok;
+            btnCancel.Text = LM.Cancel;
+            btnNoUse.Text = LM.NoUse;
 
             #region Set
             ooDark.OnOff = thm.Dark;

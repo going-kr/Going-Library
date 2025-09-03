@@ -442,6 +442,35 @@ namespace Going.UIEditor.Controls
         }
     }
     #endregion
+    #region class : FontContent
+    public class FontContent(GoDesign design, GoContentGrid sc) : GoContentGridItem(sc)
+    {
+        public string? Name { get; set; }
+        public override bool SelectedDraw => true;
+        public override SKRect GetBounds(SKRect bounds) => bounds;
+
+        private GoDesign design = design;
+
+        public override void Draw(SKCanvas canvas,  SKRect Bounds)
+        {
+            var nmh = 24;
+            var thm = GoThemeW.Current;
+            var rtImage = Util.FromRect(Bounds.Left, Bounds.Top, Bounds.Width, Bounds.Height - nmh);
+            var rtName = Util.FromRect(Bounds.Left, rtImage.Bottom, Bounds.Width, nmh);
+
+            if (design != null)
+            {
+                using (var p = new SKPaint { IsAntialias = true })
+                {
+                    Util.DrawText(canvas, Name, Name ?? "", GoFontStyle.Normal, 24, rtImage, thm.Fore);
+                    Util.DrawText(canvas, Name, sc.Font.Name, GoFontStyle.Normal, 12, rtName, thm.Base5);
+                }
+            }
+
+            base.Draw(canvas, Bounds);
+        }
+    }
+    #endregion
     #region class : ItemClickedEventArgs
     public class ItemClickedEventArgs(GoContentGridItem item) : EventArgs
     {

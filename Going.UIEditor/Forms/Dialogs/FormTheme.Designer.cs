@@ -40,57 +40,57 @@
             goLabel5 = new Going.UI.Forms.Controls.GoLabel();
             goLabel6 = new Going.UI.Forms.Controls.GoLabel();
             goLabel7 = new Going.UI.Forms.Controls.GoLabel();
-            cinFore = new Going.UI.Forms.Controls.GoInputColor();
-            cinBack = new Going.UI.Forms.Controls.GoInputColor();
-            cinWindow = new Going.UI.Forms.Controls.GoInputColor();
-            cinWindowBorder = new Going.UI.Forms.Controls.GoInputColor();
-            cinPoint = new Going.UI.Forms.Controls.GoInputColor();
-            cinTitle = new Going.UI.Forms.Controls.GoInputColor();
-            cinBase5 = new Going.UI.Forms.Controls.GoInputColor();
-            cinBase4 = new Going.UI.Forms.Controls.GoInputColor();
-            cinBase3 = new Going.UI.Forms.Controls.GoInputColor();
-            cinBase2 = new Going.UI.Forms.Controls.GoInputColor();
-            cinBase1 = new Going.UI.Forms.Controls.GoInputColor();
-            cinBase0 = new Going.UI.Forms.Controls.GoInputColor();
+            cinFore = new Going.UIEditor.Controls.GoInputColorString();
+            cinBack = new Going.UIEditor.Controls.GoInputColorString();
+            cinWindow = new Going.UIEditor.Controls.GoInputColorString();
+            cinWindowBorder = new Going.UIEditor.Controls.GoInputColorString();
+            cinPoint = new Going.UIEditor.Controls.GoInputColorString();
+            cinTitle = new Going.UIEditor.Controls.GoInputColorString();
+            cinBase5 = new Going.UIEditor.Controls.GoInputColorString();
+            cinBase4 = new Going.UIEditor.Controls.GoInputColorString();
+            cinBase3 = new Going.UIEditor.Controls.GoInputColorString();
+            cinBase2 = new Going.UIEditor.Controls.GoInputColorString();
+            cinBase1 = new Going.UIEditor.Controls.GoInputColorString();
+            cinBase0 = new Going.UIEditor.Controls.GoInputColorString();
             goLabel8 = new Going.UI.Forms.Controls.GoLabel();
             goLabel9 = new Going.UI.Forms.Controls.GoLabel();
             goLabel10 = new Going.UI.Forms.Controls.GoLabel();
             goLabel11 = new Going.UI.Forms.Controls.GoLabel();
             goLabel12 = new Going.UI.Forms.Controls.GoLabel();
             goLabel13 = new Going.UI.Forms.Controls.GoLabel();
-            cinUser6 = new Going.UI.Forms.Controls.GoInputColor();
-            cinUser5 = new Going.UI.Forms.Controls.GoInputColor();
-            cinUser4 = new Going.UI.Forms.Controls.GoInputColor();
-            cinUser3 = new Going.UI.Forms.Controls.GoInputColor();
-            cinUser2 = new Going.UI.Forms.Controls.GoInputColor();
-            cinUser1 = new Going.UI.Forms.Controls.GoInputColor();
+            cinUser6 = new Going.UIEditor.Controls.GoInputColorString();
+            cinUser5 = new Going.UIEditor.Controls.GoInputColorString();
+            cinUser4 = new Going.UIEditor.Controls.GoInputColorString();
+            cinUser3 = new Going.UIEditor.Controls.GoInputColorString();
+            cinUser2 = new Going.UIEditor.Controls.GoInputColorString();
+            cinUser1 = new Going.UIEditor.Controls.GoInputColorString();
             goLabel14 = new Going.UI.Forms.Controls.GoLabel();
             goLabel15 = new Going.UI.Forms.Controls.GoLabel();
             goLabel16 = new Going.UI.Forms.Controls.GoLabel();
             goLabel17 = new Going.UI.Forms.Controls.GoLabel();
             goLabel18 = new Going.UI.Forms.Controls.GoLabel();
             goLabel19 = new Going.UI.Forms.Controls.GoLabel();
-            cinUser9 = new Going.UI.Forms.Controls.GoInputColor();
-            cinUser8 = new Going.UI.Forms.Controls.GoInputColor();
-            cinUser7 = new Going.UI.Forms.Controls.GoInputColor();
+            cinUser9 = new Going.UIEditor.Controls.GoInputColorString();
+            cinUser8 = new Going.UIEditor.Controls.GoInputColorString();
+            cinUser7 = new Going.UIEditor.Controls.GoInputColorString();
             goLabel20 = new Going.UI.Forms.Controls.GoLabel();
             goLabel21 = new Going.UI.Forms.Controls.GoLabel();
             goLabel22 = new Going.UI.Forms.Controls.GoLabel();
-            cinError = new Going.UI.Forms.Controls.GoInputColor();
-            cinDanger = new Going.UI.Forms.Controls.GoInputColor();
-            cinWarning = new Going.UI.Forms.Controls.GoInputColor();
-            cinGood = new Going.UI.Forms.Controls.GoInputColor();
-            cinScrollCursor = new Going.UI.Forms.Controls.GoInputColor();
-            cinScrollBar = new Going.UI.Forms.Controls.GoInputColor();
+            cinError = new Going.UIEditor.Controls.GoInputColorString();
+            cinDanger = new Going.UIEditor.Controls.GoInputColorString();
+            cinWarning = new Going.UIEditor.Controls.GoInputColorString();
+            cinGood = new Going.UIEditor.Controls.GoInputColorString();
+            cinScrollCursor = new Going.UIEditor.Controls.GoInputColorString();
+            cinScrollBar = new Going.UIEditor.Controls.GoInputColorString();
             goLabel23 = new Going.UI.Forms.Controls.GoLabel();
             goLabel24 = new Going.UI.Forms.Controls.GoLabel();
             goLabel25 = new Going.UI.Forms.Controls.GoLabel();
             goLabel26 = new Going.UI.Forms.Controls.GoLabel();
             goLabel27 = new Going.UI.Forms.Controls.GoLabel();
             goLabel28 = new Going.UI.Forms.Controls.GoLabel();
-            cinHighlight = new Going.UI.Forms.Controls.GoInputColor();
+            cinHighlight = new Going.UIEditor.Controls.GoInputColorString();
             goLabel29 = new Going.UI.Forms.Controls.GoLabel();
-            cinSelect = new Going.UI.Forms.Controls.GoInputColor();
+            cinSelect = new Going.UIEditor.Controls.GoInputColorString();
             goLabel30 = new Going.UI.Forms.Controls.GoLabel();
             goPanel1 = new Going.UI.Forms.Containers.GoPanel();
             goPanel2 = new Going.UI.Forms.Containers.GoPanel();
@@ -441,15 +441,11 @@
             cinFore.BackColor = Color.FromArgb(60, 60, 60);
             cinFore.BackgroundColor = "Base2";
             cinFore.BorderColor = "Base3";
-            cinFore.ButtonSize = null;
             cinFore.Direction = UI.Enums.GoDirectionHV.Horizon;
             cinFore.FillColor = "Base3";
             cinFore.FontName = "나눔고딕";
             cinFore.FontSize = 12F;
             cinFore.FontStyle = UI.Enums.GoFontStyle.Normal;
-            cinFore.IconGap = 5F;
-            cinFore.IconSize = 12F;
-            cinFore.IconString = null;
             cinFore.Location = new Point(97, 100);
             cinFore.Margin = new Padding(5);
             cinFore.Name = "cinFore";
@@ -459,8 +455,6 @@
             cinFore.TabStop = false;
             cinFore.Text = "goInputColor1";
             cinFore.TextColor = "Fore";
-            cinFore.Title = null;
-            cinFore.TitleSize = null;
             cinFore.ValueColor = "Base1";
             // 
             // cinBack
@@ -468,15 +462,11 @@
             cinBack.BackColor = Color.FromArgb(60, 60, 60);
             cinBack.BackgroundColor = "Base2";
             cinBack.BorderColor = "Base3";
-            cinBack.ButtonSize = null;
             cinBack.Direction = UI.Enums.GoDirectionHV.Horizon;
             cinBack.FillColor = "Base3";
             cinBack.FontName = "나눔고딕";
             cinBack.FontSize = 12F;
             cinBack.FontStyle = UI.Enums.GoFontStyle.Normal;
-            cinBack.IconGap = 5F;
-            cinBack.IconSize = 12F;
-            cinBack.IconString = null;
             cinBack.Location = new Point(97, 150);
             cinBack.Margin = new Padding(5);
             cinBack.Name = "cinBack";
@@ -486,8 +476,6 @@
             cinBack.TabStop = false;
             cinBack.Text = "goInputColor2";
             cinBack.TextColor = "Fore";
-            cinBack.Title = null;
-            cinBack.TitleSize = null;
             cinBack.ValueColor = "Base1";
             // 
             // cinWindow
@@ -495,15 +483,11 @@
             cinWindow.BackColor = Color.FromArgb(60, 60, 60);
             cinWindow.BackgroundColor = "Base2";
             cinWindow.BorderColor = "Base3";
-            cinWindow.ButtonSize = null;
             cinWindow.Direction = UI.Enums.GoDirectionHV.Horizon;
             cinWindow.FillColor = "Base3";
             cinWindow.FontName = "나눔고딕";
             cinWindow.FontSize = 12F;
             cinWindow.FontStyle = UI.Enums.GoFontStyle.Normal;
-            cinWindow.IconGap = 5F;
-            cinWindow.IconSize = 12F;
-            cinWindow.IconString = null;
             cinWindow.Location = new Point(97, 200);
             cinWindow.Margin = new Padding(5);
             cinWindow.Name = "cinWindow";
@@ -513,8 +497,6 @@
             cinWindow.TabStop = false;
             cinWindow.Text = "goInputColor3";
             cinWindow.TextColor = "Fore";
-            cinWindow.Title = null;
-            cinWindow.TitleSize = null;
             cinWindow.ValueColor = "Base1";
             // 
             // cinWindowBorder
@@ -522,15 +504,11 @@
             cinWindowBorder.BackColor = Color.FromArgb(60, 60, 60);
             cinWindowBorder.BackgroundColor = "Base2";
             cinWindowBorder.BorderColor = "Base3";
-            cinWindowBorder.ButtonSize = null;
             cinWindowBorder.Direction = UI.Enums.GoDirectionHV.Horizon;
             cinWindowBorder.FillColor = "Base3";
             cinWindowBorder.FontName = "나눔고딕";
             cinWindowBorder.FontSize = 12F;
             cinWindowBorder.FontStyle = UI.Enums.GoFontStyle.Normal;
-            cinWindowBorder.IconGap = 5F;
-            cinWindowBorder.IconSize = 12F;
-            cinWindowBorder.IconString = null;
             cinWindowBorder.Location = new Point(97, 250);
             cinWindowBorder.Margin = new Padding(5);
             cinWindowBorder.Name = "cinWindowBorder";
@@ -540,8 +518,6 @@
             cinWindowBorder.TabStop = false;
             cinWindowBorder.Text = "goInputColor4";
             cinWindowBorder.TextColor = "Fore";
-            cinWindowBorder.Title = null;
-            cinWindowBorder.TitleSize = null;
             cinWindowBorder.ValueColor = "Base1";
             // 
             // cinPoint
@@ -549,15 +525,11 @@
             cinPoint.BackColor = Color.FromArgb(60, 60, 60);
             cinPoint.BackgroundColor = "Base2";
             cinPoint.BorderColor = "Base3";
-            cinPoint.ButtonSize = null;
             cinPoint.Direction = UI.Enums.GoDirectionHV.Horizon;
             cinPoint.FillColor = "Base3";
             cinPoint.FontName = "나눔고딕";
             cinPoint.FontSize = 12F;
             cinPoint.FontStyle = UI.Enums.GoFontStyle.Normal;
-            cinPoint.IconGap = 5F;
-            cinPoint.IconSize = 12F;
-            cinPoint.IconString = null;
             cinPoint.Location = new Point(97, 300);
             cinPoint.Margin = new Padding(5);
             cinPoint.Name = "cinPoint";
@@ -567,8 +539,6 @@
             cinPoint.TabStop = false;
             cinPoint.Text = "goInputColor5";
             cinPoint.TextColor = "Fore";
-            cinPoint.Title = null;
-            cinPoint.TitleSize = null;
             cinPoint.ValueColor = "Base1";
             // 
             // cinTitle
@@ -576,15 +546,11 @@
             cinTitle.BackColor = Color.FromArgb(60, 60, 60);
             cinTitle.BackgroundColor = "Base2";
             cinTitle.BorderColor = "Base3";
-            cinTitle.ButtonSize = null;
             cinTitle.Direction = UI.Enums.GoDirectionHV.Horizon;
             cinTitle.FillColor = "Base3";
             cinTitle.FontName = "나눔고딕";
             cinTitle.FontSize = 12F;
             cinTitle.FontStyle = UI.Enums.GoFontStyle.Normal;
-            cinTitle.IconGap = 5F;
-            cinTitle.IconSize = 12F;
-            cinTitle.IconString = null;
             cinTitle.Location = new Point(97, 350);
             cinTitle.Margin = new Padding(5);
             cinTitle.Name = "cinTitle";
@@ -594,8 +560,6 @@
             cinTitle.TabStop = false;
             cinTitle.Text = "goInputColor6";
             cinTitle.TextColor = "Fore";
-            cinTitle.Title = null;
-            cinTitle.TitleSize = null;
             cinTitle.ValueColor = "Base1";
             // 
             // cinBase5
@@ -603,15 +567,11 @@
             cinBase5.BackColor = Color.FromArgb(60, 60, 60);
             cinBase5.BackgroundColor = "Base2";
             cinBase5.BorderColor = "Base3";
-            cinBase5.ButtonSize = null;
             cinBase5.Direction = UI.Enums.GoDirectionHV.Horizon;
             cinBase5.FillColor = "Base3";
             cinBase5.FontName = "나눔고딕";
             cinBase5.FontSize = 12F;
             cinBase5.FontStyle = UI.Enums.GoFontStyle.Normal;
-            cinBase5.IconGap = 5F;
-            cinBase5.IconSize = 12F;
-            cinBase5.IconString = null;
             cinBase5.Location = new Point(611, 350);
             cinBase5.Margin = new Padding(5);
             cinBase5.Name = "cinBase5";
@@ -621,8 +581,6 @@
             cinBase5.TabStop = false;
             cinBase5.Text = "goInputColor7";
             cinBase5.TextColor = "Fore";
-            cinBase5.Title = null;
-            cinBase5.TitleSize = null;
             cinBase5.ValueColor = "Base1";
             // 
             // cinBase4
@@ -630,15 +588,11 @@
             cinBase4.BackColor = Color.FromArgb(60, 60, 60);
             cinBase4.BackgroundColor = "Base2";
             cinBase4.BorderColor = "Base3";
-            cinBase4.ButtonSize = null;
             cinBase4.Direction = UI.Enums.GoDirectionHV.Horizon;
             cinBase4.FillColor = "Base3";
             cinBase4.FontName = "나눔고딕";
             cinBase4.FontSize = 12F;
             cinBase4.FontStyle = UI.Enums.GoFontStyle.Normal;
-            cinBase4.IconGap = 5F;
-            cinBase4.IconSize = 12F;
-            cinBase4.IconString = null;
             cinBase4.Location = new Point(611, 300);
             cinBase4.Margin = new Padding(5);
             cinBase4.Name = "cinBase4";
@@ -648,8 +602,6 @@
             cinBase4.TabStop = false;
             cinBase4.Text = "goInputColor8";
             cinBase4.TextColor = "Fore";
-            cinBase4.Title = null;
-            cinBase4.TitleSize = null;
             cinBase4.ValueColor = "Base1";
             // 
             // cinBase3
@@ -657,15 +609,11 @@
             cinBase3.BackColor = Color.FromArgb(60, 60, 60);
             cinBase3.BackgroundColor = "Base2";
             cinBase3.BorderColor = "Base3";
-            cinBase3.ButtonSize = null;
             cinBase3.Direction = UI.Enums.GoDirectionHV.Horizon;
             cinBase3.FillColor = "Base3";
             cinBase3.FontName = "나눔고딕";
             cinBase3.FontSize = 12F;
             cinBase3.FontStyle = UI.Enums.GoFontStyle.Normal;
-            cinBase3.IconGap = 5F;
-            cinBase3.IconSize = 12F;
-            cinBase3.IconString = null;
             cinBase3.Location = new Point(611, 250);
             cinBase3.Margin = new Padding(5);
             cinBase3.Name = "cinBase3";
@@ -675,8 +623,6 @@
             cinBase3.TabStop = false;
             cinBase3.Text = "goInputColor9";
             cinBase3.TextColor = "Fore";
-            cinBase3.Title = null;
-            cinBase3.TitleSize = null;
             cinBase3.ValueColor = "Base1";
             // 
             // cinBase2
@@ -684,15 +630,11 @@
             cinBase2.BackColor = Color.FromArgb(60, 60, 60);
             cinBase2.BackgroundColor = "Base2";
             cinBase2.BorderColor = "Base3";
-            cinBase2.ButtonSize = null;
             cinBase2.Direction = UI.Enums.GoDirectionHV.Horizon;
             cinBase2.FillColor = "Base3";
             cinBase2.FontName = "나눔고딕";
             cinBase2.FontSize = 12F;
             cinBase2.FontStyle = UI.Enums.GoFontStyle.Normal;
-            cinBase2.IconGap = 5F;
-            cinBase2.IconSize = 12F;
-            cinBase2.IconString = null;
             cinBase2.Location = new Point(611, 200);
             cinBase2.Margin = new Padding(5);
             cinBase2.Name = "cinBase2";
@@ -702,8 +644,6 @@
             cinBase2.TabStop = false;
             cinBase2.Text = "goInputColor10";
             cinBase2.TextColor = "Fore";
-            cinBase2.Title = null;
-            cinBase2.TitleSize = null;
             cinBase2.ValueColor = "Base1";
             // 
             // cinBase1
@@ -711,15 +651,11 @@
             cinBase1.BackColor = Color.FromArgb(60, 60, 60);
             cinBase1.BackgroundColor = "Base2";
             cinBase1.BorderColor = "Base3";
-            cinBase1.ButtonSize = null;
             cinBase1.Direction = UI.Enums.GoDirectionHV.Horizon;
             cinBase1.FillColor = "Base3";
             cinBase1.FontName = "나눔고딕";
             cinBase1.FontSize = 12F;
             cinBase1.FontStyle = UI.Enums.GoFontStyle.Normal;
-            cinBase1.IconGap = 5F;
-            cinBase1.IconSize = 12F;
-            cinBase1.IconString = null;
             cinBase1.Location = new Point(611, 150);
             cinBase1.Margin = new Padding(5);
             cinBase1.Name = "cinBase1";
@@ -729,8 +665,6 @@
             cinBase1.TabStop = false;
             cinBase1.Text = "goInputColor11";
             cinBase1.TextColor = "Fore";
-            cinBase1.Title = null;
-            cinBase1.TitleSize = null;
             cinBase1.ValueColor = "Base1";
             // 
             // cinBase0
@@ -738,15 +672,11 @@
             cinBase0.BackColor = Color.FromArgb(60, 60, 60);
             cinBase0.BackgroundColor = "Base2";
             cinBase0.BorderColor = "Base3";
-            cinBase0.ButtonSize = null;
             cinBase0.Direction = UI.Enums.GoDirectionHV.Horizon;
             cinBase0.FillColor = "Base3";
             cinBase0.FontName = "나눔고딕";
             cinBase0.FontSize = 12F;
             cinBase0.FontStyle = UI.Enums.GoFontStyle.Normal;
-            cinBase0.IconGap = 5F;
-            cinBase0.IconSize = 12F;
-            cinBase0.IconString = null;
             cinBase0.Location = new Point(611, 100);
             cinBase0.Margin = new Padding(5);
             cinBase0.Name = "cinBase0";
@@ -756,8 +686,6 @@
             cinBase0.TabStop = false;
             cinBase0.Text = "goInputColor12";
             cinBase0.TextColor = "Fore";
-            cinBase0.Title = null;
-            cinBase0.TitleSize = null;
             cinBase0.ValueColor = "Base1";
             // 
             // goLabel8
@@ -939,15 +867,11 @@
             cinUser6.BackColor = Color.FromArgb(60, 60, 60);
             cinUser6.BackgroundColor = "Base2";
             cinUser6.BorderColor = "Base3";
-            cinUser6.ButtonSize = null;
             cinUser6.Direction = UI.Enums.GoDirectionHV.Horizon;
             cinUser6.FillColor = "Base3";
             cinUser6.FontName = "나눔고딕";
             cinUser6.FontSize = 12F;
             cinUser6.FontStyle = UI.Enums.GoFontStyle.Normal;
-            cinUser6.IconGap = 5F;
-            cinUser6.IconSize = 12F;
-            cinUser6.IconString = null;
             cinUser6.Location = new Point(868, 350);
             cinUser6.Margin = new Padding(5);
             cinUser6.Name = "cinUser6";
@@ -957,8 +881,6 @@
             cinUser6.TabStop = false;
             cinUser6.Text = "goInputColor13";
             cinUser6.TextColor = "Fore";
-            cinUser6.Title = null;
-            cinUser6.TitleSize = null;
             cinUser6.ValueColor = "Base1";
             // 
             // cinUser5
@@ -966,15 +888,11 @@
             cinUser5.BackColor = Color.FromArgb(60, 60, 60);
             cinUser5.BackgroundColor = "Base2";
             cinUser5.BorderColor = "Base3";
-            cinUser5.ButtonSize = null;
             cinUser5.Direction = UI.Enums.GoDirectionHV.Horizon;
             cinUser5.FillColor = "Base3";
             cinUser5.FontName = "나눔고딕";
             cinUser5.FontSize = 12F;
             cinUser5.FontStyle = UI.Enums.GoFontStyle.Normal;
-            cinUser5.IconGap = 5F;
-            cinUser5.IconSize = 12F;
-            cinUser5.IconString = null;
             cinUser5.Location = new Point(868, 300);
             cinUser5.Margin = new Padding(5);
             cinUser5.Name = "cinUser5";
@@ -984,8 +902,6 @@
             cinUser5.TabStop = false;
             cinUser5.Text = "goInputColor14";
             cinUser5.TextColor = "Fore";
-            cinUser5.Title = null;
-            cinUser5.TitleSize = null;
             cinUser5.ValueColor = "Base1";
             // 
             // cinUser4
@@ -993,15 +909,11 @@
             cinUser4.BackColor = Color.FromArgb(60, 60, 60);
             cinUser4.BackgroundColor = "Base2";
             cinUser4.BorderColor = "Base3";
-            cinUser4.ButtonSize = null;
             cinUser4.Direction = UI.Enums.GoDirectionHV.Horizon;
             cinUser4.FillColor = "Base3";
             cinUser4.FontName = "나눔고딕";
             cinUser4.FontSize = 12F;
             cinUser4.FontStyle = UI.Enums.GoFontStyle.Normal;
-            cinUser4.IconGap = 5F;
-            cinUser4.IconSize = 12F;
-            cinUser4.IconString = null;
             cinUser4.Location = new Point(868, 250);
             cinUser4.Margin = new Padding(5);
             cinUser4.Name = "cinUser4";
@@ -1011,8 +923,6 @@
             cinUser4.TabStop = false;
             cinUser4.Text = "goInputColor15";
             cinUser4.TextColor = "Fore";
-            cinUser4.Title = null;
-            cinUser4.TitleSize = null;
             cinUser4.ValueColor = "Base1";
             // 
             // cinUser3
@@ -1020,15 +930,11 @@
             cinUser3.BackColor = Color.FromArgb(60, 60, 60);
             cinUser3.BackgroundColor = "Base2";
             cinUser3.BorderColor = "Base3";
-            cinUser3.ButtonSize = null;
             cinUser3.Direction = UI.Enums.GoDirectionHV.Horizon;
             cinUser3.FillColor = "Base3";
             cinUser3.FontName = "나눔고딕";
             cinUser3.FontSize = 12F;
             cinUser3.FontStyle = UI.Enums.GoFontStyle.Normal;
-            cinUser3.IconGap = 5F;
-            cinUser3.IconSize = 12F;
-            cinUser3.IconString = null;
             cinUser3.Location = new Point(868, 200);
             cinUser3.Margin = new Padding(5);
             cinUser3.Name = "cinUser3";
@@ -1038,8 +944,6 @@
             cinUser3.TabStop = false;
             cinUser3.Text = "goInputColor16";
             cinUser3.TextColor = "Fore";
-            cinUser3.Title = null;
-            cinUser3.TitleSize = null;
             cinUser3.ValueColor = "Base1";
             // 
             // cinUser2
@@ -1047,15 +951,11 @@
             cinUser2.BackColor = Color.FromArgb(60, 60, 60);
             cinUser2.BackgroundColor = "Base2";
             cinUser2.BorderColor = "Base3";
-            cinUser2.ButtonSize = null;
             cinUser2.Direction = UI.Enums.GoDirectionHV.Horizon;
             cinUser2.FillColor = "Base3";
             cinUser2.FontName = "나눔고딕";
             cinUser2.FontSize = 12F;
             cinUser2.FontStyle = UI.Enums.GoFontStyle.Normal;
-            cinUser2.IconGap = 5F;
-            cinUser2.IconSize = 12F;
-            cinUser2.IconString = null;
             cinUser2.Location = new Point(868, 150);
             cinUser2.Margin = new Padding(5);
             cinUser2.Name = "cinUser2";
@@ -1065,8 +965,6 @@
             cinUser2.TabStop = false;
             cinUser2.Text = "goInputColor17";
             cinUser2.TextColor = "Fore";
-            cinUser2.Title = null;
-            cinUser2.TitleSize = null;
             cinUser2.ValueColor = "Base1";
             // 
             // cinUser1
@@ -1074,15 +972,11 @@
             cinUser1.BackColor = Color.FromArgb(60, 60, 60);
             cinUser1.BackgroundColor = "Base2";
             cinUser1.BorderColor = "Base3";
-            cinUser1.ButtonSize = null;
             cinUser1.Direction = UI.Enums.GoDirectionHV.Horizon;
             cinUser1.FillColor = "Base3";
             cinUser1.FontName = "나눔고딕";
             cinUser1.FontSize = 12F;
             cinUser1.FontStyle = UI.Enums.GoFontStyle.Normal;
-            cinUser1.IconGap = 5F;
-            cinUser1.IconSize = 12F;
-            cinUser1.IconString = null;
             cinUser1.Location = new Point(868, 100);
             cinUser1.Margin = new Padding(5);
             cinUser1.Name = "cinUser1";
@@ -1092,8 +986,6 @@
             cinUser1.TabStop = false;
             cinUser1.Text = "goInputColor18";
             cinUser1.TextColor = "Fore";
-            cinUser1.Title = null;
-            cinUser1.TitleSize = null;
             cinUser1.ValueColor = "Base1";
             // 
             // goLabel14
@@ -1275,15 +1167,11 @@
             cinUser9.BackColor = Color.FromArgb(60, 60, 60);
             cinUser9.BackgroundColor = "Base2";
             cinUser9.BorderColor = "Base3";
-            cinUser9.ButtonSize = null;
             cinUser9.Direction = UI.Enums.GoDirectionHV.Horizon;
             cinUser9.FillColor = "Base3";
             cinUser9.FontName = "나눔고딕";
             cinUser9.FontSize = 12F;
             cinUser9.FontStyle = UI.Enums.GoFontStyle.Normal;
-            cinUser9.IconGap = 5F;
-            cinUser9.IconSize = 12F;
-            cinUser9.IconString = null;
             cinUser9.Location = new Point(868, 500);
             cinUser9.Margin = new Padding(5);
             cinUser9.Name = "cinUser9";
@@ -1293,8 +1181,6 @@
             cinUser9.TabStop = false;
             cinUser9.Text = "goInputColor19";
             cinUser9.TextColor = "Fore";
-            cinUser9.Title = null;
-            cinUser9.TitleSize = null;
             cinUser9.ValueColor = "Base1";
             // 
             // cinUser8
@@ -1302,15 +1188,11 @@
             cinUser8.BackColor = Color.FromArgb(60, 60, 60);
             cinUser8.BackgroundColor = "Base2";
             cinUser8.BorderColor = "Base3";
-            cinUser8.ButtonSize = null;
             cinUser8.Direction = UI.Enums.GoDirectionHV.Horizon;
             cinUser8.FillColor = "Base3";
             cinUser8.FontName = "나눔고딕";
             cinUser8.FontSize = 12F;
             cinUser8.FontStyle = UI.Enums.GoFontStyle.Normal;
-            cinUser8.IconGap = 5F;
-            cinUser8.IconSize = 12F;
-            cinUser8.IconString = null;
             cinUser8.Location = new Point(868, 450);
             cinUser8.Margin = new Padding(5);
             cinUser8.Name = "cinUser8";
@@ -1320,8 +1202,6 @@
             cinUser8.TabStop = false;
             cinUser8.Text = "goInputColor20";
             cinUser8.TextColor = "Fore";
-            cinUser8.Title = null;
-            cinUser8.TitleSize = null;
             cinUser8.ValueColor = "Base1";
             // 
             // cinUser7
@@ -1329,15 +1209,11 @@
             cinUser7.BackColor = Color.FromArgb(60, 60, 60);
             cinUser7.BackgroundColor = "Base2";
             cinUser7.BorderColor = "Base3";
-            cinUser7.ButtonSize = null;
             cinUser7.Direction = UI.Enums.GoDirectionHV.Horizon;
             cinUser7.FillColor = "Base3";
             cinUser7.FontName = "나눔고딕";
             cinUser7.FontSize = 12F;
             cinUser7.FontStyle = UI.Enums.GoFontStyle.Normal;
-            cinUser7.IconGap = 5F;
-            cinUser7.IconSize = 12F;
-            cinUser7.IconString = null;
             cinUser7.Location = new Point(868, 400);
             cinUser7.Margin = new Padding(5);
             cinUser7.Name = "cinUser7";
@@ -1347,8 +1223,6 @@
             cinUser7.TabStop = false;
             cinUser7.Text = "goInputColor21";
             cinUser7.TextColor = "Fore";
-            cinUser7.Title = null;
-            cinUser7.TitleSize = null;
             cinUser7.ValueColor = "Base1";
             // 
             // goLabel20
@@ -1443,15 +1317,11 @@
             cinError.BackColor = Color.FromArgb(60, 60, 60);
             cinError.BackgroundColor = "Base2";
             cinError.BorderColor = "Base3";
-            cinError.ButtonSize = null;
             cinError.Direction = UI.Enums.GoDirectionHV.Horizon;
             cinError.FillColor = "Base3";
             cinError.FontName = "나눔고딕";
             cinError.FontSize = 12F;
             cinError.FontStyle = UI.Enums.GoFontStyle.Normal;
-            cinError.IconGap = 5F;
-            cinError.IconSize = 12F;
-            cinError.IconString = null;
             cinError.Location = new Point(354, 350);
             cinError.Margin = new Padding(5);
             cinError.Name = "cinError";
@@ -1461,8 +1331,6 @@
             cinError.TabStop = false;
             cinError.Text = "goInputColor22";
             cinError.TextColor = "Fore";
-            cinError.Title = null;
-            cinError.TitleSize = null;
             cinError.ValueColor = "Base1";
             // 
             // cinDanger
@@ -1470,15 +1338,11 @@
             cinDanger.BackColor = Color.FromArgb(60, 60, 60);
             cinDanger.BackgroundColor = "Base2";
             cinDanger.BorderColor = "Base3";
-            cinDanger.ButtonSize = null;
             cinDanger.Direction = UI.Enums.GoDirectionHV.Horizon;
             cinDanger.FillColor = "Base3";
             cinDanger.FontName = "나눔고딕";
             cinDanger.FontSize = 12F;
             cinDanger.FontStyle = UI.Enums.GoFontStyle.Normal;
-            cinDanger.IconGap = 5F;
-            cinDanger.IconSize = 12F;
-            cinDanger.IconString = null;
             cinDanger.Location = new Point(354, 300);
             cinDanger.Margin = new Padding(5);
             cinDanger.Name = "cinDanger";
@@ -1488,8 +1352,6 @@
             cinDanger.TabStop = false;
             cinDanger.Text = "goInputColor23";
             cinDanger.TextColor = "Fore";
-            cinDanger.Title = null;
-            cinDanger.TitleSize = null;
             cinDanger.ValueColor = "Base1";
             // 
             // cinWarning
@@ -1497,15 +1359,11 @@
             cinWarning.BackColor = Color.FromArgb(60, 60, 60);
             cinWarning.BackgroundColor = "Base2";
             cinWarning.BorderColor = "Base3";
-            cinWarning.ButtonSize = null;
             cinWarning.Direction = UI.Enums.GoDirectionHV.Horizon;
             cinWarning.FillColor = "Base3";
             cinWarning.FontName = "나눔고딕";
             cinWarning.FontSize = 12F;
             cinWarning.FontStyle = UI.Enums.GoFontStyle.Normal;
-            cinWarning.IconGap = 5F;
-            cinWarning.IconSize = 12F;
-            cinWarning.IconString = null;
             cinWarning.Location = new Point(354, 250);
             cinWarning.Margin = new Padding(5);
             cinWarning.Name = "cinWarning";
@@ -1515,8 +1373,6 @@
             cinWarning.TabStop = false;
             cinWarning.Text = "goInputColor24";
             cinWarning.TextColor = "Fore";
-            cinWarning.Title = null;
-            cinWarning.TitleSize = null;
             cinWarning.ValueColor = "Base1";
             // 
             // cinGood
@@ -1524,15 +1380,11 @@
             cinGood.BackColor = Color.FromArgb(60, 60, 60);
             cinGood.BackgroundColor = "Base2";
             cinGood.BorderColor = "Base3";
-            cinGood.ButtonSize = null;
             cinGood.Direction = UI.Enums.GoDirectionHV.Horizon;
             cinGood.FillColor = "Base3";
             cinGood.FontName = "나눔고딕";
             cinGood.FontSize = 12F;
             cinGood.FontStyle = UI.Enums.GoFontStyle.Normal;
-            cinGood.IconGap = 5F;
-            cinGood.IconSize = 12F;
-            cinGood.IconString = null;
             cinGood.Location = new Point(354, 200);
             cinGood.Margin = new Padding(5);
             cinGood.Name = "cinGood";
@@ -1542,8 +1394,6 @@
             cinGood.TabStop = false;
             cinGood.Text = "goInputColor25";
             cinGood.TextColor = "Fore";
-            cinGood.Title = null;
-            cinGood.TitleSize = null;
             cinGood.ValueColor = "Base1";
             // 
             // cinScrollCursor
@@ -1551,15 +1401,11 @@
             cinScrollCursor.BackColor = Color.FromArgb(60, 60, 60);
             cinScrollCursor.BackgroundColor = "Base2";
             cinScrollCursor.BorderColor = "Base3";
-            cinScrollCursor.ButtonSize = null;
             cinScrollCursor.Direction = UI.Enums.GoDirectionHV.Horizon;
             cinScrollCursor.FillColor = "Base3";
             cinScrollCursor.FontName = "나눔고딕";
             cinScrollCursor.FontSize = 12F;
             cinScrollCursor.FontStyle = UI.Enums.GoFontStyle.Normal;
-            cinScrollCursor.IconGap = 5F;
-            cinScrollCursor.IconSize = 12F;
-            cinScrollCursor.IconString = null;
             cinScrollCursor.Location = new Point(354, 150);
             cinScrollCursor.Margin = new Padding(5);
             cinScrollCursor.Name = "cinScrollCursor";
@@ -1569,8 +1415,6 @@
             cinScrollCursor.TabStop = false;
             cinScrollCursor.Text = "goInputColor26";
             cinScrollCursor.TextColor = "Fore";
-            cinScrollCursor.Title = null;
-            cinScrollCursor.TitleSize = null;
             cinScrollCursor.ValueColor = "Base1";
             // 
             // cinScrollBar
@@ -1578,15 +1422,11 @@
             cinScrollBar.BackColor = Color.FromArgb(60, 60, 60);
             cinScrollBar.BackgroundColor = "Base2";
             cinScrollBar.BorderColor = "Base3";
-            cinScrollBar.ButtonSize = null;
             cinScrollBar.Direction = UI.Enums.GoDirectionHV.Horizon;
             cinScrollBar.FillColor = "Base3";
             cinScrollBar.FontName = "나눔고딕";
             cinScrollBar.FontSize = 12F;
             cinScrollBar.FontStyle = UI.Enums.GoFontStyle.Normal;
-            cinScrollBar.IconGap = 5F;
-            cinScrollBar.IconSize = 12F;
-            cinScrollBar.IconString = null;
             cinScrollBar.Location = new Point(354, 100);
             cinScrollBar.Margin = new Padding(5);
             cinScrollBar.Name = "cinScrollBar";
@@ -1596,8 +1436,6 @@
             cinScrollBar.TabStop = false;
             cinScrollBar.Text = "goInputColor27";
             cinScrollBar.TextColor = "Fore";
-            cinScrollBar.Title = null;
-            cinScrollBar.TitleSize = null;
             cinScrollBar.ValueColor = "Base1";
             // 
             // goLabel23
@@ -1779,15 +1617,11 @@
             cinHighlight.BackColor = Color.FromArgb(60, 60, 60);
             cinHighlight.BackgroundColor = "Base2";
             cinHighlight.BorderColor = "Base3";
-            cinHighlight.ButtonSize = null;
             cinHighlight.Direction = UI.Enums.GoDirectionHV.Horizon;
             cinHighlight.FillColor = "Base3";
             cinHighlight.FontName = "나눔고딕";
             cinHighlight.FontSize = 12F;
             cinHighlight.FontStyle = UI.Enums.GoFontStyle.Normal;
-            cinHighlight.IconGap = 5F;
-            cinHighlight.IconSize = 12F;
-            cinHighlight.IconString = null;
             cinHighlight.Location = new Point(354, 400);
             cinHighlight.Margin = new Padding(5);
             cinHighlight.Name = "cinHighlight";
@@ -1797,8 +1631,6 @@
             cinHighlight.TabStop = false;
             cinHighlight.Text = "goInputColor28";
             cinHighlight.TextColor = "Fore";
-            cinHighlight.Title = null;
-            cinHighlight.TitleSize = null;
             cinHighlight.ValueColor = "Base1";
             // 
             // goLabel29
@@ -1835,15 +1667,11 @@
             cinSelect.BackColor = Color.FromArgb(60, 60, 60);
             cinSelect.BackgroundColor = "Base2";
             cinSelect.BorderColor = "Base3";
-            cinSelect.ButtonSize = null;
             cinSelect.Direction = UI.Enums.GoDirectionHV.Horizon;
             cinSelect.FillColor = "Base3";
             cinSelect.FontName = "나눔고딕";
             cinSelect.FontSize = 12F;
             cinSelect.FontStyle = UI.Enums.GoFontStyle.Normal;
-            cinSelect.IconGap = 5F;
-            cinSelect.IconSize = 12F;
-            cinSelect.IconString = null;
             cinSelect.Location = new Point(354, 450);
             cinSelect.Margin = new Padding(5);
             cinSelect.Name = "cinSelect";
@@ -1853,8 +1681,6 @@
             cinSelect.TabStop = false;
             cinSelect.Text = "goInputColor29";
             cinSelect.TextColor = "Fore";
-            cinSelect.Title = null;
-            cinSelect.TitleSize = null;
             cinSelect.ValueColor = "Base1";
             // 
             // goLabel30
@@ -2412,57 +2238,57 @@
         private UI.Forms.Controls.GoLabel goLabel5;
         private UI.Forms.Controls.GoLabel goLabel6;
         private UI.Forms.Controls.GoLabel goLabel7;
-        private UI.Forms.Controls.GoInputColor cinFore;
-        private UI.Forms.Controls.GoInputColor cinBack;
-        private UI.Forms.Controls.GoInputColor cinWindow;
-        private UI.Forms.Controls.GoInputColor cinWindowBorder;
-        private UI.Forms.Controls.GoInputColor cinPoint;
-        private UI.Forms.Controls.GoInputColor cinTitle;
-        private UI.Forms.Controls.GoInputColor cinBase5;
-        private UI.Forms.Controls.GoInputColor cinBase4;
-        private UI.Forms.Controls.GoInputColor cinBase3;
-        private UI.Forms.Controls.GoInputColor cinBase2;
-        private UI.Forms.Controls.GoInputColor cinBase1;
-        private UI.Forms.Controls.GoInputColor cinBase0;
+        private Controls.GoInputColorString cinFore;
+        private Controls.GoInputColorString cinBack;
+        private Controls.GoInputColorString cinWindow;
+        private Controls.GoInputColorString cinWindowBorder;
+        private Controls.GoInputColorString cinPoint;
+        private Controls.GoInputColorString cinTitle;
+        private Controls.GoInputColorString cinBase5;
+        private Controls.GoInputColorString cinBase4;
+        private Controls.GoInputColorString cinBase3;
+        private Controls.GoInputColorString cinBase2;
+        private Controls.GoInputColorString cinBase1;
+        private Controls.GoInputColorString cinBase0;
         private UI.Forms.Controls.GoLabel goLabel8;
         private UI.Forms.Controls.GoLabel goLabel9;
         private UI.Forms.Controls.GoLabel goLabel10;
         private UI.Forms.Controls.GoLabel goLabel11;
         private UI.Forms.Controls.GoLabel goLabel12;
         private UI.Forms.Controls.GoLabel goLabel13;
-        private UI.Forms.Controls.GoInputColor cinUser6;
-        private UI.Forms.Controls.GoInputColor cinUser5;
-        private UI.Forms.Controls.GoInputColor cinUser4;
-        private UI.Forms.Controls.GoInputColor cinUser3;
-        private UI.Forms.Controls.GoInputColor cinUser2;
-        private UI.Forms.Controls.GoInputColor cinUser1;
+        private Controls.GoInputColorString cinUser6;
+        private Controls.GoInputColorString cinUser5;
+        private Controls.GoInputColorString cinUser4;
+        private Controls.GoInputColorString cinUser3;
+        private Controls.GoInputColorString cinUser2;
+        private Controls.GoInputColorString cinUser1;
         private UI.Forms.Controls.GoLabel goLabel14;
         private UI.Forms.Controls.GoLabel goLabel15;
         private UI.Forms.Controls.GoLabel goLabel16;
         private UI.Forms.Controls.GoLabel goLabel17;
         private UI.Forms.Controls.GoLabel goLabel18;
         private UI.Forms.Controls.GoLabel goLabel19;
-        private UI.Forms.Controls.GoInputColor cinUser9;
-        private UI.Forms.Controls.GoInputColor cinUser8;
-        private UI.Forms.Controls.GoInputColor cinUser7;
+        private Controls.GoInputColorString cinUser9;
+        private Controls.GoInputColorString cinUser8;
+        private Controls.GoInputColorString cinUser7;
         private UI.Forms.Controls.GoLabel goLabel20;
         private UI.Forms.Controls.GoLabel goLabel21;
         private UI.Forms.Controls.GoLabel goLabel22;
-        private UI.Forms.Controls.GoInputColor cinError;
-        private UI.Forms.Controls.GoInputColor cinDanger;
-        private UI.Forms.Controls.GoInputColor cinWarning;
-        private UI.Forms.Controls.GoInputColor cinGood;
-        private UI.Forms.Controls.GoInputColor cinScrollCursor;
-        private UI.Forms.Controls.GoInputColor cinScrollBar;
+        private Controls.GoInputColorString cinError;
+        private Controls.GoInputColorString cinDanger;
+        private Controls.GoInputColorString cinWarning;
+        private Controls.GoInputColorString cinGood;
+        private Controls.GoInputColorString cinScrollCursor;
+        private Controls.GoInputColorString cinScrollBar;
         private UI.Forms.Controls.GoLabel goLabel23;
         private UI.Forms.Controls.GoLabel goLabel24;
         private UI.Forms.Controls.GoLabel goLabel25;
         private UI.Forms.Controls.GoLabel goLabel26;
         private UI.Forms.Controls.GoLabel goLabel27;
         private UI.Forms.Controls.GoLabel goLabel28;
-        private UI.Forms.Controls.GoInputColor cinHighlight;
+        private Controls.GoInputColorString cinHighlight;
         private UI.Forms.Controls.GoLabel goLabel29;
-        private UI.Forms.Controls.GoInputColor cinSelect;
+        private Controls.GoInputColorString cinSelect;
         private UI.Forms.Controls.GoLabel goLabel30;
         private UI.Forms.Containers.GoPanel goPanel1;
         private UI.Forms.Containers.GoPanel goPanel2;

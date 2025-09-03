@@ -635,6 +635,22 @@ namespace Going.UIEditor.Controls
             }
         }
         #endregion
+
+        #region GetObjValue
+        protected object? GetObjValue(object o, PropertyInfo info)
+        {
+            object? ret = null;
+            var tp = o.GetType();
+            if (tp == info.DeclaringType) ret = info.GetValue(o);
+            else
+            {
+                var info2 = tp.GetProperty(info.Name);
+                if (info2 != null && info.PropertyType == info2.PropertyType) ret = info2.GetValue(o);
+            }
+
+            return ret;
+        }
+        #endregion
         #endregion
 
         #region Static
@@ -654,12 +670,13 @@ namespace Going.UIEditor.Controls
             }
             else return false;
         }
-        public static bool IsUseButton(PropertyInfo? Info) => IsCollection(Info) || IsEnum(Info) || IsSizes(Info) || IsEnum(Info) || IsImage(Info) || IsMultiLine(Info);
+        public static bool IsUseButton(PropertyInfo? Info) => IsCollection(Info) || IsEnum(Info) || IsSizes(Info) || IsEnum(Info) || IsImage(Info) || IsFontName(Info) || IsMultiLine(Info);
         public static bool IsCollection(PropertyInfo? Info) => Info != null && typeof(IEnumerable).IsAssignableFrom(Info.PropertyType) && Info.PropertyType != typeof(string) && !Attribute.IsDefined(Info, typeof(GoSizesPropertyAttribute));
         public static bool IsSizes(PropertyInfo? Info) => Info != null && typeof(IEnumerable).IsAssignableFrom(Info.PropertyType) && Info.PropertyType != typeof(string) && Attribute.IsDefined(Info, typeof(GoSizesPropertyAttribute));
         public static bool IsEnum(PropertyInfo? Info) => Info != null && Info.PropertyType.IsEnum;
         public static bool IsBool(PropertyInfo? Info) => Info != null && Info.PropertyType == typeof(bool);
         public static bool IsImage(PropertyInfo? Info) => Info != null && Attribute.IsDefined(Info, typeof(GoImagePropertyAttribute));
+        public static bool IsFontName(PropertyInfo? Info) => Info != null && Attribute.IsDefined(Info, typeof(GoFontNamePropertyAttribute));
         public static bool IsMultiLine(PropertyInfo? Info) => Info != null && Attribute.IsDefined(Info, typeof(GoMultiLinePropertyAttribute));
 
         #region ValueToString
@@ -835,7 +852,7 @@ namespace Going.UIEditor.Controls
         {
             if (Info != null && Grid.SelectedObjects != null)
             {
-                var vs = Grid.SelectedObjects.Select(x => Info?.GetValue(x));
+                var vs = Grid.SelectedObjects.Select(x => GetObjValue(x, Info));
                 var lk = vs.ToLookup(x => x);
                 var val = lk.Count == 1 ? (lk.FirstOrDefault()?.Key ?? null) : null;
 
@@ -884,24 +901,19 @@ namespace Going.UIEditor.Controls
             if (Info != null && Grid.SelectedObjects != null)
             {
                 var tp = Info.PropertyType;
+
+
                 var values = Enum.GetValues(tp).Cast<object>().Select(x => new GoListItem { Text = x.ToString(), Tag = x }).ToList();
 
-                IEnumerable<object?>? vs = null;
-                    vs = Grid.SelectedObjects.Select(x =>
-                    {
-                        try
-                        {
-                            return Info?.GetValue(x);
-                        }
-                        catch { return null; }
-                    });
+                var vs = Grid.SelectedObjects.Select(x => GetObjValue(x, Info));
                 var lk = vs.ToLookup(x => x);
                 var val = lk.Count == 1 ? (lk.FirstOrDefault()?.Key ?? null) : null;
                 var ret = Program.SelBox.ShowRadio(Name, (values.Count > 10 ? 4 : (values.Count > 3 ? 3 : 1)), values, values.FirstOrDefault(x => object.Equals(x.Tag, val)));
-                if (ret != null && ret.Tag != null) 
+                if (ret != null && ret.Tag != null)
                 {
                     SelectedObjectLoop((obj) => SetValue(obj, Info, ret.Tag));
                 }
+
             }
             base.OnButtonClick(rtValue, rtButton);
         }
@@ -1032,6 +1044,18 @@ namespace Going.UIEditor.Controls
                     if (vv is string s && s == "{NONE}") vv = null;
                     SelectedObjectLoop((obj) => SetValue(obj, Info, vv));
                 }
+            }
+            else if (Info != null && IsFontName(Info))
+            {
+                #region Font
+                var ret = Program.FontSelector.ShowFontSelect(Info.Name);
+                if (ret != null && Grid.SelectedObjects != null)
+                {
+                    object? vv = ret.Name;
+                    if (vv is string s && s == "{NONE}") vv = "나눔고딕";
+                    SelectedObjectLoop((obj) => SetValue(obj, Info, vv));
+                }
+                #endregion
             }
             else if (IsMultiLine(Info) && Info != null)
             {
@@ -1187,7 +1211,7 @@ namespace Going.UIEditor.Controls
             {
                 var tp = Info.PropertyType;
 
-                var vs = Grid.SelectedObjects.Select(x => Info?.GetValue(x));
+                var vs = Grid.SelectedObjects.Select(x => GetObjValue(x, Info));
                 var lk = vs.ToLookup(x => x);
                 var val = lk.Count == 1 ? (lk.FirstOrDefault()?.Key ?? null) : null;
 
@@ -1282,7 +1306,7 @@ namespace Going.UIEditor.Controls
             {
                 var tp = Info.PropertyType;
 
-                var vs = Grid.SelectedObjects.Select(x => Info?.GetValue(x));
+                var vs = Grid.SelectedObjects.Select(x => GetObjValue(x, Info));
                 var lk = vs.ToLookup(x => x);
                 var val = lk.Count == 1 ? (lk.FirstOrDefault()?.Key ?? null) : null;
 

@@ -6,7 +6,9 @@ using Going.UI.Utils;
 using Going.UIEditor.Datas;
 using Going.UIEditor.Forms;
 using Going.UIEditor.Forms.Dialogs;
+using Going.UIEditor.Forms.Editors;
 using Going.UIEditor.Managers;
+using Going.UIEditor.Utils;
 using SkiaSharp;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Policy;
@@ -29,15 +31,19 @@ namespace Going.UIEditor
         public static FormImageSelector ImageSelector { get; set; }
         public static FormMultiLineString MultiLineInputor { get; set; }
         public static FormTheme ThemeForm { get; set; }
+        public static FormFontAdd FontAdder { get; set; }
+        public static FormFontSelector FontSelector { get; set; }
 
         [STAThread]
         static void Main()
         {
- 
-            ApplicationConfiguration.Initialize();
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.SetHighDpiMode(HighDpiMode.DpiUnawareGdiScaled);
 
             GoThemeW.Current.Select = GoThemeW.Current.ToColor("#007acc");
             GoThemeW.Current.Highlight = GoThemeW.Current.Select;
+            FontPath.Build();
 
             DataMgr = new DataManager();
 
@@ -51,6 +57,8 @@ namespace Going.UIEditor
             ImageSelector = new FormImageSelector();
             MultiLineInputor = new FormMultiLineString();
             ThemeForm = new FormTheme();
+            FontAdder = new FormFontAdd();
+            FontSelector = new FormFontSelector();
             MainForm = new FormMain();
 
             Application.Run(MainForm);

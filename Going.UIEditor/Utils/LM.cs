@@ -757,6 +757,111 @@ namespace Going.UIEditor.Utils
         #endregion
         #endregion
 
+        #region 테마 
+        #region ThemeEditor
+        public static string ThemeEditor
+        {
+            get
+            {
+                if (lang == Lang.KO) return "테마 에디터";
+                else if (lang == Lang.EN) return "Theme Editor";
+                else return "";
+            }
+        }
+        #endregion
+        #region NoUse
+        public static string NoUse
+        {
+            get
+            {
+                if (lang == Lang.KO) return "사용 안함";
+                else if (lang == Lang.EN) return "Not Used";
+                else return "";
+            }
+        }
+        #endregion
+        #endregion
+
+        #region 폰트
+        #region FontAdd
+        public static string FontAdd
+        {
+            get
+            {
+                if (lang == Lang.KO) return "폰트 추가";
+                else if (lang == Lang.EN) return "Add Font";
+                else return "";
+            }
+        }
+        #endregion
+        #region FontList
+        public static string FontList
+        {
+            get
+            {
+                if (lang == Lang.KO) return "폰트 목록";
+                else if (lang == Lang.EN) return "Font List";
+                else return "";
+            }
+        }
+        #endregion
+        #region FontName
+        public static string FontName
+        {
+            get
+            {
+                if (lang == Lang.KO) return "폰트명";
+                else if (lang == Lang.EN) return "Font Name";
+                else return "";
+            }
+        }
+        #endregion
+        #region Example
+        public static string Example
+        {
+            get
+            {
+                if (lang == Lang.KO) return "예시";
+                else if (lang == Lang.EN) return "Example";
+                else return "";
+            }
+        }
+        #endregion
+        #region CantDeleteDefaultFont
+        public static string CantDeleteDefaultFont
+        {
+            get
+            {
+                if (lang == Lang.KO) return "'나눔고딕'은 기본 폰트로 삭제할 수 없습니다.";
+                else if (lang == Lang.EN) return "'NanumGothic' is a default font and cannot be removed.";
+                else return "";
+            }
+        }
+        #endregion
+        #region ErrorFontCount
+        public static string ErrorFontCount
+        {
+            get
+            {
+                if (lang == Lang.KO) return "폰트는 5종류 이상 추가할 수 없습니다";
+                else if (lang == Lang.EN) return "You cannot add more than 5 fonts.";
+                else return "";
+            }
+        }
+        #endregion
+        #region DefaultFont
+        public static string DefaultFont
+        {
+            get
+            {
+                if (lang == Lang.KO) return "기본 폰트";
+                else if (lang == Lang.EN) return "Default Font";
+                else return "";
+            }
+        }
+        #endregion
+        #endregion
+
         #region 새 페이지
         #region NewPage
         public static string NewPage
@@ -793,19 +898,29 @@ namespace Going.UIEditor.Utils
         #endregion
         #endregion
 
-        #region 이미지 선택기
+        #region 선택기
         #region ImageSelector
         public static string ImageSelector
         {
             get
             {
-                if (lang == Lang.KO) return "이미지 선택기"; 
+                if (lang == Lang.KO) return "이미지 선택기";
                 else if (lang == Lang.EN) return "Image Selector";
                 else return "";
             }
         }
         #endregion
-
+        #region FontSelector
+        public static string FontSelector
+        {
+            get
+            {
+                if (lang == Lang.KO) return "폰트 선택기";
+                else if (lang == Lang.EN) return "Font Selector";
+                else return "";
+            }
+        }
+        #endregion
         #endregion
 
         #region 배포

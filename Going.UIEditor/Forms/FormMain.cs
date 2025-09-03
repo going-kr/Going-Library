@@ -184,6 +184,8 @@ namespace Going.UIEditor
                     var (nouse, thm) = Program.ThemeForm.ShowTheme(p.Design.Theme ?? GoTheme.DarkTheme);
                     if (nouse) { p.Design.CustomTheme = null; p.Edit = true; }
                     else if (thm != null) { p.Design.CustomTheme = thm; p.Edit = true; }
+
+                    var wnd = dockPanel.ActiveContent as EditorWindow; if (wnd != null) wnd.Invalidate();
                 }
             };
             #endregion

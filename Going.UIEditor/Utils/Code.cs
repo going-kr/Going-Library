@@ -15,6 +15,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Windows.UI.Input.Inking;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Going.UIEditor.Utils
 {
@@ -212,6 +213,15 @@ namespace Going.UIEditor.Utils
                             sb.AppendLine($"            ]);");
                         }
                     }
+
+                    foreach(var v in prj.Design.GetFonts())
+                    {
+                        foreach(var data in v.fonts)
+                        {
+                            sb.AppendLine($"            Design.AddFont(\"{v.name}\", Convert.FromBase64String(\"{Convert.ToBase64String(data)}\"));");
+                        }
+                    }
+
                     sb.AppendLine($"            #endregion");
                     sb.AppendLine($"");
                     #endregion
