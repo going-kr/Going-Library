@@ -93,7 +93,7 @@ namespace Going.UIEditor.Controls
                         }
                     }
 
-                    itm.Draw(canvas, rt);
+                    itm.Draw(canvas, thm, rt);
                 }
             });
             canvas.RestoreToCount(sp);
@@ -344,7 +344,7 @@ namespace Going.UIEditor.Controls
         public abstract bool SelectedDraw { get; }
         public abstract SKRect GetBounds(SKRect Bounds);
 
-        public virtual void Draw(SKCanvas canvas, SKRect Bounds) { }
+        public virtual void Draw(SKCanvas canvas, GoTheme thm, SKRect Bounds) { }
         public virtual void MouseDown(SKRect Bounds, int x, int y) { }
         public virtual void MouseUp(SKRect Bounds, int x, int y) { }
         public virtual void MouseMove(SKRect Bounds, int x, int y) { }
@@ -397,10 +397,9 @@ namespace Going.UIEditor.Controls
 
         private GoDesign design = design;
 
-        public override void Draw(SKCanvas canvas, SKRect Bounds)
+        public override void Draw(SKCanvas canvas, GoTheme thm, SKRect Bounds)
         {
             var nmh = 24;
-            var thm = GoThemeW.Current;
             var rtImage = Util.FromRect(Bounds.Left, Bounds.Top, Bounds.Width, Bounds.Height - nmh);
             var rtName = Util.FromRect(Bounds.Left, rtImage.Bottom, Bounds.Width, nmh);
 
@@ -438,7 +437,7 @@ namespace Going.UIEditor.Controls
                 }
             }
 
-            base.Draw(canvas, Bounds);
+            base.Draw(canvas, thm, Bounds);
         }
     }
     #endregion
@@ -451,10 +450,9 @@ namespace Going.UIEditor.Controls
 
         private GoDesign design = design;
 
-        public override void Draw(SKCanvas canvas,  SKRect Bounds)
+        public override void Draw(SKCanvas canvas, GoTheme thm, SKRect Bounds)
         {
             var nmh = 24;
-            var thm = GoThemeW.Current;
             var rtImage = Util.FromRect(Bounds.Left, Bounds.Top, Bounds.Width, Bounds.Height - nmh);
             var rtName = Util.FromRect(Bounds.Left, rtImage.Bottom, Bounds.Width, nmh);
 
@@ -467,7 +465,7 @@ namespace Going.UIEditor.Controls
                 }
             }
 
-            base.Draw(canvas, Bounds);
+            base.Draw(canvas, thm, Bounds);
         }
     }
     #endregion

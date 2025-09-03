@@ -129,6 +129,8 @@ namespace Going.UIEditor
             btnSaveAs.ButtonClicked += (o, s) => SaveAsFile();
             btnProgramSetting.ButtonClicked += (o, s) => ProgramSetting();
             btnResourceManager.ButtonClicked += (o, s) => ResourceManager();
+            btnTheme.ButtonClicked += (o, s) => ThemeEditor();
+
             valPath.ButtonClicked += (o, s) =>
             {
                 if(s.Button.Name == "select")
@@ -176,18 +178,7 @@ namespace Going.UIEditor
             };
             #endregion
             #region Theme
-            btnTheme.ButtonClicked += (o, s) =>
-            {
-                var p = Program.CurrentProject;
-                if (p != null && p.Design != null)
-                {
-                    var (nouse, thm) = Program.ThemeForm.ShowTheme(p.Design.Theme ?? GoTheme.DarkTheme);
-                    if (nouse) { p.Design.CustomTheme = null; p.Edit = true; }
-                    else if (thm != null) { p.Design.CustomTheme = thm; p.Edit = true; }
-
-                    var wnd = dockPanel.ActiveContent as EditorWindow; if (wnd != null) wnd.Invalidate();
-                }
-            };
+           
             #endregion
             #endregion
 
@@ -411,7 +402,14 @@ namespace Going.UIEditor
             if (!opening)
             {
                 opening = true;
-                var r = CloseFile();
+
+                var p = Program.CurrentProject;
+                DialogResult ret = DialogResult.OK;
+                if (p != null && (p.Edit || p.FilePath == null))
+                {
+                    ret = Program.MessageBox.ShowMessageBoxYesNoCancel(LM.Save, LM.SaveQuestion);
+                    if (ret == DialogResult.Yes) p.Save();
+                }
 
                 if (r != DialogResult.Cancel)
                 {
@@ -493,6 +491,20 @@ namespace Going.UIEditor
         void ResourceManager()
         {
             Program.ResourceForm.ShowResourceManager();
+        }
+        #endregion
+        #region ThemeEditor
+        void ThemeEditor()
+        {
+            var p = Program.CurrentProject;
+            if (p != null && p.Design != null)
+            {
+                var (nouse, thm) = Program.ThemeForm.ShowTheme(p.Design.Theme ?? GoTheme.DarkTheme);
+                if (nouse) { p.Design.CustomTheme = null; p.Edit = true; }
+                else if (thm != null) { p.Design.CustomTheme = thm; p.Edit = true; }
+
+                var wnd = dockPanel.ActiveContent as EditorWindow; if (wnd != null) wnd.Invalidate();
+            }
         }
         #endregion
 

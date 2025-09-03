@@ -169,7 +169,7 @@ namespace Going.UIEditor.Controls
                         for (int i = si; i <= ei; i++)
                         {
                             var v = properties[i];
-                            v.Draw(canvas, rtsCol);
+                            v.Draw(canvas, thm, rtsCol);
                         }
                         #endregion
                     }
@@ -484,9 +484,8 @@ namespace Going.UIEditor.Controls
 
         #region Method
         #region Draw
-        public void Draw(SKCanvas canvas, SKRect[] rtsCol)
+        public void Draw(SKCanvas canvas, GoTheme thm, SKRect[] rtsCol)
         {
-            var thm = GoThemeW.Current;
             if (Type == PropertyGridItemType.Category)
             {
                 var rt = Util.FromRect(Bounds.Left + 10, Bounds.Top, Bounds.Width - 10, Bounds.Height);
@@ -498,7 +497,7 @@ namespace Going.UIEditor.Controls
 
                 Util.DrawText(canvas, Util2.EllipsisPath(Name, pg.FontName, pg.FontStyle, pg.FontSize, rtTitle.Width - 20), pg.FontName, pg.FontStyle, pg.FontSize, rtTitle, thm.Base5);
 
-                OnDrawValue(canvas, rtTitle, rtValue, rtButton);
+                OnDrawValue(canvas, thm, rtTitle, rtValue, rtButton);
             }
         }
         #endregion
@@ -580,7 +579,7 @@ namespace Going.UIEditor.Controls
         #endregion
 
         #region Virtual
-        protected virtual void OnDrawValue(SKCanvas canvas, SKRect rtTitle, SKRect rtValue, SKRect rtButton) { }
+        protected virtual void OnDrawValue(SKCanvas canvas, GoTheme thm, SKRect rtTitle, SKRect rtValue, SKRect rtButton) { }
         protected virtual void OnValueClick(SKRect rtValue, SKRect rtButton) { }
         protected virtual void OnValueOutsideClick(SKRect rtValue, SKRect rtButton) { }
         protected virtual void OnButtonClick(SKRect rtValue, SKRect rtButton) { }
@@ -802,11 +801,10 @@ namespace Going.UIEditor.Controls
     public class PropertyGridItemID(GoPropertyGrid pg) : PropertyGridItem(pg)
     {
         #region Draw
-        protected override void OnDrawValue(SKCanvas canvas, SKRect rtTitle, SKRect rtValue, SKRect rtButton)
+        protected override void OnDrawValue(SKCanvas canvas, GoTheme thm, SKRect rtTitle, SKRect rtValue, SKRect rtButton)
         {
-            base.OnDrawValue(canvas, rtTitle, rtValue, rtButton);
+            base.OnDrawValue(canvas, thm, rtTitle, rtValue, rtButton);
 
-            var thm = GoThemeW.Current;
             var s = Util2.EllipsisPath(Grid.SelectedObjects?.Count() == 1 && Grid.SelectedObjects?.FirstOrDefault() is IGoControl c ? c.Id.ToString() : "", Grid.FontName, Grid.FontStyle, Grid.FontSize, rtValue.Width - 20);
             Util.DrawText(canvas, s, Grid.FontName, Grid.FontStyle, Grid.FontSize, rtValue, thm.Base5);
         }
@@ -817,11 +815,10 @@ namespace Going.UIEditor.Controls
     public class PropertyGridItemCType(GoPropertyGrid pg) : PropertyGridItem(pg)
     {
         #region Draw
-        protected override void OnDrawValue(SKCanvas canvas, SKRect rtTitle, SKRect rtValue, SKRect rtButton)
+        protected override void OnDrawValue(SKCanvas canvas, GoTheme thm, SKRect rtTitle, SKRect rtValue, SKRect rtButton)
         {
-            base.OnDrawValue(canvas, rtTitle, rtValue, rtButton);
+            base.OnDrawValue(canvas, thm, rtTitle, rtValue, rtButton);
 
-            var thm = GoThemeW.Current;
             var s = Grid.SelectedObjects?.Count() == 1 && Grid.SelectedObjects?.FirstOrDefault() is IGoControl c ? c.GetType().Name : "";
             Util.DrawText(canvas, s, Grid.FontName, Grid.FontStyle, Grid.FontSize, rtValue, thm.Base5);
         }
@@ -833,11 +830,9 @@ namespace Going.UIEditor.Controls
     {
         #region Override
         #region Draw
-        protected override void OnDrawValue(SKCanvas canvas, SKRect rtTitle, SKRect rtValue, SKRect rtButton)
+        protected override void OnDrawValue(SKCanvas canvas, GoTheme thm, SKRect rtTitle, SKRect rtValue, SKRect rtButton)
         {
-            base.OnDrawValue(canvas, rtTitle, rtValue, rtButton);
-
-            var thm = GoThemeW.Current;
+            base.OnDrawValue(canvas, thm, rtTitle, rtValue, rtButton);
 
             var vs = Grid.SelectedObjects?.Select(x => ValueToString(x));
             var lk = vs?.ToLookup(x => x);
@@ -869,11 +864,9 @@ namespace Going.UIEditor.Controls
     {
         #region Override
         #region Draw
-        protected override void OnDrawValue(SKCanvas canvas, SKRect rtTitle, SKRect rtValue, SKRect rtButton)
+        protected override void OnDrawValue(SKCanvas canvas, GoTheme thm, SKRect rtTitle, SKRect rtValue, SKRect rtButton)
         {
-            base.OnDrawValue(canvas, rtTitle, rtValue, rtButton);
-
-            var thm = GoThemeW.Current;
+            base.OnDrawValue(canvas, thm, rtTitle, rtValue, rtButton);
 
             #region Value
             var vs = Grid.SelectedObjects?.Select(x => ValueToString(x));
@@ -994,11 +987,9 @@ namespace Going.UIEditor.Controls
 
         #region Override
         #region Draw
-        protected override void OnDrawValue(SKCanvas canvas, SKRect rtTitle, SKRect rtValue, SKRect rtButton)
+        protected override void OnDrawValue(SKCanvas canvas, GoTheme thm, SKRect rtTitle, SKRect rtValue, SKRect rtButton)
         {
-            base.OnDrawValue(canvas, rtTitle, rtValue, rtButton);
-
-            var thm = GoThemeW.Current;
+            base.OnDrawValue(canvas, thm, rtTitle, rtValue, rtButton);
 
             #region Value
             if (!txt.Visible)
@@ -1178,11 +1169,9 @@ namespace Going.UIEditor.Controls
     {
         #region Override
         #region Draw
-        protected override void OnDrawValue(SKCanvas canvas, SKRect rtTitle, SKRect rtValue, SKRect rtButton)
+        protected override void OnDrawValue(SKCanvas canvas, GoTheme thm, SKRect rtTitle, SKRect rtValue, SKRect rtButton)
         {
-            base.OnDrawValue(canvas, rtTitle, rtValue, rtButton);
-
-            var thm = GoThemeW.Current;
+            base.OnDrawValue(canvas, thm, rtTitle, rtValue, rtButton);
         
             #region Value
             var vs = Grid.SelectedObjects?.Select(x => ValueToString(x));
@@ -1273,11 +1262,9 @@ namespace Going.UIEditor.Controls
     {
         #region Override
         #region Draw
-        protected override void OnDrawValue(SKCanvas canvas, SKRect rtTitle, SKRect rtValue, SKRect rtButton)
+        protected override void OnDrawValue(SKCanvas canvas, GoTheme thm, SKRect rtTitle, SKRect rtValue, SKRect rtButton)
         {
-            base.OnDrawValue(canvas, rtTitle, rtValue, rtButton);
-
-            var thm = GoThemeW.Current;
+            base.OnDrawValue(canvas, thm, rtTitle, rtValue, rtButton);
 
             #region Value
             var vs = Grid.SelectedObjects?.Select(x => ValueToString(x));
