@@ -82,6 +82,7 @@ namespace Going.UI.OpenTK.Windows
 
             GoInputEventer.Current.InputString += TKInputManager.Current.InputString;
             GoInputEventer.Current.InputNumber += TKInputManager.Current.InputNumber;
+            TKInputManager.Current.SetInvalidate(Invalidate);
         }
         #endregion
 

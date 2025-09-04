@@ -108,9 +108,9 @@ namespace Going.UIEditor.Utils
                     sb.AppendLine($"        #region declare");
                     foreach (var v in lsA) sb.AppendLine($"        {TypeName(v)} {v.Name};");
                     sb.AppendLine($"");
-                    foreach (var v in prj.Design.Pages.Values) sb.AppendLine($"        public {TypeName(v)} {v.Name} {{ get; private set; }}");
+                    foreach (var v in prj.Design.Pages.Values) sb.AppendLine($"        public {v.Name} {v.Name} {{ get; private set; }}");
                     sb.AppendLine($"");
-                    foreach (var v in prj.Design.Windows.Values) sb.AppendLine($"        public {TypeName(v)} {v.Name} {{ get; private set; }}");
+                    foreach (var v in prj.Design.Windows.Values) sb.AppendLine($"        public {v.Name} {v.Name} {{ get; private set; }}");
                     sb.AppendLine($"        #endregion");
                     sb.AppendLine($"");
                     #endregion

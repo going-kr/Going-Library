@@ -21,7 +21,7 @@ namespace Going.UI.Utils
         #endregion
 
         #region Properties
-        public static bool UseAnimation { get; private set; } = true;
+        public static bool UseAnimation { get; set; } = true;
 
         public double TotalMillls { get; private set; }
         public double PlayMillis
@@ -93,6 +93,12 @@ namespace Going.UI.Utils
                             this.IsPlaying = false;
                             this.TotalMillls = 0;
                             Refresh?.Invoke();
+                            
+                            _ = Task.Run(async () =>
+                            {
+                                await Task.Delay(50);
+                                Refresh?.Invoke();
+                            });
                         }
 
                     }, cancel.Token);

@@ -157,7 +157,6 @@ namespace Going.UI.Design
             stkWindow.Push(wnd);
             wnd.Bounds = MathTool.MakeRectangle(Util.FromRect(0, 0, Width, Height), new SKSize(wnd.Width, wnd.Height));
             CurrentPage?.FireMouseMove(-1, -1);
-            CurrentPage?.FireShow();
 
             wnd.FireShow();
         }

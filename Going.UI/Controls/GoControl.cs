@@ -177,7 +177,10 @@ namespace Going.UI.Controls
                     while (bDown && (DateTime.Now - downTime).TotalMilliseconds < LongClickTime) await Task.Delay(100);
 
                     if ((DateTime.Now - downTime).TotalMilliseconds >= LongClickTime && CollisionTool.Check(rtContent, x, y))
+                    {
+                        bDown = false;
                         OnMouseLongClick(x, y, button);
+                    }
                 });
 
                 if (Selectable) Design?.Select(this);

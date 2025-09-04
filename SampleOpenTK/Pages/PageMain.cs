@@ -59,13 +59,14 @@ namespace SampleOpenTK.Pages
 
 
             };
+            /*
             btnIB.ButtonClicked += (o, s) =>
             {
                 //inbox.ShowString("테스트", null, (result) => { Console.WriteLine(result); });
                 //inbox.ShowBool("테스트", (result) => { Console.WriteLine(result); });
                 inbox.Showinputbox<Data>("테스트", (result) => { if (result != null) Console.WriteLine(JsonSerializer.Serialize(result)); });
             };
-
+            */
             grid = new GoGridLayoutPanel { Left = 140, Top = 10, Width = 300, Height = 400 };
             grid.AddRow("25%", ["25%", "25%", "25%", "25%"]);
             grid.AddRow("25%", ["25%", "25%", "25%", "25%"]);
@@ -83,7 +84,10 @@ namespace SampleOpenTK.Pages
 
             GoDialogs.SystemWindows.Add("AlarmSearchBox", AlarmSearchBox.Default);
 
-
+            btnIB.ButtonClicked += (o, s) => { 
+            };
+            btnIB.MouseLongClicked += (o, s) => { 
+            };
         }
     }
 

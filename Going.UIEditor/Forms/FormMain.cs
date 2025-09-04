@@ -204,6 +204,16 @@ namespace Going.UIEditor
             var p = Program.CurrentProject;
             if (p != null)
             {
+                #region Close
+                explorer?.Close();
+                toolBox?.Close();
+                properties?.Close();
+
+                var ls = editors.ToList();
+                editors.Clear();
+                foreach (var w in ls) w.Close();
+                #endregion
+
                 #region Layout
                 if (File.Exists(PATH_LAYOUT))
                 {
@@ -247,7 +257,7 @@ namespace Going.UIEditor
             }
             else
             {
-                #region Layout
+                #region Close
                 explorer?.Close();
                 toolBox?.Close();
                 properties?.Close();
@@ -411,7 +421,7 @@ namespace Going.UIEditor
                     if (ret == DialogResult.Yes) p.Save();
                 }
 
-                if (r != DialogResult.Cancel)
+                if (ret != DialogResult.Cancel)
                 {
                     var v = Project.Open();
                     if (v != null)

@@ -29,6 +29,8 @@ namespace Going.UI.OpenTK.Input
 
         public SKSize ScreenSize { get; set; }
         public bool IsPlaying => ani.IsPlaying;
+
+        public bool KeyboardShiftHold { get => keyboard.UseShiftHolding; set => keyboard.UseShiftHolding = value; }
         #region TranslateY
         public float TranslateY
         {
@@ -112,6 +114,9 @@ namespace Going.UI.OpenTK.Input
                     ani.Start(Animation.Time200, "clear", GoInputEventer.Current.ClearInputControl);
                 }
             };
+
+            ani.Refresh = () => actInv?.Invoke();
+
         }
         #endregion
 
@@ -228,6 +233,11 @@ namespace Going.UI.OpenTK.Input
                     case InputType.Number: keypad.MouseMove(x, y); break;
                 }
             }
+        }
+
+        public void SetInvalidate(Action invalidate)
+        {
+            actInv = invalidate;
         }
         #endregion
     }
