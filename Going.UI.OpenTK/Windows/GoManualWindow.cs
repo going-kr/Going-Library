@@ -190,6 +190,8 @@ namespace Going.UI.OpenTK.Windows
                         }
                         #endregion
 
+                        OnDraw(canvas, thm);
+
                         ctx.Flush();
                         SwapBuffers();
 
@@ -200,6 +202,7 @@ namespace Going.UI.OpenTK.Windows
                             IsFirstRender = false;
                             IsVisible = true;
                         }
+
                     }
                     catch { }
                 }
@@ -313,6 +316,13 @@ namespace Going.UI.OpenTK.Windows
             Design.KeyUp(e.Shift, e.Control, e.Alt, (GoKeys)e.Key);
             inv = true;
             base.OnKeyDown(e);
+        }
+        #endregion
+
+        #region OnDraw
+        protected virtual void OnDraw(SKCanvas canvas, GoTheme thm)
+        {
+
         }
         #endregion
         #endregion
