@@ -662,7 +662,12 @@ namespace Going.UI.Design
         public bool RemoveImage(string name) => Images.Remove(name);
 
         public List<(string name, List<SKImage> images)> GetImages() => [.. Images.Select(x => (x.Key, x.Value))];
-        public List<SKImage> GetImage(string? name) => name != null && Images.TryGetValue(name.ToLower(), out var ls) ? ls : [];
+        public List<SKImage> GetImage(string? name)
+        {
+            var k = Images.Keys.FirstOrDefault(x => x.Equals(name, StringComparison.InvariantCultureIgnoreCase));
+
+            return k != null && Images.TryGetValue(k, out var ls) ? ls : [];
+        }
         #endregion
 
         #region Font
