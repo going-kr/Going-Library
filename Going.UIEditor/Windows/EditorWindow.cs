@@ -404,9 +404,9 @@ namespace Going.UIEditor.Windows
                                     int idx = sw.SelectedPage != null ? sw.Pages.IndexOf(sw.SelectedPage) : -1;
                                     var s = sw.SelectedPage != null ? sw.SelectedPage.Name : $"Page {idx}";
 
-                                    Util.DrawText(canvas, s, "나눔고딕", GoFontStyle.Normal, 12, rtT, prj.Design.Theme.Base5);
-                                    Util.DrawIcon(canvas, "fa-angle-left", 12, rtP, idx - 1 >= 0 ? prj.Design.Theme.Base5 : prj.Design.Theme.Base3);
-                                    Util.DrawIcon(canvas, "fa-angle-right", 12, rtN, idx + 1 < sw.Pages.Count ? prj.Design.Theme.Base5 : prj.Design.Theme.Base3);
+                                    Util.DrawText(canvas, s, "나눔고딕", GoFontStyle.Normal, 12, rtT, prj.Design.Theme.Fore);
+                                    Util.DrawIcon(canvas, "fa-angle-left", 12, rtP, idx - 1 >= 0 ? prj.Design.Theme.Fore : prj.Design.Theme.Fore.WithAlpha(120));
+                                    Util.DrawIcon(canvas, "fa-angle-right", 12, rtN, idx + 1 < sw.Pages.Count ? prj.Design.Theme.Fore : prj.Design.Theme.Fore.WithAlpha(120));
                                     #region box
                                     p.IsStroke = true;
                                     p.Color = SKColors.Red;

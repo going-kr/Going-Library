@@ -8,14 +8,14 @@ using SampleOpenTK.Pages;
 
 namespace SampleOpenTK.Windows
 {
-    public class MainWindow : GoManualWindow
+    public class MainWindow : GoViewWindow
     {
         GoTableLayoutPanel tblTitle;
         GoNavigator nav;
 
         public MainWindow() : base(1024, 768, WindowBorder.Hidden)
         {
-            Interval = 10;
+            //Interval = 10;
 
             #region Window Setting
             Title = "Going Library Sample";

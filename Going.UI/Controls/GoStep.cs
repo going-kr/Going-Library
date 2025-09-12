@@ -26,7 +26,7 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 5)] public bool IsCircle { get; set; } = false;
         [GoProperty(PCategory.Control, 6)] public bool UseButton { get; set; } = true;
 
-        public int StepCount { get; set; } = 7;
+        [GoProperty(PCategory.Control, 8)] public int StepCount { get; set; } = 7;
         [GoProperty(PCategory.Control, 7)]
         public int Step
         {

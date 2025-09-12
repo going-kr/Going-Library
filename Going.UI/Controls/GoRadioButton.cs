@@ -122,6 +122,12 @@ namespace Going.UI.Controls
 
             base.OnMouseMove(x, y);
         }
+
+        protected override void OnMouseLongClick(float x, float y, GoMouseButton button)
+        {
+            bDown = false;
+            base.OnMouseLongClick(x, y, button);
+        }
         #endregion
     }
 }

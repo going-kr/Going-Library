@@ -721,8 +721,8 @@ namespace Going.UI.Utils
         #endregion
 
         #region Box
-        public static void DrawBox(SKCanvas canvas, SKRect bounds, SKColor color, GoRoundType round, float corner, bool clean = true) => DrawBox(canvas, bounds, color, color, round, corner, clean);
-        public static void DrawBox(SKCanvas canvas, SKRect bounds, SKColor fillcolor, SKColor borderColor, GoRoundType round, float corner, bool clean = true)
+        public static void DrawBox(SKCanvas canvas, SKRect bounds, SKColor color, GoRoundType round, float corner, bool clean = true, float borderSize = 1F) => DrawBox(canvas, bounds, color, color, round, corner, clean, borderSize);
+        public static void DrawBox(SKCanvas canvas, SKRect bounds, SKColor fillcolor, SKColor borderColor, GoRoundType round, float corner, bool clean = true, float borderSize = 1F)
         {
             using var p = new SKPaint();
             p.IsAntialias = true;
@@ -733,13 +733,37 @@ namespace Going.UI.Utils
                 bounds.Offset(0.5F, 0.5F);
             }
 
-            using var path = PathTool.Box(bounds, round, corner);
 
             if (fillcolor != SKColors.Transparent)
             {
                 p.IsStroke = false;
                 p.Color = fillcolor;
+                using var path = PathTool.Box(bounds, round, corner);
                 canvas.DrawPath(path, p);
+            }
+
+            if (borderColor != SKColors.Transparent)
+            {
+                p.IsStroke = true;
+                p.StrokeWidth = borderSize;
+                p.Color = borderColor;
+                
+                float strokeHalf = p.StrokeWidth / 2f;
+                bounds.Inflate(-strokeHalf, -strokeHalf);
+                using var path = PathTool.Box(bounds, round, corner);
+                canvas.DrawPath(path, p);
+            }
+        }
+
+        public static void DrawBox(SKCanvas canvas, SKRoundRect bounds, SKColor fillcolor, SKColor borderColor)
+        {
+            using var p = new SKPaint { IsAntialias = true };
+
+            if (fillcolor != SKColors.Transparent)
+            {
+                p.IsStroke = false;
+                p.Color = fillcolor;
+                canvas.DrawRoundRect(bounds, p);
             }
 
             if (borderColor != SKColors.Transparent)
@@ -747,11 +771,14 @@ namespace Going.UI.Utils
                 p.IsStroke = true;
                 p.StrokeWidth = 1F;
                 p.Color = borderColor;
-                canvas.DrawPath(path, p);
+
+                float strokeHalf = p.StrokeWidth / 2f;
+                bounds.Inflate(-strokeHalf, -strokeHalf);
+                canvas.DrawRoundRect(bounds, p);
             }
         }
 
-        public static void DrawBox(SKCanvas canvas, SKRoundRect bounds, SKColor fillcolor, SKColor borderColor)
+        public static void DrawBox(SKCanvas canvas, SKRoundRect bounds, SKColor fillcolor, SKColor borderColor, float borderSize)
         {
             using var p = new SKPaint { IsAntialias = true };
 
@@ -766,8 +793,11 @@ namespace Going.UI.Utils
             if (borderColor != SKColors.Transparent)
             {
                 p.IsStroke = true;
-                p.StrokeWidth = 1F;
+                p.StrokeWidth = borderSize;
                 p.Color = borderColor;
+
+                float strokeHalf = p.StrokeWidth / 2f;
+                bounds.Inflate(-strokeHalf, -strokeHalf);
                 canvas.DrawRoundRect(bounds, p);
             }
         }

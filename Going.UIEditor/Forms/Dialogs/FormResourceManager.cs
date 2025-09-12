@@ -48,7 +48,7 @@ namespace Going.UIEditor.Forms
                         {
                             foreach (var filename in ofd.FileNames)
                             {
-                                var name = Path.GetFileNameWithoutExtension(filename);
+                                var name = Path.GetFileNameWithoutExtension(filename).ToLower();
                                 var data = File.ReadAllBytes(filename);
                                 var imgs = prj.Design.GetImages();
                                 if (imgs.Any(x => x.name == name))

@@ -21,6 +21,7 @@ namespace Going.UI.Containers
         [GoProperty(PCategory.Control, 2)] public GoRoundType Round { get; set; } = GoRoundType.All;
 
         [GoProperty(PCategory.Control, 3)] public bool BackgroundDraw { get; set; } = true;
+        [GoProperty(PCategory.Control, 4)] public float BorderSize { get; set; } = 1F;
         #endregion
 
         #region Constructor
@@ -37,7 +38,7 @@ namespace Going.UI.Containers
             var rts = Areas();
             var rtBox = rts["Content"];
 
-            if (BackgroundDraw) Util.DrawBox(canvas, rtBox, cBox, cBorder, Round, thm.Corner);
+            if (BackgroundDraw) Util.DrawBox(canvas, rtBox, cBox, cBorder, Round, thm.Corner, true, BorderSize);
 
             base.OnDraw(canvas, thm);
         }
