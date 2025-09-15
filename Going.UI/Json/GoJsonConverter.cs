@@ -34,7 +34,42 @@ namespace Going.UI.Json
             try
             {
                 var tps = typeof(GoControl).Assembly.GetTypes();
-                ControlTypes = tps.Where(x => x.GetInterface("IGoControl") != null).ToDictionary(x => ControlName(x), y => y);
+
+                foreach(var v in tps.Where(x => x.GetInterface("IGoControl") != null))
+                {
+                    if(v.IsGenericType)
+                    {
+                        if (v == typeof(GoInputNumber<>))
+                        {
+                            ControlTypes.Add("GoValueNumber<byte>", typeof(GoValueNumber<byte>));
+                            ControlTypes.Add("GoValueNumber<ushort>", typeof(GoValueNumber<ushort>));
+                            ControlTypes.Add("GoValueNumber<uint>", typeof(GoValueNumber<uint>));
+                            ControlTypes.Add("GoValueNumber<ulong>", typeof(GoValueNumber<ulong>));
+                            ControlTypes.Add("GoValueNumber<sbyte>", typeof(GoValueNumber<sbyte>));
+                            ControlTypes.Add("GoValueNumber<short>", typeof(GoValueNumber<short>));
+                            ControlTypes.Add("GoValueNumber<int>", typeof(GoValueNumber<int>));
+                            ControlTypes.Add("GoValueNumber<long>", typeof(GoValueNumber<long>));
+                            ControlTypes.Add("GoValueNumber<float>", typeof(GoValueNumber<float>));
+                            ControlTypes.Add("GoValueNumber<double>", typeof(GoValueNumber<double>));
+                            ControlTypes.Add("GoValueNumber<decimal>", typeof(GoValueNumber<decimal>));
+                        }
+                        else if (v == typeof(GoValueNumber<>))
+                        {
+                            ControlTypes.Add("GoInputNumber<byte>", typeof(GoInputNumber<byte>));
+                            ControlTypes.Add("GoInputNumber<ushort>", typeof(GoInputNumber<ushort>));
+                            ControlTypes.Add("GoInputNumber<uint>", typeof(GoInputNumber<uint>));
+                            ControlTypes.Add("GoInputNumber<ulong>", typeof(GoInputNumber<ulong>));
+                            ControlTypes.Add("GoInputNumber<sbyte>", typeof(GoInputNumber<sbyte>));
+                            ControlTypes.Add("GoInputNumber<short>", typeof(GoInputNumber<short>));
+                            ControlTypes.Add("GoInputNumber<int>", typeof(GoInputNumber<int>));
+                            ControlTypes.Add("GoInputNumber<long>", typeof(GoInputNumber<long>));
+                            ControlTypes.Add("GoInputNumber<float>", typeof(GoInputNumber<float>));
+                            ControlTypes.Add("GoInputNumber<double>", typeof(GoInputNumber<double>));
+                            ControlTypes.Add("GoInputNumber<decimal>", typeof(GoInputNumber<decimal>));
+                        }
+                    }
+                    else ControlTypes.Add(ControlName(v), v);
+                }
             }
             catch { }
         }
@@ -190,7 +225,6 @@ namespace Going.UI.Json
         {
             var tp = value.GetType();
             var mp = GoJsonConverter.ControlTypes.FirstOrDefault(x => x.Value == tp);
-
             if (!string.IsNullOrWhiteSpace(mp.Key))
             {
                 writer.WriteStartObject();

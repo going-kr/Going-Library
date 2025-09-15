@@ -1,4 +1,5 @@
-﻿using Going.UI.Enums;
+﻿using Going.UI.Datas;
+using Going.UI.Enums;
 using Going.UI.Extensions;
 using Going.UI.Themes;
 using Going.UI.Tools;
@@ -27,10 +28,15 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 8)] public string TextColor { get; set; } = "Fore";
         [GoProperty(PCategory.Control, 9)] public string ButtonColor { get; set; } = "Base3";
         [GoProperty(PCategory.Control, 10)] public string CheckedButtonColor { get; set; } = "Select";
-        [GoProperty(PCategory.Control, 11)] public GoRoundType Round { get; set; } = GoRoundType.All;
+        [GoProperty(PCategory.Control, 11)] public string BorderColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Control, 12)] public string CheckedBorderColor { get; set; } = "Select";
+        [GoProperty(PCategory.Control, 13)] public GoRoundType Round { get; set; } = GoRoundType.All;
+        [GoProperty(PCategory.Control, 14)] public float BorderWidth { get; set; } = 1F;
+        [GoProperty(PCategory.Control, 15)] public GoButtonFillStyle FillStyle { get; set; } = GoButtonFillStyle.Flat;
+
 
         private bool bCheck = false;
-        [GoProperty(PCategory.Control, 12)]
+        [GoProperty(PCategory.Control, 16)]
         public bool Checked
         {
             get => bCheck; set
@@ -74,10 +80,13 @@ namespace Going.UI.Controls
         {
             var cText = thm.ToColor(TextColor).BrightnessTransmit(bDown ? thm.DownBrightness : 0);
             var cBtn = thm.ToColor(Checked ? CheckedButtonColor : ButtonColor).BrightnessTransmit(bDown ? thm.DownBrightness : 0);
+            var cBor = thm.ToColor(Checked ? CheckedBorderColor : BorderColor).BrightnessTransmit(bDown ? thm.DownBrightness : 0);
             var rts = Areas();
             var rtBox = rts["Content"];
 
-            Util.DrawBox(canvas, rtBox, cBtn.BrightnessTransmit(bHover ? thm.HoverFillBrightness : 0), cBtn.BrightnessTransmit(bHover ? thm.HoverBorderBrightness : 0), Round, thm.Corner);
+            Util.DrawButton(canvas, thm, rtBox, cBtn.BrightnessTransmit(bHover ? thm.HoverFillBrightness : 0),
+                                                cBor.BrightnessTransmit(bHover ? thm.HoverBorderBrightness : 0), 
+                                                Round, thm.Corner, true, BorderWidth, FillStyle, bDown);
 
             if (bDown) rtBox.Offset(0, 1);
             Util.DrawTextIcon(canvas, Text, FontName, FontStyle, FontSize, IconString, IconSize, IconDirection, IconGap, rtBox, cText, GoContentAlignment.MiddleCenter);

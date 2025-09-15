@@ -1,4 +1,5 @@
-﻿using Going.UI.Enums;
+﻿using Going.UI.Datas;
+using Going.UI.Enums;
 using Going.UI.Extensions;
 using Going.UI.Themes;
 using Going.UI.Tools;
@@ -23,13 +24,15 @@ namespace Going.UI.Controls
 
         [GoProperty(PCategory.Control, 4)] public string TextColor { get; set; } = "Fore";
         [GoProperty(PCategory.Control, 5)] public string ButtonColor { get; set; } = "Base3";
-        [GoProperty(PCategory.Control, 6)] public string OnColor { get; set; } = "Good";
-        [GoProperty(PCategory.Control, 7)] public string OffColor { get; set; } = "Base2";
-
-        [GoProperty(PCategory.Control, 8)] public GoRoundType Round { get; set; } = GoRoundType.All;
+        [GoProperty(PCategory.Control, 6)] public string BorderColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Control, 7)] public string OnColor { get; set; } = "Good";
+        [GoProperty(PCategory.Control, 8)] public string OffColor { get; set; } = "Base2";
+        [GoProperty(PCategory.Control, 9)] public GoRoundType Round { get; set; } = GoRoundType.All;
+        [GoProperty(PCategory.Control, 10)] public float BorderWidth { get; set; } = 1F;
+        [GoProperty(PCategory.Control, 11)] public GoButtonFillStyle FillStyle { get; set; } = GoButtonFillStyle.Flat;
 
         private bool bOnOff = false;
-        [GoProperty(PCategory.Control, 9)]
+        [GoProperty(PCategory.Control, 12)]
         public bool OnOff
         {
             get => bOnOff; set
@@ -42,8 +45,8 @@ namespace Going.UI.Controls
             }
         }
 
-        [GoProperty(PCategory.Control, 10)] public int LampSize { get; set; } = 24;
-        [GoProperty(PCategory.Control, 11)] public int Gap { get; set; } = 10;
+        [GoProperty(PCategory.Control, 13)] public int LampSize { get; set; } = 24;
+        [GoProperty(PCategory.Control, 14)] public int Gap { get; set; } = 10;
         #endregion
 
         #region Event
@@ -68,6 +71,7 @@ namespace Going.UI.Controls
         {
             var cText = thm.ToColor(TextColor).BrightnessTransmit(bDown ? thm.DownBrightness : 0);
             var cBtn = thm.ToColor(ButtonColor).BrightnessTransmit(bDown ? thm.DownBrightness : 0);
+            var cBor = thm.ToColor(BorderColor).BrightnessTransmit(bDown ? thm.DownBrightness : 0);
             var cOff = thm.ToColor(OffColor);
             var cOn = thm.ToColor(OnColor);
             var cLmp = OnOff ? cOn : cOff;
@@ -76,7 +80,9 @@ namespace Going.UI.Controls
             var rtBox = rts["Box"];
             var rtText = rts["Text"];
 
-            Util.DrawBox(canvas, rtContent, cBtn.BrightnessTransmit(bHover ? thm.HoverFillBrightness : 0), cBtn.BrightnessTransmit(bHover ? thm.HoverBorderBrightness : 0), Round, thm.Corner);
+            Util.DrawButton(canvas, thm, rtContent, cBtn.BrightnessTransmit(bHover ? thm.HoverFillBrightness : 0),
+                                                    cBor.BrightnessTransmit(bHover ? thm.HoverBorderBrightness : 0),
+                                                    Round, thm.Corner, true, BorderWidth, FillStyle, bDown);
 
             if (bDown) { rtBox.Offset(0, 1); rtText.Offset(0, 1); }
 

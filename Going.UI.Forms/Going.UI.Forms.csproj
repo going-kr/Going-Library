@@ -13,11 +13,11 @@
     <Description>WinForms version of Going UI</Description>
     <AssemblyVersion></AssemblyVersion>
     <FileVersion></FileVersion>
-    <Version>1.0.3.3</Version>
+    <Version>1.0.3.6</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Going.UI" Version="1.0.3.3" />
+    <PackageReference Include="Going.UI" Version="1.0.3.6" />
     <PackageReference Include="SkiaSharp.Views.WindowsForms" Version="3.116.1" />
   </ItemGroup>
 

@@ -721,6 +721,149 @@ namespace Going.UI.Utils
         #endregion
 
         #region Box
+        public static void DrawButton(SKCanvas canvas, GoTheme thm, SKRect bounds, SKColor fillcolor, SKColor borderColor, GoRoundType round, float corner, bool clean = true, float borderSize = 1F, GoButtonFillStyle style = GoButtonFillStyle.Flat, bool bDown = false)
+        {
+            using var p = new SKPaint();
+            p.IsAntialias = true;
+
+            if (clean)
+            {
+                bounds = Int(bounds);
+                bounds.Offset(0.5F, 0.5F);
+            }
+
+            if (style == GoButtonFillStyle.Flat)
+            {
+                #region Flat
+                if (fillcolor != SKColors.Transparent)
+                {
+                    p.IsStroke = false;
+                    p.Color = fillcolor;
+                    using var path = PathTool.Box(bounds, round, corner);
+                    canvas.DrawPath(path, p);
+                }
+
+                if (borderColor != SKColors.Transparent)
+                {
+                    p.IsStroke = true;
+                    p.StrokeWidth = borderSize;
+                    p.Color = borderColor;
+
+                    float strokeHalf = p.StrokeWidth / 2f;
+                    bounds.Inflate(-strokeHalf, -strokeHalf);
+                    using var path = PathTool.Box(bounds, round, corner);
+                    canvas.DrawPath(path, p);
+                }
+                #endregion
+            }
+            else if(style == GoButtonFillStyle.Gradient)
+            {
+                #region Gradient
+                if (fillcolor != SKColors.Transparent)
+                {
+                    using var sh = SKShader.CreateLinearGradient(new SKPoint(bounds.Left, bounds.Top), new SKPoint(bounds.Left, bounds.Bottom),
+                                                               !bDown ? [fillcolor.BrightnessTransmit(thm.GradientLightBrightness), fillcolor.BrightnessTransmit(thm.GradientDarkBrightness)] : [fillcolor.BrightnessTransmit(thm.GradientDarkBrightness), fillcolor.BrightnessTransmit(thm.GradientLightBrightness)], 
+                                                                SKShaderTileMode.Clamp);
+                    p.IsStroke = false;
+                    p.Shader = sh;
+                    using var path = PathTool.Box(bounds, round, corner);
+                    canvas.DrawPath(path, p);
+                    p.Shader = null;
+                }
+
+                if (borderColor != SKColors.Transparent)
+                {
+                    p.IsStroke = true;
+                    p.StrokeWidth = borderSize;
+                    p.Color = borderColor;
+
+                    float strokeHalf = p.StrokeWidth / 2f;
+                    bounds.Inflate(-strokeHalf, -strokeHalf);
+                    using var path = PathTool.Box(bounds, round, corner);
+                    canvas.DrawPath(path, p);
+                }
+                #endregion
+            }
+            else if(style == GoButtonFillStyle.Emboss)
+            {
+                #region Emboss
+                if (fillcolor != SKColors.Transparent)
+                {
+                    p.IsStroke = false;
+                    p.Color = fillcolor;
+                    using var path = PathTool.Box(bounds, round, corner);
+                    canvas.DrawPath(path, p);
+                }
+
+                {
+                    p.IsStroke = true;
+                    p.StrokeWidth = borderSize + (borderSize / 2);
+                   
+                    float stroke = p.StrokeWidth;
+                    var vbnd = bounds;                    vbnd.Inflate(-stroke, -stroke);
+                    var vbnd2 = ScaleRectFromCenter(vbnd, Convert.ToSingle((stroke * 2) / MathTool.GetDistance(new SKPoint(vbnd.Left, vbnd.Top), new SKPoint(vbnd.Right, vbnd.Bottom)) * 100F));
+                    using var path = PathTool.Box(vbnd, round, corner);
+                    
+                    using (new SKAutoCanvasRestore(canvas))
+                    {
+                        using var path2 = new SKPath();
+                        path2.MoveTo(vbnd2.Left, vbnd2.Top);
+                        path2.LineTo(vbnd2.Right, vbnd2.Top);
+                        path2.LineTo(vbnd2.Left, vbnd2.Bottom);
+                        path2.Close();
+                        canvas.ClipPath(path2);
+
+                        p.Color = fillcolor.BrightnessTransmit(bDown ? thm.GradientDarkBrightness : thm.GradientLightBrightness);
+                        canvas.DrawPath(path, p);
+                    }
+
+                    using (new SKAutoCanvasRestore(canvas))
+                    {
+                        using var path2 = new SKPath();
+                        path2.MoveTo(vbnd2.Right, vbnd2.Top);
+                        path2.LineTo(vbnd2.Right, vbnd2.Bottom);
+                        path2.LineTo(vbnd2.Left, vbnd2.Bottom);
+                        path2.Close();
+                        canvas.ClipPath(path2);
+
+                        p.Color = fillcolor.BrightnessTransmit(bDown ? thm.GradientLightBrightness : thm.GradientDarkBrightness);
+                        canvas.DrawPath(path, p);
+                    }
+                }
+
+                if (borderColor != SKColors.Transparent)
+                {
+                    p.IsStroke = true;
+                    p.StrokeWidth = borderSize;
+                    p.Color = borderColor;
+
+                    float strokeHalf = p.StrokeWidth / 2f;
+                    bounds.Inflate(-strokeHalf, -strokeHalf);
+                    using var path = PathTool.Box(bounds, round, corner);
+                    canvas.DrawPath(path, p);
+                }
+                #endregion
+            }
+        }
+
+        static SKRect ScaleRectFromCenter(SKRect originalRect, float scalePercent)
+        {
+            float scaleFactor = 1.0f + (scalePercent / 100.0f);
+
+            float centerX = originalRect.MidX;
+            float centerY = originalRect.MidY;
+
+            float newWidth = originalRect.Width * scaleFactor;
+            float newHeight = originalRect.Height * scaleFactor;
+
+            return new SKRect(
+                centerX - newWidth / 2,
+                centerY - newHeight / 2,
+                centerX + newWidth / 2,
+                centerY + newHeight / 2
+            );
+        }
+
         public static void DrawBox(SKCanvas canvas, SKRect bounds, SKColor color, GoRoundType round, float corner, bool clean = true, float borderSize = 1F) => DrawBox(canvas, bounds, color, color, round, corner, clean, borderSize);
         public static void DrawBox(SKCanvas canvas, SKRect bounds, SKColor fillcolor, SKColor borderColor, GoRoundType round, float corner, bool clean = true, float borderSize = 1F)
         {
@@ -732,7 +875,6 @@ namespace Going.UI.Utils
                 bounds = Int(bounds);
                 bounds.Offset(0.5F, 0.5F);
             }
-
 
             if (fillcolor != SKColors.Transparent)
             {

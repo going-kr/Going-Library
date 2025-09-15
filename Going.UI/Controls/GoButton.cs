@@ -28,11 +28,13 @@ namespace Going.UI.Controls
 
         [GoProperty(PCategory.Control, 8)] public string TextColor { get; set; } = "Fore";
         [GoProperty(PCategory.Control, 9)] public string ButtonColor { get; set; } = "Base3";
-        [GoProperty(PCategory.Control, 10)] public GoRoundType Round { get; set; } = GoRoundType.All;
-
-        [GoProperty(PCategory.Control, 11)] public bool BackgroundDraw { get; set; } = true;
-        [GoProperty(PCategory.Control, 12)] public bool BorderOnly { get; set; } = false;
-        [GoProperty(PCategory.Control, 13)] public GoContentAlignment ContentAlignment { get; set; } = GoContentAlignment.MiddleCenter;
+        [GoProperty(PCategory.Control, 10)] public string BorderColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Control, 11)] public GoRoundType Round { get; set; } = GoRoundType.All;
+        [GoProperty(PCategory.Control, 12)] public float BorderWidth { get; set; } = 1F;
+        [GoProperty(PCategory.Control, 13)] public bool BackgroundDraw { get; set; } = true;
+        [GoProperty(PCategory.Control, 14)] public bool BorderOnly { get; set; } = false;
+        [GoProperty(PCategory.Control, 15)] public GoButtonFillStyle FillStyle { get; set; } = GoButtonFillStyle.Flat;
+        [GoProperty(PCategory.Control, 16)] public GoContentAlignment ContentAlignment { get; set; } = GoContentAlignment.MiddleCenter;
         #endregion
 
         #region Event
@@ -56,10 +58,17 @@ namespace Going.UI.Controls
         {
             var cText = thm.ToColor(TextColor).BrightnessTransmit(bDown ? thm.DownBrightness : 0);
             var cBtn = thm.ToColor(ButtonColor).BrightnessTransmit(bDown ? thm.DownBrightness : 0);
+            var cBor = thm.ToColor(BorderColor).BrightnessTransmit(bDown ? thm.DownBrightness : 0);
             var rts = Areas();
             var rtBox = rts["Content"];
 
-            if (BackgroundDraw) Util.DrawBox(canvas, rtBox, (BorderOnly ? SKColors.Transparent : cBtn.BrightnessTransmit(bHover ? thm.HoverFillBrightness : 0)), cBtn.BrightnessTransmit(bHover ? thm.HoverBorderBrightness : 0), Round, thm.Corner);
+            if (BackgroundDraw)
+            {
+                if (BorderOnly)
+                    Util.DrawBox(canvas, rtBox, SKColors.Transparent, cBor.BrightnessTransmit(bHover ? thm.HoverBorderBrightness : 0), Round, thm.Corner, true, BorderWidth);
+                else
+                    Util.DrawButton(canvas, thm, rtBox, cBtn.BrightnessTransmit(bHover ? thm.HoverFillBrightness : 0), cBor.BrightnessTransmit(bHover ? thm.HoverBorderBrightness : 0), Round, thm.Corner, true, BorderWidth, FillStyle, bDown);
+            }
 
             if (bDown) rtBox.Offset(0, 1);
             Util.DrawTextIcon(canvas, Text, FontName, FontStyle, FontSize, IconString, IconSize, IconDirection, IconGap, rtBox, cText, ContentAlignment);

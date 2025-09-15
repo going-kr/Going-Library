@@ -280,7 +280,8 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 17)] public string? FormatString { get; set; } = null;
 
         [GoProperty(PCategory.Control, 18)] public string? Unit { get; set; }
-        [GoProperty(PCategory.Control, 19)] public float? UnitSize { get; set; } = null;
+        [GoProperty(PCategory.Control, 19)] public float UnitFontSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 20)] public float? UnitSize { get; set; } = null;
         #endregion
 
         #region Constructor
@@ -315,7 +316,7 @@ namespace Going.UI.Controls
 
             if (UnitSize.HasValue)
             {
-                Util.DrawText(canvas, Unit, FontName, FontStyle, FontSize, rtUnit, cText);
+                Util.DrawText(canvas, Unit, FontName, FontStyle, UnitFontSize, rtUnit, cText);
 
                 using var pe = SKPathEffect.CreateDash([2, 2], 2);
                 p.StrokeWidth = 1;

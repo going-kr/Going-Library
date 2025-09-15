@@ -8,6 +8,11 @@ using System.Threading.Tasks;
 
 namespace Going.UI.Datas
 {
+    public enum GoButtonFillStyle
+    { 
+        Flat, Emboss, Gradient
+    }
+
     public class GoButtonItem
     {
         [GoProperty(PCategory.Control, 0)] public string Name { get; set; }

@@ -106,6 +106,10 @@
             inDownBrightness = new Going.UI.Forms.Controls.GoInputFloat();
             goLabel31 = new Going.UI.Forms.Controls.GoLabel();
             inCorner = new Going.UI.Forms.Controls.GoInputInteger();
+            goLabel37 = new Going.UI.Forms.Controls.GoLabel();
+            inGradLight = new Going.UI.Forms.Controls.GoInputFloat();
+            goLabel38 = new Going.UI.Forms.Controls.GoLabel();
+            inGradDark = new Going.UI.Forms.Controls.GoInputFloat();
             tpnl1.SuspendLayout();
             goPanel1.SuspendLayout();
             goPanel2.SuspendLayout();
@@ -1805,6 +1809,10 @@
             goPanel2.BackgroundDraw = true;
             goPanel2.BorderOnly = false;
             goPanel2.ButtonWidth = null;
+            goPanel2.Controls.Add(inGradDark);
+            goPanel2.Controls.Add(goLabel38);
+            goPanel2.Controls.Add(inGradLight);
+            goPanel2.Controls.Add(goLabel37);
             goPanel2.Controls.Add(goLabel36);
             goPanel2.Controls.Add(inShadowAlpha);
             goPanel2.Controls.Add(goLabel35);
@@ -2202,6 +2210,128 @@
             inCorner.Value = 0;
             inCorner.ValueColor = "Base1";
             // 
+            // goLabel37
+            // 
+            goLabel37.BackColor = Color.FromArgb(60, 60, 60);
+            goLabel37.BackgroundColor = "Base2";
+            goLabel37.BackgroundDraw = false;
+            goLabel37.BorderOnly = false;
+            goLabel37.ContentAlignment = UI.Enums.GoContentAlignment.MiddleRight;
+            goLabel37.FontName = "나눔고딕";
+            goLabel37.FontSize = 12F;
+            goLabel37.FontStyle = UI.Enums.GoFontStyle.Normal;
+            goLabel37.IconDirection = UI.Enums.GoDirectionHV.Horizon;
+            goLabel37.IconGap = 5F;
+            goLabel37.IconSize = 12F;
+            goLabel37.IconString = null;
+            goLabel37.LabelColor = "Base2";
+            goLabel37.Location = new Point(269, 142);
+            goLabel37.Margin = new Padding(5);
+            goLabel37.Name = "goLabel37";
+            goLabel37.Round = UI.Enums.GoRoundType.All;
+            goLabel37.Size = new Size(75, 40);
+            goLabel37.TabIndex = 19;
+            goLabel37.TabStop = false;
+            goLabel37.Text = "Gradient Light\r\nBrightness";
+            goLabel37.TextColor = "Fore";
+            goLabel37.TextPadding.Bottom = 0F;
+            goLabel37.TextPadding.Left = 0F;
+            goLabel37.TextPadding.Right = 0F;
+            goLabel37.TextPadding.Top = 0F;
+            // 
+            // inGradLight
+            // 
+            inGradLight.BackColor = Color.FromArgb(50, 50, 50);
+            inGradLight.BackgroundColor = "Back";
+            inGradLight.BorderColor = "Base3";
+            inGradLight.ButtonSize = null;
+            inGradLight.Direction = UI.Enums.GoDirectionHV.Horizon;
+            inGradLight.FillColor = "Base3";
+            inGradLight.FontName = "나눔고딕";
+            inGradLight.FontSize = 12F;
+            inGradLight.FontStyle = UI.Enums.GoFontStyle.Normal;
+            inGradLight.FormatString = null;
+            inGradLight.IconGap = 5F;
+            inGradLight.IconSize = 12F;
+            inGradLight.IconString = null;
+            inGradLight.Location = new Point(351, 142);
+            inGradLight.Maximum = 1D;
+            inGradLight.Minimum = -1D;
+            inGradLight.Name = "inGradLight";
+            inGradLight.Round = UI.Enums.GoRoundType.All;
+            inGradLight.Size = new Size(162, 40);
+            inGradLight.TabIndex = 20;
+            inGradLight.TabStop = false;
+            inGradLight.Text = "goInputFloat2";
+            inGradLight.TextColor = "Fore";
+            inGradLight.Title = null;
+            inGradLight.TitleSize = null;
+            inGradLight.Unit = null;
+            inGradLight.UnitSize = null;
+            inGradLight.Value = 0D;
+            inGradLight.ValueColor = "Base1";
+            // 
+            // goLabel38
+            // 
+            goLabel38.BackColor = Color.FromArgb(60, 60, 60);
+            goLabel38.BackgroundColor = "Base2";
+            goLabel38.BackgroundDraw = false;
+            goLabel38.BorderOnly = false;
+            goLabel38.ContentAlignment = UI.Enums.GoContentAlignment.MiddleRight;
+            goLabel38.FontName = "나눔고딕";
+            goLabel38.FontSize = 12F;
+            goLabel38.FontStyle = UI.Enums.GoFontStyle.Normal;
+            goLabel38.IconDirection = UI.Enums.GoDirectionHV.Horizon;
+            goLabel38.IconGap = 5F;
+            goLabel38.IconSize = 12F;
+            goLabel38.IconString = null;
+            goLabel38.LabelColor = "Base2";
+            goLabel38.Location = new Point(526, 142);
+            goLabel38.Margin = new Padding(5);
+            goLabel38.Name = "goLabel38";
+            goLabel38.Round = UI.Enums.GoRoundType.All;
+            goLabel38.Size = new Size(75, 40);
+            goLabel38.TabIndex = 21;
+            goLabel38.TabStop = false;
+            goLabel38.Text = "Gradient\r\nDark\r\nBrightness";
+            goLabel38.TextColor = "Fore";
+            goLabel38.TextPadding.Bottom = 0F;
+            goLabel38.TextPadding.Left = 0F;
+            goLabel38.TextPadding.Right = 0F;
+            goLabel38.TextPadding.Top = 0F;
+            // 
+            // inGradDark
+            // 
+            inGradDark.BackColor = Color.FromArgb(50, 50, 50);
+            inGradDark.BackgroundColor = "Back";
+            inGradDark.BorderColor = "Base3";
+            inGradDark.ButtonSize = null;
+            inGradDark.Direction = UI.Enums.GoDirectionHV.Horizon;
+            inGradDark.FillColor = "Base3";
+            inGradDark.FontName = "나눔고딕";
+            inGradDark.FontSize = 12F;
+            inGradDark.FontStyle = UI.Enums.GoFontStyle.Normal;
+            inGradDark.FormatString = null;
+            inGradDark.IconGap = 5F;
+            inGradDark.IconSize = 12F;
+            inGradDark.IconString = null;
+            inGradDark.Location = new Point(609, 142);
+            inGradDark.Maximum = 1D;
+            inGradDark.Minimum = -1D;
+            inGradDark.Name = "inGradDark";
+            inGradDark.Round = UI.Enums.GoRoundType.All;
+            inGradDark.Size = new Size(162, 40);
+            inGradDark.TabIndex = 22;
+            inGradDark.TabStop = false;
+            inGradDark.Text = "goInputFloat2";
+            inGradDark.TextColor = "Fore";
+            inGradDark.Title = null;
+            inGradDark.TitleSize = null;
+            inGradDark.Unit = null;
+            inGradDark.UnitSize = null;
+            inGradDark.Value = 0D;
+            inGradDark.ValueColor = "Base1";
+            // 
             // FormTheme
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -2304,5 +2434,9 @@
         private UI.Forms.Controls.GoLabel goLabel32;
         private UI.Forms.Controls.GoInputFloat inDownBrightness;
         private UI.Forms.Controls.GoLabel goLabel31;
+        private UI.Forms.Controls.GoInputFloat inGradDark;
+        private UI.Forms.Controls.GoLabel goLabel38;
+        private UI.Forms.Controls.GoInputFloat inGradLight;
+        private UI.Forms.Controls.GoLabel goLabel37;
     }
 }

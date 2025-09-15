@@ -69,6 +69,8 @@ namespace Going.UI.Themes
         public float HoverBorderBrightness { get; set; }
         public float HoverFillBrightness { get; set; }
         public float StageLineBrightness { get; set; }
+        public float GradientLightBrightness { get; set; } = 0.2F;
+        public float GradientDarkBrightness { get; set; } = -0.2F;
         #endregion
 
         #region Static
@@ -215,6 +217,9 @@ namespace Going.UI.Themes
             HoverBorderBrightness = 0.5F;
             HoverFillBrightness = 0.15F;
             ShadowAlpha = 180;
+
+            GradientDarkBrightness = 0.2F;
+            GradientDarkBrightness = -0.2F;
         }
     }
 }

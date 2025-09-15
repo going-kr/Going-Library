@@ -79,6 +79,8 @@ namespace Going.UIEditor.Forms.Dialogs
             inHoverBorderBrightness.Value = Math.Round(thm.HoverBorderBrightness, 3);
             inHoverFillBrightness.Value = Math.Round(thm.HoverFillBrightness, 3);
             inShadowAlpha.Value = thm.ShadowAlpha;
+            inGradLight.Value = Math.Round(thm.GradientLightBrightness, 3);
+            inGradDark.Value = Math.Round(thm.GradientDarkBrightness, 3);
             #endregion
 
             if (this.ShowDialog() == DialogResult.OK && !nouse)
@@ -126,6 +128,8 @@ namespace Going.UIEditor.Forms.Dialogs
                 ret.HoverBorderBrightness = Convert.ToSingle(inHoverBorderBrightness.Value);
                 ret.HoverFillBrightness = Convert.ToSingle(inHoverFillBrightness.Value);
                 ret.ShadowAlpha = Convert.ToByte(inShadowAlpha.Value);
+                ret.GradientLightBrightness = Convert.ToSingle(inGradLight.Value);
+                ret.GradientDarkBrightness = Convert.ToSingle(inGradDark.Value);
                 #endregion
             }
 

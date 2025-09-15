@@ -84,7 +84,8 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Bounds, 8), JsonIgnore] public float Bottom { get => bounds.Bottom; set => bounds.Bottom = value; }
         [GoProperty(PCategory.Bounds, 9)] public bool Fill { get; set; } = false;
         [GoProperty(PCategory.Bounds, 10)] public GoPadding Margin { get; set; } = new(3, 3, 3, 3);
-        [GoProperty(PCategory.Bounds, 11)] public int? LongClickTime { get; set; } = null;
+        [GoProperty(PCategory.Bounds, 11)] public bool UseLongClick { get; set; } = false;
+        [GoProperty(PCategory.Bounds, 12)] public int? LongClickTime { get; set; } = null;
 
         [JsonIgnore] public bool FirstRender { get; internal set; } = true;
         [JsonIgnore] public bool View { get; internal set; } = true;
@@ -99,6 +100,7 @@ namespace Going.UI.Controls
         #region Event
         public event EventHandler<GoMouseClickEventArgs>? MouseClicked;
         public event EventHandler<GoMouseClickEventArgs>? MouseLongClicked;
+        public event EventHandler<GoMouseClickEventArgs>? MouseLongClickCanceled;
         public event EventHandler<GoMouseClickEventArgs>? MouseDown;
         public event EventHandler<GoMouseClickEventArgs>? MouseUp;
         public event EventHandler<GoMouseClickEventArgs>? MouseDoubleClicked;
@@ -111,7 +113,7 @@ namespace Going.UI.Controls
 
         #region Member Variable
         private SKRect bounds = new SKRect(0, 0, 70, 30);
-        private float dx, dy;
+        private float dx, dy, mx, my;
         private bool bDown = false;
         private DateTime downTime;
         #endregion
@@ -127,6 +129,7 @@ namespace Going.UI.Controls
         protected virtual void OnMouseUp(float x, float y, GoMouseButton button) { MouseUp?.Invoke(this, new GoMouseClickEventArgs(x, y, button)); }
         protected virtual void OnMouseClick(float x, float y, GoMouseButton button) { MouseClicked?.Invoke(this, new GoMouseClickEventArgs(x, y, button)); }
         protected virtual void OnMouseLongClick(float x, float y, GoMouseButton button) { MouseLongClicked?.Invoke(this, new GoMouseClickEventArgs(x, y, button)); }
+        protected virtual void OnMouseLongClickCancel(float x, float y, GoMouseButton button) { MouseLongClickCanceled?.Invoke(this, new GoMouseClickEventArgs(x, y, button)); }
         protected virtual void OnMouseDoubleClick(float x, float y, GoMouseButton button) { MouseDoubleClicked?.Invoke(this, new GoMouseClickEventArgs(x, y, button)); }
         protected virtual void OnMouseMove(float x, float y) { MouseMove?.Invoke(this, new GoMouseEventArgs(x, y)); }
         protected virtual void OnMouseWheel(float x, float y, float delta) { MouseWheel?.Invoke(this, new GoMouseWheelEventArgs(x, y, delta)); }
@@ -167,24 +170,30 @@ namespace Going.UI.Controls
             var rtContent = rts["Content"];
             if (CollisionTool.Check(rtContent, x, y))
             {
-                dx = x; dy = y;
+                mx = dx = x;
+                my = dy = y;
                 bDown = true;
                 downTime = DateTime.Now;
                 OnMouseDown(x, y, button);
 
-                Task.Run(async () =>
-                {
-                    var time = LongClickTime ?? GlobalLongClickTime;
-
-                    downTime = DateTime.Now;
-                    while (bDown && (DateTime.Now - downTime).TotalMilliseconds < time) await Task.Delay(100);
-
-                    if ((DateTime.Now - downTime).TotalMilliseconds >= time && CollisionTool.Check(rtContent, x, y))
+                if (UseLongClick)
+                    Task.Run(async () =>
                     {
-                        bDown = false;
-                        OnMouseLongClick(x, y, button);
-                    }
-                });
+                        var time = LongClickTime ?? GlobalLongClickTime;
+
+                        downTime = DateTime.Now;
+                        while (bDown && (DateTime.Now - downTime).TotalMilliseconds < time) await Task.Delay(100);
+                                                
+                        if (bDown) 
+                        {
+                            bDown = false;
+
+                            if ((DateTime.Now - downTime).TotalMilliseconds >= time && CollisionTool.Check(rtContent, mx, my))
+                                OnMouseLongClick(x, y, button);
+                            else 
+                                OnMouseLongClickCancel(x, y, button);
+                        }
+                    });
 
                 if (Selectable) Design?.Select(this);
             }
@@ -194,8 +203,9 @@ namespace Going.UI.Controls
         {
             if (bDown)
             {
-                OnMouseUp(x, y, button);
                 bDown = false;
+
+                OnMouseUp(x, y, button);
 
                 var dist = Math.Abs(MathTool.GetDistance(new SKPoint(dx, dy), new SKPoint(x, y)));
                 // 3픽셀 이내에 있을 때만 클릭으로 인정(터치가)
@@ -205,7 +215,7 @@ namespace Going.UI.Controls
         }
 
         public void FireMouseDoubleClick(float x, float y, GoMouseButton button) { OnMouseDoubleClick(x, y, button); }
-        public void FireMouseMove(float x, float y) { OnMouseMove(x, y); }
+        public void FireMouseMove(float x, float y) { mx = x; my = y; OnMouseMove(x, y); }
         public void FireMouseWheel(float x, float y, float delta) { OnMouseWheel(x, y, delta); }
         public void FireKeyDown(bool Shift, bool Control, bool Alt, GoKeys key) { OnKeyDown(Shift, Control, Alt, key); }
         public void FireKeyUp(bool Shift, bool Control, bool Alt, GoKeys key) { OnKeyUp(Shift, Control, Alt, key); }
