@@ -38,7 +38,7 @@ namespace Going.UI.Controls
     public class GoControl : IGoControl
     {
         #region Properties
-        public static int LongClickTime { get; set; } = 2000;
+        public static int GlobalLongClickTime { get; set; } = 1000;
 
         public Guid Id { get; init; } = Guid.NewGuid();
         [GoProperty(PCategory.Basic, 0)] public string? Name { get; set; }
@@ -84,6 +84,7 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Bounds, 8), JsonIgnore] public float Bottom { get => bounds.Bottom; set => bounds.Bottom = value; }
         [GoProperty(PCategory.Bounds, 9)] public bool Fill { get; set; } = false;
         [GoProperty(PCategory.Bounds, 10)] public GoPadding Margin { get; set; } = new(3, 3, 3, 3);
+        [GoProperty(PCategory.Bounds, 11)] public int? LongClickTime { get; set; } = null;
 
         [JsonIgnore] public bool FirstRender { get; internal set; } = true;
         [JsonIgnore] public bool View { get; internal set; } = true;
@@ -173,10 +174,12 @@ namespace Going.UI.Controls
 
                 Task.Run(async () =>
                 {
-                    downTime = DateTime.Now;
-                    while (bDown && (DateTime.Now - downTime).TotalMilliseconds < LongClickTime) await Task.Delay(100);
+                    var time = LongClickTime ?? GlobalLongClickTime;
 
-                    if ((DateTime.Now - downTime).TotalMilliseconds >= LongClickTime && CollisionTool.Check(rtContent, x, y))
+                    downTime = DateTime.Now;
+                    while (bDown && (DateTime.Now - downTime).TotalMilliseconds < time) await Task.Delay(100);
+
+                    if ((DateTime.Now - downTime).TotalMilliseconds >= time && CollisionTool.Check(rtContent, x, y))
                     {
                         bDown = false;
                         OnMouseLongClick(x, y, button);
