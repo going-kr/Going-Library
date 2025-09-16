@@ -1,9 +1,12 @@
 ﻿//#define Modbus
 //#define TextComm
-#define Mqtt
+//#define Mqtt
+#define Test
 
 using Going.Basis.Datas;
 using uPLibrary.Networking.M2Mqtt;
+using System.Numerics;
+
 
 
 
@@ -93,4 +96,27 @@ while (true)
     mq.Publish("/time", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"));
     Thread.Sleep(1000);
 }
+#elif Test
+using Going.Basis.Communications.Modbus.RTU;
+
+BitMemories P = new BitMemories("P", 512);
+BitMemories M = new BitMemories("M", 4096);
+WordMemories T = new WordMemories("T", 512);
+WordMemories C = new WordMemories("C", 512);
+WordMemories D = new WordMemories("D", 4096);
+
+var slave = new SlaveRTU { Port = "COM6", Baudrate = 115200, Slave = 1 };
+
+slave.BitAreas.Add(0x0000, P);
+slave.BitAreas.Add(0x1000, M);
+slave.WordAreas.Add(0x5000, T);
+slave.WordAreas.Add(0x6000, C);
+slave.WordAreas.Add(0x7000, D);
+slave.Start();
+
+while(true)
+{
+
+}
 #endif
+
