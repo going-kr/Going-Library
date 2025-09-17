@@ -6,6 +6,8 @@
 using Going.Basis.Datas;
 using uPLibrary.Networking.M2Mqtt;
 using System.Numerics;
+using Going.Basis.Extensions;
+
 
 
 
@@ -113,6 +115,11 @@ slave.WordAreas.Add(0x5000, T);
 slave.WordAreas.Add(0x6000, C);
 slave.WordAreas.Add(0x7000, D);
 slave.Start();
+
+var u = D[0];
+u.Bit15(true); 
+D[0] = u;
+D[2] = 0;
 
 while(true)
 {

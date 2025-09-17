@@ -164,61 +164,102 @@ namespace Going.UI.Controls
         public void FireHide() { OnHide(); }
 
         public void FireUpdate() { OnUpdate(); }
+        
         public void FireMouseDown(float x, float y, GoMouseButton button)
         {
-            var rts = Areas();
-            var rtContent = rts["Content"];
-            if (CollisionTool.Check(rtContent, x, y))
+            if (Visible)
             {
-                mx = dx = x;
-                my = dy = y;
-                bDown = true;
-                downTime = DateTime.Now;
-                OnMouseDown(x, y, button);
+                var rts = Areas();
+                var rtContent = rts["Content"];
+                if (CollisionTool.Check(rtContent, x, y))
+                {
+                    mx = dx = x;
+                    my = dy = y;
+                    bDown = true;
+                    downTime = DateTime.Now;
+                    OnMouseDown(x, y, button);
 
-                if (UseLongClick)
-                    Task.Run(async () =>
-                    {
-                        var time = LongClickTime ?? GlobalLongClickTime;
-
-                        downTime = DateTime.Now;
-                        while (bDown && (DateTime.Now - downTime).TotalMilliseconds < time) await Task.Delay(100);
-                                                
-                        if (bDown) 
+                    if (UseLongClick)
+                        Task.Run(async () =>
                         {
-                            bDown = false;
+                            var time = LongClickTime ?? GlobalLongClickTime;
 
-                            if ((DateTime.Now - downTime).TotalMilliseconds >= time && CollisionTool.Check(rtContent, mx, my))
-                                OnMouseLongClick(x, y, button);
-                            else 
-                                OnMouseLongClickCancel(x, y, button);
-                        }
-                    });
+                            downTime = DateTime.Now;
+                            while (bDown && (DateTime.Now - downTime).TotalMilliseconds < time) await Task.Delay(100);
 
-                if (Selectable) Design?.Select(this);
+                            if (bDown)
+                            {
+                                bDown = false;
+
+                                if ((DateTime.Now - downTime).TotalMilliseconds >= time && CollisionTool.Check(rtContent, mx, my))
+                                    OnMouseLongClick(x, y, button);
+                                else
+                                    OnMouseLongClickCancel(x, y, button);
+                            }
+                        });
+
+                    if (Selectable) Design?.Select(this);
+                }
             }
         }
 
         public void FireMouseUp(float x, float y, GoMouseButton button)
         {
-            if (bDown)
+            if (Visible)
             {
-                bDown = false;
+                if (bDown)
+                {
+                    bDown = false;
 
-                OnMouseUp(x, y, button);
+                    OnMouseUp(x, y, button);
 
-                var dist = Math.Abs(MathTool.GetDistance(new SKPoint(dx, dy), new SKPoint(x, y)));
-                // 3픽셀 이내에 있을 때만 클릭으로 인정(터치가)
-                // 그래서 감압식은 찍은 압력에 따라 좌표가 바뀌기 때문에 3픽셀을 늘이면 동작한다.
-                if (CollisionTool.Check(Util.FromRect(0, 0, Width, Height), x, y) && dist < 3) OnMouseClick(x, y, button);
+                    var dist = Math.Abs(MathTool.GetDistance(new SKPoint(dx, dy), new SKPoint(x, y)));
+                    // 3픽셀 이내에 있을 때만 클릭으로 인정(터치가)
+                    // 그래서 감압식은 찍은 압력에 따라 좌표가 바뀌기 때문에 3픽셀을 늘이면 동작한다.
+                    if (CollisionTool.Check(Util.FromRect(0, 0, Width, Height), x, y) && dist < 3) OnMouseClick(x, y, button);
+                }
             }
         }
 
-        public void FireMouseDoubleClick(float x, float y, GoMouseButton button) { OnMouseDoubleClick(x, y, button); }
-        public void FireMouseMove(float x, float y) { mx = x; my = y; OnMouseMove(x, y); }
-        public void FireMouseWheel(float x, float y, float delta) { OnMouseWheel(x, y, delta); }
-        public void FireKeyDown(bool Shift, bool Control, bool Alt, GoKeys key) { OnKeyDown(Shift, Control, Alt, key); }
-        public void FireKeyUp(bool Shift, bool Control, bool Alt, GoKeys key) { OnKeyUp(Shift, Control, Alt, key); }
+        public void FireMouseDoubleClick(float x, float y, GoMouseButton button)
+        {
+            if (Visible)
+            {
+                OnMouseDoubleClick(x, y, button);
+            }
+        }
+        
+        public void FireMouseMove(float x, float y)
+        {
+            if (Visible)
+            {
+                mx = x; my = y; OnMouseMove(x, y);
+            }
+        }
+        
+        public void FireMouseWheel(float x, float y, float delta)
+        {
+            if (Visible)
+            {
+                OnMouseWheel(x, y, delta);
+            }
+        }
+        
+        public void FireKeyDown(bool Shift, bool Control, bool Alt, GoKeys key)
+        {
+            if (Visible)
+            {
+                OnKeyDown(Shift, Control, Alt, key);
+            }
+        }
+
+        public void FireKeyUp(bool Shift, bool Control, bool Alt, GoKeys key)
+        {
+            if (Visible)
+            {
+                OnKeyUp(Shift, Control, Alt, key);
+            }
+        }
         #endregion
 
         #region Areas
