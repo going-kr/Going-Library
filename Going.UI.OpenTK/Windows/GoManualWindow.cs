@@ -75,7 +75,7 @@ namespace Going.UI.OpenTK.Windows
                 ClientSize = new Vector2i(width, height),
                 StartVisible = false,
                 API = Environment.OSVersion.Platform == PlatformID.Unix ? ContextAPI.OpenGLES : ContextAPI.OpenGL,
-                APIVersion = Environment.OSVersion.Platform == PlatformID.Unix ? new Version(3, 1) : new Version(3, 2)
+                APIVersion = Environment.OSVersion.Platform == PlatformID.Unix ? new Version(2, 0) : new Version(3, 2)
             })
         {
             if (Environment.OSVersion.Platform == PlatformID.Unix) WindowState = WindowState.Fullscreen;
