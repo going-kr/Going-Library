@@ -1,4 +1,5 @@
 ﻿using Going.UI.Controls;
+using Going.UI.Datas;
 using Going.UI.Enums;
 using Going.UI.Utils;
 using System;
@@ -28,6 +29,10 @@ namespace Going.UI.Forms.Controls
         public bool BackgroundDraw { get => Control.BackgroundDraw; set { if (Control.BackgroundDraw != value) { Control.BackgroundDraw = value; Invalidate(); } } }
         public bool BorderOnly { get => Control.BorderOnly; set { if (Control.BorderOnly != value) { Control.BorderOnly = value; Invalidate(); } } }
         public GoContentAlignment ContentAlignment { get => Control.ContentAlignment; set { if (Control.ContentAlignment != value) { Control.ContentAlignment = value; Invalidate(); } } }
+
+        public string Bordercolor { get => Control.BorderColor; set { if (Control.BorderColor != value) { Control.BorderColor = value; Invalidate(); } } }
+        public float BorderWidth { get => Control.BorderWidth; set { if (Control.BorderWidth != value) { Control.BorderWidth = value; Invalidate(); } } }
+        public GoButtonFillStyle FillStyle { get => Control.FillStyle; set { if (Control.FillStyle != value) { Control.FillStyle = value; Invalidate(); } } }
         #endregion
 
         #region Event

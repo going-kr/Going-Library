@@ -33,6 +33,10 @@ namespace Going.UI.Forms.Controls
 
         public GoDirectionHV Direction { get => Control.Direction; set { if (Control.Direction != value) { Control.Direction = value; Invalidate(); } } }
         public GoButtonsMode Mode { get => Control.Mode; set { if (Control.Mode != value) { Control.Mode = value; Invalidate(); } } }
+
+        public string Bordercolor { get => Control.BorderColor; set { if (Control.BorderColor != value) { Control.BorderColor = value; Invalidate(); } } }
+        public float BorderWidth { get => Control.BorderWidth; set { if (Control.BorderWidth != value) { Control.BorderWidth = value; Invalidate(); } } }
+        public GoButtonFillStyle FillStyle { get => Control.FillStyle; set { if (Control.FillStyle != value) { Control.FillStyle = value; Invalidate(); } } }
         #endregion
 
         #region Event

@@ -17,6 +17,7 @@ using OpenTK.Graphics.OpenGL;
 using SkiaSharp;
 using System.Data;
 using System.Diagnostics;
+using System.Drawing;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -113,12 +114,12 @@ namespace Going.UIEditor.Windows
         public override void OnContentDraw(ContentDrawEventArgs e)
         {
             var prj = Program.CurrentProject;
-            //var thm = GoThemeW.Current;
             var canvas = e.Canvas;
 
             if (prj != null)
             {
                 prj.Design.DesignMode = true;
+                var thm = prj.Design.Theme;
 
                 SKRect? rt = GetBounds();
                 using var p = new SKPaint { };
@@ -130,7 +131,7 @@ namespace Going.UIEditor.Windows
                     using var imgf = SKImageFilter.CreateDropShadow(2, 2, 2, 2, Util.FromArgb(128, SKColors.Black));
                     p.ImageFilter = imgf;
                     p.IsStroke = false;
-                    p.Color = GoThemeW.Current.Back;
+                    p.Color = thm.Back;
                     canvas.DrawRect(rt.Value, p);
                     p.ImageFilter = null;
                 }
@@ -144,15 +145,15 @@ namespace Going.UIEditor.Windows
                         var crt = rt.Value; crt.Inflate(1, 1);
                         canvas.ClipRect(crt);
                         canvas.Translate(rt.Value.Left, rt.Value.Top);
-                        canvas.Clear(prj.Design.Theme.Back);
+                        canvas.Clear(thm.Back);
                         #endregion
 
                         #region draw
                         prj.Design.SetSize(Convert.ToInt32(rt.Value.Width), Convert.ToInt32(rt.Value.Height));
 
-                        if (Target is GoDesign design2) prj.Design.DrawPage(canvas, prj.Design.Theme, null);
-                        else if (Target is GoPage page2) prj.Design.DrawPage(canvas, prj.Design.Theme, page2);
-                        else if (Target is GoWindow wnd2) wnd2.FireDraw(canvas, prj.Design.Theme);
+                        if (Target is GoDesign design2) prj.Design.DrawPage(canvas, thm, null);
+                        else if (Target is GoPage page2) prj.Design.DrawPage(canvas, thm, page2);
+                        else if (Target is GoWindow wnd2) wnd2.FireDraw(canvas, thm);
                         #endregion
                     }
                 }
@@ -404,9 +405,9 @@ namespace Going.UIEditor.Windows
                                     int idx = sw.SelectedPage != null ? sw.Pages.IndexOf(sw.SelectedPage) : -1;
                                     var s = sw.SelectedPage != null ? sw.SelectedPage.Name : $"Page {idx}";
 
-                                    Util.DrawText(canvas, s, "나눔고딕", GoFontStyle.Normal, 12, rtT, prj.Design.Theme.Fore);
-                                    Util.DrawIcon(canvas, "fa-angle-left", 12, rtP, idx - 1 >= 0 ? prj.Design.Theme.Fore : prj.Design.Theme.Fore.WithAlpha(120));
-                                    Util.DrawIcon(canvas, "fa-angle-right", 12, rtN, idx + 1 < sw.Pages.Count ? prj.Design.Theme.Fore : prj.Design.Theme.Fore.WithAlpha(120));
+                                    Util.DrawText(canvas, s, "나눔고딕", GoFontStyle.Normal, 12, rtT, thm.Fore);
+                                    Util.DrawIcon(canvas, "fa-angle-left", 12, rtP, idx - 1 >= 0 ? thm.Fore : thm.Fore.WithAlpha(120));
+                                    Util.DrawIcon(canvas, "fa-angle-right", 12, rtN, idx + 1 < sw.Pages.Count ? thm.Fore : thm.Fore.WithAlpha(120));
                                     #region box
                                     p.IsStroke = true;
                                     p.Color = SKColors.Red;
@@ -862,7 +863,7 @@ namespace Going.UIEditor.Windows
                 var rt = GetBounds();
                 var pt = PointToClient(new Point(drgevent.X, drgevent.Y));
                 var v = drgevent.Data?.GetData(typeof(GoToolItem)) as GoToolItem;
-                if (v != null && rt.HasValue && CollisionTool.Check(rt.Value, pt.X, pt.Y) && v.Tag is Type tp)
+                if (v != null && rt.HasValue && CollisionTool.Check(rt.Value, pt.X, pt.Y))
                 {
                     int x = Convert.ToInt32(pt.X - rt.Value.Left);
                     int y = Convert.ToInt32(pt.Y - rt.Value.Top);
@@ -870,55 +871,62 @@ namespace Going.UIEditor.Windows
                     var (con, cx, cy) = target_container(x, y);
                     if (con != null)
                     {
-                        var nc = Activator.CreateInstance(tp);
-                        if (nc is GoControl vc)
+                        Type? tp = null;
+
+                        if(v.Tag is Type tp2) tp = tp2;
+
+                        if (tp != null)
                         {
-                            vc.FireInit(prj.Design);
-                            #region default value
-                            vc.Left = cx; vc.Top = cy; vc.Width = 80; vc.Height = 40;
-                            if (vc is GoTableLayoutPanel tpnl)
+                            var nc = Activator.CreateInstance(tp);
+                            if (nc is GoControl vc)
                             {
-                                tpnl.Rows = ["20%", "20%", "20%", "20%", "20%"];
-                                tpnl.Columns = ["20%", "20%", "20%", "20%", "20%"];
-                            }
-                            else if(vc is GoGridLayoutPanel gpnl)
-                            {
-                                gpnl.AddRow("25%", ["25%", "25%", "25%", "25%"]);
-                                gpnl.AddRow("25%", ["33.3%", "33.4%", "33.3%"]);
-                                gpnl.AddRow("25%", ["50%", "50%"]);
-                                gpnl.AddRow("25%", ["100%"]);
-                            }
-                            else if(vc is GoTabControl tab)
-                            {
-                                tab.TabPages.Add(new GoTabPage { Text = "tab1" });
-                                tab.TabPages.Add(new GoTabPage { Text = "tab2" });
-                            }
-                            else if (vc is GoSwitchPanel swpnl)
-                            {
-                                swpnl.Pages.Add(new GoSubPage { Name = "pnl1" });
-                                swpnl.Pages.Add(new GoSubPage { Name = "pnl2" });
-                            }
-                            #endregion
+                                vc.FireInit(prj.Design);
+                                #region default value
+                                vc.Left = cx; vc.Top = cy; vc.Width = 80; vc.Height = 40;
+                                if (vc is GoTableLayoutPanel tpnl)
+                                {
+                                    tpnl.Rows = ["20%", "20%", "20%", "20%", "20%"];
+                                    tpnl.Columns = ["20%", "20%", "20%", "20%", "20%"];
+                                }
+                                else if (vc is GoGridLayoutPanel gpnl)
+                                {
+                                    gpnl.AddRow("25%", ["25%", "25%", "25%", "25%"]);
+                                    gpnl.AddRow("25%", ["33.3%", "33.4%", "33.3%"]);
+                                    gpnl.AddRow("25%", ["50%", "50%"]);
+                                    gpnl.AddRow("25%", ["100%"]);
+                                }
+                                else if (vc is GoTabControl tab)
+                                {
+                                    tab.TabPages.Add(new GoTabPage { Text = "tab1" });
+                                    tab.TabPages.Add(new GoTabPage { Text = "tab2" });
+                                }
+                                else if (vc is GoSwitchPanel swpnl)
+                                {
+                                    swpnl.Pages.Add(new GoSubPage { Name = "pnl1" });
+                                    swpnl.Pages.Add(new GoSubPage { Name = "pnl2" });
+                                }
+                                #endregion
 
-                            TransAction(() =>
-                            {
-                                if (con is GoTableLayoutPanel tpnl && tableIndex(tpnl, cx, cy, out var tidx))
+                                TransAction(() =>
                                 {
-                                    AddControl(tpnl, vc, tidx.Col, tidx.Row, 1, 1);
-                                    SelectedControl([.. sels], [vc]);
-                                }
-                                else if (con is GoGridLayoutPanel gpnl && gridIndex(gpnl, cx, cy, out var gidx))
-                                {
-                                    AddControl(gpnl, vc, gidx.Col, gidx.Row);
-                                    SelectedControl([.. sels], [vc]);
-                                }
-                                else
-                                {
-                                    AddControl(con, vc);
-                                    SelectedControl([.. sels], [vc]);
-                                }
+                                    if (con is GoTableLayoutPanel tpnl && tableIndex(tpnl, cx, cy, out var tidx))
+                                    {
+                                        AddControl(tpnl, vc, tidx.Col, tidx.Row, 1, 1);
+                                        SelectedControl([.. sels], [vc]);
+                                    }
+                                    else if (con is GoGridLayoutPanel gpnl && gridIndex(gpnl, cx, cy, out var gidx))
+                                    {
+                                        AddControl(gpnl, vc, gidx.Col, gidx.Row);
+                                        SelectedControl([.. sels], [vc]);
+                                    }
+                                    else
+                                    {
+                                        AddControl(con, vc);
+                                        SelectedControl([.. sels], [vc]);
+                                    }
 
-                            });
+                                });
+                            }
                         }
                     }
 
@@ -1169,9 +1177,9 @@ namespace Going.UIEditor.Windows
                 var (rtL, rtT, rtR, rtB, rtF, rtFR) = design2.LayoutBounds();
 
                 if (design2.UseLeftSideBar) con.Add(design2.LeftSideBar);
-                else if (design2.UseRightSideBar) con.Add(design2.RightSideBar);
-                else if (design2.UseTitleBar) con.Add(design2.TitleBar);
-                else if (design2.UseFooter) con.Add(design2.Footer);
+                if (design2.UseRightSideBar) con.Add(design2.RightSideBar);
+                if (design2.UseTitleBar) con.Add(design2.TitleBar);
+                if (design2.UseFooter) con.Add(design2.Footer);
             }
             else if (Target is GoPage page2) con.Add(page2);
             else if (Target is GoWindow wnd2) con.Add(wnd2);
@@ -1418,7 +1426,8 @@ namespace Going.UIEditor.Windows
 
             var gx = ptUp.X - ptDown.X;
             var gy = ptUp.Y - ptDown.Y;
-            var crt = calcbox(anc.Name, anc.Control.Bounds, gx, gy);
+            var art = anc.Control.Bounds; art.Inflate(-1, -1);
+            var crt = calcbox(anc.Name, art, gx, gy);
 
             var rt = tpnl.Areas()["Content"];
             var rts = Util.Grid(rt, [.. tpnl.Columns], [.. tpnl.Rows]);
@@ -1565,7 +1574,6 @@ namespace Going.UIEditor.Windows
                 }
                 #endregion
             }
-
         }
         #endregion
 

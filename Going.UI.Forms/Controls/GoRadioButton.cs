@@ -1,4 +1,5 @@
-﻿using Going.UI.Enums;
+﻿using Going.UI.Datas;
+using Going.UI.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,10 @@ namespace Going.UI.Forms.Controls
         public GoRoundType Round { get => Control.Round; set { if (Control.Round != value) { Control.Round = value; Invalidate(); } } }
 
         public bool Checked { get => Control.Checked; set { if (Control.Checked != value) { Control.Checked = value; Invalidate(); } } }
+
+        public string Bordercolor { get => Control.BorderColor; set { if (Control.BorderColor != value) { Control.BorderColor = value; Invalidate(); } } }
+        public float BorderWidth { get => Control.BorderWidth; set { if (Control.BorderWidth != value) { Control.BorderWidth = value; Invalidate(); } } }
+        public GoButtonFillStyle FillStyle { get => Control.FillStyle; set { if (Control.FillStyle != value) { Control.FillStyle = value; Invalidate(); } } }
         #endregion
 
         #region Event

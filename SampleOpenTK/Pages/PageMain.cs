@@ -25,6 +25,7 @@ namespace SampleOpenTK.Pages
         GoMessageBox msgbox;
         GoSelectorBox selbox;
         GoInputBox inbox;
+        GoButtons btns;
 
         GoGridLayoutPanel grid;
 
@@ -37,6 +38,13 @@ namespace SampleOpenTK.Pages
             Childrens.Add(btnMB);
             Childrens.Add(btnSB);
             Childrens.Add(btnIB);
+
+            btns = new GoButtons { Left = 140, Top = 460, Width = 300, Height = 40, BorderWidth = 1, FillStyle = GoButtonFillStyle.Emboss, BorderColor = "base1" };
+            btns.Buttons.Add(new GoButtonsItem { Text = "Mode1", Size = "25%" });
+            btns.Buttons.Add(new GoButtonsItem { Text = "Mode2", Size = "25%" });
+            btns.Buttons.Add(new GoButtonsItem { Text = "Mode3", Size = "25%" });
+            btns.Buttons.Add(new GoButtonsItem { Text = "Mode4", Size = "25%" });
+            Childrens.Add(btns);
 
             msgbox = new GoMessageBox { };
             selbox = new GoSelectorBox { };

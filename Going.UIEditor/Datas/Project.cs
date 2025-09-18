@@ -79,7 +79,7 @@ namespace Going.UIEditor.Datas
             using (var ofd = new OpenFileDialog())
             {
                 ofd.Title = LM.Open;
-                ofd.InitialDirectory = Program.DataMgr.ProjectFolder;
+                ofd.InitialDirectory = Program.DataMgr.LastOpenFolder ??  Program.DataMgr.ProjectFolder;
                 ofd.Multiselect = false;
                 ofd.Filter = "Going UI Editor File|*.gud";
 
@@ -88,6 +88,9 @@ namespace Going.UIEditor.Datas
                     var s = File.ReadAllText(ofd.FileName);
                     ret = JsonSerializer.Deserialize<Project>(s, JsonOpt.Options);
                     if (ret != null) ret.FilePath = ofd.FileName;
+
+                    Program.DataMgr.LastOpenFolder = Path.GetDirectoryName(ofd.FileName);
+                    Program.DataMgr.SaveSetting();
                 }
             }
 

@@ -27,13 +27,17 @@ namespace Going.UI.Controls
 
         [GoProperty(PCategory.Control, 6)] public string TextColor { get; set; } = "Fore";
         [GoProperty(PCategory.Control, 7)] public string ButtonColor { get; set; } = "Base3";
-        [GoProperty(PCategory.Control, 8)] public string SelectedButtonColor { get; set; } = "Select";
-        [GoProperty(PCategory.Control, 9)] public GoRoundType Round { get; set; } = GoRoundType.All;
+        [GoProperty(PCategory.Control, 8)] public string BorderColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Control, 9)] public string SelectedButtonColor { get; set; } = "Select";
+        [GoProperty(PCategory.Control, 8)] public string SelectedBorderColor { get; set; } = "Select";
+        [GoProperty(PCategory.Control, 10)] public GoRoundType Round { get; set; } = GoRoundType.All;
+        [GoProperty(PCategory.Control, 11)] public float BorderWidth { get; set; } = 1F;
+        [GoProperty(PCategory.Control, 12)] public GoButtonFillStyle FillStyle { get; set; } = GoButtonFillStyle.Flat;
 
-        [GoProperty(PCategory.Control, 10)] public List<GoButtonsItem> Buttons { get; set; } = [];
+        [GoProperty(PCategory.Control, 13)] public List<GoButtonsItem> Buttons { get; set; } = [];
 
-        [GoProperty(PCategory.Control, 11)] public GoDirectionHV Direction { get; set; } = GoDirectionHV.Horizon;
-        [GoProperty(PCategory.Control, 12)] public GoButtonsMode Mode { get; set; } = GoButtonsMode.Button;
+        [GoProperty(PCategory.Control, 14)] public GoDirectionHV Direction { get; set; } = GoDirectionHV.Horizon;
+        [GoProperty(PCategory.Control, 15)] public GoButtonsMode Mode { get; set; } = GoButtonsMode.Button;
         #endregion
 
         #region Event
@@ -57,6 +61,8 @@ namespace Going.UI.Controls
             var cText = thm.ToColor(TextColor);
             var cButton = thm.ToColor(ButtonColor);
             var cSelButton = thm.ToColor(SelectedButtonColor);
+            var cBorder = thm.ToColor(BorderColor);
+            var cSelBorder = thm.ToColor(SelectedBorderColor);
             #endregion
             #region bounds
             var rts = Areas();
@@ -97,9 +103,15 @@ namespace Going.UI.Controls
                     if (btn.Hover)
                     {
                         var rnd = rnds[i];
-                        var cBtn = cButton.BrightnessTransmit(btn.Down ? thm.DownBrightness : 0);
+                        var cBtn = (btn.Selected ? cSelButton : cButton).BrightnessTransmit(btn.Down ? thm.DownBrightness : 0);
+                        var cBor = (btn.Selected ? cSelBorder : cBorder).BrightnessTransmit(btn.Down ? thm.DownBrightness : 0);
                         var cTxt = cText.BrightnessTransmit(btn.Down ? thm.DownBrightness : 0);
-                        Util.DrawBox(canvas, rt, SKColors.Transparent, cBtn.BrightnessTransmit(btn.Hover ? thm.HoverBorderBrightness : 0), rnd, thm.Corner);
+                        rt.Inflate(1, 1);
+                        Util.DrawButton(canvas, thm, rt, cBtn.BrightnessTransmit(btn.Hover ? thm.HoverFillBrightness : 0),
+                                                         cBor.BrightnessTransmit(btn.Hover ? thm.HoverBorderBrightness : 0), rnd, thm.Corner, true, BorderWidth, FillStyle, btn.Down);
+
+                        if (btn.Down) rt.Offset(0, 1);
+                        Util.DrawTextIcon(canvas, btn.Text, FontName, FontStyle, FontSize, btn.IconString, IconSize, GoDirectionHV.Horizon, IconGap, rt, cTxt, GoContentAlignment.MiddleCenter);
                     }
                 });
                 #endregion

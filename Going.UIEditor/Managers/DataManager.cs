@@ -13,10 +13,12 @@ namespace Going.UIEditor.Managers
     {
         #region Const
         const string PATH_SETTING = "setting.json";
+        const string PATH_LAST_OPEN_FOLDER = "lastopnefolder.json";
         #endregion
 
         #region Properties 
         public string? ProjectFolder { get; set; }
+        public string? LastOpenFolder { get; set; }
 
         #region Language
         private Lang lang = Lang.NONE;
@@ -53,7 +55,9 @@ namespace Going.UIEditor.Managers
             var v = JsonSerializer.Serialize(new Set
             {
                 ProjectFolder = this.ProjectFolder,
+                LastOpenFolder = this.LastOpenFolder,
                 Language = this.Language,
+             
             }, JsonOpt.Options);
             File.WriteAllText(PATH_SETTING, v);
         }
@@ -65,11 +69,13 @@ namespace Going.UIEditor.Managers
             {
                 var set = JsonSerializer.Deserialize<Set>(File.ReadAllText(PATH_SETTING));
                 this.ProjectFolder = set?.ProjectFolder;
+                this.LastOpenFolder = set?.LastOpenFolder;
                 this.Language = set?.Language ?? Lang.KO;
             }
             else
             {
                 this.ProjectFolder = Path.Combine(Application.StartupPath, "ui_editor");
+                this.LastOpenFolder = null;
                 this.Language = Lang.KO;
             }
         }
@@ -81,6 +87,7 @@ namespace Going.UIEditor.Managers
     public class Set
     {
         public string? ProjectFolder { get; set; }
+        public string? LastOpenFolder { get; set; }
         public Lang Language { get; set; } = Lang.NONE;
     }
     #endregion
