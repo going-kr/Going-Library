@@ -228,9 +228,18 @@ namespace Going.Basis.Communications.LS
                 }
                 #endregion
 
-                if (WorkQueue.Count > 0)
+                if (WorkQueue.Count > 0 || ManualWorkList.Count > 0)
                 {
-                    var w = WorkQueue.Dequeue();
+                    Work? w = null;
+                    #region Get Work
+                    if (ManualWorkList.Count > 0)
+                    {
+                        w = ManualWorkList[0];
+                        ManualWorkList.RemoveAt(0);
+                    }
+                    else w = WorkQueue.Dequeue();
+                    #endregion
+
                     var bRepeat = true;
                     var nTimeoutCount = 0;
                     var Timeout = w.Timeout ?? this.Timeout;

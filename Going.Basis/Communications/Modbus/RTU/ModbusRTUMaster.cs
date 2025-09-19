@@ -3,6 +3,7 @@ using Going.Basis.Extensions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO.Ports;
 using System.Linq;
 using System.Text;
@@ -235,6 +236,9 @@ namespace Going.Basis.Communications.Modbus.RTU
                     {
                         baResponse = new byte[BufferSize];
                         IsStart = true;
+
+                        DateTime ppp = DateTime.Now;
+
                         while (!token.IsCancellationRequested && IsStart)
                         {
                             try
@@ -243,6 +247,10 @@ namespace Going.Basis.Communications.Modbus.RTU
                             }
                             catch (SchedulerStopException) { break; }
                             await Task.Delay(Interval);
+
+
+                            Debug.WriteLine($"{(DateTime.Now - ppp).TotalMilliseconds:0}");
+                            ppp = DateTime.Now;
                         }
                     }
 
@@ -281,17 +289,18 @@ namespace Going.Basis.Communications.Modbus.RTU
         {
             try
             {
-                #region Manual Fill
-                if (ManualWorkList.Count > 0)
+                if (WorkQueue.Count > 0 || ManualWorkList.Count > 0)
                 {
-                    for (int i = 0; i < ManualWorkList.Count; i++) WorkQueue.Enqueue(ManualWorkList[i]);
-                    ManualWorkList.Clear();
-                }
-                #endregion
+                    Work? w = null;
+                    #region Get Work
+                    if (ManualWorkList.Count > 0)
+                    {
+                        w = ManualWorkList[0];
+                        ManualWorkList.RemoveAt(0);
+                    }
+                    else w = WorkQueue.Dequeue();
+                    #endregion
 
-                if (WorkQueue.Count > 0)
-                {
-                    var w = WorkQueue.Dequeue();
                     var bRepeat = true;
                     var nTimeoutCount = 0;
                     var Timeout = w.Timeout ?? this.Timeout;

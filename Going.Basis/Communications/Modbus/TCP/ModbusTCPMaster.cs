@@ -295,17 +295,18 @@ namespace Going.Basis.Communications.Modbus.TCP
         {
             try
             {
-                #region Manual Fill
-                if (ManualWorkList.Count > 0)
+                if (WorkQueue.Count > 0 || ManualWorkList.Count > 0)
                 {
-                    for (int i = 0; i < ManualWorkList.Count; i++) WorkQueue.Enqueue(ManualWorkList[i]);
-                    ManualWorkList.Clear();
-                }
-                #endregion
+                    Work? w = null;
+                    #region Get Work
+                    if (ManualWorkList.Count > 0)
+                    {
+                        w = ManualWorkList[0];
+                        ManualWorkList.RemoveAt(0);
+                    }
+                    else w = WorkQueue.Dequeue();
+                    #endregion
 
-                if (WorkQueue.Count > 0)
-                {
-                    var w = WorkQueue.Dequeue();
                     var bRepeat = true;
                     var nTimeoutCount = 0;
                     var Timeout = w.Timeout ?? this.Timeout;
