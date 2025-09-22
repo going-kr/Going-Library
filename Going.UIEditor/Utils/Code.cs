@@ -802,6 +802,7 @@ namespace Going.UIEditor.Utils
         static void MakeDesignBarCode<T>(StringBuilder sb, string space, string varname, T con, List<IGoControl> ls)
         {
             sb.AppendLine($"{space}var json = Encoding.UTF8.GetString(Convert.FromBase64String(\"{Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(con, GoJsonConverter.Options)))}\"));");
+            //sb.AppendLine(@$"{space}var json = @""{JsonSerializer.Serialize(con, GoJsonConverter.Options).Replace("\"", "\"\"")}"";");
             sb.AppendLine($"{space}var c = JsonSerializer.Deserialize<{TypeName(con)}>(json, GoJsonConverter.Options);");
             var props = con.GetType().GetProperties().Where(x => ValidProp(x));
             foreach (var pi in props) sb.AppendLine($"{space}{varname}.{pi.Name} = c.{pi.Name};");
