@@ -1,13 +1,12 @@
-﻿//#define Modbus
+﻿#define Modbus
 //#define TextComm
 //#define Mqtt
-#define Test
+//#define Test
 
 using Going.Basis.Datas;
 using uPLibrary.Networking.M2Mqtt;
 using System.Numerics;
 using Going.Basis.Extensions;
-
 
 
 
@@ -22,15 +21,15 @@ WordMemories T = new WordMemories("T", 128);
 WordMemories C = new WordMemories("C", 128);
 WordMemories D = new WordMemories("D", 1024);
 
-var slave = new SlaveRTU { Port = "COM5", Baudrate = 115200, Slave = 1 };
+var slave = new SlaveTCP { Slave = 1 };
 //var slave = new SlaveTCP {  Slave = 1 };
 slave.BitAreas.Add(0x0000, P);
 slave.BitAreas.Add(0x1000, M);
 slave.WordAreas.Add(0x5000, T);
 slave.WordAreas.Add(0x6000, C);
 slave.WordAreas.Add(0x7000, D);
-slave.Start();
 
+/*
 var master = new MasterRTU { Port = "COM6", Baudrate = 115200 };
 //var master = new MasterTCP { RemoteIP = "127.0.0.1" };
 master.BitAreas.Add(0x0000, "P");
@@ -42,10 +41,16 @@ master.MonitorWord_F3(1, 0x7000, 12);
 master.Start();
 
 master.SetWord(1, "D10", 100);
-
+*/
 int sec = 0;
 while (true)
 {
+    var r = Console.ReadLine();
+    if (r?.ToLower().Trim() == "start") slave.Start();
+    else if (r?.ToLower().Trim() == "stop") slave.Stop();
+    else if (r?.ToLower().Trim() == "status") Console.WriteLine($"{slave.IsStart}");
+
+    /*
     var now = DateTime.Now;
     D[0] = (ushort)now.Year;
     D[1] = (ushort)now.Month;
@@ -61,8 +66,8 @@ while (true)
         for (int i = 0; i <= 10; i++) Console.Write((master.GetWord(1, $"D{i}") ?? 0).ToString().PadLeft(5));
         Console.WriteLine();
     }
+    */
 
-    Thread.Sleep(1);
 }
 #elif TextComm
 using Going.Basis.Communications.TextComm.RTU;

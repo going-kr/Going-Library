@@ -72,9 +72,13 @@ namespace Going.Basis.Communications.TextComm.TCP
                     IsStart = true;
                     while (!token.IsCancellationRequested && IsStart)
                     {
-                        var sock = server.Accept();
-                        _ = Task.Run(async () => await run(sock));
-                        await Task.Delay(100);
+                        try
+                        {
+                            var sock = await server.AcceptAsync(token);
+                            _ = Task.Run(async () => await run(sock, token), token);
+                            await Task.Delay(100);
+                        }
+                        catch { }
                     }
                     IsStart = false;
 
@@ -102,7 +106,7 @@ namespace Going.Basis.Communications.TextComm.TCP
         #endregion
 
         #region Run
-        async Task run(Socket sock)
+        async Task run(Socket sock, CancellationToken cancel)
         {
             SocketConnected?.Invoke(this, new SocketEventArgs(sock));
 
@@ -114,7 +118,7 @@ namespace Going.Basis.Communications.TextComm.TCP
             var ok = false;
             #endregion
 
-            while (IsStart && isConnected)
+            while (!cancel.IsCancellationRequested && IsStart && isConnected)
             {
                 try
                 {
