@@ -160,24 +160,31 @@ namespace Going.Basis.Communications.Modbus.TCP
                 {
                     var token = cancel.Token;
 
-                    #region server listen
-                    server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                    IPEndPoint ipEndPoint = new IPEndPoint(IPAddress.Any, LocalPort);
-                    server.Bind(ipEndPoint);
-                    server.Listen(10);
-                    #endregion
-
-                    IsStart = true;
-                    while (!token.IsCancellationRequested && IsStart)
+                    try
                     {
-                        try
+                        #region server listen
+                        server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                        IPEndPoint ipEndPoint = new IPEndPoint(IPAddress.Any, LocalPort);
+                        server.Bind(ipEndPoint);
+                        server.Listen(10);
+                        #endregion
+
+                        IsStart = true;
+                        while (!token.IsCancellationRequested && IsStart)
                         {
-                            var sock = await server.AcceptAsync(token);
-                            _ = Task.Run(async () => await run(sock, token), token);
-                            await Task.Delay(100);
+                            try
+                            {
+                                var sock = await server.AcceptAsync(token);
+                                _ = Task.Run(async () => await run(sock, token), token);
+                                await Task.Delay(100);
+                            }
+                            catch { }
                         }
-                        catch { }
+
+                        server.Close();
                     }
+                    catch { }
+
                     IsStart = false;
 
                 }, cancel.Token);
