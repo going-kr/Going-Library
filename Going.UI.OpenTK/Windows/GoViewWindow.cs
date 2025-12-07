@@ -182,6 +182,8 @@ namespace Going.UI.OpenTK.Windows
                             }
                         }
                         #endregion
+
+                        OnDraw(canvas);
                     }
                     #endregion
 
@@ -300,6 +302,8 @@ namespace Going.UI.OpenTK.Windows
             base.OnKeyDown(e);
         }
         #endregion
+
+        public virtual void OnDraw(SKCanvas canvas) { }
         #endregion
 
         #region Method

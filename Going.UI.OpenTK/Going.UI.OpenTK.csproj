@@ -10,7 +10,7 @@
     <PackageIconUrl>https://raw.githubusercontent.com/Going-kr/Going-Library/master/icon/Going_logo_blue.png</PackageIconUrl>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Description>OpenTK version of Going UI</Description>
-    <Version>1.0.4</Version>
+    <Version>1.0.4.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
