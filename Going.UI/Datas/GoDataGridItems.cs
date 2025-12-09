@@ -130,6 +130,11 @@ namespace Going.UI.Datas
                 if (ci < Grid.Columns.Count-1) canvas.DrawLine(r, Bounds.Top, r, Bounds.Bottom, p);
                 p.PathEffect = null;
                 OnDraw(canvas, thm);
+
+                if(!Enabled)
+                {
+                    Util.DrawBox(canvas, Bounds, Util.FromArgb(GoTheme.DisableAlpha, cBack), GoRoundType.Rect, thm.Corner);
+                }
             }
         }
         #endregion
@@ -137,7 +142,7 @@ namespace Going.UI.Datas
         #region Mouse
         internal void MouseDown(float x, float y, GoMouseButton button)
         {
-            if (CollisionTool.Check(Bounds, x, y))
+            if (CollisionTool.Check(Bounds, x, y) && Enabled)
             {
                 bDown = true;
                 OnMouseDown(x, y, button);
@@ -146,7 +151,7 @@ namespace Going.UI.Datas
 
         internal void MouseUp(float x, float y, GoMouseButton button)
         {
-            if (bDown)
+            if (bDown && Enabled)
             {
                 bDown = false;
                 OnMouseUp(x, y, button);
@@ -155,12 +160,14 @@ namespace Going.UI.Datas
 
         internal void MouseClick(float x, float y, GoMouseButton button)
         {
-            OnMouseClick(x, y, button);
+            if (Enabled)
+                OnMouseClick(x, y, button);
         }
 
         internal void MouseMove(float x, float y)
         {
-            OnMouseMove(x, y);
+            if (Enabled)
+                OnMouseMove(x, y);
         }
         #endregion
         #endregion
@@ -1384,7 +1391,10 @@ namespace Going.UI.Datas
             if (Column is GoDataGridInputComboColumn col && CollisionTool.Check(rt, x, y))
             {
                 var v = col.Items.FirstOrDefault(x => x.Value != null ? x.Value.Equals(Value) : false);
-                Grid.ComboDropDownOpen(this, rt, col.ItemHeight, col.MaximumViewCount, col.Items, v, (item) =>
+
+                var items = col.Filter != null ? col.Items.Where(x => col.Filter(x)).ToList() : col.Items;
+
+                Grid.ComboDropDownOpen(this, rt, col.ItemHeight, col.MaximumViewCount, items, v, (item) =>
                 {
                     if (item != null)
                     {
@@ -1415,6 +1425,7 @@ namespace Going.UI.Datas
     {
         #region Properties
         public List<GoDataGridInputComboItem> Items { get; set; } = [];
+        public Func<GoDataGridInputComboItem, bool>? Filter { get; set; }
         public int MaximumViewCount { get; set; } = 8;
         public int ItemHeight { get; set; } = 30;
         #endregion 
