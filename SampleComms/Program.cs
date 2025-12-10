@@ -21,14 +21,14 @@ WordMemories T = new WordMemories("T", 128);
 WordMemories C = new WordMemories("C", 128);
 WordMemories D = new WordMemories("D", 1024);
 
-var slave = new SlaveTCP { Slave = 1 };
+var slave = new SlaveRTU { Port = "COM6", Baudrate = 115200, Slave = 1 };
 //var slave = new SlaveTCP {  Slave = 1 };
 slave.BitAreas.Add(0x0000, P);
 slave.BitAreas.Add(0x1000, M);
 slave.WordAreas.Add(0x5000, T);
 slave.WordAreas.Add(0x6000, C);
 slave.WordAreas.Add(0x7000, D);
-
+slave.Start();
 /*
 var master = new MasterRTU { Port = "COM6", Baudrate = 115200 };
 //var master = new MasterTCP { RemoteIP = "127.0.0.1" };
@@ -45,12 +45,16 @@ master.SetWord(1, "D10", 100);
 int sec = 0;
 while (true)
 {
+    var d1 = D[1];
+    d1.Bit7(DateTime.Now.Second % 2 == 0);
+    D[1] = d1;
+
+    /*
     var r = Console.ReadLine();
     if (r?.ToLower().Trim() == "start") slave.Start();
     else if (r?.ToLower().Trim() == "stop") slave.Stop();
     else if (r?.ToLower().Trim() == "status") Console.WriteLine($"{slave.IsStart}");
 
-    /*
     var now = DateTime.Now;
     D[0] = (ushort)now.Year;
     D[1] = (ushort)now.Month;
@@ -67,8 +71,9 @@ while (true)
         Console.WriteLine();
     }
     */
-
+    Thread.Sleep(10);
 }
+
 #elif TextComm
 using Going.Basis.Communications.TextComm.RTU;
 using Going.Basis.Communications.TextComm.TCP;

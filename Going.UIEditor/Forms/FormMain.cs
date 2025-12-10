@@ -560,6 +560,21 @@ namespace Going.UIEditor
                                         if (!File.Exists(filename)) File.WriteAllText(filename, r.Code, Encoding.Unicode);
                                     }
                                     else File.WriteAllText(filename, r.Code, Encoding.Unicode);
+
+                                    if(k2 == "design.json")
+                                    {
+                                        try
+                                        {
+                                            if (Directory.Exists(Path.Combine(dir, "bin", "Debug")))
+                                                foreach (var d in Directory.GetDirectories(Path.Combine(dir, "bin", "Debug")))
+                                                    File.WriteAllText(Path.Combine(d, r.FileName), r.Code);
+
+                                            if (Directory.Exists(Path.Combine(dir, "bin", "Release")))
+                                                foreach (var d in Directory.GetDirectories(Path.Combine(dir, "bin", "Release")))
+                                                    File.WriteAllText(Path.Combine(d, r.FileName), r.Code);
+                                        }
+                                        catch { }
+                                    }
                                 }
                             }
 
