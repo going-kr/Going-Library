@@ -34,7 +34,6 @@ namespace Going.UIEditor.Utils
                 ret = new Dictionary<string, Dictionary<string, UICode>>
                 {
                     { "", [] },
-                    { "App.json", [] },
                     { "Pages", [] },
                     { "Windows", [] }
                 };
