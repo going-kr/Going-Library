@@ -56,7 +56,7 @@ namespace Going.Basis.Communications.TextComm.TCP
 
         public bool IsOpen => bIsOpen;
         public bool IsStart { get; private set; }
-        public bool AutoStart { get; set; }
+        public bool AutoReconnect { get; set; } = true;
         #endregion
 
         #region Member Variable
@@ -84,35 +84,13 @@ namespace Going.Basis.Communications.TextComm.TCP
         #region Construct
         public TextCommTCPMaster()
         {
-            Task.Run(async () =>
-            {
-                while (true)
-                {
-                    if (!IsStart && AutoStart)
-                    {
-                        _Start();
-                    }
-                    await Task.Delay(1000);
-                }
-            });
+
         }
         #endregion
 
         #region Method
         #region Start / Stop
         public void Start()
-        {
-            if (AutoStart) throw new Exception("AutoStart가 true일 땐 Start/Stop 을 할 수 없습니다.");
-            else _Start();
-        }
-
-        public void Stop()
-        {
-            if (AutoStart) throw new Exception("AutoStart가 true일 땐 Start/Stop 을 할 수 없습니다.");
-            else _Stop();
-        }
-
-        private void _Start()
         {
             if (!IsOpen && !IsStart)
             {
@@ -121,52 +99,62 @@ namespace Going.Basis.Communications.TextComm.TCP
                 {
                     var token = cancel.Token;
 
-                    #region Connect
-                    try
+                    if (!OperatingSystem.IsBrowser())
                     {
-                        client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                        client.ReceiveTimeout = Timeout;
-                        client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, Timeout);
-                        client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
-                        client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
-
-                        client.Connect(RemoteIP, RemotePort);
-                        bIsOpen = client.Connected;
-                        SocketConnected?.Invoke(this, new SocketEventArgs(client));
-                    }
-                    catch { }
-                    #endregion
-
-                    if (bIsOpen)
-                    {
-                        baResponse = new byte[BufferSize];
-                        IsStart = true;
-                        while (!token.IsCancellationRequested && IsStart)
+                        do
                         {
+                            #region Connect
                             try
                             {
-                                Process();
+                                client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                                client.ReceiveTimeout = Timeout;
+                                client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, Timeout);
+                                client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
+                                client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+
+                                await client.ConnectAsync(RemoteIP, RemotePort, token);
+                                bIsOpen = client.Connected;
+                                SocketConnected?.Invoke(this, new SocketEventArgs(client));
                             }
-                            catch (SchedulerStopException) { break; }
-                            await Task.Delay(Interval);
-                        }
-                    }
+                            catch { }
+                            #endregion
 
-                    if (bIsOpen && client != null)
-                    {
-                        client.Close();
-                        SocketDisconnected?.Invoke(this, new SocketEventArgs(client));
-                    }
+                            if (bIsOpen)
+                            {
+                                baResponse = new byte[BufferSize];
+                                IsStart = true;
 
-                    IsStart = false;
+                                while (!token.IsCancellationRequested && IsStart)
+                                {
+                                    try
+                                    {
+                                        Process();
+                                    }
+                                    catch (SchedulerStopException) { break; }
+                                    catch(Exception ex) { }
+                                    await Task.Delay(Interval, token);
+                                }
+                            }
+
+                            if (bIsOpen && client != null)
+                            {
+                                client.Close();
+                                SocketDisconnected?.Invoke(this, new SocketEventArgs(client));
+
+                                client.Dispose();
+                                client = null;
+                            }
+
+                        } while (!token.IsCancellationRequested && AutoReconnect && IsStart);
+                    }
 
                 }, cancel.Token);
             }
         }
 
-        private void _Stop()
+        public void Stop()
         {
-            try { cancel?.Cancel(false); }
+            try { IsStart = false; cancel?.Cancel(false); }
             finally
             {
                 cancel?.Dispose();

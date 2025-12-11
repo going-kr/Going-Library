@@ -48,8 +48,8 @@ namespace Going.Basis.Communications.Modbus.RTU
             modbus.MultiWordWriteRequest += Modbus_MultiWordWriteRequest;
             modbus.WordBitSetRequest += Modbus_WordBitSetRequest;
 
-            modbus.DeviceOpened += (o, s) => DeviceOpened?.Invoke(this, EventArgs.Empty);
-            modbus.DeviceClosed += (o, s) => DeviceClosed?.Invoke(this, EventArgs.Empty);
+            modbus.DeviceOpened += (o, s) => DeviceOpened?.Invoke(this, System.EventArgs.Empty);
+            modbus.DeviceClosed += (o, s) => DeviceClosed?.Invoke(this, System.EventArgs.Empty);
         }
         #endregion
 
@@ -89,7 +89,7 @@ namespace Going.Basis.Communications.Modbus.RTU
                         for (int i = 0; i < args.Length; i++)
                         {
                             var sidx = args.StartAddress - BaseAddress + i;
-                            ret[i] = mem[sidx];
+                            ret[i] = mem[sidx].Value;
                         }
                         args.ResponseData = ret;
                         args.Success = true;
@@ -122,7 +122,7 @@ namespace Going.Basis.Communications.Modbus.RTU
 
                     if (args.StartAddress >= BaseAddress && args.StartAddress < BaseAddress + mem.Size)
                     {
-                        mem[args.StartAddress - BaseAddress] = args.WriteValue;
+                        mem[args.StartAddress - BaseAddress].Value = args.WriteValue;
                         args.Success = true;
                     }
                 }
@@ -152,7 +152,7 @@ namespace Going.Basis.Communications.Modbus.RTU
 
                     if (args.StartAddress >= BaseAddress && args.StartAddress + args.Length < BaseAddress + mem.Size)
                     {
-                        for (int i = 0; i < args.WriteValues.Length; i++) mem[args.StartAddress - BaseAddress + i] = args.WriteValues[i];
+                        for (int i = 0; i < args.WriteValues.Length; i++) mem[args.StartAddress - BaseAddress + i].Value = args.WriteValues[i];
                         args.Success = true;
                     }
                 }
@@ -168,8 +168,8 @@ namespace Going.Basis.Communications.Modbus.RTU
                     if (args.StartAddress >= BaseAddress && args.StartAddress < BaseAddress + mem.Size && args.BitIndex >= 0 && args.BitIndex < 16)
                     {
                         var p = Convert.ToUInt16(Math.Pow(2, args.BitIndex));
-                        if (args.WriteValue) mem[args.StartAddress - BaseAddress] |= p;
-                        else mem[args.StartAddress - BaseAddress] &= (ushort)~p;
+                        if (args.WriteValue) mem[args.StartAddress - BaseAddress].Value |= p;
+                        else mem[args.StartAddress - BaseAddress].Value &= (ushort)~p;
 
                         args.Success = true;
                     }

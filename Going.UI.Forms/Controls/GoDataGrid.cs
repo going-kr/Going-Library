@@ -146,8 +146,16 @@ namespace Going.UI.Forms.Controls
         #endregion
 
         #region Method
-        public void SetDataSource<T>(IEnumerable<T> values) => Control.SetDataSource<T>(values);
-        public void RefreshRows() => Control.RefreshRows();
+        public void SetDataSource<T>(IEnumerable<T> values)
+        {
+            Control.SetDataSource<T>(values);
+            Invalidate();
+        }
+        public void RefreshRows()
+        {
+            Control.RefreshRows();
+            Invalidate();
+        }
 
         void spkey(Keys key, Keys modifier)
         {

@@ -16,6 +16,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Windows.UI.Input.Inking;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Going.UIEditor.Utils
 {
@@ -37,6 +38,12 @@ namespace Going.UIEditor.Utils
                     { "Windows", [] }
                 };
 
+                #region app.json
+                {
+                    var json = prj.Design.JsonSerialize();
+                    ret[""].Add("design.json", new UICode("design.json", json, true));
+                }
+                #endregion
                 #region Program.cs
                 {
                     var sb = new StringBuilder();
@@ -66,7 +73,6 @@ namespace Going.UIEditor.Utils
                     sb.AppendLine($"    {{");
                     sb.AppendLine($"        public MainWindow() : base({prj.Width}, {prj.Height}, WindowBorder.Hidden)");
                     sb.AppendLine($"        {{");
-                    sb.AppendLine($"            InitializeComponent();");
                     sb.AppendLine($"        }}");
                     sb.AppendLine($"    }}");
                     sb.AppendLine($"}}");
@@ -106,6 +112,7 @@ namespace Going.UIEditor.Utils
 
                     #region Var
                     sb.AppendLine($"        #region declare");
+                    sb.AppendLine($"        internal GoDesign DS {{ get; private set; }}");
                     foreach (var v in lsA) sb.AppendLine($"        {TypeName(v)} {v.Name};");
                     sb.AppendLine($"");
                     foreach (var v in prj.Design.Pages.Values) sb.AppendLine($"        public {v.Name} {v.Name} {{ get; private set; }}");
@@ -120,9 +127,18 @@ namespace Going.UIEditor.Utils
                     sb.AppendLine($"        #endregion");
                     sb.AppendLine($"");
                     #endregion
-                    sb.AppendLine($"        private void InitializeComponent()");
+                    sb.AppendLine($"        public void InitializeComponent()");
                     sb.AppendLine($"        {{");
 
+                    #region Design Load
+                    sb.AppendLine($"            #region Design Load");
+                    sb.AppendLine($"            if (!File.Exists(\"design.json\")) throw new Exception(\"design.json 파일이 없습니다.\");");
+                    sb.AppendLine($"            var json = File.ReadAllText(\"design.json\");");
+                    sb.AppendLine($"            var ds = GoDesign.JsonDeserialize(json);");
+                    sb.AppendLine($"            DS = ds;");
+                    sb.AppendLine($"            #endregion");
+                    sb.AppendLine($"");
+                    #endregion
                     #region Window Setting
                     sb.AppendLine($"            #region Window Setting");
                     sb.AppendLine($"            Current = this;");
@@ -135,14 +151,14 @@ namespace Going.UIEditor.Utils
                     #endregion
                     #region Design Setting
                     sb.AppendLine($"            #region Design Setting");
-                    sb.AppendLine($"            Design.UseTitleBar = {(prj.Design.UseTitleBar ? "true" : "false")};");
-                    sb.AppendLine($"            Design.UseLeftSideBar = {(prj.Design.UseLeftSideBar ? "true" : "false")};");
-                    sb.AppendLine($"            Design.UseRightSideBar = {(prj.Design.UseRightSideBar ? "true" : "false")};");
-                    sb.AppendLine($"            Design.UseFooter = {(prj.Design.UseFooter ? "true" : "false")};");
-                    sb.AppendLine($"            Design.OverlaySideBar = {(prj.Design.OverlaySideBar ? "true" : "false")};");
-                    sb.AppendLine($"            Design.BarColor = \"{prj.Design.BarColor}\";");
-                    sb.AppendLine($"            Design.ExpandLeftSideBar = {(prj.Design.ExpandLeftSideBar ? "true" : "false")};");
-                    sb.AppendLine($"            Design.ExpandRightSideBar = {(prj.Design.ExpandRightSideBar ? "true" : "false")};");
+                    sb.AppendLine($"            Design.UseTitleBar = ds.UseTitleBar;");
+                    sb.AppendLine($"            Design.UseLeftSideBar = ds.UseTitleBar;");
+                    sb.AppendLine($"            Design.UseRightSideBar = ds.ExpandRightSideBar;");
+                    sb.AppendLine($"            Design.UseFooter = ds.UseFooter;");
+                    sb.AppendLine($"            Design.OverlaySideBar = ds.OverlaySideBar;");
+                    sb.AppendLine($"            Design.BarColor = ds.BarColor;");
+                    sb.AppendLine($"            Design.ExpandLeftSideBar = ds.ExpandLeftSideBar;");
+                    sb.AppendLine($"            Design.ExpandRightSideBar = ds.ExpandRightSideBar;");
                     sb.AppendLine($"            #endregion");
                     sb.AppendLine($"");
                     #endregion
@@ -151,77 +167,17 @@ namespace Going.UIEditor.Utils
                     {
                         var v = prj.Design.CustomTheme;
                         sb.AppendLine($"            #region Theme Setting");
-                        sb.AppendLine($"            Design.CustomTheme = new GoTheme();");
-                        sb.AppendLine($"            Design.CustomTheme.Dark = {(v.Dark ? "true" : "false")};");
-
-                        sb.AppendLine($"            Design.CustomTheme.Fore = {color(v.Fore)};");
-                        sb.AppendLine($"            Design.CustomTheme.Back = {color(v.Back)};");
-                        sb.AppendLine($"            Design.CustomTheme.Window = {color(v.Window)};");
-                        sb.AppendLine($"            Design.CustomTheme.WindowBorder = {color(v.WindowBorder)};");
-                        sb.AppendLine($"            Design.CustomTheme.Point = {color(v.Point)};");
-                        sb.AppendLine($"            Design.CustomTheme.Title = {color(v.Title)};");
-
-                        sb.AppendLine($"            Design.CustomTheme.ScrollBar = {color(v.ScrollBar)};");
-                        sb.AppendLine($"            Design.CustomTheme.ScrollCursor = {color(v.ScrollCursor)};");
-                        sb.AppendLine($"            Design.CustomTheme.Good = {color(v.Good)};");
-                        sb.AppendLine($"            Design.CustomTheme.Warning = {color(v.Warning)};");
-                        sb.AppendLine($"            Design.CustomTheme.Danger = {color(v.Danger)};");
-                        sb.AppendLine($"            Design.CustomTheme.Error = {color(v.Error)};");
-                        sb.AppendLine($"            Design.CustomTheme.Highlight = {color(v.Highlight)};");
-                        sb.AppendLine($"            Design.CustomTheme.Select = {color(v.Select)};");
-
-                        sb.AppendLine($"            Design.CustomTheme.Base0 = {color(v.Base0)};");
-                        sb.AppendLine($"            Design.CustomTheme.Base1 = {color(v.Base1)};");
-                        sb.AppendLine($"            Design.CustomTheme.Base2 = {color(v.Base2)};");
-                        sb.AppendLine($"            Design.CustomTheme.Base3 = {color(v.Base3)};");
-                        sb.AppendLine($"            Design.CustomTheme.Base4 = {color(v.Base4)};");
-                        sb.AppendLine($"            Design.CustomTheme.Base5 = {color(v.Base5)};");
-
-                        sb.AppendLine($"            Design.CustomTheme.User1 = {color(v.User1)};");
-                        sb.AppendLine($"            Design.CustomTheme.User2 = {color(v.User2)};");
-                        sb.AppendLine($"            Design.CustomTheme.User3 = {color(v.User3)};");
-                        sb.AppendLine($"            Design.CustomTheme.User4 = {color(v.User4)};");
-                        sb.AppendLine($"            Design.CustomTheme.User5 = {color(v.User5)};");
-                        sb.AppendLine($"            Design.CustomTheme.User6 = {color(v.User6)};");
-                        sb.AppendLine($"            Design.CustomTheme.User7 = {color(v.User7)};");
-                        sb.AppendLine($"            Design.CustomTheme.User8 = {color(v.User8)};");
-                        sb.AppendLine($"            Design.CustomTheme.User9 = {color(v.User9)};");
-
-                        sb.AppendLine($"            Design.CustomTheme.Corner = {v.Corner};");
-                        sb.AppendLine($"            Design.CustomTheme.DownBrightness = {v.DownBrightness:0.0##}F;");
-                        sb.AppendLine($"            Design.CustomTheme.BorderBrightness = {v.BorderBrightness:0.0##}F;");
-                        sb.AppendLine($"            Design.CustomTheme.HoverBorderBrightness = {v.HoverBorderBrightness:0.0##}F;");
-                        sb.AppendLine($"            Design.CustomTheme.HoverFillBrightness = {v.HoverFillBrightness:0.0##}F;");
-                        sb.AppendLine($"            Design.CustomTheme.ShadowAlpha = {v.ShadowAlpha};");
-
+                        sb.AppendLine($"            Design.CustomTheme = ds.CustomTheme;");
                         sb.AppendLine($"            #endregion");
                         sb.AppendLine($"");
                     }
                     #endregion
                     #region Resources
                     sb.AppendLine($"            #region Resources");
-                    foreach (var v in prj.Design.GetImages())
-                    {
-                        if (v.images.Count > 0)
-                        {
-                            sb.AppendLine($"            Design.AddImage(\"{v.name}\", [");
-                            foreach (var img in v.images)
-                            {
-                                using var data = img.Encode(SKEncodedImageFormat.Png, 100);
-                                sb.AppendLine($"                Util.FromImage64(\"{Convert.ToBase64String(data.ToArray())}\"),");
-                            }
-                            sb.AppendLine($"            ]);");
-                        }
-                    }
-
-                    foreach(var v in prj.Design.GetFonts())
-                    {
-                        foreach(var data in v.fonts)
-                        {
-                            sb.AppendLine($"            Design.AddFont(\"{v.name}\", Convert.FromBase64String(\"{Convert.ToBase64String(data)}\"));");
-                        }
-                    }
-
+                    sb.AppendLine($"            foreach (var v in ds.GetImages()) Design.AddImage(v.name, v.images);");
+                    sb.AppendLine($"            foreach (var v in ds.GetFonts())");
+                    sb.AppendLine($"                foreach (var f in v.fonts)");
+                    sb.AppendLine($"                        Design.AddFont(v.name, f);");
                     sb.AppendLine($"            #endregion");
                     sb.AppendLine($"");
                     #endregion
@@ -230,6 +186,7 @@ namespace Going.UIEditor.Utils
                     {
                         sb.AppendLine($"            #region TitleBar");
                         sb.AppendLine($"            {{");
+                        sb.AppendLine($"                var c = ds.TitleBar;");
                         MakeDesignBarCode(sb, "                ", "Design.TitleBar", prj.Design.TitleBar, lsT);
                         sb.AppendLine($"            }}");
                         sb.AppendLine($"            #endregion");
@@ -240,6 +197,7 @@ namespace Going.UIEditor.Utils
                     {
                         sb.AppendLine($"            #region LeftSideBar");
                         sb.AppendLine($"            {{");
+                        sb.AppendLine($"                var c = ds.LeftSideBar;");
                         MakeDesignBarCode(sb, "                ", "Design.LeftSideBar", prj.Design.LeftSideBar, lsL);
                         sb.AppendLine($"            }}");
                         sb.AppendLine($"            #endregion");
@@ -250,6 +208,7 @@ namespace Going.UIEditor.Utils
                     {
                         sb.AppendLine($"            #region RightSideBar");
                         sb.AppendLine($"            {{");
+                        sb.AppendLine($"                var c = ds.LeftSideBar;");
                         MakeDesignBarCode(sb, "                ", "Design.RightSideBar", prj.Design.RightSideBar, lsR);
                         sb.AppendLine($"            }}");
                         sb.AppendLine($"            #endregion");
@@ -260,6 +219,7 @@ namespace Going.UIEditor.Utils
                     {
                         sb.AppendLine($"            #region Footer");
                         sb.AppendLine($"            {{");
+                        sb.AppendLine($"                var c = ds.LeftSideBar;");
                         MakeDesignBarCode(sb, "                ", "Design.Footer", prj.Design.Footer, lsB);
                         sb.AppendLine($"            }}");
                         sb.AppendLine($"            #endregion");
@@ -354,6 +314,7 @@ namespace Going.UIEditor.Utils
                             sb.AppendLine($"        public void InitializeComponent()");
                             sb.AppendLine($"        {{");
                             sb.AppendLine($"            #region base");
+                            sb.AppendLine($"            var c = MainWindow.Current.DS.Pages[\"{page.Name}\"];");
                             MakeDesignBarCode(sb, "            ", "this", page, ls);
                             sb.AppendLine($"            #endregion");
                             sb.AppendLine($"        }}");
@@ -422,6 +383,7 @@ namespace Going.UIEditor.Utils
                             sb.AppendLine($"        public void InitializeComponent()");
                             sb.AppendLine($"        {{");
                             sb.AppendLine($"            #region base");
+                            sb.AppendLine($"            var c = MainWindow.Current.DS.Windows[\"{wnd.Name}\"];");
                             MakeDesignBarCode(sb, "            ", "this", wnd, ls);
                             sb.AppendLine($"            #endregion");
                             sb.AppendLine($"        }}");
@@ -801,9 +763,6 @@ namespace Going.UIEditor.Utils
         #region MakeDesignBarCode
         static void MakeDesignBarCode<T>(StringBuilder sb, string space, string varname, T con, List<IGoControl> ls)
         {
-            sb.AppendLine($"{space}var json = Encoding.UTF8.GetString(Convert.FromBase64String(\"{Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(con, GoJsonConverter.Options)))}\"));");
-            //sb.AppendLine(@$"{space}var json = @""{JsonSerializer.Serialize(con, GoJsonConverter.Options).Replace("\"", "\"\"")}"";");
-            sb.AppendLine($"{space}var c = JsonSerializer.Deserialize<{TypeName(con)}>(json, GoJsonConverter.Options);");
             var props = con.GetType().GetProperties().Where(x => ValidProp(x));
             foreach (var pi in props) sb.AppendLine($"{space}{varname}.{pi.Name} = c.{pi.Name};");
             sb.AppendLine($"{space}{varname}.Childrens.AddRange(c.Childrens);");

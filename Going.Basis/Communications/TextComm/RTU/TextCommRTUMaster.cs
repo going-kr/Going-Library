@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Going.Basis.Communications.TextComm.RTU
 {
-    public class TextCommRTUMaster
+    public class TextCommRTUMaster : IDisposable
     {
         #region class : Work
         public class Work(int id, byte[] data, byte slave, byte command, string message)
@@ -58,7 +58,9 @@ namespace Going.Basis.Communications.TextComm.RTU
 
         public bool IsOpen => ser.IsOpen;
         public bool IsStart { get; private set; }
-        public bool AutoStart { get; set; }
+        public bool AutoReconnect { get; set; }
+
+        public bool IsDisposed { get; private set; }
         #endregion
 
         #region Member Variable
@@ -85,17 +87,7 @@ namespace Going.Basis.Communications.TextComm.RTU
         #region Construct
         public TextCommRTUMaster()
         {
-            Task.Run(async () =>
-            {
-                while (true)
-                {
-                    if (!IsStart && AutoStart)
-                    {
-                        _Start();
-                    }
-                    await Task.Delay(1000);
-                }
-            });
+            
         }
         #endregion
 
@@ -103,58 +95,54 @@ namespace Going.Basis.Communications.TextComm.RTU
         #region Start / Stop
         public void Start()
         {
-            if (AutoStart) throw new Exception("AutoStart가 true일 땐 Start/Stop 을 할 수 없습니다.");
-            else _Start();
-        }
-
-        public void Stop()
-        {
-            if (AutoStart) throw new Exception("AutoStart가 true일 땐 Start/Stop 을 할 수 없습니다.");
-            else _Stop();
-        }
-
-        private void _Start()
-        {
             if (!IsOpen && !IsStart)
             {
                 cancel = new CancellationTokenSource();
                 task = Task.Run(async () =>
                 {
+                    IsStart = true;
+
                     var token = cancel.Token;
 
-                    try { ser.Open(); DeviceOpened?.Invoke(this, EventArgs.Empty); }
-                    catch { }
-
-                    if (ser.IsOpen)
+                    if (!OperatingSystem.IsBrowser())
                     {
-                        baResponse = new byte[BufferSize];
-                        IsStart = true;
-                        while (!token.IsCancellationRequested && IsStart)
+                        do
                         {
-                            try
+                            try { ser.Open(); DeviceOpened?.Invoke(this, EventArgs.Empty); }
+                            catch { }
+
+                            if (ser.IsOpen)
                             {
-                                Process();
+                                baResponse = new byte[BufferSize];
+
+                                while (!token.IsCancellationRequested && IsStart)
+                                {
+                                    try
+                                    {
+                                        Process();
+                                    }
+                                    catch (SchedulerStopException) { break; }
+                                    catch (Exception ex) { }
+                                    await Task.Delay(Interval, token);
+                                }
                             }
-                            catch (SchedulerStopException) { break; }
-                            await Task.Delay(Interval);
-                        }
-                    }
 
-                    if (ser.IsOpen)
-                    {
-                        ser.Close();
-                        DeviceClosed?.Invoke(this, EventArgs.Empty);
-                    }
+                            if (ser.IsOpen)
+                            {
+                                ser.Close();
+                                DeviceClosed?.Invoke(this, EventArgs.Empty);
+                            }
 
-                    IsStart = false;
+                        } while (!token.IsCancellationRequested && AutoReconnect && IsStart);
+                    }
 
                 }, cancel.Token);
             }
         }
 
-        private void _Stop()
+        public void Stop()
         {
-            try { cancel?.Cancel(false); }
+            try { IsStart = false; cancel?.Cancel(false); }
             finally
             {
                 cancel?.Dispose();
@@ -163,7 +151,7 @@ namespace Going.Basis.Communications.TextComm.RTU
 
             if (task != null)
             {
-                try { task.Wait(); }
+                try { task.Wait(); task.Dispose(); }
                 catch { }
                 finally { task = null; }
             }
@@ -175,12 +163,14 @@ namespace Going.Basis.Communications.TextComm.RTU
         {
             try
             {
-                #region Manual Fill
+                #region Manual Fill (삭제)
+                /*
                 if (ManualWorkList.Count > 0)
                 {
                     for (int i = 0; i < ManualWorkList.Count; i++) WorkQueue.Enqueue(ManualWorkList[i]);
                     ManualWorkList.Clear();
                 }
+                */
                 #endregion
 
                 if (WorkQueue.Count > 0 || ManualWorkList.Count > 0)
@@ -207,9 +197,11 @@ namespace Going.Basis.Communications.TextComm.RTU
                             ser.Write(w.Data, 0, w.Data.Length);
                             ser.BaseStream.Flush();
                         }
+                        catch (TimeoutException) { }
                         catch (IOException) { throw new SchedulerStopException(); }
                         catch (UnauthorizedAccessException) { throw new SchedulerStopException(); }
                         catch (InvalidOperationException) { throw new SchedulerStopException(); }
+                        catch (OperationCanceledException) { throw new SchedulerStopException(); }
                         #endregion
 
                         #region read
@@ -230,9 +222,11 @@ namespace Going.Basis.Communications.TextComm.RTU
                                     lsResponse.Add(v);
                                 }
                             }
+                            catch (TimeoutException) { }
                             catch (IOException) { throw new SchedulerStopException(); }
                             catch (UnauthorizedAccessException) { throw new SchedulerStopException(); }
                             catch (InvalidOperationException) { throw new SchedulerStopException(); }
+                            catch (OperationCanceledException) { throw new SchedulerStopException(); }
 
                             if (lsResponse.Count >= 2 && lsResponse.FirstOrDefault() == 0x02 && lsResponse.LastOrDefault() == 0x03) bCollecting = false;
 
@@ -347,6 +341,19 @@ namespace Going.Basis.Communications.TextComm.RTU
         {
             var ba = TextCommPacket.MakePacket(MessageEncoding, Slave, Command, Message);
             ManualWorkList.Add(new Work(MessageID, ba, Slave, Command, Message) { RepeatCount = repeatCount, Timeout = timeout });
+        }
+        #endregion
+
+        #region Dispose
+        public void Dispose()
+        {
+            IsDisposed = true;
+
+            if (IsStart) Stop();
+
+            ser?.Dispose();
+            cancel?.Dispose();
+            task?.Dispose();
         }
         #endregion
         #endregion

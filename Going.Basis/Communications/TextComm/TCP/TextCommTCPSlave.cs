@@ -62,24 +62,31 @@ namespace Going.Basis.Communications.TextComm.TCP
                 {
                     var token = cancel.Token;
 
-                    #region server listen
-                    server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                    IPEndPoint ipEndPoint = new IPEndPoint(IPAddress.Any, LocalPort);
-                    server.Bind(ipEndPoint);
-                    server.Listen(10);
-                    #endregion
-
-                    IsStart = true;
-                    while (!token.IsCancellationRequested && IsStart)
+                    try
                     {
-                        try
+                        #region server listen
+                        server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                        IPEndPoint ipEndPoint = new IPEndPoint(IPAddress.Any, LocalPort);
+                        server.Bind(ipEndPoint);
+                        server.Listen(10);
+                        #endregion
+
+                        IsStart = true;
+                        while (!token.IsCancellationRequested && IsStart)
                         {
-                            var sock = await server.AcceptAsync(token);
-                            _ = Task.Run(async () => await run(sock, token), token);
-                            await Task.Delay(100);
+                            try
+                            {
+                                var sock = await server.AcceptAsync(token);
+                                _ = Task.Run(async () => await run(sock, token), token);
+                                await Task.Delay(100, token);
+                            }
+                            catch { }
                         }
-                        catch { }
+
+                        server.Close();
                     }
+                    catch { }
+
                     IsStart = false;
 
                 }, cancel.Token);
@@ -89,7 +96,7 @@ namespace Going.Basis.Communications.TextComm.TCP
         #region Stop
         public void Stop()
         {
-            try { cancel?.Cancel(false); }
+            try { IsStart = false; cancel?.Cancel(false); }
             finally
             {
                 cancel?.Dispose();
@@ -98,7 +105,7 @@ namespace Going.Basis.Communications.TextComm.TCP
 
             if (task != null)
             {
-                try { task.Wait(); }
+                try { task.Wait(); task.Dispose(); }
                 catch { }
                 finally { task = null; }
             }
@@ -189,7 +196,7 @@ namespace Going.Basis.Communications.TextComm.TCP
                     else if (ex.SocketErrorCode == SocketError.Shutdown) { isConnected = false; }
                 }
                 catch { }
-                await Task.Delay(10);
+                await Task.Delay(10, cancel);
             }
 
             if (sock.Connected) sock.Close();

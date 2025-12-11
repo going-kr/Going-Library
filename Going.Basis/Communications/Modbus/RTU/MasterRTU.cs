@@ -46,8 +46,8 @@ namespace Going.Basis.Communications.Modbus.RTU
             modbus.BitReadReceived += Modbus_BitReadReceived;
             modbus.WordReadReceived += Modbus_WordReadReceived;
 
-            modbus.DeviceOpened += (o, s) => DeviceOpened?.Invoke(this, EventArgs.Empty);
-            modbus.DeviceClosed += (o, s) => DeviceClosed?.Invoke(this, EventArgs.Empty);
+            modbus.DeviceOpened += (o, s) => DeviceOpened?.Invoke(this, System.EventArgs.Empty);
+            modbus.DeviceClosed += (o, s) => DeviceClosed?.Invoke(this, System.EventArgs.Empty);
         }
         #endregion
 
@@ -61,8 +61,8 @@ namespace Going.Basis.Communications.Modbus.RTU
                 var code = BitAreas[baseAddr];
                 if (e.StartAddress >= baseAddr)
                 {
-                    for (int i = 0; i < e.ReceiveData.Length; i++) 
-                       Devices[e.Slave].Bits[$"{code}{e.StartAddress + i - baseAddr}"] = e.ReceiveData[i];
+                    for (int i = 0; i < e.ReceiveData.Length; i++)
+                        Devices[e.Slave].Bits[$"{code}{e.StartAddress + i - baseAddr}"] = e.ReceiveData[i];
                 }
             }
         }

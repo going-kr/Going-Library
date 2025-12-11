@@ -31,8 +31,8 @@ namespace Going.Basis.Communications.Modbus.TCP
         #endregion
 
         #region Event
-        public event EventHandler<SocketEventArgs>? DeviceClosed;
-        public event EventHandler<SocketEventArgs>? DeviceOpened;
+        public event EventHandler<EventArgs>? DeviceClosed;
+        public event EventHandler<EventArgs>? DeviceOpened;
         #endregion
 
         #region Constructor
@@ -43,7 +43,7 @@ namespace Going.Basis.Communications.Modbus.TCP
             modbus.BitReadReceived += Modbus_BitReadReceived;
             modbus.WordReadReceived += Modbus_WordReadReceived;
 
-            modbus.SocketConnected+= (o, s) => DeviceOpened?.Invoke(this, s);
+            modbus.SocketConnected += (o, s) => DeviceOpened?.Invoke(this, s);
             modbus.SocketDisconnected += (o, s) => DeviceClosed?.Invoke(this, s);
         }
         #endregion

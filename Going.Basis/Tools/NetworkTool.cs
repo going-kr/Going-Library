@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using System.Net.Sockets;
 using System.Net;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using System.Management;
-using System.Runtime.InteropServices;
-using System.Diagnostics;
 
 namespace Going.Basis.Tools
 {
@@ -69,52 +69,69 @@ namespace Going.Basis.Tools
 
         private static bool SetLocalIP_Windows(string description, string ip, string subnet, string gateway)
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            try
             {
-                try
-                {
-                    ManagementClass managementClass = new ManagementClass("Win32_NetworkAdapterConfiguration");
-                    ManagementObjectCollection managementObjectCollection = managementClass.GetInstances();
-
-                    foreach (ManagementObject managementObject in managementObjectCollection)
-                    {
-                        var _description = managementObject["Description"] as string;
-                        if (string.Compare(_description, description, StringComparison.InvariantCultureIgnoreCase) == 0)
-                        {
-                            ManagementBaseObject setGatewaysManagementBaseObject = managementObject.GetMethodParameters("SetGateways");
-                            setGatewaysManagementBaseObject["DefaultIPGateway"] = new string[] { gateway };
-                            setGatewaysManagementBaseObject["GatewayCostMetric"] = new int[] { 1 };
-
-                            ManagementBaseObject enableStaticManagementBaseObject = managementObject.GetMethodParameters("EnableStatic");
-                            enableStaticManagementBaseObject["IPAddress"] = new string[] { ip };
-                            enableStaticManagementBaseObject["SubnetMask"] = new string[] { subnet };
-
-                            managementObject.InvokeMethod("EnableStatic", enableStaticManagementBaseObject, null);
-                            managementObject.InvokeMethod("SetGateways", setGatewaysManagementBaseObject, null);
-                            return true;
-                        }
-                    }
-                }
-                catch (Exception ex) { }
+                string interfaceName = GetInterfaceNameFromDescription(description);
+                if (string.IsNullOrEmpty(interfaceName)) return false;
+                return ExecuteNetshCommand($"interface ip set address \"{interfaceName}\" static {ip} {subnet} {gateway}");
             }
-            return false;
+            catch
+            {
+                return false;
+            }
         }
 
         private static bool SetLocalIP_Linux(string interfaceName, string ip, string subnet, string gateway)
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            try
             {
-                try
-                {
-                    RunBashCommand($"sudo ip addr flush dev {interfaceName}");
-                    RunBashCommand($"sudo ip addr add {ip}/{subnet} dev {interfaceName}");
-                    RunBashCommand($"sudo ip route add default via {gateway} dev {interfaceName}");
+                int prefixLength = SubnetToCIDR(subnet);
 
-                    return true;
+                var hasNmcli = ExecuteLinuxCommand("which", "nmcli");
+                if (hasNmcli)
+                {
+                    var cmd = $"connection modify \"{interfaceName}\" " +
+                             $"ipv4.method manual " +
+                             $"ipv4.addresses {ip}/{prefixLength} " +
+                             $"ipv4.gateway {gateway}";
+
+                    return ExecuteLinuxCommand("nmcli", cmd);
                 }
-                catch (Exception ex) { return false; }
+
+                var result1 = ExecuteLinuxCommand("ip", $"addr add {ip}/{prefixLength} dev {interfaceName}");
+                var result2 = ExecuteLinuxCommand("ip", $"route add default via {gateway} dev {interfaceName}");
+                return result1 && result2;
             }
-            return false;
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static string GetInterfaceNameFromDescription(string description)
+        {
+            var nic = NetworkInterface.GetAllNetworkInterfaces().FirstOrDefault(n => n.Description == description);
+            return nic?.Name ?? string.Empty;
+        }
+
+        private static int SubnetToCIDR(string subnet)
+        {
+            var parts = subnet.Split('.');
+            if (parts.Length != 4) return 24;
+
+            int cidr = 0;
+            foreach (var part in parts)
+            {
+                if (byte.TryParse(part, out byte b))
+                {
+                    while (b > 0)
+                    {
+                        cidr += b & 1;
+                        b >>= 1;
+                    }
+                }
+            }
+            return cidr;
         }
         #endregion
         #region SetDHCP
@@ -136,44 +153,34 @@ namespace Going.Basis.Tools
 
         private static bool SetDHCP_Windows(string description)
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            try
             {
-                try
-                {
-                    ManagementClass managementClass = new ManagementClass("Win32_NetworkAdapterConfiguration");
-                    ManagementObjectCollection managementObjectCollection = managementClass.GetInstances();
+                string interfaceName = GetInterfaceNameFromDescription(description);
+                if (string.IsNullOrEmpty(interfaceName)) return false;
 
-                    foreach (ManagementObject managementObject in managementObjectCollection)
-                    {
-                        string _description = managementObject["Description"] as string;
-                        bool dhcpEnabled = (bool)(managementObject["DHCPEnabled"] ?? false);
+                var result1 = ExecuteNetshCommand($"interface ip set address \"{interfaceName}\" dhcp");
+                var result2 = ExecuteNetshCommand($"interface ip set dns \"{interfaceName}\" dhcp");
 
-                        if (string.Compare(_description, description, StringComparison.InvariantCultureIgnoreCase) == 0 && !dhcpEnabled)
-                        {
-                            ManagementBaseObject enableDHCPManagementBaseObject = managementObject.InvokeMethod("EnableDHCP", null, null);
-                            return enableDHCPManagementBaseObject != null;
-                        }
-                    }
-                }
-                catch (Exception ex) { }
+                return result1 && result2;
             }
-            return false;
+            catch
+            {
+                return false;
+            }
         }
 
         private static bool SetDHCP_Linux(string interfaceName)
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            try
             {
-                try
-                {
-                    // 기존 설정 제거 (정적 IP를 제거하고 DHCP 활성화)
-                    RunBashCommand($"sudo dhclient -r {interfaceName}");
-                    RunBashCommand($"sudo dhclient {interfaceName}");
-                    return true;
-                }
-                catch (Exception ex) { }
+                var result = ExecuteLinuxCommand("which", "nmcli");
+                if (result) return ExecuteLinuxCommand("nmcli", $"connection modify \"{interfaceName}\" ipv4.method auto");
+                return ExecuteLinuxCommand("dhclient", interfaceName);
             }
-            return false;
+            catch
+            {
+                return false;
+            }
         }
         #endregion
         #region GetNicDescriptions
@@ -189,49 +196,19 @@ namespace Going.Basis.Tools
 
         private static string[] GetNicDescriptions_Windows()
         {
-            List<string> ls = [];
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                try
-                {
-                    ManagementClass managementClass = new ManagementClass("Win32_NetworkAdapterConfiguration");
-                    ManagementObjectCollection managementObjectCollection = managementClass.GetInstances();
-
-                    foreach (ManagementObject managementObject in managementObjectCollection)
-                    {
-                        var desc = managementObject["Description"] as string;
-                        if (!string.IsNullOrEmpty(desc))
-                        {
-                            ls.Add(desc);
-                        }
-                    }
-                }
-                catch (Exception ex) { }
-            }
-            return ls.ToArray();
+            return NetworkInterface.GetAllNetworkInterfaces()
+                .Where(nic => nic.NetworkInterfaceType != NetworkInterfaceType.Loopback && nic.NetworkInterfaceType != NetworkInterfaceType.Tunnel)
+                .Select(nic => nic.Description)
+                .ToArray();
         }
 
         private static string[] GetNicDescriptions_Linux()
         {
-            List<string> interfaces = [];
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                try
-                {
-                    string output = RunBashCommand("ip -o link show | awk -F': ' '{print $2}'");
-                    if (!string.IsNullOrEmpty(output))
-                    {
-                        interfaces.AddRange(output.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries));
-                    }
-                }
-                catch (Exception ex) { }
-            }
-
-            return interfaces.ToArray();
+            return NetworkInterface.GetAllNetworkInterfaces()
+                .Where(nic => nic.NetworkInterfaceType != NetworkInterfaceType.Loopback && !nic.Name.StartsWith("docker") && !nic.Name.StartsWith("br-"))
+                .Select(nic => nic.Name)
+                .ToArray();
         }
-
         #endregion
         #region IsSocketConnected
         public static bool IsSocketConnected(Socket s, int PollTime = 100)
@@ -251,31 +228,58 @@ namespace Going.Basis.Tools
         }
         #endregion
 
-        #region RunBashCommand
-        private static string RunBashCommand(string command)
+        #region Command
+        private static bool ExecuteNetshCommand(string arguments)
         {
-            ProcessStartInfo psi = new ProcessStartInfo
+            try
             {
-                FileName = "/bin/bash",
-                Arguments = $"-c \"{command}\"",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            };
-
-            using (Process process = Process.Start(psi))
-            {
-                process.WaitForExit();
-                string output = process.StandardOutput.ReadToEnd();
-                string error = process.StandardError.ReadToEnd();
-
-                if (!string.IsNullOrEmpty(error))
+                var psi = new ProcessStartInfo
                 {
-                    throw new Exception("명령 실행 오류: " + error);
-                }
+                    FileName = "netsh",
+                    Arguments = arguments,
+                    UseShellExecute = true,
+                    CreateNoWindow = true,
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    Verb = "runas" // 관리자 권한
+                };
 
-                return output.Trim();
+                using var process = Process.Start(psi);
+                if (process == null)
+                    return false;
+
+                process.WaitForExit();
+                return process.ExitCode == 0;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static bool ExecuteLinuxCommand(string command, string arguments)
+        {
+            try
+            {
+                var psi = new ProcessStartInfo
+                {
+                    FileName = command,
+                    Arguments = arguments,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true
+                };
+
+                using var process = Process.Start(psi);
+                if (process == null)
+                    return false;
+
+                process.WaitForExit();
+                return process.ExitCode == 0;
+            }
+            catch
+            {
+                return false;
             }
         }
         #endregion

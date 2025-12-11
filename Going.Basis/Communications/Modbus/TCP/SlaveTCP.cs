@@ -26,8 +26,8 @@ namespace Going.Basis.Communications.Modbus.TCP
         #endregion
 
         #region Event
-        public event EventHandler<SocketEventArgs>? SocketConnected;
-        public event EventHandler<SocketEventArgs>? SocketDisconnected;
+        public event EventHandler<EventArgs>? SocketConnected;
+        public event EventHandler<EventArgs>? SocketDisconnected;
         #endregion
 
         #region Constructor
@@ -84,7 +84,7 @@ namespace Going.Basis.Communications.Modbus.TCP
                         for (int i = 0; i < args.Length; i++)
                         {
                             var sidx = args.StartAddress - BaseAddress + i;
-                            ret[i] = mem[sidx];
+                            ret[i] = mem[sidx].Value;
                         }
                         args.ResponseData = ret;
                         args.Success = true;
@@ -117,7 +117,7 @@ namespace Going.Basis.Communications.Modbus.TCP
 
                     if (args.StartAddress >= BaseAddress && args.StartAddress < BaseAddress + mem.Size)
                     {
-                        mem[args.StartAddress - BaseAddress] = args.WriteValue;
+                        mem[args.StartAddress - BaseAddress].Value = args.WriteValue;
                         args.Success = true;
                     }
                 }
@@ -147,7 +147,7 @@ namespace Going.Basis.Communications.Modbus.TCP
 
                     if (args.StartAddress >= BaseAddress && args.StartAddress + args.Length < BaseAddress + mem.Size)
                     {
-                        for (int i = 0; i < args.WriteValues.Length; i++) mem[args.StartAddress - BaseAddress + i] = args.WriteValues[i];
+                        for (int i = 0; i < args.WriteValues.Length; i++) mem[args.StartAddress - BaseAddress + i].Value = args.WriteValues[i];
                         args.Success = true;
                     }
                 }
@@ -163,8 +163,8 @@ namespace Going.Basis.Communications.Modbus.TCP
                     if (args.StartAddress >= BaseAddress && args.StartAddress < BaseAddress + mem.Size && args.BitIndex >= 0 && args.BitIndex < 16)
                     {
                         var p = Convert.ToUInt16(Math.Pow(2, args.BitIndex));
-                        if (args.WriteValue) mem[args.StartAddress - BaseAddress] |= p;
-                        else mem[args.StartAddress - BaseAddress] &= (ushort)~p;
+                        if (args.WriteValue) mem[args.StartAddress - BaseAddress].Value |= p;
+                        else mem[args.StartAddress - BaseAddress].Value &= (ushort)~p;
 
                         args.Success = true;
                     }

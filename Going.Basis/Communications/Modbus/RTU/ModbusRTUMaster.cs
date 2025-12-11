@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Going.Basis.Communications.Modbus.RTU
 {
-    public class ModbusRTUMaster
+    public class ModbusRTUMaster : IDisposable
     {
         #region class : Work
         public class Work(int id, byte[] data, int rescnt)
@@ -24,7 +24,7 @@ namespace Going.Basis.Communications.Modbus.RTU
         }
         #endregion
         #region class : EventArgs
-        public class BitReadEventArgs(Work WorkItem, bool[] Datas) : EventArgs
+        public class BitReadEventArgs(Work WorkItem, bool[] Datas) : System.EventArgs
         {
             public int MessageID => WorkItem.MessageID;
             public int Slave => WorkItem.Data[0];
@@ -34,7 +34,7 @@ namespace Going.Basis.Communications.Modbus.RTU
             public bool[] ReceiveData => Datas;
         }
 
-        public class WordReadEventArgs(Work WorkItem, int[] Datas) : EventArgs
+        public class WordReadEventArgs(Work WorkItem, int[] Datas) : System.EventArgs
         {
             public int MessageID => WorkItem.MessageID;
             public int Slave => WorkItem.Data[0];
@@ -45,7 +45,7 @@ namespace Going.Basis.Communications.Modbus.RTU
             public int[] ReceiveData => Datas;
         }
 
-        public class BitWriteEventArgs(Work WorkItem) : EventArgs
+        public class BitWriteEventArgs(Work WorkItem) : System.EventArgs
         {
             public int MessageID => WorkItem.MessageID;
             public int Slave => WorkItem.Data[0];
@@ -54,7 +54,7 @@ namespace Going.Basis.Communications.Modbus.RTU
             public bool WriteValue => (WorkItem.Data[4] << 8 | WorkItem.Data[5]) == 0xFF00;
         }
 
-        public class WordWriteEventArgs(Work WorkItem) : EventArgs
+        public class WordWriteEventArgs(Work WorkItem) : System.EventArgs
         {
             public int MessageID => WorkItem.MessageID;
             public int Slave => WorkItem.Data[0];
@@ -63,7 +63,7 @@ namespace Going.Basis.Communications.Modbus.RTU
             public int WriteValue => WorkItem.Data[4] << 8 | WorkItem.Data[5];
         }
 
-        public class MultiBitWriteEventArgs : EventArgs
+        public class MultiBitWriteEventArgs : System.EventArgs
         {
             public int MessageID => WorkItem.MessageID;
             public int Slave => WorkItem.Data[0];
@@ -84,14 +84,14 @@ namespace Going.Basis.Communications.Modbus.RTU
                 {
                     var v = WorkItem.Data[i];
                     for (int j = 0; j < 8; j++)
-                        if (ret.Count < Length) ret.Add(v.Bit(j));
+                        if (ret.Count < Length) ret.Add(v.GetBit(j));
                 }
                 WriteValues = [.. ret];
                 #endregion
             }
         }
 
-        public class MultiWordWriteEventArgs : EventArgs
+        public class MultiWordWriteEventArgs : System.EventArgs
         {
             public int MessageID => WorkItem.MessageID;
             public int Slave => WorkItem.Data[0];
@@ -117,7 +117,7 @@ namespace Going.Basis.Communications.Modbus.RTU
             }
         }
 
-        public class WordBitSetEventArgs(Work WorkItem) : EventArgs
+        public class WordBitSetEventArgs(Work WorkItem) : System.EventArgs
         {
             public int MessageID => WorkItem.MessageID;
             public int Slave => WorkItem.Data[0];
@@ -128,7 +128,7 @@ namespace Going.Basis.Communications.Modbus.RTU
 
         }
 
-        public class TimeoutEventArgs(Work WorkItem) : EventArgs
+        public class TimeoutEventArgs(Work WorkItem) : System.EventArgs
         {
             public int MessageID => WorkItem.MessageID;
             public int Slave => WorkItem.Data[0];
@@ -136,7 +136,7 @@ namespace Going.Basis.Communications.Modbus.RTU
             public int StartAddress => WorkItem.Data[2] << 8 | WorkItem.Data[3];
         }
 
-        public class CRCErrorEventArgs(Work WorkItem) : EventArgs
+        public class CRCErrorEventArgs(Work WorkItem) : System.EventArgs
         {
             public int MessageID => WorkItem.MessageID;
             public int Slave => WorkItem.Data[0];
@@ -156,9 +156,13 @@ namespace Going.Basis.Communications.Modbus.RTU
         public int Interval { get; set; } = 10;
         public int BufferSize { get; set; } = 1024;
 
-        public bool IsOpen => ser.IsOpen;
+        public bool IsOpen => !OperatingSystem.IsBrowser() && ser.IsOpen;
         public bool IsStart { get; private set; }
-        public bool AutoStart { get; set; }
+        public bool AutoReconnect { get; set; }
+
+        public bool IsDisposed { get; private set; }
+
+        public string ModuleId { get; } = Guid.NewGuid().ToString();
         #endregion
 
         #region Member Variable
@@ -192,17 +196,7 @@ namespace Going.Basis.Communications.Modbus.RTU
         #region Construct
         public ModbusRTUMaster()
         {
-            Task.Run(async () =>
-            {
-                while (true)
-                {
-                    if (!IsStart && AutoStart)
-                    {
-                        _Start();
-                    }
-                    await Task.Delay(1000);
-                }
-            });
+
         }
         #endregion
 
@@ -210,65 +204,54 @@ namespace Going.Basis.Communications.Modbus.RTU
         #region Start / Stop
         public void Start()
         {
-            if (AutoStart) throw new Exception("AutoStart가 true일 땐 Start/Stop 을 할 수 없습니다.");
-            else _Start();
-        }
-
-        public void Stop()
-        {
-            if (AutoStart) throw new Exception("AutoStart가 true일 땐 Start/Stop 을 할 수 없습니다.");
-            else _Stop();
-        }
-
-        private void _Start()
-        {
             if (!IsOpen && !IsStart)
             {
                 cancel = new CancellationTokenSource();
                 task = Task.Run(async () =>
                 {
+                    IsStart = true;
+
                     var token = cancel.Token;
 
-                    try { ser.Open(); DeviceOpened?.Invoke(this, EventArgs.Empty); }
-                    catch { }
-
-                    if (ser.IsOpen)
+                    if (!OperatingSystem.IsBrowser())
                     {
-                        baResponse = new byte[BufferSize];
-                        IsStart = true;
-
-                        DateTime ppp = DateTime.Now;
-
-                        while (!token.IsCancellationRequested && IsStart)
+                        do
                         {
-                            try
+                            try { ser.Open(); DeviceOpened?.Invoke(this, System.EventArgs.Empty); }
+                            catch { }
+
+                            if (ser.IsOpen)
                             {
-                                Process();
+                                baResponse = new byte[BufferSize];
+
+                                while (!token.IsCancellationRequested && IsStart && ser.IsOpen)
+                                {
+                                    try
+                                    {
+                                        Process();
+                                    }
+                                    catch (SchedulerStopException) { break; }
+                                    catch (Exception ex) { }
+                                    await Task.Delay(Interval, token);
+                                }
                             }
-                            catch (SchedulerStopException) { break; }
-                            await Task.Delay(Interval);
 
+                            if (ser.IsOpen)
+                            {
+                                ser.Close();
+                                DeviceClosed?.Invoke(this, System.EventArgs.Empty);
+                            }
 
-                            Debug.WriteLine($"{(DateTime.Now - ppp).TotalMilliseconds:0}");
-                            ppp = DateTime.Now;
-                        }
+                        } while (!token.IsCancellationRequested && AutoReconnect && IsStart);
                     }
-
-                    if (ser.IsOpen)
-                    {
-                        ser.Close();
-                        DeviceClosed?.Invoke(this, EventArgs.Empty);
-                    }
-
-                    IsStart = false;
 
                 }, cancel.Token);
             }
         }
 
-        private void _Stop()
+        public void Stop()
         {
-            try { cancel?.Cancel(false); }
+            try { IsStart = false; cancel?.Cancel(false); }
             finally
             {
                 cancel?.Dispose();
@@ -277,7 +260,7 @@ namespace Going.Basis.Communications.Modbus.RTU
 
             if (task != null)
             {
-                try { task.Wait(); }
+                try { task.Wait(); task.Dispose(); }
                 catch { }
                 finally { task = null; }
             }
@@ -287,163 +270,173 @@ namespace Going.Basis.Communications.Modbus.RTU
         #region Process
         void Process()
         {
-            try
+            #region Manual Fill (삭제)
+            /*
+            if (ManualWorkList.Count > 0)
             {
-                if (WorkQueue.Count > 0 || ManualWorkList.Count > 0)
+                for (int i = 0; i < ManualWorkList.Count; i++) WorkQueue.Enqueue(ManualWorkList[i]);
+                ManualWorkList.Clear();
+            }
+            */
+            #endregion
+
+            if (WorkQueue.Count > 0 || ManualWorkList.Count > 0)
+            {
+                Work? w = null;
+                #region Get Work
+                if (ManualWorkList.Count > 0)
                 {
-                    Work? w = null;
-                    #region Get Work
-                    if (ManualWorkList.Count > 0)
+                    w = ManualWorkList[0];
+                    ManualWorkList.RemoveAt(0);
+                }
+                else w = WorkQueue.Dequeue();
+                #endregion
+
+                var bRepeat = true;
+                var nTimeoutCount = 0;
+                var Timeout = w.Timeout ?? this.Timeout;
+
+                while (bRepeat)
+                {
+                    #region write
+                    try
                     {
-                        w = ManualWorkList[0];
-                        ManualWorkList.RemoveAt(0);
+                        ser.Write(w.Data, 0, w.Data.Length);
+                        ser.BaseStream.Flush();
                     }
-                    else w = WorkQueue.Dequeue();
+                    catch (TimeoutException) { }
+                    catch (IOException) { throw new SchedulerStopException(); }
+                    catch (UnauthorizedAccessException) { throw new SchedulerStopException(); }
+                    catch (InvalidOperationException) { throw new SchedulerStopException(); }
+                    catch (OperationCanceledException) { throw new SchedulerStopException(); }
                     #endregion
 
-                    var bRepeat = true;
-                    var nTimeoutCount = 0;
-                    var Timeout = w.Timeout ?? this.Timeout;
-
-                    while (bRepeat)
+                    #region read
+                    var nRecv = 0;
+                    var prev = DateTime.Now;
+                    var gap = TimeSpan.Zero;
+                    var bCollecting = true;
+                    while (bCollecting)
                     {
-                        #region write
                         try
                         {
-                            ser.Write(w.Data, 0, w.Data.Length);
-                            ser.BaseStream.Flush();
+                            ser.ReadTimeout = Timeout;
+                            var len = ser.Read(baResponse, nRecv, baResponse.Length - nRecv);
+                            nRecv += len;
                         }
+                        catch (TimeoutException) { }
                         catch (IOException) { throw new SchedulerStopException(); }
                         catch (UnauthorizedAccessException) { throw new SchedulerStopException(); }
                         catch (InvalidOperationException) { throw new SchedulerStopException(); }
-                        #endregion
+                        catch (OperationCanceledException) { throw new SchedulerStopException(); }
 
-                        #region read
-                        var nRecv = 0;
-                        var prev = DateTime.Now;
-                        var gap = TimeSpan.Zero;
-                        var bCollecting = true;
-                        while (bCollecting)
+                        if (nRecv == w.ResponseCount) bCollecting = false;
+
+                        gap = DateTime.Now - prev;
+                        if (gap.TotalMilliseconds >= Timeout) break;
+                    }
+                    #endregion
+
+                    #region parse
+                    if (gap.TotalMilliseconds < Timeout)
+                    {
+                        if (nRecv > 2)
                         {
-                            try
+                            byte crcHi = 0, crcLo = 0;
+                            ModbusCRC.GetCRC(baResponse, nRecv - 2, ref crcHi, ref crcLo);
+                            if (crcHi == baResponse[nRecv - 2] && crcLo == baResponse[nRecv - 1])
                             {
-                                ser.ReadTimeout = Timeout;
-                                var len = ser.Read(baResponse, nRecv, baResponse.Length - nRecv);
-                                nRecv += len;
-                            }
-                            catch (IOException) { throw new SchedulerStopException(); }
-                            catch (UnauthorizedAccessException) { throw new SchedulerStopException(); }
-                            catch (InvalidOperationException) { throw new SchedulerStopException(); }
-
-                            if (nRecv == w.ResponseCount) bCollecting = false;
-
-                            gap = DateTime.Now - prev;
-                            if (gap.TotalMilliseconds >= Timeout) break;
-                        }
-                        #endregion
-
-                        #region parse
-                        if (gap.TotalMilliseconds < Timeout)
-                        {
-                            if (nRecv > 2)
-                            {
-                                byte crcHi = 0, crcLo = 0;
-                                ModbusCRC.GetCRC(baResponse, nRecv - 2, ref crcHi, ref crcLo);
-                                if (crcHi == baResponse[nRecv - 2] && crcLo == baResponse[nRecv - 1])
+                                ModbusFunction Func = (ModbusFunction)baResponse[1];
+                                switch (Func)
                                 {
-                                    ModbusFunction Func = (ModbusFunction)baResponse[1];
-                                    switch (Func)
-                                    {
-                                        case ModbusFunction.BITREAD_F1:
-                                        case ModbusFunction.BITREAD_F2:
-                                            #region BitRead
-                                            {
-                                                int ByteCount = baResponse[2];
-                                                int Length = w.Data[4] << 8 | w.Data[5];
-                                                byte[] baData = new byte[ByteCount];
-                                                Array.Copy(baResponse, 3, baData, 0, ByteCount);
-                                                BitArray ba = new BitArray(baData);
+                                    case ModbusFunction.BITREAD_F1:
+                                    case ModbusFunction.BITREAD_F2:
+                                        #region BitRead
+                                        {
+                                            int ByteCount = baResponse[2];
+                                            int Length = w.Data[4] << 8 | w.Data[5];
+                                            byte[] baData = new byte[ByteCount];
+                                            Array.Copy(baResponse, 3, baData, 0, ByteCount);
+                                            BitArray ba = new BitArray(baData);
 
-                                                bool[] bd = new bool[Length];
-                                                for (int i = 0; i < ba.Length && i < Length; i++) bd[i] = ba[i];
+                                            bool[] bd = new bool[Length];
+                                            for (int i = 0; i < ba.Length && i < Length; i++) bd[i] = ba[i];
 
-                                                BitReadReceived?.Invoke(this, new BitReadEventArgs(w, bd));
-                                            }
-                                            #endregion
-                                            break;
-                                        case ModbusFunction.WORDREAD_F3:
-                                        case ModbusFunction.WORDREAD_F4:
-                                            #region WordRead
-                                            {
-                                                int ByteCount = baResponse[2];
-                                                int[] data = new int[ByteCount / 2];
-                                                for (int i = 0; i < data.Length; i++) data[i] = Convert.ToUInt16(baResponse[3 + i * 2] << 8 | baResponse[4 + i * 2]);
+                                            BitReadReceived?.Invoke(this, new BitReadEventArgs(w, bd));
+                                        }
+                                        #endregion
+                                        break;
+                                    case ModbusFunction.WORDREAD_F3:
+                                    case ModbusFunction.WORDREAD_F4:
+                                        #region WordRead
+                                        {
+                                            int ByteCount = baResponse[2];
+                                            int[] data = new int[ByteCount / 2];
+                                            for (int i = 0; i < data.Length; i++) data[i] = Convert.ToUInt16(baResponse[3 + i * 2] << 8 | baResponse[4 + i * 2]);
 
-                                                WordReadReceived?.Invoke(this, new WordReadEventArgs(w, data));
-                                            }
-                                            #endregion
-                                            break;
-                                        case ModbusFunction.BITWRITE_F5:
-                                            #region BitWrite
-                                            {
-                                                BitWriteReceived?.Invoke(this, new BitWriteEventArgs(w));
-                                            }
-                                            #endregion
-                                            break;
-                                        case ModbusFunction.WORDWRITE_F6:
-                                            #region WordWrite
-                                            {
-                                                WordWriteReceived?.Invoke(this, new WordWriteEventArgs(w));
-                                            }
-                                            #endregion
-                                            break;
-                                        case ModbusFunction.MULTIBITWRITE_F15:
-                                            #region MultiBitWrite
-                                            {
-                                                MultiBitWriteReceived?.Invoke(this, new MultiBitWriteEventArgs(w));
-                                            }
-                                            #endregion
-                                            break;
-                                        case ModbusFunction.MULTIWORDWRITE_F16:
-                                            #region MultiWordWrite
-                                            {
-                                                MultiWordWriteReceived?.Invoke(this, new MultiWordWriteEventArgs(w));
-                                            }
-                                            #endregion
-                                            break;
-                                        case ModbusFunction.WORDBITSET_F26:
-                                            #region WordBitSet
-                                            {
-                                                WordBitSetReceived?.Invoke(this, new WordBitSetEventArgs(w));
-                                            }
-                                            #endregion
-                                            break;
-                                    }
+                                            WordReadReceived?.Invoke(this, new WordReadEventArgs(w, data));
+                                        }
+                                        #endregion
+                                        break;
+                                    case ModbusFunction.BITWRITE_F5:
+                                        #region BitWrite
+                                        {
+                                            BitWriteReceived?.Invoke(this, new BitWriteEventArgs(w));
+                                        }
+                                        #endregion
+                                        break;
+                                    case ModbusFunction.WORDWRITE_F6:
+                                        #region WordWrite
+                                        {
+                                            WordWriteReceived?.Invoke(this, new WordWriteEventArgs(w));
+                                        }
+                                        #endregion
+                                        break;
+                                    case ModbusFunction.MULTIBITWRITE_F15:
+                                        #region MultiBitWrite
+                                        {
+                                            MultiBitWriteReceived?.Invoke(this, new MultiBitWriteEventArgs(w));
+                                        }
+                                        #endregion
+                                        break;
+                                    case ModbusFunction.MULTIWORDWRITE_F16:
+                                        #region MultiWordWrite
+                                        {
+                                            MultiWordWriteReceived?.Invoke(this, new MultiWordWriteEventArgs(w));
+                                        }
+                                        #endregion
+                                        break;
+                                    case ModbusFunction.WORDBITSET_F26:
+                                        #region WordBitSet
+                                        {
+                                            WordBitSetReceived?.Invoke(this, new WordBitSetEventArgs(w));
+                                        }
+                                        #endregion
+                                        break;
                                 }
-                                else CRCErrorReceived?.Invoke(this, new CRCErrorEventArgs(w));
                             }
+                            else CRCErrorReceived?.Invoke(this, new CRCErrorEventArgs(w));
+                        }
 
-                            bRepeat = false;
-                        }
-                        else
-                        {
-                            #region Timeout
-                            TimeoutReceived?.Invoke(this, new TimeoutEventArgs(w));
-                            nTimeoutCount++;
-                            if (nTimeoutCount >= (w.RepeatCount ?? 0)) bRepeat = false;
-                            #endregion
-                        }
+                        bRepeat = false;
+                    }
+                    else
+                    {
+                        #region Timeout
+                        TimeoutReceived?.Invoke(this, new TimeoutEventArgs(w));
+                        nTimeoutCount++;
+                        if (nTimeoutCount >= (w.RepeatCount ?? 0)) bRepeat = false;
                         #endregion
                     }
-                }
-                else
-                {
-                    #region Auto Fill
-                    foreach (var v in AutoWorkList) WorkQueue.Enqueue(v);
                     #endregion
                 }
             }
-            catch { }
+            else
+            {
+                #region Auto Fill
+                foreach (var v in AutoWorkList) WorkQueue.Enqueue(v);
+                #endregion
+            }
         }
         #endregion
 
@@ -507,10 +500,10 @@ namespace Going.Basis.Communications.Modbus.RTU
 
             data[0] = Convert.ToByte(slave);
             data[1] = fn;
-            data[2] = startAddr.Byte1();
-            data[3] = startAddr.Byte0();
-            data[4] = length.Byte1();
-            data[5] = length.Byte0();
+            data[2] = startAddr.GetByte(1);
+            data[3] = startAddr.GetByte(0);
+            data[4] = length.GetByte(1);
+            data[5] = length.GetByte(0);
 
             ModbusCRC.GetCRC(data, data.Length - 2, ref crcHi, ref crcLo);
             data[6] = crcHi;
@@ -531,10 +524,10 @@ namespace Going.Basis.Communications.Modbus.RTU
 
             data[0] = Convert.ToByte(slave);
             data[1] = fn;
-            data[2] = startAddr.Byte1();
-            data[3] = startAddr.Byte0();
-            data[4] = length.Byte1();
-            data[5] = length.Byte0();
+            data[2] = startAddr.GetByte(1);
+            data[3] = startAddr.GetByte(0);
+            data[4] = length.GetByte(1);
+            data[5] = length.GetByte(0);
 
             ModbusCRC.GetCRC(data, data.Length - 2, ref crcHi, ref crcLo);
             data[6] = crcHi;
@@ -553,10 +546,10 @@ namespace Going.Basis.Communications.Modbus.RTU
 
             data[0] = Convert.ToByte(slave);
             data[1] = fn;
-            data[2] = startAddr.Byte1();
-            data[3] = startAddr.Byte0();
-            data[4] = length.Byte1();
-            data[5] = length.Byte0();
+            data[2] = startAddr.GetByte(1);
+            data[3] = startAddr.GetByte(0);
+            data[4] = length.GetByte(1);
+            data[5] = length.GetByte(0);
 
             ModbusCRC.GetCRC(data, data.Length - 2, ref crcHi, ref crcLo);
             data[6] = crcHi;
@@ -577,10 +570,10 @@ namespace Going.Basis.Communications.Modbus.RTU
 
             data[0] = Convert.ToByte(slave);
             data[1] = fn;
-            data[2] = startAddr.Byte1();
-            data[3] = startAddr.Byte0();
-            data[4] = length.Byte1();
-            data[5] = length.Byte0();
+            data[2] = startAddr.GetByte(1);
+            data[3] = startAddr.GetByte(0);
+            data[4] = length.GetByte(1);
+            data[5] = length.GetByte(0);
 
             ModbusCRC.GetCRC(data, data.Length - 2, ref crcHi, ref crcLo);
             data[6] = crcHi;
@@ -598,10 +591,10 @@ namespace Going.Basis.Communications.Modbus.RTU
 
             data[0] = Convert.ToByte(slave);
             data[1] = 0x05;
-            data[2] = startAddr.Byte1();
-            data[3] = startAddr.Byte0();
-            data[4] = val.Byte1();
-            data[5] = val.Byte0();
+            data[2] = startAddr.GetByte(1);
+            data[3] = startAddr.GetByte(0);
+            data[4] = val.GetByte(1);
+            data[5] = val.GetByte(0);
 
             ModbusCRC.GetCRC(data, data.Length - 2, ref crcHi, ref crcLo);
             data[6] = crcHi;
@@ -617,10 +610,10 @@ namespace Going.Basis.Communications.Modbus.RTU
 
             data[0] = Convert.ToByte(slave);
             data[1] = 0x06;
-            data[2] = startAddr.Byte1();
-            data[3] = startAddr.Byte0();
-            data[4] = value.Byte1();
-            data[5] = value.Byte0();
+            data[2] = startAddr.GetByte(1);
+            data[3] = startAddr.GetByte(0);
+            data[4] = value.GetByte(1);
+            data[5] = value.GetByte(0);
 
             ModbusCRC.GetCRC(data, data.Length - 2, ref crcHi, ref crcLo);
             data[6] = crcHi;
@@ -640,10 +633,10 @@ namespace Going.Basis.Communications.Modbus.RTU
 
             data[0] = Convert.ToByte(slave);
             data[1] = 0x0F;
-            data[2] = startAddr.Byte1();
-            data[3] = startAddr.Byte0();
-            data[4] = values.Length.Byte1();
-            data[5] = values.Length.Byte0();
+            data[2] = startAddr.GetByte(1);
+            data[3] = startAddr.GetByte(0);
+            data[4] = values.Length.GetByte(1);
+            data[5] = values.Length.GetByte(0);
             data[6] = Convert.ToByte(Length);
 
             for (int i = 0; i < Length; i++)
@@ -674,16 +667,16 @@ namespace Going.Basis.Communications.Modbus.RTU
 
             data[0] = Convert.ToByte(slave);
             data[1] = 0x10;
-            data[2] = startAddr.Byte1();
-            data[3] = startAddr.Byte0();
-            data[4] = values.Length.Byte1();
-            data[5] = values.Length.Byte0();
+            data[2] = startAddr.GetByte(1);
+            data[3] = startAddr.GetByte(0);
+            data[4] = values.Length.GetByte(1);
+            data[5] = values.Length.GetByte(0);
             data[6] = Convert.ToByte(values.Length * 2);
 
             for (int i = 0; i < values.Length; i++)
             {
-                data[7 + i * 2] = values[i].Byte1();
-                data[8 + i * 2] = values[i].Byte0();
+                data[7 + i * 2] = values[i].GetByte(1);
+                data[8 + i * 2] = values[i].GetByte(0);
             }
 
             ModbusCRC.GetCRC(data, data.Length - 2, ref crcHi, ref crcLo);
@@ -702,17 +695,30 @@ namespace Going.Basis.Communications.Modbus.RTU
 
             data[0] = Convert.ToByte(slave);
             data[1] = 0x1A;
-            data[2] = startAddr.Byte1();
-            data[3] = startAddr.Byte0();
+            data[2] = startAddr.GetByte(1);
+            data[3] = startAddr.GetByte(0);
             data[4] = bitIndex;
-            data[5] = val.Byte1();
-            data[6] = val.Byte0();
+            data[5] = val.GetByte(1);
+            data[6] = val.GetByte(0);
 
             ModbusCRC.GetCRC(data, data.Length - 2, ref crcHi, ref crcLo);
             data[7] = crcHi;
             data[8] = crcLo;
 
             ManualWorkList.Add(new Work(id, data, 8) { RepeatCount = repeatCount, Timeout = timeout });
+        }
+        #endregion
+
+        #region Dispose
+        public void Dispose()
+        {
+            IsDisposed = true;
+
+            if (IsStart) Stop();
+
+            ser?.Dispose();
+            cancel?.Dispose();
+            task?.Dispose();
         }
         #endregion
         #endregion
