@@ -1,12 +1,14 @@
-﻿using System;
+﻿using Going.Basis.Communications.LS;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using uPLibrary.Networking.M2Mqtt.Messages;
-using uPLibrary.Networking.M2Mqtt;
-using Going.Basis.Communications.LS;
 using System.Runtime.ConstrainedExecution;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using uPLibrary.Networking.M2Mqtt;
+using uPLibrary.Networking.M2Mqtt.Messages;
 
 namespace Going.Basis.Communications.Mqtt
 {
@@ -76,75 +78,67 @@ namespace Going.Basis.Communications.Mqtt
             {
                 if (!IsStart)
                 {
-                    ClientID = clientID ?? Guid.NewGuid().ToString();
-                    UserName = userName;
-                    Password = password;
-
                     cancel = new CancellationTokenSource();
                     task = Task.Run(async () =>
                     {
-                        var token = cancel.Token;
-                        var prev = DateTime.Now;
+                        ClientID = clientID ?? Guid.NewGuid().ToString();
+                        UserName = userName;
+                        Password = password;
                         IsStart = true;
-                        client = new MqttClient(BrokerHostName);
-                        
+
+                        var token = cancel.Token;
+
+                        double sec = 1.0;
                         while (!token.IsCancellationRequested && IsStart)
                         {
-                            if (!client.IsConnected)
+                            if (client != null)
                             {
-                                try
+                                if (client.IsConnected)
                                 {
-                                    if (!string.IsNullOrWhiteSpace(Password) && !string.IsNullOrWhiteSpace(UserName))
+                                    sec = 1.0;
+                                    #region Alive
+                                    client.Publish("/test-alive", [0]);
+                                    #endregion
+                                }
+                                else
+                                {
+                                    sec = 1.0;
+                                    #region Reconnect
+                                    try
                                     {
-                                        if (client.Connect(ClientID, UserName, Password) == 0)
+                                        int? result = null;
+                                        if (!string.IsNullOrWhiteSpace(Password) && !string.IsNullOrWhiteSpace(UserName)) result = client.Connect(ClientID, UserName, Password);
+                                        else result = client.Connect(ClientID);
+
+                                        if (result == 0)
                                         {
-                                            #region Subscribe
                                             if (Subscribes.Count > 0)
-                                            {
-                                                var ts = Subscribes.Select(x => x.Topic).ToArray();
-                                                var qs = Subscribes.Select(x => (byte)x.Qos).ToArray();
-                                                client.Subscribe(ts, qs);
-                                            }
-                                            #endregion
+                                                client.Subscribe(Subscribes.Select(x => x.Topic).ToArray(), Subscribes.Select(x => (byte)x.Qos).ToArray());
 
                                             Connected?.Invoke(this, EventArgs.Empty);
                                             client.ConnectionClosed += (o, s) => Disconnected?.Invoke(this, EventArgs.Empty);
                                             client.MqttMsgPublishReceived += (o, s) => Received?.Invoke(this, new MQReceiveArgs(s.Topic, s.Message));
                                         }
                                     }
-                                    else
-                                    {
-                                        if (client.Connect(ClientID) == 0)
-                                        {
-                                            #region Subscribe
-                                            if (Subscribes.Count > 0)
-                                            {
-                                                var ts = Subscribes.Select(x => x.Topic).ToArray();
-                                                var qs = Subscribes.Select(x => (byte)x.Qos).ToArray();
-                                                client.Subscribe(ts, qs);
-                                            }
-                                            #endregion
-                                            
-                                            Connected?.Invoke(this, EventArgs.Empty);
-                                            client.ConnectionClosed += (o, s) => Disconnected?.Invoke(this, EventArgs.Empty);
-                                            client.MqttMsgPublishReceived += (o, s) => Received?.Invoke(this, new MQReceiveArgs(s.Topic, s.Message));
-                                        }
-                                    }
+                                    catch (Exception ex) { }
+                                    #endregion
                                 }
-                                catch (Exception ex) { }
-                                await Task.Delay(1000);
                             }
                             else
                             {
-                                if ((DateTime.Now - prev).TotalSeconds > 1)
+                                sec = 0.1;
+                                #region new
+                                if (BrokerHostName != null)
                                 {
-                                    client.Publish("/test-alive", [0]);
-                                    prev = DateTime.Now;
+                                    client = new MqttClient(BrokerHostName);
                                 }
-                                await Task.Delay(10);
+                                #endregion
                             }
+
+                            await Task.Delay(TimeSpan.FromSeconds(sec), token);
                         }
-                       
+
+
                         if (client != null && client.IsConnected)
                         {
                             try { client.Disconnect(); }
@@ -158,9 +152,9 @@ namespace Going.Basis.Communications.Mqtt
             catch (Exception ex) { }
         }
 
-        private void Stop()
+        public void Stop()
         {
-            try { cancel?.Cancel(false); }
+            try { IsStart = false; cancel?.Cancel(false); }
             finally
             {
                 cancel?.Dispose();
@@ -169,7 +163,7 @@ namespace Going.Basis.Communications.Mqtt
 
             if (task != null)
             {
-                try { task.Wait(); }
+                try { task.Wait(); task.Dispose(); }
                 catch { }
                 finally { task = null; }
             }

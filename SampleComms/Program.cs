@@ -45,9 +45,9 @@ master.SetWord(1, "D10", 100);
 int sec = 0;
 while (true)
 {
-    var d1 = D[1];
-    d1.Bit7(DateTime.Now.Second % 2 == 0);
-    D[1] = d1;
+    var d1 = D[1].Value;
+    d1.SetBit(7, DateTime.Now.Second % 2 == 0);
+    D[1].Value = d1;
 
     /*
     var r = Console.ReadLine();

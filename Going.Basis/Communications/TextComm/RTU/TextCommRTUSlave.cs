@@ -66,97 +66,101 @@ namespace Going.Basis.Communications.TextComm.RTU
                 {
                     var token = cancel.Token;
 
-                    try { ser.Open(); DeviceOpened?.Invoke(this, EventArgs.Empty); }
-                    catch { }
-
-                    if (ser.IsOpen)
+                    do
                     {
-                        #region var
-                        List<byte> lstResponse = [];
-                        var baResponse = new byte[1024 * 8];
-                        DateTime prev = DateTime.Now;
-                        bool ok = false;
-                        #endregion
+                        try { ser.Open(); DeviceOpened?.Invoke(this, EventArgs.Empty); }
+                        catch { }
 
-                        IsStart = true;
-                        while (!token.IsCancellationRequested && IsStart)
+                        if (ser.IsOpen)
                         {
-                            try
+                            #region var
+                            List<byte> lstResponse = [];
+                            var baResponse = new byte[1024 * 8];
+                            DateTime prev = DateTime.Now;
+                            bool ok = false;
+                            #endregion
+
+                            IsStart = true;
+                            while (!token.IsCancellationRequested && IsStart)
                             {
-                                #region read
-                                if (ser.BytesToRead > 0)
+                                try
                                 {
-                                    try
+                                    #region read
+                                    if (ser.BytesToRead > 0)
                                     {
-                                        var len = ser.Read(baResponse, 0, baResponse.Length);
-                                        for (int i = 0; i < len; i++)
+                                        try
                                         {
-                                            var v = baResponse[i];
-                                            if (v == 0x02) lstResponse.Clear();
-                                            lstResponse.Add(v);
-                                        }
-                                        prev = DateTime.Now;
-                                    }
-                                    catch (IOException) { throw new SchedulerStopException(); }
-                                    catch (UnauthorizedAccessException) { throw new SchedulerStopException(); }
-                                    catch (InvalidOperationException) { throw new SchedulerStopException(); }
-                                }
-                                #endregion
-
-                                #region parse
-                                ok = false;
-                                if (lstResponse.Count >= 2 && lstResponse.FirstOrDefault() == 0x02 && lstResponse.LastOrDefault() == 0x03)
-                                {
-                                    var ls = TextCommPacket.ParsePacket([.. lstResponse])?.ToList();
-                                    if (ls != null)
-                                    {
-                                        var sum = (byte)(ls.GetRange(0, ls.Count - 1).Select(x => (int)x).Sum() & 0xFF);
-                                        if (sum == ls[ls.Count - 1])
-                                        {
-                                            byte slave = ls[0];
-                                            byte cmd = ls[1];
-                                            string msg = MessageEncoding.GetString(ls.ToArray(), 2, ls.Count - 3);
-
-                                            if (MessageRequest != null)
+                                            var len = ser.Read(baResponse, 0, baResponse.Length);
+                                            for (int i = 0; i < len; i++)
                                             {
-                                                var args = new MessageRequestArgs(slave, cmd, msg);
-                                                MessageRequest?.Invoke(this, args);
+                                                var v = baResponse[i];
+                                                if (v == 0x02) lstResponse.Clear();
+                                                lstResponse.Add(v);
+                                            }
+                                            prev = DateTime.Now;
+                                        }
+                                        catch (IOException) { throw new SchedulerStopException(); }
+                                        catch (UnauthorizedAccessException) { throw new SchedulerStopException(); }
+                                        catch (InvalidOperationException) { throw new SchedulerStopException(); }
+                                    }
+                                    #endregion
 
-                                                if (!string.IsNullOrEmpty(args.ResponseMessage))
+                                    #region parse
+                                    ok = false;
+                                    if (lstResponse.Count >= 2 && lstResponse.FirstOrDefault() == 0x02 && lstResponse.LastOrDefault() == 0x03)
+                                    {
+                                        var ls = TextCommPacket.ParsePacket([.. lstResponse])?.ToList();
+                                        if (ls != null)
+                                        {
+                                            var sum = (byte)(ls.GetRange(0, ls.Count - 1).Select(x => (int)x).Sum() & 0xFF);
+                                            if (sum == ls[ls.Count - 1])
+                                            {
+                                                byte slave = ls[0];
+                                                byte cmd = ls[1];
+                                                string msg = MessageEncoding.GetString(ls.ToArray(), 2, ls.Count - 3);
+
+                                                if (MessageRequest != null)
                                                 {
-                                                    var snd = TextCommPacket.MakePacket(MessageEncoding, slave, cmd, args.ResponseMessage);
-                                                    ser.Write(snd.ToArray(), 0, snd.Length);
-                                                    ser.BaseStream.Flush();
+                                                    var args = new MessageRequestArgs(slave, cmd, msg);
+                                                    MessageRequest?.Invoke(this, args);
+
+                                                    if (!string.IsNullOrEmpty(args.ResponseMessage))
+                                                    {
+                                                        var snd = TextCommPacket.MakePacket(MessageEncoding, slave, cmd, args.ResponseMessage);
+                                                        ser.Write(snd.ToArray(), 0, snd.Length);
+                                                        ser.BaseStream.Flush();
+                                                    }
                                                 }
                                             }
+
+                                            ok = true;
                                         }
-                                     
-                                        ok = true;
                                     }
-                                }
-                                #endregion
+                                    #endregion
 
-                                #region buffer clear
-                                if (ok || ((DateTime.Now - prev).TotalMilliseconds >= 50 && lstResponse.Count > 0))
-                                {
-                                    lstResponse.Clear();
-                                    ser.DiscardInBuffer();
-                                    ser.BaseStream.Flush();
+                                    #region buffer clear
+                                    if (ok || ((DateTime.Now - prev).TotalMilliseconds >= 50 && lstResponse.Count > 0))
+                                    {
+                                        lstResponse.Clear();
+                                        ser.DiscardInBuffer();
+                                        ser.BaseStream.Flush();
+                                    }
+                                    #endregion
                                 }
-                                #endregion
+                                catch (SchedulerStopException) { break; }
+                                catch (Exception) { }
+                                await Task.Delay(10, token);
                             }
-                            catch (SchedulerStopException) { break; }
-                            await Task.Delay(1);
                         }
-                    }
 
-                    if (ser.IsOpen)
-                    {
-                        ser.Close();
-                        DeviceClosed?.Invoke(this, EventArgs.Empty);
-                    }
+                        if (ser.IsOpen)
+                        {
+                            ser.Close();
+                            DeviceClosed?.Invoke(this, EventArgs.Empty);
+                        }
 
-                    IsStart = false;
+
+                    } while (!token.IsCancellationRequested && IsStart);
 
                 }, cancel.Token);
             }
@@ -165,7 +169,7 @@ namespace Going.Basis.Communications.TextComm.RTU
         #region Stop
         public void Stop()
         {
-            try { cancel?.Cancel(false); }
+            try { IsStart = false; cancel?.Cancel(false); }
             finally
             {
                 cancel?.Dispose();
@@ -174,7 +178,7 @@ namespace Going.Basis.Communications.TextComm.RTU
 
             if (task != null)
             {
-                try { task.Wait(); }
+                try { task.Wait(); task.Dispose(); }
                 catch { }
                 finally { task = null; }
             }

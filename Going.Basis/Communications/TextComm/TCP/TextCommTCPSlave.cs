@@ -78,7 +78,7 @@ namespace Going.Basis.Communications.TextComm.TCP
                             {
                                 var sock = await server.AcceptAsync(token);
                                 _ = Task.Run(async () => await run(sock, token), token);
-                                await Task.Delay(100);
+                                await Task.Delay(100, token);
                             }
                             catch { }
                         }
@@ -96,7 +96,7 @@ namespace Going.Basis.Communications.TextComm.TCP
         #region Stop
         public void Stop()
         {
-            try { cancel?.Cancel(false); }
+            try { IsStart = false; cancel?.Cancel(false); }
             finally
             {
                 cancel?.Dispose();
@@ -105,7 +105,7 @@ namespace Going.Basis.Communications.TextComm.TCP
 
             if (task != null)
             {
-                try { task.Wait(); }
+                try { task.Wait(); task.Dispose(); }
                 catch { }
                 finally { task = null; }
             }
@@ -196,7 +196,7 @@ namespace Going.Basis.Communications.TextComm.TCP
                     else if (ex.SocketErrorCode == SocketError.Shutdown) { isConnected = false; }
                 }
                 catch { }
-                await Task.Delay(10);
+                await Task.Delay(10, cancel);
             }
 
             if (sock.Connected) sock.Close();

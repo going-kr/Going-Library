@@ -27,7 +27,7 @@ namespace Going.Basis.Communications.Modbus.TCP
         }
         #endregion
         #region class : EventArgs
-        public class BitReadEventArgs(Work WorkItem, bool[] Datas) : EventArgs
+        public class BitReadEventArgs(Work WorkItem, bool[] Datas) : System.EventArgs
         {
             public int MessageID => WorkItem.MessageID;
             public int Slave => WorkItem.Data[6];
@@ -37,7 +37,7 @@ namespace Going.Basis.Communications.Modbus.TCP
             public bool[] ReceiveData => Datas;
         }
 
-        public class WordReadEventArgs(Work WorkItem, int[] Datas) : EventArgs
+        public class WordReadEventArgs(Work WorkItem, int[] Datas) : System.EventArgs
         {
             public int MessageID => WorkItem.MessageID;
             public int Slave => WorkItem.Data[6];
@@ -48,7 +48,7 @@ namespace Going.Basis.Communications.Modbus.TCP
             public int[] ReceiveData => Datas;
         }
 
-        public class BitWriteEventArgs(Work WorkItem) : EventArgs
+        public class BitWriteEventArgs(Work WorkItem) : System.EventArgs
         {
             public int MessageID => WorkItem.MessageID;
             public int Slave => WorkItem.Data[6];
@@ -57,7 +57,7 @@ namespace Going.Basis.Communications.Modbus.TCP
             public bool WriteValue => (WorkItem.Data[10] << 8 | WorkItem.Data[11]) == 0xFF00;
         }
 
-        public class WordWriteEventArgs(Work WorkItem) : EventArgs
+        public class WordWriteEventArgs(Work WorkItem) : System.EventArgs
         {
             public int MessageID => WorkItem.MessageID;
             public int Slave => WorkItem.Data[6];
@@ -66,7 +66,7 @@ namespace Going.Basis.Communications.Modbus.TCP
             public int WriteValue => WorkItem.Data[10] << 8 | WorkItem.Data[11];
         }
 
-        public class MultiBitWriteEventArgs : EventArgs
+        public class MultiBitWriteEventArgs : System.EventArgs
         {
             public int MessageID => WorkItem.MessageID;
             public int Slave => WorkItem.Data[6];
@@ -87,14 +87,14 @@ namespace Going.Basis.Communications.Modbus.TCP
                 {
                     var v = WorkItem.Data[i];
                     for (int j = 0; j < 8; j++)
-                        if (ret.Count < Length) ret.Add(v.Bit(j));
+                        if (ret.Count < Length) ret.Add(v.GetBit(j));
                 }
                 WriteValues = [.. ret];
                 #endregion
             }
         }
 
-        public class MultiWordWriteEventArgs : EventArgs
+        public class MultiWordWriteEventArgs : System.EventArgs
         {
             public int MessageID => WorkItem.MessageID;
             public int Slave => WorkItem.Data[6];
@@ -120,7 +120,7 @@ namespace Going.Basis.Communications.Modbus.TCP
             }
         }
 
-        public class WordBitSetEventArgs(Work WorkItem) : EventArgs
+        public class WordBitSetEventArgs(Work WorkItem) : System.EventArgs
         {
             public int MessageID => WorkItem.MessageID;
             public int Slave => WorkItem.Data[6];
@@ -131,7 +131,7 @@ namespace Going.Basis.Communications.Modbus.TCP
 
         }
 
-        public class TimeoutEventArgs(Work WorkItem) : EventArgs
+        public class TimeoutEventArgs(Work WorkItem) : System.EventArgs
         {
             public int MessageID => WorkItem.MessageID;
             public int Slave => WorkItem.Data[6];
@@ -139,7 +139,7 @@ namespace Going.Basis.Communications.Modbus.TCP
             public int StartAddress => WorkItem.Data[8] << 8 | WorkItem.Data[9];
         }
 
-        public class CRCErrorEventArgs(Work WorkItem) : EventArgs
+        public class CRCErrorEventArgs(Work WorkItem) : System.EventArgs
         {
             public int MessageID => WorkItem.MessageID;
             public int Slave => WorkItem.Data[6];
@@ -158,7 +158,11 @@ namespace Going.Basis.Communications.Modbus.TCP
 
         public bool IsOpen => bIsOpen;
         public bool IsStart { get; private set; }
-        public bool AutoStart { get; set; }
+        public bool AutoReconnect { get; set; } = true;
+
+        public bool IsDisposed { get; private set; }
+
+        public string ModuleId { get; } = Guid.NewGuid().ToString();
         #endregion
 
         #region Member Variable
@@ -185,42 +189,20 @@ namespace Going.Basis.Communications.Modbus.TCP
         public event EventHandler<WordBitSetEventArgs>? WordBitSetReceived;
         public event EventHandler<TimeoutEventArgs>? TimeoutReceived;
 
-        public event EventHandler<SocketEventArgs>? SocketConnected;
-        public event EventHandler<SocketEventArgs>? SocketDisconnected;
+        public event EventHandler<EventArgs>? SocketConnected;
+        public event EventHandler<EventArgs>? SocketDisconnected;
         #endregion
 
         #region Construct
         public ModbusTCPMaster()
         {
-            Task.Run(async () =>
-            {
-                while (true)
-                {
-                    if (!IsStart && AutoStart)
-                    {
-                        _Start();
-                    }
-                    await Task.Delay(1000);
-                }
-            });
+
         }
         #endregion
 
         #region Method
         #region Start / Stop
         public void Start()
-        {
-            if (AutoStart) throw new Exception("AutoStart가 true일 땐 Start/Stop 을 할 수 없습니다.");
-            else _Start();
-        }
-
-        public void Stop()
-        {
-            if (AutoStart) throw new Exception("AutoStart가 true일 땐 Start/Stop 을 할 수 없습니다.");
-            else _Stop();
-        }
-
-        private void _Start()
         {
             if (!IsOpen && !IsStart)
             {
@@ -229,52 +211,62 @@ namespace Going.Basis.Communications.Modbus.TCP
                 {
                     var token = cancel.Token;
 
-                    #region Connect
-                    try
+                    if (!OperatingSystem.IsBrowser())
                     {
-                        client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                        client.ReceiveTimeout = Timeout;
-                        client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, Timeout);
-                        client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
-                        client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
-
-                        client.Connect(RemoteIP, RemotePort);
-                        bIsOpen = client.Connected;
-                        SocketConnected?.Invoke(this, new SocketEventArgs(client));
-                    }
-                    catch { }
-                    #endregion
-
-                    if (bIsOpen)
-                    {
-                        baResponse = new byte[BufferSize];
-                        IsStart = true;
-                        while (!token.IsCancellationRequested && IsStart)
+                        do
                         {
+                            #region Connect
                             try
                             {
-                                Process();
+                                client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                                client.ReceiveTimeout = Timeout;
+                                client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, Timeout);
+                                client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
+                                client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+
+                                await client.ConnectAsync(RemoteIP, RemotePort, token);
+                                bIsOpen = client.Connected;
+                                SocketConnected?.Invoke(this, new SocketEventArgs(client));
                             }
-                            catch (SchedulerStopException) { break; }
-                            await Task.Delay(Interval);
-                        }
-                    }
+                            catch { }
+                            #endregion
 
-                    if (bIsOpen && client != null)
-                    {
-                        client.Close();
-                        SocketDisconnected?.Invoke(this, new SocketEventArgs(client));
-                    }
+                            if (bIsOpen)
+                            {
+                                baResponse = new byte[BufferSize];
+                                IsStart = true;
 
-                    IsStart = false;
+                                while (!token.IsCancellationRequested && IsStart && bIsOpen)
+                                {
+                                    try
+                                    {
+                                        Process();
+                                    }
+                                    catch (SchedulerStopException) { break; }
+                                    catch (Exception ex) { }
+                                    await Task.Delay(Interval, token);
+                                }
+                            }
+
+                            if (bIsOpen && client != null)
+                            {
+                                client.Close();
+                                SocketDisconnected?.Invoke(this, new SocketEventArgs(client));
+
+                                client.Dispose();
+                                client = null;
+                            }
+
+                        } while (!token.IsCancellationRequested && AutoReconnect && IsStart);
+                    }
 
                 }, cancel.Token);
             }
         }
 
-        private void _Stop()
+        public void Stop()
         {
-            try { cancel?.Cancel(false); }
+            try { IsStart = false; cancel?.Cancel(false); }
             finally
             {
                 cancel?.Dispose();
@@ -283,7 +275,7 @@ namespace Going.Basis.Communications.Modbus.TCP
 
             if (task != null)
             {
-                try { task.Wait(); }
+                try { task.Wait(); task.Dispose(); }
                 catch { }
                 finally { task = null; }
             }
@@ -293,31 +285,64 @@ namespace Going.Basis.Communications.Modbus.TCP
         #region Process
         void Process()
         {
-            try
+            if (WorkQueue.Count > 0 || ManualWorkList.Count > 0)
             {
-                if (WorkQueue.Count > 0 || ManualWorkList.Count > 0)
+                Work? w = null;
+                #region Get Work
+                if (ManualWorkList.Count > 0)
                 {
-                    Work? w = null;
-                    #region Get Work
-                    if (ManualWorkList.Count > 0)
+                    w = ManualWorkList[0];
+                    ManualWorkList.RemoveAt(0);
+                }
+                else w = WorkQueue.Dequeue();
+                #endregion
+
+                var bRepeat = true;
+                var nTimeoutCount = 0;
+                var Timeout = w.Timeout ?? this.Timeout;
+
+                while (bRepeat)
+                {
+                    #region write
+                    try
                     {
-                        w = ManualWorkList[0];
-                        ManualWorkList.RemoveAt(0);
+                        EndPoint ipep = new IPEndPoint(IPAddress.Parse(RemoteIP), RemotePort);
+                        client?.SendTo(w.Data, ipep);
                     }
-                    else w = WorkQueue.Dequeue();
+                    catch (SocketException ex)
+                    {
+                        if (ex.SocketErrorCode == SocketError.TimedOut) { }
+                        else if (ex.SocketErrorCode == SocketError.ConnectionReset) { bIsOpen = false; }
+                        else if (ex.SocketErrorCode == SocketError.ConnectionAborted) { bIsOpen = false; }
+                        else if (ex.SocketErrorCode == SocketError.Shutdown) { bIsOpen = false; }
+                    }
+                    catch (OperationCanceledException) { throw new SchedulerStopException(); }
+                    catch { }
+                    if (!IsOpen) throw new SchedulerStopException();
                     #endregion
 
-                    var bRepeat = true;
-                    var nTimeoutCount = 0;
-                    var Timeout = w.Timeout ?? this.Timeout;
-
-                    while (bRepeat)
+                    #region read
+                    var nRecv = 0;
+                    var prev = DateTime.Now;
+                    var gap = TimeSpan.Zero;
+                    var bCollecting = true;
+                    while (bCollecting)
                     {
-                        #region write
                         try
                         {
-                            EndPoint ipep = new IPEndPoint(IPAddress.Parse(RemoteIP), RemotePort);
-                            client?.SendTo(w.Data, ipep);
+                            var len = 0;
+                            if (client != null && client.Connected)
+                            {
+                                client.ReceiveTimeout = Timeout;
+                                client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, Timeout);
+
+                                EndPoint ipep = new IPEndPoint(IPAddress.Parse(RemoteIP), RemotePort);
+
+                                len = client.ReceiveFrom(baResponse, nRecv, baResponse.Length - nRecv, SocketFlags.None, ref ipep);
+                                nRecv += len;
+                            }
+
+                            bIsOpen = len > 0;
                         }
                         catch (SocketException ex)
                         {
@@ -326,145 +351,110 @@ namespace Going.Basis.Communications.Modbus.TCP
                             else if (ex.SocketErrorCode == SocketError.ConnectionAborted) { bIsOpen = false; }
                             else if (ex.SocketErrorCode == SocketError.Shutdown) { bIsOpen = false; }
                         }
+                        catch (OperationCanceledException) { throw new SchedulerStopException(); }
                         catch { }
+
                         if (!IsOpen) throw new SchedulerStopException();
-                        #endregion
 
-                        #region read
-                        var nRecv = 0;
-                        var prev = DateTime.Now;
-                        var gap = TimeSpan.Zero;
-                        var bCollecting = true;
-                        while (bCollecting)
+                        if (nRecv == w.ResponseCount) bCollecting = false;
+
+                        gap = DateTime.Now - prev;
+                        if (gap.TotalMilliseconds >= Timeout) break;
+                    }
+                    #endregion
+
+                    #region parse
+                    if (gap.TotalMilliseconds < Timeout)
+                    {
+                        int Slave = baResponse[6];
+                        ModbusFunction Func = (ModbusFunction)baResponse[7];
+                        int StartAddress = Convert.ToInt32((w.Data[8] << 8) | (w.Data[9]));
+                        switch (Func)
                         {
-                            try
-                            {
-                                var len = 0;
-                                if (client != null && client.Connected)
+                            case ModbusFunction.BITREAD_F1:
+                            case ModbusFunction.BITREAD_F2:
+                                #region BitRead
                                 {
-                                    client.ReceiveTimeout = Timeout;
-                                    client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, Timeout);
+                                    int ByteCount = baResponse[8];
+                                    int Length = ((w.Data[10] << 8) | w.Data[11]);
+                                    byte[] baData = new byte[ByteCount];
+                                    Array.Copy(baResponse, 9, baData, 0, ByteCount);
+                                    BitArray ba = new(baData);
 
-                                    EndPoint ipep = new IPEndPoint(IPAddress.Parse(RemoteIP), RemotePort);
+                                    bool[] bd = new bool[Length];
+                                    for (int i = 0; i < ba.Length && i < Length; i++) bd[i] = ba[i];
 
-                                    len = client.ReceiveFrom(baResponse, nRecv, baResponse.Length - nRecv, SocketFlags.None, ref ipep);
-                                    nRecv += len;
+                                    BitReadReceived?.Invoke(this, new BitReadEventArgs(w, bd));
                                 }
-
-                                bIsOpen = len > 0;
-                            }
-                            catch (SocketException ex)
-                            {
-                                if (ex.SocketErrorCode == SocketError.TimedOut) { }
-                                else if (ex.SocketErrorCode == SocketError.ConnectionReset) { bIsOpen = false; }
-                                else if (ex.SocketErrorCode == SocketError.ConnectionAborted) { bIsOpen = false; }
-                                else if (ex.SocketErrorCode == SocketError.Shutdown) { bIsOpen = false; }
-                            }
-                            catch { }
-
-                            if (!IsOpen) throw new SchedulerStopException();
-
-                            if (nRecv == w.ResponseCount) bCollecting = false;
-
-                            gap = DateTime.Now - prev;
-                            if (gap.TotalMilliseconds >= Timeout) break;
+                                #endregion
+                                break;
+                            case ModbusFunction.WORDREAD_F3:
+                            case ModbusFunction.WORDREAD_F4:
+                                #region WordRead
+                                {
+                                    int ByteCount = baResponse[8];
+                                    int[] data = new int[ByteCount / 2];
+                                    for (int i = 0; i < data.Length; i++) data[i] = Convert.ToUInt16(baResponse[9 + (i * 2)] << 8 | baResponse[10 + (i * 2)]);
+                                    WordReadReceived?.Invoke(this, new WordReadEventArgs(w, data));
+                                }
+                                #endregion
+                                break;
+                            case ModbusFunction.BITWRITE_F5:
+                                #region BitWrite
+                                {
+                                    BitWriteReceived?.Invoke(this, new BitWriteEventArgs(w));
+                                }
+                                #endregion
+                                break;
+                            case ModbusFunction.WORDWRITE_F6:
+                                #region WordWrite
+                                {
+                                    WordWriteReceived?.Invoke(this, new WordWriteEventArgs(w));
+                                }
+                                #endregion
+                                break;
+                            case ModbusFunction.MULTIBITWRITE_F15:
+                                #region MultiBitWrite
+                                {
+                                    MultiBitWriteReceived?.Invoke(this, new MultiBitWriteEventArgs(w));
+                                }
+                                #endregion
+                                break;
+                            case ModbusFunction.MULTIWORDWRITE_F16:
+                                #region MultiWordWrite
+                                {
+                                    MultiWordWriteReceived?.Invoke(this, new MultiWordWriteEventArgs(w));
+                                }
+                                #endregion
+                                break;
+                            case ModbusFunction.WORDBITSET_F26:
+                                #region WordBitSet
+                                {
+                                    WordBitSetReceived?.Invoke(this, new WordBitSetEventArgs(w));
+                                }
+                                #endregion
+                                break;
                         }
-                        #endregion
 
-                        #region parse
-                        if (gap.TotalMilliseconds < Timeout)
-                        {
-                            int Slave = baResponse[6];
-                            ModbusFunction Func = (ModbusFunction)baResponse[7];
-                            int StartAddress = Convert.ToInt32((w.Data[8] << 8) | (w.Data[9]));
-                            switch (Func)
-                            {
-                                case ModbusFunction.BITREAD_F1:
-                                case ModbusFunction.BITREAD_F2:
-                                    #region BitRead
-                                    {
-                                        int ByteCount = baResponse[8];
-                                        int Length = ((w.Data[10] << 8) | w.Data[11]);
-                                        byte[] baData = new byte[ByteCount];
-                                        Array.Copy(baResponse, 9, baData, 0, ByteCount);
-                                        BitArray ba = new(baData);
-
-                                        bool[] bd = new bool[Length];
-                                        for (int i = 0; i < ba.Length && i < Length; i++) bd[i] = ba[i];
-
-                                        BitReadReceived?.Invoke(this, new BitReadEventArgs(w, bd));
-                                    }
-                                    #endregion
-                                    break;
-                                case ModbusFunction.WORDREAD_F3:
-                                case ModbusFunction.WORDREAD_F4:
-                                    #region WordRead
-                                    {
-                                        int ByteCount = baResponse[8];
-                                        int[] data = new int[ByteCount / 2];
-                                        for (int i = 0; i < data.Length; i++) data[i] = Convert.ToUInt16(baResponse[9 + (i * 2)] << 8 | baResponse[10 + (i * 2)]);
-                                        WordReadReceived?.Invoke(this, new WordReadEventArgs(w, data));
-                                    }
-                                    #endregion
-                                    break;
-                                case ModbusFunction.BITWRITE_F5:
-                                    #region BitWrite
-                                    {
-                                        BitWriteReceived?.Invoke(this, new BitWriteEventArgs(w));
-                                    }
-                                    #endregion
-                                    break;
-                                case ModbusFunction.WORDWRITE_F6:
-                                    #region WordWrite
-                                    {
-                                        WordWriteReceived?.Invoke(this, new WordWriteEventArgs(w));
-                                    }
-                                    #endregion
-                                    break;
-                                case ModbusFunction.MULTIBITWRITE_F15:
-                                    #region MultiBitWrite
-                                    {
-                                        MultiBitWriteReceived?.Invoke(this, new MultiBitWriteEventArgs(w));
-                                    }
-                                    #endregion
-                                    break;
-                                case ModbusFunction.MULTIWORDWRITE_F16:
-                                    #region MultiWordWrite
-                                    {
-                                        MultiWordWriteReceived?.Invoke(this, new MultiWordWriteEventArgs(w));
-                                    }
-                                    #endregion
-                                    break;
-                                case ModbusFunction.WORDBITSET_F26:
-                                    #region WordBitSet
-                                    {
-                                        WordBitSetReceived?.Invoke(this, new WordBitSetEventArgs(w));
-                                    }
-                                    #endregion
-                                    break;
-                            }
-
-                            bRepeat = false;
-                        }
-                        else
-                        {
-                            #region Timeout
-                            TimeoutReceived?.Invoke(this, new TimeoutEventArgs(w));
-                            nTimeoutCount++;
-                            if (nTimeoutCount >= (w.RepeatCount ?? 0)) bRepeat = false;
-                            #endregion
-                        }
+                        bRepeat = false;
+                    }
+                    else
+                    {
+                        #region Timeout
+                        TimeoutReceived?.Invoke(this, new TimeoutEventArgs(w));
+                        nTimeoutCount++;
+                        if (nTimeoutCount >= (w.RepeatCount ?? 0)) bRepeat = false;
                         #endregion
                     }
-                }
-                else
-                {
-                    #region Auto Fill
-                    foreach (var v in AutoWorkList) WorkQueue.Enqueue(v);
                     #endregion
                 }
             }
-            catch { }
+            else
+            {
+                #region Auto Fill
+                foreach (var v in AutoWorkList) WorkQueue.Enqueue(v);
+                #endregion
+            }
         }
         #endregion
 
@@ -533,10 +523,10 @@ namespace Going.Basis.Communications.Modbus.TCP
             data[5] = 0x06;
             data[6] = Convert.ToByte(slave);
             data[7] = fn;
-            data[8] = startAddr.Byte1();
-            data[9] = startAddr.Byte0();
-            data[10] = length.Byte1();
-            data[11] = length.Byte0();
+            data[8] = startAddr.GetByte(1);
+            data[9] = startAddr.GetByte(0);
+            data[10] = length.GetByte(1);
+            data[11] = length.GetByte(0);
 
             int nResCount = length / 8;
             if (length % 8 != 0) nResCount++;
@@ -558,10 +548,10 @@ namespace Going.Basis.Communications.Modbus.TCP
             data[5] = 0x06;
             data[6] = Convert.ToByte(slave);
             data[7] = fn;
-            data[8] = startAddr.Byte1();
-            data[9] = startAddr.Byte0();
-            data[10] = length.Byte1();
-            data[11] = length.Byte0();
+            data[8] = startAddr.GetByte(1);
+            data[9] = startAddr.GetByte(0);
+            data[10] = length.GetByte(1);
+            data[11] = length.GetByte(0);
 
             AutoWorkList.Add(new Work(id, data, length * 2 + 9) { Timeout = timeout });
         }
@@ -581,10 +571,10 @@ namespace Going.Basis.Communications.Modbus.TCP
             data[5] = 0x06;
             data[6] = Convert.ToByte(slave);
             data[7] = fn;
-            data[8] = startAddr.Byte1();
-            data[9] = startAddr.Byte0();
-            data[10] = length.Byte1();
-            data[11] = length.Byte0();
+            data[8] = startAddr.GetByte(1);
+            data[9] = startAddr.GetByte(0);
+            data[10] = length.GetByte(1);
+            data[11] = length.GetByte(0);
 
             int nResCount = length / 8;
             if (length % 8 != 0) nResCount++;
@@ -606,10 +596,10 @@ namespace Going.Basis.Communications.Modbus.TCP
             data[5] = 0x06;
             data[6] = Convert.ToByte(slave);
             data[7] = fn;
-            data[8] = startAddr.Byte1();
-            data[9] = startAddr.Byte0();
-            data[10] = length.Byte1();
-            data[11] = length.Byte0();
+            data[8] = startAddr.GetByte(1);
+            data[9] = startAddr.GetByte(0);
+            data[10] = length.GetByte(1);
+            data[11] = length.GetByte(0);
 
             ManualWorkList.Add(new Work(id, data, length * 2 + 9) { RepeatCount = repeatCount, Timeout = timeout });
         }
@@ -628,10 +618,10 @@ namespace Going.Basis.Communications.Modbus.TCP
             data[5] = 0x06;
             data[6] = Convert.ToByte(slave);
             data[7] = 0x05;
-            data[8] = startAddr.Byte1();
-            data[9] = startAddr.Byte0();
-            data[10] = val.Byte1();
-            data[11] = val.Byte0();
+            data[8] = startAddr.GetByte(1);
+            data[9] = startAddr.GetByte(0);
+            data[10] = val.GetByte(1);
+            data[11] = val.GetByte(0);
 
             ManualWorkList.Add(new Work(id, data, 12) { RepeatCount = repeatCount, Timeout = timeout });
         }
@@ -649,10 +639,10 @@ namespace Going.Basis.Communications.Modbus.TCP
             data[5] = 0x06;
             data[6] = Convert.ToByte(slave);
             data[7] = 0x06;
-            data[8] = startAddr.Byte1();
-            data[9] = startAddr.Byte0();
-            data[10] = value.Byte1();
-            data[11] = value.Byte0();
+            data[8] = startAddr.GetByte(1);
+            data[9] = startAddr.GetByte(0);
+            data[10] = value.GetByte(1);
+            data[11] = value.GetByte(0);
 
             ManualWorkList.Add(new Work(id, data, 12) { RepeatCount = repeatCount, Timeout = timeout });
         }
@@ -671,14 +661,14 @@ namespace Going.Basis.Communications.Modbus.TCP
             data[1] = 0;
             data[2] = 0;                                                // ProtocolID
             data[3] = 0;
-            data[4] = LengthEx.Byte1();                                 // Length (for Next Frame)
-            data[5] = LengthEx.Byte0();
+            data[4] = LengthEx.GetByte(1);                                 // Length (for Next Frame)
+            data[5] = LengthEx.GetByte(0);
             data[6] = Convert.ToByte(slave);
             data[7] = 0x0F;
-            data[8] = startAddr.Byte1();
-            data[9] = startAddr.Byte0();
-            data[10] = values.Length.Byte1();
-            data[11] = values.Length.Byte0();
+            data[8] = startAddr.GetByte(1);
+            data[9] = startAddr.GetByte(0);
+            data[10] = values.Length.GetByte(1);
+            data[11] = values.Length.GetByte(0);
             data[12] = Convert.ToByte(Length);
 
             for (int i = 0; i < Length; i++)
@@ -708,20 +698,20 @@ namespace Going.Basis.Communications.Modbus.TCP
             data[1] = 0;
             data[2] = 0;                                                // ProtocolID
             data[3] = 0;
-            data[4] = LengthEx.Byte1();                                 // Length (for Next Frame)
-            data[5] = LengthEx.Byte0();
+            data[4] = LengthEx.GetByte(1);                                 // Length (for Next Frame)
+            data[5] = LengthEx.GetByte(0);
             data[6] = Convert.ToByte(slave);
             data[7] = 0x10;
-            data[8] = startAddr.Byte1();
-            data[9] = startAddr.Byte0();
-            data[10] = values.Length.Byte1();
-            data[11] = values.Length.Byte0();
+            data[8] = startAddr.GetByte(1);
+            data[9] = startAddr.GetByte(0);
+            data[10] = values.Length.GetByte(1);
+            data[11] = values.Length.GetByte(0);
             data[12] = Convert.ToByte(values.Length * 2);
 
             for (int i = 0; i < values.Length; i++)
             {
-                data[13 + (i * 2)] = values[i].Byte1();
-                data[14 + (i * 2)] = values[i].Byte0();
+                data[13 + (i * 2)] = values[i].GetByte(1);
+                data[14 + (i * 2)] = values[i].GetByte(0);
             }
 
             ManualWorkList.Add(new Work(id, data, 12) { RepeatCount = repeatCount, Timeout = timeout });
@@ -742,13 +732,26 @@ namespace Going.Basis.Communications.Modbus.TCP
             data[5] = 0x07;
             data[6] = Convert.ToByte(slave);
             data[7] = 0x1A;
-            data[8] = startAddr.Byte1();
-            data[9] = startAddr.Byte0();
+            data[8] = startAddr.GetByte(1);
+            data[9] = startAddr.GetByte(0);
             data[10] = bitIndex;
-            data[11] = val.Byte1();
-            data[12] = val.Byte0();
+            data[11] = val.GetByte(1);
+            data[12] = val.GetByte(0);
 
             ManualWorkList.Add(new Work(id, data, 12) { RepeatCount = repeatCount, Timeout = timeout });
+        }
+        #endregion
+
+        #region Dispose
+        public void Dispose()
+        {
+            IsDisposed = true;
+
+            if (IsStart) Stop();
+
+            client?.Dispose();
+            cancel?.Dispose();
+            task?.Dispose();
         }
         #endregion
         #endregion

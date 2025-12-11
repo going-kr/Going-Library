@@ -14,7 +14,7 @@ namespace Going.Basis.Communications.Modbus.RTU
     public class ModbusRTUSlave
     {
         #region class : EventArgs
-        public class BitReadRequestArgs(byte[] Data) : EventArgs
+        public class BitReadRequestArgs(byte[] Data) : System.EventArgs
         {
             public int Slave => Data[0];
             public ModbusFunction Function => (ModbusFunction)Data[1];
@@ -25,7 +25,7 @@ namespace Going.Basis.Communications.Modbus.RTU
             public bool[]? ResponseData { get; set; }
         }
 
-        public class WordReadRequestArgs(byte[] Data) : EventArgs
+        public class WordReadRequestArgs(byte[] Data) : System.EventArgs
         {
             public int Slave => Data[0];
             public ModbusFunction Function => (ModbusFunction)Data[1];
@@ -36,7 +36,7 @@ namespace Going.Basis.Communications.Modbus.RTU
             public int[]? ResponseData { get; set; }
         }
 
-        public class BitWriteRequestArgs(byte[] Data) : EventArgs
+        public class BitWriteRequestArgs(byte[] Data) : System.EventArgs
         {
             public int Slave => Data[0];
             public ModbusFunction Function => (ModbusFunction)Data[1];
@@ -46,7 +46,7 @@ namespace Going.Basis.Communications.Modbus.RTU
             public bool Success { get; set; }
         }
 
-        public class WordWriteRequestArgs(byte[] Data) : EventArgs
+        public class WordWriteRequestArgs(byte[] Data) : System.EventArgs
         {
             public int Slave => Data[0];
             public ModbusFunction Function => (ModbusFunction)Data[1];
@@ -56,7 +56,7 @@ namespace Going.Basis.Communications.Modbus.RTU
             public bool Success { get; set; }
         }
 
-        public class MultiBitWriteRequestArgs : EventArgs
+        public class MultiBitWriteRequestArgs : System.EventArgs
         {
             public int Slave => Data[0];
             public ModbusFunction Function => (ModbusFunction)Data[1];
@@ -75,13 +75,13 @@ namespace Going.Basis.Communications.Modbus.RTU
                 List<bool> ret = new List<bool>();
                 for (int i = 7; i < Data.Length - 2; i++)
                     for (int j = 0; j < 8; j++)
-                        if (ret.Count < Length) ret.Add(Data[i].Bit(j));
+                        if (ret.Count < Length) ret.Add(Data[i].GetBit(j));
                 WriteValues = ret.ToArray();
                 #endregion
             }
         }
 
-        public class MultiWordWriteRequestArgs : EventArgs
+        public class MultiWordWriteRequestArgs : System.EventArgs
         {
             public int Slave => Data[0];
             public ModbusFunction Function => (ModbusFunction)Data[1];
@@ -107,7 +107,7 @@ namespace Going.Basis.Communications.Modbus.RTU
             }
         }
 
-        public class WordBitSetRequestArgs(byte[] Data) : EventArgs
+        public class WordBitSetRequestArgs(byte[] Data) : System.EventArgs
         {
             public int Slave => Data[0];
             public ModbusFunction Function => (ModbusFunction)Data[1];
@@ -167,371 +167,393 @@ namespace Going.Basis.Communications.Modbus.RTU
                 {
                     var token = cancel.Token;
 
-                    try { ser.Open(); DeviceOpened?.Invoke(this, EventArgs.Empty); }
-                    catch { }
-
-                    if (ser.IsOpen)
+                    do
                     {
-                        #region var
-                        List<byte> lstResponse = [];
-                        var baResponse = new byte[1024 * 8];
-                        DateTime prev = DateTime.Now;
-                        bool ok = false;
-                        #endregion
+                        try { ser.Open(); DeviceOpened?.Invoke(this, System.EventArgs.Empty); }
+                        catch { }
 
-                        IsStart = true;
-                        while (!token.IsCancellationRequested && IsStart)
+                        if (ser.IsOpen)
                         {
-                            try
+                            #region var
+                            List<byte> lstResponse = [];
+                            var baResponse = new byte[1024 * 8];
+                            DateTime prev = DateTime.Now;
+                            bool ok = false;
+                            #endregion
+
+                            IsStart = true;
+                            while (!token.IsCancellationRequested && IsStart)
                             {
-                                #region read
-                                if (ser.BytesToRead > 0)
+                                try
                                 {
+                                    #region read
                                     try
                                     {
-                                        var len = ser.Read(baResponse, 0, baResponse.Length);
-                                        for (int i = 0; i < len; i++) lstResponse.Add(baResponse[i]);
-                                        prev = DateTime.Now;
+                                        if (ser.BytesToRead > 0)
+                                        {
+                                            var len = ser.Read(baResponse, 0, baResponse.Length);
+                                            for (int i = 0; i < len; i++) lstResponse.Add(baResponse[i]);
+                                            prev = DateTime.Now;
+                                        }
                                     }
+                                    catch (TimeoutException) { }
                                     catch (IOException) { throw new SchedulerStopException(); }
                                     catch (UnauthorizedAccessException) { throw new SchedulerStopException(); }
                                     catch (InvalidOperationException) { throw new SchedulerStopException(); }
-                                }
-                                #endregion
+                                    catch (OperationCanceledException) { throw new SchedulerStopException(); }
+                                    #endregion
 
-                                #region parse
-                                ok = false;
-                                if (lstResponse.Count >= 4)
-                                {
-                                    int Slave = lstResponse[0];
-                                    ModbusFunction Function = (ModbusFunction)lstResponse[1];
-                                    int StartAddress = lstResponse[2] << 8 | lstResponse[3];
-
-                                    switch (Function)
+                                    #region parse
+                                    ok = false;
+                                    if (lstResponse.Count >= 4)
                                     {
-                                        case ModbusFunction.BITREAD_F1:
-                                        case ModbusFunction.BITREAD_F2:
-                                            #region BitRead
-                                            if (lstResponse.Count == 8)
-                                            {
-                                                byte hi = 0xFF, lo = 0xFF;
-                                                ModbusCRC.GetCRC(lstResponse, 0, 6, ref hi, ref lo);
-                                                if (lstResponse[6] == hi && lstResponse[7] == lo)
-                                                {
-                                                    if (BitReadRequest != null)
-                                                    {
-                                                        var args = new BitReadRequestArgs(lstResponse.ToArray());
-                                                        BitReadRequest.Invoke(this, args);
+                                        int Slave = lstResponse[0];
+                                        ModbusFunction Function = (ModbusFunction)lstResponse[1];
+                                        int StartAddress = lstResponse[2] << 8 | lstResponse[3];
 
-                                                        if (args.Success && args.ResponseData != null && args.ResponseData.Length == args.Length)
+                                        try
+                                        {
+                                            switch (Function)
+                                            {
+                                                case ModbusFunction.BITREAD_F1:
+                                                case ModbusFunction.BITREAD_F2:
+                                                    #region BitRead
+                                                    if (lstResponse.Count == 8)
+                                                    {
+                                                        byte hi = 0xFF, lo = 0xFF;
+                                                        ModbusCRC.GetCRC(lstResponse, 0, 6, ref hi, ref lo);
+                                                        if (lstResponse[6] == hi && lstResponse[7] == lo)
                                                         {
-                                                            #region MakeData
-                                                            List<byte> Datas = new List<byte>();
-                                                            int nlen = args.ResponseData.Length / 8;
-                                                            nlen += args.ResponseData.Length % 8 == 0 ? 0 : 1;
-                                                            for (int i = 0; i < nlen; i++)
+                                                            if (BitReadRequest != null)
                                                             {
-                                                                byte val = 0;
-                                                                for (int j = i * 8, nTemp = 0; j < args.ResponseData.Length && j < i * 8 + 8; j++, nTemp++)
-                                                                    if (args.ResponseData[j])
-                                                                        val |= Convert.ToByte(Math.Pow(2, nTemp));
-                                                                Datas.Add(val);
+                                                                var args = new BitReadRequestArgs(lstResponse.ToArray());
+                                                                BitReadRequest.Invoke(this, args);
+
+                                                                if (args.Success && args.ResponseData != null && args.ResponseData.Length == args.Length)
+                                                                {
+                                                                    #region MakeData
+                                                                    List<byte> Datas = new List<byte>();
+                                                                    int nlen = args.ResponseData.Length / 8;
+                                                                    nlen += args.ResponseData.Length % 8 == 0 ? 0 : 1;
+                                                                    for (int i = 0; i < nlen; i++)
+                                                                    {
+                                                                        byte val = 0;
+                                                                        for (int j = i * 8, nTemp = 0; j < args.ResponseData.Length && j < i * 8 + 8; j++, nTemp++)
+                                                                            if (args.ResponseData[j])
+                                                                                val |= Convert.ToByte(Math.Pow(2, nTemp));
+                                                                        Datas.Add(val);
+                                                                    }
+                                                                    #endregion
+                                                                    #region Serial Write
+                                                                    List<byte> ret = new List<byte>();
+                                                                    ret.Add((byte)Slave);
+                                                                    ret.Add((byte)Function);
+                                                                    ret.Add((byte)Datas.Count);
+                                                                    ret.AddRange(Datas.ToArray());
+                                                                    byte nhi = 0xFF, nlo = 0xFF;
+                                                                    ModbusCRC.GetCRC(ret, 0, ret.Count, ref nhi, ref nlo);
+                                                                    ret.Add(nhi);
+                                                                    ret.Add(nlo);
+                                                                    byte[] send = ret.ToArray();
+                                                                    ser.Write(send, 0, send.Length);
+                                                                    ser.BaseStream.Flush();
+                                                                    #endregion
+                                                                    ok = true;
+                                                                }
                                                             }
-                                                            #endregion
-                                                            #region Serial Write
-                                                            List<byte> ret = new List<byte>();
-                                                            ret.Add((byte)Slave);
-                                                            ret.Add((byte)Function);
-                                                            ret.Add((byte)Datas.Count);
-                                                            ret.AddRange(Datas.ToArray());
-                                                            byte nhi = 0xFF, nlo = 0xFF;
-                                                            ModbusCRC.GetCRC(ret, 0, ret.Count, ref nhi, ref nlo);
-                                                            ret.Add(nhi);
-                                                            ret.Add(nlo);
-                                                            byte[] send = ret.ToArray();
-                                                            ser.Write(send, 0, send.Length);
-                                                            ser.BaseStream.Flush();
-                                                            #endregion
+                                                            lstResponse.Clear();
+                                                        }
+                                                    }
+                                                    #endregion
+                                                    break;
+                                                case ModbusFunction.WORDREAD_F3:
+                                                case ModbusFunction.WORDREAD_F4:
+                                                    #region WordRead
+                                                    if (lstResponse.Count == 8)
+                                                    {
+                                                        byte hi = 0xFF, lo = 0xFF;
+                                                        ModbusCRC.GetCRC(lstResponse, 0, 6, ref hi, ref lo);
+                                                        if (lstResponse[6] == hi && lstResponse[7] == lo)
+                                                        {
+                                                            if (WordReadRequest != null)
+                                                            {
+                                                                var args = new WordReadRequestArgs(lstResponse.ToArray());
+                                                                WordReadRequest.Invoke(this, args);
+
+                                                                if (args.Success && args.ResponseData != null && args.ResponseData.Length == args.Length)
+                                                                {
+                                                                    #region MakeData
+                                                                    List<byte> Datas = new List<byte>();
+                                                                    for (int i = 0; i < args.ResponseData.Length; i++)
+                                                                    {
+                                                                        Datas.Add((byte)((args.ResponseData[i] & 0xFF00) >> 8));
+                                                                        Datas.Add((byte)(args.ResponseData[i] & 0x00FF));
+                                                                    }
+                                                                    #endregion
+                                                                    #region Serial Write
+                                                                    List<byte> ret = new List<byte>();
+                                                                    ret.Add((byte)Slave);
+                                                                    ret.Add((byte)Function);
+                                                                    ret.Add((byte)Datas.Count);
+                                                                    ret.AddRange(Datas.ToArray());
+                                                                    byte nhi = 0xFF, nlo = 0xFF;
+                                                                    ModbusCRC.GetCRC(ret, 0, ret.Count, ref nhi, ref nlo);
+                                                                    ret.Add(nhi);
+                                                                    ret.Add(nlo);
+                                                                    byte[] send = ret.ToArray();
+                                                                    ser.Write(send, 0, send.Length);
+                                                                    ser.BaseStream.Flush();
+                                                                    #endregion
+                                                                }
+                                                            }
                                                             ok = true;
                                                         }
                                                     }
-                                                    lstResponse.Clear();
-                                                }
-                                            }
-                                            #endregion
-                                            break;
-                                        case ModbusFunction.WORDREAD_F3:
-                                        case ModbusFunction.WORDREAD_F4:
-                                            #region WordRead
-                                            if (lstResponse.Count == 8)
-                                            {
-                                                byte hi = 0xFF, lo = 0xFF;
-                                                ModbusCRC.GetCRC(lstResponse, 0, 6, ref hi, ref lo);
-                                                if (lstResponse[6] == hi && lstResponse[7] == lo)
-                                                {
-                                                    if (WordReadRequest != null)
+                                                    #endregion
+                                                    break;
+                                                case ModbusFunction.BITWRITE_F5:
+                                                    #region BitWrite
+                                                    if (lstResponse.Count == 8)
                                                     {
-                                                        var args = new WordReadRequestArgs(lstResponse.ToArray());
-                                                        WordReadRequest.Invoke(this, args);
-
-                                                        if (args.Success && args.ResponseData != null && args.ResponseData.Length == args.Length)
+                                                        byte hi = 0xFF, lo = 0xFF;
+                                                        ModbusCRC.GetCRC(lstResponse, 0, 6, ref hi, ref lo);
+                                                        if (lstResponse[6] == hi && lstResponse[7] == lo)
                                                         {
-                                                            #region MakeData
-                                                            List<byte> Datas = new List<byte>();
-                                                            for (int i = 0; i < args.ResponseData.Length; i++)
+                                                            if (BitWriteRequest != null)
                                                             {
-                                                                Datas.Add((byte)((args.ResponseData[i] & 0xFF00) >> 8));
-                                                                Datas.Add((byte)(args.ResponseData[i] & 0x00FF));
+                                                                var args = new BitWriteRequestArgs(lstResponse.ToArray());
+                                                                BitWriteRequest.Invoke(this, args);
+
+                                                                if (args.Success)
+                                                                {
+                                                                    #region Serial Write
+                                                                    int nv = args.WriteValue ? 0xFF00 : 0;
+                                                                    List<byte> ret = new List<byte>();
+                                                                    ret.Add((byte)args.Slave);
+                                                                    ret.Add((byte)args.Function);
+                                                                    ret.Add((byte)((args.StartAddress & 0xFF00) >> 8));
+                                                                    ret.Add((byte)(args.StartAddress & 0x00FF));
+                                                                    ret.Add((byte)((nv & 0xFF00) >> 8));
+                                                                    ret.Add((byte)(nv & 0x00FF));
+                                                                    byte nhi = 0xFF, nlo = 0xFF;
+                                                                    ModbusCRC.GetCRC(ret, 0, ret.Count, ref nhi, ref nlo);
+                                                                    ret.Add(nhi);
+                                                                    ret.Add(nlo);
+                                                                    byte[] send = ret.ToArray();
+                                                                    ser.Write(send, 0, send.Length);
+                                                                    ser.BaseStream.Flush();
+                                                                    #endregion
+                                                                }
                                                             }
-                                                            #endregion
-                                                            #region Serial Write
-                                                            List<byte> ret = new List<byte>();
-                                                            ret.Add((byte)Slave);
-                                                            ret.Add((byte)Function);
-                                                            ret.Add((byte)Datas.Count);
-                                                            ret.AddRange(Datas.ToArray());
-                                                            byte nhi = 0xFF, nlo = 0xFF;
-                                                            ModbusCRC.GetCRC(ret, 0, ret.Count, ref nhi, ref nlo);
-                                                            ret.Add(nhi);
-                                                            ret.Add(nlo);
-                                                            byte[] send = ret.ToArray();
-                                                            ser.Write(send, 0, send.Length);
-                                                            ser.BaseStream.Flush();
-                                                            #endregion
+                                                            ok = true;
                                                         }
                                                     }
-                                                    ok = true;
-                                                }
-                                            }
-                                            #endregion
-                                            break;
-                                        case ModbusFunction.BITWRITE_F5:
-                                            #region BitWrite
-                                            if (lstResponse.Count == 8)
-                                            {
-                                                byte hi = 0xFF, lo = 0xFF;
-                                                ModbusCRC.GetCRC(lstResponse, 0, 6, ref hi, ref lo);
-                                                if (lstResponse[6] == hi && lstResponse[7] == lo)
-                                                {
-                                                    if (BitWriteRequest != null)
+                                                    #endregion
+                                                    break;
+                                                case ModbusFunction.WORDWRITE_F6:
+                                                    #region WordWrite
+                                                    if (lstResponse.Count == 8)
                                                     {
-                                                        var args = new BitWriteRequestArgs(lstResponse.ToArray());
-                                                        BitWriteRequest.Invoke(this, args);
-
-                                                        if (args.Success)
+                                                        byte hi = 0xFF, lo = 0xFF;
+                                                        ModbusCRC.GetCRC(lstResponse, 0, 6, ref hi, ref lo);
+                                                        if (lstResponse[6] == hi && lstResponse[7] == lo)
                                                         {
-                                                            #region Serial Write
-                                                            int nv = args.WriteValue ? 0xFF00 : 0;
-                                                            List<byte> ret = new List<byte>();
-                                                            ret.Add((byte)args.Slave);
-                                                            ret.Add((byte)args.Function);
-                                                            ret.Add((byte)((args.StartAddress & 0xFF00) >> 8));
-                                                            ret.Add((byte)(args.StartAddress & 0x00FF));
-                                                            ret.Add((byte)((nv & 0xFF00) >> 8));
-                                                            ret.Add((byte)(nv & 0x00FF));
-                                                            byte nhi = 0xFF, nlo = 0xFF;
-                                                            ModbusCRC.GetCRC(ret, 0, ret.Count, ref nhi, ref nlo);
-                                                            ret.Add(nhi);
-                                                            ret.Add(nlo);
-                                                            byte[] send = ret.ToArray();
-                                                            ser.Write(send, 0, send.Length);
-                                                            ser.BaseStream.Flush();
-                                                            #endregion
-                                                        }
-                                                    }
-                                                    ok = true;
-                                                }
-                                            }
-                                            #endregion
-                                            break;
-                                        case ModbusFunction.WORDWRITE_F6:
-                                            #region WordWrite
-                                            if (lstResponse.Count == 8)
-                                            {
-                                                byte hi = 0xFF, lo = 0xFF;
-                                                ModbusCRC.GetCRC(lstResponse, 0, 6, ref hi, ref lo);
-                                                if (lstResponse[6] == hi && lstResponse[7] == lo)
-                                                {
-                                                    if (WordWriteRequest != null)
-                                                    {
-                                                        var args = new WordWriteRequestArgs(lstResponse.ToArray());
-                                                        WordWriteRequest.Invoke(this, args);
-
-                                                        if (args.Success)
-                                                        {
-                                                            #region Serial Write
-                                                            List<byte> ret = new List<byte>();
-                                                            ret.Add((byte)args.Slave);
-                                                            ret.Add((byte)args.Function);
-                                                            ret.Add((byte)((args.StartAddress & 0xFF00) >> 8));
-                                                            ret.Add((byte)(args.StartAddress & 0x00FF));
-                                                            ret.Add((byte)((args.WriteValue & 0xFF00) >> 8));
-                                                            ret.Add((byte)(args.WriteValue & 0x00FF));
-                                                            byte nhi = 0xFF, nlo = 0xFF;
-                                                            ModbusCRC.GetCRC(ret, 0, ret.Count, ref nhi, ref nlo);
-                                                            ret.Add(nhi);
-                                                            ret.Add(nlo);
-                                                            byte[] send = ret.ToArray();
-                                                            ser.Write(send, 0, send.Length);
-                                                            ser.BaseStream.Flush();
-                                                            #endregion
-                                                        }
-                                                    }
-                                                    ok = true;
-                                                }
-                                            }
-                                            #endregion
-                                            break;
-                                        case ModbusFunction.MULTIBITWRITE_F15:
-                                            #region MultiBitWrite
-                                            if (lstResponse.Count >= 7)
-                                            {
-                                                int Length = lstResponse[4] << 8 | lstResponse[5];
-                                                int ByteCount = lstResponse[6];
-                                                if (lstResponse.Count >= 9 + ByteCount)
-                                                {
-                                                    byte hi = 0xFF, lo = 0xFF;
-                                                    ModbusCRC.GetCRC(lstResponse, 0, 7 + ByteCount, ref hi, ref lo);
-                                                    if (lstResponse[9 + ByteCount - 2] == hi && lstResponse[9 + ByteCount - 1] == lo)
-                                                    {
-                                                        var args = new MultiBitWriteRequestArgs(lstResponse.ToArray());
-                                                        if (MultiBitWriteRequest != null)
-                                                        {
-                                                            MultiBitWriteRequest.Invoke(this, args);
-
-                                                            if (args.Success)
+                                                            if (WordWriteRequest != null)
                                                             {
-                                                                #region Serial Write
-                                                                List<byte> ret = new List<byte>();
-                                                                ret.Add((byte)args.Slave);
-                                                                ret.Add((byte)args.Function);
-                                                                ret.Add((byte)((args.StartAddress & 0xFF00) >> 8));
-                                                                ret.Add((byte)(args.StartAddress & 0x00FF));
-                                                                ret.Add((byte)((args.Length & 0xFF00) >> 8));
-                                                                ret.Add((byte)(args.Length & 0x00FF));
-                                                                byte nhi = 0xFF, nlo = 0xFF;
-                                                                ModbusCRC.GetCRC(ret, 0, ret.Count, ref nhi, ref nlo);
-                                                                ret.Add(nhi);
-                                                                ret.Add(nlo);
-                                                                byte[] send = ret.ToArray();
-                                                                ser.Write(send, 0, send.Length);
-                                                                ser.BaseStream.Flush();
-                                                                #endregion
+                                                                var args = new WordWriteRequestArgs(lstResponse.ToArray());
+                                                                WordWriteRequest.Invoke(this, args);
+
+                                                                if (args.Success)
+                                                                {
+                                                                    #region Serial Write
+                                                                    List<byte> ret = new List<byte>();
+                                                                    ret.Add((byte)args.Slave);
+                                                                    ret.Add((byte)args.Function);
+                                                                    ret.Add((byte)((args.StartAddress & 0xFF00) >> 8));
+                                                                    ret.Add((byte)(args.StartAddress & 0x00FF));
+                                                                    ret.Add((byte)((args.WriteValue & 0xFF00) >> 8));
+                                                                    ret.Add((byte)(args.WriteValue & 0x00FF));
+                                                                    byte nhi = 0xFF, nlo = 0xFF;
+                                                                    ModbusCRC.GetCRC(ret, 0, ret.Count, ref nhi, ref nlo);
+                                                                    ret.Add(nhi);
+                                                                    ret.Add(nlo);
+                                                                    byte[] send = ret.ToArray();
+                                                                    ser.Write(send, 0, send.Length);
+                                                                    ser.BaseStream.Flush();
+                                                                    #endregion
+                                                                }
+                                                            }
+                                                            ok = true;
+                                                        }
+                                                    }
+                                                    #endregion
+                                                    break;
+                                                case ModbusFunction.MULTIBITWRITE_F15:
+                                                    #region MultiBitWrite
+                                                    if (lstResponse.Count >= 7)
+                                                    {
+                                                        int Length = lstResponse[4] << 8 | lstResponse[5];
+                                                        int ByteCount = lstResponse[6];
+                                                        if (lstResponse.Count >= 9 + ByteCount)
+                                                        {
+                                                            byte hi = 0xFF, lo = 0xFF;
+                                                            ModbusCRC.GetCRC(lstResponse, 0, 7 + ByteCount, ref hi, ref lo);
+                                                            if (lstResponse[9 + ByteCount - 2] == hi && lstResponse[9 + ByteCount - 1] == lo)
+                                                            {
+                                                                var args = new MultiBitWriteRequestArgs(lstResponse.ToArray());
+                                                                if (MultiBitWriteRequest != null)
+                                                                {
+                                                                    MultiBitWriteRequest.Invoke(this, args);
+
+                                                                    if (args.Success)
+                                                                    {
+                                                                        #region Serial Write
+                                                                        List<byte> ret = new List<byte>();
+                                                                        ret.Add((byte)args.Slave);
+                                                                        ret.Add((byte)args.Function);
+                                                                        ret.Add((byte)((args.StartAddress & 0xFF00) >> 8));
+                                                                        ret.Add((byte)(args.StartAddress & 0x00FF));
+                                                                        ret.Add((byte)((args.Length & 0xFF00) >> 8));
+                                                                        ret.Add((byte)(args.Length & 0x00FF));
+                                                                        byte nhi = 0xFF, nlo = 0xFF;
+                                                                        ModbusCRC.GetCRC(ret, 0, ret.Count, ref nhi, ref nlo);
+                                                                        ret.Add(nhi);
+                                                                        ret.Add(nlo);
+                                                                        byte[] send = ret.ToArray();
+                                                                        ser.Write(send, 0, send.Length);
+                                                                        ser.BaseStream.Flush();
+                                                                        #endregion
+                                                                    }
+                                                                }
+                                                                ok = true;
                                                             }
                                                         }
-                                                        ok = true;
                                                     }
-                                                }
-                                            }
-                                            #endregion
-                                            break;
-                                        case ModbusFunction.MULTIWORDWRITE_F16:
-                                            #region MultiWordWrite
-                                            if (lstResponse.Count >= 7)
-                                            {
-                                                int Length = lstResponse[4] << 8 | lstResponse[5];
-                                                int ByteCount = lstResponse[6];
-                                                if (lstResponse.Count >= 9 + ByteCount)
-                                                {
-                                                    byte hi = 0xFF, lo = 0xFF;
-                                                    ModbusCRC.GetCRC(lstResponse, 0, 7 + ByteCount, ref hi, ref lo);
-                                                    if (lstResponse[9 + ByteCount - 2] == hi && lstResponse[9 + ByteCount - 1] == lo)
+                                                    #endregion
+                                                    break;
+                                                case ModbusFunction.MULTIWORDWRITE_F16:
+                                                    #region MultiWordWrite
+                                                    if (lstResponse.Count >= 7)
                                                     {
-                                                        if (MultiWordWriteRequest != null)
+                                                        int Length = lstResponse[4] << 8 | lstResponse[5];
+                                                        int ByteCount = lstResponse[6];
+                                                        if (lstResponse.Count >= 9 + ByteCount)
                                                         {
-                                                            var args = new MultiWordWriteRequestArgs(lstResponse.ToArray());
-                                                            MultiWordWriteRequest.Invoke(this, args);
-
-                                                            if (args.Success)
+                                                            byte hi = 0xFF, lo = 0xFF;
+                                                            ModbusCRC.GetCRC(lstResponse, 0, 7 + ByteCount, ref hi, ref lo);
+                                                            if (lstResponse[9 + ByteCount - 2] == hi && lstResponse[9 + ByteCount - 1] == lo)
                                                             {
-                                                                #region Serial Write
-                                                                List<byte> ret = new List<byte>();
-                                                                ret.Add((byte)args.Slave);
-                                                                ret.Add((byte)args.Function);
-                                                                ret.Add((byte)((args.StartAddress & 0xFF00) >> 8));
-                                                                ret.Add((byte)(args.StartAddress & 0x00FF));
-                                                                ret.Add((byte)((args.Length & 0xFF00) >> 8));
-                                                                ret.Add((byte)(args.Length & 0x00FF));
-                                                                byte nhi = 0xFF, nlo = 0xFF;
-                                                                ModbusCRC.GetCRC(ret, 0, ret.Count, ref nhi, ref nlo);
-                                                                ret.Add(nhi);
-                                                                ret.Add(nlo);
-                                                                byte[] send = ret.ToArray();
-                                                                ser.Write(send, 0, send.Length);
-                                                                ser.BaseStream.Flush();
-                                                                #endregion
+                                                                if (MultiWordWriteRequest != null)
+                                                                {
+                                                                    var args = new MultiWordWriteRequestArgs(lstResponse.ToArray());
+                                                                    MultiWordWriteRequest.Invoke(this, args);
+
+                                                                    if (args.Success)
+                                                                    {
+                                                                        #region Serial Write
+                                                                        List<byte> ret = new List<byte>();
+                                                                        ret.Add((byte)args.Slave);
+                                                                        ret.Add((byte)args.Function);
+                                                                        ret.Add((byte)((args.StartAddress & 0xFF00) >> 8));
+                                                                        ret.Add((byte)(args.StartAddress & 0x00FF));
+                                                                        ret.Add((byte)((args.Length & 0xFF00) >> 8));
+                                                                        ret.Add((byte)(args.Length & 0x00FF));
+                                                                        byte nhi = 0xFF, nlo = 0xFF;
+                                                                        ModbusCRC.GetCRC(ret, 0, ret.Count, ref nhi, ref nlo);
+                                                                        ret.Add(nhi);
+                                                                        ret.Add(nlo);
+                                                                        byte[] send = ret.ToArray();
+                                                                        ser.Write(send, 0, send.Length);
+                                                                        ser.BaseStream.Flush();
+                                                                        #endregion
+                                                                    }
+                                                                }
+                                                                ok = true;
                                                             }
                                                         }
-                                                        ok = true;
                                                     }
-                                                }
-                                            }
-                                            #endregion
-                                            break;
-                                        case ModbusFunction.WORDBITSET_F26:
-                                            #region WordBitSet
-                                            if (lstResponse.Count == 9)
-                                            {
-                                                byte hi = 0xFF, lo = 0xFF;
-                                                ModbusCRC.GetCRC(lstResponse, 0, 7, ref hi, ref lo);
-                                                if (lstResponse[7] == hi && lstResponse[8] == lo)
-                                                {
-                                                    if (WordBitSetRequest != null)
+                                                    #endregion
+                                                    break;
+                                                case ModbusFunction.WORDBITSET_F26:
+                                                    #region WordBitSet
+                                                    if (lstResponse.Count == 9)
                                                     {
-                                                        var args = new WordBitSetRequestArgs(lstResponse.ToArray());
-                                                        WordBitSetRequest.Invoke(this, args);
-
-                                                        if (args.Success)
+                                                        byte hi = 0xFF, lo = 0xFF;
+                                                        ModbusCRC.GetCRC(lstResponse, 0, 7, ref hi, ref lo);
+                                                        if (lstResponse[7] == hi && lstResponse[8] == lo)
                                                         {
-                                                            #region Serial Write
-                                                            int nv = args.WriteValue ? 0xFF00 : 0;
-                                                            List<byte> ret = new List<byte>();
-                                                            ret.Add((byte)args.Slave);
-                                                            ret.Add((byte)args.Function);
-                                                            ret.Add((byte)((args.StartAddress & 0xFF00) >> 8));
-                                                            ret.Add((byte)(args.StartAddress & 0x00FF));
-                                                            ret.Add((byte)((nv & 0xFF00) >> 8));
-                                                            ret.Add((byte)(nv & 0x00FF));
-                                                            byte nhi = 0xFF, nlo = 0xFF;
-                                                            ModbusCRC.GetCRC(ret, 0, ret.Count, ref nhi, ref nlo);
-                                                            ret.Add(nhi);
-                                                            ret.Add(nlo);
-                                                            byte[] send = ret.ToArray();
-                                                            ser.Write(send, 0, send.Length);
-                                                            ser.BaseStream.Flush();
-                                                            #endregion
+                                                            if (WordBitSetRequest != null)
+                                                            {
+                                                                var args = new WordBitSetRequestArgs(lstResponse.ToArray());
+                                                                WordBitSetRequest.Invoke(this, args);
+
+                                                                if (args.Success)
+                                                                {
+                                                                    #region Serial Write
+                                                                    int nv = args.WriteValue ? 0xFF00 : 0;
+                                                                    List<byte> ret = new List<byte>();
+                                                                    ret.Add((byte)args.Slave);
+                                                                    ret.Add((byte)args.Function);
+                                                                    ret.Add((byte)((args.StartAddress & 0xFF00) >> 8));
+                                                                    ret.Add((byte)(args.StartAddress & 0x00FF));
+                                                                    ret.Add((byte)((nv & 0xFF00) >> 8));
+                                                                    ret.Add((byte)(nv & 0x00FF));
+                                                                    byte nhi = 0xFF, nlo = 0xFF;
+                                                                    ModbusCRC.GetCRC(ret, 0, ret.Count, ref nhi, ref nlo);
+                                                                    ret.Add(nhi);
+                                                                    ret.Add(nlo);
+                                                                    byte[] send = ret.ToArray();
+                                                                    ser.Write(send, 0, send.Length);
+                                                                    ser.BaseStream.Flush();
+                                                                    #endregion
+                                                                }
+                                                            }
+                                                            ok = true;
                                                         }
                                                     }
-                                                    ok = true;
-                                                }
+                                                    #endregion
+                                                    break;
                                             }
-                                            #endregion
-                                            break;
+                                        }
+                                        catch (TimeoutException) { }
+                                        catch (IOException) { throw new SchedulerStopException(); }
+                                        catch (UnauthorizedAccessException) { throw new SchedulerStopException(); }
+                                        catch (InvalidOperationException) { throw new SchedulerStopException(); }
+                                        catch (OperationCanceledException) { throw new SchedulerStopException(); }
                                     }
-                                }
-                                #endregion
+                                    #endregion
 
-                                #region buffer clear
-                                if (ok || ((DateTime.Now - prev).TotalMilliseconds >= 50 && lstResponse.Count > 0))
-                                {
-                                    lstResponse.Clear();
-                                    ser.DiscardInBuffer();
-                                    ser.BaseStream.Flush();
+                                    #region buffer clear
+                                    if (ok || ((DateTime.Now - prev).TotalMilliseconds >= 50 && lstResponse.Count > 0))
+                                    {
+                                        lstResponse.Clear();
+                                        try
+                                        {
+                                            ser.DiscardInBuffer();
+                                            ser.BaseStream.Flush();
+                                        }
+                                        catch (TimeoutException) { }
+                                        catch (IOException) { throw new SchedulerStopException(); }
+                                        catch (UnauthorizedAccessException) { throw new SchedulerStopException(); }
+                                        catch (InvalidOperationException) { throw new SchedulerStopException(); }
+                                        catch (OperationCanceledException) { throw new SchedulerStopException(); }
+                                    }
+                                    #endregion
                                 }
-                                #endregion
+                                catch (SchedulerStopException) { break; }
+                                catch (Exception) { }
+                                await Task.Delay(10, token);
                             }
-                            catch (SchedulerStopException) { break; }
-                            await Task.Delay(1);
                         }
-                    }
 
-                    if (ser.IsOpen)
-                    {
-                        ser.Close();
-                        DeviceClosed?.Invoke(this, EventArgs.Empty);
-                    }
+                        if (ser.IsOpen)
+                        {
+                            ser.Close();
+                            DeviceClosed?.Invoke(this, System.EventArgs.Empty);
+                        }
 
-                    IsStart = false;
+
+                    } while (!token.IsCancellationRequested && IsStart);
 
                 }, cancel.Token);
             }
@@ -540,7 +562,7 @@ namespace Going.Basis.Communications.Modbus.RTU
         #region Stop
         public void Stop()
         {
-            try { cancel?.Cancel(false); }
+            try { IsStart = false; cancel?.Cancel(false); }
             finally
             {
                 cancel?.Dispose();
@@ -549,7 +571,7 @@ namespace Going.Basis.Communications.Modbus.RTU
 
             if (task != null)
             {
-                try { task.Wait(); }
+                try { task.Wait(); task.Dispose(); }
                 catch { }
                 finally { task = null; }
             }

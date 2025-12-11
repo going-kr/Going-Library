@@ -16,7 +16,7 @@ namespace Going.Basis.Communications.Modbus.TCP
     public class ModbusTCPSlave
     {
         #region class : EventArgs
-        public class BitReadRequestArgs(byte[] Data) : EventArgs
+        public class BitReadRequestArgs(byte[] Data) : System.EventArgs
         {
             public int Slave => Data[6];
             public ModbusFunction Function => (ModbusFunction)Data[7];
@@ -26,7 +26,7 @@ namespace Going.Basis.Communications.Modbus.TCP
             public bool Success { get; set; }
             public bool[]? ResponseData { get; set; }
         }
-        public class WordReadRequestArgs(byte[] Data) : EventArgs
+        public class WordReadRequestArgs(byte[] Data) : System.EventArgs
         {
             public int Slave => Data[6];
             public ModbusFunction Function => (ModbusFunction)Data[7];
@@ -36,7 +36,7 @@ namespace Going.Basis.Communications.Modbus.TCP
             public bool Success { get; set; }
             public int[]? ResponseData { get; set; }
         }
-        public class BitWriteRequestArgs(byte[] Data) : EventArgs
+        public class BitWriteRequestArgs(byte[] Data) : System.EventArgs
         {
             public int Slave => Data[6];
             public ModbusFunction Function => (ModbusFunction)Data[7];
@@ -45,7 +45,7 @@ namespace Going.Basis.Communications.Modbus.TCP
 
             public bool Success { get; set; }
         }
-        public class WordWriteRequestArgs(byte[] Data) : EventArgs
+        public class WordWriteRequestArgs(byte[] Data) : System.EventArgs
         {
             public int Slave => Data[6];
             public ModbusFunction Function => (ModbusFunction)Data[7];
@@ -54,7 +54,7 @@ namespace Going.Basis.Communications.Modbus.TCP
 
             public bool Success { get; set; }
         }
-        public class MultiBitWriteRequestArgs : EventArgs
+        public class MultiBitWriteRequestArgs : System.EventArgs
         {
             public int Slave => Data[6];
             public ModbusFunction Function => (ModbusFunction)Data[7];
@@ -62,7 +62,7 @@ namespace Going.Basis.Communications.Modbus.TCP
             public int Length => (Data[10] << 8) | Data[11];
             public int ByteCount => Data[12];
             public bool[] WriteValues { get; private set; }
-            
+
             public bool Success { get; set; }
 
             byte[] Data;
@@ -74,12 +74,12 @@ namespace Going.Basis.Communications.Modbus.TCP
                 List<bool> ret = new List<bool>();
                 for (int i = 13; i < Data.Length; i++)
                     for (int j = 0; j < 8; j++)
-                        if (ret.Count < Length) ret.Add(Data[i].Bit(j));
+                        if (ret.Count < Length) ret.Add(Data[i].GetBit(j));
                 WriteValues = ret.ToArray();
                 #endregion
             }
         }
-        public class MultiWordWriteRequestArgs : EventArgs
+        public class MultiWordWriteRequestArgs : System.EventArgs
         {
             public int Slave => Data[6];
             public ModbusFunction Function => (ModbusFunction)Data[7];
@@ -105,7 +105,7 @@ namespace Going.Basis.Communications.Modbus.TCP
                 #endregion
             }
         }
-        public class WordBitSetRequestArgs(byte[] Data) : EventArgs
+        public class WordBitSetRequestArgs(byte[] Data) : System.EventArgs
         {
             public int Slave => Data[6];
             public ModbusFunction Function => (ModbusFunction)Data[7];
@@ -139,8 +139,8 @@ namespace Going.Basis.Communications.Modbus.TCP
         public event EventHandler<MultiWordWriteRequestArgs>? MultiWordWriteRequest;
         public event EventHandler<WordBitSetRequestArgs>? WordBitSetRequest;
 
-        public event EventHandler<SocketEventArgs>? SocketConnected;
-        public event EventHandler<SocketEventArgs>? SocketDisconnected;
+        public event EventHandler<EventArgs>? SocketConnected;
+        public event EventHandler<EventArgs>? SocketDisconnected;
         #endregion
 
         #region Constructor
@@ -176,7 +176,7 @@ namespace Going.Basis.Communications.Modbus.TCP
                             {
                                 var sock = await server.AcceptAsync(token);
                                 _ = Task.Run(async () => await run(sock, token), token);
-                                await Task.Delay(100);
+                                await Task.Delay(100, token);
                             }
                             catch { }
                         }
@@ -194,7 +194,7 @@ namespace Going.Basis.Communications.Modbus.TCP
         #region Stop
         public void Stop()
         {
-            try { cancel?.Cancel(false); }
+            try { IsStart = false; cancel?.Cancel(false); }
             finally
             {
                 cancel?.Dispose();
@@ -203,7 +203,7 @@ namespace Going.Basis.Communications.Modbus.TCP
 
             if (task != null)
             {
-                try { task.Wait(); }
+                try { task.Wait(); task.Dispose(); }
                 catch { }
                 finally { task = null; }
             }
@@ -549,8 +549,9 @@ namespace Going.Basis.Communications.Modbus.TCP
                     else if (ex.SocketErrorCode == SocketError.ConnectionAborted) { isConnected = false; }
                     else if (ex.SocketErrorCode == SocketError.Shutdown) { isConnected = false; }
                 }
+                catch (OperationCanceledException) { isConnected = false; }
                 catch { }
-                await Task.Delay(10);
+                await Task.Delay(10, cancel);
             }
 
             if (sock.Connected) sock.Close();

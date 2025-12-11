@@ -6,7 +6,14 @@ using System.Threading.Tasks;
 
 namespace Going.Basis.Measure
 {
-    public class Stable 
+    public enum StableMode
+    {
+        Absolute,
+        Relative,
+        Hybrid
+    }
+
+    public class Stable
     {
         #region Event
         public event EventHandler<StableEventArgs>? Measured;
@@ -15,84 +22,180 @@ namespace Going.Basis.Measure
 
         #region Properties
         public double Value { get; private set; }
-        public double ErrorRange { get; set; }
-        public int MeasureTime { get; set; }
+        public double ErrorRange { get; set; } = 1.0;
+        public int MeasureTime { get; set; } = 1000;
+        public StableMode Mode { get; set; } = StableMode.Relative;
         #endregion
 
         #region Member Variable
-        private bool IsComplete = false, IsStart = false;
-        private DateTime StarTime = DateTime.MinValue, CompleteTIme = DateTime.MinValue;
+        private bool IsMeasuringStable = false;
+        private double InitialStableValue = 0;
+        private double CurrentStableValue = 0;
+        private DateTime StableStartTime = DateTime.MinValue;
+        private bool IsFirstValue = true;
         #endregion
 
         #region Constructor
         public Stable()
         {
-            Value = 0;
-            ErrorRange = 1;
-            MeasureTime = 1000;
         }
         #endregion
 
         #region Method
-        #region Set
-        public void Set(double Value)
+        public void Set(double value)
         {
-            var old = this.Value;
-            #region Measuring
-            if (this.Value != Value)
-            {
-                this.Value = Value;
-                Measuring?.Invoke(this, new StableEventArgs(Value));
-            }
-            #endregion
+            var oldValue = this.Value;
+            this.Value = value;
 
-            if (IsStart)
+            if (oldValue != value)
             {
-                if (!IsComplete)
-                {
-                    #region Complete Start
-                    if (Math.Abs(Value - old) <= ErrorRange)
-                    {
-                        IsComplete = true;
-                        CompleteTIme = DateTime.Now;
-                    }
-                    #endregion
-                }
-                else
-                {
-                    #region Complete Instance
-                    if (Math.Abs(Value - old) > ErrorRange) { IsComplete = false; }
-                    else
-                    {
-                        var dv = (DateTime.Now - CompleteTIme).TotalMilliseconds;
-                        if (dv > MeasureTime)
-                        {
-                            IsComplete = IsStart = false;
-                            Measured?.Invoke(this, new StableEventArgs(Value));
-                        }
-                    }
-                    #endregion
-                }
+                Measuring?.Invoke(this, new StableEventArgs(value));
+            }
+
+            if (IsFirstValue)
+            {
+                IsFirstValue = false;
+                InitialStableValue = value;
+                CurrentStableValue = value;
+                return;
+            }
+
+            if (!IsMeasuringStable)
+            {
+                HandleNotMeasuring(value);
             }
             else
             {
-                #region Start
-                if (Math.Abs(old - Value) > ErrorRange)
-                {
-                    IsStart = true;
-                    StarTime = DateTime.Now;
-                }
-                #endregion
+                HandleMeasuring(value);
             }
         }
-        #endregion
+
+        private void HandleNotMeasuring(double value)
+        {
+            bool shouldStartMeasuring = false;
+
+            switch (Mode)
+            {
+                case StableMode.Absolute:
+                    shouldStartMeasuring = Math.Abs(value - InitialStableValue) > ErrorRange;
+                    break;
+
+                case StableMode.Relative:
+                    shouldStartMeasuring = Math.Abs(value - CurrentStableValue) > ErrorRange;
+                    if (!shouldStartMeasuring)
+                    {
+                        CurrentStableValue = value;
+                    }
+                    break;
+
+                case StableMode.Hybrid:
+                    shouldStartMeasuring = Math.Abs(value - InitialStableValue) > ErrorRange ||
+                                          Math.Abs(value - CurrentStableValue) > ErrorRange;
+                    if (!shouldStartMeasuring)
+                    {
+                        CurrentStableValue = value;
+                    }
+                    break;
+            }
+
+            if (shouldStartMeasuring)
+            {
+                InitialStableValue = value;
+                CurrentStableValue = value;
+                IsMeasuringStable = true;
+                StableStartTime = DateTime.Now;
+            }
+        }
+
+        private void HandleMeasuring(double value)
+        {
+            bool isStable = false;
+
+            switch (Mode)
+            {
+                case StableMode.Absolute:
+                    isStable = Math.Abs(value - InitialStableValue) <= ErrorRange;
+                    break;
+
+                case StableMode.Relative:
+                    isStable = Math.Abs(value - CurrentStableValue) <= ErrorRange;
+                    if (isStable)
+                    {
+                        CurrentStableValue = value;
+                    }
+                    break;
+
+                case StableMode.Hybrid:
+                    bool absoluteStable = Math.Abs(value - InitialStableValue) <= ErrorRange;
+                    bool relativeStable = Math.Abs(value - CurrentStableValue) <= ErrorRange;
+                    isStable = absoluteStable && relativeStable;
+
+                    if (isStable)
+                    {
+                        CurrentStableValue = value;
+                    }
+                    break;
+            }
+
+            if (!isStable)
+            {
+                InitialStableValue = value;
+                CurrentStableValue = value;
+                StableStartTime = DateTime.Now;
+            }
+            else
+            {
+                var elapsed = (DateTime.Now - StableStartTime).TotalMilliseconds;
+
+                if (elapsed >= MeasureTime)
+                {
+                    IsMeasuringStable = false;
+                    Measured?.Invoke(this, new StableEventArgs(value));
+                }
+            }
+        }
+
+        public void Reset()
+        {
+            IsMeasuringStable = false;
+            InitialStableValue = 0;
+            CurrentStableValue = 0;
+            StableStartTime = DateTime.MinValue;
+            IsFirstValue = true;
+        }
+
+        public bool IsStabilizing => IsMeasuringStable;
+
+        public double CurrentReferenceValue => CurrentStableValue;
+
+        public double RemainingTime
+        {
+            get
+            {
+                if (!IsMeasuringStable)
+                    return 0;
+
+                var elapsed = (DateTime.Now - StableStartTime).TotalMilliseconds;
+                return Math.Max(0, MeasureTime - elapsed);
+            }
+        }
+
+        public string GetStatus()
+        {
+            return $"Mode={Mode}, Value={Value:F2}, IsMeasuring={IsMeasuringStable}, " +
+                   $"Initial={InitialStableValue:F2}, Current={CurrentStableValue:F2}, " +
+                   $"Remaining={RemainingTime:F0}ms";
+        }
         #endregion
     }
 
-    #region class : StableEventArgs
-    public class StableEventArgs(double Value) : EventArgs
+    public class StableEventArgs : EventArgs
     {
-        public double Value { get; private set; } = Value;
+        public double Value { get; private set; }
+
+        public StableEventArgs(double value)
+        {
+            Value = value;
+        }
     }
-    #endregion
 }
