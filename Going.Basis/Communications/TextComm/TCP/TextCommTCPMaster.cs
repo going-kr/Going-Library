@@ -57,6 +57,8 @@ namespace Going.Basis.Communications.TextComm.TCP
         public bool IsOpen => bIsOpen;
         public bool IsStart { get; private set; }
         public bool AutoReconnect { get; set; } = true;
+
+        public object? Tag { get; set; } = null;
         #endregion
 
         #region Member Variable

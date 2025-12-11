@@ -30,6 +30,8 @@ namespace Going.Basis.Communications.TextComm.TCP
         public bool IsStart { get; private set; }
 
         public Encoding MessageEncoding { get; set; } = Encoding.ASCII;
+
+        public object? Tag { get; set; } = null;
         #endregion
 
         #region Member Variable

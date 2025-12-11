@@ -47,6 +47,8 @@ namespace Going.Basis.Communications.Mqtt
         public string? UserName { get; private set; }
         public string? Password { get; private set; }
         public List<MQSubscribe> Subscribes { get; } = [];
+
+        public object? Tag { get; set; } = null;
         #endregion
 
         #region Member Variable

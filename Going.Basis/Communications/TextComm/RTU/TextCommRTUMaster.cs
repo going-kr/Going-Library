@@ -61,6 +61,8 @@ namespace Going.Basis.Communications.TextComm.RTU
         public bool AutoReconnect { get; set; }
 
         public bool IsDisposed { get; private set; }
+
+        public object? Tag { get; set; } = null;
         #endregion
 
         #region Member Variable

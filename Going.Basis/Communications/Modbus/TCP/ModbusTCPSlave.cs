@@ -121,6 +121,8 @@ namespace Going.Basis.Communications.Modbus.TCP
         public int LocalPort { get; set; } = 502;
 
         public bool IsStart { get; private set; }
+
+        public object? Tag { get; set; } = null;
         #endregion
 
         #region Member Variable

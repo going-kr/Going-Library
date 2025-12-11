@@ -104,6 +104,8 @@ namespace Going.Basis.Communications.Mitsubishi
 
         public bool UseControlSequence { get; set; } = false;
         public bool UseCheckSum { get; set; } = false;
+
+        public object? Tag { get; set; } = null;
         #endregion
 
         #region Member Variable

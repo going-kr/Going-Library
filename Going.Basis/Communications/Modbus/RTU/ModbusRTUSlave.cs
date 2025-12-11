@@ -128,6 +128,8 @@ namespace Going.Basis.Communications.Modbus.RTU
 
         public bool IsOpen => ser.IsOpen;
         public bool IsStart { get; private set; }
+
+        public object? Tag { get; set; } = null;
         #endregion
 
         #region Member Variable

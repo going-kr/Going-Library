@@ -27,6 +27,7 @@ namespace Going.Basis.Communications.Modbus.RTU
         public Dictionary<int, string> WordAreas { get; } = [];
 
         public Dictionary<int, Mems> Devices { get; } = [];
+        public object? Tag { get; set; } = null;
         #endregion
 
         #region Member Variable

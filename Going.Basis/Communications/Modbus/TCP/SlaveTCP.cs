@@ -19,6 +19,8 @@ namespace Going.Basis.Communications.Modbus.TCP
 
         public Dictionary<int, BitMemories> BitAreas { get; } = [];
         public Dictionary<int, WordMemories> WordAreas { get; } = [];
+
+        public object? Tag { get; set; } = null;
         #endregion
 
         #region Member Variable

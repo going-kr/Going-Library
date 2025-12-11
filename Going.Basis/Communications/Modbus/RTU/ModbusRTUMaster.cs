@@ -163,6 +163,7 @@ namespace Going.Basis.Communications.Modbus.RTU
         public bool IsDisposed { get; private set; }
 
         public string ModuleId { get; } = Guid.NewGuid().ToString();
+        public object? Tag { get; set; } = null;
         #endregion
 
         #region Member Variable
