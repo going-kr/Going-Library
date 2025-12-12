@@ -19,8 +19,10 @@ namespace Going.UI.Containers
         [GoProperty(PCategory.Control, 0)] public float? PanelWidth { get; set; }
         [GoProperty(PCategory.Control, 1)] public float? PanelHeight { get; set; }
 
-        [JsonIgnore] public override SKPoint ViewPosition => new SKPoint(-Convert.ToSingle(hscroll.ScrollPositionWithOffset), -Convert.ToSingle(vscroll.ScrollPositionWithOffset));
         [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
+
+        [JsonIgnore] public override SKPoint ViewPosition => new SKPoint(-Convert.ToSingle(hscroll.ScrollPositionWithOffset), -Convert.ToSingle(vscroll.ScrollPositionWithOffset));
+        [JsonIgnore] public override SKRect PanelBounds => Areas()["Panel"];
         #endregion
 
         #region Member Variable
@@ -67,10 +69,22 @@ namespace Going.UI.Containers
             vscroll.Draw(canvas, thm, rtScrollV);
             hscroll.Draw(canvas, thm, rtScrollH);
 
+            if (Design != null && Design.DesignMode)
+            {
+                var rt = rtPanel; rt.Inflate(-0.5F, -0.5F);
+                using var pe = SKPathEffect.CreateDash([1, 2], 2);
+                using var p = new SKPaint { };
+                p.IsStroke = true; p.StrokeWidth = 1; p.Color = thm.Base3;
+                p.PathEffect = pe;
+                canvas.DrawRect(rt, p);
+            }
+
             using (new SKAutoCanvasRestore(canvas))
             {
                 canvas.Translate(hspos, vspos);
-                canvas.ClipRect(Util.FromRect(ViewPosition.X, ViewPosition.Y, rtPanel.Width, rtPanel.Height));
+                canvas.ClipRect(Util.FromRect(rtPanel.Left + ViewPosition.X, rtPanel.Top + ViewPosition.Y, rtPanel.Width, rtPanel.Height));
+
+
                 base.OnDraw(canvas, thm);
             }
         }
@@ -189,7 +203,9 @@ namespace Going.UI.Containers
             var dic = base.Areas();
             var rtContent = dic["Content"];
 
-            var rtPanel = Util.FromRect(rtContent.Left, rtContent.Top, rtContent.Width - scv, rtContent.Height - sch);
+            var rtVO = MathTool.MakeRectangle(rtContent, new SKSize(PanelWidth ?? rtContent.Width, rtContent.Height));
+
+            var rtPanel = Util.FromRect(rtVO.Left, rtContent.Top, rtVO.Width - scv, rtContent.Height - sch);
             var rtScrollV = Util.FromRect(rtPanel.Right, rtPanel.Top, scv, rtPanel.Height);
             var rtScrollH = Util.FromRect(rtPanel.Left, rtPanel.Bottom, rtPanel.Width, sch);
 
