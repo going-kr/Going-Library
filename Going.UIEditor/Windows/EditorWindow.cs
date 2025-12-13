@@ -10,7 +10,9 @@ using Going.UI.Json;
 using Going.UI.Themes;
 using Going.UI.Tools;
 using Going.UI.Utils;
+using Going.UIEditor.Controls;
 using Going.UIEditor.Forms.Dialogs;
+using Going.UIEditor.Forms.Editors;
 using Going.UIEditor.Utils;
 using GuiLabs.Undo;
 using OpenTK.Graphics.OpenGL;
@@ -22,6 +24,7 @@ using System.Reflection;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using WeifenLuo.WinFormsUI.Docking;
+using static Going.UIEditor.Controls.PropertyGridItemSizes;
 using Cursor = System.Windows.Forms.Cursor;
 using GoControl = Going.UI.Controls.GoControl;
 using Keys = System.Windows.Forms.Keys;
@@ -969,6 +972,8 @@ namespace Going.UIEditor.Windows
                 {
                     act();
                 }
+
+            if (DockPanel.Contents.FirstOrDefault(x => x is PropertiesWindow) is PropertiesWindow pw) pw.RefreshGrid();
         }
 
         public void EditObject(object obj, PropertyInfo Info, object? oldval, object? newval)
@@ -977,6 +982,16 @@ namespace Going.UIEditor.Windows
             if (p != null)
             {
                 actmgr.RecordAction(new EditAction(obj, Info, oldval, newval));
+                p.Edit = true;
+            }
+        }
+
+        public void EditSizesTable(object obj, PropertyInfo Info, object? oldval, List<SizesItem> items)
+        {
+            var p = Program.CurrentProject;
+            if (p != null)
+            {
+                actmgr.RecordAction(new EditSizesTableAction(obj, Info, oldval, items));
                 p.Edit = true;
             }
         }
@@ -1965,6 +1980,156 @@ namespace Going.UIEditor.Windows
             pi.SetValue(targetItem, oldval);
             Debug.WriteLine($"undo : mvoe");
         }
+    }
+    #endregion
+    #region EditSizesTableAction
+    public class EditSizesTableAction : GuiLabs.Undo.AbstractAction
+    {
+        object targetItem;
+        PropertyInfo pi;
+        object? newval;
+        object? oldval;
+        List<SizesItem> items;
+
+        List<TI> removeTbl = [];
+        List<TI2> updateTbl = [];
+
+        public EditSizesTableAction(object targetItem, PropertyInfo pi, object? oldval, List<SizesItem> items)
+        {
+            this.targetItem = targetItem;
+            this.pi = pi;
+            this.newval = items.Where(x => !x.IsDelete).OrderBy(x => x.Idx).Select(x => x.ToValue()).ToList();
+            this.oldval = oldval;
+            this.items = items;
+
+
+            if (targetItem is GoTableLayoutPanel tpnl)
+            {
+                var controls = tpnl.Childrens.Where(x => tpnl.Childrens.Indexes.ContainsKey(x.Id))
+                                             .OrderByDescending(x=> (pi.Name == "Columns" ? tpnl.Childrens.Indexes[x.Id].Column : tpnl.Childrens.Indexes[x.Id].Row))
+                                             .Select(x => new TblControl(tpnl.Childrens.Indexes[x.Id], x));
+           
+                updateTbl = controls.Select(x => new TI2(x.Control, x.Col, x.Row, x.ColSpan, x.RowSpan, x.Col, x.Row, x.ColSpan, x.RowSpan)).ToList();
+                var dic = updateTbl.ToDictionary(x => x.c.Id, y => y);
+                
+                #region delete
+                var dels = items.Where(x => x.IsDelete && x.OldIdx.HasValue).Select(x => x.OldIdx!.Value);
+                if (pi.Name == "Columns")
+                {
+                    foreach (var idx in dels)
+                    {
+                        foreach (var c in controls.Where(x => x.Col == idx - 1))
+                            if (!removeTbl.Any(x => x.c == c.Control))
+                                removeTbl.Add(new(c.Control, c.Col, c.Row, c.ColSpan, c.RowSpan));
+                        foreach (var c in controls.Where(x => x.Col > idx - 1))
+                            if (dic.TryGetValue(c.Control.Id, out var vv))
+                                vv.n_col--;
+                        foreach (var c in controls.Where(x => x.Col < idx - 1 && x.Col + x.ColSpan > idx - 1))
+                            if (dic.TryGetValue(c.Control.Id, out var vv))
+                                vv.n_colspan--;
+                    }
+                }
+                else if (pi.Name == "Rows")
+                {
+                    foreach (var idx in dels)
+                    {
+                        foreach (var c in controls.Where(x => x.Row == idx - 1))
+                            if (!removeTbl.Any(x => x.c == c.Control))
+                                removeTbl.Add(new (c.Control, c.Col, c.Row, c.ColSpan, c.RowSpan));
+                        foreach (var c in controls.Where(x => x.Row > idx - 1))
+                            if (dic.TryGetValue(c.Control.Id, out var vv))
+                                vv.n_row--;
+                        foreach (var c in controls.Where(x => x.Row < idx - 1 && x.Row + x.RowSpan > idx - 1))
+                            if (dic.TryGetValue(c.Control.Id, out var vv))
+                                vv.n_rowspan--;
+                    }
+                }
+                #endregion
+                #region add
+                var adds = items.Where(x => !x.OldIdx.HasValue).Select(x => x.Idx);
+                if (pi.Name == "Columns")
+                {
+                    foreach (var idx in adds)
+                    {
+                        foreach (var c in controls.Where(x => x.Col >= idx - 1))
+                            if (dic.TryGetValue(c.Control.Id, out var vv))
+                                vv.n_col++;
+                        foreach (var c in controls.Where(x => x.Col < idx - 1 && x.Col + x.ColSpan > idx - 1))
+                            if (dic.TryGetValue(c.Control.Id, out var vv))
+                                vv.n_colspan++;
+                    }
+                }
+                else if (pi.Name == "Rows")
+                {
+                    foreach (var idx in dels)
+                    {
+                        foreach (var c in controls.Where(x => x.Row >= idx - 1))
+                            if (dic.TryGetValue(c.Control.Id, out var vv))
+                                vv.n_row++;
+                        foreach (var c in controls.Where(x => x.Row < idx - 1 && x.Row + x.RowSpan > idx - 1))
+                            if (dic.TryGetValue(c.Control.Id, out var vv))
+                                vv.n_rowspan++;
+                    }
+                }
+                #endregion
+            }
+        }
+
+        protected override void ExecuteCore()
+        {
+            pi.SetValue(targetItem, newval);
+            if (targetItem is GoTableLayoutPanel tpnl)
+            {
+                foreach (var v in removeTbl) tpnl.Childrens.Remove(v.c);
+                foreach (var v in updateTbl) 
+                    if(tpnl.Childrens.Indexes.TryGetValue(v.c.Id, out var idx))
+                    {
+                        idx.Column = v.n_col;
+                        idx.Row = v.n_row;
+                        idx.ColSpan = v.n_colspan;
+                        idx.RowSpan = v.n_rowspan;
+                    }
+            }
+         }
+
+        protected override void UnExecuteCore()
+        {
+            pi.SetValue(targetItem, oldval);
+            if (targetItem is GoTableLayoutPanel tpnl)
+            {
+                foreach (var v in removeTbl) tpnl.Childrens.Add(v.c, v.col, v.row, v.colspan, v.rowspan);
+                foreach (var v in updateTbl)
+                    if (tpnl.Childrens.Indexes.TryGetValue(v.c.Id, out var idx))
+                    {
+                        idx.Column = v.o_col;
+                        idx.Row = v.o_row;
+                        idx.ColSpan = v.o_colspan;
+                        idx.RowSpan = v.o_rowspan;
+                    }
+            }
+        }
+    }
+
+    class TI(IGoControl _c, int _col, int _row, int _colspan, int _rowspan)
+    {
+        public IGoControl c { get; set; } = _c;
+        public int col { get; set; } = _col;
+        public int row { get; set; } = _row;
+        public int colspan { get; set; } = _colspan;
+        public int rowspan { get; set; } = _rowspan;
+    }
+
+    class TI2(IGoControl _c, int _o_col, int _o_row, int _o_colspan, int _o_rowspan, int _n_col, int _n_row, int _n_colspan, int _n_rowspan)
+    {
+        public IGoControl c { get; set; } = _c;
+        public int o_col { get; set; } = _o_col;
+        public int o_row { get; set; } = _o_row;
+        public int o_colspan { get; set; } = _o_colspan;
+        public int o_rowspan { get; set; } = _o_rowspan;
+        public int n_col { get; set; } = _n_col;
+        public int n_row { get; set; } = _n_row;
+        public int n_colspan { get; set; } = _n_colspan;
+        public int n_rowspan { get; set; } = _n_rowspan;
     }
     #endregion
     #region ControlAddAction 

@@ -16,9 +16,9 @@ namespace Going.UI.Controls
     public class GoOnOff : GoControl
     {
         #region Properties
-        [GoProperty(PCategory.Control, 0)] public string OnText { get; set; } = "On";
-        [GoProperty(PCategory.Control, 1)] public string OffText { get; set; } = "Off";
-        [GoProperty(PCategory.Control, 2)] public string CursorIconString { get; set; } = "fa-power-off";
+        [GoProperty(PCategory.Control, 0)] public bool DrawText { get; set; } = true;
+        [GoProperty(PCategory.Control, 1)] public string OnText { get; set; } = "On";
+        [GoProperty(PCategory.Control, 2)] public string OffText { get; set; } = "Off";
         [GoFontNameProperty(PCategory.Control, 3)] public string FontName { get; set; } = "나눔고딕";
         [GoProperty(PCategory.Control, 4)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         [GoProperty(PCategory.Control, 5)] public float FontSize { get; set; } = 12;
@@ -29,6 +29,10 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 9)] public string CursorColor { get; set; } = "Base3";
         [GoProperty(PCategory.Control, 10)] public string OnColor { get; set; } = "lime";
         [GoProperty(PCategory.Control, 11)] public string OffColor { get; set; } = "gray";
+        [GoProperty(PCategory.Control, 12)] public bool CursorIconDraw { get; set; } = true;
+        [GoProperty(PCategory.Control, 13)] public string CursorIconString { get; set; } = "fa-power-off";
+        [GoProperty(PCategory.Control, 14)] public float? CursorIconSize { get; set; }
+        [GoProperty(PCategory.Control, 15)] public float? Corner { get; set; }
 
         private bool bOnOff = false;
         [GoProperty(PCategory.Control, 12)]
@@ -86,24 +90,29 @@ namespace Going.UI.Controls
             var rtCursor = rts["Cursor"];
             var rtOn = rts["On"];
             var rtOff = rts["Off"];
+            var corner = Corner ?? rtContent.Height;
 
-            Util.DrawBox(canvas, rtContent, cBox, SKColors.Transparent, GoRoundType.All, rtContent.Height);
+            Util.DrawBox(canvas, rtContent, cBox, SKColors.Transparent, GoRoundType.All, corner);
 
             var crt = rtContent; crt.Inflate(-2, -2);
-            using var pth = PathTool.Box(crt, GoRoundType.All, rtContent.Height);
+            using var pth = PathTool.Box(crt, GoRoundType.All, corner);
             using (new SKAutoCanvasRestore(canvas))
             {
                 canvas.ClipPath(pth);
                 Util.DrawBox(canvas, rtCursor, cCursor.BrightnessTransmit(bHover ? thm.HoverFillBrightness : 0),
-                                               cCursor.BrightnessTransmit(bHover ? thm.HoverBorderBrightness : 0), GoRoundType.All, rtContent.Height);
+                                               cCursor.BrightnessTransmit(bHover ? thm.HoverBorderBrightness : 0), GoRoundType.All, corner);
 
-                Util.DrawText(canvas, OnText, FontName, FontStyle, FontSize, rtOn, cText);
-                Util.DrawText(canvas, OffText, FontName, FontStyle, FontSize, rtOff, cText);
+                if (DrawText)
+                {
+                    Util.DrawText(canvas, OnText, FontName, FontStyle, FontSize, rtOn, cText);
+                    Util.DrawText(canvas, OffText, FontName, FontStyle, FontSize, rtOff, cText);
+                }
 
-                Util.DrawIcon(canvas, CursorIconString, rtCursor.Height / 2, rtCursor, OnOff ? cOn : cOff);
+                if (CursorIconDraw)
+                    Util.DrawIcon(canvas, CursorIconString, CursorIconSize ?? rtCursor.Height / 2, rtCursor, OnOff ? cOn : cOff);
             }
 
-            Util.DrawBox(canvas, rtContent, SKColors.Transparent, cBorder, GoRoundType.All, rtContent.Height);
+            Util.DrawBox(canvas, rtContent, SKColors.Transparent, cBorder, GoRoundType.All, corner);
             base.OnDraw(canvas, thm);
         }
 

@@ -35,6 +35,7 @@ namespace Going.UI.Containers
 
         [GoProperty(PCategory.Control, 10)] public List<GoButtonItem> Buttons { get; set; } = [];
         [GoProperty(PCategory.Control, 11)] public float? ButtonWidth { get; set; }
+        [GoProperty(PCategory.Control, 12)] public float BorderWidth { get; set; } = 1;
 
         [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
 
@@ -48,7 +49,7 @@ namespace Going.UI.Containers
         #region Constructor
         [JsonConstructor]
         public GoGroupBox(List<IGoControl> childrens) : this() => Childrens = childrens;
-        public GoGroupBox() { Selectable = true; }
+        public GoGroupBox() { Selectable = false; }
         #endregion
 
         #region Override
@@ -70,7 +71,17 @@ namespace Going.UI.Containers
             {
                 canvas.ClipRect(rtTitleText, SKClipOperation.Difference);
                 canvas.ClipRect(rtButtons, SKClipOperation.Difference);
-                Util.DrawBox(canvas, rtBorder, SKColors.Transparent, cBorder, Round, thm.Corner);
+                //Util.DrawBox(canvas, rtBorder, SKColors.Transparent, cBorder, Round, thm.Corner);
+
+                rtBorder.Right -= 1;
+                using var p = new SKPaint { IsAntialias = true };
+                p.IsStroke = true;
+                p.Color = cBorder;
+                p.StrokeWidth = BorderWidth;
+                rtBorder.Inflate(-BorderWidth / 2, -BorderWidth / 2);
+                var rtr = new SKRoundRect(rtBorder, thm.Corner);
+                Util.SetRound(rtr, Round, thm.Corner);
+                canvas.DrawRoundRect(rtr, p);
             }
 
             if (Buttons.Count > 0 && ButtonWidth.HasValue)

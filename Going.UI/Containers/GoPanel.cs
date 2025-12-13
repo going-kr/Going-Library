@@ -52,7 +52,7 @@ namespace Going.UI.Containers
         #region Constructor
         [JsonConstructor]
         public GoPanel(List<IGoControl> childrens) : this() => Childrens = childrens;
-        public GoPanel() { Selectable = true; }
+        public GoPanel() { Selectable = false; }
         #endregion
 
         #region Override

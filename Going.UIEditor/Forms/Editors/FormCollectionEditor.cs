@@ -82,7 +82,7 @@ namespace Going.UIEditor.Forms
         #endregion
 
         #region ShowCollectionEditor
-        public List<T>? ShowCollectionEditor(string title,  IEnumerable<T>? vals)
+        public List<T>? ShowCollectionEditor(string title, IEnumerable<T>? vals)
         {
             this.Title = title;
 

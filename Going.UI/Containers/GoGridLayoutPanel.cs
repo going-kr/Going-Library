@@ -124,6 +124,8 @@ namespace Going.UI.Containers
         [GoSizeProperty(PCategory.Control, 0)] public string Height { get; set; } = "100%";
         [GoSizesProperty(PCategory.Control, 1)] public List<string> Columns { get; set; } = [];
 
+        [JsonIgnore] public object? ExtraData { get; set; }
+
         public override string ToString() => $"{Height} / Columns : {Columns.Count}";
     }
     #endregion

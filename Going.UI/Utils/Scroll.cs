@@ -70,12 +70,14 @@ namespace Going.UI.Utils
                 if (TouchMode)
                 {
                     double ret;
-
-                    if (Direction == ScrollDirection.Vertical)
-                        ret = tcDown != null && ScrollView < ScrollTotal ? (Convert.ToDouble(tcDown.MovePoint.Y - tcDown.DownPoint.Y) * ScrollScaleFactor) : 0;
-                    else
-                        ret = tcDown != null && ScrollView < ScrollTotal ? (Convert.ToDouble(tcDown.MovePoint.X - tcDown.DownPoint.X) * ScrollScaleFactor) : 0;
-
+                    if (scDown == null)
+                    {
+                        if (Direction == ScrollDirection.Vertical)
+                            ret = tcDown != null && ScrollView < ScrollTotal ? (Convert.ToDouble(tcDown.MovePoint.Y - tcDown.DownPoint.Y) * ScrollScaleFactor) : 0;
+                        else
+                            ret = tcDown != null && ScrollView < ScrollTotal ? (Convert.ToDouble(tcDown.MovePoint.X - tcDown.DownPoint.X) * ScrollScaleFactor) : 0;
+                    }
+                    else ret = 0;
                     return ret;
                 }
                 else return 0;
