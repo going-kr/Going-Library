@@ -16,8 +16,8 @@ namespace Going.UI.Containers
     public class GoScrollablePanel : GoContainer
     {
         #region Properties
-        [GoProperty(PCategory.Control, 0)] public float? PanelWidth { get; set; }
-        [GoProperty(PCategory.Control, 1)] public float? PanelHeight { get; set; }
+        [GoProperty(PCategory.Control, 0)] public float? BaseWidth { get; set; }
+        [GoProperty(PCategory.Control, 1)] public float? EditorHeight { get; set; }
 
         [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
 
@@ -41,7 +41,7 @@ namespace Going.UI.Containers
             hscroll.GetScrollTick = () => 10;
             hscroll.GetScrollView = () =>
             {
-                var pw = PanelWidth ?? Width;
+                var pw = BaseWidth ?? Width;
                 return pw - 1;
             };
             hscroll.Refresh = () => Invalidate();
@@ -50,7 +50,7 @@ namespace Going.UI.Containers
             vscroll.GetScrollTick = () => 10;
             vscroll.GetScrollView = () =>
             {
-                var pw = PanelWidth ?? Width;
+                var pw = BaseWidth ?? Width;
                 var ratio = Width / pw;
                 var rh = ratio < 1 ? Height / ratio : Height;
                 return rh - 1;
@@ -305,10 +305,12 @@ namespace Going.UI.Containers
             vwmax = Childrens.Count() > 0 ? Childrens.Max(x => x.Right) : 0;
             vhmax = Childrens.Count() > 0 ? Childrens.Max(x => x.Bottom)+10 : 0;
 
+            if ((Design?.DesignMode ?? false) && EditorHeight.HasValue) vhmax = EditorHeight.Value;
+
             var dic = base.Areas();
             var rtContent = dic["Content"];
 
-            var pw = PanelWidth ?? rtContent.Width;
+            var pw = BaseWidth ?? rtContent.Width;
 
             if (rtContent.Width >= pw)
             {

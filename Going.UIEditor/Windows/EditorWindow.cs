@@ -802,19 +802,23 @@ namespace Going.UIEditor.Windows
             if (prj != null)
             {
                 var (rt, rtvs, rths) = GetBounds();
-                if (rtvs.HasValue) vscroll.MouseWheel(e.X, e.Y, e.Delta / 120F);
-                else if (rths.HasValue) hscroll.MouseWheel(e.X, e.Y, e.Delta / 120F);
+
+                #region mousepos
+                var vspos = Convert.ToSingle(vscroll.ScrollPositionWithOffset);
+                var hspos = Convert.ToSingle(hscroll.ScrollPositionWithOffset);
+
+                int x = Convert.ToInt32(e.X - rt.Value.Left - hspos);
+                int y = Convert.ToInt32(e.Y - rt.Value.Top - vspos);
+                float delta = e.Delta / 120F;
+                #endregion
+
+                var tc = target_controlstack(x, y);
+
+                if (rtvs.HasValue && !tc.Any(x=>x is GoScrollablePanel)) vscroll.MouseWheel(e.X, e.Y, e.Delta / 120F);
+                else if (rths.HasValue && !tc.Any(x => x is GoScrollablePanel)) hscroll.MouseWheel(e.X, e.Y, e.Delta / 120F);
+
                 if (rt.HasValue)
                 {
-                    #region mousepos
-                    var vspos = Convert.ToSingle(vscroll.ScrollPositionWithOffset);
-                    var hspos = Convert.ToSingle(hscroll.ScrollPositionWithOffset);
-
-                    int x = Convert.ToInt32(e.X - rt.Value.Left - hspos);
-                    int y = Convert.ToInt32(e.Y - rt.Value.Top - vspos);
-                    float delta = e.Delta / 120F;
-                    #endregion
-
                     #region wheel
                     var cls = target_controlstack(x, y); 
                     if (cls.LastOrDefault(x => x is GoScrollablePanel) is GoScrollablePanel sc)
