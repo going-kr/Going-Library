@@ -284,7 +284,7 @@ namespace Going.UI.Utils
         #region TouchDown
         public void TouchDown(float x, float y)
         {
-            if (TouchMode)
+            if (TouchMode && scDown == null)
             {
                 tcDown = new TCDI() { DownPoint = new SKPoint(x, y), MovePoint = new SKPoint(x, y), DownTime = DateTime.Now };
                 tcDown.List.Add(new TCMI() { Time = DateTime.Now, Point = new SKPoint(x, y) });
