@@ -21,6 +21,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using WeifenLuo.WinFormsUI.Docking;
@@ -60,6 +61,9 @@ namespace Going.UIEditor.Windows
         SKPoint? ptDown, ptMove;
 
         IGoControl? downControl;
+
+        Scroll vscroll = new Scroll() { Direction = ScrollDirection.Vertical };
+        Scroll hscroll = new Scroll() { Direction = ScrollDirection.Horizon };
         #endregion
 
         #region Constructor
@@ -78,6 +82,18 @@ namespace Going.UIEditor.Windows
             #region new
             tmr = new Timer { Interval = 10, Enabled = true };
             actmgr = new ActionManager();
+            #endregion
+
+            #region Scroll
+            hscroll.GetScrollTotal = () => Program.CurrentProject?.Width ?? Width;
+            hscroll.GetScrollTick = () => 10;
+            hscroll.GetScrollView = () => Width - UI.Utils.Scroll.SC_WH;
+            hscroll.Refresh = () => Invalidate();
+
+            vscroll.GetScrollTotal = () => Program.CurrentProject?.Height ?? Height;
+            vscroll.GetScrollTick = () => 10;
+            vscroll.GetScrollView = () => Height - UI.Utils.Scroll.SC_WH;
+            vscroll.Refresh = () => Invalidate();
             #endregion
 
             #region Event
@@ -124,7 +140,7 @@ namespace Going.UIEditor.Windows
                 prj.Design.DesignMode = true;
                 var thm = prj.Design.Theme;
 
-                SKRect? rt = GetBounds();
+                var (rt, rtvs, rths) = GetBounds();
                 using var p = new SKPaint { };
                 using var pe = SKPathEffect.CreateDash([2, 2], 2);
 
@@ -140,19 +156,28 @@ namespace Going.UIEditor.Windows
                 }
                 #endregion
 
+                #region scroll
+                var vspos = Convert.ToSingle(vscroll.ScrollPositionWithOffset);
+                var hspos = Convert.ToSingle(hscroll.ScrollPositionWithOffset);
+                canvas.Clear(thm.Back);
+                if (rtvs.HasValue) vscroll.Draw(canvas, thm, rtvs.Value);
+                if (rths.HasValue) hscroll.Draw(canvas, thm, rths.Value);
+                #endregion
+
                 using (new SKAutoCanvasRestore(canvas))
                 {
                     if (rt != null)
                     {
                         #region base
                         var crt = rt.Value; crt.Inflate(1, 1);
+
                         canvas.ClipRect(crt);
                         canvas.Translate(rt.Value.Left, rt.Value.Top);
-                        canvas.Clear(thm.Back);
+                        canvas.Translate(hspos, vspos);
                         #endregion
 
                         #region draw
-                        prj.Design.SetSize(Convert.ToInt32(rt.Value.Width), Convert.ToInt32(rt.Value.Height));
+                        prj.Design.SetSize(Convert.ToInt32(prj.Width), Convert.ToInt32(prj.Height));
 
                         if (Target is GoDesign design2) prj.Design.DrawPage(canvas, thm, null);
                         else if (Target is GoPage page2) prj.Design.DrawPage(canvas, thm, page2);
@@ -166,7 +191,10 @@ namespace Going.UIEditor.Windows
                     if (rt != null)
                     {
                         var crt = rt.Value; crt.Inflate(1, 1);
+                        
+                        canvas.ClipRect(crt);
                         canvas.Translate(rt.Value.Left, rt.Value.Top);
+                        canvas.Translate(hspos, vspos);
 
                         if (dragAnchor != null)
                         {
@@ -360,8 +388,8 @@ namespace Going.UIEditor.Windows
                                         #region anchor
                                         {
                                             var ev = PointToClient(MousePosition);
-                                            int x = Convert.ToInt32(ev.X - rt.Value.Left);
-                                            int y = Convert.ToInt32(ev.Y - rt.Value.Top);
+                                            int x = Convert.ToInt32(ev.X - rt.Value.Left - hspos);
+                                            int y = Convert.ToInt32(ev.Y - rt.Value.Top - vspos);
 
                                             var ancs = Util2.GetAnchors(vc, vrt).Where(a => c.Parent is GoGridLayoutPanel ? a.Name == "move" : true);
 
@@ -435,6 +463,8 @@ namespace Going.UIEditor.Windows
                             #endregion
                         }
                     }
+
+                    
                 }
             }
 
@@ -449,12 +479,17 @@ namespace Going.UIEditor.Windows
             var prj = Program.CurrentProject;
             if (prj != null)
             {
-                var rt = GetBounds();
-                if (rt.HasValue)
+                var (rt, rtvs, rths) = GetBounds();
+                if (rtvs.HasValue && CollisionTool.Check(rtvs.Value, e.X, e.Y)) vscroll.MouseDown(e.X, e.Y, rtvs.Value);
+                else if (rths.HasValue && CollisionTool.Check(rths.Value, e.X, e.Y)) hscroll.MouseDown(e.X, e.Y, rths.Value);
+                else if (rt.HasValue)
                 {
                     #region mouse pos
-                    int x = Convert.ToInt32(e.X - rt.Value.Left);
-                    int y = Convert.ToInt32(e.Y - rt.Value.Top);
+                    var vspos = Convert.ToSingle(vscroll.ScrollPositionWithOffset);
+                    var hspos = Convert.ToSingle(hscroll.ScrollPositionWithOffset);
+
+                    int x = Convert.ToInt32(e.X - rt.Value.Left - hspos);
+                    int y = Convert.ToInt32(e.Y - rt.Value.Top - vspos);
                     ptDown = new SKPoint(x, y);
                     #endregion
 
@@ -540,12 +575,17 @@ namespace Going.UIEditor.Windows
             var prj = Program.CurrentProject;
             if (prj != null)
             {
-                var rt = GetBounds();
+                var (rt, rtvs, rths) = GetBounds();
+                if (rtvs.HasValue) vscroll.MouseMove(e.X, e.Y, rtvs.Value);
+                if (rths.HasValue) hscroll.MouseMove(e.X, e.Y, rths.Value);
                 if (rt.HasValue)
                 {
                     #region mouse pos
-                    int x = Convert.ToInt32(e.X - rt.Value.Left);
-                    int y = Convert.ToInt32(e.Y - rt.Value.Top);
+                    var vspos = Convert.ToSingle(vscroll.ScrollPositionWithOffset);
+                    var hspos = Convert.ToSingle(hscroll.ScrollPositionWithOffset);
+
+                    int x = Convert.ToInt32(e.X - rt.Value.Left - hspos);
+                    int y = Convert.ToInt32(e.Y - rt.Value.Top - vspos);
                     if (ptDown.HasValue) ptMove = new SKPoint(x, y);
                     #endregion
 
@@ -605,12 +645,17 @@ namespace Going.UIEditor.Windows
             if (prj != null)
             {
                 bool changed = false;
-                var rt = GetBounds();
+                var (rt, rtvs, rths) = GetBounds();
+                if (rtvs.HasValue) vscroll.MouseUp(e.X, e.Y);
+                if (rths.HasValue) hscroll.MouseUp(e.X, e.Y);
                 if (rt.HasValue)
                 {
                     #region mouse pos
-                    int x = Convert.ToInt32(e.X - rt.Value.Left);
-                    int y = Convert.ToInt32(e.Y - rt.Value.Top);
+                    var vspos = Convert.ToSingle(vscroll.ScrollPositionWithOffset);
+                    var hspos = Convert.ToSingle(hscroll.ScrollPositionWithOffset);
+
+                    int x = Convert.ToInt32(e.X - rt.Value.Left - hspos);
+                    int y = Convert.ToInt32(e.Y - rt.Value.Top - vspos);
                     #endregion
 
                     if (dragAnchor != null)
@@ -756,12 +801,17 @@ namespace Going.UIEditor.Windows
             var prj = Program.CurrentProject;
             if (prj != null)
             {
-                var rt = GetBounds();
+                var (rt, rtvs, rths) = GetBounds();
+                if (rtvs.HasValue) vscroll.MouseWheel(e.X, e.Y, e.Delta / 120F);
+                else if (rths.HasValue) hscroll.MouseWheel(e.X, e.Y, e.Delta / 120F);
                 if (rt.HasValue)
                 {
                     #region mousepos
-                    int x = Convert.ToInt32(e.X - rt.Value.Left);
-                    int y = Convert.ToInt32(e.Y - rt.Value.Top);
+                    var vspos = Convert.ToSingle(vscroll.ScrollPositionWithOffset);
+                    var hspos = Convert.ToSingle(hscroll.ScrollPositionWithOffset);
+
+                    int x = Convert.ToInt32(e.X - rt.Value.Left - hspos);
+                    int y = Convert.ToInt32(e.Y - rt.Value.Top - vspos);
                     float delta = e.Delta / 120F;
                     #endregion
 
@@ -831,15 +881,18 @@ namespace Going.UIEditor.Windows
             var prj = Program.CurrentProject;
             if (prj != null)
             {
-                var rt = GetBounds();
+                var (rt, rtvs, rths) = GetBounds();
                 var pt = PointToClient(new Point(drgevent.X, drgevent.Y));
                 var v = drgevent.Data?.GetData(typeof(GoToolItem)) as GoToolItem;
 
                 var ef = DragDropEffects.None;
                 if (v != null && rt.HasValue && CollisionTool.Check(rt.Value, pt.X, pt.Y))
                 {
-                    int x = Convert.ToInt32(pt.X - rt.Value.Left);
-                    int y = Convert.ToInt32(pt.Y - rt.Value.Top);
+                    var vspos = Convert.ToSingle(vscroll.ScrollPositionWithOffset);
+                    var hspos = Convert.ToSingle(hscroll.ScrollPositionWithOffset);
+
+                    int x = Convert.ToInt32(pt.X - rt.Value.Left - hspos);
+                    int y = Convert.ToInt32(pt.Y - rt.Value.Top - vspos);
 
                     var (con, cx, cy) = target_container(x, y);
                     if (con != null)
@@ -863,13 +916,16 @@ namespace Going.UIEditor.Windows
             this.Activate();
             if (prj != null)
             {
-                var rt = GetBounds();
+                var (rt, rtvs, rths) = GetBounds();
                 var pt = PointToClient(new Point(drgevent.X, drgevent.Y));
                 var v = drgevent.Data?.GetData(typeof(GoToolItem)) as GoToolItem;
                 if (v != null && rt.HasValue && CollisionTool.Check(rt.Value, pt.X, pt.Y))
                 {
-                    int x = Convert.ToInt32(pt.X - rt.Value.Left);
-                    int y = Convert.ToInt32(pt.Y - rt.Value.Top);
+                    var vspos = Convert.ToSingle(vscroll.ScrollPositionWithOffset);
+                    var hspos = Convert.ToSingle(hscroll.ScrollPositionWithOffset);
+
+                    int x = Convert.ToInt32(pt.X - rt.Value.Left - hspos);
+                    int y = Convert.ToInt32(pt.Y - rt.Value.Top - vspos);
 
                     var (con, cx, cy) = target_container(x, y);
                     if (con != null)
@@ -944,23 +1000,39 @@ namespace Going.UIEditor.Windows
 
         #region Method
         #region GetBounds
-        SKRect? GetBounds()
+        (SKRect? rt, SKRect? rtVS, SKRect? rtHS) GetBounds()
         {
-            SKRect? rt = null;
+            SKRect? rt = null, rtVS = null, rtHS = null;
 
             var prj = Program.CurrentProject;
 
             if (prj != null)
             {
                 if (Target is GoDesign design)
-                    rt = MathTool.MakeRectangle(Util.FromRect(0, 0, Width, Height), new SkiaSharp.SKSize(prj.Width, prj.Height));
+                {
+                    bool vs = prj.Height > Height, hs = prj.Width > Width;
+                    var szv = vs ? UI.Utils.Scroll.SC_WH : 0;
+                    var szh = hs ? UI.Utils.Scroll.SC_WH : 0;
+
+                    rt = MathTool.MakeRectangle(Util.FromRect(0, 0, Width, Height), new SkiaSharp.SKSize(Math.Min(prj.Width, Width - szv), Math.Min(prj.Height, Height - szh)));
+                    rtVS = Util.FromRect(Width - szv, 0, szv, Height - szh);
+                    rtHS = Util.FromRect(0, Height - szh, Width - szv, szh);
+                }
                 else if (Target is GoPage page)
-                    rt = MathTool.MakeRectangle(Util.FromRect(0, 0, Width, Height), new SkiaSharp.SKSize(prj.Width, prj.Height));
+                {
+                    bool vs = prj.Height > Height, hs = prj.Width > Width;
+                    var szv = vs ? UI.Utils.Scroll.SC_WH : 0;
+                    var szh = hs ? UI.Utils.Scroll.SC_WH : 0;
+
+                    rt = MathTool.MakeRectangle(Util.FromRect(0, 0, Width, Height), new SkiaSharp.SKSize(Math.Min(prj.Width, Width - szv), Math.Min(prj.Height, Height - szh)));
+                    rtVS = Util.FromRect(Width - szv, 0, szv, Height - szh);
+                    rtHS = Util.FromRect(0, Height - szh, Width - szv, szh);
+                }
                 else if (Target is GoWindow wnd)
                     rt = MathTool.MakeRectangle(Util.FromRect(0, 0, Width, Height), new SkiaSharp.SKSize(wnd.Width, wnd.Height));
             }
 
-            return rt;
+            return (rt, rtVS, rtHS);
         }
         #endregion
 
