@@ -632,18 +632,24 @@ namespace Going.UIEditor.Controls
                     pg.Invalidate();
                     pg.SelectedEditor.Invalidate();
                 }
-                else
+            }
+        }
+        #endregion
+
+        #region SetGridRow
+        protected void SetGridRow(object? c, PropertyInfo Info, List<GridRowItem> items)
+        {
+            if (pg != null && Info != null && c != null)
+            {
+                if (pg.SelectedEditor != null)
                 {
                     if (c != null && c.GetType().GetProperty(Info.Name) is PropertyInfo info2)
                     {
                         var ovalue = info2.GetValue(c);
-                        var nvalue = items.Where(x => !x.IsDelete).OrderBy(x => x.Idx).Select(x => x.ToValue()).ToList();
-                        Info.SetValue(c, nvalue);
-
-                        if (c is GoGridLayoutPanelRow row) row.ExtraData = items;
+                        pg.SelectedEditor.EditSizesGrid(c, info2, ovalue, items);
                     }
-
                     pg.Invalidate();
+                    pg.SelectedEditor.Invalidate();
                 }
             }
         }
@@ -1253,7 +1259,10 @@ namespace Going.UIEditor.Controls
                     else if (type == typeof(GoLineGraphSeries)) SetValue(Info, val as IEnumerable<GoLineGraphSeries>);
                     else if (type == typeof(GoTabPage)) SetValue(Info, val as IEnumerable<GoTabPage>);
                     else if (type == typeof(GoSubPage)) SetValue(Info, val as IEnumerable<GoSubPage>);
-                    else throw new Exception("invalid type");
+                    else
+                    {
+                        Program.MessageBox.ShowMessageBoxOk($"{Info.Name}", "유효하지 않는 타입입니다");
+                    }
 
                     Grid.Invalidate();
                 }
@@ -1267,32 +1276,40 @@ namespace Going.UIEditor.Controls
         void SetValue<T>(PropertyInfo info, IEnumerable<T>? val)
         {
             var tp = info.PropertyType;
-            using (var dlg = new FormCollectionEditor<T>())
+            if (tp == typeof(List<GoGridLayoutPanelRow>) && val is List<GoGridLayoutPanelRow> vals)
             {
-                if (val is IEnumerable<GoGridLayoutPanelRow> ls) foreach (var v in ls) v.ExtraData = null;
-
-                var ret = dlg.ShowCollectionEditor($"{info.Name} Editor", val);
-                if (ret != null && Grid?.SelectedObjects != null)
-                    SelectedObjectLoop((obj) =>
+                using (var dlg = new FormGridLayoutRowEditor())
+                {
+                    var ret = dlg.ShowGridLayoutRowEditor($"{info.Name} Editor", vals);
+                    if (ret != null && Info != null && Grid?.SelectedObjects != null)
                     {
-                        if (typeof(T) == typeof(GoGridLayoutPanelRow) && ret is IEnumerable<GoGridLayoutPanelRow> rows) 
+                        SelectedObjectLoop((obj) => SetGridRow(obj, Info, ret));
+                    }
+                }
+            }
+            else
+            {
+                using (var dlg = new FormCollectionEditor<T>())
+                {
+                    var ret = dlg.ShowCollectionEditor($"{info.Name} Editor", val);
+                    if (ret != null && Grid?.SelectedObjects != null)
+                        SelectedObjectLoop((obj) =>
                         {
+                            if (tp.IsGenericType && tp.GetGenericTypeDefinition() == typeof(List<>))
+                            {
+                                var va = new List<T>();
+                                va.AddRange(ret);
+                                SetValue(obj, info, va);
+                            }
+                            else if (tp.IsGenericType && tp.GetGenericTypeDefinition() == typeof(ObservableList<>))
+                            {
+                                var va = new ObservableList<T>();
+                                va.AddRange(ret);
+                                SetValue(obj, info, va);
+                            }
+                        });
 
-                        }
-                        else if (tp.IsGenericType && tp.GetGenericTypeDefinition() == typeof(List<>))
-                        {
-                            var va = new List<T>();
-                            va.AddRange(ret);
-                            SetValue(obj, info, va);
-                        }
-                        else if (tp.IsGenericType && tp.GetGenericTypeDefinition() == typeof(ObservableList<>))
-                        {
-                            var va = new ObservableList<T>();
-                            va.AddRange(ret);
-                            SetValue(obj, info, va);
-                        }
-                    });
-
+                }
             }
         }
         #endregion
@@ -1358,26 +1375,6 @@ namespace Going.UIEditor.Controls
             base.OnButtonClick(rtValue, rtButton);
         }
         #endregion
-        #endregion
-
-        #region Control
-        public class TblControl(GoTableIndex idx, IGoControl control)
-        {
-            public int Col => idx.Column;
-            public int Row => idx.Row;
-            public int ColSpan => idx.ColSpan;
-            public int RowSpan => idx.RowSpan;
-            public GoTableIndex Index => idx;
-            public IGoControl Control => control;
-        }
-
-        public class GrdControl(GoGridIndex idx, IGoControl control)
-        {
-            public int Col => idx.Column;
-            public int Row => idx.Row;
-            public GoGridIndex Index => idx;
-            public IGoControl Control => control;
-        }
         #endregion
     }
     #endregion

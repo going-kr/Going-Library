@@ -730,6 +730,61 @@ namespace Going.UIEditor.Utils
             }
         }
         #endregion
+        #region Index
+        public static string Index
+        {
+            get
+            {
+                if (lang == Lang.KO) return "순번";
+                else if (lang == Lang.EN) return "No";
+                else return "";
+            }
+        }
+        #endregion
+        #region Height
+        public static string Height
+        {
+            get
+            {
+                if (lang == Lang.KO) return "높이";
+                else if (lang == Lang.EN) return "Height";
+                else return "";
+            }
+        }
+        #endregion
+        #region Unit
+        public static string Unit
+        {
+            get
+            {
+                if (lang == Lang.KO) return "단위";
+                else if (lang == Lang.EN) return "Unit";
+                else return "";
+            }
+        }
+        #endregion
+        #region Column
+        public static string Column
+        {
+            get
+            {
+                if (lang == Lang.KO) return "컬럼";
+                else if (lang == Lang.EN) return "Column";
+                else return "";
+            }
+        }
+        #endregion
+        #region Value
+        public static string Value
+        {
+            get
+            {
+                if (lang == Lang.KO) return "값";
+                else if (lang == Lang.EN) return "Value";
+                else return "";
+            }
+        }
+        #endregion
         #region Items
         public static string Items
         {

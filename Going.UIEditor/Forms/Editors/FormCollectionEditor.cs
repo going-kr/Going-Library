@@ -64,7 +64,7 @@ namespace Going.UIEditor.Forms
                     pg.SelectedObjects = [v.Value];
                 }
             };
-
+            
             btnAdd.ButtonClicked += (o, s) => AddItem();
             btnDel.ButtonClicked += (o, s) => DelItem();
             #endregion
@@ -130,6 +130,14 @@ namespace Going.UIEditor.Forms
         #endregion
         #endregion
 
+        #region OnClosed
+        protected override void OnClosed(EventArgs e)
+        {
+            tmr.Enabled = false;
+            tmr.Dispose();
+            base.OnClosed(e);
+        }
+        #endregion
     }
 
     #region class : CollectionEditorItem

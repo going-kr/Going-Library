@@ -29,12 +29,13 @@ namespace Going.UIEditor.Forms.Editors
             dg.SelectionMode = GoDataGridSelectionMode.Selector;
             dg.Columns.Add(new GoDataGridLabelColumn { Name = "Idx", HeaderText = "순번", Size = "80px", });
             dg.Columns.Add(new GoDataGridInputNumberColumn<double> { Name = "Value", HeaderText = "값", Size = "100%", Minimum = 0, Maximum = 9999 });
-            dg.Columns.Add(new GoDataGridInputBoolColumn { Name = "IsPixel", HeaderText = "단위", Size = "120px", OffText = "%", OnText = "px" });
+            dg.Columns.Add(new GoDataGridInputBoolColumn { Name = "IsPixel", HeaderText = "단위", Size = "100px", OffText = "%", OnText = "px" });
             #endregion
 
             #region Event
             btnOK.ButtonClicked += (o, s) => { if (ValidCheck()) DialogResult = DialogResult.OK; };
             btnCancel.ButtonClicked += (o, s) => DialogResult = DialogResult.Cancel;
+         
             btnAdd.ButtonClicked += (o, s) => AddItem();
             btnInsert.ButtonClicked += (o, s) => InsertItem();
             btnDel.ButtonClicked += (o, s) => DelItem();
@@ -66,9 +67,10 @@ namespace Going.UIEditor.Forms.Editors
             var idx = sel != null ? dg.Rows.IndexOf(sel) : -1;
 
             if (idx == -1) AddItem();
-            else
+            else if(sel?.Source is SizesItem isz)
             {
-                items.Insert(idx, new SizesItem { });
+                var idx2 = items.IndexOf(isz);
+                items.Insert(idx2, new SizesItem { });
                 RefreshItems();
             }
         }
@@ -108,7 +110,11 @@ namespace Going.UIEditor.Forms.Editors
             btnOK.Text = LM.Ok;
             btnCancel.Text = LM.Cancel;
             goLabel1.Text = LM.Items;
-            
+
+            dg.Columns[0].HeaderText = LM.Index;
+            dg.Columns[1].HeaderText = LM.Value;
+            dg.Columns[2].HeaderText = LM.Unit;
+
             items.Clear();
             if (vals != null)
                 for (int i = 0; i < vals.Count; i++)
