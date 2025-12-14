@@ -42,10 +42,10 @@ namespace Going.UI.Forms.Dialogs
             TitleIconString = "fa-check";
             TitleIconSize = 18;
 
-            tpnl = new GoTableLayoutPanel { Fill = true, Margin = new GoPadding(10), Columns = ["34%", "33%", "33%"], Rows = ["100%", "40px"] };
-            tpnl2 = new GoTableLayoutPanel { Fill = true, Margin = new GoPadding(0), };
-            btnOk = new GoButton { Fill = true, Text = "확인" };
-            btnCancel = new GoButton { Fill = true, Text = "취소" };
+            tpnl = new GoTableLayoutPanel { Dock = GoDockStyle.Fill, Margin = new GoPadding(10), Columns = ["34%", "33%", "33%"], Rows = ["100%", "40px"] };
+            tpnl2 = new GoTableLayoutPanel { Dock = GoDockStyle.Fill, Margin = new GoPadding(0), };
+            btnOk = new GoButton { Dock = GoDockStyle.Fill, Text = "확인" };
+            btnCancel = new GoButton { Dock = GoDockStyle.Fill, Text = "취소" };
 
             tpnl.Childrens.Add(tpnl2, 0, 0, 3, 1);
             tpnl.Childrens.Add(btnOk, 1, 1);
@@ -121,7 +121,7 @@ namespace Going.UI.Forms.Dialogs
             int ic = 0, ir = 0;
             foreach (var v in items)
             {
-                var c = new GoCheckBox { Fill = true, Text = v.Text ?? "", Tag = v, ContentAlignment = GoContentAlignment.MiddleLeft, BoxSize = 20, Checked = selectedItems?.Contains(v) ?? false };
+                var c = new GoCheckBox { Dock = GoDockStyle.Fill, Text = v.Text ?? "", Tag = v, ContentAlignment = GoContentAlignment.MiddleLeft, BoxSize = 20, Checked = selectedItems?.Contains(v) ?? false };
                 c.SetInvalidate(Invalidate);
                 tpnl2.Childrens.Add(c, ic, ir);
 
@@ -177,7 +177,7 @@ namespace Going.UI.Forms.Dialogs
             int ic = 0, ir = 0;
             foreach (var v in items)
             {
-                var c = new GoRadioBox { Fill = true, Text = v.Text ?? "", Tag = v, ContentAlignment = GoContentAlignment.MiddleLeft, BoxSize = 20, Checked = selectedItem == v };
+                var c = new GoRadioBox { Dock = GoDockStyle.Fill, Text = v.Text ?? "", Tag = v, ContentAlignment = GoContentAlignment.MiddleLeft, BoxSize = 20, Checked = selectedItem == v };
                 c.SetInvalidate(Invalidate);
                 tpnl2.Childrens.Add(c, ic, ir);
 
@@ -218,7 +218,7 @@ namespace Going.UI.Forms.Dialogs
 
             var isz = items.Count > 0 ? items.Max(x => Util.MeasureTextIcon(x.Text, FontName, FontStyle, FontSize, x.IconString, FontSize + 2, Enums.GoDirectionHV.Horizon, 5).Width) : 0;
 
-            var cmb = new GoInputCombo { Fill = true, Items = items, SelectedIndex = selectedItem != null ? items.IndexOf(selectedItem) : -1 };
+            var cmb = new GoInputCombo { Dock = GoDockStyle.Fill, Items = items, SelectedIndex = selectedItem != null ? items.IndexOf(selectedItem) : -1 };
             cmb.DropDownOpening += (o, s) => { s.Cancel = true; OpenDropDown(cmb); };
             cmb.SetInvalidate(Invalidate);
 

@@ -43,12 +43,12 @@ namespace Going.UI.Forms.Dialogs
             TitleIconString = "fa-comment-dots";
             TitleIconSize = 18;
 
-            tpnl = new GoTableLayoutPanel { Fill = true, Margin = new GoPadding(10), Columns = ["16.66%", "16.66%", "16.66%", "16.66%", "16.66%", "16.67%",], Rows = ["100%", "40px"] };
-            lbl = new GoLabel { Fill = true, BackgroundDraw = false };
-            btnOK = new GoButton { Fill = true, Text = "확인" };
-            btnCancel = new GoButton { Fill = true, Text = "취소" };
-            btnYes = new GoButton { Fill = true, Text = "예" };
-            btnNo = new GoButton { Fill = true, Text = "아니요" };
+            tpnl = new GoTableLayoutPanel { Dock = GoDockStyle.Fill, Margin = new GoPadding(10), Columns = ["16.66%", "16.66%", "16.66%", "16.66%", "16.66%", "16.67%",], Rows = ["100%", "40px"] };
+            lbl = new GoLabel { Dock = GoDockStyle.Fill, BackgroundDraw = false };
+            btnOK = new GoButton { Dock = GoDockStyle.Fill, Text = "확인" };
+            btnCancel = new GoButton { Dock = GoDockStyle.Fill, Text = "취소" };
+            btnYes = new GoButton { Dock = GoDockStyle.Fill, Text = "예" };
+            btnNo = new GoButton { Dock = GoDockStyle.Fill, Text = "아니요" };
 
             btnOK.ButtonClicked += (o, s) => DialogResult = DialogResult.OK;
             btnCancel.ButtonClicked += (o, s) => DialogResult = DialogResult.Cancel;

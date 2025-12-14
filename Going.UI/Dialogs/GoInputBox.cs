@@ -2,6 +2,7 @@
 using Going.UI.Controls;
 using Going.UI.Datas;
 using Going.UI.Design;
+using Going.UI.Enums;
 using Going.UI.Utils;
 using System;
 using System.Collections.Generic;
@@ -49,10 +50,10 @@ namespace Going.UI.Dialogs
             IconSize = 18;
             IconGap = 10;
 
-            tpnl = new GoTableLayoutPanel { Fill = true, Margin = new GoPadding(10), Columns = ["34%", "33%", "33%"], Rows = ["100%", "40px"] };
-            tpnl2 = new GoTableLayoutPanel { Fill = true, Margin = new GoPadding(0), };
-            btnOk = new GoButton { Fill = true, Text = "확인" };
-            btnCancel = new GoButton { Fill = true, Text = "취소" };
+            tpnl = new GoTableLayoutPanel { Dock = GoDockStyle.Fill, Margin = new GoPadding(10), Columns = ["34%", "33%", "33%"], Rows = ["100%", "40px"] };
+            tpnl2 = new GoTableLayoutPanel { Dock = GoDockStyle.Fill, Margin = new GoPadding(0), };
+            btnOk = new GoButton { Dock = GoDockStyle.Fill, Text = "확인" };
+            btnCancel = new GoButton { Dock = GoDockStyle.Fill, Text = "취소" };
 
             tpnl.Childrens.Add(tpnl2, 0, 0, 3, 1);
             tpnl.Childrens.Add(btnOk, 1, 1);
@@ -188,7 +189,7 @@ namespace Going.UI.Dialogs
                     #region Selector
                     var c = new GoInputCombo
                     {
-                        Fill = true,
+                        Dock = GoDockStyle.Fill,
                         Title = name,
                         TitleSize = ItemTitleWidth,
                         Items = p.Items,
@@ -209,7 +210,7 @@ namespace Going.UI.Dialogs
                     #region byte
                     var c = new GoInputNumber<sbyte>
                     {
-                        Fill = true,
+                        Dock = GoDockStyle.Fill,
                         Title = name,
                         Minimum = min != null ? Convert.ToSByte(min.Value) : null,
                         Maximum = max != null ? Convert.ToSByte(max.Value) : null,
@@ -226,7 +227,7 @@ namespace Going.UI.Dialogs
                     #region short
                     var c = new GoInputNumber<short>
                     {
-                        Fill = true,
+                        Dock = GoDockStyle.Fill,
                         Title = name,
                         Minimum = min != null ? Convert.ToInt16(min.Value) : null,
                         Maximum = max != null ? Convert.ToInt16(max.Value) : null,
@@ -243,7 +244,7 @@ namespace Going.UI.Dialogs
                     #region int
                     var c = new GoInputNumber<int>
                     {
-                        Fill = true,
+                        Dock = GoDockStyle.Fill,
                         Title = name,
                         Minimum = min != null ? Convert.ToInt32(min.Value) : null,
                         Maximum = max != null ? Convert.ToInt32(max.Value) : null,
@@ -260,7 +261,7 @@ namespace Going.UI.Dialogs
                     #region long
                     var c = new GoInputNumber<long>
                     {
-                        Fill = true,
+                        Dock = GoDockStyle.Fill,
                         Title = name,
                         Minimum = min != null ? Convert.ToInt64(min.Value) : null,
                         Maximum = max != null ? Convert.ToInt64(max.Value) : null,
@@ -277,7 +278,7 @@ namespace Going.UI.Dialogs
                     #region byte
                     var c = new GoInputNumber<byte>
                     {
-                        Fill = true,
+                        Dock = GoDockStyle.Fill,
                         Title = name,
                         Minimum = min != null ? Convert.ToByte(min.Value) : null,
                         Maximum = max != null ? Convert.ToByte(max.Value) : null,
@@ -294,7 +295,7 @@ namespace Going.UI.Dialogs
                     #region ushort
                     var c = new GoInputNumber<ushort>
                     {
-                        Fill = true,
+                        Dock = GoDockStyle.Fill,
                         Title = name,
                         Minimum = min != null ? Convert.ToUInt16(min.Value) : null,
                         Maximum = max != null ? Convert.ToUInt16(max.Value) : null,
@@ -311,7 +312,7 @@ namespace Going.UI.Dialogs
                     #region uint
                     var c = new GoInputNumber<uint>
                     {
-                        Fill = true,
+                        Dock = GoDockStyle.Fill,
                         Title = name,
                         Minimum = min != null ? Convert.ToUInt32(min.Value) : null,
                         Maximum = max != null ? Convert.ToUInt32(max.Value) : null,
@@ -328,7 +329,7 @@ namespace Going.UI.Dialogs
                     #region ulong
                     var c = new GoInputNumber<ulong>
                     {
-                        Fill = true,
+                        Dock = GoDockStyle.Fill,
                         Title = name,
                         Minimum = min != null ? Convert.ToUInt64(min.Value) : null,
                         Maximum = max != null ? Convert.ToUInt64(max.Value) : null,
@@ -345,7 +346,7 @@ namespace Going.UI.Dialogs
                     #region float
                     var c = new GoInputNumber<float>
                     {
-                        Fill = true,
+                        Dock = GoDockStyle.Fill,
                         Title = name,
                         Minimum = min != null ? Convert.ToSingle(min.Value) : null,
                         Maximum = max != null ? Convert.ToSingle(max.Value) : null,
@@ -362,7 +363,7 @@ namespace Going.UI.Dialogs
                     #region double
                     var c = new GoInputNumber<double>
                     {
-                        Fill = true,
+                        Dock = GoDockStyle.Fill,
                         Title = name,
                         Minimum = min != null ? Convert.ToDouble(min.Value) : null,
                         Maximum = max != null ? Convert.ToDouble(max.Value) : null,
@@ -379,7 +380,7 @@ namespace Going.UI.Dialogs
                     #region decimal
                     var c = new GoInputNumber<decimal>
                     {
-                        Fill = true,
+                        Dock = GoDockStyle.Fill,
                         Title = name,
                         Minimum = min != null ? Convert.ToDecimal(min.Value) : null,
                         Maximum = max != null ? Convert.ToDecimal(max.Value) : null,
@@ -396,7 +397,7 @@ namespace Going.UI.Dialogs
                     #region string
                     var c = new GoInputString
                     {
-                        Fill = true,
+                        Dock = GoDockStyle.Fill,
                         Title = name,
                         TitleSize = ItemTitleWidth,
                         Tag = new InputBoxTag() { prop = v, attr = p },
@@ -410,7 +411,7 @@ namespace Going.UI.Dialogs
                     #region bool
                     var c = new GoInputBoolean
                     {
-                        Fill = true,
+                        Dock = GoDockStyle.Fill,
                         Title = name,
                         TitleSize = ItemTitleWidth,
                         OnText = p?.OnText ?? "ON",
@@ -426,7 +427,7 @@ namespace Going.UI.Dialogs
                     #region enum
                     var c = new GoInputCombo
                     {
-                        Fill = true,
+                        Dock = GoDockStyle.Fill,
                         Title = name,
                         TitleSize = ItemTitleWidth,
                         Tag = new InputBoxTag() { prop = v, attr = p },
@@ -463,7 +464,7 @@ namespace Going.UI.Dialogs
             tpnl2.Columns = ["100%"];
             tpnl2.Rows = ["100%"];
             tpnl2.Childrens.Clear();
-            tpnl2.Childrens.Add(new GoInputString { Fill = true, Value = value ?? "" }, 0, 0);
+            tpnl2.Childrens.Add(new GoInputString { Dock = GoDockStyle.Fill, Value = value ?? "" }, 0, 0);
 
             Show(w, h);
         }
@@ -488,7 +489,7 @@ namespace Going.UI.Dialogs
             tpnl2.Columns = ["100%"];
             tpnl2.Rows = ["100%"];
             tpnl2.Childrens.Clear();
-            tpnl2.Childrens.Add(new GoInputNumber<T> { Fill = true, Value = value ?? default, Minimum = min, Maximum = max }, 0, 0);
+            tpnl2.Childrens.Add(new GoInputNumber<T> { Dock = GoDockStyle.Fill, Value = value ?? default, Minimum = min, Maximum = max }, 0, 0);
 
             Show(w, h);
         }
@@ -508,7 +509,7 @@ namespace Going.UI.Dialogs
             tpnl2.Columns = ["100%"];
             tpnl2.Rows = ["100%"];
             tpnl2.Childrens.Clear();
-            tpnl2.Childrens.Add(new GoInputBoolean { Fill = true, Value = value, OnText = onText, OffText = offText }, 0, 0);
+            tpnl2.Childrens.Add(new GoInputBoolean { Dock = GoDockStyle.Fill, Value = value, OnText = onText, OffText = offText }, 0, 0);
 
             Show(w, h);
         }

@@ -80,7 +80,7 @@ namespace Going.UI.Design
 
         public GoComboBoxDropDownWindow()
         {
-            lb = new GoListBox { Margin = new GoPadding(0), Fill = true, BackgroundDraw = false };
+            lb = new GoListBox { Margin = new GoPadding(0), Dock = GoDockStyle.Fill, BackgroundDraw = false };
             Childrens.Add(lb);
 
             lb.ItemClicked += (o, s) =>
@@ -137,16 +137,16 @@ namespace Going.UI.Design
 
         public GoColorDropDownWindow()
         {
-            tbl = new GoTableLayoutPanel { Margin = new GoPadding(5), Fill = true, };
+            tbl = new GoTableLayoutPanel { Margin = new GoPadding(5), Dock = GoDockStyle.Fill, };
             tbl.Columns = ["100%", "80px", "80px"];
             tbl.Rows = ["100%", "40px"];
             Childrens.Add(tbl);
 
-            cs = new GoColorSelector { Fill = true, Margin = new GoPadding(5) };
+            cs = new GoColorSelector { Dock = GoDockStyle.Fill, Margin = new GoPadding(5) };
             tbl.Childrens.Add(cs, 0, 0, 3, 1);
 
-            btnOK = new GoButton { Fill = true, Margin = new GoPadding(5), Text = "선택" };
-            btnCancel = new GoButton { Fill = true, Margin = new GoPadding(5), Text = "취소" };
+            btnOK = new GoButton { Dock = GoDockStyle.Fill, Margin = new GoPadding(5), Text = "선택" };
+            btnCancel = new GoButton { Dock = GoDockStyle.Fill, Margin = new GoPadding(5), Text = "취소" };
             tbl.Childrens.Add(btnOK, 1, 1);
             tbl.Childrens.Add(btnCancel, 2, 1);
 
@@ -198,15 +198,15 @@ namespace Going.UI.Design
 
         public GoDateTimeDropDownWindow()
         {
-            tbl = new GoTableLayoutPanel { Margin = new GoPadding(5), Fill = true, };
+            tbl = new GoTableLayoutPanel { Margin = new GoPadding(5), Dock = GoDockStyle.Fill, };
             Childrens.Add(tbl);
 
-            cal = new GoCalendar { Fill = true, Margin = new GoPadding(5), BackgroundDraw = false, MultiSelect = false };
-            inH = new GoInputNumber<int> { Fill = true, Margin = new GoPadding(5), Minimum = 0, Maximum = 23, UnitSize = 30, Unit = "시" };
-            inM = new GoInputNumber<int> { Fill = true, Margin = new GoPadding(5), Minimum = 0, Maximum = 59, UnitSize = 30, Unit = "분" };
-            inS = new GoInputNumber<int> { Fill = true, Margin = new GoPadding(5), Minimum = 0, Maximum = 59, UnitSize = 30, Unit = "초" };
-            btnOK = new GoButton { Fill = true, Margin = new GoPadding(5), Text = "선택" };
-            btnCancel = new GoButton { Fill = true, Margin = new GoPadding(5), Text = "취소" };
+            cal = new GoCalendar { Dock = GoDockStyle.Fill, Margin = new GoPadding(5), BackgroundDraw = false, MultiSelect = false };
+            inH = new GoInputNumber<int> { Dock = GoDockStyle.Fill, Margin = new GoPadding(5), Minimum = 0, Maximum = 23, UnitSize = 30, Unit = "시" };
+            inM = new GoInputNumber<int> { Dock = GoDockStyle.Fill, Margin = new GoPadding(5), Minimum = 0, Maximum = 59, UnitSize = 30, Unit = "분" };
+            inS = new GoInputNumber<int> { Dock = GoDockStyle.Fill, Margin = new GoPadding(5), Minimum = 0, Maximum = 59, UnitSize = 30, Unit = "초" };
+            btnOK = new GoButton { Dock = GoDockStyle.Fill, Margin = new GoPadding(5), Text = "선택" };
+            btnCancel = new GoButton { Dock = GoDockStyle.Fill, Margin = new GoPadding(5), Text = "취소" };
 
             btnOK.ButtonClicked += (o, s) =>
             {

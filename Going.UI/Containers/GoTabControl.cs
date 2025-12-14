@@ -208,9 +208,16 @@ namespace Going.UI.Containers
 
             if (SelectedTab != null)
             {
-                foreach(var c in SelectedTab.Childrens)
+                var nofills = Childrens.Where(c => c.Dock != GoDockStyle.Fill).ToList();
+                var fills = Childrens.Where(c => c.Dock == GoDockStyle.Fill).ToList();
+                var bnds = Util.FromRect(0, 0, rtPanel.Width, rtPanel.Height); //Util.FromRect(rtPanel);
+                foreach (var control in nofills) bnds = ApplyDocking(control, bnds);
+                foreach (var c in fills)
                 {
-                    if (c.Fill) c.Bounds = Util.FromRect(Util.FromRect(0, 0, rtPanel.Width, rtPanel.Height), c.Margin);
+                    c.Left = bnds.Left + c.Margin.Left;
+                    c.Top = bnds.Top + c.Margin.Top;
+                    c.Right = bnds.Right - c.Margin.Right;
+                    c.Bottom = bnds.Bottom - c.Margin.Bottom;
                 }
             }
 

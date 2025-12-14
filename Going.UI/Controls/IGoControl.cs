@@ -20,7 +20,7 @@ namespace Going.UI.Controls
         string? Name { get; set; }
         SKRect Bounds { get; set; }
         GoPadding Margin { get; set; }
-        bool Fill { get; set; }
+        GoDockStyle Dock { get; set; }
         bool Visible { get; set; }
         bool Enabled { get; set; }
 

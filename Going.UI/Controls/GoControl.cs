@@ -82,7 +82,7 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Bounds, 6), JsonIgnore] public float Top { get => bounds.Top; set => bounds.Top = value; }
         [GoProperty(PCategory.Bounds, 7), JsonIgnore] public float Right { get => bounds.Right; set => bounds.Right = value; }
         [GoProperty(PCategory.Bounds, 8), JsonIgnore] public float Bottom { get => bounds.Bottom; set => bounds.Bottom = value; }
-        [GoProperty(PCategory.Bounds, 9)] public bool Fill { get; set; } = false;
+        [GoProperty(PCategory.Bounds, 9)] public GoDockStyle Dock { get; set; } = GoDockStyle.None;
         [GoProperty(PCategory.Bounds, 10)] public GoPadding Margin { get; set; } = new(3, 3, 3, 3);
         [GoProperty(PCategory.Bounds, 11)] public bool UseLongClick { get; set; } = false;
         [GoProperty(PCategory.Bounds, 12)] public int? LongClickTime { get; set; } = null;

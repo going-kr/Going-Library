@@ -20,6 +20,7 @@ using SkiaSharp;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text.Json;
@@ -1509,14 +1510,18 @@ namespace Going.UIEditor.Windows
             var ret = false;
             var rt = tpnl.Areas()["Content"];
             var rts = Util.Grid(rt, [.. tpnl.Columns], [.. tpnl.Rows]);
-            for (int ir = 0; ir < tpnl.Rows.Count; ir++)
-                for (int ic = 0; ic < tpnl.Columns.Count; ic++)
-                    if (CollisionTool.Check(rts[ir, ic], x, y) && tpnl.Childrens[ic, ir] == null)
-                    {
-                        idx.Col = ic;
-                        idx.Row = ir;
-                        ret = true;
-                    }
+
+            var cs = tpnl.Childrens.Where(x => tpnl.Childrens[x] != null).Select(x => { var i = tpnl.Childrens[x]!; return new { x, idx = i, rt = Util.Merge(rts, i.Column, i.Row, i.ColSpan, i.RowSpan) }; });
+
+            if (!cs.Any(v => CollisionTool.Check(v.rt, x, y)))
+                for (int ir = 0; ir < tpnl.Rows.Count; ir++)
+                    for (int ic = 0; ic < tpnl.Columns.Count; ic++)
+                        if (CollisionTool.Check(rts[ir, ic], x, y) && tpnl.Childrens[ic, ir] == null)
+                        {
+                            idx.Col = ic;
+                            idx.Row = ir;
+                            ret = true;
+                        }
 
             return ret;
         }
@@ -1532,12 +1537,16 @@ namespace Going.UIEditor.Windows
 
             var rt = tpnl.Areas()["Content"];
             var rts = Util.Grid(rt, [.. tpnl.Columns], [.. tpnl.Rows]);
-            for (int ir = 0; ir < tpnl.Rows.Count; ir++)
-                for (int ic = 0; ic < tpnl.Columns.Count; ic++)
-                    if (CollisionTool.Check(rts[ir, ic], crt))
-                    {
-                        idxs.Add(new TableIndex { Col = ic, Row = ir });
-                    }
+
+            var cs = tpnl.Childrens.Where(x => x != anc.Control && tpnl.Childrens[x] != null).Select(x => { var i = tpnl.Childrens[x]!; return new { x, idx = i, rt = Util.Merge(rts, i.Column, i.Row, i.ColSpan, i.RowSpan) }; });
+
+            if (!cs.Any(v => CollisionTool.Check(crt, v.rt)))
+                for (int ir = 0; ir < tpnl.Rows.Count; ir++)
+                    for (int ic = 0; ic < tpnl.Columns.Count; ic++)
+                        if (CollisionTool.Check(rts[ir, ic], crt))
+                        {
+                            idxs.Add(new TableIndex { Col = ic, Row = ir });
+                        }
 
             return idxs.Count > 0;
         }
