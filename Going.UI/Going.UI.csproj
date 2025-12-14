@@ -9,7 +9,7 @@
 	<PackageIconUrl>https://raw.githubusercontent.com/Going-kr/Going-Library/master/icon/Going_logo_blue.png</PackageIconUrl>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Description>Skia based ui libary</Description>
-    <Version>1.0.4.5</Version>
+    <Version>1.0.4.6</Version>
   </PropertyGroup>
 
   <ItemGroup>

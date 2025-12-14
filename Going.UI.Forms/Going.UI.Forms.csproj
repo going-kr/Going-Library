@@ -13,7 +13,7 @@
     <Description>WinForms version of Going UI</Description>
     <AssemblyVersion></AssemblyVersion>
     <FileVersion></FileVersion>
-    <Version>1.0.4.1</Version>
+    <Version>1.0.4.6</Version>
   </PropertyGroup>
 
   <ItemGroup>

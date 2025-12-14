@@ -870,6 +870,11 @@ namespace Going.UIEditor.Windows
                         case Keys.Shift | Keys.Down: ControlMove(0, 10); break;
 
                         case Keys.Control | Keys.F10: ShowDesignCode(); break;
+
+                        case Keys.Home: BringToFrontGUI(); break;
+                        case Keys.End: SendToBackGUI(); break;
+                        case Keys.PageUp: BringForwareGUI(); break;
+                        case Keys.PageDown: SendBackwardGUI(); break;
                     }
                 }
             }
@@ -1132,6 +1137,46 @@ namespace Going.UIEditor.Windows
                 p.Edit = true;
             }
         }
+
+        public void BringToFront(IGoControl control)
+        {
+            var p = Program.CurrentProject;
+            if (p != null && control.Parent != null && !isTopLevelContainer(control))
+            {
+                actmgr.RecordAction(new BringToFrontAction(control.Parent, control));
+                p.Edit = true;
+            }
+        }
+
+        public void BringForward(IGoControl control)
+        {
+            var p = Program.CurrentProject;
+            if (p != null && control.Parent != null && !isTopLevelContainer(control))
+            {
+                actmgr.RecordAction(new BringForwardAction(control.Parent, control));
+                p.Edit = true;
+            }
+        }
+
+        public void SendToBack(IGoControl control)
+        {
+            var p = Program.CurrentProject;
+            if (p != null && control.Parent != null && !isTopLevelContainer(control))
+            {
+                actmgr.RecordAction(new SendToBackAction(control.Parent, control));
+                p.Edit = true;
+            }
+        }
+
+        public void SendBackward(IGoControl control)
+        {
+            var p = Program.CurrentProject;
+            if (p != null && control.Parent != null && !isTopLevelContainer(control))
+            {
+                actmgr.RecordAction(new SendBackwardAction(control.Parent, control));
+                p.Edit = true;
+            }
+        }
         #endregion
 
         #region Edit
@@ -1262,6 +1307,60 @@ namespace Going.UIEditor.Windows
                             DeleteControl(c);
 
                     SelectedControl([.. sels], []);
+                });
+            }
+        }
+        #endregion
+
+        #region Bring / Send
+        public void BringToFrontGUI()
+        {
+            var p = Program.CurrentProject;
+            if (p != null)
+            {
+                TransAction(() =>
+                {
+                    if (sels.Count == 1 && sels.FirstOrDefault() is IGoControl c)
+                        BringToFront(c);
+                });
+            }
+        }
+
+        public void BringForwareGUI()
+        {
+            var p = Program.CurrentProject;
+            if (p != null)
+            {
+                TransAction(() =>
+                {
+                    if (sels.Count == 1 && sels.FirstOrDefault() is IGoControl c)
+                        BringForward(c);
+                });
+            }
+        }
+
+        public void SendToBackGUI()
+        {
+            var p = Program.CurrentProject;
+            if (p != null)
+            {
+                TransAction(() =>
+                {
+                    if (sels.Count == 1 && sels.FirstOrDefault() is IGoControl c)
+                        SendToBack(c);
+                });
+            }
+        }
+
+        public void SendBackwardGUI()
+        {
+            var p = Program.CurrentProject;
+            if (p != null)
+            {
+                TransAction(() =>
+                {
+                    if (sels.Count == 1 && sels.FirstOrDefault() is IGoControl c)
+                        SendBackward(c);
                 });
             }
         }
@@ -2461,6 +2560,171 @@ namespace Going.UIEditor.Windows
             if (container.Childrens is List<IGoControl> ls) ls.Add(control);
             else if (container.Childrens is GoGridLayoutControlCollection gls) gls.Add(control, col, row);
             else if (container.Childrens is GoTableLayoutControlCollection tls) tls.Add(control, col, row, colspan, rowspan);
+        }
+    }
+    #endregion
+    #region BringToFrontAction
+    public class BringToFrontAction : AbstractAction
+    {
+        private readonly IGoContainer container;
+        private readonly IGoControl control;
+        private int originalIndex; // 💡 Undo를 위한 원래 인덱스 저장
+
+        public BringToFrontAction(IGoContainer container, IGoControl control)
+        {
+            this.container = container;
+            this.control = control;
+        }
+
+        protected override void ExecuteCore()
+        {
+            if (container.Childrens is List<IGoControl> controls)
+            {
+                originalIndex = controls.IndexOf(control);
+                if (originalIndex != -1 && originalIndex != controls.Count - 1)
+                {
+                    controls.RemoveAt(originalIndex);
+                    controls.Insert(controls.Count, control);
+                }
+            }
+        }
+
+        protected override void UnExecuteCore()
+        {
+            if (container.Childrens is List<IGoControl> controls)
+            {
+                int currentIndex = controls.IndexOf(control);
+                if (currentIndex != -1 && currentIndex == controls.Count - 1)
+                {
+                    controls.RemoveAt(currentIndex);
+                    controls.Insert(originalIndex, control);
+                }
+            }
+        }
+    }
+    #endregion
+    #region SendToBackAction
+    public class SendToBackAction : AbstractAction
+    {
+        private readonly IGoContainer container;
+        private readonly IGoControl control;
+        private int originalIndex;
+
+        public SendToBackAction(IGoContainer container, IGoControl control)
+        {
+            this.container = container;
+            this.control = control;
+        }
+
+        protected override void ExecuteCore()
+        {
+            if (container.Childrens is List<IGoControl> controls)
+            {
+                originalIndex = controls.IndexOf(control);
+                if (originalIndex != -1 && originalIndex != 0)
+                {
+                    controls.RemoveAt(originalIndex);
+                    controls.Insert(0, control);
+                }
+            }
+        }
+
+        protected override void UnExecuteCore()
+        {
+            if (container.Childrens is List<IGoControl> controls)
+            {
+                int currentIndex = controls.IndexOf(control);
+                if (currentIndex != -1 && currentIndex == 0)
+                {
+                    controls.RemoveAt(currentIndex);
+                    controls.Insert(originalIndex, control);
+                }
+            }
+        }
+    }
+    #endregion
+    #region BringForwardAction
+    public class BringForwardAction : AbstractAction
+    {
+        private readonly IGoContainer container;
+        private readonly IGoControl control;
+        private int newIndex;
+
+        public BringForwardAction(IGoContainer container, IGoControl control)
+        {
+            this.container = container;
+            this.control = control;
+        }
+
+        protected override void ExecuteCore()
+        {
+            if (container.Childrens is List<IGoControl> controls)
+            {
+                int currentIndex = controls.IndexOf(control);
+                if (currentIndex != -1 && currentIndex < controls.Count - 1)
+                {
+                    newIndex = currentIndex + 1;
+                    controls.RemoveAt(currentIndex);
+                    controls.Insert(newIndex, control);
+                }
+            }
+        }
+
+        protected override void UnExecuteCore()
+        {
+            if (container.Childrens is List<IGoControl> controls)
+            {
+                int currentIndex = controls.IndexOf(control);
+                if (currentIndex != -1 && currentIndex > 0)
+                {
+                    int originalIndex = currentIndex - 1;
+                    controls.RemoveAt(currentIndex);
+                    controls.Insert(originalIndex, control);
+                }
+            }
+        }
+    }
+    #endregion
+    #region SendBackwardAction
+    public class SendBackwardAction : AbstractAction
+    {
+        private readonly IGoContainer container;
+        private readonly IGoControl control;
+
+        public SendBackwardAction(IGoContainer container, IGoControl control)
+        {
+            this.container = container;
+            this.control = control;
+        }
+
+        protected override void ExecuteCore()
+        {
+            if (container.Childrens is List<IGoControl> controls)
+            {
+                int currentIndex = controls.IndexOf(control);
+
+                if (currentIndex > 0)
+                {
+                    int newIndex = currentIndex - 1;
+                    controls.RemoveAt(currentIndex);
+                    controls.Insert(newIndex, control);
+                }
+            }
+        }
+
+        protected override void UnExecuteCore()
+        {
+            if (container.Childrens is List<IGoControl> controls)
+            {
+                int currentIndex = controls.IndexOf(control);
+
+                if (currentIndex != -1 && currentIndex < controls.Count - 1)
+                {
+                    int originalIndex = currentIndex + 1;
+                    controls.RemoveAt(currentIndex);
+                    controls.Insert(originalIndex, control);
+                }
+            }
         }
     }
     #endregion
