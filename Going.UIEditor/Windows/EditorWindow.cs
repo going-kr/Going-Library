@@ -25,6 +25,7 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 using static Going.UIEditor.Controls.PropertyGridItemSizes;
 using Cursor = System.Windows.Forms.Cursor;
@@ -103,7 +104,27 @@ namespace Going.UIEditor.Windows
                 var prj = Program.CurrentProject;
                 if (IsActivated)
                     Invalidate();
+
+                if(cms.Visible)
+                {
+                    var sc = sels.FirstOrDefault() as IGoControl;
+
+                    tsmiBringToFront.Enabled = sels.Count == 1 && sc != null && sc.Parent is IGoContainer con1 && con1.Childrens is List<IGoControl>;
+                    tsmiSendToBack.Enabled = sels.Count == 1 && sc != null && sc.Parent is IGoContainer con2 && con2.Childrens is List<IGoControl>;
+
+                    tsmiCopy.Enabled = sels.Count > 0 && sc != null && !isTopLevelContainer(sc);
+                    tsmiCut.Enabled = sels.Count > 0 && sc != null && !isTopLevelContainer(sc);
+                    tsmiPaste.Enabled = Clipboard.GetData("going-control") is string;
+                    tsmiDelete.Enabled = sels.Count > 0 && sc != null && !isTopLevelContainer(sc);
+                }
             };
+
+            tsmiBringToFront.Click += (o, s) => BringToFrontGUI();
+            tsmiSendToBack.Click += (o, s) => SendToBackGUI();
+            tsmiCut.Click += (o, s) => Cut();
+            tsmiCopy.Click += (o, s) => Copy();
+            tsmiPaste.Click += (o, s) => Paste();
+            tsmiDelete.Click += (o, s) => Delete();
             #endregion
         }
         #endregion
@@ -483,6 +504,7 @@ namespace Going.UIEditor.Windows
             if (prj != null)
             {
                 var (rt, rtvs, rths) = GetBounds();
+
                 if (rtvs.HasValue && CollisionTool.Check(rtvs.Value, e.X, e.Y)) vscroll.MouseDown(e.X, e.Y, rtvs.Value);
                 else if (rths.HasValue && CollisionTool.Check(rths.Value, e.X, e.Y)) hscroll.MouseDown(e.X, e.Y, rths.Value);
                 else if (rt.HasValue)
@@ -564,6 +586,34 @@ namespace Going.UIEditor.Windows
                                 }
                                 #endregion
                             }
+                        }
+                    }
+                    #endregion
+
+                    #region cms
+                    if ( e.Button == MouseButtons.Right)
+                    {
+                        if (CollisionTool.Check(rt.Value, e.X, e.Y))
+                        {
+                            var ls = target_controlstack(x, y);
+                            var c = ls.LastOrDefault();
+                            var sc = sels.FirstOrDefault() as IGoControl;
+
+                            tsmiSelect.DropDownItems.Clear();
+                            foreach (var v in ls)
+                                tsmiSelect.DropDownItems.Add(new ToolStripMenuItem(v.Name ?? $"({v.GetType().Name[2..]})", null,
+                                    (o, s) =>
+                                    {
+                                        if (o is ToolStripMenuItem tsmi && tsmi.Tag is IGoControl c)
+                                            SelectedControl(sels, [c]);
+                                    })
+                                {
+                                    ForeColor = Util.FromArgb(GoThemeW.Current.Base5),
+                                    Tag = v
+                                });
+
+
+                            ContextMenuStrip = cms;
                         }
                     }
                     #endregion
@@ -661,6 +711,7 @@ namespace Going.UIEditor.Windows
                     int y = Convert.ToInt32(e.Y - rt.Value.Top - vspos);
                     #endregion
 
+
                     if (dragAnchor != null)
                     {
                         #region anchor drag
@@ -675,7 +726,7 @@ namespace Going.UIEditor.Windows
                                     #region tpnl
                                     (vcon, vc, tidx) =>
                                     {
-                                        if(tidx != null && vcon is GoTableLayoutPanel tpnl)
+                                        if (tidx != null && vcon is GoTableLayoutPanel tpnl)
                                         {
                                             DeleteControl(dragAnchor.Control);
                                             AddControl(tpnl, dragAnchor.Control, tidx.Col, tidx.Row, tidx.Colspan, tidx.Rowspan);
@@ -749,8 +800,13 @@ namespace Going.UIEditor.Windows
                                 }
                                 else
                                 {
-                                    sels.Clear();
-                                    foreach (var v in vsels) sels.Add(v);
+                                    var c = vsels.FirstOrDefault();
+                                    if (c != null && sels.Contains(c)) { }
+                                    else
+                                    {
+                                        sels.Clear();
+                                        foreach (var v in vsels) sels.Add(v);
+                                    }
                                 }
 
                                 changed = true;
@@ -776,7 +832,10 @@ namespace Going.UIEditor.Windows
                         }
                         #endregion
                     }
+
                 }
+
+                ContextMenuStrip = null;
 
                 #region release
                 var clears1 = sels.Where(x => x is IGoControl sc && sc.Parent is GoTabControl tab && !tab.Childrens.Contains(sc)).ToArray();
