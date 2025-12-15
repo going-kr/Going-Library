@@ -39,6 +39,9 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 14)] public float? ButtonSize { get; set; }
         [GoProperty(PCategory.Control, 15)] public List<GoButtonItem> Buttons { get; set; } = [];
 
+        [GoProperty(PCategory.Control, 16)] public GoAutoFontSize AutoFontSize { get; set; } = GoAutoFontSize.NotUsed;
+        [GoProperty(PCategory.Control, 17)] public GoAutoFontSize AutoIconSize { get; set; } = GoAutoFontSize.NotUsed;
+
         [JsonIgnore] private bool UseTitle => TitleSize.HasValue && TitleSize.Value > 0;
         [JsonIgnore] private bool UseButton => ButtonSize.HasValue && ButtonSize.Value > 0 && Buttons.Count > 0;
         #endregion
@@ -87,13 +90,17 @@ namespace Going.UI.Controls
             var rndButtons = Util.Rounds(GoDirectionHV.Horizon, rndButton, (ButtonSize.HasValue ? Buttons.Count : 0));
 
             #endregion
+
+            var fsz = Util.FontSize(AutoFontSize, rtBox.Height) ?? FontSize;
+            var isz = Util.FontSize(AutoIconSize, rtBox.Height) ?? IconSize;
+
             #endregion
 
             #region Title
             if (useT)
             {
                 Util.DrawBox(canvas, rtTitle, cFill, rndTitle, thm.Corner);
-                Util.DrawTextIcon(canvas, Title, FontName, FontStyle, FontSize, IconString, IconSize, GoDirectionHV.Horizon, IconGap, rtTitle, cText);
+                Util.DrawTextIcon(canvas, Title, FontName, FontStyle, fsz, IconString, isz, GoDirectionHV.Horizon, IconGap, rtTitle, cText);
             }
             #endregion
 
@@ -123,7 +130,7 @@ namespace Going.UI.Controls
                     }
 
                     if (btn.Down) rt.Offset(0, 1);
-                    Util.DrawTextIcon(canvas, btn.Text, FontName, FontStyle, FontSize, btn.IconString, IconSize, GoDirectionHV.Horizon, IconGap, rt, cTxt, GoContentAlignment.MiddleCenter);
+                    Util.DrawTextIcon(canvas, btn.Text, FontName, FontStyle, fsz, btn.IconString, isz, GoDirectionHV.Horizon, IconGap, rt, cTxt, GoContentAlignment.MiddleCenter);
                 });
             }
             #endregion
@@ -260,7 +267,7 @@ namespace Going.UI.Controls
     public class GoValueString : GoValue
     {
         #region Properties
-        [GoProperty(PCategory.Control, 16)] public string? Value { get; set; }
+        [GoProperty(PCategory.Control, 18)] public string? Value { get; set; }
         #endregion
 
         #region OnDrawValue
@@ -268,7 +275,9 @@ namespace Going.UI.Controls
         {
             var cText = thm.ToColor(TextColor);
 
-            Util.DrawText(canvas, Value, FontName, FontStyle, FontSize, rtValue, cText);
+            var fsz = Util.FontSize(AutoFontSize, rtValue.Height) ?? FontSize;
+
+            Util.DrawText(canvas, Value, FontName, FontStyle, fsz, rtValue, cText);
         }
         #endregion
     }
@@ -276,12 +285,15 @@ namespace Going.UI.Controls
     public class GoValueNumber<T> : GoValue where T : struct
     {
         #region Properties
-        [GoProperty(PCategory.Control, 16)] public T Value { get; set; }
-        [GoProperty(PCategory.Control, 17)] public string? FormatString { get; set; } = null;
+        [GoProperty(PCategory.Control, 18)] public T Value { get; set; }
+        [GoProperty(PCategory.Control, 19)] public string? FormatString { get; set; } = null;
 
-        [GoProperty(PCategory.Control, 18)] public string? Unit { get; set; }
-        [GoProperty(PCategory.Control, 19)] public float UnitFontSize { get; set; } = 12;
-        [GoProperty(PCategory.Control, 20)] public float? UnitSize { get; set; } = null;
+        [GoProperty(PCategory.Control, 20)] public string? Unit { get; set; }
+        [GoProperty(PCategory.Control, 21)] public float UnitFontSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 22)] public float? UnitSize { get; set; } = null;
+
+        [GoProperty(PCategory.Control, 23)] public GoAutoFontSize AutoUnitFontSize { get; set; } = GoAutoFontSize.NotUsed;
+
         #endregion
 
         #region Constructor
@@ -311,12 +323,15 @@ namespace Going.UI.Controls
             var cText = thm.ToColor(TextColor);
             var (rtText, rtUnit) = bounds(rtValue);
 
+            var fsz = Util.FontSize(AutoFontSize, rtValue.Height) ?? FontSize;
+            var ufsz = Util.FontSize(AutoUnitFontSize, rtValue.Height) ?? UnitFontSize;
+
             var text = ValueTool.ToString(Value, FormatString) ?? "";
-            Util.DrawText(canvas, text, FontName, FontStyle, FontSize, rtText, cText);
+            Util.DrawText(canvas, text, FontName, FontStyle, fsz, rtText, cText);
 
             if (UnitSize.HasValue)
             {
-                Util.DrawText(canvas, Unit, FontName, FontStyle, UnitFontSize, rtUnit, cText);
+                Util.DrawText(canvas, Unit, FontName, FontStyle, ufsz, rtUnit, cText);
 
                 using var pe = SKPathEffect.CreateDash([2, 2], 2);
                 p.StrokeWidth = 1;
@@ -341,12 +356,12 @@ namespace Going.UI.Controls
     public class GoValueBoolean : GoValue
     {
         #region Properties
-        [GoProperty(PCategory.Control, 16)] public bool Value { get; set; }
+        [GoProperty(PCategory.Control, 18)] public bool Value { get; set; }
 
-        [GoProperty(PCategory.Control, 17)] public string? OnText { get; set; } = "ON";
-        [GoProperty(PCategory.Control, 18)] public string? OffText { get; set; } = "OFF";
-        [GoProperty(PCategory.Control, 19)] public string? OnIconString { get; set; }
-        [GoProperty(PCategory.Control, 20)] public string? OffIconString { get; set; }
+        [GoProperty(PCategory.Control, 19)] public string? OnText { get; set; } = "ON";
+        [GoProperty(PCategory.Control, 20)] public string? OffText { get; set; } = "OFF";
+        [GoProperty(PCategory.Control, 21)] public string? OnIconString { get; set; }
+        [GoProperty(PCategory.Control, 22)] public string? OffIconString { get; set; }
         #endregion
 
         #region OnDrawValue
@@ -359,9 +374,12 @@ namespace Going.UI.Controls
             var cTextD = Util.FromArgb(80, cTextL);
             var (rtOn, rtOff) = bounds(rtValue);
 
+            var fsz = Util.FontSize(AutoFontSize, rtValue.Height) ?? FontSize;
+            var isz = Util.FontSize(AutoIconSize, rtValue.Height) ?? IconSize;
 
-            Util.DrawTextIcon(canvas, OnText, FontName, FontStyle, FontSize, OnIconString, IconSize, GoDirectionHV.Horizon, IconGap, rtOn, Value ? cTextL : cTextD);
-            Util.DrawTextIcon(canvas, OffText, FontName, FontStyle, FontSize, OffIconString, IconSize, GoDirectionHV.Horizon, IconGap, rtOff, Value ? cTextD : cTextL);
+
+            Util.DrawTextIcon(canvas, OnText, FontName, FontStyle, fsz, OnIconString, isz, GoDirectionHV.Horizon, IconGap, rtOn, Value ? cTextL : cTextD);
+            Util.DrawTextIcon(canvas, OffText, FontName, FontStyle, fsz, OffIconString, isz, GoDirectionHV.Horizon, IconGap, rtOff, Value ? cTextD : cTextL);
 
             using var pe = SKPathEffect.CreateDash([2, 2], 2);
             p.StrokeWidth = 1;

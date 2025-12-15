@@ -51,6 +51,11 @@ namespace Going.UI.Controls
         }
 
         [GoProperty(PCategory.Control, 18)] public bool AllowToggle { get; set; } = true;
+
+
+        [GoProperty(PCategory.Control, 19)] public GoAutoFontSize AutoFontSize { get; set; } = GoAutoFontSize.NotUsed;
+        [GoProperty(PCategory.Control, 20)] public GoAutoFontSize AutoIconSize { get; set; } = GoAutoFontSize.NotUsed;
+
         #endregion
 
         #region Event
@@ -84,7 +89,11 @@ namespace Going.UI.Controls
                                                 Round, thm.Corner, true, BorderWidth, FillStyle, bDown);
 
             if (bDown) rtBox.Offset(0, 1);
-            Util.DrawTextIcon(canvas, t, FontName, FontStyle, FontSize, IconString, IconSize, IconDirection, IconGap, rtBox, cText, GoContentAlignment.MiddleCenter);
+
+            var fsz = Util.FontSize(AutoFontSize, rtBox.Height) ?? FontSize;
+            var isz = Util.FontSize(AutoIconSize, rtBox.Height) ?? IconSize;
+
+            Util.DrawTextIcon(canvas, t, FontName, FontStyle, fsz, IconString, isz, IconDirection, IconGap, rtBox, cText, GoContentAlignment.MiddleCenter);
 
             base.OnDraw(canvas, thm);
         }

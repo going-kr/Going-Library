@@ -40,6 +40,8 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 8)] public int BoxSize { get; set; } = 24;
         [GoProperty(PCategory.Control, 9)] public int Gap { get; set; } = 10;
         [GoProperty(PCategory.Control, 10)] public GoContentAlignment ContentAlignment { get; set; } = GoContentAlignment.MiddleCenter;
+
+        [GoProperty(PCategory.Control, 11)] public GoAutoFontSize AutoFontSize { get; set; } = GoAutoFontSize.NotUsed;
         #endregion
 
         #region Event
@@ -72,7 +74,10 @@ namespace Going.UI.Controls
             Util.DrawBox(canvas, rtBox, cBox.BrightnessTransmit(bHover ? thm.HoverFillBrightness : 0), cBox.BrightnessTransmit(bHover ? thm.HoverBorderBrightness : 0), GoRoundType.All, thm.Corner);
 
             if (Checked) Util.DrawIcon(canvas, "fa-check", BoxSize * 0.65F, rtBox, cChk);
-            Util.DrawText(canvas, Text, FontName, FontStyle, FontSize, rtText, cText, GoContentAlignment.MiddleCenter);
+
+            var fsz = Util.FontSize(AutoFontSize, rtText.Height) ?? FontSize;
+
+            Util.DrawText(canvas, Text, FontName, FontStyle, fsz, rtText, cText, GoContentAlignment.MiddleCenter);
 
             base.OnDraw(canvas, thm);
         }

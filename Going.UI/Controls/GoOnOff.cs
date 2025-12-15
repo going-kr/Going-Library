@@ -35,7 +35,7 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 15)] public float? Corner { get; set; }
 
         private bool bOnOff = false;
-        [GoProperty(PCategory.Control, 12)]
+        [GoProperty(PCategory.Control, 16)]
         public bool OnOff
         {
             get => bOnOff;
@@ -52,6 +52,9 @@ namespace Going.UI.Controls
                 }
             }
         }
+
+        [GoProperty(PCategory.Control, 17)] public GoAutoFontSize AutoFontSize { get; set; } = GoAutoFontSize.NotUsed;
+        [GoProperty(PCategory.Control, 17)] public GoAutoFontSize AutoCursorIconSize { get; set; } = GoAutoFontSize.NotUsed;
         #endregion
 
         #region Member Variable
@@ -94,6 +97,9 @@ namespace Going.UI.Controls
 
             Util.DrawBox(canvas, rtContent, cBox, SKColors.Transparent, GoRoundType.All, corner);
 
+            var fsz = Util.FontSize(AutoFontSize, rtContent.Height) ?? FontSize;
+            var isz = Util.FontSize(AutoCursorIconSize, rtContent.Height) ?? CursorIconSize;
+
             var crt = rtContent; crt.Inflate(-2, -2);
             using var pth = PathTool.Box(crt, GoRoundType.All, corner);
             using (new SKAutoCanvasRestore(canvas))
@@ -104,12 +110,12 @@ namespace Going.UI.Controls
 
                 if (DrawText)
                 {
-                    Util.DrawText(canvas, OnText, FontName, FontStyle, FontSize, rtOn, cText);
-                    Util.DrawText(canvas, OffText, FontName, FontStyle, FontSize, rtOff, cText);
+                    Util.DrawText(canvas, OnText, FontName, FontStyle, fsz, rtOn, cText);
+                    Util.DrawText(canvas, OffText, FontName, FontStyle, fsz, rtOff, cText);
                 }
 
                 if (CursorIconDraw)
-                    Util.DrawIcon(canvas, CursorIconString, CursorIconSize ?? rtCursor.Height / 2, rtCursor, OnOff ? cOn : cOff);
+                    Util.DrawIcon(canvas, CursorIconString, isz ?? rtCursor.Height / 2, rtCursor, OnOff ? cOn : cOff);
             }
 
             Util.DrawBox(canvas, rtContent, SKColors.Transparent, cBorder, GoRoundType.All, corner);

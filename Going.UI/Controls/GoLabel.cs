@@ -32,6 +32,10 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 14)] public bool BackgroundDraw { get; set; } = true;
         [GoProperty(PCategory.Control, 15)] public bool BorderOnly{ get; set; } = false;
         [GoProperty(PCategory.Control, 16)] public GoContentAlignment ContentAlignment { get; set; } = GoContentAlignment.MiddleCenter;
+
+        [GoProperty(PCategory.Control, 17)] public GoAutoFontSize AutoFontSize { get; set; } = GoAutoFontSize.NotUsed;
+        [GoProperty(PCategory.Control, 18)] public GoAutoFontSize AutoIconSize { get; set; } = GoAutoFontSize.NotUsed;
+
         #endregion
 
         #region Override
@@ -52,7 +56,10 @@ namespace Going.UI.Controls
                     Util.DrawBox(canvas, rtBox, cLabel, cBor, Round, thm.Corner, true, BorderWidth);
             }
 
-            Util.DrawTextIcon(canvas, Text, FontName, FontStyle, FontSize, IconString, IconSize, IconDirection, IconGap, rtText, cText, ContentAlignment);
+            var fsz = Util.FontSize(AutoFontSize, rtText.Height) ?? FontSize;
+            var isz = Util.FontSize(AutoIconSize, rtText.Height) ?? IconSize;
+
+            Util.DrawTextIcon(canvas, Text, FontName, FontStyle, fsz, IconString, isz, IconDirection, IconGap, rtText, cText, ContentAlignment);
 
             base.OnDraw(canvas, thm);
         }

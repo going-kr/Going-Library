@@ -47,7 +47,8 @@ namespace Going.UI.Controls
         }
         [GoProperty(PCategory.Control, 8)] public int BoxSize { get; set; } = 24;
         [GoProperty(PCategory.Control, 9)] public int Gap { get; set; } = 10;
-        [GoProperty(PCategory.Control,10)] public GoContentAlignment ContentAlignment { get; set; } = GoContentAlignment.MiddleCenter;
+        [GoProperty(PCategory.Control, 10)] public GoContentAlignment ContentAlignment { get; set; } = GoContentAlignment.MiddleCenter;
+        [GoProperty(PCategory.Control, 11)] public GoAutoFontSize AutoFontSize { get; set; } = GoAutoFontSize.NotUsed;
         #endregion
 
         #region Event
@@ -81,7 +82,9 @@ namespace Going.UI.Controls
             var sz = BoxSize * 0.45F;
             if (Checked) Util.DrawBox(canvas, MathTool.MakeRectangle(rtBox, new SKSize(sz, sz)), cText, GoRoundType.Ellipse, thm.Corner);
 
-            Util.DrawText(canvas, Text, FontName, FontStyle, FontSize, rtText, cText, GoContentAlignment.MiddleCenter);
+            var fsz = Util.FontSize(AutoFontSize, rtBox.Height) ?? FontSize;
+
+            Util.DrawText(canvas, Text, FontName, FontStyle, fsz, rtText, cText, GoContentAlignment.MiddleCenter);
 
             base.OnDraw(canvas, thm);
         }

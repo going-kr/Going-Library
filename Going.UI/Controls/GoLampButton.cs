@@ -47,6 +47,9 @@ namespace Going.UI.Controls
 
         [GoProperty(PCategory.Control, 13)] public int LampSize { get; set; } = 24;
         [GoProperty(PCategory.Control, 14)] public int Gap { get; set; } = 10;
+
+        [GoProperty(PCategory.Control, 15)] public GoAutoFontSize AutoFontSize { get; set; } = GoAutoFontSize.NotUsed;
+
         #endregion
 
         #region Event
@@ -128,7 +131,10 @@ namespace Going.UI.Controls
 
 
 #endif
-            Util.DrawText(canvas, Text, FontName, FontStyle, FontSize, rtText, cText, GoContentAlignment.MiddleCenter);
+
+            var fsz = Util.FontSize(AutoFontSize, rtBox.Height) ?? FontSize;
+
+            Util.DrawText(canvas, Text, FontName, FontStyle, fsz, rtText, cText, GoContentAlignment.MiddleCenter);
 
 
             base.OnDraw(canvas, thm);

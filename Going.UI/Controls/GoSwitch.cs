@@ -61,6 +61,10 @@ namespace Going.UI.Controls
                 }
             }
         }
+
+        [GoProperty(PCategory.Control, 19)] public GoAutoFontSize AutoFontSize { get; set; } = GoAutoFontSize.NotUsed;
+        [GoProperty(PCategory.Control, 20)] public GoAutoFontSize AutoIconSize { get; set; } = GoAutoFontSize.NotUsed;
+
         #endregion
 
         #region Member Variable
@@ -200,6 +204,11 @@ namespace Going.UI.Controls
             var cTL = cOnText;
             var cTD = cOffText;
 
+
+            var fsz = Util.FontSize(AutoFontSize, rtContent.Height) ?? FontSize;
+            var isz = Util.FontSize(AutoIconSize, rtContent.Height) ?? IconSize;
+
+
             if (Animation.UseAnimation && ani.IsPlaying)
             {
                 var cton = ani.Variable == "ON" ? ani.Value(AnimationAccel.DCL, cTD, cTL) : ani.Value(AnimationAccel.DCL, cTL, cTD);
@@ -207,8 +216,8 @@ namespace Going.UI.Controls
                 var cion = ani.Variable == "ON" ? ani.Value(AnimationAccel.DCL, cTD, cOn) : ani.Value(AnimationAccel.DCL, cOn, cTD);
                 var cioff = ani.Variable == "ON" ? ani.Value(AnimationAccel.DCL, cOff, cTD) : ani.Value(AnimationAccel.DCL, cTD, cOff);
 
-                Util.DrawTextIcon(canvas, OnText, FontName, FontStyle, FontSize, OnIconString, IconSize, IconDirection, IconGap, rtOnText, cton, cion);
-                Util.DrawTextIcon(canvas, OffText, FontName, FontStyle, FontSize, OffIconString, IconSize, IconDirection, IconGap, rtOffText, ctoff, cioff);
+                Util.DrawTextIcon(canvas, OnText, FontName, FontStyle, fsz, OnIconString, isz, IconDirection, IconGap, rtOnText, cton, cion);
+                Util.DrawTextIcon(canvas, OffText, FontName, FontStyle, fsz, OffIconString, isz, IconDirection, IconGap, rtOffText, ctoff, cioff);
             }
             else
             {
@@ -217,8 +226,8 @@ namespace Going.UI.Controls
                 var cion = OnOff ? cOn : cTD;
                 var cioff = OnOff ? cTD : cOff;
 
-                Util.DrawTextIcon(canvas, OnText, FontName, FontStyle, FontSize, OnIconString, IconSize, IconDirection, IconGap, rtOnText, cton, cion);
-                Util.DrawTextIcon(canvas, OffText, FontName, FontStyle, FontSize, OffIconString, IconSize, IconDirection, IconGap, rtOffText, ctoff, cioff);
+                Util.DrawTextIcon(canvas, OnText, FontName, FontStyle, fsz, OnIconString, isz, IconDirection, IconGap, rtOnText, cton, cion);
+                Util.DrawTextIcon(canvas, OffText, FontName, FontStyle, fsz, OffIconString, isz, IconDirection, IconGap, rtOffText, ctoff, cioff);
 
             }
             #endregion

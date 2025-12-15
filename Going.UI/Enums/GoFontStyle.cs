@@ -18,10 +18,12 @@ namespace Going.UI.Enums
     public enum GoAutoFontSize
     {
         NotUsed,
+        XXS,
         XS,
         S,
         M,
         L,
-        XL
+        XL,
+        XXL,
     }
 }

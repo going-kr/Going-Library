@@ -16,6 +16,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -44,6 +45,10 @@ namespace Going.UI.Controls
 
         [GoProperty(PCategory.Control, 14)] public float? ButtonSize { get; set; }
         [GoProperty(PCategory.Control, 15)] public List<GoButtonItem> Buttons { get; set; } = [];
+
+        [GoProperty(PCategory.Control, 16)] public GoAutoFontSize AutoFontSize { get; set; } = GoAutoFontSize.NotUsed;
+        [GoProperty(PCategory.Control, 17)] public GoAutoFontSize AutoIconSize { get; set; } = GoAutoFontSize.NotUsed;
+
         [JsonIgnore] public virtual bool Valid => true;
 
         [JsonIgnore] private bool UseTitle => TitleSize.HasValue && TitleSize.Value > 0;
@@ -94,13 +99,17 @@ namespace Going.UI.Controls
             var rndButtons = Util.Rounds(GoDirectionHV.Horizon, rndButton, (ButtonSize.HasValue ? Buttons.Count : 0));
 
             #endregion
+
+            var fsz = Util.FontSize(AutoFontSize, rtBox.Height) ?? FontSize;
+            var isz = Util.FontSize(AutoIconSize, rtBox.Height) ?? IconSize;
+
             #endregion
 
             #region Title
             if (useT)
             {
                 Util.DrawBox(canvas, rtTitle, cFill, rndTitle, thm.Corner);
-                Util.DrawTextIcon(canvas, Title, FontName, FontStyle, FontSize, IconString, IconSize, GoDirectionHV.Horizon, IconGap, rtTitle, cText);
+                Util.DrawTextIcon(canvas, Title, FontName, FontStyle, fsz, IconString, isz, GoDirectionHV.Horizon, IconGap, rtTitle, cText);
             }
             #endregion
 
@@ -130,7 +139,7 @@ namespace Going.UI.Controls
                     }
 
                     if (btn.Down) rt.Offset(0, 1);
-                    Util.DrawTextIcon(canvas, btn.Text, FontName, FontStyle, FontSize, btn.IconString, IconSize, GoDirectionHV.Horizon, IconGap, rt, cTxt, GoContentAlignment.MiddleCenter);
+                    Util.DrawTextIcon(canvas, btn.Text, FontName, FontStyle, fsz, btn.IconString, isz, GoDirectionHV.Horizon, IconGap, rt, cTxt, GoContentAlignment.MiddleCenter);
                 });
             }
             #endregion
@@ -270,7 +279,7 @@ namespace Going.UI.Controls
     {
         #region Properties
         private string sVal = "";
-        [GoProperty(PCategory.Control, 16)]
+        [GoProperty(PCategory.Control, 18)]
         public string Value
         {
             get => sVal;
@@ -293,8 +302,12 @@ namespace Going.UI.Controls
         protected override void OnDrawValue(SKCanvas canvas, GoTheme thm, SKRect rtValue)
         {
             var cText = thm.ToColor(TextColor);
+         
+            var fsz = Util.FontSize(AutoFontSize, rtValue.Height) ?? FontSize;
+            var isz = Util.FontSize(AutoIconSize, rtValue.Height) ?? IconSize;
 
-            Util.DrawText(canvas, Value, FontName, FontStyle, FontSize, rtValue, cText);
+
+            Util.DrawText(canvas, Value, FontName, FontStyle, fsz, rtValue, cText);
 
         }
         #endregion
@@ -311,7 +324,7 @@ namespace Going.UI.Controls
     {
         #region Properties
         private T sVal = default(T);
-        [GoProperty(PCategory.Control, 16)]
+        [GoProperty(PCategory.Control, 18)]
         public T Value
         {
             get => sVal;
@@ -325,15 +338,15 @@ namespace Going.UI.Controls
             }
         }
 
-        [GoProperty(PCategory.Control, 17)] public T? Minimum { get; set; } = null;
-        [GoProperty(PCategory.Control, 18)] public T? Maximum { get; set; } = null;
+        [GoProperty(PCategory.Control, 19)] public T? Minimum { get; set; } = null;
+        [GoProperty(PCategory.Control, 20)] public T? Maximum { get; set; } = null;
 
-        [GoProperty(PCategory.Control, 19)] public string? FormatString { get; set; } = null;
+        [GoProperty(PCategory.Control, 21)] public string? FormatString { get; set; } = null;
 
         [JsonIgnore] public override bool Valid => bValid;
 
-        [GoProperty(PCategory.Control, 20)] public string? Unit { get; set; }
-        [GoProperty(PCategory.Control, 21)] public float? UnitSize { get; set; } = null;
+        [GoProperty(PCategory.Control, 22)] public string? Unit { get; set; }
+        [GoProperty(PCategory.Control, 23)] public float? UnitSize { get; set; } = null;
         #endregion
 
         #region Event
@@ -372,12 +385,15 @@ namespace Going.UI.Controls
             var cText = thm.ToColor(TextColor);
             var (rtText, rtUnit) = bounds(rtValue);
 
+            var fsz = Util.FontSize(AutoFontSize, rtValue.Height) ?? FontSize;
+            var isz = Util.FontSize(AutoIconSize, rtValue.Height) ?? IconSize;
+
             var text = ValueTool.ToString(Value, FormatString) ?? "";
-            Util.DrawText(canvas, text, FontName, FontStyle, FontSize, rtText, cText);
+            Util.DrawText(canvas, text, FontName, FontStyle, fsz, rtText, cText);
 
             if(UnitSize.HasValue)
             {
-                Util.DrawText(canvas, Unit, FontName, FontStyle, FontSize, rtUnit, cText);
+                Util.DrawText(canvas, Unit, FontName, FontStyle, fsz, rtUnit, cText);
 
                 using var pe = SKPathEffect.CreateDash([2, 2], 2);
                 p.StrokeWidth = 1;
@@ -432,7 +448,7 @@ namespace Going.UI.Controls
     {
         #region Properties
         private bool sVal = false;
-        [GoProperty(PCategory.Control, 16)]
+        [GoProperty(PCategory.Control, 18)]
         public bool Value
         {
             get => sVal;
@@ -450,10 +466,10 @@ namespace Going.UI.Controls
             }
         }
 
-        [GoProperty(PCategory.Control, 17)] public string? OnText { get; set; } = "ON";
-        [GoProperty(PCategory.Control, 18)] public string? OffText { get; set; } = "OFF";
-        [GoProperty(PCategory.Control, 19)] public string? OnIconString { get; set; }
-        [GoProperty(PCategory.Control, 20)] public string? OffIconString { get; set; }
+        [GoProperty(PCategory.Control, 19)] public string? OnText { get; set; } = "ON";
+        [GoProperty(PCategory.Control, 20)] public string? OffText { get; set; } = "OFF";
+        [GoProperty(PCategory.Control, 21)] public string? OnIconString { get; set; }
+        [GoProperty(PCategory.Control, 22)] public string? OffIconString { get; set; }
         #endregion
         
         #region Event
@@ -482,19 +498,22 @@ namespace Going.UI.Controls
             var cTextD = Util.FromArgb(80, cTextL);
             var (rtOn, rtOff) = bounds(rtValue);
 
+            var fsz = Util.FontSize(AutoFontSize, rtValue.Height) ?? FontSize;
+            var isz = Util.FontSize(AutoIconSize, rtValue.Height) ?? IconSize;
+
             if (Animation.UseAnimation && ani.IsPlaying)
             {
                 var cOn = ani.Variable == "ON" ? ani.Value(AnimationAccel.Linear, cTextD, cTextL) : ani.Value(AnimationAccel.Linear, cTextL, cTextD);
                 var cOff = ani.Variable == "ON" ? ani.Value(AnimationAccel.Linear, cTextL, cTextD) : ani.Value(AnimationAccel.Linear, cTextD, cTextL);
 
-                Util.DrawTextIcon(canvas, OnText, FontName, FontStyle, FontSize, OnIconString, IconSize, GoDirectionHV.Horizon, IconGap, rtOn, cOn);
-                Util.DrawTextIcon(canvas, OffText, FontName, FontStyle, FontSize, OffIconString, IconSize, GoDirectionHV.Horizon, IconGap, rtOff, cOff);
+                Util.DrawTextIcon(canvas, OnText, FontName, FontStyle, fsz, OnIconString, isz, GoDirectionHV.Horizon, IconGap, rtOn, cOn);
+                Util.DrawTextIcon(canvas, OffText, FontName, FontStyle, fsz, OffIconString, isz, GoDirectionHV.Horizon, IconGap, rtOff, cOff);
 
             }
             else
             {
-                Util.DrawTextIcon(canvas, OnText, FontName, FontStyle, FontSize, OnIconString, IconSize, GoDirectionHV.Horizon, IconGap, rtOn, Value ? cTextL : cTextD);
-                Util.DrawTextIcon(canvas, OffText, FontName, FontStyle, FontSize, OffIconString, IconSize, GoDirectionHV.Horizon, IconGap, rtOff, Value ? cTextD : cTextL);
+                Util.DrawTextIcon(canvas, OnText, FontName, FontStyle, fsz, OnIconString, isz, GoDirectionHV.Horizon, IconGap, rtOn, Value ? cTextL : cTextD);
+                Util.DrawTextIcon(canvas, OffText, FontName, FontStyle, fsz, OffIconString, isz, GoDirectionHV.Horizon, IconGap, rtOff, Value ? cTextD : cTextL);
             }
 
             using var pe = SKPathEffect.CreateDash([2, 2], 2);
@@ -531,7 +550,7 @@ namespace Going.UI.Controls
     public class GoInputCombo : GoInput
     {
         #region Properties
-        [GoProperty(PCategory.Control, 16)] public List<GoListItem> Items { get; set; } = [];
+        [GoProperty(PCategory.Control, 18)] public List<GoListItem> Items { get; set; } = [];
 
         private int nSelIndex = -1;
         [JsonIgnore]
@@ -550,8 +569,8 @@ namespace Going.UI.Controls
 
         [JsonIgnore] public GoListItem? SelectedItem => SelectedIndex >= 0 && SelectedIndex < Items.Count ? Items[SelectedIndex] : null;
 
-        [GoProperty(PCategory.Control, 17)] public int ItemHeight { get; set; } = 30;
-        [GoProperty(PCategory.Control, 18)] public int MaximumViewCount { get; set; } = 8;
+        [GoProperty(PCategory.Control, 19)] public int ItemHeight { get; set; } = 30;
+        [GoProperty(PCategory.Control, 20)] public int MaximumViewCount { get; set; } = 8;
         #endregion
 
         #region Event
@@ -573,11 +592,14 @@ namespace Going.UI.Controls
             var cText = thm.ToColor(TextColor);
             var (rtText, rtArrow) = bounds(rtValue);
 
+            var fsz = Util.FontSize(AutoFontSize, rtText.Height) ?? FontSize;
+            var isz = Util.FontSize(AutoIconSize, rtText.Height) ?? IconSize;
+
             #region item
             if (SelectedIndex >= 0 && SelectedIndex < Items.Count)
             {
                 var item = Items[SelectedIndex];
-                Util.DrawTextIcon(canvas, item.Text, FontName, FontStyle, FontSize, item.IconString, IconSize, GoDirectionHV.Horizon, IconGap, rtText, cText);
+                Util.DrawTextIcon(canvas, item.Text, FontName, FontStyle, fsz, item.IconString, isz, GoDirectionHV.Horizon, IconGap, rtText, cText);
             }
             #endregion
 
@@ -632,7 +654,7 @@ namespace Going.UI.Controls
     public class GoInputSelector : GoInput
     {
         #region Properties
-        [GoProperty(PCategory.Control, 16)] public List<GoListItem> Items { get; set; } = [];
+        [GoProperty(PCategory.Control, 18)] public List<GoListItem> Items { get; set; } = [];
 
         private int nSelIndex = -1;
         [JsonIgnore]
@@ -680,6 +702,9 @@ namespace Going.UI.Controls
             var cText = thm.ToColor(TextColor);
             var (rtText, rtArrowL, rtArrowR) = bounds(rtValue);
 
+            var fsz = Util.FontSize(AutoFontSize, rtText.Height) ?? FontSize;
+            var isz = Util.FontSize(AutoIconSize, rtText.Height) ?? IconSize;
+
             #region item
             using (new SKAutoCanvasRestore(canvas))
             {
@@ -698,13 +723,13 @@ namespace Going.UI.Controls
                                 var itmP = Items[selidx - 1];
                                 var rtP = Util.FromRect(rtText.Left + ani.Value(AnimationAccel.DCL, 0, -rtText.Width), rtText.Top, rtText.Width, rtText.Height);
                                 var cP = cText.WithAlpha(Convert.ToByte(ani.Value(AnimationAccel.DCL, 255, 0)));
-                                Util.DrawTextIcon(canvas, itmP.Text, FontName, FontStyle, FontSize, itmP.IconString, IconSize, GoDirectionHV.Horizon, IconGap, rtP, cP);
+                                Util.DrawTextIcon(canvas, itmP.Text, FontName, FontStyle, fsz, itmP.IconString, isz, GoDirectionHV.Horizon, IconGap, rtP, cP);
                             }
 
                             var rtN = Util.FromRect(rtText.Left + ani.Value(AnimationAccel.DCL, rtText.Width, 0), rtText.Top, rtText.Width, rtText.Height);
                             var itmN = Items[selidx];
                             var cN = cText.WithAlpha(Convert.ToByte(ani.Value(AnimationAccel.DCL, 0, 255)));
-                            Util.DrawTextIcon(canvas, itmN.Text, FontName, FontStyle, FontSize, itmN.IconString, IconSize, GoDirectionHV.Horizon, IconGap, rtN, cN);
+                            Util.DrawTextIcon(canvas, itmN.Text, FontName, FontStyle, fsz, itmN.IconString, isz, GoDirectionHV.Horizon, IconGap, rtN, cN);
                         }
                         else if(dir == "Prev")
                         {
@@ -713,13 +738,13 @@ namespace Going.UI.Controls
                                 var itmP = Items[selidx + 1];
                                 var rtP = Util.FromRect(rtText.Left + ani.Value(AnimationAccel.DCL, 0, rtText.Width), rtText.Top, rtText.Width, rtText.Height);
                                 var cP = cText.WithAlpha(Convert.ToByte(ani.Value(AnimationAccel.DCL, 255, 0)));
-                                Util.DrawTextIcon(canvas, itmP.Text, FontName, FontStyle, FontSize, itmP.IconString, IconSize, GoDirectionHV.Horizon, IconGap, rtP, cP);
+                                Util.DrawTextIcon(canvas, itmP.Text, FontName, FontStyle, fsz, itmP.IconString, isz, GoDirectionHV.Horizon, IconGap, rtP, cP);
                             }
 
                             var itmN = Items[selidx];
                             var rtN = Util.FromRect(rtText.Left + ani.Value(AnimationAccel.DCL, -rtText.Width, 0), rtText.Top, rtText.Width, rtText.Height);
                             var cN = cText.WithAlpha(Convert.ToByte(ani.Value(AnimationAccel.DCL, 0, 255)));
-                            Util.DrawTextIcon(canvas, itmN.Text, FontName, FontStyle, FontSize, itmN.IconString, IconSize, GoDirectionHV.Horizon, IconGap, rtN, cN);
+                            Util.DrawTextIcon(canvas, itmN.Text, FontName, FontStyle, fsz, itmN.IconString, isz, GoDirectionHV.Horizon, IconGap, rtN, cN);
                         }
 
                     }
@@ -729,7 +754,7 @@ namespace Going.UI.Controls
                     if (SelectedIndex >= 0 && SelectedIndex < Items.Count)
                     {
                         var item = Items[SelectedIndex];
-                        Util.DrawTextIcon(canvas, item.Text, FontName, FontStyle, FontSize, item.IconString, IconSize, GoDirectionHV.Horizon, IconGap, rtText, cText);
+                        Util.DrawTextIcon(canvas, item.Text, FontName, FontStyle, fsz, item.IconString, isz, GoDirectionHV.Horizon, IconGap, rtText, cText);
                     }
                 }
             }
@@ -836,7 +861,7 @@ namespace Going.UI.Controls
     public class GoInputColor : GoInput
     {
         #region Properties
-        [GoProperty(PCategory.Control, 16)]
+        [GoProperty(PCategory.Control, 18)]
         public SKColor Value
         {
             get => cValue; 
@@ -871,12 +896,15 @@ namespace Going.UI.Controls
             var cText = thm.ToColor(TextColor);
             var (rtText, rtArrow) = bounds(rtValue);
 
-            #region item
-            var isz = FontSize;
-            var text = $"#{Value.Red:X2}{Value.Green:X2}{Value.Blue:X2}";
-            var (rtIco, rtVal) = Util.TextIconBounds(text, FontName, FontStyle, FontSize, new SKSize(isz, isz), GoDirectionHV.Horizon, IconGap, rtText, GoContentAlignment.MiddleCenter);
+            var fsz = Util.FontSize(AutoFontSize, rtText.Height) ?? FontSize;
+            var isz = Util.FontSize(AutoIconSize, rtText.Height) ?? IconSize;
 
-            Util.DrawText(canvas, text, FontName, FontStyle, FontSize, rtVal, cText);
+            #region item
+            var vsz = fsz;
+            var text = $"#{Value.Red:X2}{Value.Green:X2}{Value.Blue:X2}";
+            var (rtIco, rtVal) = Util.TextIconBounds(text, FontName, FontStyle, fsz, new SKSize(vsz, vsz), GoDirectionHV.Horizon, IconGap, rtText, GoContentAlignment.MiddleCenter);
+
+            Util.DrawText(canvas, text, FontName, FontStyle, fsz, rtVal, cText);
             Util.DrawBox(canvas, rtIco, Value, GoRoundType.Rect, thm.Corner);
             #endregion
 
@@ -932,7 +960,7 @@ namespace Going.UI.Controls
     public class GoInputDateTime : GoInput
     {
         #region Properties
-        [GoProperty(PCategory.Control, 16)]
+        [GoProperty(PCategory.Control, 18)]
         public DateTime Value
         {
             get => cValue;
@@ -946,9 +974,9 @@ namespace Going.UI.Controls
             }
         }
 
-        [GoProperty(PCategory.Control, 17)] public GoDateTimeKind DateTimeStyle { get; set; } = GoDateTimeKind.DateTime;
-        [GoProperty(PCategory.Control, 18)] public string DateFormat { get; set; } = "yyyy-MM-dd";
-        [GoProperty(PCategory.Control, 19)] public string TimeFormat { get; set; } = "HH:mm:ss";
+        [GoProperty(PCategory.Control, 19)] public GoDateTimeKind DateTimeStyle { get; set; } = GoDateTimeKind.DateTime;
+        [GoProperty(PCategory.Control, 20)] public string DateFormat { get; set; } = "yyyy-MM-dd";
+        [GoProperty(PCategory.Control, 21)] public string TimeFormat { get; set; } = "HH:mm:ss";
         #endregion
 
         #region Event
@@ -971,6 +999,9 @@ namespace Going.UI.Controls
             var cText = thm.ToColor(TextColor);
             var (rtText, rtArrow) = bounds(rtValue);
 
+            var fsz = Util.FontSize(AutoFontSize, rtText.Height) ?? FontSize;
+            var isz = Util.FontSize(AutoIconSize, rtText.Height) ?? IconSize;
+
             #region item
             var format = $"{DateFormat} {TimeFormat}";
             switch (DateTimeStyle)
@@ -981,7 +1012,7 @@ namespace Going.UI.Controls
             }
             var text = Value.ToString(format);
 
-            Util.DrawText(canvas, text, FontName, FontStyle, FontSize, rtText, cText);
+            Util.DrawText(canvas, text, FontName, FontStyle, fsz, rtText, cText);
             #endregion
 
             #region sep

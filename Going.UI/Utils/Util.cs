@@ -1539,11 +1539,13 @@ namespace Going.UI.Utils
 
             switch(sz)
             {
-                case GoAutoFontSize.XS: ret = height * 0.2F; break;
-                case GoAutoFontSize.S: ret = height * 0.35F; break;
+                case GoAutoFontSize.XXS: ret = height * 0.2F; break;
+                case GoAutoFontSize.XS: ret = height * 0.3F; break;
+                case GoAutoFontSize.S: ret = height * 0.4F; break;
                 case GoAutoFontSize.M: ret = height * 0.5F; break;
-                case GoAutoFontSize.L: ret = height * 0.65F; break;
-                case GoAutoFontSize.XL: ret = height * 0.8F; break;
+                case GoAutoFontSize.L: ret = height * 0.6F; break;
+                case GoAutoFontSize.XL: ret = height * 0.7F; break;
+                case GoAutoFontSize.XXL: ret = height * 0.8F; break;
             }
 
             return ret;

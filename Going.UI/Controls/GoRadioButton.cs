@@ -34,7 +34,6 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 14)] public float BorderWidth { get; set; } = 1F;
         [GoProperty(PCategory.Control, 15)] public GoButtonFillStyle FillStyle { get; set; } = GoButtonFillStyle.Flat;
 
-
         private bool bCheck = false;
         [GoProperty(PCategory.Control, 16)]
         public bool Checked
@@ -56,6 +55,9 @@ namespace Going.UI.Controls
                 }
             }
         }
+
+        [GoProperty(PCategory.Control, 17)] public GoAutoFontSize AutoFontSize { get; set; } = GoAutoFontSize.NotUsed;
+        [GoProperty(PCategory.Control, 18)] public GoAutoFontSize AutoIconSize { get; set; } = GoAutoFontSize.NotUsed;
         #endregion
 
         #region Event
@@ -89,7 +91,11 @@ namespace Going.UI.Controls
                                                 Round, thm.Corner, true, BorderWidth, FillStyle, bDown);
 
             if (bDown) rtBox.Offset(0, 1);
-            Util.DrawTextIcon(canvas, Text, FontName, FontStyle, FontSize, IconString, IconSize, IconDirection, IconGap, rtBox, cText, GoContentAlignment.MiddleCenter);
+
+            var fsz = Util.FontSize(AutoFontSize, rtBox.Height) ?? FontSize;
+            var isz = Util.FontSize(AutoIconSize, rtBox.Height) ?? IconSize;
+
+            Util.DrawTextIcon(canvas, Text, FontName, FontStyle, fsz, IconString, isz, IconDirection, IconGap, rtBox, cText, GoContentAlignment.MiddleCenter);
 
             base.OnDraw(canvas, thm);
         }

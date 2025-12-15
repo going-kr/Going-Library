@@ -34,7 +34,7 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 8)] public GoRoundType Round { get; set; } = GoRoundType.All;
 
         private double nVal = 0;
-        [GoProperty(PCategory.Control,10)]
+        [GoProperty(PCategory.Control, 10)]
         public double Value
         {
             get => nVal;
@@ -48,11 +48,14 @@ namespace Going.UI.Controls
             }
         }
 
-        [GoProperty(PCategory.Control,11)] public double Minimum { get; set; } = 0D;
-        [GoProperty(PCategory.Control,12)] public double Maximum { get; set; } = 100D;
-        [GoProperty(PCategory.Control,13)] public double Tick { get; set; } = 1D;
-        [GoProperty(PCategory.Control,14)] public string? Format { get; set; }
-        [GoProperty(PCategory.Control,15)] public float ButtonSize { get; set; } = 40;
+        [GoProperty(PCategory.Control, 11)] public double Minimum { get; set; } = 0D;
+        [GoProperty(PCategory.Control, 12)] public double Maximum { get; set; } = 100D;
+        [GoProperty(PCategory.Control, 13)] public double Tick { get; set; } = 1D;
+        [GoProperty(PCategory.Control, 14)] public string? Format { get; set; }
+        [GoProperty(PCategory.Control, 15)] public float ButtonSize { get; set; } = 40;
+
+        [GoProperty(PCategory.Control, 16)] public GoAutoFontSize AutoFontSize { get; set; } = GoAutoFontSize.NotUsed;
+
         #endregion
 
         #region Member Variable
@@ -81,7 +84,7 @@ namespace Going.UI.Controls
             var rtValue = rts["Value"];
             var rtPlus = rts["Plus"];
             var rtMinus = rts["Minus"];
-            
+
             var rndv = GoRoundType.T;
             var rndm = GoRoundType.LB;
             var rndp = GoRoundType.RB;
@@ -93,7 +96,7 @@ namespace Going.UI.Controls
                 rndm = rnds[0];
                 rndp = rnds[2];
             }
-            else if(Direction == GoDirectionHV.Vertical) 
+            else if (Direction == GoDirectionHV.Vertical)
             {
                 var rnds1 = Util.Rounds(GoDirectionHV.Vertical, Round, 2);
                 var rnds2 = Util.Rounds(GoDirectionHV.Horizon, rnds1[1], 2);
@@ -137,14 +140,16 @@ namespace Going.UI.Controls
             #endregion
             #region Value
             var txt = ValueTool.ToString<double>(Value, Format);
-            Util.DrawText(canvas, txt, FontName, FontStyle, FontSize, rtValue, cText);
+            var fsz = Util.FontSize(AutoFontSize, rtValue.Height) ?? FontSize;
+
+            Util.DrawText(canvas, txt, FontName, FontStyle, fsz, rtValue, cText);
             #endregion
             #region Border
             Util.DrawBox(canvas, rtContent, SKColors.Transparent, cBorder, Round, thm.Corner);
             #endregion
             #region Border2
             #region Minus
-            if(bHoverM)
+            if (bHoverM)
             {
                 var bHover = bHoverM;
                 var bDown = bDownM;
@@ -157,7 +162,7 @@ namespace Going.UI.Controls
             }
             #endregion
             #region Plus
-            if(bHoverP)
+            if (bHoverP)
             {
                 var bHover = bHoverP;
                 var bDown = bDownP;
@@ -169,7 +174,7 @@ namespace Going.UI.Controls
                 Util.DrawBox(canvas, rt, SKColors.Transparent, cBtn.BrightnessTransmit(bHover ? thm.HoverBorderBrightness : 0), rnd, thm.Corner);
             }
             #endregion
-           
+
             #endregion
 
             base.OnDraw(canvas, thm);
