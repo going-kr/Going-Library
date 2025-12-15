@@ -146,6 +146,8 @@ namespace Going.UIEditor.Windows
                 using var pe = SKPathEffect.CreateDash([2, 2], 2);
 
                 #region BG
+                canvas.Clear(GoTheme.DarkTheme.Back);
+
                 if (rt.HasValue)
                 {
                     using var imgf = SKImageFilter.CreateDropShadow(2, 2, 2, 2, Util.FromArgb(128, SKColors.Black));
@@ -160,7 +162,7 @@ namespace Going.UIEditor.Windows
                 #region scroll
                 var vspos = Convert.ToSingle(vscroll.ScrollPositionWithOffset);
                 var hspos = Convert.ToSingle(hscroll.ScrollPositionWithOffset);
-                canvas.Clear(thm.Back);
+
                 if (rtvs.HasValue) vscroll.Draw(canvas, thm, rtvs.Value);
                 if (rths.HasValue) hscroll.Draw(canvas, thm, rths.Value);
                 #endregion

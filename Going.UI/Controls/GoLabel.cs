@@ -22,7 +22,7 @@ namespace Going.UI.Controls
         [GoMultiLineProperty(PCategory.Control, 4)] public string Text { get; set; } = "label";
         [GoFontNameProperty(PCategory.Control, 5)] public string FontName { get; set; } = "나눔고딕";
         [GoProperty(PCategory.Control, 6)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
-        [GoProperty(PCategory.Control, 7)] public float FontSize { get; set; } = 12;
+        [GoFontSizeProperty(PCategory.Control, 7)] public float FontSize { get; set; } = 12;
         [GoProperty(PCategory.Control, 8)] public GoPadding TextPadding { get; set; } = new GoPadding(0, 0, 0, 0);
         [GoProperty(PCategory.Control, 9)] public string TextColor { get; set; } = "Fore";
         [GoProperty(PCategory.Control, 10)] public string LabelColor { get; set; } = "Base2";
@@ -32,7 +32,6 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 14)] public bool BackgroundDraw { get; set; } = true;
         [GoProperty(PCategory.Control, 15)] public bool BorderOnly{ get; set; } = false;
         [GoProperty(PCategory.Control, 16)] public GoContentAlignment ContentAlignment { get; set; } = GoContentAlignment.MiddleCenter;
-
         #endregion
 
         #region Override
@@ -44,6 +43,7 @@ namespace Going.UI.Controls
             var rts = Areas();
             var rtBox = rts["Content"];
             var rtText = rts["Text"];
+            var FontSize = GetFontSize(rtText.Height);
 
             if (BackgroundDraw)
             {
@@ -65,6 +65,21 @@ namespace Going.UI.Controls
             dic["Text"] = Util.FromRect(dic["Content"], TextPadding);
 
             return dic;
+        }
+        #endregion
+
+        #region FontSize
+        protected float GetFontSize(float height)
+        {
+            var ret = FontSize;
+            var fsz = Convert.ToInt32(FontSize);
+            if (fsz >= 1000)
+            {
+                if (fsz == 1001) ret = height * 0.3F;
+                else if (fsz == 1002) ret = height * 0.5F;
+                else if (fsz == 1003) ret = height * 0.7F;
+            }
+            return ret;
         }
         #endregion
     }
