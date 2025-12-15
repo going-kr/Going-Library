@@ -43,7 +43,7 @@ namespace Going.UI.Controls
             var rts = Areas();
             var rtBox = rts["Content"];
             var rtText = rts["Text"];
-            var FontSize = GetFontSize(rtText.Height);
+            var FontSize = Util.FontSize(this.FontSize, rtText.Height);
 
             if (BackgroundDraw)
             {
@@ -68,19 +68,5 @@ namespace Going.UI.Controls
         }
         #endregion
 
-        #region FontSize
-        protected float GetFontSize(float displayHeight)
-        {
-            var ret = FontSize;
-            var fsz = Convert.ToInt32(FontSize);
-            if (fsz >= 1000)
-            {
-                if (fsz == 1001) ret = displayHeight * 0.3F;
-                else if (fsz == 1002) ret = displayHeight * 0.5F;
-                else if (fsz == 1003) ret = displayHeight * 0.7F;
-            }
-            return ret;
-        }
-        #endregion
     }
 }
