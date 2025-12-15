@@ -14,4 +14,14 @@ namespace Going.UI.Enums
         Bold,
         BoldItalic
     }
+
+    public enum GoAutoFontSize
+    {
+        NotUsed,
+        XS,
+        S,
+        M,
+        L,
+        XL
+    }
 }

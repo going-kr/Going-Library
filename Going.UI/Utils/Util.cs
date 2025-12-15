@@ -1531,6 +1531,24 @@ namespace Going.UI.Utils
             return new SKColor(Convert.ToByte(r * 255.0), Convert.ToByte(g * 255.0), Convert.ToByte(b * 255.0));
         }
         #endregion
+
+        #region FontSize
+        public static float? FontSize(GoAutoFontSize sz, float height)
+        {
+            float? ret = null;
+
+            switch(sz)
+            {
+                case GoAutoFontSize.XS: ret = height * 0.2F; break;
+                case GoAutoFontSize.S: ret = height * 0.35F; break;
+                case GoAutoFontSize.M: ret = height * 0.5F; break;
+                case GoAutoFontSize.L: ret = height * 0.65F; break;
+                case GoAutoFontSize.XL: ret = height * 0.8F; break;
+            }
+
+            return ret;
+        }
+        #endregion
         #endregion
 
         #region AllControls
