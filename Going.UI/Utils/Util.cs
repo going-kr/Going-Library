@@ -1531,21 +1531,6 @@ namespace Going.UI.Utils
             return new SKColor(Convert.ToByte(r * 255.0), Convert.ToByte(g * 255.0), Convert.ToByte(b * 255.0));
         }
         #endregion
-
-        #region FontSize
-        public static float FontSize(float fontSize, float displayHeight)
-        {
-            var ret = fontSize;
-            var fsz = Convert.ToInt32(fontSize);
-            if (fsz >= 1000)
-            {
-                if (fsz == 1001) ret = displayHeight * 0.3F;
-                else if (fsz == 1002) ret = displayHeight * 0.5F;
-                else if (fsz == 1003) ret = displayHeight * 0.7F;
-            }
-            return ret;
-        }
-        #endregion
         #endregion
 
         #region AllControls

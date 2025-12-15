@@ -709,14 +709,13 @@ namespace Going.UIEditor.Controls
             }
             else return false;
         }
-        public static bool IsUseButton(PropertyInfo? Info) => IsCollection(Info) || IsEnum(Info) || IsSizes(Info) || IsEnum(Info) || IsImage(Info) || IsFontName(Info) || IsFontSize(Info) || IsMultiLine(Info);
+        public static bool IsUseButton(PropertyInfo? Info) => IsCollection(Info) || IsEnum(Info) || IsSizes(Info) || IsEnum(Info) || IsImage(Info) || IsFontName(Info) || IsMultiLine(Info);
         public static bool IsCollection(PropertyInfo? Info) => Info != null && typeof(IEnumerable).IsAssignableFrom(Info.PropertyType) && Info.PropertyType != typeof(string) && !Attribute.IsDefined(Info, typeof(GoSizesPropertyAttribute));
         public static bool IsSizes(PropertyInfo? Info) => Info != null && typeof(IEnumerable).IsAssignableFrom(Info.PropertyType) && Info.PropertyType != typeof(string) && Attribute.IsDefined(Info, typeof(GoSizesPropertyAttribute));
         public static bool IsEnum(PropertyInfo? Info) => Info != null && Info.PropertyType.IsEnum;
         public static bool IsBool(PropertyInfo? Info) => Info != null && Info.PropertyType == typeof(bool);
         public static bool IsImage(PropertyInfo? Info) => Info != null && Attribute.IsDefined(Info, typeof(GoImagePropertyAttribute));
         public static bool IsFontName(PropertyInfo? Info) => Info != null && Attribute.IsDefined(Info, typeof(GoFontNamePropertyAttribute));
-        public static bool IsFontSize(PropertyInfo? Info) => Info != null && Attribute.IsDefined(Info, typeof(GoFontSizePropertyAttribute));
         public static bool IsMultiLine(PropertyInfo? Info) => Info != null && Attribute.IsDefined(Info, typeof(GoMultiLinePropertyAttribute));
 
         #region ValueToString
@@ -1039,24 +1038,7 @@ namespace Going.UIEditor.Controls
                 var lk = vs?.ToLookup(x => x);
                 var s = lk?.Count == 1 ? (lk.FirstOrDefault()?.Key ?? "") : "";
 
-                if (IsFontSize(Info))
-                {
-                    if (float.TryParse(s, out var val))
-                    {
-                        var isz = Convert.ToInt32(val);
-                        if (val > 1000)
-                        {
-                            if (isz == 1001) Util.DrawText(canvas, "Small", Grid.FontName, Grid.FontStyle, Grid.FontSize, rtValue, thm.Base5);
-                            if (isz == 1002) Util.DrawText(canvas, "Medium", Grid.FontName, Grid.FontStyle, Grid.FontSize, rtValue, thm.Base5);
-                            if (isz == 1003) Util.DrawText(canvas, "Large", Grid.FontName, Grid.FontStyle, Grid.FontSize, rtValue, thm.Base5);
-                        }
-                        else Util.DrawText(canvas, s, Grid.FontName, Grid.FontStyle, Grid.FontSize, rtValue, thm.Base5);
-                    }
-                }
-                else
-                {
-                    Util.DrawText(canvas, s, Grid.FontName, Grid.FontStyle, Grid.FontSize, rtValue, thm.Base5);
-                }
+                Util.DrawText(canvas, s, Grid.FontName, Grid.FontStyle, Grid.FontSize, rtValue, thm.Base5);
             }
             #endregion
 
@@ -1103,25 +1085,6 @@ namespace Going.UIEditor.Controls
                     object? vv = ret.Name;
                     if (vv is string s && s == "{NONE}") vv = "나눔고딕";
                     SelectedObjectLoop((obj) => SetValue(obj, Info, vv));
-                }
-                #endregion
-            }
-            else if (Info != null && IsFontSize(Info))
-            {
-                #region FontSize
-                List<GoListItem> itms = [
-                    new GoListItem{ Text = "Small", Tag = 1001F, },
-                    new GoListItem{ Text = "Medium", Tag = 1002F, },
-                    new GoListItem{ Text = "Large", Tag = 1003F, },
-                ];
-
-                float? vsz = (Grid.SelectedObjects?.Count() == 1 ? (float?)Info.GetValue(Grid.SelectedObjects.First()) : null);
-                var sel = vsz.HasValue ? itms.FirstOrDefault(x => Convert.ToSingle(x.Tag) == vsz.Value) : null;
-
-                var ret = Program.SelBox.ShowRadio(Info.Name, 1, itms, sel);
-                if (ret != null && Grid.SelectedObjects != null && ret.Tag is float sz)
-                {
-                    SelectedObjectLoop((obj) => SetValue(obj, Info, sz));
                 }
                 #endregion
             }

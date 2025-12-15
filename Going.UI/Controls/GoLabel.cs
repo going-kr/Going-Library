@@ -22,7 +22,7 @@ namespace Going.UI.Controls
         [GoMultiLineProperty(PCategory.Control, 4)] public string Text { get; set; } = "label";
         [GoFontNameProperty(PCategory.Control, 5)] public string FontName { get; set; } = "나눔고딕";
         [GoProperty(PCategory.Control, 6)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
-        [GoFontSizeProperty(PCategory.Control, 7)] public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 7)] public float FontSize { get; set; } = 12;
         [GoProperty(PCategory.Control, 8)] public GoPadding TextPadding { get; set; } = new GoPadding(0, 0, 0, 0);
         [GoProperty(PCategory.Control, 9)] public string TextColor { get; set; } = "Fore";
         [GoProperty(PCategory.Control, 10)] public string LabelColor { get; set; } = "Base2";
@@ -43,8 +43,7 @@ namespace Going.UI.Controls
             var rts = Areas();
             var rtBox = rts["Content"];
             var rtText = rts["Text"];
-            var FontSize = Util.FontSize(this.FontSize, rtText.Height);
-
+            
             if (BackgroundDraw)
             {
                 if (BorderOnly)
