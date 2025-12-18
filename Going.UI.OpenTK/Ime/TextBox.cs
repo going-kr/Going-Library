@@ -17,6 +17,19 @@ namespace Going.UI.OpenTK.Ime
 {
     public class TextBox
     {
+        #region enum
+        public enum TextBoxInputMode
+        {
+            All,            // 모든 문자
+            NumberOnly,     // 숫자만 (0-9)
+            IntegerOnly,    // 정수 (0-9, -, +)
+            DecimalOnly,    // 실수 (0-9, -, +, .)
+            AlphaNumeric,   // 영문+숫자
+            AlphaOnly,      // 영문만
+            HexOnly         // 16진수 (0-9, A-F)
+        }
+        #endregion
+
         #region Properties
         public string Text
         {
@@ -38,6 +51,10 @@ namespace Going.UI.OpenTK.Ime
         public int SelectionStart { get; set; } = -1;
         public int SelectionEnd { get; set; } = -1;
         public int Padding { get; set; } = 0;
+
+        public TextBoxInputMode InputMode { get; set; } = TextBoxInputMode.All;
+        public double? MinValue { get; set; } = null;
+        public double? MaxValue { get; set; } = null;
         #endregion
 
         #region Member Variable
@@ -46,18 +63,14 @@ namespace Going.UI.OpenTK.Ime
         private int _compositionCursorPos = 0;
         public bool IsComposing => !string.IsNullOrEmpty(_compositionText);
 
-        private float _cursorBlinkTime = 0;
-        private bool _cursorVisible = true;
-        private const float CURSOR_BLINK_INTERVAL = 0.5f;
-
         private bool _imeCommitted = false; // IME 완료 플래그 추가
         private string stxt = "";
         private Action<string>? callback;
         #endregion
 
         #region Metdho
-
-        public void Set(IGoControl c, SKRect rect, Action<string> callback, string? text)
+        #region InputString
+        public void InputString(IGoControl c, SKRect rect, Action<string> callback, string? text)
         {
             if (c != Control)
             {
@@ -66,29 +79,56 @@ namespace Going.UI.OpenTK.Ime
                 Bounds = rect;
                 Bounds.Offset(c.ScreenX, c.ScreenY);
                 Text = text ?? "";
+                SelectionStart = 0;
+                SelectionEnd = Text.Length;
+                CursorPosition = Text.Length;
+                InputMode = TextBoxInputMode.All;
 
                 if (Control is GoInput vc) vc._InputModeInvisibleText_ = true;
 
                 this.callback = callback;
             }
         }
-
-        #region Update
-        public void Update(float deltaTime)
+        #endregion
+        #region InputNumber
+        public void InputNumber(IGoControl c, SKRect rect, Action<string> callback, Type valueType, object value, object? min, object? max)
         {
-            if (IsFocused)
+            if (c != Control)
             {
-                _cursorBlinkTime += deltaTime;
-                if (_cursorBlinkTime >= CURSOR_BLINK_INTERVAL)
-                {
-                    _cursorVisible = !_cursorVisible;
-                    _cursorBlinkTime = 0;
-                }
+                IsFocused = true;
+                Control = c;
+                Bounds = rect;
+                Bounds.Offset(c.ScreenX, c.ScreenY);
+                Text = value?.ToString() ?? "";
+                SelectionStart = 0;
+                SelectionEnd = Text.Length;
+                CursorPosition = Text.Length;
+
+                if (valueType == typeof(byte) || valueType == typeof(ushort) || valueType == typeof(uint) || valueType == typeof(ulong)) InputMode = TextBoxInputMode.NumberOnly;
+                else if (valueType == typeof(sbyte) || valueType == typeof(short) || valueType == typeof(int) || valueType == typeof(long)) InputMode = TextBoxInputMode.IntegerOnly;
+                else if (valueType == typeof(float) || valueType == typeof(double) || valueType == typeof(decimal)) InputMode = TextBoxInputMode.DecimalOnly;
+
+                if (min != null) min = Convert.ToDouble(min);
+                if (max != null) max = Convert.ToDouble(max);
+
+                if (Control is GoInput vc) vc._InputModeInvisibleText_ = true;
+
+                this.callback = callback;
             }
         }
         #endregion
 
-        #region Draw 메서드 (조합 텍스트 통합 렌더링)
+        #region Update
+        public void Update()
+        {
+            if (IsFocused)
+            {
+              
+            }
+        }
+        #endregion
+
+        #region Draw
         public void Draw(SKCanvas canvas, GoTheme thm)
         {
             if (IsFocused)
@@ -107,14 +147,12 @@ namespace Going.UI.OpenTK.Ime
                         var textY = Bounds.Top + Bounds.Height / 2 + c.FontSize / 2 - 2;
                         float textStartX = CalculateTextStartX(font, GoContentAlignment.MiddleCenter);
 
-                        // ✅ 핵심: 조합 중이면 임시로 합친 텍스트 만들기
                         string displayText = Text;
                         int compositionStart = -1;
                         int compositionLength = 0;
 
                         if (IsComposing && IsFocused)
                         {
-                            // 조합 텍스트를 커서 위치에 삽입
                             displayText = Text.Insert(CursorPosition, _compositionText);
                             compositionStart = CursorPosition;
                             compositionLength = _compositionText.Length;
@@ -147,7 +185,7 @@ namespace Going.UI.OpenTK.Ime
                         }
                         #endregion
 
-                        #region 조합 중인 텍스트 배경 및 밑줄
+                        #region 입력부
                         if (IsComposing && compositionStart >= 0)
                         {
                             string beforeComposition = displayText.Substring(0, compositionStart);
@@ -156,7 +194,6 @@ namespace Going.UI.OpenTK.Ime
                             float beforeWidth = font.MeasureText(beforeComposition);
                             float compositionWidth = font.MeasureText(composition);
 
-                            // 조합 중인 텍스트 배경
                             p.Color = new SKColor(60, 60, 80, 180);
                             p.IsStroke = false;
                             canvas.DrawRect(
@@ -167,7 +204,6 @@ namespace Going.UI.OpenTK.Ime
                                 p
                             );
 
-                            // 조합 중인 텍스트 밑줄
                             p.Color = new SKColor(100, 150, 255);
                             p.StrokeWidth = 1;
                             p.IsStroke = true;
@@ -181,23 +217,21 @@ namespace Going.UI.OpenTK.Ime
                         }
                         #endregion
 
-                        #region 텍스트 그리기
-                        // ✅ 합쳐진 텍스트를 한 번에 그림
+                        #region 텍스트
                         p.Color = cText;
                         p.IsStroke = false;
                         canvas.DrawText(displayText, textStartX, textY, font, p);
                         #endregion
 
                         #region 커서
-                        if (IsFocused && _cursorVisible)
+                        if (IsFocused && DateTime.Now.Millisecond > 500)
                         {
-                            // 조합 중이면 조합 텍스트 끝에 커서
                             int cursorPos = CursorPosition + (IsComposing ? _compositionText.Length : 0);
                             string textBeforeCursor = displayText.Substring(0, cursorPos);
                             float cursorX = textStartX + font.MeasureText(textBeforeCursor);
 
                             p.Color = cText;
-                            p.StrokeWidth = 2;
+                            p.StrokeWidth = 1;
                             p.IsStroke = true;
                             canvas.DrawLine(
                                 cursorX,
@@ -219,8 +253,6 @@ namespace Going.UI.OpenTK.Ime
         public void OnKeyPress(KeyboardKeyEventArgs e, string inputChar)
         {
             if (!IsFocused) return;
-
-            ResetCursorBlink();
 
             switch (e.Key)
             {
@@ -328,6 +360,21 @@ namespace Going.UI.OpenTK.Ime
                         PasteFromClipboard();
                     }
                     break;
+                #endregion
+                #region Enter
+                case Keys.Enter:
+                case Keys.KeyPadEnter:
+                    {
+                        IsFocused = false;
+                        if (Control is GoInput vc) vc._InputModeInvisibleText_ = false;
+                        Control = null;
+                        Text = "";
+                        callback = null;
+                        CursorPosition = 0;
+
+                        ClearSelection();
+                    }
+                    break;
                     #endregion
             }
 
@@ -345,12 +392,22 @@ namespace Going.UI.OpenTK.Ime
                 return;
             }
 
-            ResetCursorBlink();
+            if (!IsInputAllowed(text))
+            {
+                return; 
+            }
 
             if (HasSelection()) DeleteSelection();
 
             Text = Text.Insert(CursorPosition, text);
             CursorPosition += text.Length;
+
+            if (!ValidateValueRange())
+            {
+                Text = Text.Remove(CursorPosition - text.Length, text.Length);
+                CursorPosition -= text.Length;
+                return;
+            }
 
             UpdateScrollOffset();
         }
@@ -361,7 +418,6 @@ namespace Going.UI.OpenTK.Ime
         {
             if (!IsFocused) return;
 
-            ResetCursorBlink();
             _compositionText = compositionText ?? "";
             _compositionCursorPos = cursorPos;
 
@@ -379,8 +435,6 @@ namespace Going.UI.OpenTK.Ime
 
             if (!string.IsNullOrEmpty(text))
             {
-                ResetCursorBlink();
-
                 if (HasSelection())
                 {
                     DeleteSelection();
@@ -448,7 +502,7 @@ namespace Going.UI.OpenTK.Ime
             else return false;
         }
         #endregion
-        #region GetCursorPositionFromMouse (수정됨)
+        #region GetCursorPositionFromMouse
         private int GetCursorPositionFromMouse(float mouseX)
         {
             if (Control is GoInput c)
@@ -483,15 +537,13 @@ namespace Going.UI.OpenTK.Ime
             return Text.Length;
         }
         #endregion
-        #region UpdateScrollOffset (수정됨)
+        #region UpdateScrollOffset
         private void UpdateScrollOffset()
         {
             if (Control is GoInput c)
             {
-                // ✅ 수정: 정렬 모드 확인
                 var align = GoContentAlignment.MiddleCenter;
 
-                // 중앙/우측 정렬일 때는 스크롤 비활성화
                 if (align == GoContentAlignment.TopCenter ||
                     align == GoContentAlignment.MiddleCenter ||
                     align == GoContentAlignment.BottomCenter ||
@@ -582,14 +634,6 @@ namespace Going.UI.OpenTK.Ime
         }
         #endregion
 
-        #region ResetCursorBlink
-        private void ResetCursorBlink()
-        {
-            _cursorBlinkTime = 0;
-            _cursorVisible = true;
-        }
-        #endregion
-
         #region CopyToClipboard
         private void CopyToClipboard()
         {
@@ -616,6 +660,11 @@ namespace Going.UI.OpenTK.Ime
                 string? clipboardText = TextCopy.ClipboardService.GetText();
                 if (!string.IsNullOrEmpty(clipboardText))
                 {
+                    if (!IsInputAllowed(clipboardText))
+                    {
+                        return; 
+                    }
+
                     if (HasSelection())
                     {
                         DeleteSelection();
@@ -623,6 +672,14 @@ namespace Going.UI.OpenTK.Ime
 
                     Text = Text.Insert(CursorPosition, clipboardText);
                     CursorPosition += clipboardText.Length;
+
+                    if (!ValidateValueRange())
+                    {
+                        Text = Text.Remove(CursorPosition - clipboardText.Length, clipboardText.Length);
+                        CursorPosition -= clipboardText.Length;
+                        return;
+                    }
+
                     UpdateScrollOffset();
                 }
             }
@@ -632,10 +689,9 @@ namespace Going.UI.OpenTK.Ime
         }
         #endregion
 
-        #region CalculateTextStartX (수정)
+        #region CalculateTextStartX
         private float CalculateTextStartX(SKFont font, GoContentAlignment align)
         {
-            // ✅ displayText 사용 (조합 중인 텍스트 포함)
             string displayText = Text;
             if (IsComposing)
             {
@@ -666,6 +722,89 @@ namespace Going.UI.OpenTK.Ime
         }
         #endregion
 
+        #region ValidateValueRange
+        private bool ValidateValueRange()
+        {
+            if (InputMode != TextBoxInputMode.IntegerOnly &&
+                InputMode != TextBoxInputMode.DecimalOnly &&
+                InputMode != TextBoxInputMode.NumberOnly)
+                return true;
+
+            if (MinValue == null && MaxValue == null)
+                return true;
+
+            if (string.IsNullOrEmpty(Text) || Text == "-" || Text == "+")
+                return true;
+
+            if (!double.TryParse(Text, out double value))
+                return true; 
+
+            if (MinValue.HasValue && value < MinValue.Value)
+                return false;
+            if (MaxValue.HasValue && value > MaxValue.Value)
+                return false;
+
+            return true;
+        }
+        #endregion
+        #region IsInputAllowed
+        private bool IsInputAllowed(string input)
+        {
+            if (string.IsNullOrEmpty(input)) return false;
+
+            switch (InputMode)
+            {
+                case TextBoxInputMode.All:
+                    return true;
+
+                case TextBoxInputMode.NumberOnly:
+                    return input.All(c => char.IsDigit(c));
+
+                case TextBoxInputMode.IntegerOnly:
+                    foreach (char c in input)
+                    {
+                        if (!char.IsDigit(c) && c != '-' && c != '+')
+                            return false;
+                    }
+                    if ((input.Contains('-') || input.Contains('+')) && CursorPosition != 0)
+                        return false;
+                    if ((input.Contains('-') && Text.Contains('-')) ||
+                        (input.Contains('+') && Text.Contains('+')))
+                        return false;
+                    return true;
+
+                case TextBoxInputMode.DecimalOnly:
+                    foreach (char c in input)
+                    {
+                        if (!char.IsDigit(c) && c != '-' && c != '+' && c != '.')
+                            return false;
+                    }
+                    if ((input.Contains('-') || input.Contains('+')) && CursorPosition != 0)
+                        return false;
+                    if ((input.Contains('-') && Text.Contains('-')) ||
+                        (input.Contains('+') && Text.Contains('+')))
+                        return false;
+                    if (input.Contains('.') && Text.Contains('.'))
+                        return false;
+                    return true;
+
+                case TextBoxInputMode.AlphaNumeric:
+                    return input.All(c => char.IsLetterOrDigit(c));
+
+                case TextBoxInputMode.AlphaOnly:
+                    return input.All(c => char.IsLetter(c));
+
+                case TextBoxInputMode.HexOnly:
+                    return input.All(c =>
+                        char.IsDigit(c) ||
+                        (c >= 'A' && c <= 'F') ||
+                        (c >= 'a' && c <= 'f'));
+
+                default:
+                    return true;
+            }
+        }
+        #endregion
         #endregion
         #endregion
     }

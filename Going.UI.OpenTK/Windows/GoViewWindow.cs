@@ -86,7 +86,7 @@ namespace Going.UI.OpenTK.Windows
             else if (OperatingSystem.IsWindows())
             {
                 GoInputEventer.Current.InputString += ImeInputManger.Current.InputString;
-
+                GoInputEventer.Current.InputNumber += ImeInputManger.Current.InputNumber;
             }
 
         }

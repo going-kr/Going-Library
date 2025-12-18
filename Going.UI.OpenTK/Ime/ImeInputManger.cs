@@ -125,11 +125,7 @@ namespace Going.UI.OpenTK.Ime
         {
             if (txt.IsFocused)
             {
-                float currentTime = (float)_stopwatch.Elapsed.TotalSeconds;
-                float deltaTime = currentTime - _lastTime;
-                _lastTime = currentTime;
-
-                txt.Update(deltaTime);
+                txt.Update();
             }
         }
         #endregion
@@ -192,7 +188,12 @@ namespace Going.UI.OpenTK.Ime
 
         public void InputString(IGoControl control, SKRect bounds, Action<string> callback, string? value = null)
         {
-            txt.Set(control, bounds, callback, value);
+            txt.InputString(control, bounds, callback, value);
+        }
+
+        public void InputNumber(IGoControl control, SKRect bounds, Action<string> callback, Type valueType, object value, object? min, object? max)
+        {
+            txt.InputNumber(control, bounds, callback, valueType, value, min, max);
         }
     }
 }
