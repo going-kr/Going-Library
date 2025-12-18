@@ -35,6 +35,7 @@ using Going.UI.Managers;
 using System.Security.Cryptography.X509Certificates;
 using Going.UI.Design;
 using static System.Net.Mime.MediaTypeNames;
+using Going.UI.OpenTK.Ime;
 
 namespace Going.UI.OpenTK.Windows
 {
@@ -76,8 +77,18 @@ namespace Going.UI.OpenTK.Windows
         {
             if (Environment.OSVersion.Platform == PlatformID.Unix) WindowState = WindowState.Fullscreen;
 
-            GoInputEventer.Current.InputString += TKInputManager.Current.InputString;
-            GoInputEventer.Current.InputNumber += TKInputManager.Current.InputNumber;
+
+            if (OperatingSystem.IsLinux())
+            {
+                GoInputEventer.Current.InputString += TKInputManager.Current.InputString;
+                GoInputEventer.Current.InputNumber += TKInputManager.Current.InputNumber;
+            }
+            else if (OperatingSystem.IsWindows())
+            {
+                GoInputEventer.Current.InputString += ImeInputManger.Current.InputString;
+
+            }
+
         }
         #endregion
 
@@ -105,6 +116,7 @@ namespace Going.UI.OpenTK.Windows
                 {
                     Handle = GLFW.GetWin32Window(WindowPtr);
                     DarkMode(Handle, true);
+                    ImeInputManger.Current.Init(WindowPtr);
                 }
             }
         }
@@ -187,6 +199,8 @@ namespace Going.UI.OpenTK.Windows
                     }
                     #endregion
 
+                    if (OperatingSystem.IsWindows()) ImeInputManger.Current.OnDraw(canvas, thm);
+
                     ctx.Flush();
                     SwapBuffers();
 
@@ -209,9 +223,12 @@ namespace Going.UI.OpenTK.Windows
             if (ctx != null && target != null)
             {
                 Design.Update();
+
+                if (OperatingSystem.IsWindows()) ImeInputManger.Current.OnUpdate();
             }
         }
         #endregion
+       
         #region OnMouseDown
         protected override void OnMouseDown(MouseButtonEventArgs e)
         {
@@ -223,6 +240,8 @@ namespace Going.UI.OpenTK.Windows
 
             if (TKInputManager.Current.IsInput) TKInputManager.Current.MouseDown(x, y, mb);
             else Design.MouseDown(x, y, mb);
+
+            if (OperatingSystem.IsWindows()) ImeInputManger.Current.OnMouseDown(MouseState, KeyboardState, e);
 
             base.OnMouseDown(e);
         }
@@ -240,6 +259,8 @@ namespace Going.UI.OpenTK.Windows
             if ((DateTime.Now - dcTime).TotalMilliseconds < 300) Design.MouseDoubleClick(x, y, mb);
             dcTime = DateTime.Now;
 
+            if (OperatingSystem.IsWindows()) ImeInputManger.Current.OnMouseUp(MouseState, KeyboardState, e);
+
             base.OnMouseUp(e);
         }
         #endregion
@@ -251,6 +272,8 @@ namespace Going.UI.OpenTK.Windows
 
             if (TKInputManager.Current.IsInput) TKInputManager.Current.MouseMove(x, y);
             else Design.MouseMove(x, y);
+
+            if (OperatingSystem.IsWindows()) ImeInputManger.Current.OnMouseMove(MouseState, KeyboardState);
 
             base.OnMouseMove(e);
         }
@@ -288,10 +311,21 @@ namespace Going.UI.OpenTK.Windows
             base.OnResize(e);
         }
         #endregion
+        
+        #region OnTextInput
+        protected override void OnTextInput(TextInputEventArgs e)
+        {
+            if (OperatingSystem.IsWindows()) ImeInputManger.Current.OnTextInput(e);
+            base.OnTextInput(e);
+        }
+        #endregion
         #region OnKeyDown
         protected override void OnKeyDown(KeyboardKeyEventArgs e)
         {
             Design.KeyDown(e.Shift, e.Control, e.Alt, (GoKeys)e.Key);
+
+            if (OperatingSystem.IsWindows()) ImeInputManger.Current.OnKeyDown(e);
+
             base.OnKeyDown(e);
         }
         #endregion
@@ -299,6 +333,7 @@ namespace Going.UI.OpenTK.Windows
         protected override void OnKeyUp(KeyboardKeyEventArgs e)
         {
             Design.KeyUp(e.Shift, e.Control, e.Alt, (GoKeys)e.Key);
+
             base.OnKeyDown(e);
         }
         #endregion
@@ -328,9 +363,8 @@ namespace Going.UI.OpenTK.Windows
                 stencil = 8;
                 GL.GetRenderbufferParameter(RenderbufferTarget.Renderbuffer, RenderbufferParameterName.RenderbufferWidth, out int bufferWidth);
                 GL.GetRenderbufferParameter(RenderbufferTarget.Renderbuffer, RenderbufferParameterName.RenderbufferHeight, out int bufferHeight);
-
             }
-            
+
             return new GRBackendRenderTarget(Size.X, Size.Y, 0, stencil, new GRGlFramebufferInfo(0, SKColorType.Rgba8888.ToGlSizedFormat()));
         }
         #endregion

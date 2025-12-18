@@ -9,6 +9,7 @@ using Going.UI.Utils;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
@@ -50,7 +51,7 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 17)] public GoAutoFontSize AutoIconSize { get; set; } = GoAutoFontSize.NotUsed;
 
         [JsonIgnore] public virtual bool Valid => true;
-
+        [JsonIgnore, Browsable(false), EditorBrowsable(EditorBrowsableState.Never)] public bool _InputModeInvisibleText_ { get; set; } = false;
         [JsonIgnore] private bool UseTitle => TitleSize.HasValue && TitleSize.Value > 0;
         [JsonIgnore] private bool UseButton => ButtonSize.HasValue && ButtonSize.Value > 0 && Buttons.Count > 0;
         #endregion
@@ -115,8 +116,7 @@ namespace Going.UI.Controls
 
             #region Value
             Util.DrawBox(canvas, rtValue, cValue, rndValue, thm.Corner);
-
-            OnDrawValue(canvas, thm, rtValue);
+            if (!_InputModeInvisibleText_) OnDrawValue(canvas, thm, rtValue);
             #endregion
 
             #region Button

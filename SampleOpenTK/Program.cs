@@ -8,7 +8,7 @@ using Going.UI.OpenTK.Windows;
 using OpenTK.Windowing.Common;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+using Test3;
 
-
-
-Console.WriteLine("test");
+using var wnd = new MainWindow { };
+wnd.Run();
