@@ -904,8 +904,11 @@ namespace Going.UI.Datas
             var rt = Bounds; rt.Inflate(InputInflateW, InputInflateH);
             Util.DrawBox(canvas, rt, cV.BrightnessTransmit(GoDataGrid.InputBright * br), cB, GoRoundType.Rect, thm.Corner);
 
-            var text = Value is string s ? s : null;
-            Util.DrawText(canvas, text, Grid.FontName, Grid.FontStyle, Grid.FontSize, rt, cText);
+            if (!(Grid._InputModeInvisibleText_ && Grid.InputObject == this))
+            {
+                var text = Value is string s ? s : null;
+                Util.DrawText(canvas, text, Grid.FontName, Grid.FontStyle, Grid.FontSize, rt, cText);
+            }
         }
         #endregion
 
@@ -913,7 +916,7 @@ namespace Going.UI.Datas
         protected override void OnMouseClick(float x, float y, GoMouseButton button)
         {
             var rt = Bounds; rt.Inflate(InputInflateW, InputInflateH);
-            if (CollisionTool.Check(rt, x, y) && Value is string v) Grid?.InvokeEditText(this, v);
+            if (CollisionTool.Check(rt, x, y)) Grid?.InvokeEditText(this, Value as string);
 
             base.OnMouseClick(x, y, button);
         }
@@ -974,8 +977,11 @@ namespace Going.UI.Datas
             
             Util.DrawBox(canvas, rt, cV.BrightnessTransmit(GoDataGrid.InputBright * br), cB, GoRoundType.Rect, thm.Corner);
 
-            var text = Value is T val ? ValueTool.ToString<T>(val, FormatString) : null;
-            Util.DrawText(canvas, text, Grid.FontName, Grid.FontStyle, Grid.FontSize, rt, cText);
+            if (!(Grid._InputModeInvisibleText_ && Grid.InputObject == this))
+            {
+                var text = Value is T val ? ValueTool.ToString<T>(val, FormatString) : null;
+                Util.DrawText(canvas, text, Grid.FontName, Grid.FontStyle, Grid.FontSize, rt, cText);
+            }
         }
         #endregion
 

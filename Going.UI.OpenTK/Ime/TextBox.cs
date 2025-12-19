@@ -1,4 +1,5 @@
 ﻿using Going.UI.Controls;
+using Going.UI.Datas;
 using Going.UI.Enums;
 using Going.UI.Managers;
 using Going.UI.Themes;
@@ -34,7 +35,7 @@ namespace Going.UI.OpenTK.Ime
         #region Properties
         public string Text
         {
-            get => stxt; 
+            get => stxt;
             set
             {
                 if (stxt != value)
@@ -78,17 +79,28 @@ namespace Going.UI.OpenTK.Ime
                 IsFocused = true;
                 Control = c;
                 Bounds = rect;
-                Bounds.Offset(c.ScreenX, c.ScreenY);
+                //Bounds.Offset(c.ScreenX, c.ScreenY);
                 Text = text ?? "";
+                ClearSelection();
                 SelectionStart = 0;
                 SelectionEnd = Text.Length;
                 CursorPosition = Text.Length;
                 InputMode = TextBoxInputMode.All;
 
-                if (Control is GoInput vc)
+                if (Control is GoInput vc && vc.IsKeyboardInput)
                 {
                     GoInputEventer.Current.SetInputControl(vc);
                     vc._InputModeInvisibleText_ = true;
+                }
+                else if (Control is GoColorSelector vcs)
+                {
+                    GoInputEventer.Current.SetInputControl(vcs);
+                    vcs._InputModeInvisibleText_ = true;
+                }
+                else if (Control is GoDataGrid vdg)
+                {
+                    GoInputEventer.Current.SetInputControl(vdg);
+                    vdg._InputModeInvisibleText_ = true;
                 }
 
                 this.callback = callback;
@@ -103,11 +115,13 @@ namespace Going.UI.OpenTK.Ime
                 IsFocused = true;
                 Control = c;
                 Bounds = rect;
-                Bounds.Offset(c.ScreenX, c.ScreenY);
+                //Bounds.Offset(c.ScreenX, c.ScreenY);
                 Text = value?.ToString() ?? "";
+                ClearSelection();
                 SelectionStart = 0;
                 SelectionEnd = Text.Length;
                 CursorPosition = Text.Length;
+
 
                 if (valueType == typeof(byte) || valueType == typeof(ushort) || valueType == typeof(uint) || valueType == typeof(ulong)) InputMode = TextBoxInputMode.NumberOnly;
                 else if (valueType == typeof(sbyte) || valueType == typeof(short) || valueType == typeof(int) || valueType == typeof(long)) InputMode = TextBoxInputMode.IntegerOnly;
@@ -116,10 +130,20 @@ namespace Going.UI.OpenTK.Ime
                 if (min != null) min = Convert.ToDouble(min);
                 if (max != null) max = Convert.ToDouble(max);
 
-                if (Control is GoInput vc)
+                if (Control is GoInput vc && vc.IsKeyboardInput)
                 {
-                    GoInputEventer.Current.SetInputControl(vc); 
+                    GoInputEventer.Current.SetInputControl(vc);
                     vc._InputModeInvisibleText_ = true;
+                }
+                else if (Control is GoColorSelector vcs)
+                {
+                    GoInputEventer.Current.SetInputControl(vcs);
+                    vcs._InputModeInvisibleText_ = true;
+                }
+                else if (Control is GoDataGrid vdg)
+                {
+                    GoInputEventer.Current.SetInputControl(vdg);
+                    vdg._InputModeInvisibleText_ = true;
                 }
 
                 this.callback = callback;
@@ -132,7 +156,7 @@ namespace Going.UI.OpenTK.Ime
         {
             if (IsFocused)
             {
-              
+
             }
         }
         #endregion
@@ -144,16 +168,47 @@ namespace Going.UI.OpenTK.Ime
             {
                 using (new SKAutoCanvasRestore(canvas))
                 {
-                    if (Control is GoInput c)
+                    if (Control != null)
                     {
-                        canvas.Translate(c.ScreenX, c.ScreenY);
+                        #region var
+                        #region control var
+                        string fontName = "나눔고딕";
+                        float fontSize = 12;
+                        GoFontStyle fontStyle = GoFontStyle.Normal;
+                        string textColor = "Fore";
 
-                        SKTypeface face = Util.GetTypeface(c.FontName, c.FontStyle);
-                        using var font = new SKFont(face, c.FontSize);
+                        if (Control is GoInput vc && vc.IsKeyboardInput)
+                        {
+                            fontName = vc.FontName;
+                            fontSize = vc.FontSize;
+                            fontStyle = vc.FontStyle;
+                            textColor = vc.TextColor;
+                        }
+                        else if (Control is GoColorSelector vcs)
+                        {
+                            fontName = vcs.FontName;
+                            fontSize = vcs.FontSize;
+                            fontStyle = vcs.FontStyle;
+                            textColor = vcs.TextColor;
+                        }
+                        else if (Control is GoDataGrid vdg)
+                        {
+                            fontName = vdg.FontName;
+                            fontSize = vdg.FontSize;
+                            fontStyle = vdg.FontStyle;
+                            textColor = vdg.TextColor;
+                        }
+                        #endregion
+
+                        #region var
+                        canvas.Translate(Control.ScreenX, Control.ScreenY);
+
+                        SKTypeface face = Util.GetTypeface(fontName, fontStyle);
+                        using var font = new SKFont(face, fontSize);
                         using var p = new SKPaint { IsAntialias = true };
-                        var cText = thm.ToColor(c.TextColor);
+                        var cText = thm.ToColor(textColor);
 
-                        var textY = Bounds.Top + Bounds.Height / 2 + c.FontSize / 2 - 2;
+                        var textY = Bounds.Top + Bounds.Height / 2 + fontSize / 2 - 2;
                         float textStartX = CalculateTextStartX(font, GoContentAlignment.MiddleCenter);
 
                         string displayText = Text;
@@ -166,6 +221,8 @@ namespace Going.UI.OpenTK.Ime
                             compositionStart = CursorPosition;
                             compositionLength = _compositionText.Length;
                         }
+                        #endregion
+                        #endregion
 
                         #region 선택영역
                         if (HasSelection())
@@ -186,9 +243,9 @@ namespace Going.UI.OpenTK.Ime
                             p.IsStroke = false;
                             canvas.DrawRect(
                                 textStartX + beforeWidth,
-                                Bounds.Top + (Bounds.Height - c.FontSize) / 2,
+                                Bounds.MidY - ((fontSize + 3) / 2),
                                 selectionWidth,
-                                c.FontSize + 4,
+                                fontSize + 4,
                                 p
                             );
                         }
@@ -207,9 +264,9 @@ namespace Going.UI.OpenTK.Ime
                             p.IsStroke = false;
                             canvas.DrawRect(
                                 textStartX + beforeWidth,
-                                Bounds.Top + (Bounds.Height - c.FontSize) / 2,
+                                Bounds.Top + (Bounds.Height - fontSize) / 2,
                                 compositionWidth,
-                                c.FontSize + 4,
+                                fontSize + 4,
                                 p
                             );
 
@@ -218,9 +275,9 @@ namespace Going.UI.OpenTK.Ime
                             p.IsStroke = true;
                             canvas.DrawLine(
                                 textStartX + beforeWidth,
-                                Bounds.Top + Bounds.Height - (Bounds.Height - c.FontSize) / 2 + 2,
+                                Bounds.Top + Bounds.Height - (Bounds.Height - fontSize) / 2 + 2,
                                 textStartX + beforeWidth + compositionWidth,
-                                Bounds.Top + Bounds.Height - (Bounds.Height - c.FontSize) / 2 + 2,
+                                Bounds.Top + Bounds.Height - (Bounds.Height - fontSize) / 2 + 2,
                                 p
                             );
                         }
@@ -244,9 +301,9 @@ namespace Going.UI.OpenTK.Ime
                             p.IsStroke = true;
                             canvas.DrawLine(
                                 cursorX,
-                                Bounds.Top + (Bounds.Height - c.FontSize) / 2,
+                                Bounds.Top + (Bounds.Height - fontSize) / 2,
                                 cursorX,
-                                Bounds.Top + Bounds.Height - (Bounds.Height - c.FontSize) / 2,
+                                Bounds.Top + Bounds.Height - (Bounds.Height - fontSize) / 2,
                                 p
                             );
                         }
@@ -263,6 +320,8 @@ namespace Going.UI.OpenTK.Ime
         {
             if (!IsFocused) return;
 
+            if (Control is GoDataGrid vdg) dg_spkey(vdg, e);
+         
             switch (e.Key)
             {
                 #region Back
@@ -373,8 +432,62 @@ namespace Going.UI.OpenTK.Ime
                 #region Enter
                 case Keys.Enter:
                 case Keys.KeyPadEnter:
+                case Keys.Escape:
                     {
-                        Complete();
+                        if (Control is not GoDataGrid) Complete();
+                    }
+                    break;
+                #endregion
+                #region Tab
+                case Keys.Tab:
+                    {
+                        if (Control is GoInput vc && vc.IsKeyboardInput)
+                        {
+                            #region Input
+                            var cs = vc.Parent?.Childrens.Where(x => x is GoInput vi && vi.IsKeyboardInput).ToList() ?? [];
+                            var idxC = cs.IndexOf(vc);
+                            var idxN = idxC + 1;
+                            if (idxN >= cs.Count) idxN = 0;
+
+                            if (idxN >= 0 && idxN < cs.Count && cs[idxN] is GoInput target && idxN != idxC)
+                            {
+                                Complete();
+
+                                var rt = target.Areas()["Value"];
+
+                                target.FireMouseDown(rt.MidX, rt.MidY, GoMouseButton.Left);
+                                target.FireMouseUp(rt.MidX, rt.MidY, GoMouseButton.Left);
+                            }
+                            #endregion
+                        }
+                        else if (Control is GoColorSelector vcs)
+                        {
+                            #region RGB
+                            var rts = vcs.Areas();
+
+                            if (vcs._InputColor_ == "R")
+                            {
+                                Complete();
+                                var rt = vcs.Areas()["ValueG"];
+                                vcs.FireMouseDown(rt.MidX, rt.MidY, GoMouseButton.Left);
+                                vcs.FireMouseUp(rt.MidX, rt.MidY, GoMouseButton.Left);
+                            }
+                            else if (vcs._InputColor_ == "G")
+                            {
+                                Complete();
+                                var rt = vcs.Areas()["ValueB"];
+                                vcs.FireMouseDown(rt.MidX, rt.MidY, GoMouseButton.Left);
+                                vcs.FireMouseUp(rt.MidX, rt.MidY, GoMouseButton.Left);
+                            }
+                            else if (vcs._InputColor_ == "B")
+                            {
+                                Complete();
+                                var rt = vcs.Areas()["ValueR"];
+                                vcs.FireMouseDown(rt.MidX, rt.MidY, GoMouseButton.Left);
+                                vcs.FireMouseUp(rt.MidX, rt.MidY, GoMouseButton.Left);
+                            }
+                            #endregion
+                        }
                     }
                     break;
                     #endregion
@@ -396,7 +509,7 @@ namespace Going.UI.OpenTK.Ime
 
             if (!IsInputAllowed(text))
             {
-                return; 
+                return;
             }
 
             if (HasSelection()) DeleteSelection();
@@ -508,33 +621,28 @@ namespace Going.UI.OpenTK.Ime
         #region GetCursorPositionFromMouse
         private int GetCursorPositionFromMouse(float mouseX)
         {
-            if (Control is GoInput c)
+            using var font = GetFont();
+
+            float textStartX = CalculateTextStartX(font, GoContentAlignment.MiddleCenter);
+            float relativeX = mouseX - textStartX;
+
+            for (int i = 0; i <= Text.Length; i++)
             {
-                SKTypeface face = Util.GetTypeface(c.FontName, c.FontStyle);
-                using var font = new SKFont(face, c.FontSize);
+                string substr = Text.Substring(0, i);
+                float width = font.MeasureText(substr);
 
-                // ✅ 수정: 정렬에 따른 텍스트 시작 위치 계산
-                float textStartX = CalculateTextStartX(font, GoContentAlignment.MiddleCenter);
-                float relativeX = mouseX - textStartX;
-
-                for (int i = 0; i <= Text.Length; i++)
+                if (width >= relativeX)
                 {
-                    string substr = Text.Substring(0, i);
-                    float width = font.MeasureText(substr);
-
-                    if (width >= relativeX)
+                    if (i > 0)
                     {
-                        if (i > 0)
-                        {
-                            string prevSubstr = Text.Substring(0, i - 1);
-                            float prevWidth = font.MeasureText(prevSubstr);
-                            float charWidth = width - prevWidth;
+                        string prevSubstr = Text.Substring(0, i - 1);
+                        float prevWidth = font.MeasureText(prevSubstr);
+                        float charWidth = width - prevWidth;
 
-                            if (relativeX - prevWidth < charWidth / 2)
-                                return i - 1;
-                        }
-                        return i;
+                        if (relativeX - prevWidth < charWidth / 2)
+                            return i - 1;
                     }
+                    return i;
                 }
             }
             return Text.Length;
@@ -543,36 +651,30 @@ namespace Going.UI.OpenTK.Ime
         #region UpdateScrollOffset
         private void UpdateScrollOffset()
         {
-            if (Control is GoInput c)
+            var align = GoContentAlignment.MiddleCenter;
+
+            if (align == GoContentAlignment.TopCenter ||
+                align == GoContentAlignment.MiddleCenter ||
+                align == GoContentAlignment.BottomCenter ||
+                align == GoContentAlignment.TopRight ||
+                align == GoContentAlignment.MiddleRight ||
+                align == GoContentAlignment.BottomRight)
             {
-                var align = GoContentAlignment.MiddleCenter;
-
-                if (align == GoContentAlignment.TopCenter ||
-                    align == GoContentAlignment.MiddleCenter ||
-                    align == GoContentAlignment.BottomCenter ||
-                    align == GoContentAlignment.TopRight ||
-                    align == GoContentAlignment.MiddleRight ||
-                    align == GoContentAlignment.BottomRight)
-                {
-                    _scrollOffset = 0;
-                    return;
-                }
-
-                SKTypeface face = Util.GetTypeface(c.FontName, c.FontStyle);
-                using var font = new SKFont(face, c.FontSize);
-
-                string textBeforeCursor = Text.Substring(0, CursorPosition);
-                float cursorX = font.MeasureText(textBeforeCursor);
-
-                if (IsComposing) cursorX += font.MeasureText(_compositionText);
-
-                float viewWidth = Bounds.Width - Padding * 2;
-
-                if (cursorX - _scrollOffset > viewWidth - 10)
-                    _scrollOffset = cursorX - viewWidth + 10;
-                else if (cursorX - _scrollOffset < 10)
-                    _scrollOffset = Math.Max(0, cursorX - 10);
+                _scrollOffset = 0;
+                return;
             }
+
+            using var font = GetFont();
+
+            string textBeforeCursor = Text[..CursorPosition];
+            float cursorX = font.MeasureText(textBeforeCursor);
+
+            if (IsComposing) cursorX += font.MeasureText(_compositionText);
+
+            float viewWidth = Bounds.Width - Padding * 2;
+
+            if (cursorX - _scrollOffset > viewWidth - 10) _scrollOffset = cursorX - viewWidth + 10;
+            else if (cursorX - _scrollOffset < 10) _scrollOffset = Math.Max(0, cursorX - 10);
         }
         #endregion
 
@@ -648,7 +750,7 @@ namespace Going.UI.OpenTK.Ime
 
             try
             {
-               TextCopy.ClipboardService.SetText(selectedText);
+                TextCopy.ClipboardService.SetText(selectedText);
             }
             catch (Exception ex)
             {
@@ -665,7 +767,7 @@ namespace Going.UI.OpenTK.Ime
                 {
                     if (!IsInputAllowed(clipboardText))
                     {
-                        return; 
+                        return;
                     }
 
                     if (HasSelection())
@@ -740,7 +842,7 @@ namespace Going.UI.OpenTK.Ime
                 return true;
 
             if (!double.TryParse(Text, out double value))
-                return true; 
+                return true;
 
             if (MinValue.HasValue && value < MinValue.Value)
                 return false;
@@ -817,7 +919,7 @@ namespace Going.UI.OpenTK.Ime
                 case TextBoxInputMode.IntegerOnly:
                 case TextBoxInputMode.DecimalOnly:
                 case TextBoxInputMode.HexOnly:
-                    return false; 
+                    return false;
 
                 default:
                     return true;
@@ -829,11 +931,22 @@ namespace Going.UI.OpenTK.Ime
         void Complete()
         {
             IsFocused = false;
-            if (Control is GoInput vc)
+            if (Control is GoInput vc && vc.IsKeyboardInput)
             {
                 vc._InputModeInvisibleText_ = false;
                 GoInputEventer.Current.ClearInputControl();
             }
+            else if (Control is GoColorSelector vcs)
+            {
+                vcs._InputModeInvisibleText_ = false;
+                GoInputEventer.Current.ClearInputControl();
+            }
+            else if (Control is GoDataGrid vdg)
+            {
+                vdg._InputModeInvisibleText_ = false;
+                GoInputEventer.Current.ClearInputControl();
+            }
+
             Control = null;
             Text = "";
             callback = null;
@@ -843,6 +956,119 @@ namespace Going.UI.OpenTK.Ime
             ClearSelection();
         }
         #endregion
+
+        #region GetFont
+        SKFont GetFont()
+        {
+            string fontName = "나눔고딕";
+            float fontSize = 12;
+            GoFontStyle fontStyle = GoFontStyle.Normal;
+
+            if (Control is GoInput vc && vc.IsKeyboardInput)
+            {
+                fontName = vc.FontName;
+                fontSize = vc.FontSize;
+                fontStyle = vc.FontStyle;
+            }
+            else if (Control is GoColorSelector vcs)
+            {
+                fontName = vcs.FontName;
+                fontSize = vcs.FontSize;
+                fontStyle = vcs.FontStyle;
+            }
+            else if (Control is GoDataGrid vdg)
+            {
+                fontName = vdg.FontName;
+                fontSize = vdg.FontSize;
+                fontStyle = vdg.FontStyle;
+            }
+
+            SKTypeface face = Util.GetTypeface(fontName, fontStyle);
+            return new SKFont(face, fontSize);
+        }
+        #endregion
+        #endregion
+
+        #region dg_spkey
+        void dg_spkey(GoDataGrid vdg, KeyboardKeyEventArgs e)
+        {
+            if ((e.Key == Keys.Enter || e.Key == Keys.KeyPadEnter || e.Key == Keys.Down) && vdg.InputObject is GoDataGridCell cell)
+            {
+                var ri = vdg.ViewRows.IndexOf(cell.Row);
+                if (ri + 1 < vdg.ViewRows.Count)
+                {
+                    Complete();
+                    vdg.InputCell(vdg.ViewRows[ri + 1].Cells[cell.ColumnIndex], "d");
+                }
+                else
+                {
+                    if (e.Key != Keys.Down) Complete();
+                }
+            }
+            else if (e.Key == Keys.Escape)
+            {
+                Complete();
+            }
+            else if ((e.Key == Keys.Up) && vdg.InputObject is GoDataGridCell cell2)
+            {
+                var ri = vdg.ViewRows.IndexOf(cell2.Row);
+                if (ri - 1 >= 0)
+                {
+                    Complete();
+                    vdg.InputCell(vdg.ViewRows[ri - 1].Cells[cell2.ColumnIndex], "u");
+                }
+            }
+            else if ((e.Key == Keys.Left && e.Alt) && vdg.InputObject is GoDataGridCell cell3)
+            {
+                var ls = cell3.Row.Cells.Where(x =>
+                {
+                    var tp = x.GetType();
+                    return x is GoDataGridInputTextCell || (tp.IsGenericType && tp.GetGenericTypeDefinition() == typeof(GoDataGridInputNumberCell<>));
+                }).ToList();
+
+                var idx = ls.IndexOf(cell3);
+                if (idx >= 0 && idx - 1 >= 0)
+                {
+                    Complete();
+                    vdg.InputCell(ls[idx - 1], "l");
+                }
+            }
+            else if ((e.Key == Keys.Right && e.Alt) && vdg.InputObject is GoDataGridCell cell4)
+            {
+                var ls = cell4.Row.Cells.Where(x =>
+                {
+                    var tp = x.GetType();
+                    return x is GoDataGridInputTextCell || (tp.IsGenericType && tp.GetGenericTypeDefinition() == typeof(GoDataGridInputNumberCell<>));
+                }).ToList();
+
+                var idx = ls.IndexOf(cell4);
+                if (idx >= 0 && idx + 1 < ls.Count)
+                {
+                    Complete();
+                    vdg.InputCell(ls[idx + 1], "r");
+                }
+            }
+            else if ((e.Key == Keys.Tab) && vdg.InputObject is GoDataGridCell cell5)
+            {
+                var ls = cell5.Row.Cells.Where(x =>
+                {
+                    var tp = x.GetType();
+                    return x is GoDataGridInputTextCell || (tp.IsGenericType && tp.GetGenericTypeDefinition() == typeof(GoDataGridInputNumberCell<>));
+                }).ToList();
+
+                var idx = ls.IndexOf(cell5);
+                if (idx >= 0 && idx + 1 < ls.Count)
+                {
+                    Complete();
+                    vdg.InputCell(ls[idx + 1], "r");
+                }
+                else
+                {
+                    Complete();
+                    vdg.InputCell(ls[0], "r");
+                }
+            }
+        }
         #endregion
         #endregion
     }

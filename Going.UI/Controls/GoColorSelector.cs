@@ -6,6 +6,7 @@ using Going.UI.Utils;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -33,6 +34,9 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 5)] public string BorderColor { get; set; } = "Base3";
 
         [GoProperty(PCategory.Control, 6)] public GoContentAlignment ContentAlignment { get; set; } = GoContentAlignment.MiddleCenter;
+
+        [JsonIgnore, Browsable(false), EditorBrowsable(EditorBrowsableState.Never)] public bool _InputModeInvisibleText_ { get; set; } = false;
+        [JsonIgnore, Browsable(false), EditorBrowsable(EditorBrowsableState.Never)] public string? _InputColor_ => sInput;
 
         [JsonIgnore]
         [GoProperty(PCategory.Control, 7)]
@@ -149,9 +153,9 @@ namespace Going.UI.Controls
                 Util.DrawText(canvas, "R", FontName, FontStyle, FontSize, rtTitleR, cText);
                 Util.DrawText(canvas, "G", FontName, FontStyle, FontSize, rtTitleG, cText);
                 Util.DrawText(canvas, "B", FontName, FontStyle, FontSize, rtTitleB, cText);
-                Util.DrawText(canvas, $"{Value.Red}", FontName, FontStyle, FontSize, rtValueR, cText);
-                Util.DrawText(canvas, $"{Value.Green}", FontName, FontStyle, FontSize, rtValueG, cText);
-                Util.DrawText(canvas, $"{Value.Blue}", FontName, FontStyle, FontSize, rtValueB, cText);
+                if (!(_InputModeInvisibleText_ && sInput == "R")) Util.DrawText(canvas, $"{Value.Red}", FontName, FontStyle, FontSize, rtValueR, cText);
+                if (!(_InputModeInvisibleText_ && sInput == "G")) Util.DrawText(canvas, $"{Value.Green}", FontName, FontStyle, FontSize, rtValueG, cText);
+                if (!(_InputModeInvisibleText_ && sInput == "B")) Util.DrawText(canvas, $"{Value.Blue}", FontName, FontStyle, FontSize, rtValueB, cText);
                 #endregion
 
                 #region Color

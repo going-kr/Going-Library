@@ -51,6 +51,7 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 17)] public GoAutoFontSize AutoIconSize { get; set; } = GoAutoFontSize.NotUsed;
 
         [JsonIgnore] public virtual bool Valid => true;
+        [JsonIgnore] public virtual bool IsKeyboardInput => false;
         [JsonIgnore, Browsable(false), EditorBrowsable(EditorBrowsableState.Never)] public bool _InputModeInvisibleText_ { get; set; } = false;
         [JsonIgnore] private bool UseTitle => TitleSize.HasValue && TitleSize.Value > 0;
         [JsonIgnore] private bool UseButton => ButtonSize.HasValue && ButtonSize.Value > 0 && Buttons.Count > 0;
@@ -292,6 +293,8 @@ namespace Going.UI.Controls
                 }
             }
         }
+
+        [JsonIgnore] public override bool IsKeyboardInput => true;
         #endregion
 
         #region Event
@@ -344,6 +347,7 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 21)] public string? FormatString { get; set; } = null;
 
         [JsonIgnore] public override bool Valid => bValid;
+        [JsonIgnore] public override bool IsKeyboardInput => true;
 
         [GoProperty(PCategory.Control, 22)] public string? Unit { get; set; }
         [GoProperty(PCategory.Control, 23)] public float? UnitSize { get; set; } = null;

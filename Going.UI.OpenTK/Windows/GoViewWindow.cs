@@ -238,9 +238,10 @@ namespace Going.UI.OpenTK.Windows
             float y = MousePosition.Y;
             GoMouseButton mb = ToGoMouseButton(e.Button);
 
-            if (OperatingSystem.IsLinux() && TKInputManager.Current.IsInput) TKInputManager.Current.MouseDown(x, y, mb);
-            else if (OperatingSystem.IsWindows() && ImeInputManager.Current.IsInput) ImeInputManager.Current.OnMouseDown(MouseState, KeyboardState, e);
-            else Design.MouseDown(x, y, mb);
+            if (OperatingSystem.IsLinux()) TKInputManager.Current.MouseDown(x, y, mb);
+            if (OperatingSystem.IsWindows()) ImeInputManager.Current.OnMouseDown(MouseState, KeyboardState, e);
+            
+            Design.MouseDown(x, y, mb);
 
 
             base.OnMouseDown(e);
@@ -253,9 +254,10 @@ namespace Going.UI.OpenTK.Windows
             float y = MousePosition.Y;
             GoMouseButton mb = ToGoMouseButton(e.Button);
 
-            if (OperatingSystem.IsLinux() && TKInputManager.Current.IsInput) TKInputManager.Current.MouseUp(x, y, mb);
-            else if (OperatingSystem.IsWindows() && ImeInputManager.Current.IsInput) ImeInputManager.Current.OnMouseUp(MouseState, KeyboardState, e);
-            else Design.MouseUp(x, y, mb);
+            if (OperatingSystem.IsLinux()) TKInputManager.Current.MouseUp(x, y, mb);
+            if (OperatingSystem.IsWindows()) ImeInputManager.Current.OnMouseUp(MouseState, KeyboardState, e);
+            
+            Design.MouseUp(x, y, mb);
 
             if ((DateTime.Now - dcTime).TotalMilliseconds < 300) Design.MouseDoubleClick(x, y, mb);
             dcTime = DateTime.Now;
@@ -270,9 +272,9 @@ namespace Going.UI.OpenTK.Windows
             float x = MousePosition.X;
             float y = MousePosition.Y;
 
-            if (OperatingSystem.IsLinux() && TKInputManager.Current.IsInput) TKInputManager.Current.MouseMove(x, y);
-            else if (OperatingSystem.IsWindows() && ImeInputManager.Current.IsInput) ImeInputManager.Current.OnMouseMove(MouseState, KeyboardState);
-            else Design.MouseMove(x, y);
+            if (OperatingSystem.IsLinux()) TKInputManager.Current.MouseMove(x, y);
+            if (OperatingSystem.IsWindows()) ImeInputManager.Current.OnMouseMove(MouseState, KeyboardState);
+            Design.MouseMove(x, y);
 
 
             base.OnMouseMove(e);

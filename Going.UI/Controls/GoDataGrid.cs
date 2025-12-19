@@ -58,6 +58,8 @@ namespace Going.UI.Controls
         [JsonIgnore] internal Type? DataType { get; private set; }
         [JsonIgnore] public object? InputObject { get; internal set; }
         [JsonIgnore] public List<GoDataGridRow> ViewRows => mrows;
+
+        [JsonIgnore, Browsable(false), EditorBrowsable(EditorBrowsableState.Never)] public bool _InputModeInvisibleText_ { get; set; } = false;
         #endregion
 
         #region Member Variable
