@@ -1,5 +1,6 @@
 ﻿using Going.UI.Controls;
 using Going.UI.Enums;
+using Going.UI.Managers;
 using Going.UI.Themes;
 using Going.UI.Tools;
 using Going.UI.Utils;
@@ -84,7 +85,11 @@ namespace Going.UI.OpenTK.Ime
                 CursorPosition = Text.Length;
                 InputMode = TextBoxInputMode.All;
 
-                if (Control is GoInput vc) vc._InputModeInvisibleText_ = true;
+                if (Control is GoInput vc)
+                {
+                    GoInputEventer.Current.SetInputControl(vc);
+                    vc._InputModeInvisibleText_ = true;
+                }
 
                 this.callback = callback;
             }
@@ -111,7 +116,11 @@ namespace Going.UI.OpenTK.Ime
                 if (min != null) min = Convert.ToDouble(min);
                 if (max != null) max = Convert.ToDouble(max);
 
-                if (Control is GoInput vc) vc._InputModeInvisibleText_ = true;
+                if (Control is GoInput vc)
+                {
+                    GoInputEventer.Current.SetInputControl(vc); 
+                    vc._InputModeInvisibleText_ = true;
+                }
 
                 this.callback = callback;
             }
@@ -365,14 +374,7 @@ namespace Going.UI.OpenTK.Ime
                 case Keys.Enter:
                 case Keys.KeyPadEnter:
                     {
-                        IsFocused = false;
-                        if (Control is GoInput vc) vc._InputModeInvisibleText_ = false;
-                        Control = null;
-                        Text = "";
-                        callback = null;
-                        CursorPosition = 0;
-
-                        ClearSelection();
+                        Complete();
                     }
                     break;
                     #endregion
@@ -418,6 +420,14 @@ namespace Going.UI.OpenTK.Ime
         {
             if (!IsFocused) return;
 
+            if (!AllowIME())
+            {
+                _compositionText = "";
+                _compositionCursorPos = 0;
+                return;
+            }
+
+
             _compositionText = compositionText ?? "";
             _compositionCursorPos = cursorPos;
 
@@ -428,6 +438,13 @@ namespace Going.UI.OpenTK.Ime
         public void OnIMECommit(string text)
         {
             if (!IsFocused) return;
+
+            if (!AllowIME())
+            {
+                _compositionText = "";
+                _compositionCursorPos = 0;
+                return;
+            }
 
             _compositionText = "";
             _compositionCursorPos = 0;
@@ -455,26 +472,12 @@ namespace Going.UI.OpenTK.Ime
             {
                 CursorPosition = GetCursorPositionFromMouse(mouseX - (Control?.ScreenX ?? 0));
 
-                if (!isShiftPressed)
-                {
-                    ClearSelection();
-                }
-                else
-                {
-                    UpdateSelection();
-                }
+                if (!isShiftPressed) ClearSelection();
+                else UpdateSelection();
             }
             else
             {
-                IsFocused = false;
-                if (Control is GoInput vc) vc._InputModeInvisibleText_ = false;
-                Control = null;
-                Text = "";
-                callback = null;
-                CursorPosition = 0;
-                
-
-                ClearSelection();
+                Complete();
             }
         }
         #endregion
@@ -803,6 +806,41 @@ namespace Going.UI.OpenTK.Ime
                 default:
                     return true;
             }
+        }
+        #endregion
+        #region AllowIME
+        private bool AllowIME()
+        {
+            switch (InputMode)
+            {
+                case TextBoxInputMode.NumberOnly:
+                case TextBoxInputMode.IntegerOnly:
+                case TextBoxInputMode.DecimalOnly:
+                case TextBoxInputMode.HexOnly:
+                    return false; 
+
+                default:
+                    return true;
+            }
+        }
+        #endregion
+
+        #region Complate
+        void Complete()
+        {
+            IsFocused = false;
+            if (Control is GoInput vc)
+            {
+                vc._InputModeInvisibleText_ = false;
+                GoInputEventer.Current.ClearInputControl();
+            }
+            Control = null;
+            Text = "";
+            callback = null;
+            CursorPosition = 0;
+
+
+            ClearSelection();
         }
         #endregion
         #endregion

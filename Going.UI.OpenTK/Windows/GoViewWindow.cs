@@ -85,8 +85,8 @@ namespace Going.UI.OpenTK.Windows
             }
             else if (OperatingSystem.IsWindows())
             {
-                GoInputEventer.Current.InputString += ImeInputManger.Current.InputString;
-                GoInputEventer.Current.InputNumber += ImeInputManger.Current.InputNumber;
+                GoInputEventer.Current.InputString += ImeInputManager.Current.InputString;
+                GoInputEventer.Current.InputNumber += ImeInputManager.Current.InputNumber;
             }
 
         }
@@ -116,7 +116,7 @@ namespace Going.UI.OpenTK.Windows
                 {
                     Handle = GLFW.GetWin32Window(WindowPtr);
                     DarkMode(Handle, true);
-                    ImeInputManger.Current.Init(WindowPtr);
+                    ImeInputManager.Current.Init(WindowPtr);
                 }
             }
         }
@@ -199,7 +199,7 @@ namespace Going.UI.OpenTK.Windows
                     }
                     #endregion
 
-                    if (OperatingSystem.IsWindows()) ImeInputManger.Current.OnDraw(canvas, thm);
+                    if (OperatingSystem.IsWindows()) ImeInputManager.Current.OnDraw(canvas, thm);
 
                     ctx.Flush();
                     SwapBuffers();
@@ -224,7 +224,7 @@ namespace Going.UI.OpenTK.Windows
             {
                 Design.Update();
 
-                if (OperatingSystem.IsWindows()) ImeInputManger.Current.OnUpdate();
+                if (OperatingSystem.IsWindows()) ImeInputManager.Current.OnUpdate();
             }
         }
         #endregion
@@ -238,10 +238,10 @@ namespace Going.UI.OpenTK.Windows
             float y = MousePosition.Y;
             GoMouseButton mb = ToGoMouseButton(e.Button);
 
-            if (TKInputManager.Current.IsInput) TKInputManager.Current.MouseDown(x, y, mb);
+            if (OperatingSystem.IsLinux() && TKInputManager.Current.IsInput) TKInputManager.Current.MouseDown(x, y, mb);
+            else if (OperatingSystem.IsWindows() && ImeInputManager.Current.IsInput) ImeInputManager.Current.OnMouseDown(MouseState, KeyboardState, e);
             else Design.MouseDown(x, y, mb);
 
-            if (OperatingSystem.IsWindows()) ImeInputManger.Current.OnMouseDown(MouseState, KeyboardState, e);
 
             base.OnMouseDown(e);
         }
@@ -253,13 +253,13 @@ namespace Going.UI.OpenTK.Windows
             float y = MousePosition.Y;
             GoMouseButton mb = ToGoMouseButton(e.Button);
 
-            if (TKInputManager.Current.IsInput) TKInputManager.Current.MouseUp(x, y, mb);
+            if (OperatingSystem.IsLinux() && TKInputManager.Current.IsInput) TKInputManager.Current.MouseUp(x, y, mb);
+            else if (OperatingSystem.IsWindows() && ImeInputManager.Current.IsInput) ImeInputManager.Current.OnMouseUp(MouseState, KeyboardState, e);
             else Design.MouseUp(x, y, mb);
 
             if ((DateTime.Now - dcTime).TotalMilliseconds < 300) Design.MouseDoubleClick(x, y, mb);
             dcTime = DateTime.Now;
 
-            if (OperatingSystem.IsWindows()) ImeInputManger.Current.OnMouseUp(MouseState, KeyboardState, e);
 
             base.OnMouseUp(e);
         }
@@ -270,10 +270,10 @@ namespace Going.UI.OpenTK.Windows
             float x = MousePosition.X;
             float y = MousePosition.Y;
 
-            if (TKInputManager.Current.IsInput) TKInputManager.Current.MouseMove(x, y);
+            if (OperatingSystem.IsLinux() && TKInputManager.Current.IsInput) TKInputManager.Current.MouseMove(x, y);
+            else if (OperatingSystem.IsWindows() && ImeInputManager.Current.IsInput) ImeInputManager.Current.OnMouseMove(MouseState, KeyboardState);
             else Design.MouseMove(x, y);
 
-            if (OperatingSystem.IsWindows()) ImeInputManger.Current.OnMouseMove(MouseState, KeyboardState);
 
             base.OnMouseMove(e);
         }
@@ -315,7 +315,7 @@ namespace Going.UI.OpenTK.Windows
         #region OnTextInput
         protected override void OnTextInput(TextInputEventArgs e)
         {
-            if (OperatingSystem.IsWindows()) ImeInputManger.Current.OnTextInput(e);
+            if (OperatingSystem.IsWindows()) ImeInputManager.Current.OnTextInput(e);
             base.OnTextInput(e);
         }
         #endregion
@@ -324,7 +324,7 @@ namespace Going.UI.OpenTK.Windows
         {
             Design.KeyDown(e.Shift, e.Control, e.Alt, (GoKeys)e.Key);
 
-            if (OperatingSystem.IsWindows()) ImeInputManger.Current.OnKeyDown(e);
+            if (OperatingSystem.IsWindows()) ImeInputManager.Current.OnKeyDown(e);
 
             base.OnKeyDown(e);
         }

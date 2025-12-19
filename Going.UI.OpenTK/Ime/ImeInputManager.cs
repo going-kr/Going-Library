@@ -1,4 +1,5 @@
 ﻿using Going.UI.Controls;
+using Going.UI.Managers;
 using Going.UI.Themes;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
@@ -13,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Going.UI.OpenTK.Ime
 {
-    internal unsafe class ImeInputManger
+    internal unsafe class ImeInputManager
     {
         #region Const
         private const int GWL_WNDPROC = -4;
@@ -35,8 +36,10 @@ namespace Going.UI.OpenTK.Ime
         #endregion
 
         #region Member Variable
-        private static readonly Lazy<ImeInputManger> _instance = new Lazy<ImeInputManger>(() => new ImeInputManger());
-        public static ImeInputManger Current => _instance.Value;
+        private static readonly Lazy<ImeInputManager> _instance = new Lazy<ImeInputManager>(() => new ImeInputManager());
+        public static ImeInputManager Current => _instance.Value;
+        public bool IsInput => InputControl != null;
+        public IGoControl? InputControl => GoInputEventer.Current.InputControl;
 
         private TextBox txt;
         private delegate IntPtr WndProcDelegate(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
@@ -50,7 +53,7 @@ namespace Going.UI.OpenTK.Ime
         #endregion
 
         #region Constructor
-        public ImeInputManger()
+        public ImeInputManager()
         {
             txt = new TextBox();
         }
@@ -186,6 +189,7 @@ namespace Going.UI.OpenTK.Ime
         }
         #endregion
 
+        #region Input
         public void InputString(IGoControl control, SKRect bounds, Action<string> callback, string? value = null)
         {
             txt.InputString(control, bounds, callback, value);
@@ -195,5 +199,7 @@ namespace Going.UI.OpenTK.Ime
         {
             txt.InputNumber(control, bounds, callback, valueType, value, min, max);
         }
+        #endregion
+     
     }
 }
