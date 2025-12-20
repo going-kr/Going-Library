@@ -540,6 +540,10 @@ namespace Going.UI.OpenTK.Ime
                 return;
             }
 
+            if (HasSelection())
+            {
+                DeleteSelection();
+            }
 
             _compositionText = compositionText ?? "";
             _compositionCursorPos = cursorPos;
