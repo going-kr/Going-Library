@@ -86,7 +86,7 @@ namespace Going.UI.Containers
 
                 if (Design != null && Design.DesignMode)
                 {
-                    var rt = rtView; rt.Inflate(-0.5F, -0.5F);
+                    var rt = Util.Int(rtView); rt.Inflate(-0.5F, -0.5F);
                     using var pe = SKPathEffect.CreateDash([1, 2], 2);
                     using var p = new SKPaint { };
                     p.IsStroke = true; p.StrokeWidth = 1; p.Color = thm.Base3;

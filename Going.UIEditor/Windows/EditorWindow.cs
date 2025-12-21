@@ -16,6 +16,7 @@ using Going.UIEditor.Forms.Editors;
 using Going.UIEditor.Utils;
 using GuiLabs.Undo;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 using SkiaSharp;
 using System.Data;
 using System.Diagnostics;
@@ -268,11 +269,18 @@ namespace Going.UIEditor.Windows
                                     {
                                         var tort = trt; tort.Inflate(MAG_INTERVAL, MAG_INTERVAL);
 
-                                        float overlapT = Math.Max(ort.Top, trt.Top);
-                                        float overlapB = Math.Min(ort.Bottom, trt.Bottom);
-                                        var dy = MathTool.Center(overlapT, overlapB);
+                                        if (mx.MagNameX == "gc")
+                                        {
+                                            if (mx.MagX.HasValue) canvas.DrawLine(mx.MagX.Value, tort.Top, mx.MagX.Value, tort.Bottom, p);
+                                        }
+                                        else
+                                        {
+                                            float overlapT = Math.Max(ort.Top, trt.Top);
+                                            float overlapB = Math.Min(ort.Bottom, trt.Bottom);
+                                            var dy = MathTool.Center(overlapT, overlapB);
 
-                                        if (mx.MagX.HasValue) canvas.DrawLine(mx.MagX.Value, dy, mx.MagNameX?.Contains('l') ?? false ? tort.Left : tort.Right, dy, p);
+                                            if (mx.MagX.HasValue) canvas.DrawLine(mx.MagX.Value, dy, mx.MagNameX?.Contains('l') ?? false ? tort.Left : tort.Right, dy, p);
+                                        }
                                     }
                                 }, 
                                 (my) =>
@@ -308,11 +316,18 @@ namespace Going.UIEditor.Windows
                                     {
                                         var tort = trt; tort.Inflate(MAG_INTERVAL, MAG_INTERVAL);
 
-                                        float overlapL = Math.Max(ort.Left, trt.Left);
-                                        float overlapR = Math.Min(ort.Right, trt.Right);
-                                        var dx = MathTool.Center(overlapL, overlapR);
+                                        if (my.MagNameY == "gc")
+                                        {
+                                            if (my.MagY.HasValue) canvas.DrawLine(tort.Left, my.MagY.Value, tort.Right, my.MagY.Value, p);
+                                        }
+                                        else
+                                        {
+                                            float overlapL = Math.Max(ort.Left, trt.Left);
+                                            float overlapR = Math.Min(ort.Right, trt.Right);
+                                            var dx = MathTool.Center(overlapL, overlapR);
 
-                                        if (my.MagY.HasValue) canvas.DrawLine(dx, my.MagY.Value, dx, my.MagNameY?.Contains('t') ?? false ? tort.Top : tort.Bottom, p);
+                                            if (my.MagY.HasValue) canvas.DrawLine(dx, my.MagY.Value, dx, my.MagNameY?.Contains('t') ?? false ? tort.Top : tort.Bottom, p);
+                                        }
                                     }
                                 });
                             }
@@ -2137,9 +2152,8 @@ namespace Going.UIEditor.Windows
             {
                 foreach (var vc in alls.ToArray())
                     if (parent_check(vc, con)  ) alls.Remove(vc);
-
-
             }
+
 
             var (xs, ys) = mag_controlpos(srt);
             var tls = alls.Where(tc => tc != c && mag_check(tc, xs, ys, anc)).ToList();
