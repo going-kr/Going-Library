@@ -34,27 +34,33 @@ namespace Going.UI.Containers
             if (Design != null && Design.DesignMode)
             {
                 var rt = Areas()["Content"];
-                
+                rt.Inflate(-0.5F, -0.5F);
+                rt.Offset(0.5F, 0.5F);
                 using var pe = SKPathEffect.CreateDash([1, 2], 2);
                 using var p = new SKPaint { };
 
-                var rts = GridBounds();
+                var rts = GridBounds(rt);
 
+                p.IsStroke = true;
+                p.StrokeWidth = 1;
+                p.Color = thm.Base3;
+                p.IsAntialias = false;
+                p.PathEffect = pe;
+                
                 for (int ir = 0; ir < Rows.Count; ir++)
                 {
+                    if (CellBounds(rts, 0, ir) is SKRect vrt1)
+                    {
+                        if (ir == 0) canvas.DrawLine(rt.Left, vrt1.Top, rt.Right, vrt1.Top, p);
+                        canvas.DrawLine(rt.Left, vrt1.Bottom, rt.Right, vrt1.Bottom, p);
+                    }
+
                     for (int ic = 0; ic < Rows[ir].Columns.Count; ic++)
                     {
-                        if (CellBounds(rts, ic, ir) is SKRect vrt)
+                        if (CellBounds(rts, ic, ir) is SKRect vrt2)
                         {
-                            var mrt = vrt;
-                            mrt.Inflate(-0.5F, -0.5F);
-
-                            p.IsStroke = true;
-                            p.StrokeWidth = 1;
-                            p.Color = thm.Base3;
-                            p.PathEffect = pe;
-                            canvas.DrawRect(mrt, p);
-                            p.PathEffect = null;
+                            if (ic == 0) canvas.DrawLine(vrt2.Left, vrt2.Top, vrt2.Left, vrt2.Bottom, p);
+                            canvas.DrawLine(vrt2.Right, vrt2.Top, vrt2.Right, vrt2.Bottom, p);
                         }
                     }
                 }

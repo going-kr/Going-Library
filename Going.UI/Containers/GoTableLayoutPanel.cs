@@ -34,9 +34,11 @@ namespace Going.UI.Containers
         #region Override
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
-            if(Design != null && Design.DesignMode)
+            if (Design != null && Design.DesignMode)
             {
                 var rt = Areas()["Content"];
+                rt.Inflate(-0.5F, -0.5F);
+                rt.Offset(0.5F, 0.5F);
                 var rts = Util.Grid(rt, Columns.ToArray(), Rows.ToArray());
 
                 using var pe = SKPathEffect.CreateDash([1, 2], 2);
@@ -46,12 +48,24 @@ namespace Going.UI.Containers
                 p.StrokeWidth = 1;
                 p.Color = thm.Base3;
                 p.PathEffect = pe;
-                foreach(var v in rts)
+                p.IsAntialias = false;
+
+                for (int i = 0; i < rts.GetLength(1); i++)
                 {
-                    var vrt = v;
-                    vrt.Inflate(-0.5F, -0.5F);
-                    canvas.DrawRect(vrt, p);
+                    var l = rts[0, i].Left;
+                    var r = rts[0, i].Right;
+                    canvas.DrawLine(r, rt.Top, r, rt.Bottom, p);
+                    if (i == 0) canvas.DrawLine(l, rt.Top, l, rt.Bottom, p);
                 }
+
+                for (int i = 0; i < rts.GetLength(0); i++)
+                {
+                    var t = rts[i, 0].Top;
+                    var b = rts[i, 0].Bottom;
+                    canvas.DrawLine(rt.Left, b, rt.Right, b, p);
+                    if (i == 0) canvas.DrawLine(rt.Left, t, rt.Right, t, p);
+                }
+
                 p.PathEffect = null;
             }
 

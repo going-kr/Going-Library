@@ -40,9 +40,12 @@ namespace Going.UI.Containers
 
             if (Design?.DesignMode ?? false)
             {
-                var rt = Util.Int(rtEditor); rt.Inflate(-0.5F, -0.5F);
+                var rt = rtEditor;
+                rt.Inflate(-0.5F, -0.5F);
+                rt.Offset(0.5F, 0.5F);
                 using var pe = SKPathEffect.CreateDash([1, 2], 2);
                 using var p = new SKPaint { };
+                p.IsAntialias = false;
                 p.IsStroke = true; p.StrokeWidth = 1; p.Color = thm.Base3;
                 p.PathEffect = pe;
                 canvas.DrawRect(rt, p);
