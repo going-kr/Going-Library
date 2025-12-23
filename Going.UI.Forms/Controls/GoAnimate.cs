@@ -54,6 +54,7 @@ namespace Going.UI.Forms.Controls
         System.Windows.Forms.Timer tmr = new System.Windows.Forms.Timer { Enabled = false, Interval = 30 };
         private int idx = 0;
         private DateTime prev = DateTime.Now;
+        SKPath path = new SKPath();
         #endregion
 
         #region Constructor
@@ -119,7 +120,7 @@ namespace Going.UI.Forms.Controls
                     }
                     #endregion
 
-                    using var path = PathTool.Box(rt, Round, thm.Corner);
+                    PathTool.Box(path, rt, Round, thm.Corner);
                     using (new SKAutoCanvasRestore(canvas))
                     {
                         canvas.ClipPath(path, SKClipOperation.Intersect, true);
@@ -129,6 +130,12 @@ namespace Going.UI.Forms.Controls
             }
 
             base.OnContentDraw(e);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            path.Dispose();
+            base.Dispose(disposing);
         }
         #endregion
     }

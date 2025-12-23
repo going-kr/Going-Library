@@ -45,9 +45,11 @@ namespace Going.UI.Controls
         #region Member Variable
         private Scroll scroll = new Scroll() { Direction = ScrollDirection.Vertical };
 
-        bool bShift, bControl;
+        private bool bShift, bControl;
         private GoListItem? first = null;
         private SKRect rtBoxP = new SKRect();
+
+        private SKPath path = new SKPath();
         #endregion
 
         #region Event 
@@ -97,8 +99,8 @@ namespace Going.UI.Controls
 
             using (new SKAutoCanvasRestore(canvas))
             {
-                using var pth = PathTool.Box(rtContent, Round, thm.Corner);
-                canvas.ClipPath(pth, SKClipOperation.Intersect, true);
+                PathTool.Box(path, rtContent, Round, thm.Corner);
+                canvas.ClipPath(path, SKClipOperation.Intersect, true);
                 canvas.Translate(rtContent.Left, spos + rtContent.Top); // 스크롤 위치만큼 이동(spos가 필요한 이유) - 여기서부터 위치변경 후 그리기 시작
                 itemLoop((i, item) =>
                 {
@@ -227,6 +229,14 @@ namespace Going.UI.Controls
             bShift = Shift;
             bControl = Control;
             base.OnKeyUp(Shift, Control, Alt, key);
+        }
+        #endregion
+
+        #region Dispose
+        protected override void OnDispose()
+        {
+            path.Dispose();
+            base.OnDispose();
         }
         #endregion
 

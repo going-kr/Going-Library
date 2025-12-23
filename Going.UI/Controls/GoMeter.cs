@@ -61,6 +61,10 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 16)] public int Gap { get; set; } = 0;
         #endregion
 
+        #region Member Variable
+        SKPath path = new SKPath();
+        #endregion
+
         #region Event
         public event EventHandler? ValueChanged;
         #endregion
@@ -129,8 +133,9 @@ namespace Going.UI.Controls
             #endregion
 
             #region Needle
-            using (var path = PathTool.Needle(rtContent, rtBox, Value, Minimum, Maximum, StartAngle, SweepAngle, RemarkFontSize))
             {
+                PathTool.Needle(path, rtContent, rtBox, Value, Minimum, Maximum, StartAngle, SweepAngle, RemarkFontSize);
+
                 var distN = rwh - RemarkFontSize - 5;
                 using var imgf = SKImageFilter.CreateDropShadow(2, 2, 3, 3, Util.FromArgb(thm.ShadowAlpha, SKColors.Black));
                 using var lg = SKShader.CreateRadialGradient(cp, distN, [cNd, cNd, cNdp, cNdp], [0, 0.6F, 0.61F, 1], SKShaderTileMode.Clamp);
@@ -153,6 +158,12 @@ namespace Going.UI.Controls
             Util.DrawText(canvas, Title, FontName, FontStyle, TitleFontSize, rtTitle, cText);
             #endregion
             base.OnDraw(canvas, thm);
+        }
+
+        protected override void OnDispose()
+        {
+            path.Dispose();
+            base.OnDispose();
         }
 
         public override Dictionary<string, SKRect> Areas()

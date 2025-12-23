@@ -19,7 +19,11 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 1)] public GoImageScaleMode ScaleMode { get; set; } = GoImageScaleMode.Real;
         [GoProperty(PCategory.Control, 2)] public GoRoundType Round { get; set; } = GoRoundType.Rect;
         #endregion
- 
+
+        #region Member Variable
+        SKPath path = new SKPath();
+        #endregion
+
         #region Override
         #region OnDraw
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
@@ -61,7 +65,7 @@ namespace Going.UI.Controls
                     }
                     #endregion
 
-                    using var path = PathTool.Box(rt, Round, thm.Corner);
+                    PathTool.Box(path, rt, Round, thm.Corner);
                     using (new SKAutoCanvasRestore(canvas))
                     {
                         canvas.ClipPath(path, SKClipOperation.Intersect, true);
@@ -70,6 +74,14 @@ namespace Going.UI.Controls
                 }
             }
             base.OnDraw(canvas, thm);
+        }
+        #endregion
+
+        #region Dispose
+        protected override void OnDispose()
+        {
+            path.Dispose();
+            base.OnDispose();
         }
         #endregion
         #endregion

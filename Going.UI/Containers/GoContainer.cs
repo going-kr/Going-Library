@@ -116,6 +116,13 @@ namespace Going.UI.Containers
 
             GUI.KeyUp(this, Shift, Control, Alt, key);
         }
+
+        protected override void OnDispose()
+        {
+            base.OnDispose();
+
+            foreach (var c in Childrens) c.Dispose();
+        }
         #endregion
 
         #region Virtual

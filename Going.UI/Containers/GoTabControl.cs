@@ -73,6 +73,7 @@ namespace Going.UI.Containers
 
         #region Member Variable
         GoTabPage? selTab;
+        Dictionary<GoTabPage, SKPath> paths = [];
         #endregion
 
         #region Constructor
@@ -130,7 +131,10 @@ namespace Going.UI.Containers
                     #endregion
 
                     #region tab
-                    using var pth = PathTool.Tab(rt, TabPosition, thm.Corner);
+
+                    if (!paths.ContainsKey(tab)) paths[tab] = new SKPath();
+                    var pth = paths[tab];
+                    PathTool.Tab(pth, rt, TabPosition, thm.Corner);
 
                     p.IsStroke = false;
                     p.Color = cTab;
@@ -223,6 +227,18 @@ namespace Going.UI.Containers
 
             //base.OnLayout();
         }
+
+        protected override void OnDispose()
+        {
+            //base.OnDispose();
+
+            foreach (var p in TabPages)
+                foreach (var c in p.Childrens)
+                    c.Dispose();
+
+            foreach (var v in paths.Values) v.Dispose();
+
+        }
         #endregion
 
         #region Mouse
@@ -297,6 +313,8 @@ namespace Going.UI.Containers
             return dic;
         }
         #endregion
+
+
         #endregion
 
         #region Method

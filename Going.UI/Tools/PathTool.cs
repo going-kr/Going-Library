@@ -16,9 +16,9 @@ namespace Going.UI.Tools
     public class PathTool
     {
         #region Box
-        public static SKPath Box(SKRect rect, GoRoundType round, float corner)
+        public static void Box(SKPath path, SKRect rect, GoRoundType round, float corner)
         {
-            var path = new SKPath();
+            path.Reset();
 
             var rt = new SKRoundRect(rect, corner);
             switch (round)
@@ -37,45 +37,39 @@ namespace Going.UI.Tools
             }
 
             path.AddRoundRect(rt);
-
-            return path;
         }
         #endregion
         #region Check
-        public static SKPath Check(SKRect rect)
+        public static void Check(SKPath path, SKRect rect)
         {
+            path.Reset();
+
             var INF = rect.Width / 4;
             var rtCheck = Util.FromRect(rect.Left, rect.Top, rect.Width, rect.Height);
             rtCheck.Inflate(-INF, -INF);
 
-            var path = new SKPath();
 
             var points = new SKPoint[] { new SKPoint(rtCheck.Left, rtCheck.MidY),
                                          new SKPoint(rtCheck.MidX, rtCheck.Bottom),
                                          new SKPoint(rtCheck.Right, rtCheck.Top)};
 
-
             path.MoveTo(points[0]);
             path.LineTo(points[1]);
             path.LineTo(points[2]);
-
-            return path;
         }
         #endregion
         #region Circle
-        public static SKPath Circle(float x, float y, float r)
+        public static void Circle(SKPath path, float x, float y, float r)
         {
-            var path = new SKPath();
-
+            path.Reset();
             path.AddCircle(x, y, r);
-
-            return path;
         }
         #endregion
         #region RoundedPolygon
-        public static SKPath RoundedPolygon(SKPoint[] points, float radius)
+        public static void RoundedPolygon(SKPath retval, SKPoint[] points, float radius)
         {
-            SKPath retval = new SKPath();
+            retval.Reset();
+
             if (points.Length < 3) throw new ArgumentException();
 
             var rects = new SKRect[points.Length];
@@ -149,14 +143,13 @@ namespace Going.UI.Tools
                 else retval.ArcTo(rect, (float)Vector.AngleBetween(new Vector(1, 0), n2), sweepangle, false);
             }
             retval.Close();
-            return retval;
         }
         #endregion
 
         #region Gauge
-        public static SKPath Gauge(SKRect rtGauge, float startAngle, float sweepAngle, float barSize)
+        public static void Gauge(SKPath path, SKRect rtGauge, float startAngle, float sweepAngle, float barSize)
         {
-            var path = new SKPath();
+            path.Reset();
 
             #region var
             var cp = MathTool.CenterPoint(rtGauge);
@@ -180,15 +173,13 @@ namespace Going.UI.Tools
             path.ArcTo(rtOut, startAngle + sweepAngle, -sweepAngle, false);
             path.Close();
             #endregion
-
-            return path;
         }
         #endregion
         #region Needle
-        public static SKPath Needle(SKRect rtContent, SKRect rtGauge,
+        public static void Needle(SKPath path, SKRect rtContent, SKRect rtGauge,
             double value, double minimum, double maximum, float startAngle, float sweepAngle, float remarkFontSize)
         {
-            var path = new SKPath();
+            path.Reset();
 
             #region var
             var rwh = rtGauge.Width / 2F;
@@ -207,25 +198,22 @@ namespace Going.UI.Tools
             path.ArcTo(rtS, vang + startAngle + 90 + 180, 180, false);
             path.Close();
             #endregion
-
-            return path;
         }
         #endregion
         #region Knob
-        public static SKPath Knob(SKRect rtContent, SKRect rtKnob)
+        public static void Knob(SKPath path, SKRect rtContent, SKRect rtKnob)
         {
-            var path = new SKPath();
+            path.Reset();
 
             var cp = new SKPoint(rtContent.MidX, rtContent.MidY);
             path.AddCircle(cp.X, cp.Y, rtKnob.Width / 2F);
-
-            return path;
         }
         #endregion
         #region KnobCursor
-        public static SKPath KnobCursor(SKPoint pt1, SKPoint pt2, float vang, int width)
+        public static void KnobCursor(SKPath path, SKPoint pt1, SKPoint pt2, float vang, int width)
         {
-            var path = new SKPath();
+            path.Reset();
+
             var sz = width;
             var rt1 = MathTool.MakeRectangle(pt1, sz);
             var rt2 = MathTool.MakeRectangle(pt2, sz);
@@ -233,15 +221,13 @@ namespace Going.UI.Tools
             path.AddArc(SKRect.Create(rt1.Left, rt1.Top, rt1.Width, rt1.Height), vang - 90, 180);
             path.ArcTo(SKRect.Create(rt2.Left, rt2.Top, rt2.Width, rt2.Height), vang + 90, 180, false);
             path.Close();
-
-            return path;
         }
         #endregion
 
         #region Tab
-        public static SKPath Tab(SKRect rtTab,  GoDirection tabPosition, float corner)
+        public static void Tab(SKPath path, SKRect rtTab,  GoDirection tabPosition, float corner)
         {
-            SKPath path = new SKPath();
+            path.Reset();
 
             var corner2 = corner * 2F;
             switch (tabPosition)
@@ -279,7 +265,6 @@ namespace Going.UI.Tools
                     }
                     break;
             }
-            return path;
         }
         #endregion
     }

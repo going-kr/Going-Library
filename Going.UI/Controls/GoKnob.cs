@@ -75,6 +75,8 @@ namespace Going.UI.Controls
         double calcAngle;
         double downAngle;
         SKPoint prev;
+
+        SKPath path;
         #endregion
 
         #region Override
@@ -121,12 +123,13 @@ namespace Going.UI.Controls
                 var pt2 = MathTool.GetPointWithAngle(cp, vang, whCursor * 0.5F);
                 using var imgf = SKImageFilter.CreateDropShadow(1, 1, 1, 1, thm.Dark ? SKColors.Black : SKColors.Gray);
 
-                using (var pth = PathTool.KnobCursor(pt1, pt2, vang, whCursor / 8))
                 {
+                    PathTool.KnobCursor(path, pt1, pt2, vang, whCursor / 8);
+
                     p.IsStroke = false;
                     p.Color = cCur.BrightnessTransmit(1);
                     p.ImageFilter = imgf;
-                    canvas.DrawPath(pth, p);
+                    canvas.DrawPath(path, p);
                     p.ImageFilter = null;
                 }
             }
@@ -228,6 +231,11 @@ namespace Going.UI.Controls
             base.OnMouseMove(x, y);
         }
 
+        protected override void OnDispose()
+        {
+            path.Dispose();
+            base.OnDispose();
+        }
 
         public override Dictionary<string, SKRect> Areas()
         {

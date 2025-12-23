@@ -36,6 +36,7 @@ namespace Going.UI.Controls
 
         #region Member Variable
         bool bMonthPrev = false, bMonthNext = false;
+        SKPath path = new SKPath();
         #endregion
 
         #region Event
@@ -79,7 +80,7 @@ namespace Going.UI.Controls
             }
             #endregion
             #region Days
-            using (var path = PathTool.Box(rtContent, BackgroundDraw ? Round : GoRoundType.Rect, thm.Corner))
+            PathTool.Box(path, rtContent, BackgroundDraw ? Round : GoRoundType.Rect, thm.Corner);
             {
                 using (new SKAutoCanvasRestore(canvas))
                 {
@@ -196,6 +197,13 @@ namespace Going.UI.Controls
                     dic[$"Day_{ic}_{ir - 2}"] = rts[ir, ic];
 
             return dic;
+        }
+        #endregion
+        #region Dispose
+        protected override void OnDispose()
+        {
+            path.Dispose();
+            base.OnDispose();
         }
         #endregion
         #endregion

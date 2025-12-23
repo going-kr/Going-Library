@@ -65,6 +65,7 @@ namespace Going.UI.Controls
         private bool downOnOff = false;
         private SKPoint? ptDown = null;
         private SKPoint? ptMove = null;
+        private SKPath path = new SKPath();
         #endregion
 
         #region Event
@@ -101,10 +102,10 @@ namespace Going.UI.Controls
             var isz = Util.FontSize(AutoCursorIconSize, rtContent.Height) ?? CursorIconSize;
 
             var crt = rtContent; crt.Inflate(-2, -2);
-            using var pth = PathTool.Box(crt, GoRoundType.All, corner);
+            PathTool.Box(path, crt, GoRoundType.All, corner);
             using (new SKAutoCanvasRestore(canvas))
             {
-                canvas.ClipPath(pth);
+                canvas.ClipPath(path);
                 Util.DrawBox(canvas, rtCursor, cCursor.BrightnessTransmit(bHover ? thm.HoverFillBrightness : 0),
                                                cCursor.BrightnessTransmit(bHover ? thm.HoverBorderBrightness : 0), GoRoundType.All, corner);
 
@@ -122,6 +123,11 @@ namespace Going.UI.Controls
             base.OnDraw(canvas, thm);
         }
 
+        protected override void OnDispose()
+        {
+            path.Dispose();
+            base.OnDispose();
+        }
 
         protected override void OnMouseDown(float x, float y, GoMouseButton button)
         {

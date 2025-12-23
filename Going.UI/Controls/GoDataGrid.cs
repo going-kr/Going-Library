@@ -82,6 +82,8 @@ namespace Going.UI.Controls
 
         private GoComboBoxDropDownWindow dwndCombo = new GoComboBoxDropDownWindow();
         private GoDataGridCell? dwndComboCell;
+
+        private SKPath path = new SKPath();
         #endregion
 
         #region Event
@@ -174,7 +176,7 @@ namespace Going.UI.Controls
             var br = thm.Dark ? 1F : -1F;
             #endregion
             #endregion
-            using (var path = PathTool.Box(rtContent, GoRoundType.All, thm.Corner))
+            PathTool.Box(path, rtContent, GoRoundType.All, thm.Corner);
             {
                 canvas.ClipPath(path, SKClipOperation.Intersect, true);
 
@@ -843,6 +845,15 @@ namespace Going.UI.Controls
             #endregion
 
             return dic;
+        }
+        #endregion
+
+        #region Dispose
+        protected override void OnDispose()
+        {
+            base.OnDispose();
+
+            path.Dispose();
         }
         #endregion
         #endregion

@@ -51,6 +51,6 @@ namespace Going.UI.Controls
         void FireMouseWheel(float x, float y, float delta);
         void FireKeyDown(bool Shift, bool Control, bool Alt, GoKeys key) { }
         void FireKeyUp(bool Shift, bool Control, bool Alt, GoKeys key) { }
-
+        void Dispose();
     }
 }

@@ -50,6 +50,7 @@ namespace Going.UI.Controls
         #region Member Variable
         private Scroll scroll = new Scroll() { Direction = ScrollDirection.Vertical };
         private SKRect rtBoxP = new SKRect();
+        private SKPath path = new SKPath();
         #endregion
 
         #region Event 
@@ -100,8 +101,8 @@ namespace Going.UI.Controls
 
             using (new SKAutoCanvasRestore(canvas))
             {
-                using var pth = PathTool.Box(rtContent, Round, thm.Corner);
-                canvas.ClipPath(pth, SKClipOperation.Intersect, true);
+                PathTool.Box(path, rtContent, Round, thm.Corner);
+                canvas.ClipPath(path, SKClipOperation.Intersect, true);
                 canvas.Translate(rtContent.Left, Convert.ToInt64(spos) + rtContent.Top);
                 itemLoop((i, category) =>
                 {
@@ -121,6 +122,14 @@ namespace Going.UI.Controls
 
 
             base.OnDraw(canvas, thm);
+        }
+        #endregion
+
+        #region Dispose
+        protected override void OnDispose()
+        {
+            path.Dispose();
+            base.OnDispose();
         }
         #endregion
 

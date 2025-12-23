@@ -79,6 +79,17 @@ namespace Going.UI.Containers
             base.OnDraw(canvas, thm);
         }
         #endregion
+
+        #region OnDispose
+        protected override void OnDispose()
+        {
+            //base.OnDispose();
+
+            foreach (var p in Pages)
+                foreach (var c in p.Childrens)
+                    c.Dispose();
+        }
+        #endregion
         #endregion
 
         #region Method

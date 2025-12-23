@@ -26,6 +26,7 @@ namespace Going.UI.Forms.Controls
         GoImageScaleMode eScaleMode = GoImageScaleMode.Real;
         GoRoundType eRound = GoRoundType.Rect;
         GoResourceManager? rm = null;
+        SKPath path = new SKPath();
         #endregion
 
         #region Override
@@ -70,7 +71,7 @@ namespace Going.UI.Forms.Controls
                     }
                     #endregion
 
-                    using var path = PathTool.Box(rt, Round, thm.Corner);
+                    PathTool.Box(path,rt, Round, thm.Corner);
                     using (new SKAutoCanvasRestore(canvas))
                     {
                         canvas.ClipPath(path, SKClipOperation.Intersect, true);
@@ -80,6 +81,12 @@ namespace Going.UI.Forms.Controls
             }
 
             base.OnContentDraw(e);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            path.Dispose();
+            base.Dispose(disposing);
         }
         #endregion
     }

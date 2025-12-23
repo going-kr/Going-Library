@@ -54,6 +54,11 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 16)] public int Gap { get; set; } = 0;
         #endregion
 
+        #region Member Variable
+        SKPath pathEmpty = new SKPath();
+        SKPath pathFill = new SKPath();
+        #endregion
+
         #region Event
         public event EventHandler? ValueChanged;
         #endregion
@@ -80,8 +85,10 @@ namespace Going.UI.Controls
             using var p = new SKPaint { IsAntialias = true };
 
             #region Empty
-            using (var pth = PathTool.Gauge(rtBox, StartAngle, SweepAngle, BarSize))
+            PathTool.Gauge(pathEmpty, rtBox, StartAngle, SweepAngle, BarSize);
             {
+                var pth = pathEmpty;
+
                 p.Color = cEmpty;
                 p.IsStroke = false;
                 canvas.DrawPath(pth, p);
@@ -97,8 +104,9 @@ namespace Going.UI.Controls
             var Ang = Convert.ToSingle(MathTool.Map(Value, Minimum, Maximum, 0, SweepAngle));
             if (Ang > 0)
             {
+                var pth = pathFill;
                 using var imgf = SKImageFilter.CreateDropShadow(2, 2, 2, 2, Util.FromArgb(thm.ShadowAlpha, SKColors.Black));
-                using var pth = PathTool.Gauge(rtBox, StartAngle, Ang, BarSize);
+                PathTool.Gauge(pth, rtBox, StartAngle, Ang, BarSize);
 
                 p.IsStroke = false;
                 p.Color = cFill;
@@ -131,6 +139,14 @@ namespace Going.UI.Controls
             rts["Text"] = Util.FromRect(rt.Left, rt.MidY - (vh / 2), rt.Width, vh);
             rts["Title"] = Util.FromRect(rt.Left, rt.MidY - (vh / 2) + vh + Gap, rt.Width, th);
             return rts;
+        }
+
+        protected override void OnDispose()
+        {
+            pathEmpty.Dispose();
+            pathFill.Dispose();
+
+            base.OnDispose();
         }
         #endregion
     }

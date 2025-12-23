@@ -50,6 +50,7 @@ namespace Going.UI.Controls
         private SKRect rtBoxP = new SKRect();
         private bool bShift, bControl;
         private GoTreeNode? first = null;
+        private SKPath path = new SKPath();
         #endregion
 
         #region Event 
@@ -101,8 +102,8 @@ namespace Going.UI.Controls
 
             using (new SKAutoCanvasRestore(canvas))
             {
-                using var pth = PathTool.Box(rtContent, Round, thm.Corner);
-                canvas.ClipPath(pth, SKClipOperation.Intersect, true);
+                PathTool.Box(path, rtContent, Round, thm.Corner);
+                canvas.ClipPath(path, SKClipOperation.Intersect, true);
                 canvas.Translate(rtContent.Left, Convert.ToInt64(spos) + rtContent.Top);
 
                 itemLoop((i, node) =>
@@ -124,6 +125,14 @@ namespace Going.UI.Controls
 
 
             base.OnDraw(canvas, thm);
+        }
+        #endregion
+
+        #region Override
+        protected override void OnDispose()
+        {
+            path.Dispose();
+            base.OnDispose();
         }
         #endregion
 

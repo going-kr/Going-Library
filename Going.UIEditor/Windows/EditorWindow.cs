@@ -223,170 +223,165 @@ namespace Going.UIEditor.Windows
 
                         if (dragAnchor != null)
                         {
-                            #region magnet
-                            if (ptMove.HasValue && ptDown.HasValue)
-                            {
-                                var c = dragAnchor.Control;
-                                var gx = ptMove.Value.X - ptDown.Value.X;
-                                var gy = ptMove.Value.Y - ptDown.Value.Y;
-                                var srt = calcbox(dragAnchor.Name, c.Bounds, gx, gy);
-                                var (vx, vy) = containerviewpos(c.Parent);
-                                srt.Offset(-vx, -vy);
-                                srt.Offset(c.ScreenX - c.Left, c.ScreenY - c.Top);
-
-                                mag_proc(dragAnchor, srt, false, (mx) => gx += mx.DistR, (my) => gy += my.DistR);
-                                mag_proc(dragAnchor, srt, true, 
-                                (mx) =>
-                                {
-                                    p.IsStroke = true;
-                                    p.Color = SKColors.Red;
-                                    p.StrokeWidth = 1;
-
-                                    var ort = calcbox(dragAnchor.Name, c.Bounds, gx, gy);
-                                    var (vx, vy) = containerviewpos(c.Parent);
-                                    ort.Offset(-vx, -vy);
-                                    ort.Offset(c.ScreenX - c.Left, c.ScreenY - c.Top);
-
-                                    var trt = new SKRect(mx.PairXs[0], mx.PairYs[0], mx.PairXs[2], mx.PairYs[2]);
-
-                                    if (mx.GapMode == "n")
-                                    {
-                                        var y1 = Math.Min(ort.Top, mx.PairYs.Min());
-                                        var y2 = Math.Max(ort.Bottom, mx.PairYs.Max());
-                                        if (mx.MagX.HasValue) canvas.DrawLine(mx.MagX.Value, y1, mx.MagX.Value, y2, p);
-                                    }
-                                    else if(mx.GapMode == "s")
-                                    {
-                                        var tort = trt; tort.Inflate(-MAG_INTERVAL, -MAG_INTERVAL);
-
-                                        float overlapT = Math.Max(ort.Top, trt.Top);
-                                        float overlapB = Math.Min(ort.Bottom, trt.Bottom);
-                                        var dy = MathTool.Center(overlapT, overlapB);
-
-                                        if (mx.MagX.HasValue) canvas.DrawLine(mx.MagX.Value, dy, mx.MagNameX?.Contains('l') ?? false ? tort.Left : tort.Right, dy, p);
-                                    }
-                                    else if (mx.GapMode == "p")
-                                    {
-                                        var tort = trt; tort.Inflate(MAG_INTERVAL, MAG_INTERVAL);
-
-                                        if (mx.MagNameX == "gc")
-                                        {
-                                            if (mx.MagX.HasValue) canvas.DrawLine(mx.MagX.Value, tort.Top, mx.MagX.Value, tort.Bottom, p);
-                                        }
-                                        else
-                                        {
-                                            float overlapT = Math.Max(ort.Top, trt.Top);
-                                            float overlapB = Math.Min(ort.Bottom, trt.Bottom);
-                                            var dy = MathTool.Center(overlapT, overlapB);
-
-                                            if (mx.MagX.HasValue) canvas.DrawLine(mx.MagX.Value, dy, mx.MagNameX?.Contains('l') ?? false ? tort.Left : tort.Right, dy, p);
-                                        }
-                                    }
-                                }, 
-                                (my) =>
-                                {
-                                    p.IsStroke = true;
-                                    p.Color = SKColors.Red;
-                                    p.StrokeWidth = 1;
-
-                                    var ort = calcbox(dragAnchor.Name, c.Bounds, gx, gy);
-                                    var (vx, vy) = containerviewpos(c.Parent);
-                                    ort.Offset(-vx, -vy);
-                                    ort.Offset(c.ScreenX - c.Left, c.ScreenY - c.Top);
-
-                                    var trt = new SKRect(my.PairXs[0], my.PairYs[0], my.PairXs[2], my.PairYs[2]);
-
-                                    if (my.GapMode == "n")
-                                    {
-                                        var x1 = Math.Min(ort.Left, my.PairXs.Min());
-                                        var x2 = Math.Max(ort.Right, my.PairXs.Max());
-                                        if (my.MagY.HasValue) canvas.DrawLine(x1, my.MagY.Value, x2, my.MagY.Value, p);
-                                    }
-                                    else if(my.GapMode == "s")
-                                    {
-                                        var tort = trt; tort.Inflate(-MAG_INTERVAL, -MAG_INTERVAL);
-
-                                        float overlapL = Math.Max(ort.Left, trt.Left);
-                                        float overlapR = Math.Min(ort.Right, trt.Right);
-                                        var dx = MathTool.Center(overlapL, overlapR);
-
-                                        if (my.MagY.HasValue) canvas.DrawLine(dx, my.MagY.Value, dx, my.MagNameY?.Contains('t') ?? false ? tort.Top : tort.Bottom, p);
-                                    }
-                                    else if (my.GapMode == "p")
-                                    {
-                                        var tort = trt; tort.Inflate(MAG_INTERVAL, MAG_INTERVAL);
-
-                                        if (my.MagNameY == "gc")
-                                        {
-                                            if (my.MagY.HasValue) canvas.DrawLine(tort.Left, my.MagY.Value, tort.Right, my.MagY.Value, p);
-                                        }
-                                        else
-                                        {
-                                            float overlapL = Math.Max(ort.Left, trt.Left);
-                                            float overlapR = Math.Min(ort.Right, trt.Right);
-                                            var dx = MathTool.Center(overlapL, overlapR);
-
-                                            if (my.MagY.HasValue) canvas.DrawLine(dx, my.MagY.Value, dx, my.MagNameY?.Contains('t') ?? false ? tort.Top : tort.Bottom, p);
-                                        }
-                                    }
-                                });
-                            }
-                            #endregion
-                      
-                            #region drag anchor
+                            #region drag & magnet
                             if (ptDown.HasValue && ptMove.HasValue)
                             {
+                                var c = dragAnchor.Control;
+
                                 dragAnchorProc(dragAnchor, ptDown.Value, ptMove.Value,
                                 #region tpnl
-                                (vcon, vc, tidx) =>
-                                {
-                                    if (tidx != null && vcon is GoTableLayoutPanel tpnl)
+                                    (vcon, vc, tidx) =>
                                     {
-                                        var (vx, vy) = containerviewpos(tpnl.Parent);
-                                        var trt = Util.FromRect(tpnl.ScreenX - vx, tpnl.ScreenY - vy, tpnl.Width - 1, tpnl.Height - 1);
-                                        var rts = Util.Grid(trt, [.. tpnl.Columns], [.. tpnl.Rows]);
-                                        var vrt = Util.Merge(rts, tidx.Col, tidx.Row, tidx.Colspan, tidx.Rowspan);
-
-                                        p.IsStroke = true;
-                                        p.Color = SKColors.Red;
-                                        p.StrokeWidth = 1;
-                                        p.PathEffect = pe;
-                                        canvas.DrawRect(vrt, p);
-                                        p.PathEffect = null;
-                                    }
-                                },
-                                #endregion
-                                #region gpnl
-                                (vcon, vc, gidx) =>
-                                {
-                                    if (gidx != null && vcon is GoGridLayoutPanel gpnl)
-                                    {
-                                        var (vx, vy) = containerviewpos(gpnl.Parent);
-                                        var rts = gpnl.GridBounds(Util.FromRect(gpnl.ScreenX - vx, gpnl.ScreenY - vy, gpnl.Width - 1, gpnl.Height - 1));
-                                        var vrt = gpnl.CellBounds(rts, gidx.Col, gidx.Row);
-                                        if (vrt.HasValue)
+                                        if (tidx != null && vcon is GoTableLayoutPanel tpnl)
                                         {
+                                            var (vx, vy) = containerviewpos(tpnl.Parent);
+                                            var trt = Util.FromRect(tpnl.ScreenX - vx, tpnl.ScreenY - vy, tpnl.Width - 1, tpnl.Height - 1);
+                                            var rts = Util.Grid(trt, [.. tpnl.Columns], [.. tpnl.Rows]);
+                                            var vrt = Util.Merge(rts, tidx.Col, tidx.Row, tidx.Colspan, tidx.Rowspan);
+
                                             p.IsStroke = true;
                                             p.Color = SKColors.Red;
                                             p.StrokeWidth = 1;
                                             p.PathEffect = pe;
-                                            canvas.DrawRect(vrt.Value, p);
+                                            canvas.DrawRect(vrt, p);
                                             p.PathEffect = null;
                                         }
-                                    }
-                                },
+                                    },
+                                #endregion
+                                #region gpnl
+                                    (vcon, vc, gidx) =>
+                                    {
+                                        if (gidx != null && vcon is GoGridLayoutPanel gpnl)
+                                        {
+                                            var (vx, vy) = containerviewpos(gpnl.Parent);
+                                            var rts = gpnl.GridBounds(Util.FromRect(gpnl.ScreenX - vx, gpnl.ScreenY - vy, gpnl.Width - 1, gpnl.Height - 1));
+                                            var vrt = gpnl.CellBounds(rts, gidx.Col, gidx.Row);
+                                            if (vrt.HasValue)
+                                            {
+                                                p.IsStroke = true;
+                                                p.Color = SKColors.Red;
+                                                p.StrokeWidth = 1;
+                                                p.PathEffect = pe;
+                                                canvas.DrawRect(vrt.Value, p);
+                                                p.PathEffect = null;
+                                            }
+                                        }
+                                    },
                                 #endregion
                                 #region other
-                                (vcon, vc, srt, nrt) =>
-                                {
-                                    p.IsStroke = true;
-                                    p.Color = SKColors.Red;
-                                    p.StrokeWidth = 1;
-                                    p.PathEffect = pe;
-                                    canvas.DrawRect(srt, p);
-                                    p.PathEffect = null;
-                                }
-                                #endregion
+                                    (vcon, vc, srt, nrt, gx, gy) =>
+                                    {
+                                        #region src
+                                        p.IsStroke = true;
+                                        p.Color = SKColors.Red;
+                                        p.StrokeWidth = 1;
+                                        p.PathEffect = pe;
+                                        canvas.DrawRect(srt, p);
+                                        p.PathEffect = null;
+                                        #endregion
+
+                                        if (vc == c)
+                                        {
+                                            #region magnet
+                                            mag_proc(dragAnchor, srt, true,
+                                            (mx) =>
+                                            {
+                                                p.IsStroke = true;
+                                                p.Color = SKColors.Red;
+                                                p.StrokeWidth = 1;
+
+                                                var ort = calcbox(dragAnchor.Name, c.Bounds, gx, gy);
+                                                var (vx, vy) = containerviewpos(c.Parent);
+                                                ort.Offset(-vx, -vy);
+                                                ort.Offset(c.ScreenX - c.Left, c.ScreenY - c.Top);
+
+                                                var trt = new SKRect(mx.PairXs[0], mx.PairYs[0], mx.PairXs[2], mx.PairYs[2]);
+
+                                                if (mx.GapMode == "n")
+                                                {
+                                                    var y1 = Math.Min(ort.Top, mx.PairYs.Min());
+                                                    var y2 = Math.Max(ort.Bottom, mx.PairYs.Max());
+                                                    if (mx.MagX.HasValue) canvas.DrawLine(mx.MagX.Value, y1, mx.MagX.Value, y2, p);
+                                                }
+                                                else if (mx.GapMode == "s")
+                                                {
+                                                    var tort = trt; tort.Inflate(-MAG_INTERVAL, -MAG_INTERVAL);
+
+                                                    float overlapT = Math.Max(ort.Top, trt.Top);
+                                                    float overlapB = Math.Min(ort.Bottom, trt.Bottom);
+                                                    var dy = MathTool.Center(overlapT, overlapB);
+
+                                                    if (mx.MagX.HasValue) canvas.DrawLine(mx.MagX.Value, dy, mx.MagNameX?.Contains('l') ?? false ? tort.Left : tort.Right, dy, p);
+                                                }
+                                                else if (mx.GapMode == "p")
+                                                {
+                                                    var tort = trt; tort.Inflate(MAG_INTERVAL, MAG_INTERVAL);
+
+                                                    if (mx.MagNameX == "gc")
+                                                    {
+                                                        if (mx.MagX.HasValue) canvas.DrawLine(mx.MagX.Value, tort.Top, mx.MagX.Value, tort.Bottom, p);
+                                                    }
+                                                    else
+                                                    {
+                                                        float overlapT = Math.Max(ort.Top, trt.Top);
+                                                        float overlapB = Math.Min(ort.Bottom, trt.Bottom);
+                                                        var dy = MathTool.Center(overlapT, overlapB);
+
+                                                        if (mx.MagX.HasValue) canvas.DrawLine(mx.MagX.Value, dy, mx.MagNameX?.Contains('l') ?? false ? tort.Left : tort.Right, dy, p);
+                                                    }
+                                                }
+                                            },
+                                            (my) =>
+                                            {
+                                                p.IsStroke = true;
+                                                p.Color = SKColors.Red;
+                                                p.StrokeWidth = 1;
+
+                                                var ort = calcbox(dragAnchor.Name, c.Bounds, gx, gy);
+                                                var (vx, vy) = containerviewpos(c.Parent);
+                                                ort.Offset(-vx, -vy);
+                                                ort.Offset(c.ScreenX - c.Left, c.ScreenY - c.Top);
+
+                                                var trt = new SKRect(my.PairXs[0], my.PairYs[0], my.PairXs[2], my.PairYs[2]);
+
+                                                if (my.GapMode == "n")
+                                                {
+                                                    var x1 = Math.Min(ort.Left, my.PairXs.Min());
+                                                    var x2 = Math.Max(ort.Right, my.PairXs.Max());
+                                                    if (my.MagY.HasValue) canvas.DrawLine(x1, my.MagY.Value, x2, my.MagY.Value, p);
+                                                }
+                                                else if (my.GapMode == "s")
+                                                {
+                                                    var tort = trt; tort.Inflate(-MAG_INTERVAL, -MAG_INTERVAL);
+
+                                                    float overlapL = Math.Max(ort.Left, trt.Left);
+                                                    float overlapR = Math.Min(ort.Right, trt.Right);
+                                                    var dx = MathTool.Center(overlapL, overlapR);
+
+                                                    if (my.MagY.HasValue) canvas.DrawLine(dx, my.MagY.Value, dx, my.MagNameY?.Contains('t') ?? false ? tort.Top : tort.Bottom, p);
+                                                }
+                                                else if (my.GapMode == "p")
+                                                {
+                                                    var tort = trt; tort.Inflate(MAG_INTERVAL, MAG_INTERVAL);
+
+                                                    if (my.MagNameY == "gc")
+                                                    {
+                                                        if (my.MagY.HasValue) canvas.DrawLine(tort.Left, my.MagY.Value, tort.Right, my.MagY.Value, p);
+                                                    }
+                                                    else
+                                                    {
+                                                        float overlapL = Math.Max(ort.Left, trt.Left);
+                                                        float overlapR = Math.Min(ort.Right, trt.Right);
+                                                        var dx = MathTool.Center(overlapL, overlapR);
+
+                                                        if (my.MagY.HasValue) canvas.DrawLine(dx, my.MagY.Value, dx, my.MagNameY?.Contains('t') ?? false ? tort.Top : tort.Bottom, p);
+                                                    }
+                                                }
+                                            });
+                                            #endregion
+                                        }
+                                    }
+                                    #endregion
                                 );
                             }
                             #endregion
@@ -665,19 +660,20 @@ namespace Going.UIEditor.Windows
                         {
                             dragAnchorProc(dragAnchor, ptDown.Value, ptMove.Value,
                             #region tpnl
-                            (vcon, vc, tidx) => {
-                                cur = tidx != null ? cursor(dragAnchor.Name) : Cursors.No;
-                            },
+                                (vcon, vc, tidx) =>
+                                {
+                                    cur = tidx != null ? cursor(dragAnchor.Name) : Cursors.No;
+                                },
                             #endregion
                             #region gpnl
-                            (vcon, vc, gidx) =>
-                            {
-                                cur = gidx != null ? cursor(dragAnchor.Name) : Cursors.No;
-                            },
+                                (vcon, vc, gidx) =>
+                                {
+                                    cur = gidx != null ? cursor(dragAnchor.Name) : Cursors.No;
+                                },
                             #endregion
                             #region Other    
-                            (vcon, vc, srt, nrt) => { cur = cursor(dragAnchor.Name); }
-                            #endregion
+                                (vcon, vc, srt, nrt, gx, gy) => { cur = cursor(dragAnchor.Name); }
+                                #endregion
                             );
                         }
                     }
@@ -739,42 +735,42 @@ namespace Going.UIEditor.Windows
                                 {
                                     dragAnchorProc(dragAnchor, ptDown.Value, ptMove.Value,
                                     #region tpnl
-                                    (vcon, vc, tidx) =>
-                                    {
-                                        if (tidx != null && vcon is GoTableLayoutPanel tpnl)
+                                        (vcon, vc, tidx) =>
                                         {
-                                            DeleteControl(dragAnchor.Control);
-                                            AddControl(tpnl, dragAnchor.Control, tidx.Col, tidx.Row, tidx.Colspan, tidx.Rowspan);
-                                        }
-                                    },
+                                            if (tidx != null && vcon is GoTableLayoutPanel tpnl)
+                                            {
+                                                DeleteControl(dragAnchor.Control);
+                                                AddControl(tpnl, dragAnchor.Control, tidx.Col, tidx.Row, tidx.Colspan, tidx.Rowspan);
+                                            }
+                                        },
                                     #endregion
                                     #region gpnl
-                                    (vcon, vc, gidx) =>
-                                    {
-                                        if (gidx != null && vcon is GoGridLayoutPanel gpnl)
+                                        (vcon, vc, gidx) =>
                                         {
-                                            DeleteControl(dragAnchor.Control);
-                                            AddControl(gpnl, dragAnchor.Control, gidx.Col, gidx.Row);
-                                        }
-                                    },
+                                            if (gidx != null && vcon is GoGridLayoutPanel gpnl)
+                                            {
+                                                DeleteControl(dragAnchor.Control);
+                                                AddControl(gpnl, dragAnchor.Control, gidx.Col, gidx.Row);
+                                            }
+                                        },
                                     #endregion
                                     #region other
-                                    (vcon, vc, srt, nrt) =>
-                                    {
-                                        if (dragAnchor.Name == "move" && vc.Parent != vcon)
+                                        (vcon, vc, srt, nrt, gx, gy) =>
                                         {
-                                            DeleteControl(vc);
-                                            AddControl(vcon, vc);
-                                            var ort = vc.Bounds;
-                                            EditObject(vc, pi, ort, nrt);
+                                            if (dragAnchor.Name == "move" && vc.Parent != vcon)
+                                            {
+                                                DeleteControl(vc);
+                                                AddControl(vcon, vc);
+                                                var ort = vc.Bounds;
+                                                EditObject(vc, pi, ort, nrt);
+                                            }
+                                            else
+                                            {
+                                                var ort = vc.Bounds;
+                                                EditObject(vc, pi, ort, nrt);
+                                            }
                                         }
-                                        else
-                                        {
-                                            var ort = vc.Bounds;
-                                            EditObject(vc, pi, ort, nrt);
-                                        }
-                                    }
-                                    #endregion
+                                        #endregion
                                     );
                                 });
                             }
@@ -1751,7 +1747,7 @@ namespace Going.UIEditor.Windows
         void dragAnchorProc(Anchor anc, SKPoint ptDown, SKPoint ptMove,
             Action <IGoContainer, IGoControl, TableIndex?> tbl,
             Action<IGoContainer, IGoControl, GridIndex?> grid,
-            Action<IGoContainer, IGoControl, SKRect, SKRect> other)
+            Action<IGoContainer, IGoControl, SKRect, SKRect, float, float> other)
         {
             var x = Convert.ToInt32(ptMove.X);
             var y = Convert.ToInt32(ptMove.Y);
@@ -1843,7 +1839,7 @@ namespace Going.UIEditor.Windows
 
                 foreach (var vc in sels.Select(x => x as IGoControl).Where(x => x != null && (x.Parent == anc.Control.Parent || anc.Name != "move")))
                 {
-                    if (!isTopLevelContainer(vc))
+                    if (vc != null && !isTopLevelContainer(vc))
                     {
                         var srt = calcbox(anc.Name, vc.Bounds, gx, gy);
                         var (vx, vy) = containerviewpos(vc.Parent);
@@ -1853,8 +1849,7 @@ namespace Going.UIEditor.Windows
                         var (tx, ty) = containerpos(con, srt.Left, srt.Top);
                         var nrt = Util.FromRect(tx, ty, srt.Width, srt.Height);
 
-
-                        other(con, vc, srt, nrt);
+                        other(con, vc, srt, nrt, gx, gy);
                     }
                 }
                 #endregion

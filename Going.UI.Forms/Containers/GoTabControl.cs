@@ -72,6 +72,7 @@ namespace Going.UI.Forms.Containers
         string sTabColor = "Base2";
         string sTabBorderColor = "Base3";
         private string sBackgroundColor = "Back";
+        SKPath path = new SKPath();
         #endregion
 
         #region Constructor
@@ -160,16 +161,16 @@ namespace Going.UI.Forms.Containers
                         #endregion
 
                         #region tab
-                        using var pth = PathTool.Tab(rt, TabPosition, thm.Corner);
+                        PathTool.Tab(path, rt, TabPosition, thm.Corner);
 
                         p.IsStroke = false;
                         p.Color = cTab;
-                        canvas.DrawPath(pth, p);
+                        canvas.DrawPath(path, p);
 
                         p.IsStroke = true;
                         p.Color = cBorder;
                         p.StrokeWidth = 1F;
-                        canvas.DrawPath(pth, p);
+                        canvas.DrawPath(path, p);
                         #endregion
 
                         #region retouch 2
@@ -247,6 +248,12 @@ namespace Going.UI.Forms.Containers
             base.OnEnabledChanged(e);
         }
         #endregion
+
+        protected override void Dispose(bool disposing)
+        {
+            path.Dispose();
+            base.Dispose(disposing);
+        }
         #endregion
 
         #region Method

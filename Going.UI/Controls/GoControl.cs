@@ -35,7 +35,7 @@ namespace Going.UI.Controls
     public class GoFontNamePropertyAttribute(string category, int order) : GoPropertyAttribute(category, order) { }
     public class GoMultiLinePropertyAttribute(string category, int order) : GoPropertyAttribute(category, order) { }
 
-    public class GoControl : IGoControl
+    public class GoControl : IGoControl, IDisposable
     {
         #region Properties
         public static int GlobalLongClickTime { get; set; } = 1000;
@@ -137,6 +137,7 @@ namespace Going.UI.Controls
         protected virtual void OnMouseLeave() { }
         protected virtual void OnKeyDown(bool Shift, bool Control, bool Alt, GoKeys key) { }
         protected virtual void OnKeyUp(bool Shift, bool Control, bool Alt, GoKeys key) { }
+        protected virtual void OnDispose() { }
         #endregion
 
         #region Fire
@@ -259,6 +260,11 @@ namespace Going.UI.Controls
             {
                 OnKeyUp(Shift, Control, Alt, key);
             }
+        }
+
+        public void Dispose()
+        {
+            OnDispose();
         }
         #endregion
 

@@ -22,6 +22,10 @@ namespace Going.UI.Containers
         [GoProperty(PCategory.Control, 2)] public GoRoundType Round { get; set; } = GoRoundType.All;
         #endregion
 
+        #region Member Variable
+        SKPath path = new SKPath();
+        #endregion
+
         #region Constructor
         [JsonConstructor]
         public GoPicturePanel(List<IGoControl> childrens) : this() => Childrens = childrens;
@@ -68,7 +72,7 @@ namespace Going.UI.Containers
                     }
                     #endregion
 
-                    using var path = PathTool.Box(rt, Round, thm.Corner);
+                    PathTool.Box(path, rt, Round, thm.Corner);
                     using (new SKAutoCanvasRestore(canvas))
                     {
                         canvas.ClipPath(path, SKClipOperation.Intersect, true);
@@ -77,6 +81,13 @@ namespace Going.UI.Containers
                 }
             }
             base.OnDraw(canvas, thm);
+        }
+
+        protected override void OnDispose()
+        {
+            base.OnDispose();
+
+            path.Dispose();
         }
         #endregion
     }

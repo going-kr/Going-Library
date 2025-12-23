@@ -162,6 +162,17 @@ namespace Going.UI.Utils
 
             foreach (var v in disposeItems) v.Dispose();
         }
+
+        public static void UnloadExternalFonts()
+        {
+            List<SKTypeface> disposeItems = [];
+
+            foreach (var fontName in ExternalFonts.Keys)
+                if (fontName != "나눔고딕")
+                    disposeItems.AddRange(ExternalFonts[fontName].Values);
+
+            foreach (var v in disposeItems) v.Dispose();
+        }
         #endregion
 
         #region GetFontStyle
@@ -739,8 +750,13 @@ namespace Going.UI.Utils
                 {
                     p.IsStroke = false;
                     p.Color = fillcolor;
-                    using var path = PathTool.Box(bounds, round, corner);
-                    canvas.DrawPath(path, p);
+                    if (round == GoRoundType.Ellipse) canvas.DrawOval(bounds, p);
+                    else
+                    {
+                        SKRoundRect rtr = new SKRoundRect(bounds, corner);
+                        SetRound(rtr, round, corner);
+                        canvas.DrawRoundRect(rtr, p);
+                    }
                 }
 
                 if (borderColor != SKColors.Transparent)
@@ -751,8 +767,13 @@ namespace Going.UI.Utils
 
                     float strokeHalf = p.StrokeWidth / 2f;
                     bounds.Inflate(-strokeHalf, -strokeHalf);
-                    using var path = PathTool.Box(bounds, round, corner);
-                    canvas.DrawPath(path, p);
+                    if (round == GoRoundType.Ellipse) canvas.DrawOval(bounds, p);
+                    else
+                    {
+                        SKRoundRect rtr = new SKRoundRect(bounds, corner);
+                        SetRound(rtr, round, corner);
+                        canvas.DrawRoundRect(rtr, p);
+                    }
                 }
                 #endregion
             }
@@ -766,11 +787,13 @@ namespace Going.UI.Utils
                                                                 SKShaderTileMode.Clamp);
                     p.IsStroke = false;
                     p.Shader = sh;
-                    var vrt = bounds;
-                    float strokeHalf = borderSize / 2;
-                    vrt.Inflate(-strokeHalf, -strokeHalf);
-                    using var path = PathTool.Box(vrt, round, corner);
-                    canvas.DrawPath(path, p);
+                    if (round == GoRoundType.Ellipse) canvas.DrawOval(bounds, p);
+                    else
+                    {
+                        SKRoundRect rtr = new SKRoundRect(bounds, corner);
+                        SetRound(rtr, round, corner);
+                        canvas.DrawRoundRect(rtr, p);
+                    }
                     p.Shader = null;
                 }
 
@@ -782,8 +805,13 @@ namespace Going.UI.Utils
 
                     float strokeHalf = p.StrokeWidth / 2f;
                     bounds.Inflate(-strokeHalf, -strokeHalf);
-                    using var path = PathTool.Box(bounds, round, corner);
-                    canvas.DrawPath(path, p);
+                    if (round == GoRoundType.Ellipse) canvas.DrawOval(bounds, p);
+                    else
+                    {
+                        SKRoundRect rtr = new SKRoundRect(bounds, corner);
+                        SetRound(rtr, round, corner);
+                        canvas.DrawRoundRect(rtr, p);
+                    }
                 }
                 #endregion
             }
@@ -792,20 +820,20 @@ namespace Going.UI.Utils
                 #region Emboss
                 if (fillcolor != SKColors.Transparent)
                 {
+                    #region Fill
                     p.IsStroke = false;
                     p.Color = fillcolor;
-                    var vrt = bounds;
-                    float strokeHalf = borderSize / 2;
-                    vrt.Inflate(-strokeHalf, -strokeHalf);
-                    using var path = PathTool.Box(vrt, round, corner);
-                    canvas.DrawPath(path, p);
-                }
+                    if (round == GoRoundType.Ellipse) canvas.DrawOval(bounds, p);
+                    else
+                    {
+                        SKRoundRect rtr = new SKRoundRect(bounds, corner);
+                        SetRound(rtr, round, corner);
+                        canvas.DrawRoundRect(rtr, p);
+                    }
+                    #endregion
 
-                {
-                
+                    #region Bevel
                     var vbnd = bounds; vbnd.Inflate(-(borderSize / 2F * 3F), -(borderSize / 2F * 3F));
-                    using var path = PathTool.Box(vbnd, round, corner);
-
                     var cp = new SKPoint(vbnd.MidX, vbnd.MidY);
                     var lt = new SKPoint(vbnd.Left, vbnd.Top);
                     var rb = new SKPoint(vbnd.Right, vbnd.Bottom);
@@ -820,25 +848,40 @@ namespace Going.UI.Utils
                                                                                   [fillcolor.BrightnessTransmit(thm.GradientDarkBrightness), fillcolor.BrightnessTransmit(thm.GradientDarkBrightness), fillcolor.BrightnessTransmit(thm.GradientLightBrightness), fillcolor.BrightnessTransmit(thm.GradientLightBrightness)],
                                                                                   [0F, 0.5F, 0.5F, 1F], SKShaderTileMode.Clamp);
                    
+
+                    p.StrokeWidth = borderSize + (borderSize / 2F);               
                     p.IsStroke = true;
-                    p.StrokeWidth = borderSize + (borderSize / 2F);
                     p.Shader = sh;
 
-                    canvas.DrawPath(path, p);
+                    if (round == GoRoundType.Ellipse) canvas.DrawOval(vbnd, p);
+                    else
+                    {
+                        SKRoundRect rtr = new SKRoundRect(vbnd, corner);
+                        SetRound(rtr, round, corner);
+                        canvas.DrawRoundRect(rtr, p);
+                    }
 
                     p.Shader = null;
+                    #endregion
                 }
 
                 if (borderColor != SKColors.Transparent)
                 {
+                    #region Boarder
                     p.IsStroke = true;
                     p.StrokeWidth = borderSize;
                     p.Color = borderColor;
 
                     float strokeHalf = p.StrokeWidth / 2f;
                     bounds.Inflate(-strokeHalf, -strokeHalf);
-                    using var path = PathTool.Box(bounds, round, corner);
-                    canvas.DrawPath(path, p);
+                    if (round == GoRoundType.Ellipse) canvas.DrawOval(bounds, p);
+                    else
+                    {
+                        SKRoundRect rtr = new SKRoundRect(bounds, corner);
+                        SetRound(rtr, round, corner);
+                        canvas.DrawRoundRect(rtr, p);
+                    }
+                    #endregion
                 }
                 #endregion
             }
@@ -860,8 +903,15 @@ namespace Going.UI.Utils
             {
                 p.IsStroke = false;
                 p.Color = fillcolor;
-                using var path = PathTool.Box(bounds, round, corner);
-                canvas.DrawPath(path, p);
+
+                if (round == GoRoundType.Ellipse)
+                    canvas.DrawOval(bounds, p);
+                else
+                {
+                    SKRoundRect rtr = new SKRoundRect(bounds, corner);
+                    SetRound(rtr, round, corner);
+                    canvas.DrawRoundRect(rtr, p);
+                }
             }
 
             if (borderColor != SKColors.Transparent)
@@ -872,8 +922,15 @@ namespace Going.UI.Utils
                 
                 float strokeHalf = p.StrokeWidth / 2f;
                 bounds.Inflate(-strokeHalf, -strokeHalf);
-                using var path = PathTool.Box(bounds, round, corner);
-                canvas.DrawPath(path, p);
+
+                if (round == GoRoundType.Ellipse)
+                    canvas.DrawOval(bounds, p);
+                else
+                {
+                    SKRoundRect rtr = new SKRoundRect(bounds, corner);
+                    SetRound(rtr, round, corner);
+                    canvas.DrawRoundRect(rtr, p);
+                }
             }
         }
 

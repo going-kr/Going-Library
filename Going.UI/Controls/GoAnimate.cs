@@ -42,9 +42,10 @@ namespace Going.UI.Controls
         #endregion
 
         #region Member Variable
-        bool bOnOff = false;
+        private bool bOnOff = false;
         private int idx = 0;
         private DateTime prev = DateTime.Now;
+        private SKPath path = new SKPath();
         #endregion
 
         #region Override
@@ -88,7 +89,7 @@ namespace Going.UI.Controls
                     }
                     #endregion
 
-                    using var path = PathTool.Box(rt, Round, thm.Corner);
+                    PathTool.Box(path, rt, Round, thm.Corner);
                     using (new SKAutoCanvasRestore(canvas))
                     {
                         canvas.ClipPath(path, SKClipOperation.Intersect, true);
@@ -115,6 +116,12 @@ namespace Going.UI.Controls
                 }
             }
             base.OnUpdate();
+        }
+
+        protected override void OnDispose()
+        {
+            path.Dispose();
+            base.OnDispose();
         }
         #endregion
         #endregion

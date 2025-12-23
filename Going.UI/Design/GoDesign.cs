@@ -28,7 +28,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Going.UI.Design
 {
-    public class GoDesign
+    public class GoDesign : IDisposable
     {
         #region Properties
         public static GoDesign? ActiveDesign { get; set; }
@@ -621,6 +621,22 @@ namespace Going.UI.Design
                 if (CurrentPage != null) GUI.KeyUp(CurrentPage, Shift, Control, Alt, key);
             }
             #endregion
+        }
+        #endregion
+
+        #region Dispose
+        public void Dispose()
+        {
+            foreach (var page in Pages.Values) page.Dispose();
+            foreach (var wnd in Windows.Values) wnd.Dispose();
+            foreach (var wnd in GoDialogs.SystemWindows.Values) wnd.Dispose();
+
+            TitleBar.Dispose();
+            LeftSideBar.Dispose();
+            RightSideBar.Dispose();
+            Footer.Dispose();
+
+            Util.UnloadExternalFonts();
         }
         #endregion
         #endregion

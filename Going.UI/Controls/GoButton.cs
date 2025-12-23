@@ -123,6 +123,7 @@ namespace Going.UI.Controls
 
             base.OnMouseLongClick(x, y, button);
         }
+
         #endregion
     }
 }
