@@ -28,6 +28,7 @@ namespace Going.UI.Json
             Options.Converters.Add(new SKImageConverter());
             Options.Converters.Add(new GoControlConverter());
             Options.Converters.Add(new GoPagesConverter());
+            Options.Converters.Add(new GoWindowsConverter());
             Options.Converters.Add(new GoTableLayoutControlCollectionConverter());
             Options.Converters.Add(new GoGridLayoutControlCollectionConverter());
 
@@ -299,6 +300,91 @@ namespace Going.UI.Json
         }
 
         public override void Write(Utf8JsonWriter writer, Dictionary<string, GoPage> value, JsonSerializerOptions options)
+        {
+            writer.WriteStartObject();
+
+            foreach (var kvp in value)
+            {
+                var tp = kvp.Value.GetType();
+                var mp = GoJsonConverter.ControlTypes.FirstOrDefault(x => x.Value == tp);
+
+                if (!string.IsNullOrWhiteSpace(mp.Key))
+                {
+                    writer.WritePropertyName(kvp.Key);
+                    writer.WriteStartObject();
+                    writer.WriteString("Type", mp.Key);
+                    writer.WritePropertyName("Value");
+                    JsonSerializer.Serialize(writer, kvp.Value, tp, options);
+                    writer.WriteEndObject();
+                }
+            }
+
+            writer.WriteEndObject();
+        }
+    }
+    #endregion
+    #region GoWindowsConverter
+    public class GoWindowsConverter : JsonConverter<Dictionary<string, GoWindow>>
+    {
+        public override Dictionary<string, GoWindow> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            var result = new Dictionary<string, GoWindow>();
+
+            if (reader.TokenType != JsonTokenType.StartObject)
+                throw new JsonException("Expected StartObject");
+
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonTokenType.EndObject) return result;
+                if (reader.TokenType != JsonTokenType.PropertyName) throw new JsonException("Expected PropertyName");
+
+                string key = reader.GetString();
+                reader.Read();
+
+                if (reader.TokenType != JsonTokenType.StartObject)
+                    throw new JsonException("Expected StartObject for GoWindow entry");
+
+                string typeName = null;
+                GoWindow pageInstance = null;
+
+                while (reader.Read())
+                {
+                    if (reader.TokenType == JsonTokenType.EndObject)
+                        break;
+
+                    if (reader.TokenType != JsonTokenType.PropertyName)
+                        throw new JsonException("Expected PropertyName inside page entry");
+
+                    string propName = reader.GetString();
+                    reader.Read();
+
+                    if (propName == "Type")
+                    {
+                        typeName = reader.GetString();
+                    }
+                    else if (propName == "Value")
+                    {
+                        if (typeName == null)
+                            throw new JsonException("Type is missing in GoWindow entry");
+
+                        var type = GoJsonConverter.ControlTypes.TryGetValue(typeName, out var tp) ? tp : null;
+                        if (type == null)
+                            throw new JsonException($"Unknown GoWindow type: {typeName}");
+
+                        pageInstance = (GoWindow)JsonSerializer.Deserialize(ref reader, type, options);
+                    }
+                }
+
+                if (pageInstance == null)
+                    throw new JsonException("Value is missing in GoWindow entry");
+
+                result[key] = pageInstance;
+            }
+
+            throw new JsonException("Unexpected end of GoWindow JSON");
+        }
+
+        public override void Write(Utf8JsonWriter writer, Dictionary<string, GoWindow> value, JsonSerializerOptions options)
         {
             writer.WriteStartObject();
 

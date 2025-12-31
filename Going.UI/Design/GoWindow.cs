@@ -167,7 +167,12 @@ namespace Going.UI.Design
         protected virtual void OnCloseButtonClick() => Close();
         protected virtual void OnClosing(GoCancelableEventArgs e) { }
 
-        public void Show() => (Design ?? GoDesign.ActiveDesign)?.ShowWindow(this);
+        public void Show()
+        {
+            (Design ?? GoDesign.ActiveDesign)?.ShowWindow(this);
+            OnShow();
+        }
+
         public void Show(float width, float height)
         {
             var design = Design ?? GoDesign.ActiveDesign;
@@ -183,6 +188,7 @@ namespace Going.UI.Design
             var e = new GoCancelableEventArgs();
             OnClosing(e);
             if (!e.Cancel) Design?.HideWindow(this);
+            OnHide();
         }
         #endregion
     }
