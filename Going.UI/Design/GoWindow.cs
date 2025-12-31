@@ -170,7 +170,6 @@ namespace Going.UI.Design
         public void Show()
         {
             (Design ?? GoDesign.ActiveDesign)?.ShowWindow(this);
-            OnShow();
         }
 
         public void Show(float width, float height)
@@ -188,7 +187,6 @@ namespace Going.UI.Design
             var e = new GoCancelableEventArgs();
             OnClosing(e);
             if (!e.Cancel) Design?.HideWindow(this);
-            OnHide();
         }
         #endregion
     }
