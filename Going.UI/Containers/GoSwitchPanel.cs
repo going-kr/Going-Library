@@ -68,7 +68,10 @@ namespace Going.UI.Containers
 
             foreach (var p in Pages)
                 foreach (var c in p.Childrens)
+                {
                     c.FireInit(design);
+                    if (c is GoControl c2) c2.Parent = this;
+                }
         }
         #endregion
 

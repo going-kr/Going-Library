@@ -8,6 +8,7 @@ using Going.UI.Themes;
 using Going.UI.Tools;
 using Going.UI.Utils;
 using SkiaSharp;
+using System.ComponentModel;
 using System.Text.Json.Serialization;
 
 namespace Going.UI.Controls
@@ -44,6 +45,9 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Basic, 0)] public string? Name { get; set; }
         [GoProperty(PCategory.Basic, 1)] public virtual bool Visible { get; set; } = true;
         [GoProperty(PCategory.Basic, 2)] public virtual bool Enabled { get; set; } = true;
+        [GoProperty(PCategory.Basic, 3)] public bool UseLongClick { get; set; } = false;
+        [GoProperty(PCategory.Basic, 4)] public int? LongClickTime { get; set; } = null;
+
         public bool Selectable { get; protected set; } = false;
         [JsonIgnore] public object? Tag { get; set; }
         [JsonIgnore] public float ScreenX => Parent != null && Parent is GoControl pc ? pc.ScreenX + Parent.PanelBounds.Left + X : X;
@@ -84,9 +88,7 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Bounds, 8), JsonIgnore] public float Bottom { get => bounds.Bottom; set => bounds.Bottom = value; }
         [GoProperty(PCategory.Bounds, 9)] public GoDockStyle Dock { get; set; } = GoDockStyle.None;
         [GoProperty(PCategory.Bounds, 10)] public GoPadding Margin { get; set; } = new(3, 3, 3, 3);
-        [GoProperty(PCategory.Bounds, 11)] public bool UseLongClick { get; set; } = false;
-        [GoProperty(PCategory.Bounds, 12)] public int? LongClickTime { get; set; } = null;
-
+        
         [JsonIgnore] public bool FirstRender { get; internal set; } = true;
         [JsonIgnore] public bool View { get; internal set; } = true;
         [JsonIgnore] public IGoContainer? Parent { get; internal set; }
@@ -285,6 +287,11 @@ namespace Going.UI.Controls
         internal void InvokeDragDrop(float x, float y, object item) => DragDrop?.Invoke(this, new GoDragEventArgs(x, y, item));
         internal void Leave() => OnMouseLeave();
 
+        #endregion
+
+        #region SetParent
+        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+        public void SetParent(IGoContainer? parent) => Parent = parent;
         #endregion
         #endregion
     }
