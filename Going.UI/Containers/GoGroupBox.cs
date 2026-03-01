@@ -48,7 +48,7 @@ namespace Going.UI.Containers
 
         #region Constructor
         [JsonConstructor]
-        public GoGroupBox(List<IGoControl> childrens) : this() => Childrens = childrens;
+        public GoGroupBox(List<IGoControl> childrens) : this() => Childrens = childrens ?? [];
         public GoGroupBox() { Selectable = false; }
         #endregion
 

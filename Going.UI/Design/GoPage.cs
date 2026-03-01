@@ -21,7 +21,7 @@ namespace Going.UI.Design
 
         #region Constructor
         [JsonConstructor]
-        public GoPage(List<IGoControl> childrens) : this() => Childrens = childrens;
+        public GoPage(List<IGoControl> childrens) : this() => Childrens = childrens ?? [];
         public GoPage() { }
         #endregion
 

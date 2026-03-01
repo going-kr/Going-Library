@@ -28,7 +28,7 @@ namespace Going.UI.Containers
 
         #region Constructor
         [JsonConstructor]
-        public GoPicturePanel(List<IGoControl> childrens) : this() => Childrens = childrens;
+        public GoPicturePanel(List<IGoControl> childrens) : this() => Childrens = childrens ?? [];
         public GoPicturePanel() { }
         #endregion
 

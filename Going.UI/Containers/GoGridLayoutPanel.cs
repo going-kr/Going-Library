@@ -23,7 +23,7 @@ namespace Going.UI.Containers
 
         #region Constructor
         [JsonConstructor]
-        public GoGridLayoutPanel(GoGridLayoutControlCollection childrens) => Childrens = childrens;
+        public GoGridLayoutPanel(GoGridLayoutControlCollection childrens) => Childrens = childrens ?? [];
         public GoGridLayoutPanel() { }
         #endregion
 

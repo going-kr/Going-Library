@@ -34,7 +34,7 @@ namespace Going.UI.Containers
 
         #region Constructor
         [JsonConstructor]
-        public GoScrollablePanel(List<IGoControl> childrens) : this() => Childrens = childrens;
+        public GoScrollablePanel(List<IGoControl> childrens) : this() => Childrens = childrens ?? [];
         public GoScrollablePanel()
         {
             hscroll.GetScrollTotal = () => vwmax;

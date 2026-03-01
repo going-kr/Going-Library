@@ -44,7 +44,7 @@ namespace Going.UI.Design
 
         #region Constructor
         [JsonConstructor]
-        public GoTitleBar(List<IGoControl> childrens) : this() => Childrens = childrens;
+        public GoTitleBar(List<IGoControl> childrens) : this() => Childrens = childrens ?? [];
         public GoTitleBar() { }
         #endregion
 
@@ -209,7 +209,7 @@ namespace Going.UI.Design
 
         #region Constructor
         [JsonConstructor]
-        public GoSideBar(List<IGoControl> childrens) : this() => Childrens = childrens;
+        public GoSideBar(List<IGoControl> childrens) : this() => Childrens = childrens ?? [];
         public GoSideBar()
         {
             ani.Refresh = () => Invalidate();
@@ -227,7 +227,7 @@ namespace Going.UI.Design
 
         #region Constructor
         [JsonConstructor]
-        public GoFooter(List<IGoControl> childrens) : this() => Childrens = childrens;
+        public GoFooter(List<IGoControl> childrens) : this() => Childrens = childrens ?? [];
         public GoFooter() { }
         #endregion
     }

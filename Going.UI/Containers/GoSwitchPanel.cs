@@ -117,7 +117,7 @@ namespace Going.UI.Containers
         [JsonInclude] public List<IGoControl> Childrens { get; } = [];
 
         [JsonConstructor]
-        public GoSubPage(List<IGoControl> childrens) : this() => Childrens = childrens;
+        public GoSubPage(List<IGoControl> childrens) : this() => Childrens = childrens ?? [];
         public GoSubPage() { }
 
         public override string ToString() => Name;

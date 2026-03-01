@@ -27,7 +27,7 @@ namespace Going.UI.Containers
 
         #region Constructor
         [JsonConstructor]
-        public GoTableLayoutPanel(GoTableLayoutControlCollection childrens) => Childrens = childrens;
+        public GoTableLayoutPanel(GoTableLayoutControlCollection childrens) => Childrens = childrens ?? [];
         public GoTableLayoutPanel() { }
         #endregion
 

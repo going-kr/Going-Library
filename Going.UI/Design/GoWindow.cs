@@ -47,7 +47,7 @@ namespace Going.UI.Design
 
         #region Constructor
         [JsonConstructor]
-        public GoWindow(List<IGoControl> childrens) : this() => Childrens = childrens;
+        public GoWindow(List<IGoControl> childrens) : this() => Childrens = childrens ?? [];
         public GoWindow() { }
         #endregion
 

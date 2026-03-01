@@ -185,7 +185,14 @@ namespace Going.UI.Design
         {
             if (json != null)
             {
-                try { return JsonSerializer.Deserialize<GoDesign>(json, GoJsonConverter.Options); }
+                try
+                {
+                    var ds = JsonSerializer.Deserialize<GoDesign>(json, GoJsonConverter.Options);
+
+                    var ch = ds?.TitleBar?.Childrens;
+
+                    return ds;
+                }
                 catch (Exception ex) { return null; }
             }
             else return null;

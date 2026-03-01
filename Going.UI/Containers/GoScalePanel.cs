@@ -26,7 +26,7 @@ namespace Going.UI.Containers
 
         #region Constructor
         [JsonConstructor]
-        public GoScalePanel(List<IGoControl> childrens) : this() => Childrens = childrens;
+        public GoScalePanel(List<IGoControl> childrens) : this() => Childrens = childrens ?? [];
         public GoScalePanel() { }
         #endregion
 
