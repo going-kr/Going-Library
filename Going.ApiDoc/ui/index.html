@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Going.UI - API Documentation</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<header class="site-header">
+  <a class="logo" href="../index.html"><span class="pkg">API</span> Going Library</a>
+  <div class="search-wrapper"><input type="text" id="search-input" placeholder="클래스, 메서드 검색..."></div>
+  <nav class="header-nav">
+    <a href="../index.html">Home</a>
+    <a href="../basis/index.html">Going.Basis</a>
+    <a href="index.html" class="active">Going.UI</a>
+  </nav>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar" data-current="ui/index.html"></aside>
+  <main class="main-content">
+    <div class="breadcrumb">
+      <a href="../index.html">Going Library</a><span class="sep">›</span>
+      <span>Going.UI</span>
+    </div>
+    <h1 class="page-title">Going.UI</h1>
+    <p class="page-subtitle">
+      SkiaSharp 기반 크로스플랫폼 UI 엔진 &nbsp;·&nbsp;
+      <code>NuGet: Going.UI</code> &nbsp;·&nbsp; <code>SkiaSharp 3.x</code> &nbsp;·&nbsp; <code>.NET 8.0</code>
+    </p>
+
+    <div class="ns-list">
+      <a class="ns-card" href="design.html">
+        <h3>Going.UI.Design</h3>
+        <p>UI 렌더링 루트 컨테이너 및 페이지/윈도우 관리. 입력 이벤트 디스패치, 이미지·폰트 관리.</p>
+        <div class="class-count">GoDesign · GoWindow · GoPage · GoTitleBar · GoSideBar · GoFooter · GoDropDownWindow</div>
+      </a>
+      <a class="ns-card" href="controls.html">
+        <h3>Going.UI.Controls</h3>
+        <p>40여 종 인터랙티브 컨트롤. 버튼, 입력, 슬라이더, 데이터그리드, 그래프, 게이지 등.</p>
+        <div class="class-count">GoButton · GoLabel · GoCheckBox · GoSlider · GoDataGrid · GoLineGraph · GoGauge ...</div>
+      </a>
+      <a class="ns-card" href="containers.html">
+        <h3>Going.UI.Containers</h3>
+        <p>자식 컨트롤 레이아웃 컨테이너. 그리드, 박스, 스크롤, 탭, 스위치, 테이블 패널.</p>
+        <div class="class-count">GoContainer · GoGridLayoutPanel · GoScrollablePanel · GoTabControl · GoSwitchPanel ...</div>
+      </a>
+      <a class="ns-card" href="dialogs.html">
+        <h3>Going.UI.Dialogs</h3>
+        <p>모달 다이얼로그. 메시지박스, 값 입력, 항목 선택 다이얼로그 및 정적 헬퍼.</p>
+        <div class="class-count">GoDialogs · GoMessageBox · GoInputBox · GoSelectorBox</div>
+      </a>
+      <a class="ns-card" href="themes.html">
+        <h3>Going.UI.Themes</h3>
+        <p>다크/라이트 테마 색상 팔레트. 컨트롤 렌더링 파라미터 (Corner, Alpha, Brightness).</p>
+        <div class="class-count">GoTheme</div>
+      </a>
+      <a class="ns-card" href="collections.html">
+        <h3>Going.UI.Collections</h3>
+        <p>변경 감지(Changed 플래그) 기능이 있는 제네릭 리스트 컬렉션.</p>
+        <div class="class-count">ObservableList&lt;T&gt;</div>
+      </a>
+      <a class="ns-card" href="datas.html">
+        <h3>Going.UI.Datas</h3>
+        <p>UI 컨트롤용 데이터 모델 클래스, 이벤트 인수 클래스.</p>
+        <div class="class-count">GoListItem · GoPadding · GoButtonItem · GoMouseEventArgs · GoDragEventArgs ...</div>
+      </a>
+      <a class="ns-card" href="enums.html">
+        <h3>Going.UI.Enums</h3>
+        <p>UI 프레임워크 전체에서 사용하는 열거형 타입 모음.</p>
+        <div class="class-count">GoContentAlignment · GoDirection · GoFontStyle · GoRoundType · GoKeys · GoMouseButton ...</div>
+      </a>
+      <a class="ns-card" href="imagecanvas.html">
+        <h3>Going.UI.ImageCanvas</h3>
+        <p>이미지 파일(PNG) 기반 경량 UI 컨트롤. 산업용 HMI 비트맵 버튼·표시기.</p>
+        <div class="class-count">IcButton · IcLabel · IcOnOff · IcProgress · IcSlider · IcState</div>
+      </a>
+    </div>
+
+    <!-- Architecture summary -->
+    <h2 style="font-size:16px;font-weight:400;color:#fff;margin:40px 0 16px;padding-bottom:8px;border-bottom:1px solid var(--border);">아키텍처</h2>
+    <div style="background:var(--panel-bg);border:1px solid var(--border);border-radius:6px;padding:20px;font-family:Consolas,monospace;font-size:13px;line-height:2;">
+      <div><span style="color:var(--keyword)">GoDesign</span> <span style="color:var(--text-muted)">← 최상위 캔버스. Pages/Windows 관리</span></div>
+      <div style="padding-left:20px">├── <span style="color:var(--type)">GoPage</span> <span style="color:var(--text-muted)">← 화면 단위. Childrens[] 보유</span></div>
+      <div style="padding-left:20px">│   └── <span style="color:var(--method)">IGoContainer</span> <span style="color:var(--text-muted)">← GoContainer 계열 (Grid, Scroll, Tab …)</span></div>
+      <div style="padding-left:20px">│       └── <span style="color:var(--property)">IGoControl</span> <span style="color:var(--text-muted)">← GoControl 계열 (Button, Label …)</span></div>
+      <div style="padding-left:20px">└── <span style="color:var(--type)">GoWindow</span> <span style="color:var(--text-muted)">← 모달/오버레이 윈도우</span></div>
+      <div style="margin-top:8px"><span style="color:var(--keyword)">GoTheme</span> <span style="color:var(--text-muted)">← 색상 팔레트. Draw 시 thm 파라미터로 전달</span></div>
+      <div><span style="color:var(--keyword)">GoDialogs</span> <span style="color:var(--text-muted)">← 정적 싱글턴 (MessageBox, InputBox, SelectorBox)</span></div>
+    </div>
+
+    <!-- Dependencies -->
+    <div style="margin-top:24px;padding:20px;background:var(--panel-bg);border:1px solid var(--border);border-radius:6px;">
+      <h3 style="font-size:13px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px;">의존성</h3>
+      <table style="width:100%;font-family:Consolas,monospace;font-size:13px;border-collapse:collapse;">
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:6px 12px;color:var(--property)">SkiaSharp</td>
+          <td style="padding:6px 12px;color:var(--string)">3.116.1</td>
+          <td style="padding:6px 12px;color:var(--text-muted)">2D 렌더링 엔진</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 12px;color:var(--property)">내장 폰트</td>
+          <td style="padding:6px 12px;color:var(--string)">—</td>
+          <td style="padding:6px 12px;color:var(--text-muted)">나눔고딕 (Regular/Bold), Font Awesome (fab/far/fas)</td>
+        </tr>
+      </table>
+    </div>
+  </main>
+</div>
+<button class="back-to-top" id="back-to-top" title="맨 위로">↑</button>
+<script src="../js/app.js"></script>
+</body>
+</html>
