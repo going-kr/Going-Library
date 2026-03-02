@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Collections - Going.UI API</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<header class="site-header">
+  <a class="logo" href="../index.html"><span class="pkg">API</span> Going Library</a>
+  <div class="search-wrapper"><input type="text" id="search-input" placeholder="클래스, 메서드 검색..."></div>
+  <nav class="header-nav">
+    <a href="../index.html">Home</a>
+    <a href="../basis/index.html">Going.Basis</a>
+    <a href="index.html" class="active">Going.UI</a>
+  </nav>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar" data-current="ui/collections.html"></aside>
+  <main class="main-content">
+    <div class="breadcrumb">
+      <a href="../index.html">Going Library</a><span class="sep">›</span>
+      <a href="index.html">Going.UI</a><span class="sep">›</span>
+      <span>Collections</span>
+    </div>
+    <h1 class="page-title">Collections</h1>
+    <p class="page-subtitle">네임스페이스 <code>Going.UI.Collections</code> — 변경 감지 컬렉션</p>
+
+    <div id="class-ObservableList" class="class-card" data-search="observablelist generic class list collection changed">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature">
+          <span class="kw">public class</span> <span class="nm">ObservableList&lt;T&gt;</span>
+          <span class="base"> : IList&lt;T&gt;</span>
+        </div>
+        <div class="class-desc">변경 감지 플래그(Changed)를 가진 제네릭 리스트. UI 컨테이너 Childrens 등에 사용.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="changed bool"><td class="col-type">bool</td><td class="col-name">Changed <span class="accessor">get set</span></td><td class="col-desc">항목이 추가/제거/변경된 여부. 소비 후 수동 초기화 필요.</td></tr>
+            <tr data-search="count int"><td class="col-type">int</td><td class="col-name">Count <span class="accessor">get</span></td><td class="col-desc">항목 수</td></tr>
+            <tr data-search="isreadonly bool"><td class="col-type">bool</td><td class="col-name">IsReadOnly <span class="accessor">get</span></td><td class="col-desc">항상 false</td></tr>
+            <tr data-search="indexer t"><td class="col-type">T</td><td class="col-name">this[int index] <span class="accessor">get set</span></td><td class="col-desc">인덱서</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Methods</div>
+          <table class="api-table">
+            <tr data-search="add void item"><td class="ret">void</td><td class="col-method-name">Add</td><td class="params">(<span class="tp">T</span> item)</td><td class="col-desc">항목 추가</td></tr>
+            <tr data-search="addrange void ienumerable"><td class="ret">void</td><td class="col-method-name">AddRange</td><td class="params">(<span class="tp">IEnumerable&lt;T&gt;</span> items)</td><td class="col-desc">범위 추가</td></tr>
+            <tr data-search="insert void index"><td class="ret">void</td><td class="col-method-name">Insert</td><td class="params">(<span class="tp">int</span> index, <span class="tp">T</span> item)</td><td class="col-desc">지정 위치에 삽입</td></tr>
+            <tr data-search="remove bool"><td class="ret">bool</td><td class="col-method-name">Remove</td><td class="params">(<span class="tp">T</span> item)</td><td class="col-desc">항목 제거</td></tr>
+            <tr data-search="removeat void index"><td class="ret">void</td><td class="col-method-name">RemoveAt</td><td class="params">(<span class="tp">int</span> index)</td><td class="col-desc">인덱스로 제거</td></tr>
+            <tr data-search="clear void"><td class="ret">void</td><td class="col-method-name">Clear</td><td class="params">()</td><td class="col-desc">전체 삭제</td></tr>
+            <tr data-search="contains bool"><td class="ret">bool</td><td class="col-method-name">Contains</td><td class="params">(<span class="tp">T</span> item)</td><td class="col-desc">항목 포함 여부</td></tr>
+            <tr data-search="indexof int"><td class="ret">int</td><td class="col-method-name">IndexOf</td><td class="params">(<span class="tp">T</span> item)</td><td class="col-desc">항목 인덱스 반환 (없으면 -1)</td></tr>
+            <tr data-search="copyto void array"><td class="ret">void</td><td class="col-method-name">CopyTo</td><td class="params">(<span class="tp">T[]</span> array, <span class="tp">int</span> arrayIndex)</td><td class="col-desc">배열로 복사</td></tr>
+            <tr data-search="getenumerator"><td class="ret">IEnumerator&lt;T&gt;</td><td class="col-method-name">GetEnumerator</td><td class="params">()</td><td class="col-desc">열거자 반환 (foreach 지원)</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="no-results" class="no-results">검색 결과가 없습니다.</div>
+  </main>
+</div>
+<button class="back-to-top" id="back-to-top" title="맨 위로">↑</button>
+<script src="../js/app.js"></script>
+</body>
+</html>
