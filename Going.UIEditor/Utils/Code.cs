@@ -73,6 +73,7 @@ namespace Going.UIEditor.Utils
                     sb.AppendLine($"    {{");
                     sb.AppendLine($"        public MainWindow() : base({prj.Width}, {prj.Height}, WindowBorder.Hidden)");
                     sb.AppendLine($"        {{");
+                    sb.AppendLine($"            InitializeComponent();");
                     sb.AppendLine($"        }}");
                     sb.AppendLine($"    }}");
                     sb.AppendLine($"}}");
@@ -301,6 +302,7 @@ namespace Going.UIEditor.Utils
                             sb.AppendLine($"using Going.UI.Json;");
                             sb.AppendLine($"using Going.UI.OpenTK.Windows;");
                             sb.AppendLine($"using Going.UI.Utils;");
+                            sb.AppendLine($"using Going.UI.ImageCanvas;");
                             sb.AppendLine($"using OpenTK.Windowing.Common;");
                             sb.AppendLine($"");
                             sb.AppendLine($"namespace {prj.Name}.Pages");
@@ -314,7 +316,7 @@ namespace Going.UIEditor.Utils
                             sb.AppendLine($"        public void InitializeComponent()");
                             sb.AppendLine($"        {{");
                             sb.AppendLine($"            #region base");
-                            sb.AppendLine($"            var c = MainWindow.Current.DS.Pages[\"{page.Name}\"];");
+                            sb.AppendLine($"            var c = MainWindow.Current.DS.Pages[\"{page.Name}\"]{(page is IcPage ? " as IcPage" : "")};");
                             MakeDesignBarCode(sb, "            ", "this", page, ls);
                             sb.AppendLine($"            #endregion");
                             sb.AppendLine($"        }}");

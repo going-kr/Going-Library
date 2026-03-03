@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Going.UI.OpenTK\Going.UI.OpenTK.csproj" />
+    <ProjectReference Include="..\Going.UI\Going.UI.csproj" />
   </ItemGroup>
 
 </Project>

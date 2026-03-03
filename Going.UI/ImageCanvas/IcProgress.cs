@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Going.UI.ImageCanvas
 {
@@ -60,18 +61,50 @@ namespace Going.UI.ImageCanvas
 
             if (Design != null && Parent != null)
             {
-                var offB = Design.GetImage(OffBarImage)?.FirstOrDefault();
-                var onB = Design.GetImage(OnBarImage)?.FirstOrDefault();
-
-                if (offB != null && onB != null)
+                if (OnBarImage == null && OffBarImage == null)
                 {
-                    bounds(offB, (_, rtBar, rtFill) =>
+                    SKImage? offB = null, onB = null;
+                    if (Parent is IcContainer con) { offB = Design.GetImage(con.OffImage)?.FirstOrDefault(); onB = Design.GetImage(con.OnImage).FirstOrDefault(); }
+                    else if (Parent is IcPage page) { offB = Design.GetImage(page.OffImage).FirstOrDefault(); onB = Design.GetImage(page.OnImage).FirstOrDefault(); }
+
+                    if (onB != null && offB != null)
                     {
-                        canvas.DrawImage(offB, rtBar, Util.Sampling);
-                        if (Value > Minimum) canvas.DrawImage(onB, Util.FromRect(0, 0, rtFill.Width, rtFill.Height), rtFill, Util.Sampling);
-                        if (DrawText) Util.DrawText(canvas, Value.ToString(FormatString ?? "0"), FontName, FontStyle, FontSize, rtBar, cText);
-                    });
+                        var sx = (double)onB.Width / Parent.Bounds.Width;
+                        var sy = (double)onB.Height / Parent.Bounds.Height;
+
+                        if (offB != null && onB != null)
+                        {
+                            var vbBS = Util.FromRect(Convert.ToInt32(Left * sx), Convert.ToInt32(Top * sy), Convert.ToInt32(Width * sx), Convert.ToInt32(Height * sy));
+                            var vbBD = Util.FromRect(0, 0, Width, Height);
+
+                            var w = Convert.ToSingle(MathTool.Map(Value, Minimum, Maximum, 0, Width));
+                            var vbFS = Util.FromRect(Convert.ToInt32(Left * sx), Convert.ToInt32(Top * sy), Convert.ToSingle(w * sx), Convert.ToSingle(Height * sy));
+                            var vbFD = Util.FromRect(0, 0, w, Height);
+
+                            canvas.DrawImage(offB, vbBS, vbBD, Util.Sampling);
+                            if (Value > Minimum) canvas.DrawImage(onB, vbFS, vbFD, Util.Sampling);
+                            if (DrawText) Util.DrawText(canvas, Value.ToString(FormatString ?? "0"), FontName, FontStyle, FontSize, vbBD, cText);
+
+                        }
+                    }
                 }
+                else
+                {
+                    var offB = Design.GetImage(OffBarImage)?.FirstOrDefault();
+                    var onB = Design.GetImage(OnBarImage)?.FirstOrDefault();
+
+                    if (offB != null && onB != null)
+                    {
+                        bounds(offB, (_, rtBar, rtFill) =>
+                        {
+                            canvas.DrawImage(offB, rtBar, Util.Sampling);
+                            if (Value > Minimum) canvas.DrawImage(onB, Util.FromRect(0, 0, rtFill.Width, rtFill.Height), rtFill, Util.Sampling);
+                            if (DrawText) Util.DrawText(canvas, Value.ToString(FormatString ?? "0"), FontName, FontStyle, FontSize, rtBar, cText);
+                        });
+                    }
+                }
+
+                
             }
 
             base.OnDraw(canvas, thm);

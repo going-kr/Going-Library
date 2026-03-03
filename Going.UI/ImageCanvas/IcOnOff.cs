@@ -60,8 +60,8 @@ namespace Going.UI.ImageCanvas
             if (Design != null && Parent != null)
             {
                 List<SKImage>? offs = null, ons = null;
-                if (Parent is IcContainer con) { offs = Design.GetImage(con.OffImage); ons = Design.GetImage(con.OffImage); }
-                else if (Parent is IcPage page) { offs = Design.GetImage(page.OffImage); ons = Design.GetImage(page.OffImage); }
+                if (Parent is IcContainer con) { offs = Design.GetImage(con.OffImage); ons = Design.GetImage(con.OnImage); }
+                else if (Parent is IcPage page) { offs = Design.GetImage(page.OffImage); ons = Design.GetImage(page.OnImage); }
 
                 if (offs?.Count > 0 && ons?.Count > 0)
                 {

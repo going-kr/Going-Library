@@ -26,13 +26,15 @@ namespace Going.UI.ImageCanvas
 
         protected override void OnBackgroundDraw(SKCanvas canvas, GoTheme thm)
         {
-            using var p = new SKPaint {  };
+            using var p = new SKPaint { };
 
             var rts = Areas();
             var rtContent = rts["Content"];
 
             if (Design != null && Design.GetImage(OffImage) is List<SKImage> imgs && imgs.Count > 0)
+            {
                 canvas.DrawImage(imgs.First(), rtContent, Util.Sampling);
+            }
             else
             {
                 p.IsStroke = false;
