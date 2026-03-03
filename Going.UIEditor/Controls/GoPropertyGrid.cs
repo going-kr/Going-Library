@@ -11,6 +11,7 @@ using Going.UI.Themes;
 using Going.UI.Tools;
 using Going.UI.Utils;
 using Going.UIEditor.Forms;
+using Going.UIEditor.Forms.Editors;
 using Going.UIEditor.Utils;
 using Going.UIEditor.Windows;
 using SkiaSharp;
@@ -610,6 +611,44 @@ namespace Going.UIEditor.Controls
                     }
 
                     pg.Invalidate();
+                }
+            }
+        }
+        #endregion
+
+        #region SetSizes
+        protected void SetSizes(object? c, PropertyInfo Info, List<SizesItem> items)
+        {
+            if (pg != null && Info != null && c != null)
+            {
+                if (pg.SelectedEditor != null)
+                {
+                    if (c != null && c.GetType().GetProperty(Info.Name) is PropertyInfo info2)
+                    {
+                        var ovalue = info2.GetValue(c);
+                        pg.SelectedEditor.EditSizesTable(c, info2, ovalue, items);
+                    }
+                    pg.Invalidate();
+                    pg.SelectedEditor.Invalidate();
+                }
+            }
+        }
+        #endregion
+
+        #region SetGridRow
+        protected void SetGridRow(object? c, PropertyInfo Info, List<GridRowItem> items)
+        {
+            if (pg != null && Info != null && c != null)
+            {
+                if (pg.SelectedEditor != null)
+                {
+                    if (c != null && c.GetType().GetProperty(Info.Name) is PropertyInfo info2)
+                    {
+                        var ovalue = info2.GetValue(c);
+                        pg.SelectedEditor.EditSizesGrid(c, info2, ovalue, items);
+                    }
+                    pg.Invalidate();
+                    pg.SelectedEditor.Invalidate();
                 }
             }
         }
@@ -1297,21 +1336,19 @@ namespace Going.UIEditor.Controls
                 var lk = vs.ToLookup(x => x);
                 var val = lk.Count == 1 ? (lk.FirstOrDefault()?.Key ?? null) : null;
 
-                if (IsSizes(Info))
+                if (IsSizes(Info) && val is List<string> items)
                 {
-                    var rs = val is IEnumerable<string> va && va.Count() > 0 ? string.Concat(va.Select(x => $"{x}, "))[..^2] : "";
-
-                    using (var dlg = new Going.UI.Forms.Dialogs.GoInputBox { MinimumWidth = 400 })
+                    using (var dlg = new FormSizesEditor())
                     {
-                        dlg.OkText = LM.Ok;
-                        dlg.CancelText = LM.Cancel;
-                        var ret = dlg.ShowString(Info.Name, rs);
-
-                        var itms = ret?.Split(',').Select(x => x.Trim()).ToArray();
-                        if (itms != null && Util.ValidSizes(itms))
+                        var ret = dlg.ShowSizesEditor(Info.Name, items);
+                        if (ret != null)
                         {
-                            SelectedObjectLoop((obj) => SetValue(obj, Info, itms.ToList()));
-                            Grid.Invalidate();
+                            var itms = ret.Where(x => !x.IsDelete).OrderBy(x => x.Idx).Select(x => x.ToValue()).ToArray();
+                            if (itms != null && Util.ValidSizes(itms))
+                            {
+                                SelectedObjectLoop((obj) => SetSizes(obj, Info, ret));
+                                Grid.Invalidate();
+                            }
                         }
                     }
                 }
@@ -1319,6 +1356,26 @@ namespace Going.UIEditor.Controls
             base.OnButtonClick(rtValue, rtButton);
         }
         #endregion
+        #endregion
+
+        #region Control
+        public class TblControl(GoTableIndex idx, IGoControl control)
+        {
+            public int Col => idx.Column;
+            public int Row => idx.Row;
+            public int ColSpan => idx.ColSpan;
+            public int RowSpan => idx.RowSpan;
+            public GoTableIndex Index => idx;
+            public IGoControl Control => control;
+        }
+
+        public class GrdControl(GoGridIndex idx, IGoControl control)
+        {
+            public int Col => idx.Column;
+            public int Row => idx.Row;
+            public GoGridIndex Index => idx;
+            public IGoControl Control => control;
+        }
         #endregion
     }
     #endregion
