@@ -152,8 +152,8 @@ namespace Going.UIEditor.Utils
                     #region Design Setting
                     sb.AppendLine($"            #region Design Setting");
                     sb.AppendLine($"            Design.UseTitleBar = ds.UseTitleBar;");
-                    sb.AppendLine($"            Design.UseLeftSideBar = ds.UseTitleBar;");
-                    sb.AppendLine($"            Design.UseRightSideBar = ds.ExpandRightSideBar;");
+                    sb.AppendLine($"            Design.UseLeftSideBar = ds.UseLeftSideBar;");
+                    sb.AppendLine($"            Design.UseRightSideBar = ds.UseRightSideBar;");
                     sb.AppendLine($"            Design.UseFooter = ds.UseFooter;");
                     sb.AppendLine($"            Design.OverlaySideBar = ds.OverlaySideBar;");
                     sb.AppendLine($"            Design.BarColor = ds.BarColor;");
