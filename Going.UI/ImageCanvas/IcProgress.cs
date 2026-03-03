@@ -67,25 +67,22 @@ namespace Going.UI.ImageCanvas
                     if (Parent is IcContainer con) { offB = Design.GetImage(con.OffImage)?.FirstOrDefault(); onB = Design.GetImage(con.OnImage).FirstOrDefault(); }
                     else if (Parent is IcPage page) { offB = Design.GetImage(page.OffImage).FirstOrDefault(); onB = Design.GetImage(page.OnImage).FirstOrDefault(); }
 
-                    if (onB != null && offB != null)
+                    if (offB != null && onB != null)
                     {
                         var sx = (double)onB.Width / Parent.Bounds.Width;
                         var sy = (double)onB.Height / Parent.Bounds.Height;
 
-                        if (offB != null && onB != null)
-                        {
-                            var vbBS = Util.FromRect(Convert.ToInt32(Left * sx), Convert.ToInt32(Top * sy), Convert.ToInt32(Width * sx), Convert.ToInt32(Height * sy));
-                            var vbBD = Util.FromRect(0, 0, Width, Height);
+                        var vbBS = Util.FromRect(Convert.ToInt32(Left * sx), Convert.ToInt32(Top * sy), Convert.ToInt32(Width * sx), Convert.ToInt32(Height * sy));
+                        var vbBD = Util.FromRect(0, 0, Width, Height);
 
-                            var w = Convert.ToSingle(MathTool.Map(Value, Minimum, Maximum, 0, Width));
-                            var vbFS = Util.FromRect(Convert.ToInt32(Left * sx), Convert.ToInt32(Top * sy), Convert.ToSingle(w * sx), Convert.ToSingle(Height * sy));
-                            var vbFD = Util.FromRect(0, 0, w, Height);
+                        var w = Convert.ToSingle(MathTool.Map(Value, Minimum, Maximum, 0, Width));
+                        var vbFS = Util.FromRect(Convert.ToInt32(Left * sx), Convert.ToInt32(Top * sy), Convert.ToSingle(w * sx), Convert.ToSingle(Height * sy));
+                        var vbFD = Util.FromRect(0, 0, w, Height);
 
-                            canvas.DrawImage(offB, vbBS, vbBD, Util.Sampling);
-                            if (Value > Minimum) canvas.DrawImage(onB, vbFS, vbFD, Util.Sampling);
-                            if (DrawText) Util.DrawText(canvas, Value.ToString(FormatString ?? "0"), FontName, FontStyle, FontSize, vbBD, cText);
+                        canvas.DrawImage(offB, vbBS, vbBD, Util.Sampling);
+                        if (Value > Minimum) canvas.DrawImage(onB, vbFS, vbFD, Util.Sampling);
+                        if (DrawText) Util.DrawText(canvas, Value.ToString(FormatString ?? "0"), FontName, FontStyle, FontSize, vbBD, cText);
 
-                        }
                     }
                 }
                 else
