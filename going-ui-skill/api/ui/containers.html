@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Containers - Going.UI API</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<header class="site-header">
+  <a class="logo" href="../index.html"><span class="pkg">API</span> Going Library</a>
+  <div class="search-wrapper"><input type="text" id="search-input" placeholder="클래스, 메서드 검색..."></div>
+  <nav class="header-nav">
+    <a href="../index.html">Home</a>
+    <a href="../basis/index.html">Going.Basis</a>
+    <a href="index.html" class="active">Going.UI</a>
+  </nav>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar" data-current="ui/containers.html"></aside>
+  <main class="main-content">
+    <div class="breadcrumb">
+      <a href="../index.html">Going Library</a><span class="sep">›</span>
+      <a href="index.html">Going.UI</a><span class="sep">›</span>
+      <span>Containers</span>
+    </div>
+    <h1 class="page-title">Containers</h1>
+    <p class="page-subtitle">네임스페이스 <code>Going.UI.Containers</code> — 자식 컨트롤을 포함하는 레이아웃 컨테이너</p>
+
+    <!-- Interface: IGoContainer -->
+    <div id="class-IGoContainer" class="class-card" data-search="igocontainer interface container children bounds panel viewposition">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public interface</span> <span class="nm">IGoContainer</span></div>
+        <div class="class-desc">컨테이너 인터페이스. 자식 컨트롤 목록과 패널 영역을 정의합니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="childrens ienumerable"><td class="col-type">IEnumerable&lt;IGoControl&gt;</td><td class="col-name">Childrens <span class="accessor">get</span></td><td class="col-desc">자식 컨트롤 목록</td></tr>
+            <tr data-search="bounds skrect"><td class="col-type">SKRect</td><td class="col-name">Bounds <span class="accessor">get set</span></td><td class="col-desc">컨테이너 전체 영역</td></tr>
+            <tr data-search="panelbounds skrect"><td class="col-type">SKRect</td><td class="col-name">PanelBounds <span class="accessor">get</span></td><td class="col-desc">자식 컨트롤이 배치되는 내부 영역</td></tr>
+            <tr data-search="viewposition skpoint"><td class="col-type">SKPoint</td><td class="col-name">ViewPosition <span class="accessor">get</span></td><td class="col-desc">스크롤 뷰 오프셋</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Abstract: GoContainer -->
+    <div id="class-GoContainer" class="class-card" data-search="gocontainer abstract container gocontrol dock layout">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public abstract class</span> <span class="nm">GoContainer</span> <span class="base">: GoControl, IGoContainer</span></div>
+        <div class="class-desc">모든 컨테이너의 추상 기반 클래스. Dock/Margin 기반 레이아웃 처리를 포함합니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="childrens ienumerable"><td class="col-type">IEnumerable&lt;IGoControl&gt;</td><td class="col-name">Childrens <span class="accessor">get</span></td><td class="col-desc">자식 컨트롤 목록 (override 가능)</td></tr>
+            <tr data-search="panelbounds skrect"><td class="col-type">SKRect</td><td class="col-name">PanelBounds <span class="accessor">get</span></td><td class="col-desc">기본: Content 영역 전체</td></tr>
+            <tr data-search="viewposition skpoint"><td class="col-type">SKPoint</td><td class="col-name">ViewPosition <span class="accessor">get</span></td><td class="col-desc">기본: (0, 0)</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">상속된 GoControl 기본 속성</div>
+          <table class="api-table">
+            <tr><td class="col-type" colspan="3" style="color:var(--comment)">Id, Name, Visible, Enabled, Bounds, X, Y, Width, Height, Dock, Margin, Parent, Design — <a href="controls.html#class-GoControl">GoControl 참고</a></td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Class: GoBoxPanel -->
+    <div id="class-GoBoxPanel" class="class-card" data-search="goboxpanel class container box border background round">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoBoxPanel</span> <span class="base">: GoContainer</span></div>
+        <div class="class-desc">단순 배경 박스 컨테이너. 테두리와 배경색만 그립니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="childrens list"><td class="col-type">List&lt;IGoControl&gt;</td><td class="col-name">Childrens <span class="accessor">get</span></td><td class="col-desc">자식 컨트롤 목록</td></tr>
+            <tr data-search="bordercolor string"><td class="col-type">string</td><td class="col-name">BorderColor <span class="accessor">get set</span></td><td class="col-desc">테두리 색상. 기본값: "Base3"</td></tr>
+            <tr data-search="boxcolor string"><td class="col-type">string</td><td class="col-name">BoxColor <span class="accessor">get set</span></td><td class="col-desc">배경 색상. 기본값: "Base2"</td></tr>
+            <tr data-search="round goroundtype"><td class="col-type">GoRoundType</td><td class="col-name">Round <span class="accessor">get set</span></td><td class="col-desc">모서리 스타일. 기본값: All</td></tr>
+            <tr data-search="backgrounddraw bool"><td class="col-type">bool</td><td class="col-name">BackgroundDraw <span class="accessor">get set</span></td><td class="col-desc">배경 그리기 여부. 기본값: true</td></tr>
+            <tr data-search="bordersize float"><td class="col-type">float</td><td class="col-name">BorderSize <span class="accessor">get set</span></td><td class="col-desc">테두리 두께. 기본값: 1</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Class: GoGroupBox -->
+    <div id="class-GoGroupBox" class="class-card" data-search="gogroupbox class container groupbox title text border round buttons">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoGroupBox</span> <span class="base">: GoContainer</span></div>
+        <div class="class-desc">그룹 박스 컨테이너. 타이틀이 테두리 선에 겹쳐지는 WinForms 스타일의 그룹 박스입니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="iconstring string"><td class="col-type">string?</td><td class="col-name">IconString <span class="accessor">get set</span></td><td class="col-desc">타이틀 아이콘 문자열</td></tr>
+            <tr data-search="iconsize float"><td class="col-type">float</td><td class="col-name">IconSize / IconGap <span class="accessor">get set</span></td><td class="col-desc">아이콘 크기/간격. 기본값: 12, 5</td></tr>
+            <tr data-search="text string"><td class="col-type">string</td><td class="col-name">Text <span class="accessor">get set</span></td><td class="col-desc">그룹 타이틀 텍스트</td></tr>
+            <tr data-search="fontname string"><td class="col-type">string</td><td class="col-name">FontName / FontStyle / FontSize <span class="accessor">get set</span></td><td class="col-desc">타이틀 폰트 설정</td></tr>
+            <tr data-search="textcolor string"><td class="col-type">string</td><td class="col-name">TextColor <span class="accessor">get set</span></td><td class="col-desc">타이틀 색상. 기본값: "Fore"</td></tr>
+            <tr data-search="bordercolor string"><td class="col-type">string</td><td class="col-name">BorderColor <span class="accessor">get set</span></td><td class="col-desc">테두리 색상. 기본값: "Base3"</td></tr>
+            <tr data-search="round goroundtype"><td class="col-type">GoRoundType</td><td class="col-name">Round <span class="accessor">get set</span></td><td class="col-desc">모서리 스타일</td></tr>
+            <tr data-search="buttons list"><td class="col-type">List&lt;GoButtonItem&gt;</td><td class="col-name">Buttons <span class="accessor">get set</span></td><td class="col-desc">타이틀 우측 버튼 목록</td></tr>
+            <tr data-search="buttonwidth float"><td class="col-type">float?</td><td class="col-name">ButtonWidth <span class="accessor">get set</span></td><td class="col-desc">버튼 영역 전체 너비</td></tr>
+            <tr data-search="borderwidth float"><td class="col-type">float</td><td class="col-name">BorderWidth <span class="accessor">get set</span></td><td class="col-desc">테두리 두께. 기본값: 1</td></tr>
+            <tr data-search="childrens list"><td class="col-type">List&lt;IGoControl&gt;</td><td class="col-name">Childrens <span class="accessor">get</span></td><td class="col-desc">자식 컨트롤 목록</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Events</div>
+          <table class="api-table">
+            <tr data-search="buttonclicked event"><td class="event-args">EventHandler&lt;ButtonClickEventArgs&gt;</td><td class="col-method-name">ButtonClicked</td><td class="col-desc">타이틀 버튼 클릭 시. ButtonClickEventArgs.Button: 클릭된 GoButtonItem</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Class: GoPanel -->
+    <div id="class-GoPanel" class="class-card" data-search="gopanel class container panel title text background buttons">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoPanel</span> <span class="base">: GoContainer</span></div>
+        <div class="class-desc">패널 컨테이너. 타이틀 헤더 + 콘텐츠 영역 구조의 카드형 컨테이너입니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="iconstring string"><td class="col-type">string?</td><td class="col-name">IconString <span class="accessor">get set</span></td><td class="col-desc">타이틀 아이콘 문자열</td></tr>
+            <tr data-search="iconsize float"><td class="col-type">float</td><td class="col-name">IconSize / IconGap <span class="accessor">get set</span></td><td class="col-desc">아이콘 크기/간격. 기본값: 12, 5</td></tr>
+            <tr data-search="text string"><td class="col-type">string</td><td class="col-name">Text <span class="accessor">get set</span></td><td class="col-desc">패널 타이틀 텍스트</td></tr>
+            <tr data-search="fontname string"><td class="col-type">string</td><td class="col-name">FontName / FontStyle / FontSize <span class="accessor">get set</span></td><td class="col-desc">타이틀 폰트 설정</td></tr>
+            <tr data-search="textcolor string"><td class="col-type">string</td><td class="col-name">TextColor <span class="accessor">get set</span></td><td class="col-desc">타이틀 텍스트 색상. 기본값: "Fore"</td></tr>
+            <tr data-search="panelcolor string"><td class="col-type">string</td><td class="col-name">PanelColor <span class="accessor">get set</span></td><td class="col-desc">패널 배경 색상. 기본값: "Base2"</td></tr>
+            <tr data-search="round goroundtype"><td class="col-type">GoRoundType</td><td class="col-name">Round <span class="accessor">get set</span></td><td class="col-desc">모서리 스타일</td></tr>
+            <tr data-search="backgrounddraw bool"><td class="col-type">bool</td><td class="col-name">BackgroundDraw <span class="accessor">get set</span></td><td class="col-desc">배경 그리기 여부. 기본값: true</td></tr>
+            <tr data-search="borderonly bool"><td class="col-type">bool</td><td class="col-name">BorderOnly <span class="accessor">get set</span></td><td class="col-desc">테두리만 그리기 여부. 기본값: false</td></tr>
+            <tr data-search="titleheight float"><td class="col-type">float</td><td class="col-name">TitleHeight <span class="accessor">get set</span></td><td class="col-desc">타이틀 영역 높이. 기본값: 40</td></tr>
+            <tr data-search="buttons list"><td class="col-type">List&lt;GoButtonItem&gt;</td><td class="col-name">Buttons <span class="accessor">get set</span></td><td class="col-desc">타이틀 우측 버튼 목록</td></tr>
+            <tr data-search="buttonwidth float"><td class="col-type">float?</td><td class="col-name">ButtonWidth <span class="accessor">get set</span></td><td class="col-desc">버튼 영역 전체 너비</td></tr>
+            <tr data-search="childrens list"><td class="col-type">List&lt;IGoControl&gt;</td><td class="col-name">Childrens <span class="accessor">get</span></td><td class="col-desc">콘텐츠 영역 자식 컨트롤 목록</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Events</div>
+          <table class="api-table">
+            <tr data-search="buttonclicked event"><td class="event-args">EventHandler&lt;ButtonClickEventArgs&gt;</td><td class="col-method-name">ButtonClicked</td><td class="col-desc">타이틀 버튼 클릭 시</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Class: GoScrollablePanel -->
+    <div id="class-GoScrollablePanel" class="class-card" data-search="goscrollablepanel class container scroll scrollbar viewport">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoScrollablePanel</span> <span class="base">: GoContainer</span></div>
+        <div class="class-desc">스크롤 가능한 컨테이너. 수직/수평 스크롤바를 자동으로 표시하고 콘텐츠 영역을 스크롤합니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="basewidth float"><td class="col-type">float?</td><td class="col-name">BaseWidth <span class="accessor">get set</span></td><td class="col-desc">콘텐츠 기준 너비. null이면 컨테이너 너비와 동일</td></tr>
+            <tr data-search="editorheight float"><td class="col-type">float?</td><td class="col-name">EditorHeight <span class="accessor">get set</span></td><td class="col-desc">에디터 모드 시 강제 세로 크기 (디자인 뷰용)</td></tr>
+            <tr data-search="childrens list"><td class="col-type">List&lt;IGoControl&gt;</td><td class="col-name">Childrens <span class="accessor">get</span></td><td class="col-desc">자식 컨트롤 목록</td></tr>
+            <tr data-search="viewposition skpoint"><td class="col-type">SKPoint</td><td class="col-name">ViewPosition <span class="accessor">get</span></td><td class="col-desc">현재 스크롤 오프셋 (-scrollPos)</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Class: GoSwitchPanel -->
+    <div id="class-GoSwitchPanel" class="class-card" data-search="goswitchpanel class container switch page subpage pagechanged">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoSwitchPanel</span> <span class="base">: GoContainer</span></div>
+        <div class="class-desc">전환 패널. 여러 서브페이지(GoSubPage) 중 선택된 하나만 표시합니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="pages list gosubpage"><td class="col-type">List&lt;GoSubPage&gt;</td><td class="col-name">Pages <span class="accessor">get set</span></td><td class="col-desc">서브 페이지 목록</td></tr>
+            <tr data-search="selectedpage gosubpage"><td class="col-type">GoSubPage?</td><td class="col-name">SelectedPage <span class="accessor">get set</span></td><td class="col-desc">현재 선택된 서브 페이지</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Methods</div>
+          <table class="api-table">
+            <tr data-search="setpage void string"><td class="ret">void</td><td class="col-method-name">SetPage</td><td class="params">(<span class="tp">string</span> name)</td><td class="col-desc">이름으로 서브 페이지 전환</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Events</div>
+          <table class="api-table">
+            <tr data-search="pagechanged event"><td class="event-args">EventHandler</td><td class="col-method-name">PageChanged</td><td class="col-desc">페이지 전환 완료 시</td></tr>
+            <tr data-search="pagechanging event cancel"><td class="event-args">EventHandler&lt;CancelEventArgs&gt;</td><td class="col-method-name">PageChanging</td><td class="col-desc">페이지 전환 전. Cancel = true로 취소 가능</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">GoSubPage</div>
+          <table class="api-table">
+            <tr data-search="gosubpage name"><td class="col-type">string</td><td class="col-name">Name <span class="accessor">get set</span></td><td class="col-desc">서브 페이지 이름</td></tr>
+            <tr data-search="gosubpage childrens"><td class="col-type">List&lt;IGoControl&gt;</td><td class="col-name">Childrens <span class="accessor">get</span></td><td class="col-desc">이 서브 페이지의 자식 컨트롤 목록</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Class: GoTabControl -->
+    <div id="class-GoTabControl" class="class-card" data-search="gotabcontrol class container tab tabpage tabchanged nav position">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoTabControl</span> <span class="base">: GoContainer</span></div>
+        <div class="class-desc">탭 컨트롤. 탭 헤더 위치(Up/Down/Left/Right)를 선택할 수 있으며 GoTabPage별로 컨트롤을 분리합니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="icondirection"><td class="col-type">GoDirectionHV</td><td class="col-name">IconDirection <span class="accessor">get set</span></td><td class="col-desc">탭 아이콘 방향. 기본값: Horizon</td></tr>
+            <tr data-search="iconsize float"><td class="col-type">float</td><td class="col-name">IconSize / IconGap <span class="accessor">get set</span></td><td class="col-desc">아이콘 크기/간격. 기본값: 12, 5</td></tr>
+            <tr data-search="fontname string"><td class="col-type">string</td><td class="col-name">FontName / FontStyle / FontSize <span class="accessor">get set</span></td><td class="col-desc">탭 텍스트 폰트</td></tr>
+            <tr data-search="textcolor string"><td class="col-type">string</td><td class="col-name">TextColor <span class="accessor">get set</span></td><td class="col-desc">탭 텍스트 색상. 기본값: "Fore"</td></tr>
+            <tr data-search="tabcolor string"><td class="col-type">string</td><td class="col-name">TabColor <span class="accessor">get set</span></td><td class="col-desc">탭/페이지 배경 색상. 기본값: "Base2"</td></tr>
+            <tr data-search="tabbordercolor string"><td class="col-type">string</td><td class="col-name">TabBorderColor <span class="accessor">get set</span></td><td class="col-desc">탭 테두리 색상. 기본값: "Base3"</td></tr>
+            <tr data-search="tabposition godirection"><td class="col-type">GoDirection</td><td class="col-name">TabPosition <span class="accessor">get set</span></td><td class="col-desc">탭 헤더 위치 (Up/Down/Left/Right). 기본값: Up</td></tr>
+            <tr data-search="navsize float"><td class="col-type">float</td><td class="col-name">NavSize <span class="accessor">get set</span></td><td class="col-desc">탭 헤더 영역 크기(높이 또는 너비). 기본값: 40</td></tr>
+            <tr data-search="selectedtab gotabpage"><td class="col-type">GoTabPage?</td><td class="col-name">SelectedTab <span class="accessor">get set</span></td><td class="col-desc">현재 선택된 탭 페이지</td></tr>
+            <tr data-search="tabpages list gotabpage"><td class="col-type">List&lt;GoTabPage&gt;</td><td class="col-name">TabPages <span class="accessor">get set</span></td><td class="col-desc">탭 페이지 목록</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Methods</div>
+          <table class="api-table">
+            <tr data-search="settab void string"><td class="ret">void</td><td class="col-method-name">SetTab</td><td class="params">(<span class="tp">string</span> name)</td><td class="col-desc">이름으로 탭 전환</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Events</div>
+          <table class="api-table">
+            <tr data-search="tabchanged event"><td class="event-args">EventHandler</td><td class="col-method-name">TabChanged</td><td class="col-desc">탭 전환 완료 시</td></tr>
+            <tr data-search="tabchanging event cancel"><td class="event-args">EventHandler&lt;CancelEventArgs&gt;</td><td class="col-method-name">TabChanging</td><td class="col-desc">탭 전환 전. Cancel = true로 취소 가능</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">GoTabPage</div>
+          <table class="api-table">
+            <tr data-search="gotabpage name"><td class="col-type">string</td><td class="col-name">Name <span class="accessor">get set</span></td><td class="col-desc">탭 페이지 이름</td></tr>
+            <tr data-search="gotabpage iconstring"><td class="col-type">string?</td><td class="col-name">IconString <span class="accessor">get set</span></td><td class="col-desc">탭 헤더 아이콘</td></tr>
+            <tr data-search="gotabpage text"><td class="col-type">string?</td><td class="col-name">Text <span class="accessor">get set</span></td><td class="col-desc">탭 헤더 텍스트</td></tr>
+            <tr data-search="gotabpage childrens"><td class="col-type">List&lt;IGoControl&gt;</td><td class="col-name">Childrens <span class="accessor">get</span></td><td class="col-desc">이 탭 페이지의 자식 컨트롤 목록</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Class: GoTableLayoutPanel -->
+    <div id="class-GoTableLayoutPanel" class="class-card" data-search="gotablelayoutpanel class container table layout grid columns rows colspan rowspan">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoTableLayoutPanel</span> <span class="base">: GoContainer</span></div>
+        <div class="class-desc">테이블 레이아웃 컨테이너. Columns와 Rows에 크기 문자열("100%", "50px", "30%")을 지정하여 격자를 구성합니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="columns list string"><td class="col-type">List&lt;string&gt;</td><td class="col-name">Columns <span class="accessor">get set</span></td><td class="col-desc">열 크기 목록. 예: ["50%", "50%"] 또는 ["100px", "100%"]</td></tr>
+            <tr data-search="rows list string"><td class="col-type">List&lt;string&gt;</td><td class="col-name">Rows <span class="accessor">get set</span></td><td class="col-desc">행 크기 목록</td></tr>
+            <tr data-search="childrens gotablelayout"><td class="col-type">GoTableLayoutControlCollection</td><td class="col-name">Childrens <span class="accessor">get</span></td><td class="col-desc">자식 컨트롤 컬렉션 (컬럼/행 인덱스 포함)</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">GoTableLayoutControlCollection</div>
+          <table class="api-table">
+            <tr data-search="add void igocontrol col row"><td class="ret">void</td><td class="col-method-name">Add</td><td class="params">(<span class="tp">IGoControl</span> control, <span class="tp">int</span> col, <span class="tp">int</span> row, <span class="tp">int</span> colspan = 1, <span class="tp">int</span> rowspan = 1)</td><td class="col-desc">컨트롤을 지정된 격자 위치에 추가. colspan/rowspan으로 병합 가능</td></tr>
+            <tr data-search="remove bool"><td class="ret">bool</td><td class="col-method-name">Remove</td><td class="params">(<span class="tp">IGoControl</span> control)</td><td class="col-desc">컨트롤 제거</td></tr>
+            <tr data-search="clear void"><td class="ret">void</td><td class="col-method-name">Clear</td><td class="params">()</td><td class="col-desc">모든 컨트롤 제거</td></tr>
+            <tr data-search="contains bool"><td class="ret">bool</td><td class="col-method-name">Contains</td><td class="params">(<span class="tp">IGoControl</span> control)</td><td class="col-desc">컨트롤 포함 여부</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Class: GoGridLayoutPanel -->
+    <div id="class-GoGridLayoutPanel" class="class-card" data-search="gogridlayoutpanel class container grid layout rows columns variable">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoGridLayoutPanel</span> <span class="base">: GoContainer</span></div>
+        <div class="class-desc">가변 열 그리드 레이아웃 컨테이너. 각 행마다 다른 수의 열을 가질 수 있습니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="rows list gogridlayoutpanelrow"><td class="col-type">List&lt;GoGridLayoutPanelRow&gt;</td><td class="col-name">Rows <span class="accessor">get set</span></td><td class="col-desc">행 정의 목록. GoGridLayoutPanelRow: Height(string), Columns(List&lt;string&gt;)</td></tr>
+            <tr data-search="childrens gogridlayout"><td class="col-type">GoGridLayoutControlCollection</td><td class="col-name">Childrens <span class="accessor">get</span></td><td class="col-desc">자식 컨트롤 컬렉션</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Methods</div>
+          <table class="api-table">
+            <tr data-search="addrow void string columns"><td class="ret">void</td><td class="col-method-name">AddRow</td><td class="params">(<span class="tp">string</span> height, <span class="tp">string[]</span> columns)</td><td class="col-desc">행 추가. 예: AddRow("50px", ["50%", "50%"])</td></tr>
+            <tr data-search="gridbounds dict"><td class="ret">Dictionary&lt;int, Dictionary&lt;int, SKRect&gt;&gt;</td><td class="col-method-name">GridBounds</td><td class="params">()</td><td class="col-desc">현재 그리드 각 셀의 SKRect 영역 반환</td></tr>
+            <tr data-search="cellbounds skrect"><td class="ret">SKRect?</td><td class="col-method-name">CellBounds</td><td class="params">(<span class="tp">Dictionary&lt;int, Dictionary&lt;int, SKRect&gt;&gt;</span> rts, <span class="tp">int</span> col, <span class="tp">int</span> row)</td><td class="col-desc">특정 셀 영역 반환</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">GoGridLayoutControlCollection</div>
+          <table class="api-table">
+            <tr data-search="add void igocontrol col row"><td class="ret">void</td><td class="col-method-name">Add</td><td class="params">(<span class="tp">IGoControl</span> control, <span class="tp">int</span> col, <span class="tp">int</span> row)</td><td class="col-desc">컨트롤을 지정된 격자 위치에 추가</td></tr>
+            <tr data-search="remove bool"><td class="ret">bool</td><td class="col-method-name">Remove</td><td class="params">(<span class="tp">IGoControl</span> control)</td><td class="col-desc">컨트롤 제거</td></tr>
+            <tr data-search="clear void"><td class="ret">void</td><td class="col-method-name">Clear</td><td class="params">()</td><td class="col-desc">모든 컨트롤 제거</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="no-results" class="no-results">검색 결과가 없습니다.</div>
+  </main>
+</div>
+<button class="back-to-top" id="back-to-top" title="맨 위로">↑</button>
+<script src="../js/app.js"></script>
+</body>
+</html>
