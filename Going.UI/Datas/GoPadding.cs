@@ -51,7 +51,7 @@ namespace Going.UI.Datas
                     return new GoPadding(left, top, right, bottom);
                 }
             }
-            throw new ArgumentException("유효하지 않은 포맷입니다.'");
+            throw new ArgumentException("유효하지 않은 포맷입니다.");
         }
 
         public override object? ConvertTo(ITypeDescriptorContext? context, CultureInfo? culture, object? value, Type destinationType)

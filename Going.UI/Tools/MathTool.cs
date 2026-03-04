@@ -179,7 +179,7 @@ namespace Going.UI.Tools
             double dy = p2.Y - p1.Y;
             double dz = p2.Z - p1.Z;
 
-            return Math.Sqrt(dx * dx + dy * dy * dz * dz);
+            return Math.Sqrt(dx * dx + dy * dy + dz * dz);
         }
 
         public static double GetDistance(double[] first, double[] second)

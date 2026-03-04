@@ -22,7 +22,7 @@ namespace Going.UI.Datas
 
     public class GoMouseWheelEventArgs(float x, float y, float delta) : GoMouseEventArgs(x, y)
     {
-        public float Delta { get; private set; }
+        public float Delta { get; private set; } = delta;
     }
 
     public class GoCancelableEventArgs : EventArgs

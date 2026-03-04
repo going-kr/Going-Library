@@ -82,7 +82,7 @@ namespace Going.UI.Controls
             set
             {
                 var clampedValue = MathClamp(value, LowerValue, Maximum);
-                if (Math.Abs(sUpperValue - value) < 0.00001f) return;
+                if (Math.Abs(sUpperValue - clampedValue) < 0.00001f) return;
                 sUpperValue = clampedValue;
                 UpperValueChanged?.Invoke(this, EventArgs.Empty);
                 RangeChanged?.Invoke(this, EventArgs.Empty);

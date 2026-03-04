@@ -196,7 +196,7 @@ namespace Going.UI.Controls
                     ItemLongClicked?.Invoke(this, new ListItemEventArgs(item));
             });
 
-            base.OnMouseClick(x, y, button);
+            base.OnMouseLongClick(x, y, button);
         }
 
         protected override void OnMouseDoubleClick(float x, float y, GoMouseButton button)
@@ -212,7 +212,7 @@ namespace Going.UI.Controls
                     ItemDoubleClicked?.Invoke(this, new ListItemEventArgs(item));
             });
 
-            base.OnMouseClick(x, y, button);
+            base.OnMouseDoubleClick(x, y, button);
         }
         #endregion
 
