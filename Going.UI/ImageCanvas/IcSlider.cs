@@ -1,4 +1,4 @@
-﻿using Going.UI.Controls;
+using Going.UI.Controls;
 using Going.UI.Enums;
 using Going.UI.Themes;
 using Going.UI.Tools;
@@ -66,20 +66,63 @@ namespace Going.UI.ImageCanvas
 
             if (Design != null && Parent != null)
             {
-                var offB = Design.GetImage(OffBarImage).FirstOrDefault();
-                var onB = Design.GetImage(OnBarImage).FirstOrDefault();
-                var offC = Design.GetImage(OffCursorImage).FirstOrDefault();
-                var onC = Design.GetImage(OnCursorImage).FirstOrDefault();
-
-                if (offB != null && onB != null && offC != null && onC != null)
+                if (OffBarImage == null && OnBarImage == null)
                 {
-                    bounds(offB, offC, (_, rtBar, rtCur, rtFill) =>
+                    #region 부모 이미지 공유 모드
+                    SKImage? offB = null, onB = null;
+                    if (Parent is IcContainer con) { offB = Design.GetImage(con.OffImage)?.FirstOrDefault(); onB = Design.GetImage(con.OnImage)?.FirstOrDefault(); }
+                    else if (Parent is IcPage page) { offB = Design.GetImage(page.OffImage)?.FirstOrDefault(); onB = Design.GetImage(page.OnImage)?.FirstOrDefault(); }
+
+                    if (offB != null && onB != null)
                     {
-                        canvas.DrawImage(offB, rtBar, Util.Sampling);
-                        if (Value > Minimum) canvas.DrawImage(onB, Util.FromRect(0, 0, rtFill.Width, rtFill.Height), rtFill, Util.Sampling);
-                        canvas.DrawImage(bCurDown ? onC : offC, rtCur, Util.Sampling);
-                        if (DrawText) Util.DrawText(canvas, Value.ToString(FormatString ?? "0"), FontName, FontStyle, FontSize, rtCur, cText);
-                    });
+                        var sx = (double)onB.Width / Parent.Bounds.Width;
+                        var sy = (double)onB.Height / Parent.Bounds.Height;
+
+                        var vbBS = Util.FromRect(Convert.ToInt32(Left * sx), Convert.ToInt32(Top * sy), Convert.ToInt32(Width * sx), Convert.ToInt32(Height * sy));
+                        var vbBD = Util.FromRect(0, 0, Width, Height);
+
+                        var w = Convert.ToSingle(MathTool.Map(Value, Minimum, Maximum, 0, Width));
+                        var vbFS = Util.FromRect(Convert.ToInt32(Left * sx), Convert.ToInt32(Top * sy), Convert.ToSingle(w * sx), Convert.ToSingle(Height * sy));
+                        var vbFD = Util.FromRect(0, 0, w, Height);
+
+                        canvas.DrawImage(offB, vbBS, vbBD, Util.Sampling);
+                        if (Value > Minimum) canvas.DrawImage(onB, vbFS, vbFD, Util.Sampling);
+
+                        var offC = Design.GetImage(OffCursorImage).FirstOrDefault();
+                        var onC = Design.GetImage(OnCursorImage).FirstOrDefault();
+
+                        if (offC != null && onC != null)
+                        {
+                            var rtCur = cursorRect(offC);
+                            canvas.DrawImage(bCurDown ? onC : offC, rtCur, Util.Sampling);
+                            if (DrawText) Util.DrawText(canvas, Value.ToString(FormatString ?? "0"), FontName, FontStyle, FontSize, rtCur, cText);
+                        }
+                        else
+                        {
+                            if (DrawText) Util.DrawText(canvas, Value.ToString(FormatString ?? "0"), FontName, FontStyle, FontSize, vbBD, cText);
+                        }
+                    }
+                    #endregion
+                }
+                else
+                {
+                    #region 독립 이미지 모드
+                    var offB = Design.GetImage(OffBarImage).FirstOrDefault();
+                    var onB = Design.GetImage(OnBarImage).FirstOrDefault();
+                    var offC = Design.GetImage(OffCursorImage).FirstOrDefault();
+                    var onC = Design.GetImage(OnCursorImage).FirstOrDefault();
+
+                    if (offB != null && onB != null && offC != null && onC != null)
+                    {
+                        bounds(offB, offC, (_, rtBar, rtCur, rtFill) =>
+                        {
+                            canvas.DrawImage(offB, rtBar, Util.Sampling);
+                            if (Value > Minimum) canvas.DrawImage(onB, Util.FromRect(0, 0, rtFill.Width, rtFill.Height), rtFill, Util.Sampling);
+                            canvas.DrawImage(bCurDown ? onC : offC, rtCur, Util.Sampling);
+                            if (DrawText) Util.DrawText(canvas, Value.ToString(FormatString ?? "0"), FontName, FontStyle, FontSize, rtCur, cText);
+                        });
+                    }
+                    #endregion
                 }
             }
 
@@ -90,17 +133,29 @@ namespace Going.UI.ImageCanvas
         {
             if (Design != null && Parent != null)
             {
-                var offB = Design.GetImage(OffBarImage).FirstOrDefault();
-                var onB = Design.GetImage(OnBarImage).FirstOrDefault();
-                var offC = Design.GetImage(OffCursorImage).FirstOrDefault();
-                var onC = Design.GetImage(OnCursorImage).FirstOrDefault();
-
-                if (offB != null && onB != null && offC != null && onC != null)
+                if (OffBarImage == null && OnBarImage == null)
                 {
-                    bounds(offB, offC, (rtBox, rtBar, rtCur, rtFill) =>
+                    var offC = Design.GetImage(OffCursorImage).FirstOrDefault();
+                    var onC = Design.GetImage(OnCursorImage).FirstOrDefault();
+                    if (offC != null && onC != null)
                     {
-                        if (CollisionTool.Check(rtCur, x, y)) bCurDown = true;
-                    });
+                        if (CollisionTool.Check(cursorRect(offC), x, y)) bCurDown = true;
+                    }
+                }
+                else
+                {
+                    var offB = Design.GetImage(OffBarImage).FirstOrDefault();
+                    var onB = Design.GetImage(OnBarImage).FirstOrDefault();
+                    var offC = Design.GetImage(OffCursorImage).FirstOrDefault();
+                    var onC = Design.GetImage(OnCursorImage).FirstOrDefault();
+
+                    if (offB != null && onB != null && offC != null && onC != null)
+                    {
+                        bounds(offB, offC, (rtBox, rtBar, rtCur, rtFill) =>
+                        {
+                            if (CollisionTool.Check(rtCur, x, y)) bCurDown = true;
+                        });
+                    }
                 }
             }
             base.OnMouseDown(x, y, button);
@@ -112,20 +167,32 @@ namespace Going.UI.ImageCanvas
             {
                 if (Design != null && Parent != null)
                 {
-                    var offB = Design.GetImage(OffBarImage).FirstOrDefault();
-                    var onB = Design.GetImage(OnBarImage).FirstOrDefault();
-                    var offC = Design.GetImage(OffCursorImage).FirstOrDefault();
-                    var onC = Design.GetImage(OnCursorImage).FirstOrDefault();
-
-                    if (offB != null && onB != null && offC != null && onC != null)
+                    if (OffBarImage == null && OnBarImage == null)
                     {
-                        bounds(offB, offC, (rtBox, rtBar, rtCur, rtFill) =>
+                        var offC = Design.GetImage(OffCursorImage).FirstOrDefault();
+                        var onC = Design.GetImage(OnCursorImage).FirstOrDefault();
+                        if (offC != null && onC != null)
                         {
-                            Value = MathTool.Map(MathTool.Constrain(x, rtBar.Left, rtBar.Right), rtBar.Left, rtBar.Right, Minimum, Maximum);
-                        });
+                            Value = MathTool.Map(MathTool.Constrain(x, 0, Width), 0, Width, Minimum, Maximum);
+                        }
+                    }
+                    else
+                    {
+                        var offB = Design.GetImage(OffBarImage).FirstOrDefault();
+                        var onB = Design.GetImage(OnBarImage).FirstOrDefault();
+                        var offC = Design.GetImage(OffCursorImage).FirstOrDefault();
+                        var onC = Design.GetImage(OnCursorImage).FirstOrDefault();
+
+                        if (offB != null && onB != null && offC != null && onC != null)
+                        {
+                            bounds(offB, offC, (rtBox, rtBar, rtCur, rtFill) =>
+                            {
+                                Value = MathTool.Map(MathTool.Constrain(x, rtBar.Left, rtBar.Right), rtBar.Left, rtBar.Right, Minimum, Maximum);
+                            });
+                        }
                     }
                 }
-             
+
                 bCurDown = false;
             }
 
@@ -138,17 +205,29 @@ namespace Going.UI.ImageCanvas
             {
                 if (Design != null && Parent != null)
                 {
-                    var offB = Design.GetImage(OffBarImage).FirstOrDefault();
-                    var onB = Design.GetImage(OnBarImage).FirstOrDefault();
-                    var offC = Design.GetImage(OffCursorImage).FirstOrDefault();
-                    var onC = Design.GetImage(OnCursorImage).FirstOrDefault();
-
-                    if (offB != null && onB != null && offC != null && onC != null)
+                    if (OffBarImage == null && OnBarImage == null)
                     {
-                        bounds(offB, offC, (rtBox, rtBar, rtCur, rtFill) =>
+                        var offC = Design.GetImage(OffCursorImage).FirstOrDefault();
+                        var onC = Design.GetImage(OnCursorImage).FirstOrDefault();
+                        if (offC != null && onC != null)
                         {
-                            Value = MathTool.Map(MathTool.Constrain(x, rtBar.Left, rtBar.Right), rtBar.Left, rtBar.Right, Minimum, Maximum);
-                        });
+                            Value = MathTool.Map(MathTool.Constrain(x, 0, Width), 0, Width, Minimum, Maximum);
+                        }
+                    }
+                    else
+                    {
+                        var offB = Design.GetImage(OffBarImage).FirstOrDefault();
+                        var onB = Design.GetImage(OnBarImage).FirstOrDefault();
+                        var offC = Design.GetImage(OffCursorImage).FirstOrDefault();
+                        var onC = Design.GetImage(OnCursorImage).FirstOrDefault();
+
+                        if (offB != null && onB != null && offC != null && onC != null)
+                        {
+                            bounds(offB, offC, (rtBox, rtBar, rtCur, rtFill) =>
+                            {
+                                Value = MathTool.Map(MathTool.Constrain(x, rtBar.Left, rtBar.Right), rtBar.Left, rtBar.Right, Minimum, Maximum);
+                            });
+                        }
                     }
                 }
             }
@@ -171,6 +250,15 @@ namespace Going.UI.ImageCanvas
             var y = rtBar.MidY;
             var rtCur = MathTool.MakeRectangle(new SKPoint(x, y), bmCur.Width / 2F, bmCur.Height / 2F);
             act(rtBox, rtBar, rtCur, rtFill);
+        }
+        #endregion
+
+        #region cursorRect
+        SKRect cursorRect(SKImage bmCur)
+        {
+            var cx = Convert.ToSingle(MathTool.Map(Value, Minimum, Maximum, 0, Width));
+            var cy = Height / 2F;
+            return MathTool.MakeRectangle(new SKPoint(cx, cy), bmCur.Width / 2F, bmCur.Height / 2F);
         }
         #endregion
         #endregion
