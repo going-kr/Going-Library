@@ -1,6 +1,6 @@
 ---
 name: going-ui
-description: Going Library(Going.UI + Going.Basis)를 사용하는 모든 작업에 반드시 이 스킬을 참조. 사용자가 Going UI로 화면 설계, .gud 파일 생성, GoButton/GoLamp/GoInput 등 컨트롤 코드 작성, Going.Basis로 Modbus/MQTT/통신 코드 작성, GoDesign/GoPage/GoWindow 구조 작업, 테마 색상 적용, Going Library 패턴으로 C# 코드 작성 등을 요청할 때 사용. Going 관련 코드 작성 시 항상 이 스킬의 패턴과 네이밍을 따를 것.
+description: Going Library(Going.UI + Going.Basis)를 사용하는 모든 작업에 반드시 이 스킬을 참조. HMI 화면 설계, 산업용 UI 개발, PLC 연동 앱, 임베디드 GUI, SCADA 화면, 터치패널 UI, .gud 파일 생성/수정, GoButton/GoLamp/GoInput 등 컨트롤 코드 작성, Going.Basis로 Modbus RTU/TCP 마스터·슬레이브 통신, MQTT 클라이언트 코드 작성, GoDesign/GoPage/GoWindow 구조 작업, SkiaSharp 기반 커스텀 렌더링, 테마 색상 적용, Going Library 패턴으로 C# .NET 8.0 코드 작성 등을 요청할 때 사용. Going 관련 코드 작성 시 항상 이 스킬의 패턴과 네이밍을 따를 것.
 ---
 
 # Going Library Skill
@@ -13,18 +13,20 @@ description: Going Library(Going.UI + Going.Basis)를 사용하는 모든 작업
 | C# 코드 작성 (Page/Window/Main) | `ui-code.md` | 코드 패턴, Designer.cs 규칙, MakePropCode |
 | 통신 코드 작성 (Modbus/MQTT) | `basis.md` | 통신 패턴, DeviceManager, 데이터 모델 |
 
-**작업 시작 전 해당 파일을 반드시 view로 읽은 후 작업할 것.**
+**작업 시작 전 해당 파일을 반드시 `Read` 도구로 읽은 후 작업할 것.**
 
 ---
 
 ## API 문서 참조 방법
 
-Going Library의 클래스·속성·메서드·이벤트 확인이 필요할 때는 `view` 도구로 아래 HTML 파일을 직접 읽어 확인한다.
+Going Library의 클래스·속성·메서드·이벤트 확인이 필요할 때는 `Read` 도구로 아래 HTML 파일을 직접 읽어 확인한다.
 **코드 작성 전 반드시 해당 파일을 확인하고 정확한 속성명·타입·기본값을 사용할 것.**
+
+> **경로 규칙**: 아래 경로는 **이 스킬 파일(.md) 기준 상대경로**. `Read` 도구 사용 시 이 스킬 파일이 위치한 디렉터리를 기준으로 경로를 해석할 것.
 
 ### Going.UI
 
-| 파일 | 내용 |
+| 경로 (스킬 파일 기준 상대경로) | 내용 |
 |------|------|
 | `api/ui/design.html` | GoDesign, GoPage, GoWindow, GoTitleBar, GoSideBar, GoFooter |
 | `api/ui/controls.html` | 전체 컨트롤 (GoButton, GoLabel, GoInput*, GoValue*, GoDataGrid, GoSlider, GoKnob, GoStep, GoProgress 등 40여 종) |
@@ -38,7 +40,7 @@ Going Library의 클래스·속성·메서드·이벤트 확인이 필요할 때
 
 ### Going.Basis
 
-| 파일 | 내용 |
+| 경로 (스킬 파일 기준 상대경로) | 내용 |
 |------|------|
 | `api/basis/communications-modbus.html` | ModbusRTUMaster, ModbusRTUSlave, ModbusTCPMaster, ModbusTCPSlave |
 | `api/basis/communications-mqtt.html` | MQClient, MQSubscribe, MQReceiveArgs |
@@ -53,12 +55,69 @@ Going Library의 클래스·속성·메서드·이벤트 확인이 필요할 때
 ### 사용 예시
 
 ```
-// GoButton 속성 확인이 필요할 때 — Read 도구로 HTML 파일 읽기
-Read("api/ui/controls.html")
+// GoButton 속성 확인 — Read 도구로 스킬 파일 기준 상대경로 읽기
+Read("{이 스킬 파일 디렉터리}/api/ui/controls.html")
 
-// MasterRTU/ModbusTCPMaster 메서드 확인이 필요할 때
-Read("api/basis/communications-modbus.html")
+// MasterRTU/ModbusTCPMaster 메서드 확인
+Read("{이 스킬 파일 디렉터리}/api/basis/communications-modbus.html")
 ```
+
+---
+
+## 전체 워크플로우
+
+Going Library 프로젝트의 전형적인 작업 흐름:
+
+```
+1. project_brief.md 작성 (사용자)
+   └─ 프로젝트 개요, 화면 구성, 페이지/윈도우 목록
+   └─ 통신 방식 (Modbus RTU/TCP, MQTT 등)
+   └─ 장치 데이터 모델, 레지스터 맵 (있는 경우)
+
+2. .gud 파일 생성 (Claude — 채팅)
+   └─ 사용자가 project_brief.md 내용을 Claude 채팅에 전달
+   └─ Claude가 ui-json.md 참조하여 .gud 파일(JSON) 생성
+   └─ 페이지/윈도우/컨테이너/컨트롤 배치, 테마 설정 포함
+   └─ 주의: Design 필드는 이중 직렬화, SKRect는 좌표값(Width/Height 아님)
+   └─ 주의: Enum은 숫자, 모든 컨트롤에 UUID Id 필수
+
+3. UIEditor에서 수정 및 코드 배포 (사용자)
+   └─ 생성된 .gud 파일을 UIEditor에서 열기
+   └─ 컨트롤 위치/크기 미세 조정, 디자인 확인
+   └─ MakeCode 실행 → 아래 파일들 자동 생성:
+       ├─ design.json          (GoDesign 직렬화, 런타임 로드용)
+       ├─ Program.cs           (진입점, ExistsCheck=true)
+       ├─ MainWindow.cs        (사용자 파일, ExistsCheck=true)
+       ├─ MainWindow.Designer.cs (자동생성, 항상 덮어씀)
+       ├─ Pages/*.cs           (사용자 파일, ExistsCheck=true)
+       ├─ Pages/*.Designer.cs  (자동생성, 항상 덮어씀)
+       ├─ Windows/*.cs         (사용자 파일, ExistsCheck=true)
+       └─ Windows/*.Designer.cs (자동생성, 항상 덮어씀)
+
+4. Claude Code에서 프로젝트 구현 ★핵심 단계★
+   └─ 사용자가 생성된 코드 폴더를 작업 디렉터리로 지정
+   └─ project_brief.md를 Claude Code에 전달
+   └─ Claude Code가 *.cs(사용자 파일)만 작업 (Designer.cs/design.json 절대 수정 금지)
+
+   4-1. UI 코드 작성 (참조: ui-code.md)
+        ├─ Program.cs: Main 싱글턴, DataManager/DeviceManager 초기화, Run/Stop
+        ├─ MainWindow.cs: 전역 이벤트 바인딩, OnUpdateFrame에서 상태 갱신
+        ├─ Pages/*.cs: 컨트롤 이벤트 바인딩(ButtonClicked 등), OnUpdate에서 데이터→UI 반영
+        └─ Windows/*.cs: 팝업 동작, 콜백 패턴 (Show → 결과 → Close)
+
+   4-2. 통신 코드 작성 (참조: basis.md)
+        ├─ DeviceManager: Modbus Master/Slave 또는 MQTT 구성
+        ├─ DeviceData: 레지스터 맵 → 의미있는 프로퍼티 변환 (CommState 패턴)
+        ├─ DataManager: 설정 파일(JSON) 로드/저장
+        └─ ⚠ project_brief.md에 장치 모델이 없으면 반드시 사용자에게 문의
+
+5. 빌드 및 실행 (사용자)
+   └─ dotnet build → dotnet run
+   └─ design.json이 실행 디렉터리에 있어야 함
+```
+
+> **역할 분담**: 1=사용자, 2=Claude(채팅), 3=사용자(UIEditor), **4=Claude Code(핵심)**, 5=사용자.
+> Claude Code는 ***.Designer.cs와 design.json을 절대 수정하지 않으며**, *.cs(사용자 파일)만 작업한다.
 
 ---
 
