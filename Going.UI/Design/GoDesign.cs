@@ -644,6 +644,10 @@ namespace Going.UI.Design
             Footer.Dispose();
 
             Util.UnloadExternalFonts();
+
+            foreach (var imgs in Images.Values)
+                foreach (var img in imgs)
+                    img.Dispose();
         }
         #endregion
         #endregion
