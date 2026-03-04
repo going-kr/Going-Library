@@ -249,7 +249,7 @@ namespace Going.Basis.Communications.TextComm.RTU
                                 {
                                     byte slave = ls[0];
                                     byte cmd = ls[1];
-                                    if (slave == w.Slave && cmd == w.Command)
+                                    if (slave == w.Slave && cmd == w.Command && ls.Count >= 3)
                                     {
                                         var msg = MessageEncoding.GetString(ls.GetRange(2, ls.Count - 3).ToArray());
                                         MessageReceived?.Invoke(this, new ReceivedEventArgs(w, msg));

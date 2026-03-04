@@ -61,7 +61,6 @@ namespace Going.Basis.Communications.Modbus
             int CRC = (uchCRCHi << 8) | uchCRCLo;
             byFirstReturn = (byte)(CRC / 256);
             bySecondReturn = (byte)(CRC % 256);
-            pby = null;
         }
         #endregion
         #region GetCRC
@@ -79,7 +78,6 @@ namespace Going.Basis.Communications.Modbus
             int CRC = (uchCRCHi << 8) | uchCRCLo;
             byFirstReturn = (byte)(CRC / 256);
             bySecondReturn = (byte)(CRC % 256);
-            pby = null;
         }
         #endregion
         #region GetLRC
@@ -100,7 +98,6 @@ namespace Going.Basis.Communications.Modbus
             string sLRC = IntToHex(byLRC, 2);
             byFirstReturn = (byte)sLRC[0];
             bySecondReturn = (byte)sLRC[1];
-            pby = null;
         }
         #endregion
         #region HexToInt
@@ -110,7 +107,6 @@ namespace Going.Basis.Communications.Modbus
             for (int i = 0; i < n; i++)
                 str += (char)pby[i];
             return int.Parse(str, System.Globalization.NumberStyles.AllowHexSpecifier);
-            pby = null;
         }
         #endregion
         #region IntToHex

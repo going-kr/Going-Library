@@ -187,7 +187,7 @@ namespace Going.Basis.Tools
             double dy = y2 - y1;
             double dz = z2 - z1;
 
-            return Math.Sqrt(dx * dx + dy * dy * dz * dz);
+            return Math.Sqrt(dx * dx + dy * dy + dz * dz);
         }
 
         public static double GetDistance(double[] first, double[] second)

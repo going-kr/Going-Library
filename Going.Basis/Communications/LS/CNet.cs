@@ -284,7 +284,7 @@ namespace Going.Basis.Communications.LS
                             {
                                 #region var
                                 string strSlave = new([(char)baResponse[1], (char)baResponse[2]]);
-                                string strFunc = new([(char)baResponse[3], (char)baResponse[4], (char)w.Data[5]]);
+                                string strFunc = new([(char)baResponse[3], (char)baResponse[4], (char)baResponse[5]]);
                                 string strBCC = new([(char)baResponse[nRecv - 2], (char)baResponse[nRecv - 1]]);
 
                                 var slave = int.Parse(strSlave, System.Globalization.NumberStyles.AllowHexSpecifier);

@@ -208,8 +208,7 @@ namespace Going.Basis.Communications.TextComm.TCP
                             #region write
                             try
                             {
-                                EndPoint ipep = new IPEndPoint(IPAddress.Parse(RemoteIP), RemotePort);
-                                client?.SendTo(w.Data, ipep);
+                                client?.Send(w.Data);
                             }
                             catch (SocketException ex)
                             {
@@ -237,9 +236,7 @@ namespace Going.Basis.Communications.TextComm.TCP
                                         client.ReceiveTimeout = Timeout;
                                         client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, Timeout);
 
-                                        EndPoint ipep = new IPEndPoint(IPAddress.Parse(RemoteIP), RemotePort);
-
-                                        len = client.ReceiveFrom(baResponse, 0, baResponse.Length, SocketFlags.None, ref ipep);
+                                        len = client.Receive(baResponse, 0, baResponse.Length, SocketFlags.None);
                                         for (int i = 0; i < len; i++)
                                         {
                                             var v = baResponse[i];
@@ -280,7 +277,7 @@ namespace Going.Basis.Communications.TextComm.TCP
                                     {
                                         byte slave = ls[0];
                                         byte cmd = ls[1];
-                                        if (slave == w.Slave && cmd == w.Command)
+                                        if (slave == w.Slave && cmd == w.Command && ls.Count >= 3)
                                         {
                                             var msg = MessageEncoding.GetString(ls.GetRange(2, ls.Count - 3).ToArray());
                                             MessageReceived?.Invoke(this, new ReceivedEventArgs(w, msg));

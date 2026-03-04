@@ -307,8 +307,7 @@ namespace Going.Basis.Communications.Modbus.TCP
                     #region write
                     try
                     {
-                        EndPoint ipep = new IPEndPoint(IPAddress.Parse(RemoteIP), RemotePort);
-                        client?.SendTo(w.Data, ipep);
+                        client?.Send(w.Data);
                     }
                     catch (SocketException ex)
                     {
@@ -337,9 +336,7 @@ namespace Going.Basis.Communications.Modbus.TCP
                                 client.ReceiveTimeout = Timeout;
                                 client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, Timeout);
 
-                                EndPoint ipep = new IPEndPoint(IPAddress.Parse(RemoteIP), RemotePort);
-
-                                len = client.ReceiveFrom(baResponse, nRecv, baResponse.Length - nRecv, SocketFlags.None, ref ipep);
+                                len = client.Receive(baResponse, nRecv, baResponse.Length - nRecv, SocketFlags.None);
                                 nRecv += len;
                             }
 

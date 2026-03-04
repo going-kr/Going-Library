@@ -13,7 +13,7 @@ using System.Drawing;
 
 namespace Going.Basis.Datas
 {
-    public class Seriealize
+    public class Serialize
     {
         #region Xml
         public static void XmlSerializeToFile(string Path, object obj, Type type)
