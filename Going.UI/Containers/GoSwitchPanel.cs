@@ -34,7 +34,7 @@ namespace Going.UI.Containers
                         selPage = value;
                         if (selPage != null) foreach (var c in selPage.Childrens) c.FireShow();
 
-                        PageCnanged?.Invoke(this, EventArgs.Empty);
+                        PageChanged?.Invoke(this, EventArgs.Empty);
                     }
                 }
             }
@@ -46,7 +46,7 @@ namespace Going.UI.Containers
         #endregion
 
         #region Event
-        public event EventHandler? PageCnanged;
+        public event EventHandler? PageChanged;
         public event EventHandler<CancelEventArgs>? PageChanging;
         #endregion
 

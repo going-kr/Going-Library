@@ -52,7 +52,7 @@ namespace Going.UI.Containers
                         if (selTab != null) foreach (var c in selTab.Childrens) c.FireHide();
                         selTab = value;
                         if (selTab != null) foreach (var c in selTab.Childrens) c.FireShow();
-                        TabCnanged?.Invoke(this, EventArgs.Empty);
+                        TabChanged?.Invoke(this, EventArgs.Empty);
                     }
                 }
             }
@@ -67,7 +67,7 @@ namespace Going.UI.Containers
         #endregion
 
         #region Event
-        public event EventHandler? TabCnanged;
+        public event EventHandler? TabChanged;
         public event EventHandler<CancelEventArgs>? TabChanging;
         #endregion
 
