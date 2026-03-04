@@ -153,8 +153,8 @@ namespace Going.UIEditor.Utils
                     #region Design Setting
                     sb.AppendLine($"            #region Design Setting");
                     sb.AppendLine($"            Design.UseTitleBar = ds.UseTitleBar;");
-                    sb.AppendLine($"            Design.UseLeftSideBar = ds.UseTitleBar;");
-                    sb.AppendLine($"            Design.UseRightSideBar = ds.ExpandRightSideBar;");
+                    sb.AppendLine($"            Design.UseLeftSideBar = ds.UseLeftSideBar;");
+                    sb.AppendLine($"            Design.UseRightSideBar = ds.UseRightSideBar;");
                     sb.AppendLine($"            Design.UseFooter = ds.UseFooter;");
                     sb.AppendLine($"            Design.OverlaySideBar = ds.OverlaySideBar;");
                     sb.AppendLine($"            Design.BarColor = ds.BarColor;");
@@ -209,7 +209,7 @@ namespace Going.UIEditor.Utils
                     {
                         sb.AppendLine($"            #region RightSideBar");
                         sb.AppendLine($"            {{");
-                        sb.AppendLine($"                var c = ds.LeftSideBar;");
+                        sb.AppendLine($"                var c = ds.RightSideBar;");
                         MakeDesignBarCode(sb, "                ", "Design.RightSideBar", prj.Design.RightSideBar, lsR);
                         sb.AppendLine($"            }}");
                         sb.AppendLine($"            #endregion");
@@ -220,7 +220,7 @@ namespace Going.UIEditor.Utils
                     {
                         sb.AppendLine($"            #region Footer");
                         sb.AppendLine($"            {{");
-                        sb.AppendLine($"                var c = ds.LeftSideBar;");
+                        sb.AppendLine($"                var c = ds.Footer;");
                         MakeDesignBarCode(sb, "                ", "Design.Footer", prj.Design.Footer, lsB);
                         sb.AppendLine($"            }}");
                         sb.AppendLine($"            #endregion");
@@ -612,7 +612,8 @@ namespace Going.UIEditor.Utils
                     var v = lsrows;
                     foreach (var vi in v)
                     {
-                        var str = $"new GoGridLayoutPanelRow {{ Height = \"{vi.Height}\", Columns = [{vi.Columns.Select(x => $"\"{x}\", ")}] }}";
+                        //var str = $"new GoGridLayoutPanelRow {{ Height = \"{vi.Height}\", Columns = [{vi.Columns.Select(x => $"\"{x}\", ")}] }}";
+                        var str = $"new GoGridLayoutPanelRow {{ Height = \"{vi.Height}\", Columns = [{string.Concat(vi.Columns.Select(x => $"\"{x}\", "))}] }}";
                         sb.AppendLine($"{space}{varname}.{pi.Name}.Add({str});");
                     }
                 }
@@ -623,7 +624,7 @@ namespace Going.UIEditor.Utils
                     var v = li1;
                     foreach (var ti in v)
                     {
-                        var str = $"var v = new GoListItem {{ Text = {strval(ti.Text)}, IconString = {strval(ti.IconString)} }}";
+                        var str = $"new GoListItem {{ Text = {strval(ti.Text)}, IconString = {strval(ti.IconString)} }}";
                         sb.AppendLine($"{space}{varname}.{pi.Name}.Add({str});");
                     }
                 }
@@ -634,7 +635,7 @@ namespace Going.UIEditor.Utils
                     var v = li2;
                     foreach (var ti in v)
                     {
-                        var str = $"var v = new GoListItem {{ Text = {strval(ti.Text)}, IconString = {strval(ti.IconString)} }}";
+                        var str = $"new GoListItem {{ Text = {strval(ti.Text)}, IconString = {strval(ti.IconString)} }}";
                         sb.AppendLine($"{space}{varname}.{pi.Name}.Add({str});");
                     }
                 }
@@ -726,7 +727,7 @@ namespace Going.UIEditor.Utils
                     var v = lssp;
                     foreach (var ti in v)
                     {
-                        var str = $"new GoSubPage {{ Name = {strval(ti.Name)}; }}";
+                        var str = $"new GoSubPage {{ Name = {strval(ti.Name)} }}";
                         sb.AppendLine($"{space}{varname}.{pi.Name}.Add({str});");
                     }
                 }
@@ -774,7 +775,7 @@ namespace Going.UIEditor.Utils
         }
         #endregion
         #region MakePageCode
-        public static (string page, string design) MakePageCode(string projecjtName, GoPage page)
+        public static (string page, string design) MakePageCode(string projectName, GoPage page)
         {
             string pageCode, designCode;
             #region Code
@@ -788,7 +789,7 @@ namespace Going.UIEditor.Utils
                 sb.AppendLine($"using Going.UI.Design;");
                 sb.AppendLine($"using Going.UI.ImageCanvas;");
                 sb.AppendLine($"");
-                sb.AppendLine($"namespace {projecjtName}.Pages");
+                sb.AppendLine($"namespace {projectName}.Pages");
                 sb.AppendLine($"{{");
                 sb.AppendLine($"    public partial class {page.Name} : {(page is IcPage ? "IcPage" : "GoPage")}");
                 sb.AppendLine($"    {{");
