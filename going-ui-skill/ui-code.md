@@ -26,6 +26,8 @@ Windows/
 └── WindowName.Designer.cs   ← 자동생성 (항상 덮어씀)
 ```
 
+> **design.json 자동 포함**: UIEditor의 MakeCode 실행 시 `design.json`이 프로젝트 루트에 자동 생성되며, `.csproj`에 빌드 출력 복사 설정이 포함됨. `dotnet publish` 시 자동으로 출력 디렉터리에 포함되므로 별도 복사 불필요.
+
 ### ExistsCheck 규칙
 
 | 파일 | ExistsCheck | 동작 |
@@ -83,7 +85,7 @@ namespace ProjectName
 }
 ```
 
-> **GoViewWindow** 상속. `GoManualWindow`는 사용자가 수동으로 변경 시 사용.
+> **GoViewWindow** 상속. 모든 프로젝트에서 `GoViewWindow`를 사용.
 
 ### MainWindow.Designer.cs (자동생성 — ExistsCheck=false)
 
@@ -463,29 +465,52 @@ public partial class MainWindow : GoViewWindow
 }
 ```
 
-> `GoManualWindow`를 사용하면 `Interval` 프로퍼티로 렌더 루프 간격(ms) 설정 가능.
+> `Design.SetPage("PageName")`으로 페이지 전환. 자세한 패턴은 아래 **페이지 전환 패턴** 참조.
+
+---
+
+## 페이지 전환 패턴
+
+`Design.SetPage("PageName")`으로 현재 표시 페이지를 변경. Page 클래스명(= .gud에서 설정한 페이지 이름)을 문자열로 전달.
+
+### 기본 전환 (버튼 클릭)
+
+```csharp
+// MainWindow.cs 또는 Page.cs 생성자에서
+btnGoMain.ButtonClicked += (o, s) => Design.SetPage("PageMain");
+btnGoSetting.ButtonClicked += (o, s) => Design.SetPage("PageSetting");
+btnGoDetail.ButtonClicked += (o, s) => Design.SetPage("PageDetail");
+```
+
+### SideBar 메뉴 전환
+
+```csharp
+// MainWindow.cs 생성자 — SideBar 버튼으로 페이지 전환
+btnMenuMain.ButtonClicked += (o, s) => Design.SetPage("PageMain");
+btnMenuSetting.ButtonClicked += (o, s) => Design.SetPage("PageSetting");
+```
+
+### TitleBar 뒤로가기
+
+```csharp
+// MainWindow.cs 생성자 — TitleBar의 뒤로가기 버튼
+btnBack.ButtonClicked += (o, s) => Design.SetPage("PageMain");  // 메인으로 복귀
+```
+
+> **주의**: `Design.SetPage()`의 인자는 Page 클래스명 문자열 (예: `"PageMain"`, `"PageSetting"`). Designer.cs에서 `Design.AddPage()`로 등록한 이름과 일치해야 함.
 
 ---
 
 ## 설정 데이터 패턴 (Datas/SystemSetting.cs)
 
-JSON 직렬화 가능한 설정 DTO. `[SystemProp]` 어트리뷰트로 설정 페이지 자동 연동.
+JSON 직렬화 가능한 설정 DTO. 프로젝트 요구에 맞게 프로퍼티를 자유롭게 구성.
 
 ```csharp
 public class SystemSetting
 {
-    [SystemProp(1, "통신 포트")]               public string PortName  { get; set; } = "COM1";
-    [SystemProp(2, "통신 속도", 9600, 115200)] public int    Baudrate  { get; set; } = 115200;
-    [SystemProp(3, "타임아웃",  100,  5000)]   public int    Timeout   { get; set; } = 500;
-}
-
-[AttributeUsage(AttributeTargets.Property)]
-public class SystemPropAttribute(int no, string name, int min = int.MinValue, int max = int.MaxValue) : Attribute
-{
-    public int    No   => no;
-    public string Name => name;
-    public int    Min  => min;
-    public int    Max  => max;
+    public string PortName  { get; set; } = "COM1";
+    public int    Baudrate  { get; set; } = 115200;
+    public int    Timeout   { get; set; } = 500;
 }
 ```
 
