@@ -93,8 +93,15 @@ namespace Going.UI.Datas
             SKRect rt = Bounds;
             if (ToolBox != null)
             {
-                var sz = Util.MeasureTextIcon(Text, ToolBox.FontName, ToolBox.FontStyle, ToolBox.FontSize, IconString, ToolBox.IconSize, GoDirectionHV.Horizon, ToolBox.IconGap);
-                rt = Util.FromRect(Bounds.Left + 5, Bounds.Top + 1, sz.Width + 20, Bounds.Height - 2);
+                if (ItemDraw == null)
+                {
+                    var sz = Util.MeasureTextIcon(Text, ToolBox.FontName, ToolBox.FontStyle, ToolBox.FontSize, IconString, ToolBox.IconSize, GoDirectionHV.Horizon, ToolBox.IconGap);
+                    rt = Util.FromRect(Bounds.Left + 5, Bounds.Top + 1, sz.Width + 20, Bounds.Height - 2);
+                }
+                else
+                {
+                    rt = Util.FromRect(Bounds.Left + 5, Bounds.Top + 1, Bounds.Width - 10, Bounds.Height - 2);
+                }
             }
             return rt;
         }
