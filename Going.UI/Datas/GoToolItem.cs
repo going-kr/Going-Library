@@ -29,6 +29,7 @@ namespace Going.UI.Datas
         [JsonIgnore] internal SKRect Bounds { get; set; }
         [JsonIgnore] internal GoToolBox? ToolBox { get; set; }
         [JsonIgnore] public GoToolCategory? Category { get; internal set; }
+        public event Action<SKCanvas, GoTheme, GoToolBox, GoToolItem, SKRect>? ItemDraw;
         #endregion
 
         #region Method
@@ -50,7 +51,10 @@ namespace Going.UI.Datas
                     Util.DrawBox(canvas, vrt, SKColors.Transparent, c, GoRoundType.All, thm.Corner);
                 }
 
-                Util.DrawTextIcon(canvas, Text, tb.FontName, tb.FontStyle, tb.FontSize, IconString, tb.IconSize, GoDirectionHV.Horizon, tb.IconGap, rt, cText);
+                if(ItemDraw == null)
+                    Util.DrawTextIcon(canvas, Text, tb.FontName, tb.FontStyle, tb.FontSize, IconString, tb.IconSize, GoDirectionHV.Horizon, tb.IconGap, rt, cText);
+                else
+                    ItemDraw.Invoke(canvas, thm, tb, this, rt);
             }
         }
         #endregion

@@ -41,6 +41,7 @@ namespace Going.UIEditor
         {
             InitializeComponent();
             dockPanel.DockLeftPortion = dockPanel.DockRightPortion = 0.175;
+
             #region new
             dockPanel.Theme = new xTheme();
             dockPanel.ShowDocumentIcon = true;
