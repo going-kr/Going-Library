@@ -44,6 +44,57 @@ namespace Going.UIEditor.Utils
                     ret[""].Add("design.json", new UICode("design.json", json, true));
                 }
                 #endregion
+                #region ProjectName.csproj
+                {
+                    var sb = new StringBuilder();
+                    sb.AppendLine("<Project Sdk=\"Microsoft.NET.Sdk\">");
+                    sb.AppendLine("  <PropertyGroup>");
+                    sb.AppendLine("    <OutputType>Exe</OutputType>");
+                    sb.AppendLine("    <TargetFramework>net8.0</TargetFramework>");
+                    sb.AppendLine("    <ImplicitUsings>enable</ImplicitUsings>");
+                    sb.AppendLine("    <Nullable>enable</Nullable>");
+                    sb.AppendLine("  </PropertyGroup>");
+                    sb.AppendLine("  <ItemGroup>");
+                    sb.AppendLine("    <PackageReference Include=\"Going.Basis\" Version=\"1.0.0\" />");
+                    sb.AppendLine("    <PackageReference Include=\"Going.UI.OpenTK\" Version=\"1.0.4\" />");
+                    sb.AppendLine("  </ItemGroup>");
+                    sb.AppendLine("  <ItemGroup>");
+                    sb.AppendLine("    <None Update=\"design.json\">");
+                    sb.AppendLine("      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>");
+                    sb.AppendLine("    </None>");
+                    sb.AppendLine("  </ItemGroup>");
+                    sb.AppendLine("</Project>");
+
+                    ret[""].Add($"{prj.Name}.csproj", new UICode($"{prj.Name}.csproj", sb.ToString(), true));
+                }
+                #endregion
+                #region ProjectName.sln
+                {
+                    var projGuid = Guid.NewGuid().ToString("D").ToUpper();
+                    var sb = new StringBuilder();
+                    sb.AppendLine();
+                    sb.AppendLine("Microsoft Visual Studio Solution File, Format Version 12.00");
+                    sb.AppendLine("# Visual Studio Version 17");
+                    sb.AppendLine("VisualStudioVersion = 17.0.31903.59");
+                    sb.AppendLine("MinimumVisualStudioVersion = 10.0.40219.1");
+                    sb.AppendLine($"Project(\"{{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}}\") = \"{prj.Name}\", \"{prj.Name}.csproj\", \"{{{projGuid}}}\"");
+                    sb.AppendLine("EndProject");
+                    sb.AppendLine("Global");
+                    sb.AppendLine("\tGlobalSection(SolutionConfigurationPlatforms) = preSolution");
+                    sb.AppendLine("\t\tDebug|Any CPU = Debug|Any CPU");
+                    sb.AppendLine("\t\tRelease|Any CPU = Release|Any CPU");
+                    sb.AppendLine("\tEndGlobalSection");
+                    sb.AppendLine("\tGlobalSection(ProjectConfigurationPlatforms) = postSolution");
+                    sb.AppendLine($"\t\t{{{projGuid}}}.Debug|Any CPU.ActiveCfg = Debug|Any CPU");
+                    sb.AppendLine($"\t\t{{{projGuid}}}.Debug|Any CPU.Build.0 = Debug|Any CPU");
+                    sb.AppendLine($"\t\t{{{projGuid}}}.Release|Any CPU.ActiveCfg = Release|Any CPU");
+                    sb.AppendLine($"\t\t{{{projGuid}}}.Release|Any CPU.Build.0 = Release|Any CPU");
+                    sb.AppendLine("\tEndGlobalSection");
+                    sb.AppendLine("EndGlobal");
+
+                    ret[""].Add($"{prj.Name}.sln", new UICode($"{prj.Name}.sln", sb.ToString(), true));
+                }
+                #endregion
                 #region Program.cs
                 {
                     var sb = new StringBuilder();

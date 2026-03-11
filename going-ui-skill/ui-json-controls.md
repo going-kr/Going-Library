@@ -1,0 +1,885 @@
+# Going UI — 컨트롤 JSON
+
+> 이 문서는 `ui-json.md`의 하위 참조 문서. 주요 컨트롤, GoInput 계열, GoValue 계열의 JSON 구조를 다룬다.
+> 공통 속성, Enum, 테마 등은 `ui-json.md` 참조.
+
+---
+
+## 주요 컨트롤 JSON
+
+### GoLabel
+```json
+{
+  "Type": "GoLabel",
+  "Value": {
+    "IconString": null, "IconSize": 12, "IconDirection": 0, "IconGap": 5,
+    "Text": "label",
+    "FontName": "나눔고딕", "FontStyle": 0, "FontSize": 12,
+    "TextPadding": { "Left": 0, "Top": 0, "Right": 0, "Bottom": 0 },
+    "TextColor": "Fore", "LabelColor": "Base2", "BorderColor": "Base2",
+    "Round": 1, "BorderWidth": 1,
+    "BackgroundDraw": true, "BorderOnly": false,
+    "ContentAlignment": 4,
+    "AutoFontSize": 0, "AutoIconSize": 0,
+    "Id": "UUID", "Name": null,
+    "Visible": true, "Enabled": true, "Selectable": false,
+    "Bounds": "0,0,70,30", "Dock": 0,
+    "Margin": { "Left": 3, "Top": 3, "Right": 3, "Bottom": 3 }
+  }
+}
+```
+
+### GoButton
+```json
+{
+  "Type": "GoButton",
+  "Value": {
+    "IconString": null, "IconSize": 12, "IconDirection": 0, "IconGap": 5,
+    "Text": "button",
+    "FontName": "나눔고딕", "FontStyle": 0, "FontSize": 12,
+    "TextColor": "Fore", "ButtonColor": "Base3", "BorderColor": "Base3",
+    "Round": 1, "BorderWidth": 1,
+    "BackgroundDraw": true, "BorderOnly": false,
+    "FillStyle": 0, "ContentAlignment": 4,
+    "AutoFontSize": 0, "AutoIconSize": 0,
+    "Id": "UUID", "Name": null,
+    "Visible": true, "Enabled": true, "Selectable": true,
+    "Bounds": "0,0,70,30", "Dock": 0,
+    "Margin": { "Left": 3, "Top": 3, "Right": 3, "Bottom": 3 },
+    "UseLongClick": false, "LongClickTime": null
+  }
+}
+```
+
+### GoLamp
+```json
+{
+  "Type": "GoLamp",
+  "Value": {
+    "Text": "lamp",
+    "FontName": "나눔고딕", "FontStyle": 0, "FontSize": 12,
+    "TextColor": "Fore", "OnColor": "Good", "OffColor": "Base2",
+    "OnOff": false,
+    "LampSize": 24, "Gap": 10,
+    "ContentAlignment": 4, "AutoFontSize": 0,
+    "Id": "UUID", "Name": null,
+    "Visible": true, "Enabled": true, "Selectable": false,
+    "Bounds": "0,0,70,30", "Dock": 0,
+    "Margin": { "Left": 3, "Top": 3, "Right": 3, "Bottom": 3 }
+  }
+}
+```
+
+> GoLamp에는 OnText/OffText/Round 속성이 **없음**. Text 하나로 표시.
+
+### GoOnOff
+```json
+{
+  "Type": "GoOnOff",
+  "Value": {
+    "DrawText": true, "OnText": "On", "OffText": "Off",
+    "FontName": "나눔고딕", "FontStyle": 0, "FontSize": 12,
+    "TextColor": "Fore", "BoxColor": "Base1", "BorderColor": "Base3",
+    "CursorColor": "Base3",
+    "OnColor": "lime", "OffColor": "gray",
+    "CursorIconDraw": true, "CursorIconString": "fa-power-off",
+    "CursorIconSize": null, "Corner": null,
+    "OnOff": false,
+    "AutoFontSize": 0, "AutoCursorIconSize": 0,
+    "Id": "UUID", "Name": null,
+    "Visible": true, "Enabled": true, "Selectable": true,
+    "Bounds": "0,0,70,30", "Dock": 0,
+    "Margin": { "Left": 3, "Top": 3, "Right": 3, "Bottom": 3 }
+  }
+}
+```
+
+> OnColor/OffColor 기본값은 테마명이 아닌 CSS 색상명 `"lime"`, `"gray"`.
+
+### GoSwitch
+```json
+{
+  "Type": "GoSwitch",
+  "Value": {
+    "OnText": "On", "OffText": "Off",
+    "OnIconString": null, "OffIconString": null,
+    "FontName": "나눔고딕", "FontStyle": 0, "FontSize": 12,
+    "IconSize": 12, "IconDirection": 0, "IconGap": 5,
+    "OnTextColor": "Fore", "OffTextColor": "Base5",
+    "BoxColor": "Base1", "BorderColor": "Base3", "SwitchColor": "Base3",
+    "OnIconColor": "lime", "OffIconColor": "red",
+    "OnOff": false,
+    "AutoFontSize": 0, "AutoIconSize": 0,
+    "Id": "UUID", "Name": null,
+    "Visible": true, "Enabled": true, "Selectable": true,
+    "Bounds": "0,0,70,30", "Dock": 0,
+    "Margin": { "Left": 3, "Top": 3, "Right": 3, "Bottom": 3 }
+  }
+}
+```
+
+> GoSwitch에는 `Value`/`TextColor`/`OnColor`/`OffColor`/`Round` 속성 없음!
+> 텍스트색은 `OnTextColor`+`OffTextColor`, 상태는 `OnOff`, 스위치 외형은 `SwitchColor`.
+
+### GoToggleButton
+```json
+{
+  "Type": "GoToggleButton",
+  "Value": {
+    "IconString": null, "IconSize": 12, "IconDirection": 0, "IconGap": 5,
+    "Text": "button", "CheckedText": "button",
+    "FontName": "나눔고딕", "FontStyle": 0, "FontSize": 12,
+    "TextColor": "Fore",
+    "ButtonColor": "Base3", "CheckedButtonColor": "Select",
+    "BorderColor": "Base3", "CheckedBorderColor": "Select",
+    "Round": 1, "BorderWidth": 1, "FillStyle": 0,
+    "Checked": false, "AllowToggle": true,
+    "AutoFontSize": 0, "AutoIconSize": 0,
+    "Id": "UUID", "Name": null,
+    "Visible": true, "Enabled": true, "Selectable": true,
+    "Bounds": "0,0,70,30", "Dock": 0,
+    "Margin": { "Left": 3, "Top": 3, "Right": 3, "Bottom": 3 }
+  }
+}
+```
+
+> `AllowToggle` 기본값 = **true**.
+
+### GoRadioButton
+```json
+{
+  "Type": "GoRadioButton",
+  "Value": {
+    "IconString": null, "IconSize": 12, "IconDirection": 0, "IconGap": 5,
+    "Text": "button",
+    "FontName": "나눔고딕", "FontStyle": 0, "FontSize": 12,
+    "TextColor": "Fore",
+    "ButtonColor": "Base3", "CheckedButtonColor": "Select",
+    "BorderColor": "Base3", "CheckedBorderColor": "Select",
+    "Round": 1, "BorderWidth": 1, "FillStyle": 0,
+    "Checked": false,
+    "AutoFontSize": 0, "AutoIconSize": 0,
+    "Id": "UUID", "Name": null,
+    "Visible": true, "Enabled": true, "Selectable": true,
+    "Bounds": "0,0,70,30", "Dock": 0,
+    "Margin": { "Left": 3, "Top": 3, "Right": 3, "Bottom": 3 }
+  }
+}
+```
+
+### GoLampButton
+```json
+{
+  "Type": "GoLampButton",
+  "Value": {
+    "Text": "button",
+    "FontName": "나눔고딕", "FontStyle": 0, "FontSize": 12,
+    "TextColor": "Fore",
+    "ButtonColor": "Base3", "BorderColor": "Base3",
+    "OnColor": "Good", "OffColor": "Base2",
+    "Round": 1, "BorderWidth": 1, "FillStyle": 0,
+    "OnOff": false,
+    "LampSize": 24, "Gap": 10,
+    "AutoFontSize": 0,
+    "Id": "UUID", "Name": null,
+    "Visible": true, "Enabled": true, "Selectable": true,
+    "Bounds": "0,0,70,30", "Dock": 0,
+    "Margin": { "Left": 3, "Top": 3, "Right": 3, "Bottom": 3 }
+  }
+}
+```
+
+> GoLampButton에는 OnText/OffText 속성 없음.
+
+### GoProgress
+```json
+{
+  "Type": "GoProgress",
+  "Value": {
+    "FontName": "나눔고딕", "FontStyle": 0, "FontSize": 18,
+    "ValueFontSize": 14,
+    "TextColor": "Fore", "FillColor": "Good",
+    "EmptyColor": "Base1", "BorderColor": "Transparent",
+    "Direction": 0,
+    "Value": 0, "Minimum": 0, "Maximum": 100,
+    "Format": "0",
+    "Gap": 5, "CornerRadius": 5,
+    "BarSize": null, "ShowValueLabel": false,
+    "Id": "UUID", "Name": null,
+    "Visible": true, "Enabled": true, "Selectable": false,
+    "Bounds": "0,0,70,30", "Dock": 0,
+    "Margin": { "Left": 3, "Top": 3, "Right": 3, "Bottom": 3 }
+  }
+}
+```
+
+> `EmptyColor` (not BarColor), `Format` (not FormatString), `ShowValueLabel` (not DrawText).
+> GoProgress에 `Round` 속성 없음!
+
+### GoSlider
+```json
+{
+  "Type": "GoSlider",
+  "Value": {
+    "IconString": null, "IconSize": 12, "IconGap": 5, "IconDirection": 0,
+    "Text": "slider",
+    "FontName": "나눔고딕", "FontSize": 12,
+    "BackgroundDraw": false, "BorderOnly": false,
+    "TextColor": "Fore", "BoxColor": "Back",
+    "SliderColor": "Base5", "ProgressColor": "Base1",
+    "BorderColor": "danger", "Round": 1,
+    "Direction": 0,
+    "ShowValueLabel": true, "ValueFormat": "0",
+    "BarSize": 4, "HandleRadius": 15, "EnableShadow": true,
+    "HandleHoverScale": 1.05,
+    "Tick": null, "ShowTicks": false, "TickCount": 5, "TickSize": 10,
+    "Value": 0, "ValueString": "0",
+    "Minimum": 0, "Maximum": 100,
+    "Id": "UUID", "Name": null,
+    "Visible": true, "Enabled": true, "Selectable": true,
+    "Bounds": "0,0,70,30", "Dock": 0,
+    "Margin": { "Left": 3, "Top": 3, "Right": 3, "Bottom": 3 }
+  }
+}
+```
+
+> GoSlider는 이전 스킬의 속성명과 완전히 다름.
+> `SliderColor` (not CursorColor), `ProgressColor` (not BarColor), `ValueFormat` (not FormatString).
+
+### GoRangeSlider
+```json
+{
+  "Type": "GoRangeSlider",
+  "Value": {
+    "IconString": null, "IconSize": 12, "IconGap": 5, "IconDirection": 0,
+    "Text": "slider",
+    "FontName": "나눔고딕", "FontSize": 12,
+    "BackgroundDraw": false, "BorderOnly": false,
+    "TextColor": "Fore", "BoxColor": "Back",
+    "SliderColor": "Base5", "ProgressColor": "Base1",
+    "BorderColor": "danger", "Round": 1,
+    "Direction": 0,
+    "ShowValueLabel": true, "ValueFormat": "0",
+    "BarSize": 4, "HandleRadius": 15, "EnableShadow": true,
+    "HandleHoverScale": 1.05,
+    "Tick": null, "ShowTicks": false, "TickCount": 5, "TickSize": 10,
+    "LowerValue": 25, "UpperValue": 75,
+    "LowerValueString": "25", "UpperValueString": "75",
+    "Minimum": 0, "Maximum": 100,
+    "MinHandleSeparation": 0.05,
+    "Id": "UUID", "Name": null,
+    "Visible": true, "Enabled": true, "Selectable": true,
+    "Bounds": "0,0,70,30", "Dock": 0,
+    "Margin": { "Left": 3, "Top": 3, "Right": 3, "Bottom": 3 }
+  }
+}
+```
+
+> `LowerValue`/`UpperValue` (not Start/End).
+
+### GoKnob
+```json
+{
+  "Type": "GoKnob",
+  "Value": {
+    "FontName": "나눔고딕", "FontStyle": 0, "FontSize": 12,
+    "TextColor": "Fore", "KnobColor": "Base3", "CursorColor": "Fore",
+    "Value": 0, "Minimum": 0, "Maximum": 100,
+    "Tick": null, "Format": "0", "SweepAngle": 270,
+    "DrawText": true,
+    "Id": "UUID", "Name": null,
+    "Visible": true, "Enabled": true, "Selectable": true,
+    "Bounds": "0,0,70,30", "Dock": 0,
+    "Margin": { "Left": 3, "Top": 3, "Right": 3, "Bottom": 3 }
+  }
+}
+```
+
+> `KnobColor` (not BackColor), `CursorColor` (not NeedleColor).
+
+### GoNumberBox
+```json
+{
+  "Type": "GoNumberBox",
+  "Value": {
+    "FontName": "나눔고딕", "FontStyle": 0, "FontSize": 12,
+    "Direction": 0,
+    "TextColor": "Fore", "BorderColor": "Base3",
+    "ButtonColor": "Base3", "ValueColor": "Base1",
+    "Round": 1,
+    "Value": 0, "Minimum": 0, "Maximum": 100,
+    "Tick": 1, "Format": null,
+    "ButtonSize": 40,
+    "AutoFontSize": 0,
+    "Id": "UUID", "Name": null,
+    "Visible": true, "Enabled": true, "Selectable": true,
+    "Bounds": "0,0,70,30", "Dock": 0,
+    "Margin": { "Left": 3, "Top": 3, "Right": 3, "Bottom": 3 }
+  }
+}
+```
+
+> `Tick` (not Step), `Format` (not FormatString), Minimum=0 Maximum=100 (not null).
+
+### GoStep
+```json
+{
+  "Type": "GoStep",
+  "Value": {
+    "PrevIconString": "fa-chevron-left",
+    "NextIconString": "fa-chevron-right",
+    "ButtonColor": "Base3", "StepColor": "Base2", "SelectColor": "Select",
+    "IsCircle": false, "UseButton": true,
+    "StepCount": 7, "Step": 0,
+    "Id": "UUID", "Name": null,
+    "Visible": true, "Enabled": true, "Selectable": true,
+    "Bounds": "0,0,70,30", "Dock": 0,
+    "Margin": { "Left": 3, "Top": 3, "Right": 3, "Bottom": 3 }
+  }
+}
+```
+
+> GoStep에는 Items/FontName/FontSize/TextColor/Direction 속성 없음!
+> `Step` (not CurrentStep), `StepCount`(int)로 개수 지정.
+
+### GoDataGrid
+```json
+{
+  "Type": "GoDataGrid",
+  "Value": {
+    "FontName": "나눔고딕", "FontStyle": 0, "FontSize": 12,
+    "TextColor": "Fore",
+    "RowColor": "Base2", "SummaryRowColor": "Base1",
+    "ColumnColor": "Base1", "SelectedRowColor": "Select",
+    "BoxColor": "Base2", "ScrollBarColor": "Base1",
+    "RowHeight": 30, "ColumnHeight": 30,
+    "ScrollMode": 0, "SelectionMode": 0,
+    "ColumnGroups": [],
+    "Columns": [
+      {
+        "Name": "col1", "Text": "Column",
+        "Width": 150, "MinWidth": 50,
+        "HeaderAlignment": 4, "CellAlignment": 4,
+        "Sortable": false, "SizeModifiable": true, "Visible": true
+      }
+    ],
+    "SummaryRows": [],
+    "Id": "UUID", "Name": null,
+    "Visible": true, "Enabled": true, "Selectable": true,
+    "Bounds": "0,0,70,30", "Dock": 0,
+    "Margin": { "Left": 3, "Top": 3, "Right": 3, "Bottom": 3 }
+  }
+}
+```
+
+> `GoDataGridSelectionMode` — Single=0, Multi=1, None=2
+
+### GoCheckBox
+```json
+{
+  "Type": "GoCheckBox",
+  "Value": {
+    "Text": "checkbox",
+    "FontName": "나눔고딕", "FontStyle": 0, "FontSize": 12,
+    "TextColor": "Fore", "BoxColor": "Base1", "CheckColor": "Fore",
+    "Checked": false,
+    "BoxSize": 24, "Gap": 10,
+    "ContentAlignment": 4, "AutoFontSize": 0,
+    "Id": "UUID", "Name": null,
+    "Visible": true, "Enabled": true, "Selectable": true,
+    "Bounds": "0,0,70,30", "Dock": 0,
+    "Margin": { "Left": 3, "Top": 3, "Right": 3, "Bottom": 3 }
+  }
+}
+```
+
+### GoRadioBox
+```json
+{
+  "Type": "GoRadioBox",
+  "Value": {
+    "Text": "radiobox",
+    "FontName": "나눔고딕", "FontStyle": 0, "FontSize": 12,
+    "TextColor": "Fore", "BoxColor": "Base1", "CheckColor": "Fore",
+    "Checked": false,
+    "BoxSize": 24, "Gap": 10,
+    "ContentAlignment": 4, "AutoFontSize": 0,
+    "Id": "UUID", "Name": null,
+    "Visible": true, "Enabled": true, "Selectable": true,
+    "Bounds": "0,0,70,30", "Dock": 0,
+    "Margin": { "Left": 3, "Top": 3, "Right": 3, "Bottom": 3 }
+  }
+}
+```
+
+> GoRadioBox는 같은 부모 내에서 자동으로 형제 선택 해제 (exclusive).
+
+### GoIconButton
+```json
+{
+  "Type": "GoIconButton",
+  "Value": {
+    "IconString": null, "Rotate": 0,
+    "ButtonColor": "Base3",
+    "ClickBoundsExtends": false,
+    "Id": "UUID", "Name": null,
+    "Visible": true, "Enabled": true, "Selectable": true,
+    "Bounds": "0,0,70,30", "Dock": 0,
+    "Margin": { "Left": 3, "Top": 3, "Right": 3, "Bottom": 3 }
+  }
+}
+```
+
+### GoGauge
+```json
+{
+  "Type": "GoGauge",
+  "Value": {
+    "FontName": "나눔고딕", "FontStyle": 0, "FontSize": 18,
+    "Title": "Title", "TitleFontSize": 12,
+    "TextColor": "Fore", "FillColor": "Good",
+    "EmptyColor": "Base1", "BorderColor": "Base1",
+    "Value": 0, "Minimum": 0, "Maximum": 100,
+    "Format": "0",
+    "StartAngle": 135, "SweepAngle": 270,
+    "BarSize": 24, "Gap": 0,
+    "Id": "UUID", "Name": null,
+    "Visible": true, "Enabled": true, "Selectable": false,
+    "Bounds": "0,0,70,30", "Dock": 0,
+    "Margin": { "Left": 3, "Top": 3, "Right": 3, "Bottom": 3 }
+  }
+}
+```
+
+### GoMeter
+```json
+{
+  "Type": "GoMeter",
+  "Value": {
+    "FontName": "나눔고딕", "FontStyle": 0, "FontSize": 18,
+    "Title": "Title", "TitleFontSize": 12, "RemarkFontSize": 10,
+    "TextColor": "Fore", "NeedleColor": "Fore", "NeedlePointColor": "Red",
+    "RemarkColor": "Base5",
+    "Value": 0, "Minimum": 0, "Maximum": 100,
+    "GraduationLarge": 10, "GraduationSmall": 2,
+    "Format": "0", "Gap": 0,
+    "Id": "UUID", "Name": null,
+    "Visible": true, "Enabled": true, "Selectable": false,
+    "Bounds": "0,0,70,30", "Dock": 0,
+    "Margin": { "Left": 3, "Top": 3, "Right": 3, "Bottom": 3 }
+  }
+}
+```
+
+> GoMeter는 아날로그 계기판. `NeedleColor`는 GoMeter 전용 — GoKnob의 `CursorColor`와 혼동 주의.
+
+### GoPicture
+```json
+{
+  "Type": "GoPicture",
+  "Value": {
+    "Image": null,
+    "ScaleMode": 0,
+    "Round": 0,
+    "Id": "UUID", "Name": null,
+    "Visible": true, "Enabled": true, "Selectable": false,
+    "Bounds": "0,0,70,30", "Dock": 0,
+    "Margin": { "Left": 3, "Top": 3, "Right": 3, "Bottom": 3 }
+  }
+}
+```
+
+> `ScaleMode`: GoImageScaleMode — Real=0, Stretch=1, Uniform=2, UniformFill=3.
+> `Round`: GoRoundType — GoPicture는 기본 Rect(0).
+
+### GoAnimate
+```json
+{
+  "Type": "GoAnimate",
+  "Value": {
+    "OnImage": null, "OffImage": null,
+    "ScaleMode": 0, "Round": 0,
+    "Time": 30, "OnOff": false,
+    "Id": "UUID", "Name": null,
+    "Visible": true, "Enabled": true, "Selectable": false,
+    "Bounds": "0,0,70,30", "Dock": 0,
+    "Margin": { "Left": 3, "Top": 3, "Right": 3, "Bottom": 3 }
+  }
+}
+```
+
+> 이미지 시퀀스 애니메이션. `Time`은 프레임 간격(ms 아닌 프레임 틱).
+
+### GoCalendar
+```json
+{
+  "Type": "GoCalendar",
+  "Value": {
+    "FontName": "나눔고딕", "FontStyle": 0, "FontSize": 12,
+    "TextColor": "Fore", "BoxColor": "Base3", "SelectColor": "Select",
+    "Round": 1, "BackgroundDraw": true,
+    "MultiSelect": false, "NoneSelect": false,
+    "Id": "UUID", "Name": null,
+    "Visible": true, "Enabled": true, "Selectable": true,
+    "Bounds": "0,0,70,30", "Dock": 0,
+    "Margin": { "Left": 3, "Top": 3, "Right": 3, "Bottom": 3 }
+  }
+}
+```
+
+> `CurrentYear`/`CurrentMonth`/`SelectedDays`는 [JsonIgnore] — 런타임 전용.
+
+### GoNavigator
+```json
+{
+  "Type": "GoNavigator",
+  "Value": {
+    "IconSize": 12, "IconDirection": 0, "IconGap": 5,
+    "FontName": "나눔고딕", "FontStyle": 0, "FontSize": 12,
+    "TextColor": "Fore",
+    "Indent": 20, "MenuGap": 30,
+    "Menus": [],
+    "Direction": 0,
+    "Id": "UUID", "Name": null,
+    "Visible": true, "Enabled": true, "Selectable": false,
+    "Bounds": "0,0,70,30", "Dock": 0,
+    "Margin": { "Left": 3, "Top": 3, "Right": 3, "Bottom": 3 }
+  }
+}
+```
+
+> `Menus`: ObservableList\<GoMenuItem\>.
+
+### GoListBox
+```json
+{
+  "Type": "GoListBox",
+  "Value": {
+    "IconSize": 12, "IconGap": 5,
+    "FontName": "나눔고딕", "FontStyle": 0, "FontSize": 12,
+    "TextColor": "Fore", "BoxColor": "Base1",
+    "BorderColor": "Base3", "SelectColor": "Select",
+    "Round": 1, "BackgroundDraw": true,
+    "ItemHeight": 30, "ItemAlignment": 4,
+    "SelectionMode": 0,
+    "Items": [],
+    "Id": "UUID", "Name": null,
+    "Visible": true, "Enabled": true, "Selectable": true,
+    "Bounds": "0,0,70,30", "Dock": 0,
+    "Margin": { "Left": 3, "Top": 3, "Right": 3, "Bottom": 3 }
+  }
+}
+```
+
+> `SelectionMode`: GoItemSelectionMode — Single=0, Multi=1.
+> `Items`: ObservableList\<GoListItem\>.
+
+### GoTreeView
+```json
+{
+  "Type": "GoTreeView",
+  "Value": {
+    "IconSize": 12, "IconGap": 5,
+    "FontName": "나눔고딕", "FontStyle": 0, "FontSize": 12,
+    "TextColor": "Fore", "BoxColor": "Base1",
+    "BorderColor": "Base3", "SelectColor": "Select",
+    "Round": 1, "BackgroundDraw": true,
+    "DragMode": false, "ItemHeight": 30,
+    "SelectionMode": 0,
+    "Nodes": [],
+    "Id": "UUID", "Name": null,
+    "Visible": true, "Enabled": true, "Selectable": true,
+    "Bounds": "0,0,70,30", "Dock": 0,
+    "Margin": { "Left": 3, "Top": 3, "Right": 3, "Bottom": 3 }
+  }
+}
+```
+
+> `Nodes`: ObservableList\<GoTreeNode\> (재귀 트리 구조).
+
+### GoToolBox
+```json
+{
+  "Type": "GoToolBox",
+  "Value": {
+    "IconSize": 12, "IconGap": 5,
+    "FontName": "나눔고딕", "FontStyle": 0, "FontSize": 12,
+    "TextColor": "Fore", "BoxColor": "Base1",
+    "BorderColor": "Base3", "SelectColor": "Select",
+    "CategoryColor": "Base2",
+    "Round": 1, "BackgroundDraw": true,
+    "ItemHeight": 30,
+    "Categories": [],
+    "DragMode": true,
+    "Id": "UUID", "Name": null,
+    "Visible": true, "Enabled": true, "Selectable": true,
+    "Bounds": "0,0,70,30", "Dock": 0,
+    "Margin": { "Left": 3, "Top": 3, "Right": 3, "Bottom": 3 }
+  }
+}
+```
+
+> `Categories`: ObservableList\<GoToolCategory\> (GoToolItem 중첩).
+
+### GoBarGraph
+```json
+{
+  "Type": "GoBarGraph",
+  "Value": {
+    "GridColor": "Base3", "TextColor": "Fore",
+    "RemarkColor": "Base2", "GraphColor": "Back",
+    "FontName": "나눔고딕", "FontStyle": 0, "FontSize": 12,
+    "GraduationCount": 10, "FormatString": null,
+    "Mode": 0, "Direction": 1,
+    "Series": [],
+    "BarSize": 20, "BarGap": 20,
+    "Minimum": null, "Maximum": null,
+    "Id": "UUID", "Name": null,
+    "Visible": true, "Enabled": true, "Selectable": false,
+    "Bounds": "0,0,70,30", "Dock": 0,
+    "Margin": { "Left": 3, "Top": 3, "Right": 3, "Bottom": 3 }
+  }
+}
+```
+
+> `Mode`: GoBarGraphMode — List=0, Stack=1.
+> `Series`: List\<GoGraphSeries\>.
+
+### GoCircleGraph
+```json
+{
+  "Type": "GoCircleGraph",
+  "Value": {
+    "GridColor": "Base3", "TextColor": "Fore",
+    "RemarkColor": "Base2",
+    "FontName": "나눔고딕", "FontStyle": 0, "FontSize": 12,
+    "Series": [],
+    "Id": "UUID", "Name": null,
+    "Visible": true, "Enabled": true, "Selectable": false,
+    "Bounds": "0,0,70,30", "Dock": 0,
+    "Margin": { "Left": 3, "Top": 3, "Right": 3, "Bottom": 3 }
+  }
+}
+```
+
+> 파이/도넛 차트. `Series`: List\<GoGraphSeries\>.
+
+### GoLineGraph
+```json
+{
+  "Type": "GoLineGraph",
+  "Value": {
+    "GridColor": "Base3", "TextColor": "Fore",
+    "RemarkColor": "Base2", "GraphColor": "Back",
+    "FontName": "나눔고딕", "FontStyle": 0, "FontSize": 12,
+    "GraduationCount": 10, "FormatString": null,
+    "Series": [],
+    "PointWidth": 70,
+    "Id": "UUID", "Name": null,
+    "Visible": true, "Enabled": true, "Selectable": false,
+    "Bounds": "0,0,70,30", "Dock": 0,
+    "Margin": { "Left": 3, "Top": 3, "Right": 3, "Bottom": 3 }
+  }
+}
+```
+
+> `Series`: List\<GoLineGraphSeries\>.
+
+### GoTimeGraph
+```json
+{
+  "Type": "GoTimeGraph",
+  "Value": {
+    "GridColor": "Base3", "TextColor": "Fore",
+    "RemarkColor": "Base2", "GraphColor": "Back",
+    "FontName": "나눔고딕", "FontStyle": 0, "FontSize": 12,
+    "XScale": "01:00:00",
+    "XAxisGraduationTime": "00:10:00",
+    "YAxisGraduationCount": 10,
+    "TimeFormatString": null, "ValueFormatString": null,
+    "Series": [],
+    "Id": "UUID", "Name": null,
+    "Visible": true, "Enabled": true, "Selectable": false,
+    "Bounds": "0,0,70,30", "Dock": 0,
+    "Margin": { "Left": 3, "Top": 3, "Right": 3, "Bottom": 3 }
+  }
+}
+```
+
+### GoTrendGraph
+```json
+{
+  "Type": "GoTrendGraph",
+  "Value": {
+    "GridColor": "Base3", "TextColor": "Fore",
+    "RemarkColor": "Base2", "GraphColor": "Back",
+    "FontName": "나눔고딕", "FontStyle": 0, "FontSize": 12,
+    "MaximumXScale": "1.00:00:00",
+    "XScale": "01:00:00",
+    "XAxisGraduationTime": "00:10:00",
+    "YAxisGraduationCount": 10,
+    "TimeFormatString": null, "ValueFormatString": null,
+    "Interval": 1000, "IsStart": false,
+    "Series": [],
+    "Pause": false,
+    "Id": "UUID", "Name": null,
+    "Visible": true, "Enabled": true, "Selectable": false,
+    "Bounds": "0,0,70,30", "Dock": 0,
+    "Margin": { "Left": 3, "Top": 3, "Right": 3, "Bottom": 3 }
+  }
+}
+```
+
+> GoTrendGraph: 실시간 트렌드. `Interval`(ms) 주기로 데이터 수집. `Pause`로 일시정지.
+
+### GoColorSelector
+```json
+{
+  "Type": "GoColorSelector",
+  "Value": {
+    "FontName": "나눔고딕", "FontStyle": 0, "FontSize": 12,
+    "TextColor": "Fore", "InputColor": "Base1", "BorderColor": "Base3",
+    "ContentAlignment": 4,
+    "Value": 4294967295,
+    "Id": "UUID", "Name": null,
+    "Visible": true, "Enabled": true, "Selectable": true,
+    "Bounds": "0,0,70,30", "Dock": 0,
+    "Margin": { "Left": 3, "Top": 3, "Right": 3, "Bottom": 3 }
+  }
+}
+```
+
+> `Value`: SKColor uint(ARGB). HSV 색상 선택기.
+
+---
+
+## GoInput 계열
+
+GoInput은 추상 기본 클래스. 하위 타입:
+
+| 타입 | 설명 |
+|------|------|
+| `GoInputString` | 문자열 입력 |
+| `GoInputNumber<T>` | 숫자 입력 (T = byte~decimal) |
+| `GoInputBoolean` | 불리언 (ON/OFF) |
+| `GoInputCombo` | 드롭다운 |
+| `GoInputSelector` | 좌우 선택기 |
+| `GoInputColor` | 색상 선택 |
+| `GoInputDateTime` | 날짜/시간 |
+
+### GoInput 공통 속성
+```json
+{
+  "IconString": null, "IconSize": 12, "IconGap": 5,
+  "FontName": "나눔고딕", "FontStyle": 0, "FontSize": 12,
+  "Direction": 0,
+  "TextColor": "Fore", "BorderColor": "Base3",
+  "FillColor": "Base3", "ValueColor": "Base1",
+  "Round": 1,
+  "TitleSize": null, "Title": null,
+  "ButtonSize": null, "Buttons": [],
+  "AutoFontSize": 0, "AutoIconSize": 0
+}
+```
+
+> `FillColor` = "Base3" (not "Base2"), `ValueColor` = "Base1" (not "Fore").
+
+### GoInputNumber<T> 추가 속성
+```json
+{
+  "Value": 0,
+  "Minimum": null, "Maximum": null,
+  "FormatString": null,
+  "Unit": null, "UnitSize": null
+}
+```
+
+### GoInputBoolean 추가 속성
+```json
+{
+  "Value": false,
+  "OnText": "ON", "OffText": "OFF",
+  "OnIconString": null, "OffIconString": null
+}
+```
+
+### GoInputCombo 추가 속성
+```json
+{
+  "Items": [],
+  "ItemHeight": 30, "MaximumViewCount": 8
+}
+```
+
+### GoInputSelector 추가 속성
+```json
+{ "Items": [] }
+```
+
+### GoInputColor 추가 속성
+```json
+{ "Value": 4294967295 }
+```
+
+> SKColor uint 값.
+
+### GoInputDateTime 추가 속성
+```json
+{
+  "Value": "2024-01-01T00:00:00",
+  "DateTimeStyle": 0,
+  "DateFormat": "yyyy-MM-dd",
+  "TimeFormat": "HH:mm:ss"
+}
+```
+
+---
+
+## GoValue 계열
+
+| 타입 | 설명 |
+|------|------|
+| `GoValueString` | 문자열 표시 |
+| `GoValueNumber<T>` | 숫자 표시 |
+| `GoValueBoolean` | 불리언 표시 |
+
+### GoValue 공통 속성
+```json
+{
+  "IconString": null, "IconSize": 12, "IconGap": 5,
+  "FontName": "나눔고딕", "FontStyle": 0, "FontSize": 12,
+  "Direction": 0,
+  "TextColor": "Fore", "BorderColor": "Base3",
+  "FillColor": "Base3", "ValueColor": "Base2",
+  "Round": 1,
+  "TitleSize": null, "Title": null,
+  "ButtonSize": null, "Buttons": [],
+  "AutoFontSize": 0, "AutoIconSize": 0
+}
+```
+
+> `ValueColor` = "Base2" (not "Fore").
+
+### GoValueNumber<T> 추가 속성
+```json
+{
+  "Value": 0,
+  "FormatString": null,
+  "Unit": null, "UnitFontSize": 12, "UnitSize": null,
+  "AutoUnitFontSize": 0
+}
+```
+
+### GoValueString 추가 속성
+```json
+{ "Value": null }
+```
+
+### GoValueBoolean 추가 속성
+```json
+{
+  "Value": false,
+  "OnText": "ON", "OffText": "OFF",
+  "OnIconString": null, "OffIconString": null
+}
+```

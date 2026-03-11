@@ -12,6 +12,8 @@ UIEditor에서 Code 생성(MakeCode()) 실행 시 아래 파일들이 자동 생
 
 ```
 [프로젝트 루트]
+├── ProjectName.sln          ← 솔루션 파일
+├── ProjectName.csproj       ← 프로젝트 파일 (NuGet 참조, design.json 빌드 복사 설정 포함)
 ├── design.json              ← GoDesign 직렬화 (런타임 로드용, UIEditor 전용)
 ├── Program.cs               ← 진입점 (최소 구조)
 ├── MainWindow.cs            ← partial class, GoViewWindow 상속 (사용자 영역)

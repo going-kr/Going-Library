@@ -1,6 +1,6 @@
 ---
 name: going-ui
-description: Going Library(Going.UI + Going.Basis)를 사용하는 모든 작업에 반드시 이 스킬을 참조. HMI 화면 설계, 산업용 UI 개발, PLC 연동 앱, 임베디드 GUI, SCADA 화면, 터치패널 UI, .gud 파일 생성/수정, GoButton/GoLamp/GoInput 등 컨트롤 코드 작성, Going.Basis로 Modbus RTU/TCP 마스터·슬레이브 통신, MQTT 클라이언트 코드 작성, GoDesign/GoPage/GoWindow 구조 작업, SkiaSharp 기반 커스텀 렌더링, 테마 색상 적용, Going Library 패턴으로 C# .NET 8.0 코드 작성, LauncherTouch MCP 장치 제어, 라즈베리파이 키오스크 배포, mDNS 장치 검색 등을 요청할 때 사용. Going 관련 코드 작성 시 항상 이 스킬의 패턴과 네이밍을 따를 것.
+description: Going Library(Going.UI + Going.Basis)를 사용하는 모든 작업에 반드시 이 스킬을 참조. HMI 화면 설계, 산업용 UI 개발, PLC 연동 앱, 임베디드 GUI, SCADA 화면, 터치패널 UI, .gud 파일 생성/수정, GoButton/GoLamp/GoInput 등 컨트롤 코드 작성, Going.Basis로 Modbus RTU/TCP 마스터·슬레이브 통신, MQTT 클라이언트 코드 작성, GoDesign/GoPage/GoWindow 구조 작업, SkiaSharp 기반 커스텀 렌더링, 테마 색상 적용, Going Library 패턴으로 C# .NET 8.0 코드 작성, LauncherTouch MCP 장치 제어, 라즈베리파이 키오스크 배포, mDNS 장치 검색 등을 요청할 때 사용.
 ---
 
 # Going Library Skill
@@ -9,10 +9,13 @@ description: Going Library(Going.UI + Going.Basis)를 사용하는 모든 작업
 
 | 작업 | 참조 파일 | 설명 |
 |------|----------|------|
-| .gud 파일 생성/수정 | `ui-json.md` | JSON 구조, 컨트롤 속성, 컨테이너, 테마, Enum |
+| .gud 파일 생성/수정 | `ui-json.md` | .gud 구조, GoDesign, Pages/Windows, 공통 속성, Enum, 테마 |
+| ↳ 컨트롤 JSON | `ui-json-controls.md` | GoButton, GoSlider 등 40여 종 + GoInput/GoValue 계열 |
+| ↳ 컨테이너 JSON | `ui-json-containers.md` | GoTableLayoutPanel, GoBoxPanel, GoTabControl 등 9종 |
+| ↳ ImageCanvas JSON | `ui-json-imagecanvas.md` | IcButton, IcLabel, IcSlider 등 이미지 기반 7종 |
 | C# 코드 작성 (Page/Window/Main) | `ui-code.md` | 코드 패턴, Designer.cs 규칙, MakePropCode |
 | 통신 코드 작성 (Modbus/MQTT) | `basis.md` | 통신 패턴, DeviceManager, 데이터 모델 |
-| 장치 배포/제어 (LauncherTouch MCP) | `ui-mcp.md` | MCP 도구 25개, 빌드-배포 자동화, 네트워크, 키오스크 |
+| 장치 배포/제어 (LauncherTouch MCP) | `ui-mcp.md` | gtcli CLI 도구, MCP 도구 25개, 빌드-배포 자동화, 네트워크, 키오스크 |
 
 **작업 시작 전 해당 파일을 반드시 `Read` 도구로 읽은 후 작업할 것.**
 
@@ -116,20 +119,16 @@ Going Library 프로젝트의 전형적인 작업 흐름:
    └─ dotnet build → dotnet run
    └─ design.json이 실행 디렉터리에 있어야 함
 
-6. 장치 배포 (LauncherTouch MCP — 참조: ui-mcp.md)
-   └─ 6-1. 사용자가 연결된 터치 장치 확인 (mDNS: {hostname}.local)
-   └─ 6-2. 사용자가 장치 웹 UI(http://{hostname}.local:5000)에서
-          MCP 토큰 확인 → Claude Code에 전달
-   └─ 6-3. Claude Code가 빌드-배포 자동화:
+6. 장치 배포 (GoingTouchCLI — 참조: ui-mcp.md)
+   └─ 6-1. gtcli scan으로 네트워크의 터치 장치 검색
+   └─ 6-2. 사용자가 장치 웹 UI에서 MCP 토큰 확인 → Claude Code에 전달
+   └─ 6-3. Claude Code가 gtcli로 빌드-배포 자동화:
        ├─ dotnet publish -r linux-arm64 → zip 압축
-       ├─ curl -F "file=@App.zip" http://{host}:5000/api/upload
-       ├─ InstallProgram → 프로그램 설치
-       ├─ StartProgram → 실행
-       ├─ SetAutoStart → 자동실행 설정
-       └─ HideDesktopUi → 키오스크 모드
+       ├─ gtcli deploy {host} App.zip "앱이름" AppName true --token {token}
+       └─ gtcli hide-ui {host} --token {token}
 ```
 
-> **역할 분담**: 1=사용자, 2=Claude(채팅), 3=사용자(UIEditor), **4=Claude Code(핵심)**, 5=사용자, 6=사용자(장치 확인/토큰)+**Claude Code(빌드→업로드→배포 자동화)**.
+> **역할 분담**: 1=사용자, 2=Claude(채팅), 3=사용자(UIEditor), **4=Claude Code(핵심)**, 5=사용자, 6=사용자(토큰 확인)+**Claude Code(gtcli로 검색→빌드→배포 자동화)**.
 > Claude Code는 ***.Designer.cs와 design.json을 절대 수정하지 않으며**, *.cs(사용자 파일)만 작업한다.
 
 ---
