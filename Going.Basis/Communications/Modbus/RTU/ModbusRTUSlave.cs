@@ -541,10 +541,11 @@ namespace Going.Basis.Communications.Modbus.RTU
                                         catch (OperationCanceledException) { throw new SchedulerStopException(); }
                                     }
                                     #endregion
+
+                                    await Task.Delay(10, token);
                                 }
                                 catch (SchedulerStopException) { break; }
                                 catch (Exception) { }
-                                await Task.Delay(10, token);
                             }
                         }
 
@@ -564,19 +565,18 @@ namespace Going.Basis.Communications.Modbus.RTU
         #region Stop
         public void Stop()
         {
-            try { IsStart = false; cancel?.Cancel(false); }
-            finally
-            {
-                cancel?.Dispose();
-                cancel = null;
-            }
+            IsStart = false;
+            cancel?.Cancel(false);
 
             if (task != null)
             {
-                try { task.Wait(); task.Dispose(); }
+                try { if (task.Wait(3000)) task.Dispose(); }
                 catch { }
                 finally { task = null; }
             }
+
+            cancel?.Dispose();
+            cancel = null;
         }
         #endregion
         #endregion

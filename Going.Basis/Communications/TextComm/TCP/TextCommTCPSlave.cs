@@ -98,19 +98,18 @@ namespace Going.Basis.Communications.TextComm.TCP
         #region Stop
         public void Stop()
         {
-            try { IsStart = false; cancel?.Cancel(false); }
-            finally
-            {
-                cancel?.Dispose();
-                cancel = null;
-            }
+            IsStart = false;
+            cancel?.Cancel(false);
 
             if (task != null)
             {
-                try { task.Wait(); task.Dispose(); }
+                try { if (task.Wait(3000)) task.Dispose(); }
                 catch { }
                 finally { task = null; }
             }
+
+            cancel?.Dispose();
+            cancel = null;
         }
         #endregion
 
@@ -189,6 +188,8 @@ namespace Going.Basis.Communications.TextComm.TCP
                     #endregion
 
                     isConnected = NetworkTool.IsSocketConnected(sock, 10000);
+
+                    await Task.Delay(10, cancel);
                 }
                 catch (SocketException ex)
                 {
@@ -198,7 +199,6 @@ namespace Going.Basis.Communications.TextComm.TCP
                     else if (ex.SocketErrorCode == SocketError.Shutdown) { isConnected = false; }
                 }
                 catch { }
-                await Task.Delay(10, cancel);
             }
 
             if (sock.Connected) sock.Close();

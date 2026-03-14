@@ -230,10 +230,10 @@ namespace Going.Basis.Communications.Modbus.RTU
                                     try
                                     {
                                         Process();
+                                        await Task.Delay(Interval, token);
                                     }
                                     catch (SchedulerStopException) { break; }
                                     catch (Exception ex) { }
-                                    await Task.Delay(Interval, token);
                                 }
                             }
 
@@ -244,6 +244,8 @@ namespace Going.Basis.Communications.Modbus.RTU
                             }
 
                         } while (!token.IsCancellationRequested && AutoReconnect && IsStart);
+
+
                     }
 
                 }, cancel.Token);
@@ -252,19 +254,21 @@ namespace Going.Basis.Communications.Modbus.RTU
 
         public void Stop()
         {
-            try { IsStart = false; cancel?.Cancel(false); }
-            finally
-            {
-                cancel?.Dispose();
-                cancel = null;
-            }
+            IsStart = false;
+            cancel?.Cancel(false);
 
             if (task != null)
             {
-                try { task.Wait(); task.Dispose(); }
+                try
+                {
+                    if (task.Wait(3000)) task.Dispose();
+                }
                 catch { }
                 finally { task = null; }
             }
+
+            cancel?.Dispose();
+            cancel = null;
         }
         #endregion
 

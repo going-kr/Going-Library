@@ -499,7 +499,21 @@ btnMenuSetting.ButtonClicked += (o, s) => Design.SetPage("PageSetting");
 btnBack.ButtonClicked += (o, s) => Design.SetPage("PageMain");  // 메인으로 복귀
 ```
 
-> **주의**: `Design.SetPage()`의 인자는 Page 클래스명 문자열 (예: `"PageMain"`, `"PageSetting"`). Designer.cs에서 `Design.AddPage()`로 등록한 이름과 일치해야 함.
+### GoNavigator 자동 전환 (코드 불필요)
+
+GoNavigator의 GoMenuItem에 `PageName`을 지정하면 메뉴 클릭 시 자동으로 페이지가 전환된다. 별도 이벤트 핸들러 코드가 필요 없다.
+
+```json
+// .gud 파일 — TitleBar에 GoNavigator 배치 (Dock: Fill)
+"Menus": [
+  { "Text": "모니터링", "IconString": "fa-tv", "PageName": "PageMonitor" },
+  { "Text": "설정",     "IconString": "fa-cog", "PageName": "PageSetting" }
+]
+```
+
+> GoNavigator를 TitleBar 컨테이너에 Dock: 5(Fill)로 배치하면 상단 네비게이션 바 역할을 한다.
+
+> **주의**: `Design.SetPage()`의 인자는 Page 클래스명 문자열 (예: `"PageMain"`, `"PageSetting"`). Designer.cs에서 `Design.AddPage()`로 등록한 이름과 일치해야 함. GoMenuItem의 `PageName`도 동일 규칙.
 
 ---
 

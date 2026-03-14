@@ -548,7 +548,16 @@
 }
 ```
 
-> `Menus`: ObservableList\<GoMenuItem\>.
+> `Menus`: ObservableList\<GoMenuItem\>. GoMenuItem 구조:
+>
+> | 속성 | 타입 | 설명 |
+> |------|------|------|
+> | `IconString` | string? | 아이콘 문자열 (FontAwesome 등) |
+> | `Text` | string? | 메뉴 표시 텍스트 |
+> | `Tag` | object? | 사용자 정의 데이터 |
+> | `PageName` | string? | 연결할 페이지 이름. 지정 시 메뉴 클릭으로 `Design.SetPage(PageName)` 자동 호출 |
+>
+> **PageName 자동 전환**: GoMenuItem에 `PageName`을 지정하면 해당 메뉴 클릭 시 별도 코드 없이 자동으로 페이지가 전환된다.
 
 ### GoListBox
 ```json
