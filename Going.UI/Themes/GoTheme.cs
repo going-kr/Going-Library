@@ -75,6 +75,7 @@ namespace Going.UI.Themes
 
         #region Static
         public static GoTheme DarkTheme { get; } = new DarkTheme();
+        public static GoTheme Current { get; set; } = DarkTheme;
         #endregion
 
         #region Color(string)
