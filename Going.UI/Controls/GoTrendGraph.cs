@@ -190,7 +190,7 @@ namespace Going.UI.Controls
                 var rsz = Util.MeasureText(now.ToString(TimeFormatString ?? "yyyy.MM.dd\r\nHH:mm:ss"), FontName, FontStyle, FontSize);
                 var wts = TimeSpan.FromMilliseconds(-scroll.ScrollPositionWithOffsetR);
                 var ved = now + wts;
-                var vst = ved - XScale;
+                var vst = new DateTime(startTime.Year, startTime.Month, startTime.Day, startTime.Hour, startTime.Minute, startTime.Second);
                 #endregion
 
                 #region Axis
@@ -200,7 +200,12 @@ namespace Going.UI.Controls
                     p.PathEffect = pe;
 
                     var tmst = new DateTime(startTime.Ticks / XAxisGraduationTime.Ticks * XAxisGraduationTime.Ticks);
-                    for (DateTime i = new(vst.Year, vst.Month, vst.Day, vst.Hour, vst.Minute, vst.Second); i <= ved; i += XAxisGraduationTime)
+
+                    var visibleStart = ved - XScale;
+                    var skipTicks = Math.Max(0, (visibleStart.Ticks - vst.Ticks) / XAxisGraduationTime.Ticks);
+                    var loopVst = vst + TimeSpan.FromTicks(skipTicks * XAxisGraduationTime.Ticks);
+
+                    for (DateTime i = loopVst; i <= ved; i += XAxisGraduationTime)
                     {
                         if (i >= tmst)
                         {

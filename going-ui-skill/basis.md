@@ -27,7 +27,24 @@ Going.Basis의 Modbus는 **두 레이어**로 구성:
 | **슬레이브 저수준** | `ModbusRTUSlave` | `ModbusTCPSlave` | Request 이벤트 직접 처리 |
 
 > 래퍼는 내부적으로 저수준 클래스를 감싸며, 마스터는 수신 데이터를 `Devices` 딕셔너리에 자동 캐싱, 슬레이브는 메모리 영역을 자동 응답.
-> **일반적인 사용에는 래퍼를 권장**. 직접 이벤트 처리가 필요하면 저수준 사용.
+
+### ⚠ 클래스 선택 기준 — 반드시 확인
+
+**기본: MasterRTU / MasterTCP**
+아래 조건 중 하나라도 해당하면 MasterRTU / MasterTCP 사용:
+- 레지스터 맵이 있고 주기적으로 폴링하는 경우 (대부분의 케이스)
+- GetWord / GetBit로 캐시에서 값을 조회하는 패턴
+- DeviceManager에서 의미있는 프로퍼티로 변환하는 패턴
+
+통신 상태 판단: `IsOpen` 프로퍼티 또는 `DeviceOpened` / `DeviceClosed` 이벤트 사용.
+DeviceData 패턴 사용하지 않음.
+
+**예외: ModbusRTUMaster / ModbusTCPMaster**
+아래 조건이 명시적으로 요구되는 경우에만 사용:
+- 수신 이벤트(WordReadReceived)를 직접 제어해야 하는 경우
+- FC 코드 수준의 세밀한 제어가 필요한 경우
+
+위 예외 조건에 해당하지 않으면 ModbusRTUMaster / ModbusTCPMaster를 사용하지 말 것.
 
 ---
 
@@ -44,10 +61,13 @@ public class DeviceManager
         RTU.WordAreas.Add(0x0000, "D");  // D0, D1, D2...
         RTU.BitAreas.Add(0x0000, "P");   // P0, P1, P2...
 
-        // 연결 이벤트
-        RTU.DeviceOpened += (o, s) => { /* 포트 열림 */ };
-        RTU.DeviceClosed += (o, s) => { /* 포트 닫힘 */ };
+        // 통신 상태는 IsOpen 또는 이벤트로 판단 — DeviceData 불필요
+        RTU.DeviceOpened += (o, s) => { /* 연결됨 */ };
+        RTU.DeviceClosed += (o, s) => { /* 연결 해제 */ };
     }
+
+    // 통신 상태 조회
+    public bool IsConnected => RTU.IsOpen;
 
     public void Start()
     {
@@ -67,9 +87,11 @@ public class DeviceManager
         RTU.Stop();
     }
 
-    // 값 읽기 (자동 캐싱에서 조회)
-    public int? ReadWord(int slave, string addr) => RTU.GetWord(slave, addr);
-    public bool? ReadBit(int slave, string addr) => RTU.GetBit(slave, addr);
+    // 값 읽기 — 의미있는 프로퍼티로 래핑
+    public bool   IsRunning   => RTU.GetWord(1, "D0") == 1;
+    public int    ErrorCode   => RTU.GetWord(1, "D1") ?? 0;
+    public double Temperature => (RTU.GetWord(1, "D10") ?? 0) / 10.0;  // 0.1°C 단위
+    public int    Pressure    => RTU.GetWord(1, "D11") ?? 0;
 
     // 쓰기
     public void SetOutput(int slave, string addr, int value) => RTU.SetWord(slave, addr, value);
@@ -474,9 +496,11 @@ public class DeviceManager
 
 ## DeviceData 모델 패턴 (Datas/DeviceData.cs)
 
-수신된 원시 레지스터 배열을 의미있는 프로퍼티로 변환.
-`CommState`는 마지막 수신 시각으로 통신 상태 판단.
-**저수준 API (ModbusRTUMaster)의 WordReadReceived와 함께 사용.**
+⚠ ModbusRTUMaster / ModbusTCPMaster 전용 패턴.
+
+MasterRTU / MasterTCP 사용 시에는 DeviceData 불필요:
+- 값 조회 → GetWord / GetBit (캐시 자동 관리)
+- 통신 상태 → RTU.IsOpen 또는 DeviceOpened / DeviceClosed 이벤트
 
 ```csharp
 public class DeviceData
@@ -596,3 +620,6 @@ mqtt.Stop();
 | `SlaveTCP.DeviceOpened` | `SlaveTCP.SocketConnected` | TCP 슬레이브는 Socket 이벤트 사용 |
 | `wordMem[0] = 100` | `wordMem[0].Value = 100` | WordMemories는 `.Value` 프로퍼티 필요 |
 | `bitMem[0].Value` | `bitMem[0]` | BitMemories는 bool 직접 반환 (Value 없음) |
+| 일반 폴링에 `ModbusRTUMaster` 사용 | `MasterRTU` 사용 | 저수준은 특수 목적 전용 |
+| `MasterRTU` + `DeviceData` 조합 | `MasterRTU` + `GetWord/GetBit` | DeviceData는 ModbusRTUMaster 전용 |
+| `MasterRTU`에서 통신 상태를 `CommState`로 판단 | `RTU.IsOpen` 또는 `DeviceOpened/Closed` 이벤트 | MasterRTU는 IsOpen으로 판단 |

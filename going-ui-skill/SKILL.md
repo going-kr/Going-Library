@@ -16,6 +16,7 @@ description: Going Library(Going.UI + Going.Basis)를 사용하는 모든 작업
 | C# 코드 작성 (Page/Window/Main) | `ui-code.md` | 코드 패턴, Designer.cs 규칙, MakePropCode |
 | 통신 코드 작성 (Modbus/MQTT) | `basis.md` | 통신 패턴, DeviceManager, 데이터 모델 |
 | 장치 배포/제어 (LauncherTouch MCP) | `ui-mcp.md` | gtcli CLI 도구, MCP 도구 25개, 빌드-배포 자동화, 네트워크, 키오스크 |
+| project_brief.md 작성 가이드 | `ui-project-brief.md` | 템플릿, 이미지 네이밍, 섹션별 작성법 |
 
 **작업 시작 전 해당 파일을 반드시 `Read` 도구로 읽은 후 작업할 것.**
 
@@ -56,6 +57,23 @@ Going Library의 클래스·속성·메서드·이벤트 확인이 필요할 때
 | `api/basis/tools.html` | CryptoTool, MathTool, NetworkTool, WindowsTool |
 | `api/basis/utils.html` | EasyTask, HiResTimer, ExternalProgram, NaturalSortComparer, CompressionUtility |
 
+### HTML 파일 내부 구조
+
+각 API HTML 파일은 동일한 구조로 되어 있다:
+- **클래스별 섹션**: `<h2>` 태그로 클래스명 구분 (예: `<h2>GoButton</h2>`)
+- **속성 테이블**: 타입, 이름, 설명 컬럼 (get/set 접근자 표시)
+- **메서드 테이블**: 반환타입, 이름(파라미터), 설명
+- **이벤트 테이블**: 이벤트 핸들러 타입, 이름, 설명
+- **검색 팁**: `data-search` 속성에 키워드가 있으므로, `Grep`으로 컨트롤명 검색하면 해당 섹션을 빠르게 찾을 수 있음
+
+```
+// 예: GoDataGrid의 메서드만 찾기
+Grep("GoDataGrid", path="{스킬 디렉터리}/api/ui/controls.html")
+
+// 예: MasterRTU의 GetWord 시그니처 확인
+Grep("GetWord", path="{스킬 디렉터리}/api/basis/communications-modbus.html")
+```
+
 ### 사용 예시
 
 ```
@@ -73,11 +91,32 @@ Read("{이 스킬 파일 디렉터리}/api/basis/communications-modbus.html")
 Going Library 프로젝트의 전형적인 작업 흐름:
 
 ```
-1. project_brief.md 작성 (사용자)
-   └─ 프로젝트 개요, 화면 구성, 페이지/윈도우 목록
-   └─ 대상 해상도 (예: 1024x600, 1920x1080) — .gud 레이아웃 산정 기준
-   └─ 통신 방식 (Modbus RTU/TCP, MQTT 등)
-   └─ 장치 데이터 모델, 레지스터 맵 (있는 경우)
+1. project_brief.md 작성
+
+   경로 A (권장) — Claude 채팅에 프로젝트 개요 설명
+     → Claude가 아래 순서로 인터뷰 질문:
+        ① 프로젝트명, 앱 이름, 목적, 해상도, 테마
+        ② 페이지 목록 (각 페이지 역할, 주요 컨트롤, 페이지 간 이동)
+        ③ 윈도우(팝업) 목록 (트리거, 역할, 반환값)
+        ④ 통신 방식 선택 (Modbus RTU/TCP, MQTT, 없음)
+           → Modbus 선택 시: 포트, 보드레이트, 슬레이브 구성, 레지스터 맵
+           → MQTT 선택 시: 브로커 주소, 토픽/페이로드 구조
+        ⑤ 설정 파일 항목 (DataManager에 저장할 값)
+        ⑥ 레이아웃 이미지 요청 (스케치 또는 레퍼런스 HMI 캡처)
+     → Claude가 완성된 project_brief.md 생성
+     → 사용자 검토 및 이미지 첨부
+
+   경로 B — 템플릿 직접 작성 (ui-project-brief.md 참조)
+
+   ★ Claude Code 진입 전 완비 확인:
+     □ 페이지/윈도우 목록 + 레이아웃 이미지 (스케치 또는 레퍼런스)
+     □ 통신 방식 및 파라미터
+     □ 레지스터 맵 (Modbus 사용 시 필수 — 누락 시 Claude Code 작업 불가)
+     □ 설정 파일 항목
+     □ 배포 정보 (hostname, 앱 이름)
+
+   .gud 생성 시: project_brief.md + 이미지를 채팅에 함께 첨부
+   플랫폼: Going.UI.OpenTK 고정 (linux-arm64)
 
 2. .gud 파일 생성 (Claude — 채팅)
    └─ 사용자가 project_brief.md 내용을 Claude 채팅에 전달
@@ -111,8 +150,8 @@ Going Library 프로젝트의 전형적인 작업 흐름:
         └─ Windows/*.cs: 팝업 동작, 콜백 패턴 (Show → 결과 → Close)
 
    4-2. 통신 코드 작성 (참조: basis.md)
-        ├─ DeviceManager: Modbus Master/Slave 또는 MQTT 구성
-        ├─ DeviceData: 레지스터 맵 → 의미있는 프로퍼티 변환 (CommState 패턴)
+        ├─ DeviceManager: MasterRTU/MasterTCP 기본 (GetWord/GetBit + IsOpen)
+        │   └─ ModbusRTUMaster는 수신 이벤트 직접 제어 시에만 사용
         ├─ DataManager: 설정 파일(JSON) 로드/저장
         └─ ⚠ project_brief.md에 장치 모델이 없으면 반드시 사용자에게 문의
 
@@ -165,6 +204,21 @@ Modbus 레지스터 주소, 데이터 의미, 단위, 슬레이브 번호는 프
 - DeviceManager (AutoWordRead 주소, WordReadReceived 처리)
 - 데이터 모델 클래스 (Board, Channel, DeviceData 등 레지스터 맵 의존)
 - 쓰기 메서드 (WriteXxx — 주소가 확정되어야 함)
+
+DeviceManager 작성 시 클래스 선택 규칙:
+- MasterRTU / MasterTCP를 기본으로 사용할 것
+- ModbusRTUMaster / ModbusTCPMaster는 수신 이벤트 직접 제어가
+  명시적으로 필요한 경우에만 허용
+- MasterRTU 사용 시 DeviceData 패턴 사용 금지
+  (GetWord/GetBit + IsOpen으로 대체)
+
+### 3. 이미지 참조 처리
+
+project_brief.md + 이미지가 함께 제공된 경우:
+- 이미지의 레이아웃을 우선 참조
+- 텍스트 설명과 이미지가 충돌하면 이미지 우선
+- 이미지에서 읽기 어려운 컨트롤은 텍스트로 보완 후 작업
+- 이미지만으로 판단 불가한 레지스터 맵은 반드시 문의
 
 ---
 

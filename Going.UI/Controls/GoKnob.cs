@@ -76,7 +76,7 @@ namespace Going.UI.Controls
         double downAngle;
         SKPoint prev;
 
-        SKPath path;
+        SKPath path = new SKPath();
         #endregion
 
         #region Override

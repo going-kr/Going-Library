@@ -644,6 +644,60 @@ public partial class Keypad : GoWindow
 
 ---
 
+## GoDialogs 패턴 (시스템 다이얼로그)
+
+`GoDialogs`는 전역 싱글턴 다이얼로그. 별도 Window 정의 없이 사용 가능.
+콜백 기반 — 결과를 `Action`으로 수신.
+
+```csharp
+using Going.UI.Dialogs;
+
+// 1. MessageBox — 확인/취소/예/아니요
+GoDialogs.MessageBox.ShowMessageBoxOk("알림", "작업이 완료되었습니다.", (result) =>
+{
+    // result: GoDialogResult.Ok
+});
+
+GoDialogs.MessageBox.ShowMessageBoxOkCancel("확인", "저장하시겠습니까?", (result) =>
+{
+    if (result == GoDialogResult.Ok)
+        Main.DataMgr.Save();
+});
+
+GoDialogs.MessageBox.ShowMessageBoxYesNo("종료", "프로그램을 종료하시겠습니까?", (result) =>
+{
+    if (result == GoDialogResult.Yes)
+        Environment.Exit(0);
+});
+
+// 2. InputBox — 값 입력
+GoDialogs.InputBox.ShowString("이름 입력", "홍길동", (value) =>
+{
+    if (value != null) Main.DataMgr.Setting.UserName = value;
+});
+
+GoDialogs.InputBox.ShowNumber<int>("설정값", 100, 0, 1000, (value) =>
+{
+    if (value.HasValue) Main.DevMgr.SetOutput(1, "D100", value.Value);
+});
+
+GoDialogs.InputBox.ShowBool("자동 모드", true, "자동", "수동", (value) =>
+{
+    if (value.HasValue) Main.DevMgr.SetBitOutput(1, "P0", value.Value);
+});
+
+// 3. SelectorBox — 항목 선택
+GoDialogs.SelectorBox.ShowRadio<MyEnum>("모드 선택", 2, MyEnum.Mode1, (value) =>
+{
+    if (value.HasValue) Main.DataMgr.Setting.Mode = value.Value;
+});
+```
+
+> GoDialogs 사용 시 `Design.Windows`에 시스템 윈도우가 자동 등록되어 있어야 함.
+> Designer.cs의 InitializeComponent에서 `GoDialogs.SystemWindows`를 `Design.Windows`에 추가하는 코드가 필요할 수 있음.
+
+---
+
 ## 컨트롤 묶음 패턴
 
 반복되는 컨트롤 그룹(채널, 슬롯 등)을 클래스로 묶어 관리.

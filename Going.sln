@@ -9,17 +9,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleOpenTK", "SampleOpenT
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Going.UI.Forms", "Going.UI.Forms\Going.UI.Forms.csproj", "{A014D64F-027B-4EAC-AFDA-87468E27BEB5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleForms", "SampleForms\SampleForms.csproj", "{70D5E607-622C-43A3-9408-52CE04F40C7B}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Going.UI.OpenTK", "Going.UI.OpenTK\Going.UI.OpenTK.csproj", "{2D61CA91-EE9A-4DD1-8926-01F95AC35393}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Going.Basis", "Going.Basis\Going.Basis.csproj", "{6CD46FDB-7774-4AEA-A1F7-26C40039DDB7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleComms", "SampleComms\SampleComms.csproj", "{18429B00-8591-48C0-9443-E80F18FB98AD}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Going.UIEditor", "Going.UIEditor\Going.UIEditor.csproj", "{F19DCBB6-6266-4C95-8161-3146B880327C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample", "Sample\Sample.csproj", "{3BFFC702-222C-4DCD-8FFE-CDB69267044E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "going-ui-skiil", "going-ui-skiil", "{C8D5274F-AC00-46C7-1F8D-E88E81087A52}"
 	ProjectSection(SolutionItems) = preProject
@@ -31,6 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "going-ui-skiil", "going-ui-
 		going-ui-skill\ui-json-imagecanvas.md = going-ui-skill\ui-json-imagecanvas.md
 		going-ui-skill\ui-json.md = going-ui-skill\ui-json.md
 		going-ui-skill\ui-mcp.md = going-ui-skill\ui-mcp.md
+		going-ui-skill\ui-project-brief.md = going-ui-skill\ui-project-brief.md
 	EndProjectSection
 EndProject
 Global
@@ -51,10 +46,6 @@ Global
 		{A014D64F-027B-4EAC-AFDA-87468E27BEB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A014D64F-027B-4EAC-AFDA-87468E27BEB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A014D64F-027B-4EAC-AFDA-87468E27BEB5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{70D5E607-622C-43A3-9408-52CE04F40C7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{70D5E607-622C-43A3-9408-52CE04F40C7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{70D5E607-622C-43A3-9408-52CE04F40C7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{70D5E607-622C-43A3-9408-52CE04F40C7B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2D61CA91-EE9A-4DD1-8926-01F95AC35393}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2D61CA91-EE9A-4DD1-8926-01F95AC35393}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2D61CA91-EE9A-4DD1-8926-01F95AC35393}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -63,18 +54,10 @@ Global
 		{6CD46FDB-7774-4AEA-A1F7-26C40039DDB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6CD46FDB-7774-4AEA-A1F7-26C40039DDB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6CD46FDB-7774-4AEA-A1F7-26C40039DDB7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{18429B00-8591-48C0-9443-E80F18FB98AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{18429B00-8591-48C0-9443-E80F18FB98AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{18429B00-8591-48C0-9443-E80F18FB98AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{18429B00-8591-48C0-9443-E80F18FB98AD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F19DCBB6-6266-4C95-8161-3146B880327C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F19DCBB6-6266-4C95-8161-3146B880327C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F19DCBB6-6266-4C95-8161-3146B880327C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F19DCBB6-6266-4C95-8161-3146B880327C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3BFFC702-222C-4DCD-8FFE-CDB69267044E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3BFFC702-222C-4DCD-8FFE-CDB69267044E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3BFFC702-222C-4DCD-8FFE-CDB69267044E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3BFFC702-222C-4DCD-8FFE-CDB69267044E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

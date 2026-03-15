@@ -155,7 +155,7 @@ namespace Going.UIEditor.Forms.Editors
                 IsPixel = false;
                 Value = v1; 
             }
-            else if (value.EndsWith("px") && double.TryParse(value[..^1], out var v2))
+            else if (value.EndsWith("px") && double.TryParse(value[..^2], out var v2))
             {
                 IsPixel = true;
                 Value = v2;

@@ -124,15 +124,15 @@ namespace Going.UI.Controls
             {
                 if (Mode == GoBarGraphMode.Stack)
                 {
-                    var cmin = datas.Min(x => x.Values.Where(x => dicser.TryGetValue(x.Key, out var vser) && vser.Visible).Sum(y => y.Value));
-                    var cmax = datas.Max(x => x.Values.Where(x => dicser.TryGetValue(x.Key, out var vser) && vser.Visible).Sum(y => y.Value));
+                    var cmin = datas.Count > 0 ? datas.Min(x => x.Values.Where(x => dicser.TryGetValue(x.Key, out var vser) && vser.Visible).Sum(y => y.Value)) : 0;
+                    var cmax = datas.Count > 0 ? datas.Max(x => x.Values.Where(x => dicser.TryGetValue(x.Key, out var vser) && vser.Visible).Sum(y => y.Value)) : 0;
                     vmin = Minimum.HasValue ? Math.Min(cmin, Minimum.Value * Series.Where(x => x.Visible).Count()) : cmin;
                     vmax = Maximum.HasValue ? Math.Max(cmax, Maximum.Value * Series.Where(x => x.Visible).Count()) : cmax;
                 }
                 else if (Mode == GoBarGraphMode.List)
                 {
-                    var cmin = datas.Min(x => x.Values.Where(x => dicser.TryGetValue(x.Key, out var vser) && vser.Visible).Min(y => y.Value));
-                    var cmax = datas.Max(x => x.Values.Where(x => dicser.TryGetValue(x.Key, out var vser) && vser.Visible).Max(y => y.Value));
+                    var cmin = datas.Count > 0 ? datas.Min(x => x.Values.Where(x => dicser.TryGetValue(x.Key, out var vser) && vser.Visible).Min(y => y.Value)) : 0;
+                    var cmax = datas.Count > 0 ? datas.Max(x => x.Values.Where(x => dicser.TryGetValue(x.Key, out var vser) && vser.Visible).Max(y => y.Value)) : 0;
                     vmin = Minimum.HasValue ? Math.Min(cmin, Minimum.Value) : cmin;
                     vmax = Maximum.HasValue ? Math.Max(cmax, Maximum.Value) : cmax;
                 }
@@ -682,19 +682,19 @@ namespace Going.UI.Controls
             #region min / max
             double vmin = 0, vmax = 0;
             var dicser = Series.Where(x => x.Visible).ToDictionary(x => x.Name);
-            if (dicser.Count > 0)
+            if (dicser.Count > 0 )
             {
                 if (Mode == GoBarGraphMode.Stack)
                 {
-                    var cmin = datas.Min(x => x.Values.Where(x => dicser.TryGetValue(x.Key, out var vser) && vser.Visible).Sum(y => y.Value));
-                    var cmax = datas.Max(x => x.Values.Where(x => dicser.TryGetValue(x.Key, out var vser) && vser.Visible).Sum(y => y.Value));
+                    var cmin = datas.Count > 0 ? datas.Min(x => x.Values.Where(x => dicser.TryGetValue(x.Key, out var vser) && vser.Visible).Sum(y => y.Value)) : 0;
+                    var cmax = datas.Count > 0 ? datas.Max(x => x.Values.Where(x => dicser.TryGetValue(x.Key, out var vser) && vser.Visible).Sum(y => y.Value)) : 0;
                     vmin = Minimum.HasValue ? Math.Min(cmin, Minimum.Value * Series.Where(x => x.Visible).Count()) : cmin;
                     vmax = Maximum.HasValue ? Math.Max(cmax, Maximum.Value * Series.Where(x => x.Visible).Count()) : cmax;
                 }
                 else if (Mode == GoBarGraphMode.List)
                 {
-                    var cmin = datas.Min(x => x.Values.Where(x => dicser.TryGetValue(x.Key, out var vser) && vser.Visible).Min(y => y.Value));
-                    var cmax = datas.Max(x => x.Values.Where(x => dicser.TryGetValue(x.Key, out var vser) && vser.Visible).Max(y => y.Value));
+                    var cmin = datas.Count > 0 ? datas.Min(x => x.Values.Where(x => dicser.TryGetValue(x.Key, out var vser) && vser.Visible).Min(y => y.Value)) : 0;
+                    var cmax = datas.Count > 0 ? datas.Max(x => x.Values.Where(x => dicser.TryGetValue(x.Key, out var vser) && vser.Visible).Max(y => y.Value)) : 0;
                     vmin = Minimum.HasValue ? Math.Min(cmin, Minimum.Value) : cmin;
                     vmax = Maximum.HasValue ? Math.Max(cmax, Maximum.Value) : cmax;
                 }
