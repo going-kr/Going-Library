@@ -70,8 +70,8 @@ Minimum: 0                  # Y축 최소
 Maximum: 100                # Y축 최대
 BarSize: 20                 # 바 너비(px)
 BarGap: 20                  # 바 간격(px)
-Mode: 1                     # 0=List(나란히), 1=Stack(누적)
-Direction: 1                # 0=Vertical, 1=Horizontal
+Mode: 1                     # 0=Stack(누적), 1=List(나란히)
+Direction: 1                # 0=Horizon, 1=Vertical
 ```
 
 ### C# 코드
@@ -405,7 +405,7 @@ BoxColor: "Base2"               # 입력박스 색상
 ScrollBarColor: "Base1"
 RowHeight: 30
 ColumnHeight: 30
-SelectionMode: 2                # 0=None, 1=Single, 2=Multi
+SelectionMode: 2                # 0=None, 1=Selector, 2=Single, 3=Multi, 4=MultiPC
 ```
 
 > DataGrid 컬럼은 UIEditor가 아닌 **코드에서 직접 구성**하는 것이 일반적.

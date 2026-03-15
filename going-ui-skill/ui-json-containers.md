@@ -42,8 +42,6 @@
   "Type": "GoBoxPanel",
   "Value": {
     "Childrens": [ ...컨트롤 배열... ],
-    "Direction": 0,
-    "ItemSize": null,
     "BorderColor": "Base3",
     "BoxColor": "Base2",
     "Round": 1,
@@ -147,7 +145,7 @@
     "IconDirection": 0, "IconSize": 12, "IconGap": 5,
     "FontName": "나눔고딕", "FontStyle": 0, "FontSize": 12,
     "TextColor": "Fore", "TabColor": "Base2", "TabBorderColor": "Base3",
-    "TabPosition": 0, "NavSize": 40,
+    "TabPosition": 2, "NavSize": 40,
     "TabPages": [
       { "Name": "Tab1", "IconString": null, "Text": "Tab1", "Childrens": [...] }
     ],
@@ -159,7 +157,7 @@
 }
 ```
 
-> `TabPosition`: GoDirection — Up=0, Down=1, Left=2, Right=3
+> `TabPosition`: GoDirection — Left=0, Right=1, Up=2, Down=3 (기본: Up=2)
 
 ## GoPanel (제목 패널)
 

@@ -581,7 +581,7 @@ public partial class PageMain : GoPage
         // 값 입력 — Keypad 팝업
         lblSetpoint.MouseClicked += (o, s) =>
         {
-            Main.Window.Keypad.ShowKeypad(Main.DevMgr.Data.Setpoint, 1.0, (value) =>
+            Main.Window.Keypad.ShowKeypad(Main.DevMgr.Data.Setpoint, (value) =>
             {
                 Main.DevMgr.SetSetpoint(value);
             });

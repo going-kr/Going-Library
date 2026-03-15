@@ -250,19 +250,19 @@ BottomLeft=6, BottomCenter=7, BottomRight=8
 Horizon=0, Vertical=1
 
 ### GoDirection (탭 등)
-Up=0, Down=1, Left=2, Right=3
+Left=0, Right=1, Up=2, Down=3
 
 ### GoAutoFontSize
 NotUsed=0, XXS=1, XS=2, S=3, M=4, L=5, XL=6, XXL=7
 
 ### GoButtonFillStyle
-Flat=0, Gradient=1, Outline=2
+Flat=0, Emboss=1, Gradient=2
 
 ### ScrollMode
-Vertical=0, Horizontal=1, Both=2
+Horizon=0, Vertical=1, Both=2
 
 ### GoDataGridSelectionMode
-Single=0, Multi=1, None=2
+None=0, Selector=1, Single=2, Multi=3, MultiPC=4
 
 ### ProgressDirection
 LeftToRight=0, RightToLeft=1, BottomToTop=2, TopToBottom=3
@@ -271,13 +271,13 @@ LeftToRight=0, RightToLeft=1, BottomToTop=2, TopToBottom=3
 DateTime=0, Date=1, Time=2
 
 ### GoImageScaleMode
-Real=0, Stretch=1, Uniform=2, UniformFill=3
+Real=0, CenterImage=1, Strech=2, Zoom=3
 
 ### GoBarGraphMode
-List=0, Stack=1
+Stack=0, List=1
 
 ### GoItemSelectionMode
-Single=0, Multi=1
+None=0, Single=1, Multi=2, MultiPC=3
 
 ---
 

@@ -15,9 +15,9 @@
 
 ---
 
-## Modbus 아키텍처 (두 레이어)
+## Modbus 아키텍처
 
-Going.Basis의 Modbus는 **두 레이어**로 구성:
+Going.Basis의 Modbus는 **래퍼(권장) / 저수준** 두 레이어 × **마스터 / 슬레이브** 두 역할로 구성:
 
 | 레이어 | RTU 클래스 | TCP 클래스 | 용도 |
 |--------|-----------|-----------|------|
@@ -37,7 +37,7 @@ Going.Basis의 Modbus는 **두 레이어**로 구성:
 - DeviceManager에서 의미있는 프로퍼티로 변환하는 패턴
 
 통신 상태 판단: `IsOpen` 프로퍼티 또는 `DeviceOpened` / `DeviceClosed` 이벤트 사용.
-DeviceData 패턴 사용하지 않음.
+DeviceData 패턴 사용 금지 — GetWord/GetBit + IsOpen으로 대체.
 
 **예외: ModbusRTUMaster / ModbusTCPMaster**
 아래 조건이 명시적으로 요구되는 경우에만 사용:
@@ -194,22 +194,21 @@ public class DeviceManager
 }
 ```
 
-### MasterTCP 고유 프로퍼티
+### MasterTCP 프로퍼티 (MasterRTU와 다른 부분)
 
 | 프로퍼티 | 타입 | 설명 |
 |---------|------|------|
-| `RemoteIP` | string | 서버 IP 주소 |
-| `RemotePort` | int | 서버 포트 (기본 502) |
-| `Interval` | int | 폴링 간격 |
-| `Timeout` | int | 타임아웃 |
+| `RemoteIP` | string | 서버 IP 주소 (**TCP 전용**) |
+| `RemotePort` | int | 서버 포트 (기본 502) (**TCP 전용**) |
 
-> 나머지 메서드/이벤트는 MasterRTU와 동일 (Monitor/Set/Get/DeviceOpened/DeviceClosed).
+> `Interval`, `Timeout`, `IsStart`, `IsOpen`, `WordAreas`, `BitAreas`, `Devices`, `Tag`은 MasterRTU와 동일.
+> 메서드/이벤트도 동일 (Monitor/Set/Get/DeviceOpened/DeviceClosed).
 
 ---
 
 ## ModbusRTUMaster 패턴 (저수준 — 직접 이벤트 처리)
 
-수신 이벤트를 직접 처리하고 DeviceData 모델로 매핑할 때 사용.
+수신 이벤트를 직접 처리해야 할 때 사용. DeviceData 모델로 매핑하는 것은 대표적 활용 예시.
 
 ```csharp
 public class DeviceManager
@@ -496,9 +495,9 @@ public class DeviceManager
 
 ## DeviceData 모델 패턴 (Datas/DeviceData.cs)
 
-⚠ ModbusRTUMaster / ModbusTCPMaster 전용 패턴.
+⚠ 저수준 클래스(ModbusRTUMaster / ModbusTCPMaster) 사용 시의 패턴.
 
-MasterRTU / MasterTCP 사용 시에는 DeviceData 불필요:
+MasterRTU / MasterTCP 사용 시에는 DeviceData 불필요 (사용 금지):
 - 값 조회 → GetWord / GetBit (캐시 자동 관리)
 - 통신 상태 → RTU.IsOpen 또는 DeviceOpened / DeviceClosed 이벤트
 
@@ -607,8 +606,8 @@ mqtt.Stop();
 |------------|-----------|------|
 | `ModbusRTUMaster`에서 `WordAreas` 사용 | `MasterRTU`에서 `WordAreas` 사용 | WordAreas는 래퍼에만 있음 |
 | `MasterRTU`에서 `AutoWordRead_FC3` 호출 | `RTU.MonitorWord_F3(slave, addr, len)` | 래퍼는 Monitor 메서드 사용 |
-| `TCP.Host = "..."` | `TCP.RemoteIP = "..."` | TCP 프로퍼티명 주의 |
-| `TCP.Port = 502` | `TCP.RemotePort = 502` | TCP 프로퍼티명 주의 |
+| `MasterTCP.Host = "..."` | `MasterTCP.RemoteIP = "..."` | MasterTCP 프로퍼티명 주의 |
+| `MasterTCP.Port = 502` | `MasterTCP.RemotePort = 502` | MasterTCP 프로퍼티명 주의 |
 | `s.SlaveAddress` | `s.Slave` | 이벤트 인자 프로퍼티명 |
 | `s.Message` (MQTT) | `s.Datas` (byte[]) | MQTT 수신은 byte[], UTF-8 디코딩 필요 |
 | `MQQosLevel.AtLeastOnce` | `MQQos.LeastOnce` | 열거형 이름과 값 모두 다름 |
@@ -621,5 +620,5 @@ mqtt.Stop();
 | `wordMem[0] = 100` | `wordMem[0].Value = 100` | WordMemories는 `.Value` 프로퍼티 필요 |
 | `bitMem[0].Value` | `bitMem[0]` | BitMemories는 bool 직접 반환 (Value 없음) |
 | 일반 폴링에 `ModbusRTUMaster` 사용 | `MasterRTU` 사용 | 저수준은 특수 목적 전용 |
-| `MasterRTU` + `DeviceData` 조합 | `MasterRTU` + `GetWord/GetBit` | DeviceData는 ModbusRTUMaster 전용 |
+| `MasterRTU` + `DeviceData` 조합 | `MasterRTU` + `GetWord/GetBit` | DeviceData는 저수준(ModbusRTUMaster/ModbusTCPMaster) 전용 |
 | `MasterRTU`에서 통신 상태를 `CommState`로 판단 | `RTU.IsOpen` 또는 `DeviceOpened/Closed` 이벤트 | MasterRTU는 IsOpen으로 판단 |

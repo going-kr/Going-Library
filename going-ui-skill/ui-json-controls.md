@@ -365,8 +365,8 @@
 }
 ```
 
-> `GoDataGridSelectionMode` — Single=0, Multi=1, None=2
-> `ScrollMode` — Vertical=0, Horizon=1, Both=2
+> `GoDataGridSelectionMode` — None=0, Selector=1, Single=2, Multi=3, MultiPC=4
+> `ScrollMode` — Horizon=0, Vertical=1, Both=2
 
 > **Columns/SummaryRows는 보통 코드에서 구성** (ui-control-sample.md 참조). 아래는 JSON으로 직접 정의할 때의 구조.
 
@@ -666,7 +666,7 @@
 }
 ```
 
-> `SelectionMode`: GoItemSelectionMode — Single=0, Multi=1.
+> `SelectionMode`: GoItemSelectionMode — None=0, Single=1, Multi=2, MultiPC=3.
 > `Items`: ObservableList\<GoListItem\>.
 
 ### GoTreeView
@@ -730,7 +730,7 @@
     "BarSize": 20, "BarGap": 20,
     "Minimum": null, "Maximum": null,
     "Id": "UUID", "Name": null,
-    "Visible": true, "Enabled": true, "Selectable": false,
+    "Visible": true, "Enabled": true, "Selectable": true,
     "Bounds": "0,0,70,30", "Dock": 0,
     "Margin": { "Left": 3, "Top": 3, "Right": 3, "Bottom": 3 }
   }
@@ -771,7 +771,7 @@
     "Series": [],
     "PointWidth": 70,
     "Id": "UUID", "Name": null,
-    "Visible": true, "Enabled": true, "Selectable": false,
+    "Visible": true, "Enabled": true, "Selectable": true,
     "Bounds": "0,0,70,30", "Dock": 0,
     "Margin": { "Left": 3, "Top": 3, "Right": 3, "Bottom": 3 }
   }
@@ -794,7 +794,7 @@
     "TimeFormatString": null, "ValueFormatString": null,
     "Series": [],
     "Id": "UUID", "Name": null,
-    "Visible": true, "Enabled": true, "Selectable": false,
+    "Visible": true, "Enabled": true, "Selectable": true,
     "Bounds": "0,0,70,30", "Dock": 0,
     "Margin": { "Left": 3, "Top": 3, "Right": 3, "Bottom": 3 }
   }
@@ -816,9 +816,8 @@
     "TimeFormatString": null, "ValueFormatString": null,
     "Interval": 1000, "IsStart": false,
     "Series": [],
-    "Pause": false,
     "Id": "UUID", "Name": null,
-    "Visible": true, "Enabled": true, "Selectable": false,
+    "Visible": true, "Enabled": true, "Selectable": true,
     "Bounds": "0,0,70,30", "Dock": 0,
     "Margin": { "Left": 3, "Top": 3, "Right": 3, "Bottom": 3 }
   }

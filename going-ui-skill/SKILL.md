@@ -113,7 +113,6 @@ Going Library 프로젝트의 전형적인 작업 흐름:
      □ 통신 방식 및 파라미터
      □ 레지스터 맵 (Modbus 사용 시 필수 — 누락 시 Claude Code 작업 불가)
      □ 설정 파일 항목
-     □ 배포 정보 (hostname, 앱 이름)
 
    .gud 생성 시: project_brief.md + 이미지를 채팅에 함께 첨부
    플랫폼: Going.UI.OpenTK 고정 (linux-arm64)
@@ -139,6 +138,7 @@ Going Library 프로젝트의 전형적인 작업 흐름:
        └─ Windows/*.Designer.cs (자동생성, 항상 덮어씀)
 
 4. Claude Code에서 프로젝트 구현 ★핵심 단계★
+   └─ 전제: 1~3단계는 이미 완료된 상태. 작업 디렉터리에 Designer.cs와 design.json이 존재함.
    └─ 사용자가 생성된 코드 폴더를 작업 디렉터리로 지정
    └─ project_brief.md를 Claude Code에 전달
    └─ Claude Code가 *.cs(사용자 파일)만 작업 (Designer.cs/design.json 절대 수정 금지)
@@ -151,7 +151,7 @@ Going Library 프로젝트의 전형적인 작업 흐름:
 
    4-2. 통신 코드 작성 (참조: basis.md)
         ├─ DeviceManager: MasterRTU/MasterTCP 기본 (GetWord/GetBit + IsOpen)
-        │   └─ ModbusRTUMaster는 수신 이벤트 직접 제어 시에만 사용
+        │   └─ ModbusRTUMaster / ModbusTCPMaster는 수신 이벤트 직접 제어 시에만 사용
         ├─ DataManager: 설정 파일(JSON) 로드/저장
         └─ ⚠ project_brief.md에 장치 모델이 없으면 반드시 사용자에게 문의
 
@@ -197,11 +197,11 @@ Modbus 레지스터 주소, 데이터 의미, 단위, 슬레이브 번호는 프
 **확인 없이 작성 가능:**
 - UIEditor 코드 생성 후 컨트롤 이벤트 바인딩
 - Page/Window UI 로직
-- DataManager (설정 파일 구조는 사용자 확인 후)
+- DataManager (단, 설정 파일 구조는 사용자 확인 후 작성)
 - MainWindow 초기화, 페이지 전환 로직
 
 **확인 없이 작성 불가:**
-- DeviceManager (AutoWordRead 주소, WordReadReceived 처리)
+- DeviceManager (폴링 주소/영역, 수신 데이터 처리)
 - 데이터 모델 클래스 (Board, Channel, DeviceData 등 레지스터 맵 의존)
 - 쓰기 메서드 (WriteXxx — 주소가 확정되어야 함)
 
@@ -209,7 +209,7 @@ DeviceManager 작성 시 클래스 선택 규칙:
 - MasterRTU / MasterTCP를 기본으로 사용할 것
 - ModbusRTUMaster / ModbusTCPMaster는 수신 이벤트 직접 제어가
   명시적으로 필요한 경우에만 허용
-- MasterRTU 사용 시 DeviceData 패턴 사용 금지
+- MasterRTU / MasterTCP 사용 시 DeviceData 패턴 사용 금지
   (GetWord/GetBit + IsOpen으로 대체)
 
 ### 3. 이미지 참조 처리
