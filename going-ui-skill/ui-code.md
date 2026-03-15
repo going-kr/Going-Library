@@ -406,7 +406,10 @@ Designer.cs에서 코드로 자동 변환되는 타입 목록 (Code.cs MakePropC
 
 ### 전역 싱글턴 패턴 (Main.cs)
 
-전역 접근이 필요한 Manager와 Window를 정적 프로퍼티로 노출.
+Going 프로젝트의 핵심 진입 패턴. `Main` 클래스는 프로젝트 전역에서 매니저와 윈도우에 접근하기 위한 정적 허브 역할.
+UIEditor가 생성하지 않으므로 사용자가 직접 정의해야 하며, 프로젝트 전체에서 `Main.Window`, `Main.DevMgr`, `Main.DataMgr`로 참조.
+
+**왜 필요한가**: Going 라이브러리는 DI 컨테이너 없이 경량 정적 접근 패턴을 사용. 이벤트 핸들러, 페이지 간 통신, DeviceManager 접근 등 모든 곳에서 `Main.XXX`로 참조하므로 이 클래스가 없으면 프로젝트가 동작하지 않음.
 
 ```csharp
 public class Main
@@ -416,6 +419,8 @@ public class Main
     public static DataManager DataMgr { get; set; }
 }
 ```
+
+> `Main`은 Going 프레임워크 클래스가 아닌 사용자 정의 클래스. 프로퍼티 구성은 프로젝트 요구에 따라 자유롭게 확장 가능 (예: `LogManager`, `AuthManager` 등 추가).
 
 ### 진입점 확장 패턴 (Program.cs)
 
@@ -760,8 +765,8 @@ GoDialogs.SelectorBox.ShowRadio<MyEnum>("모드 선택", 2, MyEnum.Mode1, (value
 });
 ```
 
-> GoDialogs 사용 시 `Design.Windows`에 시스템 윈도우가 자동 등록되어 있어야 함.
-> Designer.cs의 InitializeComponent에서 `GoDialogs.SystemWindows`를 `Design.Windows`에 추가하는 코드가 필요할 수 있음.
+> GoDialogs.SystemWindows(MessageBox, SelectorBox, InputBox)는 프레임워크가 자동 관리함.
+> `GoDesign.Init()`이 SystemWindows를 자동 초기화하고, `ShowWindow()`가 `Design.Windows`와 `GoDialogs.SystemWindows` 양쪽을 자동 탐색하므로 별도 등록 코드 불필요.
 
 ---
 

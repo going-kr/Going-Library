@@ -74,7 +74,7 @@ namespace Going.UI.Controls
                         case GoImageScaleMode.CenterImage:
                             rt = Util.FromRect(cx - (img.Width / 2), cy - (img.Height / 2), img.Width, img.Height);
                             break;
-                        case GoImageScaleMode.Strech:
+                        case GoImageScaleMode.Stretch:
                             rt = rtContent;
                             break;
                         case GoImageScaleMode.Zoom:

@@ -271,7 +271,14 @@ LeftToRight=0, RightToLeft=1, BottomToTop=2, TopToBottom=3
 DateTime=0, Date=1, Time=2
 
 ### GoImageScaleMode
-Real=0, CenterImage=1, Strech=2, Zoom=3
+Real=0, CenterImage=1, Stretch=2, Zoom=3
+
+| 값 | 동작 |
+|----|------|
+| `Real` | 원본 크기 그대로 좌상단에 표시 |
+| `CenterImage` | 원본 크기 그대로 영역 중앙에 배치 |
+| `Stretch` | 영역 크기에 맞게 늘리기 (비율 무시) |
+| `Zoom` | 비율 유지하면서 영역에 맞게 확대/축소 |
 
 ### GoBarGraphMode
 Stack=0, List=1

@@ -536,6 +536,197 @@ public class DeviceData
 
 ---
 
+## CNet 패턴 (LS Electric PLC 시리얼 통신)
+
+LS Electric PLC와 CNet 프로토콜로 통신. Modbus와 동일한 Auto/Manual 스케줄링 구조.
+
+```csharp
+public class DeviceManager
+{
+    public CNet LS { get; } = new CNet();
+
+    public DeviceManager()
+    {
+        // 수신 이벤트
+        LS.DataReceived += (o, s) =>
+        {
+            // s.MessageID  — 요청 ID (int)
+            // s.Slave      — 슬레이브 번호 (int)
+            // s.Function   — CNetFunc (READ_SINGLE, READ_BLOCK, WRITE_SINGLE, WRITE_BLOCK)
+            // s.Data       — int[] 수신 데이터
+            // s.ReadAddress — string[] 읽기 주소
+        };
+
+        LS.WriteResponseReceived += (o, s) => { /* 쓰기 완료 */ };
+        LS.TimeoutReceived += (o, s) => { /* 타임아웃 */ };
+        LS.BCCErrorReceived += (o, s) => { /* BCC 체크섬 오류 */ };
+        LS.NAKReceived += (o, s) => { /* NAK 응답, s.ErrorCode */ };
+
+        LS.DeviceOpened += (o, s) => { /* 포트 열림 */ };
+        LS.DeviceClosed += (o, s) => { /* 포트 닫힘 */ };
+    }
+
+    public void Start()
+    {
+        var setting = Main.DataMgr.Setting;
+        LS.Port     = setting.PortName;
+        LS.Baudrate = setting.Baudrate;
+        LS.Timeout  = setting.Timeout;
+
+        // 주기 읽기 (Auto)
+        LS.AutoRSS(1, 1, "%MW100");                          // 단일 디바이스
+        LS.AutoRSS(2, 1, new[] { "%MW100", "%MW101" });      // 복수 디바이스
+        LS.AutoRSB(3, 1, "%MW200", 10);                      // 블록 읽기 (시작주소, 길이)
+
+        LS.Start();
+    }
+
+    public void Stop() => LS.Stop();
+
+    // 수동 쓰기
+    public void WriteValue(string device, int value)
+    {
+        LS.ManualWSS(10, 1, device, value);                   // 단일 쓰기
+    }
+
+    public void WriteBlock(string device, int[] values)
+    {
+        LS.ManualWSB(11, 1, device, values);                  // 블록 쓰기
+    }
+}
+```
+
+### CNet 주요 메서드
+
+```csharp
+// Auto (주기적 반복)
+LS.AutoRSS(id, slave, device);                    // 단일 읽기
+LS.AutoRSS(id, slave, devices[]);                 // 복수 읽기
+LS.AutoRSB(id, slave, device, length);            // 블록 읽기
+
+// Manual (1회 실행)
+LS.ManualRSS(id, slave, device);                  // 단일 읽기
+LS.ManualRSB(id, slave, device, length);          // 블록 읽기
+LS.ManualWSS(id, slave, device, value);           // 단일 쓰기
+LS.ManualWSS(id, slave, CNetValue[]);             // 복수 쓰기
+LS.ManualWSB(id, slave, device, values[]);        // 블록 쓰기
+
+// 큐 관리
+LS.RemoveAuto(id);       LS.ClearAuto();
+LS.RemoveManual(id);     LS.ClearManual();
+LS.ClearWorkSchedule();
+```
+
+### CNet 프로퍼티
+
+| 프로퍼티 | 타입 | 설명 |
+|---------|------|------|
+| `Port` | string | 시리얼 포트명 ("COM1") |
+| `Baudrate` | int | 통신 속도 (기본 115200) |
+| `Parity` | Parity | 패리티 |
+| `DataBits` | int | 데이터 비트 |
+| `StopBits` | StopBits | 스톱 비트 |
+| `Timeout` | int | 타임아웃 (기본 100ms) |
+| `Interval` | int | 폴링 간격 (기본 10ms) |
+| `BufferSize` | int | 버퍼 크기 (기본 1024) |
+| `IsStart` | bool (읽기전용) | 시작 상태 |
+| `IsOpen` | bool (읽기전용) | 포트 열림 상태 |
+| `AutoReconnect` | bool | 자동 재연결 |
+
+---
+
+## MC 패턴 (Mitsubishi PLC 시리얼 통신)
+
+Mitsubishi PLC와 MC 프로토콜로 통신. 비트/워드가 별도 이벤트로 분리된 것이 CNet과의 주요 차이.
+
+```csharp
+public class DeviceManager
+{
+    public MC Mitsubishi { get; } = new MC();
+
+    public DeviceManager()
+    {
+        // 워드/비트 수신 이벤트가 분리됨
+        Mitsubishi.WordDataReceived += (o, s) =>
+        {
+            // s.MessageID, s.Slave, s.Function (MCFunc), s.Data (int[])
+        };
+
+        Mitsubishi.BitDataReceived += (o, s) =>
+        {
+            // s.MessageID, s.Slave, s.Function (MCFunc), s.Data (bool[])
+        };
+
+        Mitsubishi.WriteResponseReceived += (o, s) => { /* 쓰기 완료 */ };
+        Mitsubishi.TimeoutReceived += (o, s) => { /* 타임아웃 */ };
+        Mitsubishi.CheckSumErrorReceived += (o, s) => { /* 체크섬 오류 */ };
+        Mitsubishi.NakErrorReceived += (o, s) => { /* NAK 오류 */ };
+
+        Mitsubishi.DeviceOpened += (o, s) => { /* 포트 열림 */ };
+        Mitsubishi.DeviceClosed += (o, s) => { /* 포트 닫힘 */ };
+    }
+
+    public void Start()
+    {
+        var setting = Main.DataMgr.Setting;
+        Mitsubishi.Port     = setting.PortName;
+        Mitsubishi.Baudrate = setting.Baudrate;
+        Mitsubishi.Timeout  = setting.Timeout;
+
+        // 주기 읽기 (Auto) — device, length 필수, waitTime 선택
+        Mitsubishi.AutoWordRead(1, 1, "D0", 50);       // 워드 D0~D49 주기 읽기
+        Mitsubishi.AutoBitRead(2, 1, "M0", 16);        // 비트 M0~M15 주기 읽기
+
+        Mitsubishi.Start();
+    }
+
+    public void Stop() => Mitsubishi.Stop();
+
+    // 수동 쓰기
+    public void WriteWord(string device, int value)
+    {
+        Mitsubishi.ManualWordWrite(10, 1, device, value);
+    }
+
+    public void WriteBit(string device, bool value)
+    {
+        Mitsubishi.ManualBitWrite(11, 1, device, value);
+    }
+}
+```
+
+### MC 주요 메서드
+
+```csharp
+// Auto (주기적 반복)
+Mitsubishi.AutoWordRead(id, slave, device, length);
+Mitsubishi.AutoBitRead(id, slave, device, length);
+
+// Manual (1회 실행)
+Mitsubishi.ManualWordRead(id, slave, device, length);
+Mitsubishi.ManualBitRead(id, slave, device, length);
+Mitsubishi.ManualWordWrite(id, slave, device, value);       // int 단일
+Mitsubishi.ManualWordWrite(id, slave, device, values[]);    // int[] 복수
+Mitsubishi.ManualBitWrite(id, slave, device, value);        // bool 단일
+Mitsubishi.ManualBitWrite(id, slave, device, values[]);     // bool[] 복수
+
+// 큐 관리 (CNet과 동일)
+Mitsubishi.RemoveAuto(id);       Mitsubishi.ClearAuto();
+Mitsubishi.RemoveManual(id);     Mitsubishi.ClearManual();
+Mitsubishi.ClearWorkSchedule();
+```
+
+### MC 프로퍼티 (CNet과 공통 + 추가)
+
+| 프로퍼티 | 타입 | 설명 |
+|---------|------|------|
+| `UseControlSequence` | bool | CR/LF 제어 시퀀스 사용 (기본 false) |
+| `UseCheckSum` | bool | 체크섬 검증 사용 (기본 false) |
+
+> 나머지 프로퍼티(Port, Baudrate, Parity, DataBits, StopBits, Timeout, Interval, BufferSize, IsStart, IsOpen, AutoReconnect)는 CNet과 동일.
+
+---
+
 ## MQTT 패턴
 
 ```csharp

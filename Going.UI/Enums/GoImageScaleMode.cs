@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace Going.UI.Enums
 {
-    public enum GoImageScaleMode { Real, CenterImage, Strech, Zoom }
+    public enum GoImageScaleMode { Real, CenterImage, Stretch, Zoom }
 }

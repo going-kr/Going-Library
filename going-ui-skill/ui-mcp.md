@@ -63,10 +63,10 @@ gtcli status 172.30.1.13
 | **프로그램** | `programs <host>` | 설치된 프로그램 목록 |
 | | `start <host> <app>` | 프로그램 시작 |
 | | `stop <host> <app>` | 프로그램 중지 |
-| | `install <host> <zip> <name> <exe> [autoStart]` | 프로그램 설치 |
+| | `install <host> <zipFileName> <displayName> <executableFileName> [autoStart]` | 프로그램 설치 |
 | | `uninstall <host> <app>` | 프로그램 삭제 |
 | | `autostart <host> <app> <bool>` | 자동실행 설정 |
-| **배포** | `deploy <host> <zipPath> [name] [exe] [autoStart]` | 업로드→설치→시작 원클릭 |
+| **배포** | `deploy <host> <zipPath> [displayName] [executableFileName] [autoStart]` | 업로드→설치→시작 원클릭 |
 | **파일** | `upload <host> <filePath>` | 파일 업로드 |
 | | `uploads <host>` | 업로드 파일 목록 |
 | | `delete-upload <host> <file>` | 업로드 파일 삭제 |
