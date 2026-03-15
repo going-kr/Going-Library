@@ -6,8 +6,8 @@
 
 ```xml
 <ItemGroup>
-  <PackageReference Include="Going.Basis" Version="1.0.0" />
-  <PackageReference Include="Going.UI.OpenTK" Version="1.0.4" />
+  <PackageReference Include="Going.Basis" Version="1.0.3.1" />
+  <PackageReference Include="Going.UI.OpenTK" Version="1.0.7.1" />
 </ItemGroup>
 ```
 
