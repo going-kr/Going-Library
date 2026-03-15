@@ -59,6 +59,8 @@
       </div>
     </div>
 
+    <hr class="class-separator">
+
     <!-- Class: MathTool -->
     <div id="class-MathTool" class="class-card" data-search="mathtool class static math geometry point rectangle angle distance">
       <div class="class-card-header" onclick="toggleCard(this)">
@@ -82,23 +84,38 @@
             <tr data-search="getdistance double point"><td class="ret">static double</td><td class="col-method-name">GetDistance</td><td class="params">(<span class="tp">Point</span> a, <span class="tp">Point</span> b)</td><td class="col-desc">두 점 사이 거리</td></tr>
             <tr data-search="getdistance double pointf"><td class="ret">static double</td><td class="col-method-name">GetDistance</td><td class="params">(<span class="tp">PointF</span> a, <span class="tp">PointF</span> b)</td><td class="col-desc">두 점 사이 거리 (부동소수점)</td></tr>
             <tr data-search="getdistance double 3d xyz"><td class="ret">static double</td><td class="col-method-name">GetDistance</td><td class="params">(<span class="tp">double</span> x1, <span class="tp">double</span> y1, <span class="tp">double</span> z1, <span class="tp">double</span> x2, <span class="tp">double</span> y2, <span class="tp">double</span> z2)</td><td class="col-desc">3D 두 점 사이 거리</td></tr>
+            <tr data-search="getdistance double line point"><td class="ret">static double</td><td class="col-method-name">GetDistance</td><td class="params">(<span class="tp">PointF</span> LN1, <span class="tp">PointF</span> LN2, <span class="tp">PointF</span> pt)</td><td class="col-desc">점에서 선분까지 거리</td></tr>
+            <tr data-search="getdistance double array"><td class="ret">static double</td><td class="col-method-name">GetDistance</td><td class="params">(<span class="tp">double[]</span> first, <span class="tp">double[]</span> second)</td><td class="col-desc">배열 기반 유클리드 거리</td></tr>
             <tr data-search="rotatepoint pointf"><td class="ret">static PointF</td><td class="col-method-name">RotatePoint</td><td class="params">(<span class="tp">PointF</span> Center, <span class="tp">PointF</span> Target, <span class="tp">float</span> angle)</td><td class="col-desc">Center 기준으로 Target을 angle도 회전</td></tr>
-            <tr data-search="standardangle int"><td class="ret">static int/float/double</td><td class="col-method-name">StandardAngle</td><td class="params">(<span class="tp">int/float/double</span> angle)</td><td class="col-desc">각도를 0~360 범위로 정규화 (3개 오버로드)</td></tr>
+            <tr data-search="standardangle int"><td class="ret">static int</td><td class="col-method-name">StandardAngle</td><td class="params">(<span class="tp">int</span> angle)</td><td class="col-desc">각도를 0~360 범위로 정규화 (int)</td></tr>
+            <tr data-search="standardangle float"><td class="ret">static float</td><td class="col-method-name">StandardAngle</td><td class="params">(<span class="tp">float</span> angle)</td><td class="col-desc">각도를 0~360 범위로 정규화 (float)</td></tr>
+            <tr data-search="standardangle double"><td class="ret">static double</td><td class="col-method-name">StandardAngle</td><td class="params">(<span class="tp">double</span> angle)</td><td class="col-desc">각도를 0~360 범위로 정규화 (double)</td></tr>
             <tr data-search="compareangle bool"><td class="ret">static bool</td><td class="col-method-name">CompareAngle</td><td class="params">(<span class="tp">double</span> Angle, <span class="tp">double</span> StartAngle, <span class="tp">double</span> EndAngle)</td><td class="col-desc">각도가 범위 내에 있는지 확인</td></tr>
           </table>
         </div>
         <div class="member-section">
           <div class="member-section-title">Static Methods — 사각형/점</div>
           <table class="api-table">
-            <tr data-search="centerpoint pointf rect"><td class="ret">static Point/PointF</td><td class="col-method-name">CenterPoint</td><td class="params">(<span class="tp">Rectangle/RectangleF</span> rt)</td><td class="col-desc">사각형 중심점</td></tr>
+            <tr data-search="center int float"><td class="ret">static int/float</td><td class="col-method-name">Center</td><td class="params">(<span class="tp">int/float</span> p1, <span class="tp">int/float</span> p2)</td><td class="col-desc">두 값의 중간값</td></tr>
+            <tr data-search="centerdist int float"><td class="ret">static int/float</td><td class="col-method-name">CenterDist</td><td class="params">(<span class="tp">int/float</span> x, <span class="tp">int/float</span> dist)</td><td class="col-desc">x 기준으로 dist 거리의 중심값</td></tr>
+            <tr data-search="centerpoint point rect"><td class="ret">static Point</td><td class="col-method-name">CenterPoint</td><td class="params">(<span class="tp">Rectangle</span> rt)</td><td class="col-desc">사각형 중심점</td></tr>
+            <tr data-search="centerpoint pointf rectf"><td class="ret">static PointF</td><td class="col-method-name">CenterPoint</td><td class="params">(<span class="tp">RectangleF</span> rt)</td><td class="col-desc">사각형 중심점 (부동소수점)</td></tr>
+            <tr data-search="centerpoint point two"><td class="ret">static Point</td><td class="col-method-name">CenterPoint</td><td class="params">(<span class="tp">Point</span> p1, <span class="tp">Point</span> p2)</td><td class="col-desc">두 점의 중심점</td></tr>
+            <tr data-search="centerpoint pointf two"><td class="ret">static PointF</td><td class="col-method-name">CenterPoint</td><td class="params">(<span class="tp">PointF</span> p1, <span class="tp">PointF</span> p2)</td><td class="col-desc">두 점의 중심점 (부동소수점)</td></tr>
+            <tr data-search="getpoints pointf array rectf"><td class="ret">static PointF[]</td><td class="col-method-name">GetPoints</td><td class="params">(<span class="tp">RectangleF</span> rt)</td><td class="col-desc">사각형의 4개 꼭짓점 배열 반환</td></tr>
             <tr data-search="makerectangle rectangle"><td class="ret">static Rectangle/RectangleF</td><td class="col-method-name">MakeRectangle</td><td class="params">(여러 오버로드)</td><td class="col-desc">두 점, 크기, 중심+크기 등으로 사각형 생성 (8+ 오버로드)</td></tr>
             <tr data-search="getpointwithangle pointf"><td class="ret">static PointF</td><td class="col-method-name">GetPointWithAngle</td><td class="params">(<span class="tp">PointF</span> p, <span class="tp">float</span> angle, <span class="tp">float</span> dist)</td><td class="col-desc">원점에서 각도·거리로 점 계산</td></tr>
+            <tr data-search="getpointwithangle point"><td class="ret">static PointF</td><td class="col-method-name">GetPointWithAngle</td><td class="params">(<span class="tp">Point</span> p, <span class="tp">float</span> angle, <span class="tp">float</span> dist)</td><td class="col-desc">원점에서 각도·거리로 점 계산 (Point)</td></tr>
+            <tr data-search="getx_withangle float pointf"><td class="ret">static float</td><td class="col-method-name">GetX_WithAngle</td><td class="params">(<span class="tp">PointF/Point</span> p, <span class="tp">float</span> angle, <span class="tp">float</span> dist)</td><td class="col-desc">각도·거리로 X 좌표 계산 (2개 오버로드)</td></tr>
+            <tr data-search="gety_withangle float pointf"><td class="ret">static float</td><td class="col-method-name">GetY_WithAngle</td><td class="params">(<span class="tp">PointF/Point</span> p, <span class="tp">float</span> angle, <span class="tp">float</span> dist)</td><td class="col-desc">각도·거리로 Y 좌표 계산 (2개 오버로드)</td></tr>
             <tr data-search="linearequationy float"><td class="ret">static float</td><td class="col-method-name">LinearEquationY</td><td class="params">(<span class="tp">PointF</span> p1, <span class="tp">PointF</span> p2, <span class="tp">float</span> x)</td><td class="col-desc">두 점을 지나는 직선의 Y값 계산</td></tr>
             <tr data-search="linearequationx float"><td class="ret">static float</td><td class="col-method-name">LinearEquationX</td><td class="params">(<span class="tp">PointF</span> p1, <span class="tp">PointF</span> p2, <span class="tp">float</span> y)</td><td class="col-desc">두 점을 지나는 직선의 X값 계산</td></tr>
           </table>
         </div>
       </div>
     </div>
+
+    <hr class="class-separator">
 
     <!-- Class: NetworkTool -->
     <div id="class-NetworkTool" class="class-card" data-search="networktool class static network ip nic dhcp">
@@ -121,6 +138,8 @@
         </div>
       </div>
     </div>
+
+    <hr class="class-separator">
 
     <!-- Class: WindowsTool -->
     <div id="class-WindowsTool" class="class-card" data-search="windowstool class static windows system time sleep">

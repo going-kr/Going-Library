@@ -59,6 +59,8 @@
       </div>
     </div>
 
+    <hr class="class-separator">
+
     <!-- Class: ExternalProgram -->
     <div id="class-ExternalProgram" class="class-card" data-search="externalprogram class process external launch">
       <div class="class-card-header" onclick="toggleCard(this)">
@@ -89,6 +91,8 @@
         </div>
       </div>
     </div>
+
+    <hr class="class-separator">
 
     <!-- Class: HiResTimer -->
     <div id="class-HiResTimer" class="class-card" data-search="hirestimer class timer high resolution interval elapsed">
@@ -128,6 +132,8 @@
       </div>
     </div>
 
+    <hr class="class-separator">
+
     <!-- Class: NaturalSortComparer -->
     <div id="class-NaturalSortComparer" class="class-card" data-search="naturalsortcomparer class sort natural string compare">
       <div class="class-card-header" onclick="toggleCard(this)">
@@ -150,6 +156,8 @@
       </div>
     </div>
 
+    <hr class="class-separator">
+
     <!-- Class: NaturalSortExtensions -->
     <div id="class-NaturalSortExtensions" class="class-card" data-search="naturalsortextensions class static extension sort natural linq">
       <div class="class-card-header" onclick="toggleCard(this)">
@@ -168,6 +176,8 @@
       </div>
     </div>
 
+    <hr class="class-separator">
+
     <!-- Class: CompressionUtility -->
     <div id="class-CompressionUtility" class="class-card" data-search="compressionutility class static compress decompress json gzip">
       <div class="class-card-header" onclick="toggleCard(this)">
@@ -176,10 +186,17 @@
       </div>
       <div class="class-card-body">
         <div class="member-section">
+          <div class="member-section-title">Nested Classes</div>
+          <table class="api-table">
+            <tr data-search="compressionresult class"><td class="col-type">class</td><td class="col-name">CompressionResult</td><td class="col-desc">압축 결과. Data(string?), IsCompressed(bool), OriginalSize(int), ProcessedSize(int), CompressionRatio(double, 계산 프로퍼티)</td></tr>
+            <tr data-search="decompressionresult class generic"><td class="col-type">class</td><td class="col-name">DecompressionResult&lt;T&gt;</td><td class="col-desc">해제 결과. Data(T?), WasCompressed(bool), OriginalSize(int), DecompressedSize(int)</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
           <div class="member-section-title">Static Methods</div>
           <table class="api-table">
-            <tr data-search="compressjson compressionresult static"><td class="ret">static CompressionResult</td><td class="col-method-name">CompressJson&lt;T&gt;</td><td class="params">(<span class="tp">T</span> obj)</td><td class="col-desc">객체를 JSON 직렬화 후 GZip 압축. CompressionResult: Data, IsCompressed, OriginalSize, ProcessedSize, CompressionRatio</td></tr>
-            <tr data-search="decompressjson decompressionresult static"><td class="ret">static DecompressionResult&lt;T&gt;</td><td class="col-method-name">DecompressJson&lt;T&gt;</td><td class="params">(<span class="tp">string</span> base64Data, <span class="tp">bool</span> isCompressed, <span class="tp">int</span> originalSize)</td><td class="col-desc">Base64 데이터 해제 후 역직렬화. DecompressionResult: Data, WasCompressed, OriginalSize, DecompressedSize</td></tr>
+            <tr data-search="compressjson compressionresult static"><td class="ret">static CompressionResult</td><td class="col-method-name">CompressJson&lt;T&gt;</td><td class="params">(<span class="tp">T</span> obj)</td><td class="col-desc">객체를 JSON 직렬화 후 GZip 압축</td></tr>
+            <tr data-search="decompressjson decompressionresult static"><td class="ret">static DecompressionResult&lt;T&gt;</td><td class="col-method-name">DecompressJson&lt;T&gt;</td><td class="params">(<span class="tp">string</span> base64Data, <span class="tp">bool</span> isCompressed, <span class="tp">int</span> originalSize)</td><td class="col-desc">Base64 데이터 해제 후 역직렬화</td></tr>
             <tr data-search="shouldcompress bool static"><td class="ret">static bool</td><td class="col-method-name">ShouldCompress</td><td class="params">(<span class="tp">int</span> dataSize)</td><td class="col-desc">데이터 크기 기반 압축 여부 판단</td></tr>
             <tr data-search="getcompressioninfo string static"><td class="ret">static string</td><td class="col-method-name">GetCompressionInfo</td><td class="params">(<span class="tp">int</span> originalSize, <span class="tp">int</span> processedSize, <span class="tp">bool</span> isCompressed)</td><td class="col-desc">압축 결과 설명 문자열</td></tr>
           </table>

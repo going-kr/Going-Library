@@ -51,7 +51,7 @@ Going Library의 클래스·속성·메서드·이벤트 확인이 필요할 때
 | `api/basis/communications-mqtt.html` | MQClient, MQSubscribe, MQReceiveArgs |
 | `api/basis/communications-ls.html` | CNet (LS Electric PLC) |
 | `api/basis/communications-mitsubishi.html` | MC (Mitsubishi PLC) |
-| `api/basis/datas.html` | INI, BitMemories, WordMemories, BYTE, WORD, Serialize |
+| `api/basis/datas.html` | INI, Serialize, BitMemory, WordMemory, WordRef, BitAccessor |
 | `api/basis/extensions.html` | Bits (비트/바이트 확장 메서드) |
 | `api/basis/measure.html` | Chattering, Stable |
 | `api/basis/tools.html` | CryptoTool, MathTool, NetworkTool, WindowsTool |

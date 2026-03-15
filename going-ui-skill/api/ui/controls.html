@@ -70,6 +70,7 @@
           <table class="api-table">
             <tr data-search="mouseclicked event"><td class="event-args">EventHandler&lt;GoMouseClickEventArgs&gt;</td><td class="col-method-name">MouseClicked</td><td class="col-desc">클릭 시 발생 (MouseDown→Up 3px 이내)</td></tr>
             <tr data-search="mouselongclicked event"><td class="event-args">EventHandler&lt;GoMouseClickEventArgs&gt;</td><td class="col-method-name">MouseLongClicked</td><td class="col-desc">롱클릭 완료 시 발생</td></tr>
+            <tr data-search="mouselongclickcanceled event"><td class="event-args">EventHandler&lt;GoMouseClickEventArgs&gt;</td><td class="col-method-name">MouseLongClickCanceled</td><td class="col-desc">롱클릭 취소 시 발생 (롱클릭 대기 중 손가락/마우스를 뗀 경우)</td></tr>
             <tr data-search="mousedown event"><td class="event-args">EventHandler&lt;GoMouseClickEventArgs&gt;</td><td class="col-method-name">MouseDown</td><td class="col-desc">마우스 다운 시</td></tr>
             <tr data-search="mouseup event"><td class="event-args">EventHandler&lt;GoMouseClickEventArgs&gt;</td><td class="col-method-name">MouseUp</td><td class="col-desc">마우스 업 시</td></tr>
             <tr data-search="mousedoubleclicked event"><td class="event-args">EventHandler&lt;GoMouseClickEventArgs&gt;</td><td class="col-method-name">MouseDoubleClicked</td><td class="col-desc">더블클릭 시</td></tr>
@@ -82,6 +83,8 @@
       </div>
     </div>
 
+
+    <hr class="class-separator">
     <!-- Class: GoButton -->
     <div id="class-GoButton" class="class-card" data-search="gobutton class control button click text icon style fill round">
       <div class="class-card-header" onclick="toggleCard(this)">
@@ -119,6 +122,8 @@
       </div>
     </div>
 
+
+    <hr class="class-separator">
     <!-- Class: GoLabel -->
     <div id="class-GoLabel" class="class-card" data-search="golabel class control label text display icon static">
       <div class="class-card-header" onclick="toggleCard(this)">
@@ -144,6 +149,8 @@
       </div>
     </div>
 
+
+    <hr class="class-separator">
     <!-- Class: GoCheckBox -->
     <div id="class-GoCheckBox" class="class-card" data-search="gocheckbox class control checkbox checked toggle bool box">
       <div class="class-card-header" onclick="toggleCard(this)">
@@ -175,6 +182,8 @@
       </div>
     </div>
 
+
+    <hr class="class-separator">
     <!-- Class: GoRadioButton / GoRadioBox -->
     <div id="class-GoRadioButton" class="class-card" data-search="goradiobutton goradiobox class control radio button group checked">
       <div class="class-card-header" onclick="toggleCard(this)">
@@ -183,22 +192,34 @@
       </div>
       <div class="class-card-body">
         <div class="member-section">
-          <div class="member-section-title">주요 Properties (GoCheckBox와 동일)</div>
+          <div class="member-section-title">Properties</div>
           <table class="api-table">
-            <tr data-search="text string"><td class="col-type">string</td><td class="col-name">Text <span class="accessor">get set</span></td><td class="col-desc">레이블 텍스트</td></tr>
-            <tr data-search="checked bool"><td class="col-type">bool</td><td class="col-name">Checked <span class="accessor">get set</span></td><td class="col-desc">선택 상태</td></tr>
-            <tr data-search="boxsize int"><td class="col-type">int</td><td class="col-name">BoxSize / Gap / ContentAlignment <span class="accessor">get set</span></td><td class="col-desc">크기·배치 설정</td></tr>
+            <tr data-search="iconstring string"><td class="col-type">string?</td><td class="col-name">IconString / IconSize / IconDirection / IconGap <span class="accessor">get set</span></td><td class="col-desc">아이콘 설정. 기본값: 12, Horizon, 5</td></tr>
+            <tr data-search="text string"><td class="col-type">string</td><td class="col-name">Text <span class="accessor">get set</span></td><td class="col-desc">레이블 텍스트. 기본값: "button"</td></tr>
+            <tr data-search="fontname string"><td class="col-type">string</td><td class="col-name">FontName / FontStyle / FontSize <span class="accessor">get set</span></td><td class="col-desc">폰트 설정</td></tr>
+            <tr data-search="textcolor string"><td class="col-type">string</td><td class="col-name">TextColor <span class="accessor">get set</span></td><td class="col-desc">텍스트 색상. 기본값: "Fore"</td></tr>
+            <tr data-search="buttoncolor string"><td class="col-type">string</td><td class="col-name">ButtonColor <span class="accessor">get set</span></td><td class="col-desc">버튼 배경 색상. 기본값: "Base3"</td></tr>
+            <tr data-search="checkedbuttoncolor string"><td class="col-type">string</td><td class="col-name">CheckedButtonColor <span class="accessor">get set</span></td><td class="col-desc">체크 시 배경 색상. 기본값: "Select"</td></tr>
+            <tr data-search="bordercolor string"><td class="col-type">string</td><td class="col-name">BorderColor / CheckedBorderColor <span class="accessor">get set</span></td><td class="col-desc">테두리 / 체크 시 테두리 색상. 기본값: "Base3" / "Select"</td></tr>
+            <tr data-search="round goroundtype"><td class="col-type">GoRoundType</td><td class="col-name">Round <span class="accessor">get set</span></td><td class="col-desc">모서리 스타일. 기본값: All</td></tr>
+            <tr data-search="borderwidth float"><td class="col-type">float</td><td class="col-name">BorderWidth <span class="accessor">get set</span></td><td class="col-desc">테두리 두께. 기본값: 1</td></tr>
+            <tr data-search="fillstyle"><td class="col-type">GoButtonFillStyle</td><td class="col-name">FillStyle <span class="accessor">get set</span></td><td class="col-desc">채우기 스타일. 기본값: Flat</td></tr>
+            <tr data-search="checked bool"><td class="col-type">bool</td><td class="col-name">Checked <span class="accessor">get set</span></td><td class="col-desc">선택 상태. true 설정 시 같은 부모의 다른 라디오 자동 해제</td></tr>
+            <tr data-search="autofontsize"><td class="col-type">GoAutoFontSize</td><td class="col-name">AutoFontSize / AutoIconSize <span class="accessor">get set</span></td><td class="col-desc">자동 크기 조절. 기본값: NotUsed</td></tr>
           </table>
         </div>
         <div class="member-section">
           <div class="member-section-title">Events</div>
           <table class="api-table">
+            <tr data-search="buttonclicked event"><td class="event-args">EventHandler</td><td class="col-method-name">ButtonClicked</td><td class="col-desc">버튼 클릭 시</td></tr>
             <tr data-search="checkedchanged event"><td class="event-args">EventHandler</td><td class="col-method-name">CheckedChanged</td><td class="col-desc">선택 상태 변경 시</td></tr>
           </table>
         </div>
       </div>
     </div>
 
+
+    <hr class="class-separator">
     <!-- Class: GoSwitch -->
     <div id="class-GoSwitch" class="class-card" data-search="goswitch class control switch toggle on off value bool">
       <div class="class-card-header" onclick="toggleCard(this)">
@@ -209,53 +230,122 @@
         <div class="member-section">
           <div class="member-section-title">Properties</div>
           <table class="api-table">
-            <tr data-search="value bool"><td class="col-type">bool</td><td class="col-name">Value <span class="accessor">get set</span></td><td class="col-desc">스위치 ON/OFF 상태. 변경 시 ValueChanged 발생</td></tr>
-            <tr data-search="ontext string"><td class="col-type">string?</td><td class="col-name">OnText / OffText <span class="accessor">get set</span></td><td class="col-desc">ON/OFF 표시 텍스트</td></tr>
-            <tr data-search="oncolor string"><td class="col-type">string</td><td class="col-name">OnColor / OffColor <span class="accessor">get set</span></td><td class="col-desc">ON/OFF 배경 색상</td></tr>
-            <tr data-search="textcolor string"><td class="col-type">string</td><td class="col-name">TextColor <span class="accessor">get set</span></td><td class="col-desc">텍스트 색상</td></tr>
+            <tr data-search="onoff bool"><td class="col-type">bool</td><td class="col-name">OnOff <span class="accessor">get set</span></td><td class="col-desc">스위치 ON/OFF 상태. 변경 시 OnOffChanged 발생</td></tr>
+            <tr data-search="ontext offtext string"><td class="col-type">string</td><td class="col-name">OnText / OffText <span class="accessor">get set</span></td><td class="col-desc">ON/OFF 표시 텍스트. 기본값: "On" / "Off"</td></tr>
+            <tr data-search="oniconstring string"><td class="col-type">string?</td><td class="col-name">OnIconString / OffIconString <span class="accessor">get set</span></td><td class="col-desc">ON/OFF 아이콘 문자열</td></tr>
             <tr data-search="fontname string"><td class="col-type">string</td><td class="col-name">FontName / FontStyle / FontSize <span class="accessor">get set</span></td><td class="col-desc">폰트 설정</td></tr>
-            <tr data-search="round goroundtype"><td class="col-type">GoRoundType</td><td class="col-name">Round <span class="accessor">get set</span></td><td class="col-desc">모서리 스타일</td></tr>
+            <tr data-search="iconsize float"><td class="col-type">float</td><td class="col-name">IconSize / IconGap <span class="accessor">get set</span></td><td class="col-desc">아이콘 크기/간격. 기본값: 12, 5</td></tr>
+            <tr data-search="icondirection"><td class="col-type">GoDirectionHV</td><td class="col-name">IconDirection <span class="accessor">get set</span></td><td class="col-desc">아이콘 방향</td></tr>
+            <tr data-search="ontextcolor string"><td class="col-type">string</td><td class="col-name">OnTextColor / OffTextColor <span class="accessor">get set</span></td><td class="col-desc">ON/OFF 텍스트 색상. 기본값: "Fore" / "Base5"</td></tr>
+            <tr data-search="boxcolor string"><td class="col-type">string</td><td class="col-name">BoxColor <span class="accessor">get set</span></td><td class="col-desc">스위치 배경 색상. 기본값: "Base1"</td></tr>
+            <tr data-search="bordercolor string"><td class="col-type">string</td><td class="col-name">BorderColor <span class="accessor">get set</span></td><td class="col-desc">테두리 색상. 기본값: "Base3"</td></tr>
+            <tr data-search="switchcolor string"><td class="col-type">string</td><td class="col-name">SwitchColor <span class="accessor">get set</span></td><td class="col-desc">스위치 핸들 색상. 기본값: "Base3"</td></tr>
+            <tr data-search="oniconcolor string"><td class="col-type">string</td><td class="col-name">OnIconColor / OffIconColor <span class="accessor">get set</span></td><td class="col-desc">ON/OFF 아이콘 색상. 기본값: "lime" / "red"</td></tr>
+            <tr data-search="autofontsize"><td class="col-type">GoAutoFontSize</td><td class="col-name">AutoFontSize / AutoIconSize <span class="accessor">get set</span></td><td class="col-desc">자동 크기 조절. 기본값: NotUsed</td></tr>
           </table>
         </div>
         <div class="member-section">
           <div class="member-section-title">Events</div>
           <table class="api-table">
-            <tr data-search="valuechanged event"><td class="event-args">EventHandler</td><td class="col-method-name">ValueChanged</td><td class="col-desc">Value 변경 시 발생</td></tr>
+            <tr data-search="onoffchanged event"><td class="event-args">EventHandler</td><td class="col-method-name">OnOffChanged</td><td class="col-desc">OnOff 변경 시 발생</td></tr>
           </table>
         </div>
       </div>
     </div>
 
+
+    <hr class="class-separator">
     <!-- Class: GoSlider -->
-    <div id="class-GoSlider" class="class-card" data-search="goslider class control slider value min max bar cursor direction">
+    <div id="class-GoSlider" class="class-card" data-search="goslider class control slider value min max bar handle direction tick shadow">
       <div class="class-card-header" onclick="toggleCard(this)">
         <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoSlider</span> <span class="base">: GoControl</span></div>
         <div class="class-desc">슬라이더 컨트롤. 수평/수직 방향, 범위 값 설정 가능.</div>
       </div>
       <div class="class-card-body">
         <div class="member-section">
-          <div class="member-section-title">Properties</div>
+          <div class="member-section-title">Properties — 값</div>
           <table class="api-table">
             <tr data-search="minimum double"><td class="col-type">double</td><td class="col-name">Minimum <span class="accessor">get set</span></td><td class="col-desc">최솟값. 기본값: 0</td></tr>
             <tr data-search="maximum double"><td class="col-type">double</td><td class="col-name">Maximum <span class="accessor">get set</span></td><td class="col-desc">최댓값. 기본값: 100</td></tr>
             <tr data-search="value double"><td class="col-type">double</td><td class="col-name">Value <span class="accessor">get set</span></td><td class="col-desc">현재 값. 변경 시 ValueChanged 발생</td></tr>
+            <tr data-search="valuestring string"><td class="col-type">string?</td><td class="col-name">ValueString <span class="accessor">get set</span></td><td class="col-desc">값 문자열. 기본값: "0"</td></tr>
+            <tr data-search="valueformat string"><td class="col-type">string</td><td class="col-name">ValueFormat <span class="accessor">get set</span></td><td class="col-desc">값 표시 형식 문자열. 기본값: "0"</td></tr>
+            <tr data-search="showvaluelabel bool"><td class="col-type">bool</td><td class="col-name">ShowValueLabel <span class="accessor">get set</span></td><td class="col-desc">값 텍스트 표시 여부. 기본값: true</td></tr>
             <tr data-search="tick double"><td class="col-type">double?</td><td class="col-name">Tick <span class="accessor">get set</span></td><td class="col-desc">스냅 단위. null이면 연속</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Properties — 방향 / 배치</div>
+          <table class="api-table">
             <tr data-search="direction godirectionhv"><td class="col-type">GoDirectionHV</td><td class="col-name">Direction <span class="accessor">get set</span></td><td class="col-desc">슬라이더 방향. 기본값: Horizon</td></tr>
-            <tr data-search="barcolor string"><td class="col-type">string</td><td class="col-name">BarColor / FillColor / CursorColor / BorderColor <span class="accessor">get set</span></td><td class="col-desc">색상 설정</td></tr>
-            <tr data-search="formatstring string"><td class="col-type">string</td><td class="col-name">FormatString <span class="accessor">get set</span></td><td class="col-desc">값 표시 형식 문자열</td></tr>
-            <tr data-search="drawtext bool"><td class="col-type">bool</td><td class="col-name">DrawText <span class="accessor">get set</span></td><td class="col-desc">값 텍스트 표시 여부</td></tr>
-            <tr data-search="round goroundtype"><td class="col-type">GoRoundType</td><td class="col-name">Round <span class="accessor">get set</span></td><td class="col-desc">모서리 스타일</td></tr>
+            <tr data-search="round goroundtype"><td class="col-type">GoRoundType</td><td class="col-name">Round <span class="accessor">get set</span></td><td class="col-desc">모서리 스타일. 기본값: All</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Properties — 아이콘 / 텍스트</div>
+          <table class="api-table">
+            <tr data-search="iconstring string"><td class="col-type">string?</td><td class="col-name">IconString <span class="accessor">get set</span></td><td class="col-desc">아이콘 문자열</td></tr>
+            <tr data-search="iconsize float"><td class="col-type">float</td><td class="col-name">IconSize <span class="accessor">get set</span></td><td class="col-desc">아이콘 크기. 기본값: 12</td></tr>
+            <tr data-search="icongap float"><td class="col-type">float</td><td class="col-name">IconGap <span class="accessor">get set</span></td><td class="col-desc">아이콘 간격. 기본값: 5</td></tr>
+            <tr data-search="icondirection godirectionhv"><td class="col-type">GoDirectionHV</td><td class="col-name">IconDirection <span class="accessor">get set</span></td><td class="col-desc">아이콘 배치 방향</td></tr>
+            <tr data-search="text string"><td class="col-type">string</td><td class="col-name">Text <span class="accessor">get set</span></td><td class="col-desc">슬라이더 라벨. 기본값: "slider"</td></tr>
+            <tr data-search="fontname string"><td class="col-type">string</td><td class="col-name">FontName <span class="accessor">get set</span></td><td class="col-desc">폰트 이름. 기본값: "나눔고딕"</td></tr>
+            <tr data-search="fontsize float"><td class="col-type">float</td><td class="col-name">FontSize <span class="accessor">get set</span></td><td class="col-desc">폰트 크기. 기본값: 12</td></tr>
+            <tr data-search="autofontsize goautofontsize"><td class="col-type">GoAutoFontSize</td><td class="col-name">AutoFontSize <span class="accessor">get set</span></td><td class="col-desc">자동 폰트 크기 조절</td></tr>
+            <tr data-search="autoiconsize goautofontsize"><td class="col-type">GoAutoFontSize</td><td class="col-name">AutoIconSize <span class="accessor">get set</span></td><td class="col-desc">자동 아이콘 크기 조절</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Properties — 색상</div>
+          <table class="api-table">
+            <tr data-search="textcolor string"><td class="col-type">string</td><td class="col-name">TextColor <span class="accessor">get set</span></td><td class="col-desc">텍스트 색상. 기본값: "Fore"</td></tr>
+            <tr data-search="boxcolor string"><td class="col-type">string</td><td class="col-name">BoxColor <span class="accessor">get set</span></td><td class="col-desc">배경 색상. 기본값: "Back"</td></tr>
+            <tr data-search="slidercolor string"><td class="col-type">string</td><td class="col-name">SliderColor <span class="accessor">get set</span></td><td class="col-desc">슬라이더 트랙 색상. 기본값: "Base5"</td></tr>
+            <tr data-search="progresscolor string"><td class="col-type">string</td><td class="col-name">ProgressColor <span class="accessor">get set</span></td><td class="col-desc">진행 바 색상. 기본값: "Base1"</td></tr>
+            <tr data-search="bordercolor string"><td class="col-type">string</td><td class="col-name">BorderColor <span class="accessor">get set</span></td><td class="col-desc">테두리 색상. 기본값: "danger"</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Properties — 바 / 핸들</div>
+          <table class="api-table">
+            <tr data-search="barsize int"><td class="col-type">int</td><td class="col-name">BarSize <span class="accessor">get set</span></td><td class="col-desc">바 두께 (px). 기본값: 4</td></tr>
+            <tr data-search="handleradius float"><td class="col-type">float</td><td class="col-name">HandleRadius <span class="accessor">get set</span></td><td class="col-desc">핸들 반지름. 기본값: 15</td></tr>
+            <tr data-search="handlehoverscale float"><td class="col-type">float</td><td class="col-name">HandleHoverScale <span class="accessor">get set</span></td><td class="col-desc">핸들 호버 시 확대 비율. 기본값: 1.05</td></tr>
+            <tr data-search="enableshadow bool"><td class="col-type">bool</td><td class="col-name">EnableShadow <span class="accessor">get set</span></td><td class="col-desc">그림자 활성화. 기본값: true</td></tr>
+            <tr data-search="backgrounddraw bool"><td class="col-type">bool</td><td class="col-name">BackgroundDraw <span class="accessor">get set</span></td><td class="col-desc">배경 그리기 여부. 기본값: false</td></tr>
+            <tr data-search="borderonly bool"><td class="col-type">bool</td><td class="col-name">BorderOnly <span class="accessor">get set</span></td><td class="col-desc">테두리만 그리기. 기본값: false</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Properties — 틱</div>
+          <table class="api-table">
+            <tr data-search="showticks bool"><td class="col-type">bool</td><td class="col-name">ShowTicks <span class="accessor">get set</span></td><td class="col-desc">틱 표시 여부. 기본값: false</td></tr>
+            <tr data-search="tickcount int"><td class="col-type">int</td><td class="col-name">TickCount <span class="accessor">get set</span></td><td class="col-desc">틱 개수. 기본값: 5</td></tr>
+            <tr data-search="ticksize float"><td class="col-type">float</td><td class="col-name">TickSize <span class="accessor">get set</span></td><td class="col-desc">틱 크기. 기본값: 10</td></tr>
           </table>
         </div>
         <div class="member-section">
           <div class="member-section-title">Events</div>
           <table class="api-table">
             <tr data-search="valuechanged event"><td class="event-args">EventHandler</td><td class="col-method-name">ValueChanged</td><td class="col-desc">Value 변경 시 발생</td></tr>
+            <tr data-search="sliderdragstarted event"><td class="event-args">EventHandler</td><td class="col-method-name">SliderDragStarted</td><td class="col-desc">슬라이더 드래그 시작 시 발생</td></tr>
+            <tr data-search="sliderdragcompleted event"><td class="event-args">EventHandler</td><td class="col-method-name">SliderDragCompleted</td><td class="col-desc">슬라이더 드래그 완료 시 발생</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Methods</div>
+          <table class="api-table">
+            <tr data-search="incrementalvalue void"><td class="ret">void</td><td class="col-method-name">IncrementalValue</td><td class="params">()</td><td class="col-desc">값 증가</td></tr>
+            <tr data-search="decrementalvalue void"><td class="ret">void</td><td class="col-method-name">DecrementalValue</td><td class="params">()</td><td class="col-desc">값 감소</td></tr>
+            <tr data-search="setvaluetominimum void"><td class="ret">void</td><td class="col-method-name">SetValueToMinimum</td><td class="params">()</td><td class="col-desc">값을 최솟값으로 설정</td></tr>
+            <tr data-search="setvaluetomaximum void"><td class="ret">void</td><td class="col-method-name">SetValueToMaximum</td><td class="params">()</td><td class="col-desc">값을 최댓값으로 설정</td></tr>
           </table>
         </div>
       </div>
     </div>
 
+
+    <hr class="class-separator">
     <!-- Class: GoRangeSlider -->
     <div id="class-GoRangeSlider" class="class-card" data-search="gorangeslider class control range slider value min max start end">
       <div class="class-card-header" onclick="toggleCard(this)">
@@ -281,6 +371,8 @@
       </div>
     </div>
 
+
+    <hr class="class-separator">
     <!-- Class: GoInput (abstract) and subclasses -->
     <div id="class-GoInput" class="class-card" data-search="goinput abstract control input string number bool combo selector color datetime title button">
       <div class="class-card-header" onclick="toggleCard(this)">
@@ -379,6 +471,8 @@
       </div>
     </div>
 
+
+    <hr class="class-separator">
     <!-- Class: GoProgress -->
     <div id="class-GoProgress" class="class-card" data-search="goprogress class control progress bar value min max direction">
       <div class="class-card-header" onclick="toggleCard(this)">
@@ -389,18 +483,33 @@
         <div class="member-section">
           <div class="member-section-title">Properties</div>
           <table class="api-table">
+            <tr data-search="fontname string"><td class="col-type">string</td><td class="col-name">FontName / FontStyle / FontSize <span class="accessor">get set</span></td><td class="col-desc">폰트 설정. 기본값: "나눔고딕", Normal, 18</td></tr>
+            <tr data-search="valuefontsize float"><td class="col-type">float</td><td class="col-name">ValueFontSize <span class="accessor">get set</span></td><td class="col-desc">값 텍스트 폰트 크기. 기본값: 14</td></tr>
+            <tr data-search="textcolor string"><td class="col-type">string</td><td class="col-name">TextColor <span class="accessor">get set</span></td><td class="col-desc">텍스트 색상. 기본값: "Fore"</td></tr>
+            <tr data-search="fillcolor string"><td class="col-type">string</td><td class="col-name">FillColor <span class="accessor">get set</span></td><td class="col-desc">채움 색상. 기본값: "Good"</td></tr>
+            <tr data-search="emptycolor string"><td class="col-type">string</td><td class="col-name">EmptyColor <span class="accessor">get set</span></td><td class="col-desc">빈 영역 색상. 기본값: "Base1"</td></tr>
+            <tr data-search="bordercolor string"><td class="col-type">string</td><td class="col-name">BorderColor <span class="accessor">get set</span></td><td class="col-desc">테두리 색상. 기본값: "Transparent"</td></tr>
+            <tr data-search="direction progressdirection"><td class="col-type">ProgressDirection</td><td class="col-name">Direction <span class="accessor">get set</span></td><td class="col-desc">진행 방향. 기본값: LeftToRight</td></tr>
             <tr data-search="minimum double"><td class="col-type">double</td><td class="col-name">Minimum / Maximum <span class="accessor">get set</span></td><td class="col-desc">값 범위. 기본값: 0 ~ 100</td></tr>
             <tr data-search="value double"><td class="col-type">double</td><td class="col-name">Value <span class="accessor">get set</span></td><td class="col-desc">현재 값</td></tr>
-            <tr data-search="direction godirectionhv"><td class="col-type">GoDirectionHV</td><td class="col-name">Direction <span class="accessor">get set</span></td><td class="col-desc">진행 방향. 기본값: Horizon</td></tr>
-            <tr data-search="fillcolor string"><td class="col-type">string</td><td class="col-name">FillColor / BarColor / BorderColor <span class="accessor">get set</span></td><td class="col-desc">색상 설정</td></tr>
-            <tr data-search="formatstring string"><td class="col-type">string?</td><td class="col-name">FormatString <span class="accessor">get set</span></td><td class="col-desc">값 표시 형식 문자열</td></tr>
-            <tr data-search="drawtext bool"><td class="col-type">bool</td><td class="col-name">DrawText <span class="accessor">get set</span></td><td class="col-desc">값 텍스트 표시 여부</td></tr>
-            <tr data-search="round goroundtype"><td class="col-type">GoRoundType</td><td class="col-name">Round <span class="accessor">get set</span></td><td class="col-desc">모서리 스타일</td></tr>
+            <tr data-search="format string"><td class="col-type">string</td><td class="col-name">Format <span class="accessor">get set</span></td><td class="col-desc">값 표시 형식 문자열. 기본값: "0"</td></tr>
+            <tr data-search="gap int"><td class="col-type">int</td><td class="col-name">Gap <span class="accessor">get set</span></td><td class="col-desc">간격. 기본값: 5</td></tr>
+            <tr data-search="cornerradius int"><td class="col-type">int</td><td class="col-name">CornerRadius <span class="accessor">get set</span></td><td class="col-desc">모서리 반지름. 기본값: 5</td></tr>
+            <tr data-search="barsize int"><td class="col-type">int?</td><td class="col-name">BarSize <span class="accessor">get set</span></td><td class="col-desc">바 두께 (null이면 자동)</td></tr>
+            <tr data-search="showvaluelabel bool"><td class="col-type">bool</td><td class="col-name">ShowValueLabel <span class="accessor">get set</span></td><td class="col-desc">값 라벨 표시 여부. 기본값: false</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Events</div>
+          <table class="api-table">
+            <tr data-search="valuechanged event"><td class="event-args">EventHandler</td><td class="col-method-name">ValueChanged</td><td class="col-desc">Value 변경 시 발생</td></tr>
           </table>
         </div>
       </div>
     </div>
 
+
+    <hr class="class-separator">
     <!-- Class: GoGauge -->
     <div id="class-GoGauge" class="class-card" data-search="gogauge class control gauge circular arc value min max needle">
       <div class="class-card-header" onclick="toggleCard(this)">
@@ -422,6 +531,8 @@
       </div>
     </div>
 
+
+    <hr class="class-separator">
     <!-- Class: GoListBox -->
     <div id="class-GoListBox" class="class-card" data-search="golistbox class control list scroll items selection mode">
       <div class="class-card-header" onclick="toggleCard(this)">
@@ -452,6 +563,8 @@
       </div>
     </div>
 
+
+    <hr class="class-separator">
     <!-- Class: GoDataGrid -->
     <div id="class-GoDataGrid" class="class-card" data-search="godatagrid class control datagrid table column row scroll selection">
       <div class="class-card-header" onclick="toggleCard(this)">
@@ -483,6 +596,8 @@
       </div>
     </div>
 
+
+    <hr class="class-separator">
     <!-- Class: GoLineGraph / GoBarGraph / GoTrendGraph -->
     <div id="class-GoLineGraph" class="class-card" data-search="golinegraph gobargraph gotrendgraph class control graph chart data series">
       <div class="class-card-header" onclick="toggleCard(this)">
@@ -503,6 +618,8 @@
       </div>
     </div>
 
+
+    <hr class="class-separator">
     <!-- Class: GoLamp / GoOnOff -->
     <div id="class-GoLamp" class="class-card" data-search="golamp goonoff class control lamp indicator on off state">
       <div class="class-card-header" onclick="toggleCard(this)">
@@ -513,20 +630,28 @@
         <div class="member-section">
           <div class="member-section-title">Properties</div>
           <table class="api-table">
-            <tr data-search="onoff bool value"><td class="col-type">bool</td><td class="col-name">OnOff <span class="accessor">get set</span></td><td class="col-desc">ON/OFF 상태. 변경 시 ValueChanged 발생</td></tr>
-            <tr data-search="oncolor string"><td class="col-type">string</td><td class="col-name">OnColor / OffColor <span class="accessor">get set</span></td><td class="col-desc">ON/OFF 색상</td></tr>
-            <tr data-search="text string"><td class="col-type">string</td><td class="col-name">OnText / OffText / Text <span class="accessor">get set</span></td><td class="col-desc">표시 텍스트</td></tr>
+            <tr data-search="onoff bool"><td class="col-type">bool</td><td class="col-name">OnOff <span class="accessor">get set</span></td><td class="col-desc">ON/OFF 상태. 변경 시 OnOffChanged 발생</td></tr>
+            <tr data-search="text string"><td class="col-type">string</td><td class="col-name">Text <span class="accessor">get set</span></td><td class="col-desc">표시 텍스트. 기본값: "lamp"</td></tr>
+            <tr data-search="fontname string"><td class="col-type">string</td><td class="col-name">FontName / FontStyle / FontSize <span class="accessor">get set</span></td><td class="col-desc">폰트 설정</td></tr>
+            <tr data-search="textcolor string"><td class="col-type">string</td><td class="col-name">TextColor <span class="accessor">get set</span></td><td class="col-desc">텍스트 색상. 기본값: "Fore"</td></tr>
+            <tr data-search="oncolor string"><td class="col-type">string</td><td class="col-name">OnColor / OffColor <span class="accessor">get set</span></td><td class="col-desc">ON/OFF 색상. 기본값: "Good" / "Base2"</td></tr>
+            <tr data-search="lampsize int"><td class="col-type">int</td><td class="col-name">LampSize <span class="accessor">get set</span></td><td class="col-desc">램프 크기(px). 기본값: 24</td></tr>
+            <tr data-search="gap int"><td class="col-type">int</td><td class="col-name">Gap <span class="accessor">get set</span></td><td class="col-desc">램프-텍스트 간격. 기본값: 10</td></tr>
+            <tr data-search="contentalignment"><td class="col-type">GoContentAlignment</td><td class="col-name">ContentAlignment <span class="accessor">get set</span></td><td class="col-desc">내용 정렬. 기본값: MiddleCenter</td></tr>
+            <tr data-search="autofontsize"><td class="col-type">GoAutoFontSize</td><td class="col-name">AutoFontSize <span class="accessor">get set</span></td><td class="col-desc">자동 폰트 크기. 기본값: NotUsed</td></tr>
           </table>
         </div>
         <div class="member-section">
           <div class="member-section-title">Events</div>
           <table class="api-table">
-            <tr data-search="valuechanged event"><td class="event-args">EventHandler</td><td class="col-method-name">ValueChanged</td><td class="col-desc">OnOff 값 변경 시</td></tr>
+            <tr data-search="onoffchanged event"><td class="event-args">EventHandler</td><td class="col-method-name">OnOffChanged</td><td class="col-desc">OnOff 값 변경 시</td></tr>
           </table>
         </div>
       </div>
     </div>
 
+
+    <hr class="class-separator">
     <!-- Class: GoLampButton -->
     <div id="class-GoLampButton" class="class-card" data-search="golampbutton class control lamp button on off indicator click">
       <div class="class-card-header" onclick="toggleCard(this)">
@@ -553,6 +678,8 @@
       </div>
     </div>
 
+
+    <hr class="class-separator">
     <!-- Class: GoCalendar -->
     <div id="class-GoCalendar" class="class-card" data-search="gocalendar class control calendar date month year picker">
       <div class="class-card-header" onclick="toggleCard(this)">
@@ -578,6 +705,8 @@
       </div>
     </div>
 
+
+    <hr class="class-separator">
     <!-- Class: GoKnob -->
     <div id="class-GoKnob" class="class-card" data-search="goknob class control knob rotary value min max">
       <div class="class-card-header" onclick="toggleCard(this)">
@@ -604,6 +733,8 @@
       </div>
     </div>
 
+
+    <hr class="class-separator">
     <!-- Class: GoNavigator -->
     <div id="class-GoNavigator" class="class-card" data-search="gonavigator class control navigator page previous next first last">
       <div class="class-card-header" onclick="toggleCard(this)">
@@ -628,6 +759,8 @@
       </div>
     </div>
 
+
+    <hr class="class-separator">
     <!-- Class: GoStep -->
     <div id="class-GoStep" class="class-card" data-search="gostep class control step wizard progress stage">
       <div class="class-card-header" onclick="toggleCard(this)">
@@ -647,6 +780,8 @@
       </div>
     </div>
 
+
+    <hr class="class-separator">
     <!-- Class: GoPicture -->
     <div id="class-GoPicture" class="class-card" data-search="gopicture class control picture image display scale">
       <div class="class-card-header" onclick="toggleCard(this)">
@@ -666,6 +801,8 @@
       </div>
     </div>
 
+
+    <hr class="class-separator">
     <!-- Class: GoValue -->
     <div id="class-GoValue" class="class-card" data-search="govalue class control value display number title unit">
       <div class="class-card-header" onclick="toggleCard(this)">
@@ -687,6 +824,8 @@
       </div>
     </div>
 
+
+    <hr class="class-separator">
     <!-- Class: GoMeter -->
     <div id="class-GoMeter" class="class-card" data-search="gometer class control meter value linear direction">
       <div class="class-card-header" onclick="toggleCard(this)">
@@ -706,6 +845,8 @@
       </div>
     </div>
 
+
+    <hr class="class-separator">
     <!-- Class: GoAnimate -->
     <div id="class-GoAnimate" class="class-card" data-search="goanimate class control animate animation gif image frame">
       <div class="class-card-header" onclick="toggleCard(this)">
@@ -725,6 +866,8 @@
       </div>
     </div>
 
+
+    <hr class="class-separator">
     <!-- Class: GoToggleButton -->
     <div id="class-GoToggleButton" class="class-card" data-search="gotogglebutton class control toggle button on off checked">
       <div class="class-card-header" onclick="toggleCard(this)">
@@ -750,6 +893,8 @@
       </div>
     </div>
 
+
+    <hr class="class-separator">
     <!-- Class: GoNumberBox -->
     <div id="class-GoNumberBox" class="class-card" data-search="gonumberbox class control number input updown spin value min max">
       <div class="class-card-header" onclick="toggleCard(this)">
@@ -775,6 +920,8 @@
       </div>
     </div>
 
+
+    <hr class="class-separator">
     <!-- Class: GoButtons -->
     <div id="class-GoButtons" class="class-card" data-search="gobuttons class control buttons group mode radio toggle selected">
       <div class="class-card-header" onclick="toggleCard(this)">
@@ -802,6 +949,8 @@
       </div>
     </div>
 
+
+    <hr class="class-separator">
     <!-- Class: GoIconButton -->
     <div id="class-GoIconButton" class="class-card" data-search="goiconbutton class control icon button round square circle">
       <div class="class-card-header" onclick="toggleCard(this)">
@@ -826,6 +975,8 @@
       </div>
     </div>
 
+
+    <hr class="class-separator">
     <!-- Class: GoTreeView -->
     <div id="class-GoTreeView" class="class-card" data-search="gotreeview class control tree view node expand collapse">
       <div class="class-card-header" onclick="toggleCard(this)">
@@ -851,6 +1002,8 @@
       </div>
     </div>
 
+
+    <hr class="class-separator">
     <!-- Class: GoToolBox -->
     <div id="class-GoToolBox" class="class-card" data-search="gotoolbox class control toolbox category item icon drag">
       <div class="class-card-header" onclick="toggleCard(this)">
@@ -869,6 +1022,8 @@
       </div>
     </div>
 
+
+    <hr class="class-separator">
     <!-- Class: GoColorSelector -->
     <div id="class-GoColorSelector" class="class-card" data-search="gocolorselector class control color picker hsv rgb palette">
       <div class="class-card-header" onclick="toggleCard(this)">
@@ -891,6 +1046,8 @@
       </div>
     </div>
 
+
+    <hr class="class-separator">
     <!-- Class: GoTimeGraph -->
     <div id="class-GoTimeGraph" class="class-card" data-search="gotimegraph class control timegraph history time series realtime">
       <div class="class-card-header" onclick="toggleCard(this)">

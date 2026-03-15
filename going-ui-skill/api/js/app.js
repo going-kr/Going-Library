@@ -33,12 +33,13 @@ const NAV = {
         label: 'Datas',
         children: [
           { label: 'INI', href: '../basis/datas.html#class-INI', type: 'class' },
-          { label: 'BitMemories', href: '../basis/datas.html#class-BitMemories', type: 'class' },
-          { label: 'WordMemories', href: '../basis/datas.html#class-WordMemories', type: 'class' },
-          { label: 'BYTE', href: '../basis/datas.html#class-BYTE', type: 'class' },
-          { label: 'WORD', href: '../basis/datas.html#class-WORD', type: 'class' },
           { label: 'Seriealize', href: '../basis/datas.html#class-Seriealize', type: 'static' },
-          { label: 'MemoryKinds', href: '../basis/datas.html#enum-MemoryKinds', type: 'enum' },
+          { label: 'BitMemory', href: '../basis/datas.html#class-BitMemory', type: 'class' },
+          { label: 'WordMemory', href: '../basis/datas.html#class-WordMemory', type: 'class' },
+          { label: 'WordRef', href: '../basis/datas.html#class-WordRef', type: 'class' },
+          { label: 'BitAccessor', href: '../basis/datas.html#class-BitAccessor', type: 'class' },
+          { label: 'IBitMemory', href: '../basis/datas.html#class-IBitMemory', type: 'interface' },
+          { label: 'IWordMemory', href: '../basis/datas.html#class-IWordMemory', type: 'interface' },
         ]
       },
       {

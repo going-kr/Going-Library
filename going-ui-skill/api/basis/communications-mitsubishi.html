@@ -47,6 +47,8 @@
       </div>
     </div>
 
+    <hr class="class-separator">
+
     <!-- Class: MC -->
     <div id="class-MC" class="class-card" data-search="mc class mitsubishi plc serial">
       <div class="class-card-header" onclick="toggleCard(this)">
@@ -115,14 +117,136 @@
         <div class="member-section">
           <div class="member-section-title">Events</div>
           <table class="api-table">
-            <tr data-search="worddatareceived event"><td class="event-args">EventHandler&lt;WordDataReadEventArgs&gt;</td><td class="col-method-name">WordDataReceived</td><td class="col-desc">워드 읽기 응답. WordDataReadEventArgs: ID, Slave, Func, Data[]</td></tr>
-            <tr data-search="bitdatareceived event"><td class="event-args">EventHandler&lt;BitDataReadEventArgs&gt;</td><td class="col-method-name">BitDataReceived</td><td class="col-desc">비트 읽기 응답. BitDataReadEventArgs: ID, Slave, Func, Data[]</td></tr>
+            <tr data-search="worddatareceived event"><td class="event-args">EventHandler&lt;WordDataReadEventArgs&gt;</td><td class="col-method-name">WordDataReceived</td><td class="col-desc">워드 읽기 응답. WordDataReadEventArgs: MessageID, Slave, Function, Data(int[])</td></tr>
+            <tr data-search="bitdatareceived event"><td class="event-args">EventHandler&lt;BitDataReadEventArgs&gt;</td><td class="col-method-name">BitDataReceived</td><td class="col-desc">비트 읽기 응답. BitDataReadEventArgs: MessageID, Slave, Function, Data(bool[])</td></tr>
             <tr data-search="writeresponsereceived event"><td class="event-args">EventHandler&lt;WriteEventArgs&gt;</td><td class="col-method-name">WriteResponseReceived</td><td class="col-desc">쓰기 응답</td></tr>
             <tr data-search="timeoutreceived event"><td class="event-args">EventHandler&lt;TimeoutEventArgs&gt;</td><td class="col-method-name">TimeoutReceived</td><td class="col-desc">타임아웃</td></tr>
             <tr data-search="checksumerrorreceived event"><td class="event-args">EventHandler&lt;CheckSumErrorEventArgs&gt;</td><td class="col-method-name">CheckSumErrorReceived</td><td class="col-desc">체크섬 오류</td></tr>
             <tr data-search="nakerrorreceived event"><td class="event-args">EventHandler&lt;NakErrorEventArgs&gt;</td><td class="col-method-name">NakErrorReceived</td><td class="col-desc">NAK 오류 응답</td></tr>
             <tr data-search="deviceopened event"><td class="event-args">EventHandler</td><td class="col-method-name">DeviceOpened</td><td class="col-desc">포트 열림</td></tr>
             <tr data-search="deviceclosed event"><td class="event-args">EventHandler</td><td class="col-method-name">DeviceClosed</td><td class="col-desc">포트 닫힘</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- Class: WordDataReadEventArgs -->
+    <div id="class-WordDataReadEventArgs" class="class-card" data-search="worddatareadeventargs class event mc">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">WordDataReadEventArgs</span> <span class="base">: EventArgs</span></div>
+        <div class="class-desc">워드 읽기 응답 이벤트 인수</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="messageid int"><td class="col-type">int</td><td class="col-name">MessageID <span class="accessor">get</span></td><td class="col-desc">메시지 ID</td></tr>
+            <tr data-search="slave int"><td class="col-type">int</td><td class="col-name">Slave <span class="accessor">get</span></td><td class="col-desc">슬레이브 번호</td></tr>
+            <tr data-search="function mcfunc"><td class="col-type">MCFunc</td><td class="col-name">Function <span class="accessor">get</span></td><td class="col-desc">함수 코드</td></tr>
+            <tr data-search="data int array"><td class="col-type">int[]</td><td class="col-name">Data <span class="accessor">get</span></td><td class="col-desc">수신 워드 데이터 배열</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- Class: BitDataReadEventArgs -->
+    <div id="class-BitDataReadEventArgs" class="class-card" data-search="bitdatareadeventargs class event mc">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">BitDataReadEventArgs</span> <span class="base">: EventArgs</span></div>
+        <div class="class-desc">비트 읽기 응답 이벤트 인수</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="messageid int"><td class="col-type">int</td><td class="col-name">MessageID <span class="accessor">get</span></td><td class="col-desc">메시지 ID</td></tr>
+            <tr data-search="slave int"><td class="col-type">int</td><td class="col-name">Slave <span class="accessor">get</span></td><td class="col-desc">슬레이브 번호</td></tr>
+            <tr data-search="function mcfunc"><td class="col-type">MCFunc</td><td class="col-name">Function <span class="accessor">get</span></td><td class="col-desc">함수 코드</td></tr>
+            <tr data-search="data bool array"><td class="col-type">bool[]</td><td class="col-name">Data <span class="accessor">get</span></td><td class="col-desc">수신 비트 데이터 배열</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- Class: WriteEventArgs -->
+    <div id="class-WriteEventArgs-MC" class="class-card" data-search="writeeventargs class event mc">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">WriteEventArgs</span> <span class="base">: EventArgs</span></div>
+        <div class="class-desc">쓰기 응답 이벤트 인수</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="messageid int"><td class="col-type">int</td><td class="col-name">MessageID <span class="accessor">get</span></td><td class="col-desc">메시지 ID</td></tr>
+            <tr data-search="slave int"><td class="col-type">int</td><td class="col-name">Slave <span class="accessor">get</span></td><td class="col-desc">슬레이브 번호</td></tr>
+            <tr data-search="function mcfunc"><td class="col-type">MCFunc</td><td class="col-name">Function <span class="accessor">get</span></td><td class="col-desc">함수 코드</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- Class: TimeoutEventArgs -->
+    <div id="class-TimeoutEventArgs-MC" class="class-card" data-search="timeouteventargs class event mc">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">TimeoutEventArgs</span> <span class="base">: EventArgs</span></div>
+        <div class="class-desc">타임아웃 이벤트 인수</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="messageid int"><td class="col-type">int</td><td class="col-name">MessageID <span class="accessor">get</span></td><td class="col-desc">메시지 ID</td></tr>
+            <tr data-search="slave int"><td class="col-type">int</td><td class="col-name">Slave <span class="accessor">get</span></td><td class="col-desc">슬레이브 번호</td></tr>
+            <tr data-search="function mcfunc"><td class="col-type">MCFunc</td><td class="col-name">Function <span class="accessor">get</span></td><td class="col-desc">함수 코드</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- Class: CheckSumErrorEventArgs -->
+    <div id="class-CheckSumErrorEventArgs" class="class-card" data-search="checksumerroreventargs class event mc">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">CheckSumErrorEventArgs</span> <span class="base">: EventArgs</span></div>
+        <div class="class-desc">체크섬 오류 이벤트 인수</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="messageid int"><td class="col-type">int</td><td class="col-name">MessageID <span class="accessor">get</span></td><td class="col-desc">메시지 ID</td></tr>
+            <tr data-search="slave int"><td class="col-type">int</td><td class="col-name">Slave <span class="accessor">get</span></td><td class="col-desc">슬레이브 번호</td></tr>
+            <tr data-search="function mcfunc"><td class="col-type">MCFunc</td><td class="col-name">Function <span class="accessor">get</span></td><td class="col-desc">함수 코드</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- Class: NakErrorEventArgs -->
+    <div id="class-NakErrorEventArgs" class="class-card" data-search="nakerroreventargs class event mc nak">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">NakErrorEventArgs</span> <span class="base">: EventArgs</span></div>
+        <div class="class-desc">NAK 오류 응답 이벤트 인수</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="messageid int"><td class="col-type">int</td><td class="col-name">MessageID <span class="accessor">get</span></td><td class="col-desc">메시지 ID</td></tr>
+            <tr data-search="slave int"><td class="col-type">int</td><td class="col-name">Slave <span class="accessor">get</span></td><td class="col-desc">슬레이브 번호</td></tr>
+            <tr data-search="function mcfunc"><td class="col-type">MCFunc</td><td class="col-name">Function <span class="accessor">get</span></td><td class="col-desc">함수 코드</td></tr>
           </table>
         </div>
       </div>
