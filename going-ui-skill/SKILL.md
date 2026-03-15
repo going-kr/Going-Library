@@ -5,6 +5,18 @@ description: Going Library(Going.UI + Going.Basis)를 사용하는 모든 작업
 
 # Going Library Skill
 
+Going Library는 산업용 HMI/SCADA 화면을 만들기 위한 C# .NET 8.0 UI 프레임워크. SkiaSharp 기반 커스텀 렌더링으로 GoButton, GoLamp, GoDataGrid 등 40여 종의 산업용 컨트롤을 제공하며, Going.Basis로 Modbus RTU/TCP, LS Electric CNet, Mitsubishi MC, MQTT 통신을 지원한다. 주 타겟은 라즈베리파이(linux-arm64) 터치패널이며 Windows에서도 동작한다.
+
+| 패키지 | 버전 |
+|--------|------|
+| Going.Basis | 1.0.3.1 |
+| Going.UI | 1.0.7.1 |
+| Going.UI.OpenTK | 1.0.7.1 |
+
+> 스킬 최종 갱신: 2026-03-16
+
+---
+
 ## 작업별 참조 파일
 
 | 작업 | 참조 파일 | 설명 |
@@ -13,6 +25,7 @@ description: Going Library(Going.UI + Going.Basis)를 사용하는 모든 작업
 | ↳ 컨트롤 JSON | `ui-json-controls.md` | GoButton, GoSlider 등 40여 종 + GoInput/GoValue 계열 |
 | ↳ 컨테이너 JSON | `ui-json-containers.md` | GoTableLayoutPanel, GoBoxPanel, GoTabControl 등 9종 |
 | ↳ ImageCanvas JSON | `ui-json-imagecanvas.md` | IcButton, IcLabel, IcSlider 등 이미지 기반 7종 |
+| ↳ 컨트롤 샘플 코드 | `ui-control-sample.md` | GoBarGraph, GoDataGrid 등 복잡한 컨트롤의 C# 바인딩/데이터 셋업 예제 |
 | C# 코드 작성 (Page/Window/Main) | `ui-code.md` | 코드 패턴, Designer.cs 규칙, MakePropCode |
 | 통신 코드 작성 (Modbus/MQTT) | `basis.md` | 통신 패턴, DeviceManager, 데이터 모델 |
 | 장치 배포/제어 (LauncherTouch MCP) | `ui-mcp.md` | gtcli CLI 도구, MCP 도구 25개, 빌드-배포 자동화, 네트워크, 키오스크 |
@@ -243,15 +256,10 @@ project_brief.md + 이미지가 함께 제공된 경우:
 
 ## 직렬화 핵심 규칙
 
-| 규칙 | 설명 |
-|------|------|
-| 컨트롤 래퍼 | `{ "Type": "GoButton", "Value": { ...속성... } }` |
-| SKRect (Bounds) | `"Left,Top,Right,Bottom"` 문자열. **Right/Bottom은 좌표값 (Width/Height 아님!)** 예: 좌=10, 상=10, 폭=200, 높=50 → `"10,10,210,60"` |
-| Enum | **숫자**로 직렬화 (문자열 ❌) |
-| Margin/TextPadding | `{ "Left": 0, "Top": 0, "Right": 0, "Bottom": 0 }` JSON 객체 |
-| Dock | 모든 컨트롤에 `"Dock": 0` (GoDockStyle enum, 기본 None=0, Fill=5) 필드 존재. **"Fill" 프로퍼티는 없음** |
-| Id | 모든 컨트롤에 UUID 형식의 `"Id"` 필드 필수 |
-| 기본 폰트 | `"나눔고딕"`, FontSize 기본: `12` (대부분 컨트롤) |
+> 상세 규칙은 `ui-json.md`의 "자주 하는 실수" 섹션 참조. 아래는 요약만 기재.
+
+- 컨트롤 래퍼: `{ "Type": "GoButton", "Value": { ... } }`
+- SKRect, Enum, Margin, Dock, Id, 폰트 규칙 → **`ui-json.md` 참조**
 
 ---
 
@@ -264,3 +272,32 @@ Going.UI.OpenTK   - OpenTK 어댑터 (임베디드/라즈베리파이)
 Going.Basis       - 통신 및 유틸리티 (Modbus, MQTT, 메모리, 직렬화)
 Going.UIEditor    - 비주얼 에디터 (.gud 파일 생성 도구)
 ```
+
+---
+
+## 트러블슈팅
+
+### 빌드 에러
+
+| 증상 | 원인 | 해결 |
+|------|------|------|
+| `design.json` 없음 / 파일 로드 실패 | UIEditor에서 MakeCode를 실행하지 않았거나, design.json이 실행 디렉터리에 없음 | UIEditor에서 MakeCode 재실행 후 design.json을 출력 디렉터리에 복사 |
+| `Designer.cs`에서 NullReferenceException | Designer.cs가 참조하는 컨트롤 Name이 .gud와 불일치 | Designer.cs는 수정 금지 — UIEditor에서 MakeCode 재실행 |
+| `GoDesign.JsonDeserialize` 실패 | design.json의 JSON 형식 오류 또는 버전 불일치 | UIEditor에서 .gud 다시 열고 MakeCode 재실행 |
+| 패키지 버전 불일치 | Going.UI와 Going.UI.OpenTK 버전이 다름 | 동일 버전으로 통일 (현재 1.0.7.1) |
+
+### 통신 에러
+
+| 증상 | 원인 | 해결 |
+|------|------|------|
+| Modbus `IsOpen`이 항상 false | 포트명 오류, 권한 부족, 장치 미연결 | 포트명 확인 (`/dev/ttyUSB0` 등), `sudo chmod` 권한, 케이블 점검 |
+| `TimeoutReceived` 반복 발생 | 슬레이브 번호/주소 불일치, Baudrate 불일치 | project_brief.md의 레지스터 맵과 대조, 통신 설정 확인 |
+| MQTT `Disconnected` 반복 | 브로커 주소 오류, 네트워크 단절, ClientID 중복 | BrokerHostName 확인, 고유 ClientID 사용 |
+
+### 런타임 에러
+
+| 증상 | 원인 | 해결 |
+|------|------|------|
+| UI가 표시되지 않음 (빈 화면) | `GoDesign.Init()` 미호출 또는 Pages가 비어있음 | MainWindow에서 `design.Init()` 호출 확인, .gud에 페이지 존재 확인 |
+| 컨트롤 이벤트 미작동 | Designer.cs의 Name과 코드의 참조 불일치 | Designer.cs에서 정확한 컨트롤 Name 확인 후 코드 수정 |
+| `Keypad.ShowKeypad` 미작동 | GoInputText 계열이 아닌 컨트롤에서 호출 | GoInputText, GoInputNumber 등 입력 컨트롤 전용 — API 문서 확인 |
