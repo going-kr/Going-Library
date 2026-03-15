@@ -609,6 +609,73 @@ public partial class PageMain : GoPage
 
 ---
 
+## 컨트롤 샘플 코드 (별도 파일)
+
+그래프/데이터그리드 등 복잡한 컨트롤의 C# 샘플은 **ui-control-sample.md** 참조.
+
+포함 내용:
+- GoBarGraph / GoLineGraph / GoTimeGraph — `SetDataSource` 패턴 + 디자인 설정
+- GoTrendGraph — `Start` / `SetData` 실시간 스트리밍 패턴
+- GoGauge / GoMeter / GoKnob — `OnUpdate` 값 연동
+- GoSwitchPanel — `SetPage` 서브페이지 전환
+- GoDataGrid — 컬럼 12종, SummaryRow, 이벤트, 데이터 바인딩
+- GoGraphSeries / GoLineGraphSeries 구조 정의
+
+---
+
+## 테마 색상 키 레퍼런스
+
+코드에서 `TextColor`, `ButtonColor`, `OnColor` 등의 색상 프로퍼티에 사용할 수 있는 값.
+
+### 테마 키 (문자열)
+
+| 키 | 용도 | DarkTheme 기본값 |
+|---|---|---|
+| `Fore` | 전경(텍스트) | White |
+| `Back` | 배경 | #323232 |
+| `Window` | 윈도우 배경 | #202020 |
+| `WindowBorder` | 윈도우 테두리 | #5A5A5A |
+| `Point` | 포인트 색 | DarkRed |
+| `Title` | 타이틀바 | #464646 |
+| `Base0` ~ `Base5` | 단계별 회색 | #000 → #969696 |
+| `Good` | 정상/ON | Green |
+| `Warning` | 경고 | DarkOrange |
+| `Danger` | 위험 | DarkRed |
+| `Error` | 에러 | Red |
+| `Highlight` | 하이라이트/포커스 | Cyan |
+| `Select` | 선택 행/항목 | Teal |
+| `User1` ~ `User9` | 사용자 정의 색 | Red, Green, Blue, Magenta, Yellow, Cyan, Teal, DeepSkyBlue, DarkRed |
+
+### 밝기 서픽스
+
+키 뒤에 `-` 서픽스를 붙여 밝기 조절 가능:
+
+```
+"Good-light"       // +15% 밝게
+"Good-dark"        // -15% 어둡게
+"Select-lightlight" // +30% 밝게
+"Select-darkdark"   // -30% 어둡게
+```
+
+### 직접 지정
+
+테마 키 대신 직접 색상값 사용 가능:
+
+```
+"#FF5722"           // HEX RGB
+"#80FF5722"         // HEX ARGB
+"255,87,34"         // R,G,B
+"128,255,87,34"     // A,R,G,B
+"red"               // System.Drawing.Color 이름
+```
+
+### ⚠ 주의
+
+- `"Bad"` 같은 미등록 키 사용 시 `Color.FromName()` 으로 fallback → 매칭 실패 시 투명색 반환 → **컨트롤이 안 보임**
+- 의미별 권장: 정상=`Good`, 경고=`Warning`, 위험=`Danger`, 에러=`Error`
+
+---
+
 ## Window(팝업) 패턴 (Windows/XxxWindow.cs)
 
 `GoWindow` 상속. 헬퍼 메서드로 콜백 기반 표시.

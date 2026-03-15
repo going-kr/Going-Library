@@ -355,14 +355,7 @@
     "RowHeight": 30, "ColumnHeight": 30,
     "ScrollMode": 0, "SelectionMode": 0,
     "ColumnGroups": [],
-    "Columns": [
-      {
-        "Name": "col1", "Text": "Column",
-        "Width": 150, "MinWidth": 50,
-        "HeaderAlignment": 4, "CellAlignment": 4,
-        "Sortable": false, "SizeModifiable": true, "Visible": true
-      }
-    ],
+    "Columns": [],
     "SummaryRows": [],
     "Id": "UUID", "Name": null,
     "Visible": true, "Enabled": true, "Selectable": true,
@@ -373,6 +366,99 @@
 ```
 
 > `GoDataGridSelectionMode` — Single=0, Multi=1, None=2
+> `ScrollMode` — Vertical=0, Horizon=1, Both=2
+
+> **Columns/SummaryRows는 보통 코드에서 구성** (ui-control-sample.md 참조). 아래는 JSON으로 직접 정의할 때의 구조.
+
+#### GoDataGrid 컬럼 타입별 JSON
+
+모든 컬럼 공통 속성:
+
+```json
+{
+  "Type": "GoDataGridLabelColumn",
+  "Name": "PropertyName",       // 데이터 객체의 프로퍼티명과 매칭
+  "HeaderText": "표시 텍스트",
+  "Size": "100px",              // "100px" 또는 "30%" 또는 "100%"(나머지 채움)
+  "UseFilter": false,
+  "UseSort": false,
+  "TextColor": null,            // null이면 Grid.TextColor 사용
+  "Fixed": false                // true면 수평 스크롤 시 고정
+}
+```
+
+**읽기 전용 컬럼:**
+
+```json
+// LabelColumn — 텍스트 표시
+{ "Type": "GoDataGridLabelColumn", "Name": "Name", "HeaderText": "장치명", "Size": "100px",
+  "FormatString": null }
+
+// NumberColumn<T> — 숫자 포맷 표시
+{ "Type": "GoDataGridNumberColumn<Double>", "Name": "Temperature", "HeaderText": "온도", "Size": "80px",
+  "FormatString": "0.0" }
+// T: Int32, Int64, Single, Double, Decimal 등 .NET 타입명 사용
+
+// LampColumn — bool 값 램프 표시
+{ "Type": "GoDataGridLampColumn", "Name": "IsOnline", "HeaderText": "통신", "Size": "60px",
+  "OnColor": "Good" }
+// OnColor: 테마키 또는 직접 색상 ("red", "#FF0000" 등)
+
+// CheckBoxColumn — bool 값 체크박스 표시 (읽기 전용)
+{ "Type": "GoDataGridCheckBoxColumn", "Name": "UseFilter", "HeaderText": "필터", "Size": "60px" }
+```
+
+**편집 가능 컬럼:**
+
+```json
+// InputTextColumn — 텍스트 편집
+{ "Type": "GoDataGridInputTextColumn", "Name": "Name", "HeaderText": "이름", "Size": "100px" }
+
+// InputNumberColumn<T> — 숫자 편집
+{ "Type": "GoDataGridInputNumberColumn<Int32>", "Name": "Count", "HeaderText": "수량", "Size": "80px",
+  "Minimum": 0, "Maximum": 999, "FormatString": null }
+
+// InputBoolColumn — ON/OFF 토글
+{ "Type": "GoDataGridInputBoolColumn", "Name": "IsOnline", "HeaderText": "상태", "Size": "80px",
+  "OnText": "ON", "OffText": "OFF" }
+
+// InputTimeColumn — DateTime 편집
+{ "Type": "GoDataGridInputTimeColumn", "Name": "LastUpdate", "HeaderText": "최종갱신", "Size": "140px",
+  "DateTimeStyle": 0, "DateFormat": "yyyy-MM-dd", "TimeFormat": "HH:mm:ss" }
+// GoDateTimeKind — DateTime=0, Date=1, Time=2
+
+// InputColorColumn — 색상 선택
+{ "Type": "GoDataGridInputColorColumn", "Name": "TagColor", "HeaderText": "색상", "Size": "80px" }
+
+// InputComboColumn — 드롭다운 선택
+{ "Type": "GoDataGridInputComboColumn", "Name": "State", "HeaderText": "상태", "Size": "100px",
+  "MaximumViewCount": 8, "ItemHeight": 30,
+  "Items": [
+    { "Text": "Idle", "Value": "Idle" },
+    { "Text": "Running", "Value": "Running" },
+    { "Text": "Error", "Value": "Error" }
+  ] }
+```
+
+**동작 컬럼:**
+
+```json
+// ButtonColumn — 행별 동작 버튼 (Name 불필요)
+{ "Type": "GoDataGridButtonColumn", "HeaderText": "삭제", "Size": "60px",
+  "Text": "DEL", "ButtonColor": "Danger", "SelectButtonColor": "Select-light",
+  "IconString": null, "IconSize": 12, "IconGap": 5 }
+```
+
+#### GoDataGrid 요약행 JSON
+
+```json
+"SummaryRows": [
+  { "Type": "GoDataGridSumSummaryRow",     "Title": "합계", "TitleColumnIndex": 0, "TitleColSpan": 3 },
+  { "Type": "GoDataGridAverageSummaryRow",  "Title": "평균", "TitleColumnIndex": 0, "TitleColSpan": 3 }
+]
+```
+
+> SummaryRow는 숫자형 컬럼(NumberColumn, InputNumberColumn)에 자동 적용됨
 
 ### GoCheckBox
 ```json

@@ -785,8 +785,13 @@ namespace Going.UI.Datas
 
             var sz = Math.Min(Convert.ToInt32(Grid.RowHeight * 0.75), 24);
             var rt = MathTool.MakeRectangle(Bounds, new SKSize(sz, sz));
-            Util.DrawLamp(canvas, thm, rt, cOn, cOff, val);
 
+            if(Column.Name =="IsAlarm" && val)
+            {
+
+            }
+
+            Util.DrawLamp(canvas, thm, rt, cOn, cOff, val);
         }
         #endregion
     }
