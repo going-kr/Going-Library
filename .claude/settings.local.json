@@ -3,7 +3,9 @@
     "allow": [
       "Bash(python3 -c \":*)",
       "Bash(xargs grep -l \"class GoViewWindow\\\\|class GoManualWindow\\\\|class GoPage\\\\|class IcPage\")",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(dotnet build:*)",
+      "Bash(dotnet run:*)"
     ]
   }
 }

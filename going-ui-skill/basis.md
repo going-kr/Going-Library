@@ -355,8 +355,8 @@ public class DeviceManager
     public DeviceManager()
     {
         // 메모리 영역 등록 (시작주소 → 메모리)
-        Slave.WordAreas.Add(0x0000, new WordMemories(100));  // 워드 100개
-        Slave.BitAreas.Add(0x0000, new BitMemories(32));     // 비트 32개
+        Slave.WordAreas.Add(0x0000, new WordMemory(100));  // 워드 100개
+        Slave.BitAreas.Add(0x0000, new BitMemory(32));     // 비트 32개
 
         // 연결 이벤트
         Slave.DeviceOpened += (o, s) => { /* 포트 열림 */ };
@@ -378,19 +378,19 @@ public class DeviceManager
     public int ReadWord(int baseAddr, int offset)
     {
         var mem = Slave.WordAreas[baseAddr];
-        return mem[offset].Value;            // WordMemories: mem[idx].Value (int)
+        return mem[offset].W;                // WordMemory: mem[idx].W (ushort)
     }
 
     public void WriteWord(int baseAddr, int offset, int value)
     {
         var mem = Slave.WordAreas[baseAddr];
-        mem[offset].Value = value;
+        mem[offset].W = (ushort)value;
     }
 
     public bool ReadBit(int baseAddr, int offset)
     {
         var mem = Slave.BitAreas[baseAddr];
-        return mem[offset];                  // BitMemories: mem[idx] (bool 직접)
+        return mem[offset];                  // BitMemory: mem[idx] (bool 직접 인덱싱)
     }
 
     public void WriteBit(int baseAddr, int offset, bool value)
@@ -413,8 +413,8 @@ public class DeviceManager
 | `StopBits` | StopBits | 스톱 비트 |
 | `IsStart` | bool (읽기전용) | 시작 상태 |
 | `IsOpen` | bool (읽기전용) | 포트 열림 상태 |
-| `BitAreas` | Dictionary\<int, BitMemories\> | 비트 메모리 영역 (시작주소 → 메모리) |
-| `WordAreas` | Dictionary\<int, WordMemories\> | 워드 메모리 영역 (시작주소 → 메모리) |
+| `BitAreas` | Dictionary\<int, BitMemory\> | 비트 메모리 영역 (시작주소 → 메모리) |
+| `WordAreas` | Dictionary\<int, WordMemory\> | 워드 메모리 영역 (시작주소 → 메모리) |
 | `Tag` | object? | 사용자 데이터 |
 
 ### SlaveRTU 이벤트
@@ -427,13 +427,17 @@ public class DeviceManager
 ### 메모리 인덱서 패턴 (중요)
 
 ```csharp
-// WordMemories — WORD 객체의 .Value 프로퍼티 사용
-var wordMem = new WordMemories(100);
-wordMem[0].Value = 1234;           // 쓰기
-int val = wordMem[0].Value;        // 읽기
+// WordMemory — WordRef 객체의 .W 프로퍼티 사용
+var wordMem = new WordMemory(100);
+wordMem[0].W = 1234;              // 쓰기 (ushort)
+ushort val = wordMem[0].W;        // 읽기
+short sval = wordMem[0].IW;       // 부호 있는 읽기
+wordMem[0].DW = 100000;           // 더블워드 (uint, 2워드 사용)
+wordMem[0].R = 3.14f;             // 실수 (float, 2워드 사용)
+wordMem[0].Bit[0] = true;         // 워드 내 비트 접근
 
-// BitMemories — bool 직접 인덱싱
-var bitMem = new BitMemories(32);
+// BitMemory — bool 직접 인덱싱
+var bitMem = new BitMemory(32);
 bitMem[0] = true;                  // 쓰기
 bool bit = bitMem[0];              // 읽기
 ```
@@ -451,8 +455,8 @@ public class DeviceManager
 
     public DeviceManager()
     {
-        Slave.WordAreas.Add(0x0000, new WordMemories(100));
-        Slave.BitAreas.Add(0x0000, new BitMemories(32));
+        Slave.WordAreas.Add(0x0000, new WordMemory(100));
+        Slave.BitAreas.Add(0x0000, new BitMemory(32));
 
         // TCP는 Socket 이벤트 (DeviceOpened/Closed 아님!)
         Slave.SocketConnected += (o, s) => { /* 클라이언트 접속 */ };
@@ -478,8 +482,8 @@ public class DeviceManager
 | `Slave` | int (기본 1) | 슬레이브 번호 |
 | `LocalPort` | int | 리슨 포트 (기본 502). **`Port` 아님!** |
 | `IsStart` | bool (읽기전용) | 시작 상태 |
-| `BitAreas` | Dictionary\<int, BitMemories\> | 비트 메모리 영역 |
-| `WordAreas` | Dictionary\<int, WordMemories\> | 워드 메모리 영역 |
+| `BitAreas` | Dictionary\<int, BitMemory\> | 비트 메모리 영역 |
+| `WordAreas` | Dictionary\<int, WordMemory\> | 워드 메모리 영역 |
 | `Tag` | object? | 사용자 데이터 |
 
 > **SlaveTCP에는 `IsOpen` 프로퍼티 없음** (TCP는 소켓 기반이므로).
@@ -617,8 +621,9 @@ mqtt.Stop();
 | `GetWord("D", 0)` | `GetWord(1, "D0")` | 첫 인자=slave번호, 둘째="영역+오프셋" 문자열 |
 | `SlaveTCP.Port = 502` | `SlaveTCP.LocalPort = 502` | SlaveTCP는 `LocalPort` 사용 |
 | `SlaveTCP.DeviceOpened` | `SlaveTCP.SocketConnected` | TCP 슬레이브는 Socket 이벤트 사용 |
-| `wordMem[0] = 100` | `wordMem[0].Value = 100` | WordMemories는 `.Value` 프로퍼티 필요 |
-| `bitMem[0].Value` | `bitMem[0]` | BitMemories는 bool 직접 반환 (Value 없음) |
+| `wordMem[0] = 100` | `wordMem[0].W = 100` | WordMemory는 `.W` 프로퍼티 필요 (WordRef 반환) |
+| `bitMem[0].W` | `bitMem[0]` | BitMemory는 bool 직접 반환 (.W 없음) |
+| `wordMem[0].Value` | `wordMem[0].W` | 구 API의 `.Value`는 `.W`(ushort)로 변경됨 |
 | 일반 폴링에 `ModbusRTUMaster` 사용 | `MasterRTU` 사용 | 저수준은 특수 목적 전용 |
 | `MasterRTU` + `DeviceData` 조합 | `MasterRTU` + `GetWord/GetBit` | DeviceData는 저수준(ModbusRTUMaster/ModbusTCPMaster) 전용 |
 | `MasterRTU`에서 통신 상태를 `CommState`로 판단 | `RTU.IsOpen` 또는 `DeviceOpened/Closed` 이벤트 | MasterRTU는 IsOpen으로 판단 |
