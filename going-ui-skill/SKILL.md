@@ -39,7 +39,7 @@ Going Library의 클래스·속성·메서드·이벤트 확인이 필요할 때
 | `api/ui/dialogs.html` | GoDialogs, GoMessageBox, GoInputBox, GoSelectorBox |
 | `api/ui/themes.html` | GoTheme, 색상 팔레트, ToColor() |
 | `api/ui/collections.html` | ObservableList\<T\> |
-| `api/ui/datas.html` | GoListItem, GoPadding, GoButtonItem, GoMouseEventArgs 등 데이터 클래스 |
+| `api/ui/datas.html` | GoListItem, GoPadding, GoButtonItem, GoMouseEventArgs, ButtonClickEventArgs, GoDrawnEventArgs 등 데이터/이벤트 클래스 |
 | `api/ui/enums.html` | GoContentAlignment, GoRoundType, GoDockStyle, GoKeys 등 전체 열거형 |
 | `api/ui/imagecanvas.html` | IcButton, IcLabel, IcOnOff, IcProgress, IcSlider, IcState |
 
@@ -49,8 +49,8 @@ Going Library의 클래스·속성·메서드·이벤트 확인이 필요할 때
 |------|------|
 | `api/basis/communications-modbus.html` | ModbusRTUMaster, ModbusRTUSlave, ModbusTCPMaster, ModbusTCPSlave |
 | `api/basis/communications-mqtt.html` | MQClient, MQSubscribe, MQReceiveArgs |
-| `api/basis/communications-ls.html` | CNet (LS Electric PLC) |
-| `api/basis/communications-mitsubishi.html` | MC (Mitsubishi PLC) |
+| `api/basis/communications-ls.html` | CNet (LS Electric PLC), DataReadEventArgs, WriteEventArgs, TimeoutEventArgs 등 |
+| `api/basis/communications-mitsubishi.html` | MC (Mitsubishi PLC), WordDataReadEventArgs, BitDataReadEventArgs, WriteEventArgs 등 |
 | `api/basis/datas.html` | INI, Serialize, BitMemory, WordMemory, WordRef, BitAccessor |
 | `api/basis/extensions.html` | Bits (비트/바이트 확장 메서드) |
 | `api/basis/measure.html` | Chattering, Stable |
@@ -60,10 +60,10 @@ Going Library의 클래스·속성·메서드·이벤트 확인이 필요할 때
 ### HTML 파일 내부 구조
 
 각 API HTML 파일은 동일한 구조로 되어 있다:
-- **클래스별 섹션**: `<h2>` 태그로 클래스명 구분 (예: `<h2>GoButton</h2>`)
-- **속성 테이블**: 타입, 이름, 설명 컬럼 (get/set 접근자 표시)
-- **메서드 테이블**: 반환타입, 이름(파라미터), 설명
-- **이벤트 테이블**: 이벤트 핸들러 타입, 이름, 설명
+- **클래스별 섹션**: `<div class="class-card" id="class-GoButton">` 형태로 클래스 구분, `<hr class="class-separator">`로 클래스 간 시각적 분리
+- **속성 테이블**: `<table class="api-table">` — 타입(`col-type`), 이름(`col-name`, get/set 접근자 표시), 설명(`col-desc`) 컬럼
+- **메서드 테이블**: 반환타입(`ret`), 이름(`col-method-name`), 파라미터(`params`), 설명(`col-desc`)
+- **이벤트 테이블**: 이벤트 핸들러 타입(`event-args`), 이름(`col-method-name`), 설명(`col-desc`)
 - **검색 팁**: `data-search` 속성에 키워드가 있으므로, `Grep`으로 컨트롤명 검색하면 해당 섹션을 빠르게 찾을 수 있음
 
 ```
