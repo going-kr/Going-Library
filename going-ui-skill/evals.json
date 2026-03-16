@@ -1,0 +1,106 @@
+[
+  {
+    "name": "GoButton 클릭 이벤트 바인딩",
+    "prompt": "GoButton 클릭 이벤트를 바인딩하는 C# 코드를 작성해줘. 버튼 이름은 btnStart이고, 클릭하면 GoLamp lampRun의 OnOff를 true로 변경해야 해.",
+    "expected_behavior": [
+      "Designer.cs에서 btnStart, lampRun 변수를 참조",
+      "btnStart.MouseClick += (o, s) => { ... } 패턴 사용",
+      "lampRun.OnOff = true 설정",
+      "Designer.cs를 직접 수정하지 않음"
+    ],
+    "must_contain": ["MouseClick", "lampRun.OnOff", "true"],
+    "must_not_contain": ["Click +=", "EventHandler", "new EventHandler"],
+    "references": ["ui-code.md"]
+  },
+  {
+    "name": "GoInputNumber JSON 생성",
+    "prompt": ".gud 파일에 GoInputNumber<int> 컨트롤을 추가해줘. 범위는 0~100, 초기값 50, 단위는 '%'로.",
+    "expected_behavior": [
+      "Type: GoInputNumber<Int32> (.NET 타입명 사용)",
+      "Value 래퍼 구조: { \"Type\": ..., \"Value\": { ... } }",
+      "Minimum: 0, Maximum: 100, Value: 50",
+      "Unit: \"%\"",
+      "Bounds는 SKRect 형식 (L,T,R,B)",
+      "Id 필드에 UUID 포함"
+    ],
+    "must_contain": ["GoInputNumber<Int32>", "\"Value\"", "\"Minimum\"", "\"Maximum\"", "\"Unit\""],
+    "must_not_contain": ["GoInputNumber<int>", "\"Width\"", "\"Height\""],
+    "references": ["ui-json.md", "ui-json-input-value.md"]
+  },
+  {
+    "name": "Modbus RTU 통신 코드 작성",
+    "prompt": "MasterRTU로 슬레이브 1번의 D100 워드 10개를 읽는 코드를 작성해줘.",
+    "expected_behavior": [
+      "MasterRTU 인스턴스 생성 및 Start() 호출",
+      "MonitorWord_F3(1, 100, 10) 패턴 사용",
+      "DataReceived 이벤트 바인딩",
+      "AutoResponse = true 설정",
+      "DataReadEventArgs에서 Data(int[]) 접근"
+    ],
+    "must_contain": ["MasterRTU", "MonitorWord_F3", "DataReceived", "AutoResponse"],
+    "must_not_contain": ["ReadHoldingRegisters", "ModbusClient"],
+    "references": ["basis.md"]
+  },
+  {
+    "name": "GoBarGraph Series 설정",
+    "prompt": "GoBarGraph에 3개의 시리즈(온도, 습도, 압력)를 추가하고 값을 업데이트하는 C# 코드를 작성해줘.",
+    "expected_behavior": [
+      "GoGraphSeries 인스턴스 3개 생성",
+      "Series 리스트에 Add",
+      "값 업데이트 시 series.Value 속성 사용",
+      "ui-control-sample.md를 참조해서 작성"
+    ],
+    "must_contain": ["GoGraphSeries", "Series", "Value"],
+    "must_not_contain": ["DataPoint", "Chart"],
+    "references": ["ui-control-sample.md", "ui-code.md"]
+  },
+  {
+    "name": "design.json 로드 실패 트러블슈팅",
+    "prompt": "앱 실행하면 FileNotFoundException: design.json 에러가 나. 어떻게 해결해?",
+    "expected_behavior": [
+      "UIEditor에서 MakeCode 실행 안내",
+      "csproj에 CopyToOutputDirectory 설정 안내",
+      "design.json을 직접 수정하지 말라는 경고"
+    ],
+    "must_contain": ["MakeCode", "CopyToOutputDirectory"],
+    "must_not_contain": ["수동으로 JSON 파일을 만들", "design.json을 편집"],
+    "references": ["SKILL.md (트러블슈팅)"]
+  },
+  {
+    "name": "SKRect Bounds 직렬화",
+    "prompt": "GoLabel을 좌표 (10, 20) 위치에 너비 200, 높이 40으로 .gud에 추가해줘.",
+    "expected_behavior": [
+      "Bounds를 SKRect 형식으로: \"10,20,210,60\" (L,T,R,B)",
+      "Width/Height가 아닌 Right/Bottom 좌표 계산",
+      "문자열 형태 (쉼표 구분)"
+    ],
+    "must_contain": ["10,20,210,60"],
+    "must_not_contain": ["\"Width\"", "\"Height\"", "10,20,200,40"],
+    "references": ["ui-json.md"]
+  },
+  {
+    "name": "Enum 직렬화 규칙",
+    "prompt": ".gud에서 GoButton의 ContentAlignment를 MiddleCenter로 설정해줘.",
+    "expected_behavior": [
+      "Enum 값을 숫자로 직렬화",
+      "\"ContentAlignment\": 4 (MiddleCenter = 4)",
+      "문자열 \"MiddleCenter\" 사용 금지"
+    ],
+    "must_contain": ["4"],
+    "must_not_contain": ["\"MiddleCenter\"", "\"Center\""],
+    "references": ["ui-json.md", "ui-json-controls.md"]
+  },
+  {
+    "name": "GoTableLayoutPanel 레이아웃 구성",
+    "prompt": "2행 3열 테이블 레이아웃에 6개의 GoButton을 배치하는 .gud JSON을 만들어줘.",
+    "expected_behavior": [
+      "GoTableLayoutPanel 컨테이너 사용",
+      "Rows/Columns 정의",
+      "각 버튼에 Dock=Fill (5) 설정",
+      "Controls 배열에 래퍼 형식으로 컨트롤 추가"
+    ],
+    "must_contain": ["GoTableLayoutPanel", "\"Dock\": 5", "\"Rows\"", "\"Columns\""],
+    "must_not_contain": ["Grid", "StackPanel"],
+    "references": ["ui-json-containers.md"]
+  }
+]

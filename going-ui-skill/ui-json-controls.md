@@ -1,7 +1,25 @@
 # Going UI — 컨트롤 JSON
 
-> 이 문서는 `ui-json.md`의 하위 참조 문서. 주요 컨트롤, GoInput 계열, GoValue 계열의 JSON 구조를 다룬다.
+> 이 문서는 `ui-json.md`의 하위 참조 문서. 주요 컨트롤의 JSON 구조를 다룬다.
+> GoInput/GoValue 계열은 `ui-json-input-value.md` 참조.
 > 공통 속성, Enum, 테마 등은 `ui-json.md` 참조.
+
+## 목차
+
+| # | 컨트롤 | # | 컨트롤 | # | 컨트롤 |
+|---|--------|---|--------|---|--------|
+| 1 | GoLabel | 13 | GoNumberBox | 25 | GoListBox |
+| 2 | GoButton | 14 | GoStep | 26 | GoTreeView |
+| 3 | GoLamp | 15 | GoDataGrid | 27 | GoToolBox |
+| 4 | GoOnOff | 16 | GoCheckBox | 28 | GoBarGraph |
+| 5 | GoSwitch | 17 | GoRadioBox | 29 | GoCircleGraph |
+| 6 | GoToggleButton | 18 | GoIconButton | 30 | GoLineGraph |
+| 7 | GoRadioButton | 19 | GoGauge | 31 | GoTimeGraph |
+| 8 | GoLampButton | 20 | GoMeter | 32 | GoTrendGraph |
+| 9 | GoProgress | 21 | GoPicture | 33 | GoColorSelector |
+| 10 | GoSlider | 22 | GoAnimate | | |
+| 11 | GoRangeSlider | 23 | GoCalendar | | |
+| 12 | GoKnob | 24 | GoNavigator | | |
 
 ---
 
@@ -845,135 +863,3 @@
 
 > `Value`: SKColor uint(ARGB). HSV 색상 선택기.
 
----
-
-## GoInput 계열
-
-GoInput은 추상 기본 클래스. 하위 타입:
-
-| 타입 | 설명 |
-|------|------|
-| `GoInputString` | 문자열 입력 |
-| `GoInputNumber<T>` | 숫자 입력 (T = byte~decimal) |
-| `GoInputBoolean` | 불리언 (ON/OFF) |
-| `GoInputCombo` | 드롭다운 |
-| `GoInputSelector` | 좌우 선택기 |
-| `GoInputColor` | 색상 선택 |
-| `GoInputDateTime` | 날짜/시간 |
-
-### GoInput 공통 속성
-```json
-{
-  "IconString": null, "IconSize": 12, "IconGap": 5,
-  "FontName": "나눔고딕", "FontStyle": 0, "FontSize": 12,
-  "Direction": 0,
-  "TextColor": "Fore", "BorderColor": "Base3",
-  "FillColor": "Base3", "ValueColor": "Base1",
-  "Round": 1,
-  "TitleSize": null, "Title": null,
-  "ButtonSize": null, "Buttons": [],
-  "AutoFontSize": 0, "AutoIconSize": 0
-}
-```
-
-> `FillColor` = "Base3" (not "Base2"), `ValueColor` = "Base1" (not "Fore").
-
-### GoInputNumber<T> 추가 속성
-```json
-{
-  "Value": 0,
-  "Minimum": null, "Maximum": null,
-  "FormatString": null,
-  "Unit": null, "UnitSize": null
-}
-```
-
-### GoInputBoolean 추가 속성
-```json
-{
-  "Value": false,
-  "OnText": "ON", "OffText": "OFF",
-  "OnIconString": null, "OffIconString": null
-}
-```
-
-### GoInputCombo 추가 속성
-```json
-{
-  "Items": [],
-  "ItemHeight": 30, "MaximumViewCount": 8
-}
-```
-
-### GoInputSelector 추가 속성
-```json
-{ "Items": [] }
-```
-
-### GoInputColor 추가 속성
-```json
-{ "Value": 4294967295 }
-```
-
-> SKColor uint 값.
-
-### GoInputDateTime 추가 속성
-```json
-{
-  "Value": "2024-01-01T00:00:00",
-  "DateTimeStyle": 0,
-  "DateFormat": "yyyy-MM-dd",
-  "TimeFormat": "HH:mm:ss"
-}
-```
-
----
-
-## GoValue 계열
-
-| 타입 | 설명 |
-|------|------|
-| `GoValueString` | 문자열 표시 |
-| `GoValueNumber<T>` | 숫자 표시 |
-| `GoValueBoolean` | 불리언 표시 |
-
-### GoValue 공통 속성
-```json
-{
-  "IconString": null, "IconSize": 12, "IconGap": 5,
-  "FontName": "나눔고딕", "FontStyle": 0, "FontSize": 12,
-  "Direction": 0,
-  "TextColor": "Fore", "BorderColor": "Base3",
-  "FillColor": "Base3", "ValueColor": "Base2",
-  "Round": 1,
-  "TitleSize": null, "Title": null,
-  "ButtonSize": null, "Buttons": [],
-  "AutoFontSize": 0, "AutoIconSize": 0
-}
-```
-
-> `ValueColor` = "Base2" (not "Fore").
-
-### GoValueNumber<T> 추가 속성
-```json
-{
-  "Value": 0,
-  "FormatString": null,
-  "Unit": null, "UnitFontSize": 12, "UnitSize": null,
-  "AutoUnitFontSize": 0
-}
-```
-
-### GoValueString 추가 속성
-```json
-{ "Value": null }
-```
-
-### GoValueBoolean 추가 속성
-```json
-{
-  "Value": false,
-  "OnText": "ON", "OffText": "OFF",
-  "OnIconString": null, "OffIconString": null
-}
-```

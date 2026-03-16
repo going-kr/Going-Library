@@ -26,11 +26,11 @@ LauncherTouch MCP Server의 모든 기능을 래핑한 CLI 도구.
 ### 실행 파일 위치
 
 이 스킬 디렉토리에 `gtcli.exe`가 포함되어 있다.
-Claude Code에서 실행 시 **이 스킬 파일이 위치한 디렉토리 기준**으로 경로를 지정:
+Claude Code에서 실행 시 `__SKILL_DIR__` (이 스킬 파일이 위치한 디렉터리) 기준으로 경로를 지정:
 
 ```bash
-"{이 스킬 파일 디렉터리}/gtcli.exe" scan
-"{이 스킬 파일 디렉터리}/gtcli.exe" status 172.30.1.13 --token "토큰값"
+"__SKILL_DIR__/gtcli.exe" scan
+"__SKILL_DIR__/gtcli.exe" status 172.30.1.13 --token "토큰값"
 ```
 
 > Self-contained 빌드 (약 15MB)이므로 .NET 런타임 없이 실행 가능.
