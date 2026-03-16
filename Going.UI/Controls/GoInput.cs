@@ -299,6 +299,8 @@ namespace Going.UI.Controls
 
         #region Event
         public event EventHandler? ValueChanged;
+
+        public event Func<string, bool>? Editing;
         #endregion
 
         #region OnDrawValue
@@ -318,7 +320,9 @@ namespace Going.UI.Controls
         #region OnValueClick
         protected override void OnValueClick(float x, float y, GoMouseButton button)
         {
-            GoInputEventer.Current.FireInputString(this, Areas()["Value"], (s) => Value = s, Value);
+            GoInputEventer.Current.FireInputString(this, Areas()["Value"], (s) => {
+                if (Editing?.Invoke(s) ?? true) Value = s;
+            }, Value);
         }
         #endregion
     }
@@ -355,6 +359,8 @@ namespace Going.UI.Controls
 
         #region Event
         public event EventHandler? ValueChanged;
+
+        public event Func<T, bool>? Editing;
         #endregion
 
         #region Member Variable
@@ -424,15 +430,15 @@ namespace Going.UI.Controls
                 if (v != null) bValid = ValueTool.Valid((T)v, Minimum, Maximum);
                 else bValid = false;
 
+                T val;
                 if (v != null)
                 {
-                    if (bValid) Value = (T)v;
-                    else Value = ValueTool.Constrain((T)v, Minimum, Maximum);
+                    if (bValid) val = (T)v;
+                    else val = ValueTool.Constrain((T)v, Minimum, Maximum);
                 }
-                else
-                {
-                    Value = valOrigin;
-                }
+                else val = valOrigin;
+
+                if (Editing?.Invoke(val) ?? true) Value = val;
 
             }, Value, Minimum, Maximum);
         }
@@ -478,6 +484,8 @@ namespace Going.UI.Controls
         
         #region Event
         public event EventHandler? ValueChanged;
+
+        public event Func<bool, bool>? Editing;
         #endregion
 
         #region Member Variable
@@ -536,8 +544,11 @@ namespace Going.UI.Controls
             var rtValue = Areas()["Value"];
             var (rtOn, rtOff) = bounds(rtValue);
 
-            if (CollisionTool.Check(rtOn, x, y)) Value = true;
-            else if (CollisionTool.Check(rtOff, x, y)) Value = false;
+            bool val = Value;
+            if (CollisionTool.Check(rtOn, x, y)) val = true;
+            else if (CollisionTool.Check(rtOff, x, y)) val = false;
+
+            if (Editing?.Invoke(val) ?? true) Value = val;
         }
         #endregion
 

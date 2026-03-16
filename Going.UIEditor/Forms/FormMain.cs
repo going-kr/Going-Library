@@ -566,6 +566,8 @@ namespace Going.UIEditor
                                     {
                                         try
                                         {
+                                            File.WriteAllText(Path.Combine(dir, r.FileName), r.Code);
+
                                             if (Directory.Exists(Path.Combine(dir, "bin", "Debug")))
                                                 foreach (var d in Directory.GetDirectories(Path.Combine(dir, "bin", "Debug")))
                                                     File.WriteAllText(Path.Combine(d, r.FileName), r.Code);
