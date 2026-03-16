@@ -1,5 +1,23 @@
 # Going.Basis — 통신 코드 패턴
 
+## 목차
+
+| # | 섹션 | 설명 |
+|---|------|------|
+| 1 | .csproj 패키지 참조 | 패키지 버전 및 참조 방법 |
+| 2 | Modbus 아키텍처 | 클래스 선택 기준 (MasterRTU vs ModbusRTUMaster) |
+| 3 | MasterRTU 패턴 | 래퍼 — 권장. WordAreas/BitAreas 자동 폴링 |
+| 4 | MasterTCP 패턴 | 래퍼 — 권장. TCP 버전 |
+| 5 | ModbusRTUMaster 패턴 | 저수준 — 직접 이벤트 처리 필요 시 |
+| 6 | ModbusTCPMaster 패턴 | 저수준 TCP 버전 |
+| 7 | SlaveRTU 패턴 | 래퍼 — Modbus 슬레이브 (RTU) |
+| 8 | SlaveTCP 패턴 | 래퍼 — Modbus 슬레이브 (TCP) |
+| 9 | DeviceData 모델 패턴 | ModbusRTUMaster 전용 레거시 패턴 |
+| 10 | CNet 패턴 | LS Electric PLC 시리얼 통신 |
+| 11 | MC 패턴 | Mitsubishi PLC 시리얼 통신 |
+| 12 | MQTT 패턴 | MQTT 클라이언트 |
+| 13 | 자주 하는 실수 | 통신 코드 오류 19개 대조표 |
+
 ---
 
 ## .csproj 패키지 참조
@@ -84,7 +102,7 @@ public class DeviceManager
 
     public void Stop()
     {
-        RTU.Stop();
+        RTU.Stop();  // 래퍼 클래스는 Stop()만 호출하면 내부에서 자동 정리됨
     }
 
     // 값 읽기 — 의미있는 프로퍼티로 래핑
@@ -249,6 +267,7 @@ public class DeviceManager
         RTU.Start();
     }
 
+    // ⚠ 저수준 클래스는 Stop() 외에 스케줄/큐 수동 정리 필요 (래퍼와 다름)
     public void Stop()
     {
         RTU.Stop();

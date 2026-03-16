@@ -40,7 +40,7 @@ Windows/
 
 ### 클로드 코드 작업 규칙
 
-> **절대 수정 금지**: `*.Designer.cs`, `design.json`
+> ⚠ `*.Designer.cs`, `design.json` 수정 금지 — 상세는 **SKILL.md "절대 규칙 #1"** 참조.
 > **작업 대상**: `*.cs` (사용자 파일)만 수정
 
 ```
@@ -392,8 +392,8 @@ Designer.cs에서 코드로 자동 변환되는 타입 목록 (Code.cs MakePropC
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Going.Basis" Version="1.0.0" />
-    <PackageReference Include="Going.UI.OpenTK" Version="1.0.4" />
+    <PackageReference Include="Going.Basis" Version="1.0.3.1" />
+    <PackageReference Include="Going.UI.OpenTK" Version="1.0.7.1" />
   </ItemGroup>
 </Project>
 ```
@@ -439,6 +439,17 @@ devMgr.Stop();    // 통신 종료
 
 wnd.Dispose();
 ```
+
+### 이벤트 바인딩 규칙
+
+| 이벤트 | 소속 | 용도 | 예시 |
+|--------|------|------|------|
+| `ButtonClicked` | GoButton 전용 | 버튼 클릭 처리 | `btnStart.ButtonClicked += (o, s) => { };` |
+| `MouseClicked` | GoControl 베이스 (모든 컨트롤) | 일반 클릭 — Keypad 호출, 팝업 등 | `lblValue.MouseClicked += (o, s) => { };` |
+| `MouseDoubleClicked` | GoControl 베이스 | 더블클릭 | `ctrl.MouseDoubleClicked += (o, s) => { };` |
+| `MouseLongClicked` | GoControl 베이스 | 롱클릭 (길게 누르기) | `ctrl.MouseLongClicked += (o, s) => { };` |
+
+> **GoButton은 `ButtonClicked`를 사용하고, 다른 컨트롤(GoLabel, GoLamp 등)의 클릭은 `MouseClicked`를 사용한다.** `MouseClick`이나 `Click` 이벤트는 존재하지 않는다.
 
 ### MainWindow 확장 패턴 (MainWindow.cs)
 
@@ -713,6 +724,52 @@ public partial class Keypad : GoWindow
     }
 }
 ```
+
+### 범용 설정 윈도우 콜백 패턴
+
+여러 값을 입력받고 결과를 콜백으로 반환하는 범용 패턴:
+
+```csharp
+public partial class SettingWindow : GoWindow
+{
+    Action<string, int>? _callback;
+
+    public SettingWindow()
+    {
+        InitializeComponent();
+
+        btnOk.ButtonClicked += (o, s) =>
+        {
+            _callback?.Invoke(inpName.Text, (int)inpTimeout.Value);
+            Close();
+        };
+
+        btnCancel.ButtonClicked += (o, s) => Close();
+    }
+
+    public void ShowSetting(string name, int timeout, Action<string, int> callback)
+    {
+        _callback = callback;
+        inpName.Text = name;
+        inpTimeout.Value = timeout;
+        Show();
+    }
+}
+
+// 호출 측 (Page에서)
+btnSetting.ButtonClicked += (o, s) =>
+{
+    var setting = Main.DataMgr.Setting;
+    Main.Window.SettingWnd.ShowSetting(setting.Name, setting.Timeout, (name, timeout) =>
+    {
+        setting.Name = name;
+        setting.Timeout = timeout;
+        Main.DataMgr.Save();
+    });
+};
+```
+
+> **핵심 패턴**: Show 헬퍼에서 현재 값 세팅 + `Action` 콜백 저장 → `Show()` 호출 → OK 시 콜백 실행 + `Close()`. WinForms의 `ShowDialog()`/`DialogResult`와 다름 — Going은 **비동기 콜백** 방식.
 
 ---
 

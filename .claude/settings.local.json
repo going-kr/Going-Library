@@ -9,7 +9,9 @@
       "Bash(ls -la \"C:\\\\Users\\\\hy752\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\D--Project-Going-library-src-Going\\\\6a84e07b-c92f-4b63-9fb1-db13001d41e4\\\\tasks\"\" 2>/dev/null || echo \"Directory not found \")",
       "Bash(python3 -c \"import sys,json; lines=[l for l in sys.stdin if l.strip\\(\\)]; last=json.loads\\(lines[-1]\\) if lines else {}; print\\(json.dumps\\(last.get\\(''''message'''',{}\\).get\\(''''content'''',''''''''\\)[:2000]\\) if ''''message'''' in last else ''''no message''''\\)\")",
       "Bash(python3 -c \"import sys,json; lines=[l for l in sys.stdin if l.strip\\(\\)]; last=json.loads\\(lines[-1]\\) if lines else {}; msg=last.get\\(''''message'''',{}\\).get\\(''''content'''',''''''''\\); print\\(msg[:3000] if isinstance\\(msg,str\\) else json.dumps\\(msg\\)[:3000]\\)\")",
-      "Bash(xargs grep:*)"
+      "Bash(xargs grep:*)",
+      "Bash(ls -la \"D:\\\\Project\\\\Going\\\\library\\\\src\\\\Going\\\\going-ui-skill\"\" 2>/dev/null | grep -E \"^d)",
+      "Bash(^-\" || ls -1 \"D:ProjectGoinglibrarysrcGoinggoing-ui-skill \")"
     ]
   }
 }

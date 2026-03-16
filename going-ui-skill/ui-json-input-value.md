@@ -1,6 +1,6 @@
 # Going UI — GoInput / GoValue 계열 JSON
 
-> 이 문서는 `ui-json-controls.md`에서 분리된 하위 참조 문서.
+> 이 문서는 `ui-json.md`의 하위 참조 문서 (기본 컨트롤은 `ui-json-controls.md`, 확장 컨트롤은 `ui-json-controls-ext.md` 참조).
 > GoInput(입력) / GoValue(표시) 계열 컨트롤의 JSON 구조를 다룬다.
 > 공통 속성, Enum, 테마 등은 `ui-json.md` 참조.
 

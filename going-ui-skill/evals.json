@@ -4,12 +4,12 @@
     "prompt": "GoButton 클릭 이벤트를 바인딩하는 C# 코드를 작성해줘. 버튼 이름은 btnStart이고, 클릭하면 GoLamp lampRun의 OnOff를 true로 변경해야 해.",
     "expected_behavior": [
       "Designer.cs에서 btnStart, lampRun 변수를 참조",
-      "btnStart.MouseClick += (o, s) => { ... } 패턴 사용",
+      "btnStart.ButtonClicked += (o, s) => { ... } 패턴 사용 (GoButton 전용 이벤트)",
       "lampRun.OnOff = true 설정",
       "Designer.cs를 직접 수정하지 않음"
     ],
-    "must_contain": ["MouseClick", "lampRun.OnOff", "true"],
-    "must_not_contain": ["Click +=", "EventHandler", "new EventHandler"],
+    "must_contain": ["ButtonClicked", "lampRun.OnOff", "true"],
+    "must_not_contain": ["Click +=", "EventHandler", "new EventHandler", "MouseClick"],
     "references": ["ui-code.md"]
   },
   {
@@ -32,13 +32,13 @@
     "prompt": "MasterRTU로 슬레이브 1번의 D100 워드 10개를 읽는 코드를 작성해줘.",
     "expected_behavior": [
       "MasterRTU 인스턴스 생성 및 Start() 호출",
+      "WordAreas.Add로 영역 매핑 (예: WordAreas.Add(0, \"D\"))",
       "MonitorWord_F3(1, 100, 10) 패턴 사용",
-      "DataReceived 이벤트 바인딩",
-      "AutoResponse = true 설정",
-      "DataReadEventArgs에서 Data(int[]) 접근"
+      "GetWord(1, \"D100\") 패턴으로 캐시에서 값 조회",
+      "IsOpen 또는 DeviceOpened/DeviceClosed로 통신 상태 판단"
     ],
-    "must_contain": ["MasterRTU", "MonitorWord_F3", "DataReceived", "AutoResponse"],
-    "must_not_contain": ["ReadHoldingRegisters", "ModbusClient"],
+    "must_contain": ["MasterRTU", "MonitorWord_F3", "GetWord", "WordAreas"],
+    "must_not_contain": ["ReadHoldingRegisters", "ModbusClient", "DataReceived", "AutoResponse", "DeviceData", "AutoWordRead"],
     "references": ["basis.md"]
   },
   {
@@ -88,7 +88,7 @@
     ],
     "must_contain": ["4"],
     "must_not_contain": ["\"MiddleCenter\"", "\"Center\""],
-    "references": ["ui-json.md", "ui-json-controls.md"]
+    "references": ["ui-json.md", "ui-json-controls.md", "ui-json-controls-ext.md"]
   },
   {
     "name": "GoTableLayoutPanel 레이아웃 구성",
@@ -102,5 +102,107 @@
     "must_contain": ["GoTableLayoutPanel", "\"Dock\": 5", "\"Rows\"", "\"Columns\""],
     "must_not_contain": ["Grid", "StackPanel"],
     "references": ["ui-json-containers.md"]
+  },
+  {
+    "name": "IcPage + ImageCanvas 컨트롤 JSON 생성",
+    "prompt": "ImageCanvas 방식으로 IcPage에 IcButton 2개와 IcLabel 1개를 배치하는 .gud JSON을 작성해줘. OffImage는 \"bg_off\", OnImage는 \"bg_on\"으로.",
+    "expected_behavior": [
+      "Pages에 Type: IcPage 사용 (GoPage 아님)",
+      "IcPage에 OffImage/OnImage 속성 포함",
+      "IcButton의 TextColor 기본값은 \"Black\" (GoLabel의 \"Fore\"와 다름)",
+      "IcButton의 Selectable은 true",
+      "각 컨트롤 Value 래퍼 구조: { \"Type\": \"IcButton\", \"Value\": { ... } }",
+      "모든 컨트롤에 UUID Id 포함"
+    ],
+    "must_contain": ["IcPage", "IcButton", "IcLabel", "OffImage", "OnImage"],
+    "must_not_contain": ["GoPage", "GoButton", "GoLabel"],
+    "references": ["ui-json.md", "ui-json-imagecanvas.md"]
+  },
+  {
+    "name": "gtcli 장치 배포 워크플로우",
+    "prompt": "Going UI 프로젝트를 빌드해서 터치 장치(172.30.1.13)에 배포해줘. 앱 이름은 MyApp이고 토큰은 abc123이야.",
+    "expected_behavior": [
+      "dotnet publish -r linux-arm64 타겟으로 빌드",
+      "publish 결과물을 zip으로 압축",
+      "gtcli deploy로 원클릭 배포 (업로드→설치→시작)",
+      "--token 옵션으로 인증"
+    ],
+    "must_contain": ["dotnet publish", "linux-arm64", "gtcli", "deploy", "--token"],
+    "must_not_contain": ["docker", "windows-x64"],
+    "references": ["ui-mcp.md"]
+  },
+  {
+    "name": "MasterTCP 통신 코드 작성",
+    "prompt": "MasterTCP로 192.168.0.10의 슬레이브 1번에서 D0~D49 워드 50개를 읽는 DeviceManager를 작성해줘.",
+    "expected_behavior": [
+      "MasterTCP 인스턴스 생성",
+      "RemoteIP로 IP 설정 (Host 아님)",
+      "RemotePort로 포트 설정 (Port 아님)",
+      "WordAreas.Add로 영역 매핑",
+      "MonitorWord_F3(1, 0, 50) 패턴 사용",
+      "GetWord(1, \"D0\") 패턴으로 값 조회",
+      "IsOpen 또는 DeviceOpened/DeviceClosed로 통신 상태 판단"
+    ],
+    "must_contain": ["MasterTCP", "RemoteIP", "RemotePort", "MonitorWord_F3", "GetWord"],
+    "must_not_contain": ["Host", "Port = 502", ".Port =", "ModbusTCPMaster", "DeviceData", "AutoWordRead"],
+    "references": ["basis.md"]
+  },
+  {
+    "name": "MQTT 클라이언트 코드 작성",
+    "prompt": "MQTT로 브로커 192.168.0.100에 연결해서 sensor/temperature 토픽을 구독하고, command/start 토픽에 \"1\"을 발행하는 코드를 작성해줘.",
+    "expected_behavior": [
+      "MQClient 인스턴스 생성",
+      "BrokerHostName으로 브로커 주소 설정",
+      "Received 이벤트에서 s.Datas (byte[])를 UTF-8 디코딩",
+      "Subscribe로 토픽 구독",
+      "Publish로 메시지 발행",
+      "MQQos 열거형 사용"
+    ],
+    "must_contain": ["MQClient", "BrokerHostName", "Received", "s.Datas", "Subscribe", "Publish", "MQQos"],
+    "must_not_contain": ["s.Message", "mqtt.Port", "MQQosLevel", "MqttClient", "ConnectAsync"],
+    "references": ["basis.md"]
+  },
+  {
+    "name": "GoWindow 팝업 콜백 패턴",
+    "prompt": "설정값(이름, 타임아웃)을 입력받는 SettingWindow를 만들고, PageMain에서 버튼 클릭 시 팝업을 열어 결과를 받는 코드를 작성해줘.",
+    "expected_behavior": [
+      "GoWindow 상속",
+      "Action 콜백 필드 선언",
+      "Show 헬퍼 메서드에서 현재 값 세팅 + 콜백 저장 + Show() 호출",
+      "OK 버튼에서 콜백 실행 + Close()",
+      "Cancel 버튼에서 Close()",
+      "호출 측에서 람다로 결과 수신"
+    ],
+    "must_contain": ["GoWindow", "Action", "Show()", "Close()", "ButtonClicked"],
+    "must_not_contain": ["ShowDialog", "DialogResult", "MessageBox.Show", "Form"],
+    "references": ["ui-code.md"]
+  },
+  {
+    "name": "LauncherTouch MCP 장치 관리",
+    "prompt": "LauncherTouch 장치(172.30.1.13)에서 설치된 프로그램 목록을 확인하고, MyApp을 중지한 뒤 키오스크 모드를 해제해줘. 토큰은 abc123이야.",
+    "expected_behavior": [
+      "gtcli programs로 프로그램 목록 확인",
+      "gtcli stop으로 앱 중지",
+      "gtcli show-ui로 키오스크 해제",
+      "--token 옵션으로 인증",
+      "reboot/uninstall 같은 위험 명령은 사용자 확인 필요"
+    ],
+    "must_contain": ["gtcli", "programs", "stop", "show-ui", "--token"],
+    "must_not_contain": ["curl", "ssh", "systemctl"],
+    "references": ["ui-mcp.md"]
+  },
+  {
+    "name": "MCP 도구 직접 호출로 프로그램 관리",
+    "prompt": "gtcli 없이 LauncherTouch MCP Server(172.30.1.13:5001)에 직접 연결해서 설치된 프로그램 목록을 조회하고, TestApp을 중지하는 MCP 호출을 작성해줘. 토큰은 mytoken123이야.",
+    "expected_behavior": [
+      "MCP 엔드포인트: POST http://172.30.1.13:5001/mcp",
+      "X-MCP-Token 헤더로 인증",
+      "도구명은 snake_case: get_programs, stop_program",
+      "JSON-RPC 2.0 메시지 형식",
+      "stop_program 파라미터에 appName 포함"
+    ],
+    "must_contain": ["5001/mcp", "X-MCP-Token", "get_programs", "stop_program", "appName"],
+    "must_not_contain": ["GetPrograms", "StopProgram", "PascalCase 도구명"],
+    "references": ["ui-mcp.md"]
   }
 ]

@@ -6,7 +6,9 @@
 
 | 작업 | 파일 | 설명 |
 |------|------|------|
-| 컨트롤 배치 | `ui-json-controls.md` | GoLabel, GoButton, GoSlider 등 40여 종 + GoInput/GoValue 계열 |
+| 기본 컨트롤 배치 | `ui-json-controls.md` | GoLabel, GoButton, GoLamp, GoSlider 등 기본 14종 |
+| 확장 컨트롤 배치 | `ui-json-controls-ext.md` | GoDataGrid, GoGauge, GoBarGraph, GoNavigator 등 확장 19종 |
+| GoInput/GoValue 배치 | `ui-json-input-value.md` | GoInputString, GoInputNumber 등 입력 7종 + GoValue 표시 3종 |
 | 컨테이너 배치 | `ui-json-containers.md` | GoTableLayoutPanel, GoBoxPanel, GoTabControl 등 9종 |
 | ImageCanvas UI | `ui-json-imagecanvas.md` | IcButton, IcLabel, IcSlider 등 이미지 기반 컨트롤 7종 |
 
