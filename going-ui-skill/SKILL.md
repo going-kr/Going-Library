@@ -1,6 +1,6 @@
 ---
 name: going-ui
-description: Going Library 스킬. 다음 작업 시 반드시 참조 — (1) .gud 파일 생성·수정 (GoDesign/GoPage/GoWindow JSON 직렬화), (2) GoButton/GoLamp/GoInput/GoDataGrid 등 Going.UI 컨트롤 C# 코드 작성·이벤트 바인딩·OnUpdate 데이터 연동, (3) Going.Basis Modbus RTU/TCP 마스터·슬레이브 통신·MQTT·LS CNet·Mitsubishi MC PLC 연동 코드, (4) LauncherTouch MCP 장치 배포·키오스크 설정. 트리거 키워드: Going, GoButton, GoLamp, GoSlider, GoInput, GoValue, GoDesign, .gud, Modbus, MasterRTU, SlaveRTU, MQTT, HMI, SCADA, PLC, LauncherTouch, gtcli.
+description: "Going Library 스킬. 다음 작업 시 반드시 참조 — (1) .gud 파일 생성·수정 (GoDesign/GoPage/GoWindow JSON 직렬화), (2) GoButton/GoLamp/GoInput/GoDataGrid 등 Going.UI 컨트롤 C# 코드 작성·이벤트 바인딩·OnUpdate 데이터 연동, (3) Going.Basis Modbus RTU/TCP 마스터·슬레이브 통신·MQTT·LS CNet·Mitsubishi MC PLC 연동 코드, (4) LauncherTouch MCP 장치 배포·키오스크 설정. 트리거 키워드: Going, GoButton, GoLamp, GoSlider, GoInput, GoValue, GoDesign, .gud, Modbus, MasterRTU, SlaveRTU, MQTT, HMI, SCADA, PLC, LauncherTouch, gtcli."
 ---
 
 # Going Library Skill
@@ -297,7 +297,23 @@ DeviceManager 작성 시 클래스 선택 규칙:
 - DeviceData 사용 시 MasterRTU / MasterTCP 기반을 권장
   (ID(slaveId) 필수, 읽기=GetWord/GetBit 래핑, 쓰기=Set{기능이름}()로 SetWord/SetBit 래핑)
 
-### 5. 이미지 참조 처리
+### 5. .gud 파일 Pages/Windows는 반드시 Dictionary 형태
+
+.gud Design 내부의 Pages와 Windows는 **Array `[]`가 아닌 Dictionary `{}` 형태**로 작성해야 한다.
+각 항목은 `"Type"` + `"Value"` 래핑 객체로 감싸야 하며, Key는 페이지/윈도우의 Name이다.
+컨트롤 배열 프로퍼티명은 `"Childrens"` (Controls 아님).
+
+```
+✅ "Pages": { "PageMain": { "Type": "GoPage", "Value": { "Childrens": [...], ... } } }
+❌ "Pages": [{ "Type": "GoPage", "Name": "PageMain", "Controls": [...] }]
+
+✅ "Windows": { "Keypad": { "Type": "GoWindow", "Value": { "Childrens": [...], ... } } }
+❌ "Windows": [{ "Type": "GoWindow", "Name": "Keypad" }]
+```
+
+Array로 작성하면 GoPagesConverter/GoWindowsConverter에서 `Expected StartObject` 예외 발생.
+
+### 6. 이미지 참조 처리
 
 project_brief.md + 이미지가 함께 제공된 경우:
 - 이미지의 레이아웃을 우선 참조

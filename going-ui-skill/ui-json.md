@@ -96,6 +96,13 @@ SKColor는 uint(ARGB). 예: White=4294967295, Black=4278190080
 
 ## Pages / Windows 구조
 
+> **⚠️ 절대 규칙: Pages/Windows는 Array `[]`가 아니라 Dictionary `{}` 형태**
+> - ✅ 올바름: `"Pages": { "PageMain": { "Type": "GoPage", "Value": { ... } } }`
+> - ❌ 틀림: `"Pages": [{ "Type": "GoPage", "Name": "PageMain", ... }]`
+> - Key는 페이지/윈도우의 Name, Value는 `{ "Type": "...", "Value": { ... } }` 래핑 객체
+> - `"Value"` 래핑이 반드시 있어야 함 (GoPagesConverter/GoWindowsConverter가 `Type` → `Value` 순서로 읽음)
+> - 컨트롤 배열 프로퍼티명은 `"Childrens"` (Controls 아님)
+
 ### GoPage
 ```json
 "Pages": {
