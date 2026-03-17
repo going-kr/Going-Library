@@ -64,7 +64,7 @@
     ],
     "must_contain": ["MakeCode", "CopyToOutputDirectory"],
     "must_not_contain": ["수동으로 JSON 파일을 만들", "design.json을 편집"],
-    "references": ["SKILL.md (트러블슈팅)"]
+    "references": ["SKILL.md"]
   },
   {
     "name": "SKRect Bounds 직렬화",
@@ -88,7 +88,7 @@
     ],
     "must_contain": ["4"],
     "must_not_contain": ["\"MiddleCenter\"", "\"Center\""],
-    "references": ["ui-json.md", "ui-json-controls.md", "ui-json-controls-ext.md"]
+    "references": ["ui-json.md", "ui-json-controls.md"]
   },
   {
     "name": "GoTableLayoutPanel 레이아웃 구성",
@@ -204,5 +204,215 @@
     "must_contain": ["5001/mcp", "X-MCP-Token", "get_programs", "stop_program", "appName"],
     "must_not_contain": ["GetPrograms", "StopProgram", "PascalCase 도구명"],
     "references": ["ui-mcp.md"]
+  },
+  {
+    "name": "절대규칙: Designer.cs 수정 거부",
+    "prompt": "MainWindow.Designer.cs에서 btnStart 변수명을 btnRun으로 변경해줘.",
+    "expected_behavior": [
+      "Designer.cs 수정을 거부",
+      "UIEditor에서 MakeCode를 다시 실행하라고 안내",
+      "절대 규칙 #1을 준수"
+    ],
+    "must_contain": ["Designer.cs"],
+    "must_not_contain": ["btnRun =", "var btnRun"],
+    "references": ["SKILL.md"]
+  },
+  {
+    "name": "절대규칙: API 추측 금지 — 잘못된 속성명 교정",
+    "prompt": "GoButton의 BackColor 속성을 빨간색으로 변경하는 C# 코드를 작성해줘.",
+    "expected_behavior": [
+      "BackColor는 GoButton에 없는 속성임을 인지",
+      "올바른 속성명 ButtonColor를 사용",
+      "API 문서 확인을 권고하거나 직접 확인"
+    ],
+    "must_contain": ["ButtonColor"],
+    "must_not_contain": ["BackColor", ".BackColor =", "Background"],
+    "references": ["SKILL.md", "ui-code.md"]
+  },
+  {
+    "name": "절대규칙: 영문 네이밍 — 한글 식별자 금지",
+    "prompt": "VRU 장치의 DeviceData 클래스를 만들어줘. MasterRTU 기반이고 slaveId=1. 레지스터: D0=운전상태(bool), D10=온도(0.1℃). 쓰기: D20=설정온도.",
+    "expected_behavior": [
+      "프로퍼티명/메서드명에 영문+숫자만 사용",
+      "한글은 주석으로만 사용",
+      "ID 프로퍼티 포함",
+      "Set{기능이름}() 메서드명도 영문"
+    ],
+    "must_contain": ["ID", "MasterRTU", "GetWord", "SetWord"],
+    "must_not_contain": ["운전상태", "public.*온도", "Set온도", "Set설정", "public.*설정"],
+    "references": ["SKILL.md", "basis.md"]
+  },
+  {
+    "name": "절대규칙: 데이터 구조 임의 작성 금지",
+    "prompt": "project_brief.md에 Modbus RTU 통신이 필요하다고 적혀있어. DeviceManager와 DeviceData를 작성해줘. 레지스터 맵은 따로 안 줬어.",
+    "expected_behavior": [
+      "레지스터 맵 없이 DeviceManager를 임의로 작성하지 않음",
+      "사용자에게 레지스터 맵/데이터 모델을 문의",
+      "주소/데이터 의미를 확인해야 한다고 안내"
+    ],
+    "must_contain": ["레지스터"],
+    "must_not_contain": ["MonitorWord_F3(1, 0", "GetWord(1, \"D0\")"],
+    "references": ["SKILL.md"]
+  },
+  {
+    "name": "DeviceData + MasterRTU 다중 슬레이브 패턴",
+    "prompt": "MasterRTU 기반으로 슬레이브 1번과 2번의 DeviceData 클래스를 작성해줘. 슬레이브 1: D0=운전상태(1=운전), D10=온도(0.1℃ 단위), 쓰기 D20=설정온도. 슬레이브 2: D0=압력, 쓰기 D20=설정압력. DeviceManager도 함께 작성해줘.",
+    "expected_behavior": [
+      "DeviceData 클래스에 ID(slaveId) 프로퍼티 필수",
+      "MasterRTU를 생성자로 받아 GetWord/GetBit로 읽기 래핑",
+      "쓰기는 Set{기능이름}() 메서드로 SetWord/SetBit 래핑",
+      "DeviceManager에서 Device1, Device2를 각각 생성",
+      "MonitorWord_F3로 슬레이브별 주기 읽기 등록"
+    ],
+    "must_contain": ["DeviceData", "ID", "MasterRTU", "GetWord", "SetWord"],
+    "must_not_contain": ["ModbusRTUMaster", "WordReadReceived", "AutoWordRead_FC3"],
+    "references": ["basis.md"]
+  },
+  {
+    "name": "MasterRTU vs ModbusRTUMaster 클래스 선택",
+    "prompt": "Modbus RTU로 슬레이브 3대의 레지스터를 주기적으로 읽어서 화면에 표시해야 해. 어떤 클래스를 써야 하고 왜 그런지 설명해줘.",
+    "expected_behavior": [
+      "MasterRTU를 권장",
+      "WordAreas/BitAreas로 영역 매핑, GetWord/GetBit로 캐시 조회가 일반 폴링에 적합",
+      "ModbusRTUMaster는 수신 이벤트 직접 제어가 필요할 때만 사용",
+      "MasterRTU가 기본, ModbusRTUMaster는 예외적 사용"
+    ],
+    "must_contain": ["MasterRTU"],
+    "must_not_contain": ["ModbusRTUMaster를 사용", "AutoWordRead_FC3"],
+    "references": ["basis.md"]
+  },
+  {
+    "name": "SlaveRTU 패턴 — Modbus 슬레이브 구현",
+    "prompt": "Going.Basis로 Modbus RTU 슬레이브를 구현해줘. 슬레이브 번호 1, 포트 COM1, 9600bps, 워드 메모리 100개(시작주소 0x0000), 비트 메모리 32개(시작주소 0x0000).",
+    "expected_behavior": [
+      "SlaveRTU 인스턴스 생성",
+      "WordAreas.Add(0x0000, new WordMemory(100))",
+      "BitAreas.Add(0x0000, new BitMemory(32))",
+      "Slave = 1 설정",
+      "WordMemory는 .W 프로퍼티로 접근, BitMemory는 직접 인덱싱"
+    ],
+    "must_contain": ["SlaveRTU", "WordMemory", "BitMemory", "WordAreas", "BitAreas"],
+    "must_not_contain": ["ModbusRTUSlave", "MasterRTU", "MonitorWord"],
+    "references": ["basis.md"]
+  },
+  {
+    "name": "CNet 패턴 — LS Electric PLC 통신",
+    "prompt": "LS Electric PLC와 CNet 통신 코드를 작성해줘. %MW100부터 10개 워드를 주기적으로 읽고, %MW200에 값을 써야 해.",
+    "expected_behavior": [
+      "CNet 인스턴스 생성",
+      "AutoRSB(id, slave, \"%MW100\", 10)로 블록 주기 읽기",
+      "ManualWSS(id, slave, \"%MW200\", value)로 단일 쓰기",
+      "DataReceived 이벤트에서 s.Data (int[]) 처리",
+      "LS 주소체계(%MW) 사용"
+    ],
+    "must_contain": ["CNet", "AutoRSB", "ManualWSS", "%MW"],
+    "must_not_contain": ["MasterRTU", "ModbusRTUMaster", "MonitorWord", "MC"],
+    "references": ["basis.md"]
+  },
+  {
+    "name": "MC 패턴 — Mitsubishi PLC 통신",
+    "prompt": "Mitsubishi PLC와 MC 통신 코드를 작성해줘. D0부터 50개 워드를 주기적으로 읽고, D100에 값을 써야 해.",
+    "expected_behavior": [
+      "MC 인스턴스 생성",
+      "AutoWordRead(id, slave, \"D0\", 50)로 주기 읽기",
+      "ManualWordWrite(id, slave, \"D100\", value)로 쓰기",
+      "WordDataReceived / BitDataReceived 이벤트 분리",
+      "Mitsubishi 주소체계(D0) 사용"
+    ],
+    "must_contain": ["MC", "AutoWordRead", "ManualWordWrite", "WordDataReceived"],
+    "must_not_contain": ["MasterRTU", "CNet", "MonitorWord", "AutoRSB"],
+    "references": ["basis.md"]
+  },
+  {
+    "name": "Main 싱글턴 + Program.cs 진입점 패턴",
+    "prompt": "Going UI 프로젝트의 Program.cs와 Main 싱글턴 클래스를 작성해줘. DataManager와 DeviceManager를 포함하고, 통신 시작/종료 순서도 맞춰줘.",
+    "expected_behavior": [
+      "Main 클래스에 static 프로퍼티: Window, DevMgr, DataMgr",
+      "Program.cs에서 DataManager → DeviceManager → MainWindow 순서 생성",
+      "devMgr.Start() → wnd.Run() (블로킹) → devMgr.Stop() 순서",
+      "DI 컨테이너 없이 정적 접근 패턴"
+    ],
+    "must_contain": ["Main.Window", "Main.DevMgr", "Main.DataMgr", "Start()", "Run()", "Stop()"],
+    "must_not_contain": ["IServiceCollection", "builder.Services", "DependencyInjection", "AddSingleton"],
+    "references": ["ui-code.md"]
+  },
+  {
+    "name": "Page OnUpdate 데이터 바인딩",
+    "prompt": "PageMain의 OnUpdate에서 DeviceManager의 온도/압력 데이터를 GoLabel에 표시하고, 통신 상태를 GoLamp에 반영하는 코드를 작성해줘.",
+    "expected_behavior": [
+      "protected override void OnUpdate() 오버라이드",
+      "Main.DevMgr에서 데이터 조회",
+      "GoLamp.OnOff로 통신 상태 반영",
+      "GoLabel.Text로 데이터 값 표시",
+      "base.OnUpdate() 호출"
+    ],
+    "must_contain": ["OnUpdate", "Main.DevMgr", "OnOff", ".Text"],
+    "must_not_contain": ["Timer", "DispatcherTimer", "Task.Run", "Thread"],
+    "references": ["ui-code.md"]
+  },
+  {
+    "name": "GoDialogs 시스템 다이얼로그",
+    "prompt": "사용자가 버튼을 클릭하면 '저장하시겠습니까?' 확인 다이얼로그를 표시하고, 확인 시 DataManager.Save()를 호출하는 코드를 작성해줘.",
+    "expected_behavior": [
+      "GoDialogs.MessageBox 사용",
+      "ShowMessageBoxOkCancel 또는 ShowMessageBoxYesNo 호출",
+      "콜백에서 GoDialogResult 확인",
+      "System.Windows.Forms의 MessageBox와 혼동하지 않음"
+    ],
+    "must_contain": ["GoDialogs", "MessageBox", "GoDialogResult"],
+    "must_not_contain": ["MessageBox.Show(", "System.Windows", "WinForms"],
+    "references": ["ui-code.md"]
+  },
+  {
+    "name": "GoDataGrid C# 컬럼 구성 + 데이터 바인딩",
+    "prompt": "GoDataGrid에 LabelColumn(장치명), NumberColumn<Double>(온도, 포맷 '0.0'), LampColumn(통신상태), ButtonColumn(삭제)을 추가하고 데이터를 바인딩하는 코드를 작성해줘.",
+    "expected_behavior": [
+      "GoDataGridLabelColumn, GoDataGridNumberColumn<Double>, GoDataGridLampColumn, GoDataGridButtonColumn 사용",
+      "각 컬럼의 Name이 데이터 클래스의 프로퍼티명과 일치",
+      "SetDataSource<T>로 데이터 바인딩",
+      "CellButtonClick 이벤트로 버튼 클릭 처리"
+    ],
+    "must_contain": ["GoDataGridLabelColumn", "GoDataGridNumberColumn<Double>", "GoDataGridLampColumn", "GoDataGridButtonColumn", "SetDataSource"],
+    "must_not_contain": ["DataGridView", "GridViewColumn", "DataGrid.Columns.Add(\""],
+    "references": ["ui-control-sample.md"]
+  },
+  {
+    "name": "GoTrendGraph 실시간 스트리밍",
+    "prompt": "GoTrendGraph로 온도/습도를 실시간으로 표시하는 코드를 작성해줘. DeviceManager의 통신 데이터에서 값을 가져와야 해.",
+    "expected_behavior": [
+      "Start<T>(template)로 트렌드 수집 시작",
+      "OnUpdate에서 SetData(obj)로 매 프레임 데이터 갱신",
+      "데이터 객체의 프로퍼티명이 Series.Name과 일치",
+      "SetDataSource가 아닌 Start/SetData 패턴 사용"
+    ],
+    "must_contain": ["Start(", "SetData(", "OnUpdate"],
+    "must_not_contain": ["SetDataSource", "AddPoint", "Timer"],
+    "references": ["ui-control-sample.md"]
+  },
+  {
+    "name": ".gud 최상위 구조 + Name 유효성",
+    "prompt": "프로젝트명 'OilRecovery', 해상도 1024x600의 .gud 파일 최상위 구조를 보여줘. Pages에 PageMain 하나만 포함해줘.",
+    "expected_behavior": [
+      "Name, Width, Height, ProjectFolder, Design 필드 포함",
+      "Name은 유효한 C# 식별자 (영문+숫자+밑줄)",
+      "Design 필드는 GoDesign을 직렬화한 문자열 (이중 직렬화)",
+      "Pages 안에 PageMain이 Type/Value 래퍼 구조로 포함"
+    ],
+    "must_contain": ["\"Name\"", "OilRecovery", "\"Design\"", "\"Width\": 1024", "\"Height\": 600"],
+    "must_not_contain": ["Oil Recovery", "유증기"],
+    "references": ["ui-json.md"]
+  },
+  {
+    "name": "GoNavigator + PageName 자동 페이지 전환",
+    "prompt": ".gud에 GoNavigator를 TitleBar에 배치하고, 모니터링(PageMonitor)과 설정(PageSetting) 두 메뉴를 추가해줘. 메뉴 클릭 시 페이지가 자동 전환되어야 해.",
+    "expected_behavior": [
+      "GoNavigator 타입 사용",
+      "Menus 배열에 GoMenuItem 구조 (Text, IconString, PageName)",
+      "PageName 지정으로 별도 코드 없이 자동 전환",
+      "TitleBar.Childrens에 GoNavigator 배치"
+    ],
+    "must_contain": ["GoNavigator", "PageName", "PageMonitor", "PageSetting", "Menus"],
+    "must_not_contain": ["SetPage", "ButtonClicked", "MenuClicked"],
+    "references": ["ui-json-controls-ext.md", "ui-code.md"]
   }
 ]

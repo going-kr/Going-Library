@@ -17,7 +17,8 @@
       "Read(//c/Users/hy752/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/6a26f4d3-7d4d-49eb-9e53-a7e745cf5ca7/df1216f9-be9b-4dfe-9792-5f5d6c85cbc6/skills/xlsx/**)",
       "Bash(python -c \":*)",
       "Bash(pip install:*)",
-      "Bash(powershell.exe -NoProfile -Command \":*)"
+      "Bash(powershell.exe -NoProfile -Command \":*)",
+      "Bash(wc -l D:ProjectGoingLibrarysrcGoinggoing-ui-skill/*.md D:ProjectGoingLibrarysrcGoinggoing-ui-skill/*.json)"
     ]
   }
 }
