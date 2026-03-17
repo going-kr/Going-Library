@@ -12,19 +12,67 @@ project_brief.md 위치: 프로젝트 루트/project_brief.md
 
 Claude에게 전달 시: project_brief.md 텍스트 + images/ 폴더의 이미지를 채팅에 함께 첨부.
 
+### 샘플 프로젝트 구조
+
+`/going-ui-skill/sample/` 에 실제 프로젝트 예시가 있음. 새 프로젝트 작성 시 참고:
+
+```
+sample/
+├── project_brief.md         ← 프로젝트 브리프 (완성 예시)
+├── images/                  ← 레이아웃 이미지 (Claude에게 전달하는 이미지)
+│   ├── page_monitoring.png
+│   ├── page_monitoring_layout.png   ← 레이아웃 구조도
+│   ├── wnd_calibration.png
+│   └── wnd_calibration_layout.png   ← 레이아웃 구조도
+├── reference/               ← 레퍼런스 원본 (기존 HMI 캡처, 데이터시트 등)
+│   ├── Monitoring.png       ← 원본 HMI 화면 캡처
+│   ├── CalibrationWindow.png
+│   └── *.xlsx               ← 레지스터 맵 원본 등
+└── ui/                      ← 생성된 .gud 파일
+    └── ProjectName.gud
+```
+
+> `reference/` = 원본 자료 보관용, `images/` = 레퍼런스를 기반으로 작성된 레이아웃 이미지
+
+### 샘플 참조 방법
+
+새 프로젝트 작성 시 `sample/` 폴더를 다음과 같이 활용:
+
+1. **project_brief.md 작성법 참고** — `sample/project_brief.md`는 완성된 프로젝트 브리프 예시. 프로젝트 개요, 화면 구성(페이지·윈도우 목록), 통신(Modbus 레지스터 맵), 설정 파일, 배포 정보가 모두 포함된 실제 작업 사례
+2. **레퍼런스 → 레이아웃 이미지 변환 과정 참고** — `reference/Monitoring.png`(원본 HMI)와 `images/page_monitoring_layout.png`(레이아웃 구조도)를 비교하면 원본에서 레이아웃 이미지를 어떻게 작성하는지 이해할 수 있음
+3. **최종 .gud 결과물 참고** — `ui/SenvasSample.gud`는 위 브리프+이미지를 기반으로 생성된 실제 .gud 파일. Pages/Windows Dictionary 구조, GoTableLayoutPanel `"%"` 레이아웃, 컨트롤 배치 등의 실제 결과를 확인 가능
+
+> **핵심**: 새 프로젝트 시 `sample/project_brief.md` 구조를 따라 작성하고, `sample/ui/*.gud`의 JSON 구조를 참고하여 .gud를 생성할 것
+
 ---
 
-## 이미지 종류별 활용법
+## 이미지 종류와 워크플로우
 
-**스케치 사진 (권장)**
-- 손으로 그린 레이아웃 사진
-- 컨트롤 명칭을 옆에 써두면 정확도 향상 (예: "GoButton", "GoValue")
-- 크기 비율을 대략 맞춰 그리면 Bounds 추론에 도움
+### 이미지 분류
 
-**레퍼런스 HMI 캡처**
-- 기존 시스템 화면 또는 타사 HMI 캡처
-- Claude가 Going.UI 컨트롤로 매핑하므로, 이미지 옆에 힌트 텍스트 보완 권장
-  예: "이 수치 표시 → GoValue", "이 토글 버튼 → GoToggleButton"
+| 이미지 종류 | 접두사 | 설명 |
+|-----------|--------|------|
+| 레퍼런스 이미지 | `ref_` | 원본 이미지 (기존 HMI 캡처, 디자인 시안, 타사 화면 등). `reference/` 폴더에 저장 |
+| 레이아웃 이미지 | `page_*_layout`, `wnd_*_layout` | 레퍼런스 이미지를 기반으로 작성된 레이아웃 구조도. `images/` 폴더에 저장 |
+| 페이지/윈도우 이미지 | `page_*`, `wnd_*` | 레이아웃 이미지가 없을 때 직접 사용하는 스케치 또는 레퍼런스 |
+
+### .gud 생성 워크플로우
+
+1. **레이아웃 이미지가 별도로 있는 경우** (권장)
+   - 레이아웃 이미지(`*_layout.*`)를 기준으로 전체적 레이아웃 구조를 먼저 설정
+   - 레퍼런스 이미지(`ref_*`)로 세부 컨트롤 배치·스타일을 확인
+   - 레이아웃 이미지 → 구조(TableLayout/컨테이너), 레퍼런스 이미지 → 디테일(컨트롤 종류·값·색상)
+
+2. **레이아웃 이미지가 없는 경우**
+   - 레퍼런스 이미지를 분석하여 전체적 레이아웃을 먼저 추론
+   - 큰 영역(헤더, 본문 좌/우, 하단 등)을 TableLayout `"%"` 비율로 나눔
+   - 그 안에 세부적 레이아웃(컨트롤 그룹별 컨테이너)을 잡은 후 컨트롤 배치
+
+3. **이미지가 전혀 없는 경우**
+   - project_brief.md 텍스트 설명만으로 레이아웃을 설계
+   - TableLayout `"%"` 비율 기반 반응형 레이아웃 우선
+
+> **핵심 원칙**: 항상 "전체 레이아웃 → 세부 레이아웃 → 컨트롤 배치" 순서로 진행. TableLayout Columns/Rows는 `"%"` 비율을 기본으로 사용.
 
 ---
 

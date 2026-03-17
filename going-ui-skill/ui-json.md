@@ -237,6 +237,8 @@ SKColor는 uint(ARGB). 예: White=4294967295, Black=4278190080
 > **`Fill` 속성은 존재하지 않음!** `Dock: GoDockStyle` enum(Fill=5)을 사용.
 > `Selectable`은 `protected set` — JSON에 포함되지만 직접 설정 불가.
 
+> **기본 폰트 크기**: `FontSize`의 기본값은 **12**. 텍스트가 포함된 컨트롤(GoLabel, GoButton, GoInput 등)에서 별도 지정 없으면 `"FontSize": 12`를 사용할 것. TitleBar 등 특수 영역만 16 이상으로 설정.
+
 ---
 
 ## Enum 값 참조표
