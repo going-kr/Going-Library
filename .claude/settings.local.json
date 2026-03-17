@@ -11,7 +11,13 @@
       "Bash(python3 -c \"import sys,json; lines=[l for l in sys.stdin if l.strip\\(\\)]; last=json.loads\\(lines[-1]\\) if lines else {}; msg=last.get\\(''''message'''',{}\\).get\\(''''content'''',''''''''\\); print\\(msg[:3000] if isinstance\\(msg,str\\) else json.dumps\\(msg\\)[:3000]\\)\")",
       "Bash(xargs grep:*)",
       "Bash(ls -la \"D:\\\\Project\\\\Going\\\\library\\\\src\\\\Going\\\\going-ui-skill\"\" 2>/dev/null | grep -E \"^d)",
-      "Bash(^-\" || ls -1 \"D:ProjectGoinglibrarysrcGoinggoing-ui-skill \")"
+      "Bash(^-\" || ls -1 \"D:ProjectGoinglibrarysrcGoinggoing-ui-skill \")",
+      "Bash(cd /d)",
+      "Read(//d/Project/Going/Library/**)",
+      "Read(//c/Users/hy752/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/6a26f4d3-7d4d-49eb-9e53-a7e745cf5ca7/df1216f9-be9b-4dfe-9792-5f5d6c85cbc6/skills/xlsx/**)",
+      "Bash(python -c \":*)",
+      "Bash(pip install:*)",
+      "Bash(powershell.exe -NoProfile -Command \":*)"
     ]
   }
 }

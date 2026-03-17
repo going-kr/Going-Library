@@ -12,6 +12,7 @@ using SkiaSharp;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Windows.UI.Input.Inking;
@@ -22,6 +23,25 @@ namespace Going.UIEditor.Utils
 {
     public class Code
     {
+        #region GetLatestNuGetVersion
+        static string GetLatestNuGetVersion(string packageId, string fallback)
+        {
+            try
+            {
+                using var http = new HttpClient { Timeout = TimeSpan.FromSeconds(5) };
+                var url = $"https://api.nuget.org/v3-flatcontainer/{packageId.ToLower()}/index.json";
+                var json = http.GetStringAsync(url).GetAwaiter().GetResult();
+                var doc = JsonDocument.Parse(json);
+                var versions = doc.RootElement.GetProperty("versions");
+                return versions[versions.GetArrayLength() - 1].GetString() ?? fallback;
+            }
+            catch
+            {
+                return fallback;
+            }
+        }
+        #endregion
+
         #region ValidCode
         public static bool ValidCode(Project? prj) => prj?.Design != null;
         #endregion
@@ -54,9 +74,11 @@ namespace Going.UIEditor.Utils
                     sb.AppendLine("    <ImplicitUsings>enable</ImplicitUsings>");
                     sb.AppendLine("    <Nullable>enable</Nullable>");
                     sb.AppendLine("  </PropertyGroup>");
+                    var basisVer = GetLatestNuGetVersion("Going.Basis", "1.0.4");
+                    var openTKVer = GetLatestNuGetVersion("Going.UI.OpenTK", "1.0.8");
                     sb.AppendLine("  <ItemGroup>");
-                    sb.AppendLine("    <PackageReference Include=\"Going.Basis\" Version=\"1.0.0\" />");
-                    sb.AppendLine("    <PackageReference Include=\"Going.UI.OpenTK\" Version=\"1.0.4\" />");
+                    sb.AppendLine($"    <PackageReference Include=\"Going.Basis\" Version=\"{basisVer}\" />");
+                    sb.AppendLine($"    <PackageReference Include=\"Going.UI.OpenTK\" Version=\"{openTKVer}\" />");
                     sb.AppendLine("  </ItemGroup>");
                     sb.AppendLine("  <ItemGroup>");
                     sb.AppendLine("    <None Update=\"design.json\">");

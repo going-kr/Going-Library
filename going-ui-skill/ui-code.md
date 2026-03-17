@@ -392,8 +392,9 @@ Designer.cs에서 코드로 자동 변환되는 타입 목록 (Code.cs MakePropC
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Going.Basis" Version="1.0.3.1" />
-    <PackageReference Include="Going.UI.OpenTK" Version="1.0.7.1" />
+    <PackageReference Include="Going.Basis" Version="1.0.4" />
+    <PackageReference Include="Going.UI" Version="1.0.8" />
+    <PackageReference Include="Going.UI.OpenTK" Version="1.0.8" />
   </ItemGroup>
 </Project>
 ```
