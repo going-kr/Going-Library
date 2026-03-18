@@ -165,7 +165,9 @@ namespace Going.UIEditor
             tmr.Tick += (o, s) =>
             {
                 var p = Program.CurrentDesign;
-                this.Title = $"Going UI Editor{(p != null ? $" - {p.Name}{(Program.Edit || Program.FilePath == null ? "*" : "")}" : "")}";
+                var ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+                var verStr = ver != null ? $" v{ver.Major}.{ver.Minor}.{ver.Build}" : "";
+                this.Title = $"Going UI Editor{verStr}{(p != null ? $" - {p.Name}{(Program.Edit || Program.FilePath == null ? "*" : "")}" : "")}";
                 valPath.Value = Util2.EllipsisPath(p?.ProjectFolder ?? "", valPath.FontName, valPath.FontStyle, valPath.FontSize, valPath.Width - (valPath.TitleSize ?? 0) - (valPath.ButtonSize ?? 0) - 20);
 
                 if (p != null)

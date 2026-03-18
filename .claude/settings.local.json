@@ -26,7 +26,8 @@
       "Bash(python -c \"import zipfile; z=zipfile.ZipFile\\(''D:/Project/Going/Library/src/Going/going-ui-skill.zip''\\); [print\\(n\\) for n in z.namelist\\(\\)]\")",
       "Bash(powershell -NoProfile -Command \"Add-Type -AssemblyName System.IO.Compression.FileSystem; $z = [System.IO.Compression.ZipFile]::OpenRead\\(''D:\\\\Project\\\\Going\\\\Library\\\\src\\\\Going\\\\going-ui-skill.zip''\\); foreach \\($e in $z.Entries\\) { Write-Host $e.FullName }; $z.Dispose\\(\\)\")",
       "Bash(powershell -NoProfile -Command 'Add-Type -AssemblyName System.IO.Compression.FileSystem; $z = [System.IO.Compression.ZipFile]::OpenRead\\(\"\"D:\\\\Project\\\\Going\\\\Library\\\\src\\\\Going\\\\going-ui-skill.zip\"\"\\); foreach \\($e in $z.Entries\\) { Write-Host $e.FullName }; $z.Dispose\\(\\)')",
-      "Bash(wc -l \"D:\\\\Project\\\\Going\\\\library\\\\src\\\\Going\\\\going-ui-skill\"/*.md)"
+      "Bash(wc -l \"D:\\\\Project\\\\Going\\\\library\\\\src\\\\Going\\\\going-ui-skill\"/*.md)",
+      "Bash(gh repo:*)"
     ]
   }
 }

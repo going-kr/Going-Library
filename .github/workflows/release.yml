@@ -1,0 +1,82 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+env:
+  VERSION: ${{ github.ref_name }}
+
+jobs:
+  publish-nuget:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Extract version
+        run: echo "PKG_VERSION=${VERSION#v}" >> $GITHUB_ENV
+
+      - name: Pack Going.Basis
+        run: dotnet pack Going.Basis/Going.Basis.csproj -c Release -o nupkgs -p:Version=${{ env.PKG_VERSION }}
+
+      - name: Pack Going.UI
+        run: dotnet pack Going.UI/Going.UI.csproj -c Release -o nupkgs -p:Version=${{ env.PKG_VERSION }}
+
+      - name: Pack Going.UI.OpenTK
+        run: dotnet pack Going.UI.OpenTK/Going.UI.OpenTK.csproj -c Release -o nupkgs -p:Version=${{ env.PKG_VERSION }}
+
+      - name: Publish to NuGet.org
+        run: dotnet nuget push nupkgs/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+
+  publish-nuget-forms:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Extract version
+        run: echo "PKG_VERSION=$($env:VERSION -replace '^v','')" >> $env:GITHUB_ENV
+        shell: pwsh
+
+      - name: Pack Going.UI.Forms
+        run: dotnet pack Going.UI.Forms/Going.UI.Forms.csproj -c Release -o nupkgs -p:Version=${{ env.PKG_VERSION }}
+
+      - name: Publish to NuGet.org
+        run: dotnet nuget push nupkgs/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+
+  publish-editor:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Extract version
+        run: echo "PKG_VERSION=$($env:VERSION -replace '^v','')" >> $env:GITHUB_ENV
+        shell: pwsh
+
+      - name: Publish UIEditor
+        run: dotnet publish Going.UIEditor/Going.UIEditor.csproj -c Release -o publish/UIEditor -p:Version=${{ env.PKG_VERSION }}
+
+      - name: Zip UIEditor
+        run: Compress-Archive -Path publish/UIEditor/* -DestinationPath UIEditor.zip
+        shell: pwsh
+
+      - name: Create Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create ${{ github.ref_name }} UIEditor.zip --title "Release ${{ github.ref_name }}" --notes "Release ${{ github.ref_name }}" --draft=false
