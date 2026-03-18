@@ -5,7 +5,7 @@
 <h1 align="center">Going Library</h1>
 
 <p align="center">
-  Industrial HMI/SCADA UI Framework for .NET 8.0
+  .NET 8.0 기반 산업용 HMI/SCADA UI 프레임워크
 </p>
 
 <p align="center">
@@ -17,31 +17,31 @@
 
 ---
 
-## Overview
+## 개요
 
-**Going Library** is a C# .NET 8.0 framework for building industrial HMI/SCADA user interfaces. Built on SkiaSharp custom rendering, it provides 40+ industrial controls optimized for embedded touch panels.
+**Going Library**는 C# .NET 8.0 기반의 산업용 HMI/SCADA UI 프레임워크입니다. SkiaSharp 커스텀 렌더링으로 구현되어 임베디드 터치 패널에 최적화된 40개 이상의 산업용 컨트롤을 제공합니다.
 
-### Key Features
+### 주요 특징
 
-- **40+ Industrial Controls** — GoButton, GoLamp, GoDataGrid, GoSlider, GoGauge, GoMeter, GoChart, and more
-- **Visual UI Editor** — Design .gud files with drag-and-drop, deploy generated C# code
-- **Industrial Communications** — Modbus RTU/TCP, MQTT, LS Electric CNet, Mitsubishi MC
-- **Cross-Platform** — Runs on Raspberry Pi (linux-arm64), Windows, and Linux
-- **Dark Theme Built-in** — Professional dark UI with customizable themes
-- **AI-Powered Development** — [Claude Code Skill](https://github.com/going-kr/going-ui-skill) for AI-assisted HMI development
+- **40개 이상의 산업용 컨트롤** — GoButton, GoLamp, GoDataGrid, GoSlider, GoGauge, GoMeter, GoChart 등
+- **비주얼 UI 에디터** — 드래그 앤 드롭으로 .gud 파일 설계, C# 코드 자동 생성
+- **산업용 통신** — Modbus RTU/TCP, MQTT, LS Electric CNet, Mitsubishi MC
+- **크로스 플랫폼** — Raspberry Pi(linux-arm64), Windows, Linux 지원
+- **다크 테마 기본 제공** — 전문적인 다크 UI와 커스터마이징 가능한 테마
+- **AI 개발 지원** — [Claude Code 스킬](https://github.com/going-kr/going-ui-skill)을 통한 AI 기반 HMI 개발
 
 ---
 
-## Packages
+## 패키지
 
-| Package | Description | Target |
-|---------|-------------|--------|
-| **Going.UI** | Platform-independent UI core (controls, containers, themes, design) | `net8.0` |
-| **Going.UI.OpenTK** | OpenTK adapter for embedded/Raspberry Pi | `net8.0` |
-| **Going.UI.Forms** | WinForms adapter for Windows desktop | `net8.0-windows` |
-| **Going.Basis** | Communications & utilities (Modbus, MQTT, CNet, MC) | `net8.0` |
+| 패키지 | 설명 | 대상 |
+|--------|------|------|
+| **Going.UI** | 플랫폼 독립 UI 코어 (컨트롤, 컨테이너, 테마, 디자인) | `net8.0` |
+| **Going.UI.OpenTK** | OpenTK 어댑터 (임베디드/Raspberry Pi) | `net8.0` |
+| **Going.UI.Forms** | WinForms 어댑터 (Windows 데스크톱) | `net8.0-windows` |
+| **Going.Basis** | 통신 및 유틸리티 (Modbus, MQTT, CNet, MC) | `net8.0` |
 
-## Quick Start
+## 빠른 시작
 
 ```bash
 dotnet new console -n MyHMI
@@ -66,22 +66,22 @@ public class MainWindow : GoViewWindow
 }
 ```
 
-## UI Editor
+## UI 에디터
 
-**Going UI Editor** is a visual design tool for creating `.gud` files — JSON-based UI layouts that generate C# code automatically.
+**Going UI Editor**는 `.gud` 파일을 시각적으로 설계하는 도구입니다. JSON 기반 UI 레이아웃을 만들고 C# 코드를 자동 생성합니다.
 
-Download from [Releases](https://github.com/going-kr/Going-Library/releases).
+[Releases](https://github.com/going-kr/Going-Library/releases)에서 다운로드할 수 있습니다.
 
-### Workflow
+### 작업 흐름
 
 ```
-1. Design UI in UIEditor (.gud file)
-2. MakeCode → generates .cs files
-3. Write event handlers & communication code
-4. Build & deploy to target device
+1. UIEditor에서 UI 설계 (.gud 파일)
+2. MakeCode → .cs 파일 자동 생성
+3. 이벤트 핸들러 및 통신 코드 작성
+4. 빌드 및 대상 장치에 배포
 ```
 
-## Communications
+## 통신
 
 ```csharp
 // Modbus RTU Master
@@ -90,36 +90,38 @@ rtu.WordAreas.Add(0x0000, "D");
 rtu.MonitorWord_F3(1, 0x0000, 50);
 rtu.Start();
 
-var value = rtu.GetWord("D0");  // Read from cache
-rtu.SetWord(1, "D0", 100);     // Write to device
+var value = rtu.GetWord("D0");   // 캐시에서 읽기
+rtu.SetWord(1, "D0", 100);      // 장치에 쓰기
 ```
 
-| Protocol | Classes |
-|----------|---------|
+| 프로토콜 | 클래스 |
+|----------|--------|
 | Modbus RTU | `MasterRTU`, `SlaveRTU`, `ModbusRTUMaster` |
 | Modbus TCP | `MasterTCP`, `SlaveTCP`, `ModbusTCPMaster` |
 | MQTT | `MQClient` |
 | LS Electric CNet | `CNet` |
 | Mitsubishi MC | `MC` |
 
-## Claude Code Skill
+## Claude Code 스킬
 
-Build HMI applications with AI assistance using the [Going UI Skill](https://github.com/going-kr/going-ui-skill) for Claude Code.
-
-```
-/going-ui  →  generates .gud files, writes C# code, handles communications
-```
-
-## Project Structure
+[Going UI Skill](https://github.com/going-kr/going-ui-skill)을 사용하여 AI로 HMI 애플리케이션을 개발할 수 있습니다.
 
 ```
-Going.UI           — Platform-independent UI core
-Going.UI.Forms     — WinForms adapter
-Going.UI.OpenTK    — OpenTK adapter (embedded/Raspberry Pi)
-Going.Basis        — Communications & utilities
-Going.UIEditor     — Visual UI design tool
+/install going-kr/going-ui-skill
 ```
 
-## License
+.gud 파일 생성, C# 코드 작성, 통신 설정, 장치 배포를 AI가 지원합니다.
+
+## 프로젝트 구조
+
+```
+Going.UI           — 플랫폼 독립 UI 코어
+Going.UI.Forms     — WinForms 어댑터
+Going.UI.OpenTK    — OpenTK 어댑터 (임베디드/Raspberry Pi)
+Going.Basis        — 통신 및 유틸리티
+Going.UIEditor     — 비주얼 UI 설계 도구
+```
+
+## 라이선스
 
 MIT
