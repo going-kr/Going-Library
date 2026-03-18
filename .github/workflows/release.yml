@@ -21,14 +21,15 @@ jobs:
       - name: Extract version
         run: echo "PKG_VERSION=${VERSION#v}" >> $GITHUB_ENV
 
-      - name: Build & Pack Going.Basis
-        run: dotnet build Going.Basis/Going.Basis.csproj -c Release -p:Version=${{ env.PKG_VERSION }} && cp Going.Basis/bin/Release/*.nupkg nupkgs/ 2>/dev/null; dotnet pack Going.Basis/Going.Basis.csproj -c Release -o nupkgs -p:Version=${{ env.PKG_VERSION }} --no-build
-
-      - name: Build & Pack Going.UI
-        run: dotnet build Going.UI/Going.UI.csproj -c Release -p:Version=${{ env.PKG_VERSION }} && dotnet pack Going.UI/Going.UI.csproj -c Release -o nupkgs -p:Version=${{ env.PKG_VERSION }} --no-build
-
-      - name: Build & Pack Going.UI.OpenTK
-        run: dotnet build Going.UI.OpenTK/Going.UI.OpenTK.csproj -c Release -p:Version=${{ env.PKG_VERSION }} && dotnet pack Going.UI.OpenTK/Going.UI.OpenTK.csproj -c Release -o nupkgs -p:Version=${{ env.PKG_VERSION }} --no-build
+      - name: Build & Pack
+        run: |
+          mkdir -p nupkgs
+          dotnet build Going.Basis/Going.Basis.csproj -c Release -p:Version=${{ env.PKG_VERSION }}
+          dotnet pack Going.Basis/Going.Basis.csproj -c Release -o nupkgs -p:Version=${{ env.PKG_VERSION }} --no-build
+          dotnet build Going.UI/Going.UI.csproj -c Release -p:Version=${{ env.PKG_VERSION }}
+          dotnet pack Going.UI/Going.UI.csproj -c Release -o nupkgs -p:Version=${{ env.PKG_VERSION }} --no-build
+          dotnet build Going.UI.OpenTK/Going.UI.OpenTK.csproj -c Release -p:Version=${{ env.PKG_VERSION }}
+          dotnet pack Going.UI.OpenTK/Going.UI.OpenTK.csproj -c Release -o nupkgs -p:Version=${{ env.PKG_VERSION }} --no-build
 
       - name: Publish to NuGet.org
         run: dotnet nuget push nupkgs/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
@@ -48,7 +49,10 @@ jobs:
         shell: pwsh
 
       - name: Build & Pack Going.UI.Forms
-        run: dotnet build Going.UI.Forms/Going.UI.Forms.csproj -c Release -p:Version=${{ env.PKG_VERSION }}; dotnet pack Going.UI.Forms/Going.UI.Forms.csproj -c Release -o nupkgs -p:Version=${{ env.PKG_VERSION }} --no-build
+        run: |
+          mkdir nupkgs
+          dotnet build Going.UI.Forms/Going.UI.Forms.csproj -c Release -p:Version=${{ env.PKG_VERSION }}
+          dotnet pack Going.UI.Forms/Going.UI.Forms.csproj -c Release -o nupkgs -p:Version=${{ env.PKG_VERSION }} --no-build
 
       - name: Publish to NuGet.org
         run: dotnet nuget push nupkgs/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
