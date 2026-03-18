@@ -49,12 +49,12 @@ namespace Going.UIEditor.Forms.Editors
         #region RefrshGrid
         void RefreshGrid()
         {
-            var prj = Program.CurrentProject;
+            var prj = Program.CurrentDesign;
             if (prj != null)
             {
-                var fonts = prj.Design.GetFonts();
+                var fonts = prj.GetFonts();
                 fonts.Insert(0, defaultFont);
-                var contents = fonts.Select(x => new FontContent(prj.Design, grid)
+                var contents = fonts.Select(x => new FontContent(prj, grid)
                 {
                     Name = x.name,
                 });
@@ -78,10 +78,10 @@ namespace Going.UIEditor.Forms.Editors
             SetLang(title);
             RefreshGrid();
 
-            var prj = Program.CurrentProject;
+            var prj = Program.CurrentDesign;
             if (prj != null && this.ShowDialog() == DialogResult.OK)
             {
-                if (noSelect) ret = new FontContent(prj.Design, grid) { Name = "{NONE}" };
+                if (noSelect) ret = new FontContent(prj, grid) { Name = "{NONE}" };
                 else ret = grid.SelectedItems.FirstOrDefault() as FontContent;
             }
 

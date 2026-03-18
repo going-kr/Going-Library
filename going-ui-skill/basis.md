@@ -96,6 +96,8 @@ public class DeviceManager
         RTU.Timeout  = setting.Timeout;
 
         // 주기 읽기 등록 (slaveNo, startAddr, length)
+        // ⚠️ 쓰기 대상 레지스터도 반드시 Monitor로 읽기 등록할 것
+        //    읽지 않으면 GetWord로 현재 값 조회 불가 → UI 표시 불가
         RTU.MonitorWord_F3(1, 0x0000, 50);
 
         RTU.Start();
@@ -139,7 +141,7 @@ public class DeviceManager
 ### MasterRTU 메서드
 
 ```csharp
-// 주기 읽기 (Monitor)
+// 주기 읽기 (Monitor) — 쓰기 대상 영역도 반드시 등록
 RTU.MonitorWord_F3(slave, startAddr, length);  // FC3: 워드 읽기
 RTU.MonitorWord_F4(slave, startAddr, length);  // FC4: 입력 레지스터 읽기
 RTU.MonitorBit_F1(slave, startAddr, length);   // FC1: 코일 읽기

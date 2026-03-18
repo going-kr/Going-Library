@@ -393,12 +393,12 @@
     "name": ".gud 최상위 구조 + Name 유효성",
     "prompt": "프로젝트명 'OilRecovery', 해상도 1024x600의 .gud 파일 최상위 구조를 보여줘. Pages에 PageMain 하나만 포함해줘.",
     "expected_behavior": [
-      "Name, Width, Height, ProjectFolder, Design 필드 포함",
+      "Name, DesignWidth, DesignHeight, ProjectFolder, Pages 등 GoDesign 필드 포함",
       "Name은 유효한 C# 식별자 (영문+숫자+밑줄)",
-      "Design 필드는 GoDesign을 직렬화한 문자열 (이중 직렬화)",
+      "단일 GoDesign JSON (Project 래퍼 없음)",
       "Pages 안에 PageMain이 Type/Value 래퍼 구조로 포함"
     ],
-    "must_contain": ["\"Name\"", "OilRecovery", "\"Design\"", "\"Width\": 1024", "\"Height\": 600"],
+    "must_contain": ["\"Name\"", "OilRecovery", "\"DesignWidth\": 1024", "\"DesignHeight\": 600", "\"Pages\""],
     "must_not_contain": ["Oil Recovery", "유증기"],
     "references": ["ui-json.md"]
   },

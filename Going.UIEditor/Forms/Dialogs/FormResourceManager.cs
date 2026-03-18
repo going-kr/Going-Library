@@ -37,7 +37,7 @@ namespace Going.UIEditor.Forms
             #region btnImageAdd
             btnImageAdd.ButtonClicked += (o, s) =>
             {
-                var prj = Program.CurrentProject;
+                var prj = Program.CurrentDesign;
                 if (prj != null)
                 {
                     using (var ofd = new OpenFileDialog())
@@ -50,7 +50,7 @@ namespace Going.UIEditor.Forms
                             {
                                 var name = Path.GetFileNameWithoutExtension(filename).ToLower();
                                 var data = File.ReadAllBytes(filename);
-                                var imgs = prj.Design.GetImages();
+                                var imgs = prj.GetImages();
                                 if (imgs.Any(x => x.name == name))
                                 {
                                     var ls2 = imgs.Where(x => x.name.Split('_').Length == 2);
@@ -58,8 +58,8 @@ namespace Going.UIEditor.Forms
                                     name = $"{name}_{max + 1}";
                                 }
 
-                                prj.Design.AddImage(name, data);
-                                prj.Edit = true;
+                                prj.AddImage(name, data);
+                                Program.Edit = true;
 
                                 RefreshGrid();
                             }
@@ -71,13 +71,13 @@ namespace Going.UIEditor.Forms
             #region btnImageDel
             btnImageDel.ButtonClicked += (s, e) =>
             {
-                var prj = Program.CurrentProject;
+                var prj = Program.CurrentDesign;
                 if (prj != null && grid.SelectedItems.Count > 0)
                 {
                     foreach (var item in grid.SelectedItems)
                         if (item is ImageContent c && c.Name != null)
-                            prj.Design.RemoveImage(c.Name);
-                    prj.Edit = true;
+                            prj.RemoveImage(c.Name);
+                    Program.Edit = true;
 
                     RefreshGrid();
                 }
@@ -87,7 +87,7 @@ namespace Going.UIEditor.Forms
             #region btnFontAdd
             btnFontAdd.ButtonClicked += (o, s) =>
             {
-                var prj = Program.CurrentProject;
+                var prj = Program.CurrentDesign;
                 if (prj != null)
                 {
                     var ret = Program.FontAdder.ShowFontAdd();
@@ -97,11 +97,11 @@ namespace Going.UIEditor.Forms
                         {
                             if (name != "나눔고딕")
                             {
-                                var ls = prj.Design.GetFonts();
+                                var ls = prj.GetFonts();
                                 if (ls.Count < 4)
                                 {
-                                    prj.Design.RemoveFont(name);
-                                    foreach (var data in ret[name]) prj.Design.AddFont(name, data);
+                                    prj.RemoveFont(name);
+                                    foreach (var data in ret[name]) prj.AddFont(name, data);
                                 }
                                 else
                                 {
@@ -111,7 +111,7 @@ namespace Going.UIEditor.Forms
                             }
                         }
 
-                        prj.Edit = true;
+                        Program.Edit = true;
 
                         RefreshFonts();
                     }
@@ -121,14 +121,14 @@ namespace Going.UIEditor.Forms
             #region btnFontDel
             btnFontDel.ButtonClicked += (s, e) =>
             {
-                var prj = Program.CurrentProject;
+                var prj = Program.CurrentDesign;
                 if (prj != null)
                 {
                     var ls = dgFont.Rows.Where(x => x.Selected).Select(x => (FontDataItem)x.Source!).ToList();
                     if (ls.Any(x => x.FontName == "나눔고딕")) Program.MessageBox.ShowMessageBoxOk(LM.Delete, LM.CantDeleteDefaultFont);
                     else
                     {
-                        foreach (var v in ls) prj.Design.RemoveFont(v.FontName);
+                        foreach (var v in ls) prj.RemoveFont(v.FontName);
                         RefreshFonts();
                     }
                 }
@@ -154,11 +154,11 @@ namespace Going.UIEditor.Forms
         #region RefrshGrid
         void RefreshGrid()
         {
-            var prj = Program.CurrentProject;
+            var prj = Program.CurrentDesign;
             if (prj != null)
             {
-                var imgs = prj.Design.GetImages();
-                var contents = imgs.Select(x => new ImageContent(prj.Design, grid)
+                var imgs = prj.GetImages();
+                var contents = imgs.Select(x => new ImageContent(prj, grid)
                 {
                     Name = x.name,
                     Images = x.images,
@@ -173,10 +173,10 @@ namespace Going.UIEditor.Forms
         #region RefreshFonts
         void RefreshFonts()
         {
-            var prj = Program.CurrentProject;
+            var prj = Program.CurrentDesign;
             if (prj != null)
             {
-                var fonts = prj.Design.GetFonts() ?? [];
+                var fonts = prj.GetFonts() ?? [];
                 var ls = fonts.Select(x => new FontDataItem(x.name) { FontDatas = x.fonts }).ToList();
                 ls.Insert(0, new FontDataItem("나눔고딕"));
 

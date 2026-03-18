@@ -80,8 +80,8 @@ namespace Going.UIEditor.Windows
 
                 if (itm != null)
                 {
-                    var p = Program.CurrentProject;
-                    if (itm.Text == Master) Program.MainForm.ShowEditorWindow(p.Design);
+                    var p = Program.CurrentDesign;
+                    if (itm.Text == Master) Program.MainForm.ShowEditorWindow(p);
                     else if (itm.Tag is GoPage page) Program.MainForm.ShowEditorWindow(page);
                     else if (itm.Tag is GoWindow wnd) Program.MainForm.ShowEditorWindow(wnd);
                 }
@@ -90,7 +90,7 @@ namespace Going.UIEditor.Windows
             #region tsmiExplorerAdd.Click
             tsmiExplorerAdd.Click += (o, s) =>
             {
-                var p = Program.CurrentProject;
+                var p = Program.CurrentDesign;
                 if (p != null)
                 {
                     var nm = tvExplorer.SelectedNodes.FirstOrDefault()?.Text;
@@ -101,10 +101,10 @@ namespace Going.UIEditor.Windows
                         var ret = Program.NewPageForm.ShowNewPage();
                         if (ret != null)
                         {
-                            if (!p.Design.Pages.ContainsKey(ret.Name))
+                            if (!p.Pages.ContainsKey(ret.Name))
                             {
-                                p.Design.AddPage(ret.UseIcPage ? new IcPage { Name = ret.Name } : new GoPage { Name = ret.Name });
-                                p.Edit = true;
+                                p.AddPage(ret.UseIcPage ? new IcPage { Name = ret.Name } : new GoPage { Name = ret.Name });
+                                Program.Edit = true;
                                 RefreshTreeView();
                             }
                             else
@@ -120,10 +120,10 @@ namespace Going.UIEditor.Windows
                         var ret = Program.InputBox.ShowInputBox<WindowInfo>($"{LM.Window} {LM.Add}", 1, new());
                         if (ret != null)
                         {
-                            if (!p.Design.Windows.ContainsKey(ret.Name))
+                            if (!p.Windows.ContainsKey(ret.Name))
                             {
-                                p.Design.Windows.Add(ret.Name, new GoWindow { Name = ret.Name, Width = ret.Width, Height = ret.Height });
-                                p.Edit = true;
+                                p.Windows.Add(ret.Name, new GoWindow { Name = ret.Name, Width = ret.Width, Height = ret.Height });
+                                Program.Edit = true;
                                 RefreshTreeView();
                             }
                             else
@@ -139,7 +139,7 @@ namespace Going.UIEditor.Windows
             #region tsmiExplorerDelete.Click
             tsmiExplorerDelete.Click += (o, s) =>
             {
-                var p = Program.CurrentProject;
+                var p = Program.CurrentDesign;
                 if (p != null)
                 {
                     var nm = tvExplorer.SelectedNodes.FirstOrDefault()?.Parent?.Text;
@@ -151,8 +151,8 @@ namespace Going.UIEditor.Windows
                         {
                             if (Program.MessageBox.ShowMessageBoxYesNo(LM.Delete, $"'{v.Name}' {LM.DeletePage}") == DialogResult.Yes)
                             {
-                                p.Design.Pages.Remove(v.Name);
-                                p.Edit = true;
+                                p.Pages.Remove(v.Name);
+                                Program.Edit = true;
                                 RefreshTreeView();
 
                                 var wnd = DockPanel.Contents.FirstOrDefault(x => x is EditorWindow editor && editor.Target == v) as EditorWindow;
@@ -169,8 +169,8 @@ namespace Going.UIEditor.Windows
                         {
                             if (Program.MessageBox.ShowMessageBoxYesNo(LM.Delete, $"'{v.Name}' {LM.DeleteWindow}") == DialogResult.Yes)
                             {
-                                p.Design.Windows.Remove(v.Name);
-                                p.Edit = true;
+                                p.Windows.Remove(v.Name);
+                                Program.Edit = true;
                                 RefreshTreeView();
                             }
                         }
@@ -186,7 +186,7 @@ namespace Going.UIEditor.Windows
 
                 if (ret != null)
                 {
-                    var p = Program.CurrentProject;
+                    var p = Program.CurrentDesign;
                     if (p != null)
                     {
                         var nm = tvExplorer.SelectedNodes.FirstOrDefault()?.Parent?.Text;
@@ -196,14 +196,14 @@ namespace Going.UIEditor.Windows
                             var v = tvExplorer.SelectedNodes.FirstOrDefault()?.Tag as GoPage;
                             if (v != null)
                             {
-                                if (!p.Design.Pages.ContainsKey(ret))
+                                if (!p.Pages.ContainsKey(ret))
                                 {
-                                    var ls = p.Design.Pages.Values.ToList();
+                                    var ls = p.Pages.Values.ToList();
                                     v.Name = ret;
-                                    p.Design.Pages.Clear();
-                                    foreach (var i in ls) p.Design.Pages.Add(i.Name!, i);
+                                    p.Pages.Clear();
+                                    foreach (var i in ls) p.Pages.Add(i.Name!, i);
 
-                                    p.Edit = true;
+                                    Program.Edit = true;
                                     RefreshTreeView();
                                 }
                                 else if (ret != v.Name)
@@ -219,14 +219,14 @@ namespace Going.UIEditor.Windows
                             var v = tvExplorer.SelectedNodes.FirstOrDefault()?.Tag as GoWindow;
                             if (v != null)
                             {
-                                if (!p.Design.Windows.ContainsKey(ret))
+                                if (!p.Windows.ContainsKey(ret))
                                 {
-                                    var ls = p.Design.Windows.Values.ToList();
+                                    var ls = p.Windows.Values.ToList();
                                     v.Name = ret;
-                                    p.Design.Windows.Clear();
-                                    foreach (var i in ls) p.Design.Windows.Add(i.Name!, i);
+                                    p.Windows.Clear();
+                                    foreach (var i in ls) p.Windows.Add(i.Name!, i);
 
-                                    p.Edit = true;
+                                    Program.Edit = true;
                                     RefreshTreeView();
                                 }
                                 else if (ret != v.Name)
@@ -265,17 +265,17 @@ namespace Going.UIEditor.Windows
             ndPages.Nodes.Clear();
             ndWnds.Nodes.Clear();
 
-            var p = Program.CurrentProject;
+            var p = Program.CurrentDesign;
             if(p != null)
             {
-                ndPages.Nodes.AddRange(p.Design.Pages.Select(x => new GoTreeNode 
+                ndPages.Nodes.AddRange(p.Pages.Select(x => new GoTreeNode 
                 {
                     Text = x.Value.Name,
                     IconString = "fa-file-image",
                     Tag = x.Value
                 }));
 
-                ndWnds.Nodes.AddRange(p.Design.Windows.Select(x => new GoTreeNode
+                ndWnds.Nodes.AddRange(p.Windows.Select(x => new GoTreeNode
                 {
                     Text = x.Value.Name,
                     IconString = "fa-window-maximize",

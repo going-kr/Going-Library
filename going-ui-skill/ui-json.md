@@ -16,35 +16,16 @@
 
 ---
 
-## .gud 파일 최상위 구조
+## .gud 파일 구조
+
+.gud 파일은 GoDesign 객체를 직접 직렬화한 **단일 JSON**이다 (이중 직렬화 없음).
 
 ```json
 {
   "Name": "ProjectName",
-  "Width": 1024,
-  "Height": 600,
+  "DesignWidth": 1024,
+  "DesignHeight": 600,
   "ProjectFolder": "None",
-  "Design": "<GoDesign JSON 문자열 (이중 직렬화)>"
-}
-```
-
-> **⚠️ Name 필드 규칙 (필수)**
-> - `Name`은 C# 네임스페이스로 직접 사용되므로 **반드시 유효한 C# 식별자**여야 함
-> - **영문자·숫자·언더스코어만 허용** (한글, 띄어쓰기, 특수문자 불가)
-> - **영문자 또는 언더스코어로 시작** (숫자로 시작 불가)
-> - 예시: `DataLogger` ✅, `OilRecovery_V09` ✅, `유증기 GUI` ❌, `My Project` ❌, `3DViewer` ❌
-> - 사용자가 한글·띄어쓰기가 포함된 이름을 요청하면 적절한 **영문 PascalCase 이름을 제안**할 것
-
-> `Design` 필드는 GoDesign 객체를 `GoJsonConverter.Options`로 직렬화한 **문자열**.
-> Project 자체는 `JsonOpt.Options`(ProjectConverter)로 직렬화.
-> Design 값은 JSON string — `{\u0022Pages\u0022:...}` 형태로 이스케이프됨.
-
----
-
-## GoDesign JSON 구조
-
-```json
-{
   "Pages": { ... },
   "Windows": { ... },
   "Images": {},
@@ -64,6 +45,13 @@
   "CustomTheme": null
 }
 ```
+
+> **⚠️ Name 필드 규칙 (필수)**
+> - `Name`은 C# 네임스페이스로 직접 사용되므로 **반드시 유효한 C# 식별자**여야 함
+> - **영문자·숫자·언더스코어만 허용** (한글, 띄어쓰기, 특수문자 불가)
+> - **영문자 또는 언더스코어로 시작** (숫자로 시작 불가)
+> - 예시: `DataLogger` ✅, `OilRecovery_V09` ✅, `유증기 GUI` ❌, `My Project` ❌, `3DViewer` ❌
+> - 사용자가 한글·띄어쓰기가 포함된 이름을 요청하면 적절한 **영문 PascalCase 이름을 제안**할 것
 
 ### CustomTheme
 
@@ -364,7 +352,6 @@ None=0, Single=1, Multi=2, MultiPC=3
 
 1. 요구사항 파악 (화면 크기, 페이지 구성, 컨트롤 배치)
 2. **프로젝트 이름 검증** — 영문+숫자+언더스코어만, 영문/언더스코어로 시작, 띄어쓰기·한글·특수문자 불가. 위반 시 영문 PascalCase 이름 제안
-3. GoDesign JSON 구성
+3. GoDesign JSON 구성 (Name, DesignWidth, DesignHeight, ProjectFolder 포함)
 4. 각 컨트롤마다 고유 UUID `Id` 생성
-5. Project 구조로 감싸기 (`Design` 필드는 GoDesign을 문자열로 직렬화)
-6. `.gud` 파일로 저장
+5. `.gud` 파일로 저장 (단일 GoDesign JSON — 이중 직렬화 없음)

@@ -1,16 +1,18 @@
+using Going.UI.Design;
 using Going.UI.Extensions;
 using Going.UI.Forms;
 using Going.UI.Forms.Dialogs;
+using Going.UI.Json;
 using Going.UI.Themes;
 using Going.UI.Tools;
 using Going.UI.Utils;
-using Going.UIEditor.Datas;
 using Going.UIEditor.Utils;
 using Going.UIEditor.Windows;
 using SkiaSharp;
 using System.ComponentModel;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using WeifenLuo.WinFormsUI.Docking;
 using Timer = System.Windows.Forms.Timer;
 
@@ -136,7 +138,7 @@ namespace Going.UIEditor
             {
                 if(s.Button.Name == "select")
                 {
-                    var p = Program.CurrentProject;
+                    var p = Program.CurrentDesign;
                     if (p != null)
                         using (var fd = new FolderBrowserDialog())
                         {
@@ -145,12 +147,13 @@ namespace Going.UIEditor
                             if(fd.ShowDialog() == DialogResult.OK)
                             {
                                 p.ProjectFolder = fd.SelectedPath;
-                                p.Edit = true;
+                                Program.Edit = true;
                             }
                         }
                 }
             };
 
+            btnHotReload.ButtonClicked += (o, s) => HotReload();
             btnValidCheck.ButtonClicked += (o, s) => ValidCheckProject();
             btnDeploy.ButtonClicked += (o, s) => DeployProject();
             #endregion
@@ -161,8 +164,8 @@ namespace Going.UIEditor
             #region Timer
             tmr.Tick += (o, s) =>
             {
-                var p = Program.CurrentProject;
-                this.Title = $"Going UI Editor{(p != null ? $" - {p.Name}{(p.Edit || p.FilePath == null ? "*" : "")}" : "")}";
+                var p = Program.CurrentDesign;
+                this.Title = $"Going UI Editor{(p != null ? $" - {p.Name}{(Program.Edit || Program.FilePath == null ? "*" : "")}" : "")}";
                 valPath.Value = Util2.EllipsisPath(p?.ProjectFolder ?? "", valPath.FontName, valPath.FontStyle, valPath.FontSize, valPath.Width - (valPath.TitleSize ?? 0) - (valPath.ButtonSize ?? 0) - 20);
 
                 if (p != null)
@@ -202,7 +205,7 @@ namespace Going.UIEditor
         #region SetLayout
         void SetLayout()
         {
-            var p = Program.CurrentProject;
+            var p = Program.CurrentDesign;
             if (p != null)
             {
                 #region Close
@@ -273,7 +276,7 @@ namespace Going.UIEditor
         #region SetUI
         void SetUI()
         {
-            var p = Program.CurrentProject;
+            var p = Program.CurrentDesign;
             if (p != null)
             {
                 #region UI
@@ -292,6 +295,7 @@ namespace Going.UIEditor
 
                 btnTheme.Visible = btnResourceManager.Visible = true;
                 valPath.Visible = true;
+                btnHotReload.Visible = true;
                 btnValidCheck.Visible = true;
                 btnDeploy.Visible = true;
                 #endregion
@@ -314,6 +318,7 @@ namespace Going.UIEditor
 
                 btnTheme.Visible = btnResourceManager.Visible = false;
                 valPath.Visible = false;
+                btnHotReload.Visible = false;
                 btnValidCheck.Visible = false;
                 btnDeploy.Visible = false;
                 #endregion
@@ -400,7 +405,9 @@ namespace Going.UIEditor
             var r = Program.NewFileForm.ShowNewFile();
             if (r != null)
             {
-                Program.CurrentProject = new Datas.Project { Name = r.Name, Width = r.Width, Height = r.Height  };
+                Program.CurrentDesign = new GoDesign { Name = r.Name, DesignWidth = r.Width, DesignHeight = r.Height };
+                Program.FilePath = null;
+                Program.Edit = false;
 
                 SetLayout();
                 SetUI();
@@ -414,22 +421,39 @@ namespace Going.UIEditor
             {
                 opening = true;
 
-                var p = Program.CurrentProject;
+                var p = Program.CurrentDesign;
                 DialogResult ret = DialogResult.OK;
-                if (p != null && (p.Edit || p.FilePath == null))
+                if (p != null && (Program.Edit || Program.FilePath == null))
                 {
                     ret = Program.MessageBox.ShowMessageBoxYesNoCancel(LM.Save, LM.SaveQuestion);
-                    if (ret == DialogResult.Yes) p.Save();
+                    if (ret == DialogResult.Yes) SaveFile();
                 }
 
                 if (ret != DialogResult.Cancel)
                 {
-                    var v = Project.Open();
-                    if (v != null)
+                    using (var ofd = new OpenFileDialog())
                     {
-                        Program.CurrentProject = v;
-                        SetUI();
-                        SetLayout();
+                        ofd.Title = LM.Open;
+                        ofd.InitialDirectory = Program.DataMgr.LastOpenFolder ?? Program.DataMgr.ProjectFolder;
+                        ofd.Multiselect = false;
+                        ofd.Filter = "Going UI Editor File|*.gud";
+
+                        if (ofd.ShowDialog() == DialogResult.OK)
+                        {
+                            var s = File.ReadAllText(ofd.FileName);
+                            var v = LoadDesign(s);
+                            if (v != null)
+                            {
+                                Program.CurrentDesign = v;
+                                Program.FilePath = ofd.FileName;
+                                Program.Edit = false;
+                                SetUI();
+                                SetLayout();
+                            }
+
+                            Program.DataMgr.LastOpenFolder = Path.GetDirectoryName(ofd.FileName);
+                            Program.DataMgr.SaveSetting();
+                        }
                     }
                 }
                 opening = false;
@@ -437,30 +461,131 @@ namespace Going.UIEditor
         }
         #endregion
         #region SaveFile
-        void SaveFile() => Program.CurrentProject?.Save();
-        void SaveAsFile() => Program.CurrentProject?.SaveAs();
+        void SaveFile()
+        {
+            var design = Program.CurrentDesign;
+            if (design == null) return;
+
+            if (Program.FilePath != null && Directory.Exists(Path.GetDirectoryName(Program.FilePath)))
+            {
+                var v = design.JsonSerialize();
+                try
+                {
+                    File.WriteAllText(Program.FilePath, v);
+                    Program.Edit = false;
+                }
+                catch (UnauthorizedAccessException) { Program.MessageBox.ShowMessageBoxOk(LM.Save, LM.SavePermissions); }
+            }
+            else SaveAsFile();
+        }
+
+        void SaveAsFile()
+        {
+            var design = Program.CurrentDesign;
+            if (design == null) return;
+
+            using (var sfd = new SaveFileDialog())
+            {
+                sfd.Title = LM.SaveAs;
+                sfd.InitialDirectory = Program.DataMgr.ProjectFolder;
+                sfd.Filter = "Going UI Editor File|*.gud";
+                if (sfd.ShowDialog() == DialogResult.OK)
+                {
+                    Program.FilePath = sfd.FileName;
+                    var v = design.JsonSerialize();
+                    try
+                    {
+                        File.WriteAllText(Program.FilePath, v);
+                        Program.Edit = false;
+                    }
+                    catch (UnauthorizedAccessException) { Program.MessageBox.ShowMessageBoxOk(LM.Save, LM.SavePermissions); }
+                }
+            }
+        }
         #endregion
         #region CloseFile
         DialogResult CloseFile()
         {
             DialogResult ret = DialogResult.OK;
-            var p = Program.CurrentProject;
-            if (p != null && (p.Edit || p.FilePath == null))
+            var p = Program.CurrentDesign;
+            if (p != null && (Program.Edit || Program.FilePath == null))
             {
                 ret = Program.MessageBox.ShowMessageBoxYesNoCancel(LM.Save, LM.SaveQuestion);
-                if (ret == DialogResult.Yes) p.Save();
+                if (ret == DialogResult.Yes) SaveFile();
             }
 
             if (ret != DialogResult.Cancel)
             {
                 if (p != null) dockPanel.SaveAsXml(PATH_LAYOUT);
 
-                Program.CurrentProject = null;
+                Program.CurrentDesign = null;
+                Program.FilePath = null;
+                Program.Edit = false;
                 SetLayout();
                 SetUI();
             }
 
             return ret;
+        }
+        #endregion
+        #region LoadDesign
+        GoDesign? LoadDesign(string json)
+        {
+            try
+            {
+                var doc = JsonDocument.Parse(json);
+                if (doc.RootElement.TryGetProperty("Design", out var designProp) && designProp.ValueKind == JsonValueKind.String)
+                {
+                    // 구 구조: { Name, Width, Height, ProjectFolder, Design: "<escaped JSON>" }
+                    var designJson = designProp.GetString();
+                    var design = GoDesign.JsonDeserialize(designJson);
+                    if (design != null)
+                    {
+                        design.Name = doc.RootElement.TryGetProperty("Name", out var n) ? n.GetString() : null;
+                        design.DesignWidth = doc.RootElement.TryGetProperty("Width", out var w) ? w.GetInt32() : 0;
+                        design.DesignHeight = doc.RootElement.TryGetProperty("Height", out var h) ? h.GetInt32() : 0;
+                        design.ProjectFolder = doc.RootElement.TryGetProperty("ProjectFolder", out var pf) ? pf.GetString() : null;
+                    }
+                    return design;
+                }
+                else
+                {
+                    // 새 구조: GoDesign 직접 직렬화
+                    return GoDesign.JsonDeserialize(json);
+                }
+            }
+            catch { return null; }
+        }
+        #endregion
+        #region HotReload
+        void HotReload()
+        {
+            if (Program.FilePath != null && File.Exists(Program.FilePath))
+            {
+                var s = File.ReadAllText(Program.FilePath);
+                var v = LoadDesign(s);
+                if (v != null)
+                {
+                    Program.CurrentDesign = v;
+                    Program.Edit = false;
+
+                    v.Init();
+
+                    foreach (var editor in editors)
+                    {
+                        if (editor.Target is GoDesign)
+                            editor.Target = v;
+                        else if (editor.Target is GoPage oldPage && oldPage.Name != null && v.Pages.TryGetValue(oldPage.Name, out var newPage))
+                            editor.Target = newPage;
+                        else if (editor.Target is GoWindow oldWnd && oldWnd.Name != null && v.Windows.TryGetValue(oldWnd.Name, out var newWnd))
+                            editor.Target = newWnd;
+
+                        editor.Invalidate();
+                    }
+
+                    explorer?.RefreshTreeView();
+                }
+            }
         }
         #endregion
 
@@ -507,12 +632,12 @@ namespace Going.UIEditor
         #region ThemeEditor
         void ThemeEditor()
         {
-            var p = Program.CurrentProject;
-            if (p != null && p.Design != null)
+            var p = Program.CurrentDesign;
+            if (p != null)
             {
-                var (nouse, thm) = Program.ThemeForm.ShowTheme(p.Design.Theme ?? GoTheme.DarkTheme);
-                if (nouse) { p.Design.CustomTheme = null; p.Edit = true; }
-                else if (thm != null) { p.Design.CustomTheme = thm; p.Edit = true; }
+                var (nouse, thm) = Program.ThemeForm.ShowTheme(p.Theme ?? GoTheme.DarkTheme);
+                if (nouse) { p.CustomTheme = null; Program.Edit = true; }
+                else if (thm != null) { p.CustomTheme = thm; Program.Edit = true; }
 
                 var wnd = dockPanel.ActiveContent as EditorWindow; if (wnd != null) wnd.Invalidate();
             }
@@ -522,7 +647,7 @@ namespace Going.UIEditor
         #region ValidCheckProject
         void ValidCheckProject()
         {
-            var prj = Program.CurrentProject;
+            var prj = Program.CurrentDesign;
             if(prj != null)
             {
                 if (Code.ValidCode(prj))
@@ -535,7 +660,7 @@ namespace Going.UIEditor
         #region DeployProject
         void DeployProject()
         {
-            var prj = Program.CurrentProject;
+            var prj = Program.CurrentDesign;
             if (prj != null)
             {
                 if (Directory.Exists(prj.ProjectFolder))

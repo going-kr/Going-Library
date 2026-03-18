@@ -70,7 +70,7 @@ namespace Going.UIEditor.Forms.Dialogs
 
             RefreshFonts();
 
-            var prj = Program.CurrentProject;
+            var prj = Program.CurrentDesign;
             if (prj != null && this.ShowDialog() == DialogResult.OK)
                 ret = dg.Rows.Where(x => x.Selected).Select(x => (FontDataItem)x.Source!).ToDictionary(x => x.FontName, y => y.FontPaths.Select(z => File.ReadAllBytes(z)).ToList());
 

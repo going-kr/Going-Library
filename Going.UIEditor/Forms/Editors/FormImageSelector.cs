@@ -35,11 +35,11 @@ namespace Going.UIEditor.Forms
         #region RefrshGrid
         void RefreshGrid()
         {
-            var prj = Program.CurrentProject;
+            var prj = Program.CurrentDesign;
             if (prj != null)
             {
-                var imgs = prj.Design.GetImages();
-                var contents = imgs.Select(x => new ImageContent(prj.Design, grid)
+                var imgs = prj.GetImages();
+                var contents = imgs.Select(x => new ImageContent(prj, grid)
                 {
                     Name = x.name,
                     Images = x.images,
@@ -68,10 +68,10 @@ namespace Going.UIEditor.Forms
 
             RefreshGrid();
 
-            var prj = Program.CurrentProject;
+            var prj = Program.CurrentDesign;
             if (prj != null && this.ShowDialog() == DialogResult.OK)
             {
-                if (noSelect) ret = new ImageContent(prj.Design, grid) { Name = "{NONE}" };
+                if (noSelect) ret = new ImageContent(prj, grid) { Name = "{NONE}" };
                 else ret = grid.SelectedItems.FirstOrDefault() as ImageContent;
             }
 

@@ -7,7 +7,6 @@ using Going.UI.ImageCanvas;
 using Going.UI.Json;
 using Going.UI.Themes;
 using Going.UI.Utils;
-using Going.UIEditor.Datas;
 using SkiaSharp;
 using System.Linq;
 using System.Reflection;
@@ -43,10 +42,10 @@ namespace Going.UIEditor.Utils
         #endregion
 
         #region ValidCode
-        public static bool ValidCode(Project? prj) => prj?.Design != null;
+        public static bool ValidCode(GoDesign? prj) => prj != null;
         #endregion
 
-        public static Dictionary<string, Dictionary<string, UICode>>? MakeCode(Project prj)
+        public static Dictionary<string, Dictionary<string, UICode>>? MakeCode(GoDesign prj)
         {
             Dictionary<string, Dictionary<string, UICode>>? ret = null;
             if (prj != null)
@@ -60,7 +59,8 @@ namespace Going.UIEditor.Utils
 
                 #region app.json
                 {
-                    var json = prj.Design.JsonSerialize();
+                    var json = prj.JsonSerialize();
+                    // design.json은 GoDesign 직렬화 결과를 그대로 사용
                     ret[""].Add("design.json", new UICode("design.json", json, true));
                 }
                 #endregion
@@ -137,14 +137,14 @@ namespace Going.UIEditor.Utils
                     sb.AppendLine($"using Going.UI.Datas;");
                     sb.AppendLine($"using Going.UI.OpenTK.Windows;");
                     sb.AppendLine($"using OpenTK.Windowing.Common;");
-                    if (prj.Design.Pages.Count > 0) sb.AppendLine($"using {prj.Name}.Pages;");
-                    if (prj.Design.Windows.Count > 0) sb.AppendLine($"using {prj.Name}.Windows;");
+                    if (prj.Pages.Count > 0) sb.AppendLine($"using {prj.Name}.Pages;");
+                    if (prj.Windows.Count > 0) sb.AppendLine($"using {prj.Name}.Windows;");
                     sb.AppendLine($"");
                     sb.AppendLine($"namespace {prj.Name}");
                     sb.AppendLine($"{{");
                     sb.AppendLine($"    public partial class MainWindow : GoViewWindow");
                     sb.AppendLine($"    {{");
-                    sb.AppendLine($"        public MainWindow() : base({prj.Width}, {prj.Height}, WindowBorder.Hidden)");
+                    sb.AppendLine($"        public MainWindow() : base({prj.DesignWidth}, {prj.DesignHeight}, WindowBorder.Hidden)");
                     sb.AppendLine($"        {{");
                     sb.AppendLine($"            InitializeComponent();");
                     sb.AppendLine($"        }}");
@@ -158,10 +158,10 @@ namespace Going.UIEditor.Utils
                 {
                     var sb = new StringBuilder();
 
-                    var lsT = All(prj.Design.TitleBar).Where(x => x is IGoControl c && !string.IsNullOrWhiteSpace(c.Name)).Select(x => (IGoControl)x).ToList();
-                    var lsL = All(prj.Design.LeftSideBar).Where(x => x is IGoControl c && !string.IsNullOrWhiteSpace(c.Name)).Select(x => (IGoControl)x).ToList();
-                    var lsR = All(prj.Design.RightSideBar).Where(x => x is IGoControl c && !string.IsNullOrWhiteSpace(c.Name)).Select(x => (IGoControl)x).ToList();
-                    var lsB = All(prj.Design.Footer).Where(x => x is IGoControl c && !string.IsNullOrWhiteSpace(c.Name)).Select(x => (IGoControl)x).ToList();
+                    var lsT = All(prj.TitleBar).Where(x => x is IGoControl c && !string.IsNullOrWhiteSpace(c.Name)).Select(x => (IGoControl)x).ToList();
+                    var lsL = All(prj.LeftSideBar).Where(x => x is IGoControl c && !string.IsNullOrWhiteSpace(c.Name)).Select(x => (IGoControl)x).ToList();
+                    var lsR = All(prj.RightSideBar).Where(x => x is IGoControl c && !string.IsNullOrWhiteSpace(c.Name)).Select(x => (IGoControl)x).ToList();
+                    var lsB = All(prj.Footer).Where(x => x is IGoControl c && !string.IsNullOrWhiteSpace(c.Name)).Select(x => (IGoControl)x).ToList();
                     List<IGoControl> lsA = [.. lsT, .. lsL, .. lsR, .. lsB];
 
                     sb.AppendLine($"using System.Text;");
@@ -176,8 +176,8 @@ namespace Going.UIEditor.Utils
                     sb.AppendLine($"using Going.UI.Themes;");
                     sb.AppendLine($"using OpenTK.Windowing.Common;");
 
-                    if (prj.Design.Pages.Count > 0) sb.AppendLine($"using {prj.Name}.Pages;");
-                    if (prj.Design.Windows.Count > 0) sb.AppendLine($"using {prj.Name}.Windows;");
+                    if (prj.Pages.Count > 0) sb.AppendLine($"using {prj.Name}.Pages;");
+                    if (prj.Windows.Count > 0) sb.AppendLine($"using {prj.Name}.Windows;");
                     sb.AppendLine($"");
                     sb.AppendLine($"namespace {prj.Name}");
                     sb.AppendLine($"{{");
@@ -189,9 +189,9 @@ namespace Going.UIEditor.Utils
                     sb.AppendLine($"        internal GoDesign DS {{ get; private set; }}");
                     foreach (var v in lsA) sb.AppendLine($"        {TypeName(v)} {v.Name};");
                     sb.AppendLine($"");
-                    foreach (var v in prj.Design.Pages.Values) sb.AppendLine($"        public {v.Name} {v.Name} {{ get; private set; }}");
+                    foreach (var v in prj.Pages.Values) sb.AppendLine($"        public {v.Name} {v.Name} {{ get; private set; }}");
                     sb.AppendLine($"");
-                    foreach (var v in prj.Design.Windows.Values) sb.AppendLine($"        public {v.Name} {v.Name} {{ get; private set; }}");
+                    foreach (var v in prj.Windows.Values) sb.AppendLine($"        public {v.Name} {v.Name} {{ get; private set; }}");
                     sb.AppendLine($"        #endregion");
                     sb.AppendLine($"");
                     #endregion
@@ -237,9 +237,9 @@ namespace Going.UIEditor.Utils
                     sb.AppendLine($"");
                     #endregion
                     #region Theme Setting
-                    if (prj.Design.CustomTheme != null)
+                    if (prj.CustomTheme != null)
                     {
-                        var v = prj.Design.CustomTheme;
+                        var v = prj.CustomTheme;
                         sb.AppendLine($"            #region Theme Setting");
                         sb.AppendLine($"            Design.CustomTheme = ds.CustomTheme;");
                         sb.AppendLine($"            #endregion");
@@ -261,7 +261,7 @@ namespace Going.UIEditor.Utils
                         sb.AppendLine($"            #region TitleBar");
                         sb.AppendLine($"            {{");
                         sb.AppendLine($"                var c = ds.TitleBar;");
-                        MakeDesignBarCode(sb, "                ", "Design.TitleBar", prj.Design.TitleBar, lsT);
+                        MakeDesignBarCode(sb, "                ", "Design.TitleBar", prj.TitleBar, lsT);
                         sb.AppendLine($"            }}");
                         sb.AppendLine($"            #endregion");
                         sb.AppendLine($"");
@@ -272,7 +272,7 @@ namespace Going.UIEditor.Utils
                         sb.AppendLine($"            #region LeftSideBar");
                         sb.AppendLine($"            {{");
                         sb.AppendLine($"                var c = ds.LeftSideBar;");
-                        MakeDesignBarCode(sb, "                ", "Design.LeftSideBar", prj.Design.LeftSideBar, lsL);
+                        MakeDesignBarCode(sb, "                ", "Design.LeftSideBar", prj.LeftSideBar, lsL);
                         sb.AppendLine($"            }}");
                         sb.AppendLine($"            #endregion");
                         sb.AppendLine($"");
@@ -283,7 +283,7 @@ namespace Going.UIEditor.Utils
                         sb.AppendLine($"            #region RightSideBar");
                         sb.AppendLine($"            {{");
                         sb.AppendLine($"                var c = ds.RightSideBar;");
-                        MakeDesignBarCode(sb, "                ", "Design.RightSideBar", prj.Design.RightSideBar, lsR);
+                        MakeDesignBarCode(sb, "                ", "Design.RightSideBar", prj.RightSideBar, lsR);
                         sb.AppendLine($"            }}");
                         sb.AppendLine($"            #endregion");
                         sb.AppendLine($"");
@@ -294,7 +294,7 @@ namespace Going.UIEditor.Utils
                         sb.AppendLine($"            #region Footer");
                         sb.AppendLine($"            {{");
                         sb.AppendLine($"                var c = ds.Footer;");
-                        MakeDesignBarCode(sb, "                ", "Design.Footer", prj.Design.Footer, lsB);
+                        MakeDesignBarCode(sb, "                ", "Design.Footer", prj.Footer, lsB);
                         sb.AppendLine($"            }}");
                         sb.AppendLine($"            #endregion");
                         sb.AppendLine($"");
@@ -302,24 +302,24 @@ namespace Going.UIEditor.Utils
                     #endregion
 
                     #region Pages
-                    if (prj.Design.Pages.Count > 0)
+                    if (prj.Pages.Count > 0)
                     {
                         sb.AppendLine($"            #region Pages");
-                        foreach (var v in prj.Design.Pages.Values) sb.AppendLine($"            {v.Name} = new {v.Name}();");
+                        foreach (var v in prj.Pages.Values) sb.AppendLine($"            {v.Name} = new {v.Name}();");
                         sb.AppendLine($"");
-                        foreach (var v in prj.Design.Pages.Values) sb.AppendLine($"            Design.AddPage({v.Name});");
+                        foreach (var v in prj.Pages.Values) sb.AppendLine($"            Design.AddPage({v.Name});");
                         sb.AppendLine($"");
-                        sb.AppendLine($"            Design.SetPage(\"{prj.Design.Pages.First().Value.Name}\");");
+                        sb.AppendLine($"            Design.SetPage(\"{prj.Pages.First().Value.Name}\");");
                         sb.AppendLine($"            #endregion");
                     }
                     #endregion
                     #region Windows
-                    if (prj.Design.Windows.Count > 0)
+                    if (prj.Windows.Count > 0)
                     {
                         sb.AppendLine($"            #region Windows");
-                        foreach (var v in prj.Design.Windows.Values) sb.AppendLine($"            {v.Name} = new {v.Name}();");
+                        foreach (var v in prj.Windows.Values) sb.AppendLine($"            {v.Name} = new {v.Name}();");
                         sb.AppendLine($"");
-                        foreach (var v in prj.Design.Windows.Values) sb.AppendLine($"            Design.Windows.Add({v.Name}.Name, {v.Name});");
+                        foreach (var v in prj.Windows.Values) sb.AppendLine($"            Design.Windows.Add({v.Name}.Name, {v.Name});");
                         sb.AppendLine($"            #endregion");
                     }
                     #endregion
@@ -334,7 +334,7 @@ namespace Going.UIEditor.Utils
                 #endregion
                 #region Pages
                 {
-                    foreach (var page in prj.Design.Pages.Values)
+                    foreach (var page in prj.Pages.Values)
                     {
                         #region Code
                         {
@@ -404,7 +404,7 @@ namespace Going.UIEditor.Utils
                 #endregion
                 #region Windows
                 {
-                    foreach (var wnd in prj.Design.Windows.Values)
+                    foreach (var wnd in prj.Windows.Values)
                     {
                         #region Code
                         {

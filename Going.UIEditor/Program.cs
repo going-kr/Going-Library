@@ -1,9 +1,9 @@
 using Going.UI.Controls;
+using Going.UI.Design;
 using Going.UI.Forms;
 using Going.UI.Forms.Dialogs;
 using Going.UI.Themes;
 using Going.UI.Utils;
-using Going.UIEditor.Datas;
 using Going.UIEditor.Forms;
 using Going.UIEditor.Forms.Dialogs;
 using Going.UIEditor.Forms.Editors;
@@ -17,7 +17,9 @@ namespace Going.UIEditor
 {
     internal static class Program
     {
-        public static Project? CurrentProject { get; set; }
+        public static GoDesign? CurrentDesign { get; set; }
+        public static string? FilePath { get; set; }
+        public static bool Edit { get; set; }
 
         public static DataManager DataMgr { get; set; }
         public static GoInputBox InputBox { get; set; }

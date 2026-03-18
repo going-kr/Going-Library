@@ -45,7 +45,7 @@ namespace Going.UIEditor.Windows
         #endregion
 
         #region Properties
-        public object Target { get; private set; }
+        public object Target { get; set; }
 
         public bool CanUndo => actmgr.CanUndo;
         public bool CanRedo => actmgr.CanRedo;
@@ -88,12 +88,12 @@ namespace Going.UIEditor.Windows
             #endregion
 
             #region Scroll
-            hscroll.GetScrollTotal = () => Program.CurrentProject?.Width ?? Width;
+            hscroll.GetScrollTotal = () => Program.CurrentDesign?.DesignWidth ?? Width;
             hscroll.GetScrollTick = () => 10;
             hscroll.GetScrollView = () => Width - UI.Utils.Scroll.SC_WH;
             hscroll.Refresh = () => Invalidate();
 
-            vscroll.GetScrollTotal = () => Program.CurrentProject?.Height ?? Height;
+            vscroll.GetScrollTotal = () => Program.CurrentDesign?.DesignHeight ?? Height;
             vscroll.GetScrollTick = () => 10;
             vscroll.GetScrollView = () => Height - UI.Utils.Scroll.SC_WH;
             vscroll.Refresh = () => Invalidate();
@@ -102,7 +102,7 @@ namespace Going.UIEditor.Windows
             #region Event
             tmr.Tick += (o, s) =>
             {
-                var prj = Program.CurrentProject;
+                var prj = Program.CurrentDesign;
                 if (IsActivated)
                     Invalidate();
 
@@ -134,8 +134,8 @@ namespace Going.UIEditor.Windows
         #region Shown
         protected override void OnShown(EventArgs e)
         {
-            var p = Program.CurrentProject;
-            p?.Design.Init();
+            var p = Program.CurrentDesign;
+            p?.Init();
             base.OnShown(e);
         }
         #endregion
@@ -155,13 +155,13 @@ namespace Going.UIEditor.Windows
         #region Draw
         public override void OnContentDraw(ContentDrawEventArgs e)
         {
-            var prj = Program.CurrentProject;
+            var prj = Program.CurrentDesign;
             var canvas = e.Canvas;
 
             if (prj != null)
             {
-                prj.Design.DesignMode = true;
-                var thm = prj.Design.Theme;
+                prj.DesignMode = true;
+                var thm = prj.Theme;
 
                 var (rt, rtvs, rths) = GetBounds();
                 using var p = new SKPaint { };
@@ -202,10 +202,10 @@ namespace Going.UIEditor.Windows
                         #endregion
 
                         #region draw
-                        prj.Design.SetSize(Convert.ToInt32(prj.Width), Convert.ToInt32(prj.Height));
+                        prj.SetSize(prj.DesignWidth, prj.DesignHeight);
 
-                        if (Target is GoDesign design2) prj.Design.DrawPage(canvas, thm, null);
-                        else if (Target is GoPage page2) prj.Design.DrawPage(canvas, thm, page2);
+                        if (Target is GoDesign design2) prj.DrawPage(canvas, thm, null);
+                        else if (Target is GoPage page2) prj.DrawPage(canvas, thm, page2);
                         else if (Target is GoWindow wnd2) wnd2.FireDraw(canvas, thm);
                         #endregion
                     }
@@ -492,7 +492,7 @@ namespace Going.UIEditor.Windows
                                 p.IsStroke = true;
                                 p.Color = SKColors.Red;
                                 p.StrokeWidth = 1;
-                                canvas.DrawRect(Util.FromRect(0, 0, prj.Width, prj.Height), p);
+                                canvas.DrawRect(Util.FromRect(0, 0, prj.DesignWidth, prj.DesignHeight), p);
                             }
                             #endregion
                         }
@@ -510,7 +510,7 @@ namespace Going.UIEditor.Windows
         #region OnMouseDown
         protected override void OnMouseDown(MouseEventArgs e)
         {
-            var prj = Program.CurrentProject;
+            var prj = Program.CurrentDesign;
             if (prj != null)
             {
                 var (rt, rtvs, rths) = GetBounds();
@@ -635,7 +635,7 @@ namespace Going.UIEditor.Windows
         #region OnMouseMove
         protected override void OnMouseMove(MouseEventArgs e)
         {
-            var prj = Program.CurrentProject;
+            var prj = Program.CurrentDesign;
             if (prj != null)
             {
                 var (rt, rtvs, rths) = GetBounds();
@@ -705,7 +705,7 @@ namespace Going.UIEditor.Windows
         #region OnMouseUp
         protected override void OnMouseUp(MouseEventArgs e)
         {
-            var prj = Program.CurrentProject;
+            var prj = Program.CurrentDesign;
             if (prj != null)
             {
                 bool changed = false;
@@ -871,7 +871,7 @@ namespace Going.UIEditor.Windows
         #region OnMouseWheel
         protected override void OnMouseWheel(MouseEventArgs e)
         {
-            var prj = Program.CurrentProject;
+            var prj = Program.CurrentDesign;
             if (prj != null)
             {
                 var (rt, rtvs, rths) = GetBounds();
@@ -960,7 +960,7 @@ namespace Going.UIEditor.Windows
         #region OnDragOver
         protected override void OnDragOver(DragEventArgs drgevent)
         {
-            var prj = Program.CurrentProject;
+            var prj = Program.CurrentDesign;
             if (prj != null)
             {
                 var (rt, rtvs, rths) = GetBounds();
@@ -994,7 +994,7 @@ namespace Going.UIEditor.Windows
         #region OnDragDrop
         protected override void OnDragDrop(DragEventArgs drgevent)
         {
-            var prj = Program.CurrentProject;
+            var prj = Program.CurrentDesign;
             this.Activate();
             if (prj != null)
             {
@@ -1021,7 +1021,7 @@ namespace Going.UIEditor.Windows
                             var nc = Activator.CreateInstance(tp);
                             if (nc is GoControl vc)
                             {
-                                vc.FireInit(prj.Design);
+                                vc.FireInit(prj);
                                 #region default value
                                 vc.Left = cx; vc.Top = cy; vc.Width = 80; vc.Height = 40;
                                 if (vc is GoTableLayoutPanel tpnl)
@@ -1086,27 +1086,27 @@ namespace Going.UIEditor.Windows
         {
             SKRect? rt = null, rtVS = null, rtHS = null;
 
-            var prj = Program.CurrentProject;
+            var prj = Program.CurrentDesign;
 
             if (prj != null)
             {
                 if (Target is GoDesign design)
                 {
-                    bool vs = prj.Height > Height, hs = prj.Width > Width;
+                    bool vs = prj.DesignHeight > Height, hs = prj.DesignWidth > Width;
                     var szv = vs ? UI.Utils.Scroll.SC_WH : 0;
                     var szh = hs ? UI.Utils.Scroll.SC_WH : 0;
 
-                    rt = MathTool.MakeRectangle(Util.FromRect(0, 0, Width, Height), new SkiaSharp.SKSize(Math.Min(prj.Width, Width - szv), Math.Min(prj.Height, Height - szh)));
+                    rt = MathTool.MakeRectangle(Util.FromRect(0, 0, Width, Height), new SkiaSharp.SKSize(Math.Min(prj.DesignWidth, Width - szv), Math.Min(prj.DesignHeight, Height - szh)));
                     rtVS = Util.FromRect(Width - szv, 0, szv, Height - szh);
                     rtHS = Util.FromRect(0, Height - szh, Width - szv, szh);
                 }
                 else if (Target is GoPage page)
                 {
-                    bool vs = prj.Height > Height, hs = prj.Width > Width;
+                    bool vs = prj.DesignHeight > Height, hs = prj.DesignWidth > Width;
                     var szv = vs ? UI.Utils.Scroll.SC_WH : 0;
                     var szh = hs ? UI.Utils.Scroll.SC_WH : 0;
 
-                    rt = MathTool.MakeRectangle(Util.FromRect(0, 0, Width, Height), new SkiaSharp.SKSize(Math.Min(prj.Width, Width - szv), Math.Min(prj.Height, Height - szh)));
+                    rt = MathTool.MakeRectangle(Util.FromRect(0, 0, Width, Height), new SkiaSharp.SKSize(Math.Min(prj.DesignWidth, Width - szv), Math.Min(prj.DesignHeight, Height - szh)));
                     rtVS = Util.FromRect(Width - szv, 0, szv, Height - szh);
                     rtHS = Util.FromRect(0, Height - szh, Width - szv, szh);
                 }
@@ -1132,121 +1132,121 @@ namespace Going.UIEditor.Windows
 
         public void EditObject(object obj, PropertyInfo Info, object? oldval, object? newval)
         {
-            var p = Program.CurrentProject;
+            var p = Program.CurrentDesign;
             if (p != null)
             {
                 actmgr.RecordAction(new EditAction(obj, Info, oldval, newval));
-                p.Edit = true;
+                Program.Edit = true;
             }
         }
 
         public void EditSizesTable(object obj, PropertyInfo Info, object? oldval, List<SizesItem> items)
         {
-            var p = Program.CurrentProject;
+            var p = Program.CurrentDesign;
             if (p != null)
             {
                 actmgr.RecordAction(new EditSizesTableAction(obj, Info, oldval, items));
-                p.Edit = true;
+                Program.Edit = true;
             }
         }
 
         public void EditSizesGrid(object obj, PropertyInfo Info, object? oldval, List<GridRowItem> items)
         {
-            var p = Program.CurrentProject;
+            var p = Program.CurrentDesign;
             if (p != null)
             {
                 actmgr.RecordAction(new EditSizesGridAction(obj, Info, oldval, items));
-                p.Edit = true;
+                Program.Edit = true;
             }
         }
 
         public void AddControl(IGoContainer container, IGoControl control)
         {
-            var p = Program.CurrentProject;
+            var p = Program.CurrentDesign;
             if (p != null)
             {
                 actmgr.RecordAction(new ControlAddAction(container, control));
-                p.Edit = true;
+                Program.Edit = true;
             }
         }
 
         public void AddControl(GoTableLayoutPanel container, IGoControl control, int col, int row, int colspan, int rowspan)
         {
-            var p = Program.CurrentProject;
+            var p = Program.CurrentDesign;
             if (p != null)
             {
                 actmgr.RecordAction(new ControlAddAction(container, control, col, row, colspan, rowspan));
-                p.Edit = true;
+                Program.Edit = true;
             }
         }
 
         public void AddControl(GoGridLayoutPanel container, IGoControl control, int col, int row)
         {
-            var p = Program.CurrentProject;
+            var p = Program.CurrentDesign;
             if (p != null)
             {
                 actmgr.RecordAction(new ControlAddAction(container, control, col, row));
-                p.Edit = true;
+                Program.Edit = true;
             }
         }
 
         public void DeleteControl(IGoControl control)
         {
-            var p = Program.CurrentProject;
+            var p = Program.CurrentDesign;
             if (p != null && control.Parent != null && !isTopLevelContainer(control))
             {
                 actmgr.RecordAction(new ControlDeleteAction(control.Parent, control));
-                p.Edit = true;
+                Program.Edit = true;
             }
         }
 
         public void SelectedControl(IEnumerable<object> olds, IEnumerable<object> news)
         {
-            var p = Program.CurrentProject;
+            var p = Program.CurrentDesign;
             if (p != null)
             {
                 actmgr.RecordAction(new SelectedAction(this, DockPanel, sels, news, olds));
-                p.Edit = true;
+                Program.Edit = true;
             }
         }
 
         public void BringToFront(IGoControl control)
         {
-            var p = Program.CurrentProject;
+            var p = Program.CurrentDesign;
             if (p != null && control.Parent != null && !isTopLevelContainer(control))
             {
                 actmgr.RecordAction(new BringToFrontAction(control.Parent, control));
-                p.Edit = true;
+                Program.Edit = true;
             }
         }
 
         public void BringForward(IGoControl control)
         {
-            var p = Program.CurrentProject;
+            var p = Program.CurrentDesign;
             if (p != null && control.Parent != null && !isTopLevelContainer(control))
             {
                 actmgr.RecordAction(new BringForwardAction(control.Parent, control));
-                p.Edit = true;
+                Program.Edit = true;
             }
         }
 
         public void SendToBack(IGoControl control)
         {
-            var p = Program.CurrentProject;
+            var p = Program.CurrentDesign;
             if (p != null && control.Parent != null && !isTopLevelContainer(control))
             {
                 actmgr.RecordAction(new SendToBackAction(control.Parent, control));
-                p.Edit = true;
+                Program.Edit = true;
             }
         }
 
         public void SendBackward(IGoControl control)
         {
-            var p = Program.CurrentProject;
+            var p = Program.CurrentDesign;
             if (p != null && control.Parent != null && !isTopLevelContainer(control))
             {
                 actmgr.RecordAction(new SendBackwardAction(control.Parent, control));
-                p.Edit = true;
+                Program.Edit = true;
             }
         }
         #endregion
@@ -1280,7 +1280,7 @@ namespace Going.UIEditor.Windows
                 });
                 foreach (var v in pcids) r = r.Replace(v.Item1, v.Item2);
                 var ls = JsonSerializer.Deserialize<List<IGoControl>>(r, GoJsonConverter.Options);
-                if (ls != null && Program.CurrentProject != null) foreach (var c in ls) c.FireInit(Program.CurrentProject.Design);
+                if (ls != null && Program.CurrentDesign != null) foreach (var c in ls) c.FireInit(Program.CurrentDesign);
 
                 var (con, _, _) = container(0, 0);
                 var vcon = sels.FirstOrDefault() as IGoContainer ?? con;
@@ -1312,21 +1312,21 @@ namespace Going.UIEditor.Windows
         #region Undo / Redo
         public void Undo()
         {
-            var p = Program.CurrentProject;
+            var p = Program.CurrentDesign;
             if (p != null && CanUndo)
             {
                 actmgr?.Undo();
-                p.Edit = true;
+                Program.Edit = true;
 
                 if (DockPanel.Contents.FirstOrDefault(x => x is PropertiesWindow) is PropertiesWindow pw) pw.RefreshGrid();
             }
         }
         public void Redo()
         {
-            var p = Program.CurrentProject;
+            var p = Program.CurrentDesign;
             if (p != null && CanRedo)
             {
-                actmgr?.Redo(); p.Edit = true;
+                actmgr?.Redo(); Program.Edit = true;
 
                 if (DockPanel.Contents.FirstOrDefault(x => x is PropertiesWindow) is PropertiesWindow pw) pw.RefreshGrid();
             }
@@ -1336,7 +1336,7 @@ namespace Going.UIEditor.Windows
         #region SelectAll
         public void SelectAll()
         {
-            var p = Program.CurrentProject;
+            var p = Program.CurrentDesign;
             if (p != null )
             {
                 var alls = search_control(container()).Where(xc => xc.Parent is IGoControl vcon ? CollisionTool.Check(xc.Bounds, Util.FromRect(xc.Parent.ViewPosition.X, xc.Parent.ViewPosition.Y, vcon.Width, vcon.Height)) : false);
@@ -1369,7 +1369,7 @@ namespace Going.UIEditor.Windows
         #region Delete 
         public void Delete()
         {
-            var p = Program.CurrentProject;
+            var p = Program.CurrentDesign;
             if (p != null)
             {
                 TransAction(() =>
@@ -1387,7 +1387,7 @@ namespace Going.UIEditor.Windows
         #region Bring / Send
         public void BringToFrontGUI()
         {
-            var p = Program.CurrentProject;
+            var p = Program.CurrentDesign;
             if (p != null)
             {
                 TransAction(() =>
@@ -1400,7 +1400,7 @@ namespace Going.UIEditor.Windows
 
         public void BringForwareGUI()
         {
-            var p = Program.CurrentProject;
+            var p = Program.CurrentDesign;
             if (p != null)
             {
                 TransAction(() =>
@@ -1413,7 +1413,7 @@ namespace Going.UIEditor.Windows
 
         public void SendToBackGUI()
         {
-            var p = Program.CurrentProject;
+            var p = Program.CurrentDesign;
             if (p != null)
             {
                 TransAction(() =>
@@ -1426,7 +1426,7 @@ namespace Going.UIEditor.Windows
 
         public void SendBackwardGUI()
         {
-            var p = Program.CurrentProject;
+            var p = Program.CurrentDesign;
             if (p != null)
             {
                 TransAction(() =>
@@ -1526,11 +1526,11 @@ namespace Going.UIEditor.Windows
         IGoControl? target_control(int x, int y)
         {
             IGoControl? ret = null;
-            var prj = Program.CurrentProject;
+            var prj = Program.CurrentDesign;
             var (con, cx, cy) = container(x, y);
             if (con != null && prj != null)
             {
-                ret = prj.Design.ControlStack(con, cx, cy).LastOrDefault();
+                ret = prj.ControlStack(con, cx, cy).LastOrDefault();
             }
             return ret;
         }
@@ -1540,15 +1540,15 @@ namespace Going.UIEditor.Windows
             //int x = Convert.ToInt32(ptUp.X), y = Convert.ToInt32(ptUp.Y);
             int x = Convert.ToInt32(ptDown.X), y = Convert.ToInt32(ptDown.Y);
             List<IGoControl> ret = [];
-            var prj = Program.CurrentProject;
+            var prj = Program.CurrentDesign;
             var (con, cx, cy) = target_container(x, y);
             if (con != null && prj != null)
             {
                 var drt = MathTool.MakeRectangle(ptUp, ptDown);
                 drt.Offset(cx - x, cy - y);
 
-                //var pc = prj.Design.ControlStack(con, cx, cy).LastOrDefault();
-                ret = prj.Design.ControlStack(con, drt).Where(x => x.Parent == con).ToList();
+                //var pc = prj.ControlStack(con, cx, cy).LastOrDefault();
+                ret = prj.ControlStack(con, drt).Where(x => x.Parent == con).ToList();
             }
             return ret;
         }
@@ -1556,14 +1556,14 @@ namespace Going.UIEditor.Windows
         #region target_container
         (IGoContainer? con, int cx, int cy) target_container(int x, int y, IGoControl? dragControl = null)
         {
-            var prj = Program.CurrentProject;
+            var prj = Program.CurrentDesign;
 
             var (con, cx, cy) = container(x, y);
             if (con != null && prj != null)
             {
                 if (dragControl != null)
                 {
-                    var cls = prj.Design.ControlStack(con, cx, cy);
+                    var cls = prj.ControlStack(con, cx, cy);
                     var idx = cls.IndexOf(dragControl);
                     if (idx >= 0) cls = cls.GetRange(0, idx);
                     //var pc = cls.LastOrDefault();
@@ -1576,8 +1576,8 @@ namespace Going.UIEditor.Windows
                 }
                 else
                 {
-                    //var pc = prj.Design.ControlStack(con, cx, cy).LastOrDefault();
-                    var pc = prj.Design.ControlStack(con, cx, cy).LastOrDefault(vv => vv is IGoContainer);
+                    //var pc = prj.ControlStack(con, cx, cy).LastOrDefault();
+                    var pc = prj.ControlStack(con, cx, cy).LastOrDefault(vv => vv is IGoContainer);
                     if (pc is IGoContainer vcon)
                     {
                         con = vcon;
@@ -1593,11 +1593,11 @@ namespace Going.UIEditor.Windows
         List<IGoControl> target_controlstack(int x, int y)
         {
             List<IGoControl> ret = [];
-            var prj = Program.CurrentProject;
+            var prj = Program.CurrentDesign;
             var (con, cx, cy) = container(x, y);
             if (con != null && prj != null)
             {
-                ret = prj.Design.ControlStack(con, cx, cy);
+                ret = prj.ControlStack(con, cx, cy);
             }
             return ret;
         }

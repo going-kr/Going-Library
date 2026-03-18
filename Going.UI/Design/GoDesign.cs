@@ -33,6 +33,11 @@ namespace Going.UI.Design
         #region Properties
         public static GoDesign? ActiveDesign { get; set; }
 
+        public string? Name { get; set; }
+        public int DesignWidth { get; set; }
+        public int DesignHeight { get; set; }
+        public string? ProjectFolder { get; set; }
+
         [JsonInclude] public Dictionary<string, GoPage> Pages { get; private set; } = [];
         [JsonInclude] public Dictionary<string, GoWindow> Windows { get; private set; } = [];
         [JsonInclude] private Dictionary<string, List<SKImage>> Images { get; } = new(StringComparer.OrdinalIgnoreCase);

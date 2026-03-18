@@ -94,7 +94,7 @@ namespace Going.UIEditor.Controls
             #region var 
             var canvas = e.Canvas;
             var thm = GoThemeW.Current;
-            var prj = Program.CurrentProject;
+            var prj = Program.CurrentDesign;
             using var p = new SKPaint { IsAntialias = true };
             using var pe = SKPathEffect.CreateDash([2, 2,], 2);
 
@@ -325,7 +325,7 @@ namespace Going.UIEditor.Controls
         #region SelectObjs
         private void SelectObjs(IEnumerable<object>? objs)
         {
-            var prj = Program.CurrentProject;
+            var prj = Program.CurrentDesign;
             if (prj != null)
             {
                 var (rtView, rtScroll, rtContent, rtsCell) = bounds();
@@ -1144,24 +1144,24 @@ namespace Going.UIEditor.Controls
                 {
                     var obj = Grid.SelectedObjects.First();
                     #region Rename
-                    var p = Program.CurrentProject;
-                    if (p != null && obj is GoPage p1 && Info.Name == "Name" && vv is string newname1 && !p.Design.Pages.Values.Any(x => x != p1 && x.Name == newname1))
+                    var p = Program.CurrentDesign;
+                    if (p != null && obj is GoPage p1 && Info.Name == "Name" && vv is string newname1 && !p.Pages.Values.Any(x => x != p1 && x.Name == newname1))
                     {
                         SetValue(obj, Info, vv);
 
-                        var ls = p.Design.Pages.Values.ToList();
-                        p.Design.Pages.Clear();
-                        foreach (var vp in ls) p.Design.AddPage(vp);
+                        var ls = p.Pages.Values.ToList();
+                        p.Pages.Clear();
+                        foreach (var vp in ls) p.AddPage(vp);
 
                         if (Program.MainForm.DockPanel.Contents.FirstOrDefault(x => x is ExplorerWindow) is ExplorerWindow ew) ew.RefreshTreeView();
                     }
-                    else if (p != null && obj is GoWindow w2 && Info.Name == "Name" && vv is string newname2 && !p.Design.Windows.Values.Any(x => x != w2 && x.Name == newname2))
+                    else if (p != null && obj is GoWindow w2 && Info.Name == "Name" && vv is string newname2 && !p.Windows.Values.Any(x => x != w2 && x.Name == newname2))
                     {
                         SetValue(obj, Info, vv);
 
-                        var ls = p.Design.Windows.Values.ToList();
-                        p.Design.Windows.Clear();
-                        foreach (var vp in ls) p.Design.Windows.Add(vp.Name!, vp);
+                        var ls = p.Windows.Values.ToList();
+                        p.Windows.Clear();
+                        foreach (var vp in ls) p.Windows.Add(vp.Name!, vp);
 
                         if (Program.MainForm.DockPanel.Contents.FirstOrDefault(x => x is ExplorerWindow) is ExplorerWindow ew) ew.RefreshTreeView();
                     }
