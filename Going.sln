@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.4.11605.240 stable
+VisualStudioVersion = 18.4.11605.240
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Going.UI", "Going.UI\Going.UI.csproj", "{31108846-9D73-4624-833A-1BDE6A5E981F}"
 EndProject
@@ -14,23 +14,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Going.Basis", "Going.Basis\Going.Basis.csproj", "{6CD46FDB-7774-4AEA-A1F7-26C40039DDB7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Going.UIEditor", "Going.UIEditor\Going.UIEditor.csproj", "{F19DCBB6-6266-4C95-8161-3146B880327C}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "going-ui-skiil", "going-ui-skiil", "{C8D5274F-AC00-46C7-1F8D-E88E81087A52}"
-	ProjectSection(SolutionItems) = preProject
-		going-ui-skill\basis.md = going-ui-skill\basis.md
-		going-ui-skill\evals.json = going-ui-skill\evals.json
-		going-ui-skill\SKILL.md = going-ui-skill\SKILL.md
-		going-ui-skill\ui-code.md = going-ui-skill\ui-code.md
-		going-ui-skill\ui-control-sample.md = going-ui-skill\ui-control-sample.md
-		going-ui-skill\ui-json-containers.md = going-ui-skill\ui-json-containers.md
-		going-ui-skill\ui-json-controls-ext.md = going-ui-skill\ui-json-controls-ext.md
-		going-ui-skill\ui-json-controls.md = going-ui-skill\ui-json-controls.md
-		going-ui-skill\ui-json-imagecanvas.md = going-ui-skill\ui-json-imagecanvas.md
-		going-ui-skill\ui-json-input-value.md = going-ui-skill\ui-json-input-value.md
-		going-ui-skill\ui-json.md = going-ui-skill\ui-json.md
-		going-ui-skill\ui-mcp.md = going-ui-skill\ui-mcp.md
-		going-ui-skill\ui-project-brief.md = going-ui-skill\ui-project-brief.md
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
