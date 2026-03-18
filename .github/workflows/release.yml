@@ -50,12 +50,19 @@ jobs:
 
       - name: Build & Pack Going.UI.Forms
         run: |
-          mkdir nupkgs
+          mkdir nupkgs -ErrorAction SilentlyContinue
           dotnet build Going.UI.Forms/Going.UI.Forms.csproj -c Release -p:Version=${{ env.PKG_VERSION }}
           dotnet pack Going.UI.Forms/Going.UI.Forms.csproj -c Release -o nupkgs -p:Version=${{ env.PKG_VERSION }} --no-build
+          Get-ChildItem nupkgs/
+        shell: pwsh
 
       - name: Publish to NuGet.org
-        run: dotnet nuget push nupkgs/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+        run: |
+          $pkgs = Get-ChildItem nupkgs/*.nupkg
+          foreach ($pkg in $pkgs) {
+            dotnet nuget push $pkg.FullName --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+          }
+        shell: pwsh
 
   publish-editor:
     runs-on: windows-latest
