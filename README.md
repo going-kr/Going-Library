@@ -12,7 +12,6 @@
   <a href="https://www.nuget.org/packages/Going.UI"><img src="https://img.shields.io/nuget/v/Going.UI?label=Going.UI&color=blue" alt="NuGet"></a>
   <a href="https://www.nuget.org/packages/Going.Basis"><img src="https://img.shields.io/nuget/v/Going.Basis?label=Going.Basis&color=blue" alt="NuGet"></a>
   <a href="https://www.nuget.org/packages/Going.UI.OpenTK"><img src="https://img.shields.io/nuget/v/Going.UI.OpenTK?label=Going.UI.OpenTK&color=blue" alt="NuGet"></a>
-  <a href="https://www.nuget.org/packages/Going.UI.Forms"><img src="https://img.shields.io/nuget/v/Going.UI.Forms?label=Going.UI.Forms&color=blue" alt="NuGet"></a>
 </p>
 
 ---
@@ -38,7 +37,6 @@
 |--------|------|------|
 | **Going.UI** | 플랫폼 독립 UI 코어 (컨트롤, 컨테이너, 테마, 디자인) | `net8.0` |
 | **Going.UI.OpenTK** | OpenTK 어댑터 (임베디드/Raspberry Pi) | `net8.0` |
-| **Going.UI.Forms** | WinForms 어댑터 (Windows 데스크톱) | `net8.0-windows` |
 | **Going.Basis** | 통신 및 유틸리티 (Modbus, MQTT, CNet, MC) | `net8.0` |
 
 ## 빠른 시작
@@ -106,8 +104,8 @@ rtu.SetWord(1, "D0", 100);      // 장치에 쓰기
 
 [Going UI Skill](https://github.com/going-kr/going-ui-skill)을 사용하여 AI로 HMI 애플리케이션을 개발할 수 있습니다.
 
-```
-/plugin install going-ui-skill
+```bash
+git clone https://github.com/going-kr/going-ui-skill .claude/skills/going-ui-skill
 ```
 
 디자인 파일(.gud) 생성, C# 코드 작성, 통신 설정, 장치 배포를 AI가 지원합니다.
@@ -116,7 +114,6 @@ rtu.SetWord(1, "D0", 100);      // 장치에 쓰기
 
 ```
 Going.UI           — 플랫폼 독립 UI 코어
-Going.UI.Forms     — WinForms 어댑터
 Going.UI.OpenTK    — OpenTK 어댑터 (임베디드/Raspberry Pi)
 Going.Basis        — 통신 및 유틸리티
 Going.UIEditor     — 비주얼 UI 설계 도구
