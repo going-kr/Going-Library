@@ -9,9 +9,10 @@
 </p>
 
 <p align="center">
-  <a href="https://www.nuget.org/packages/Going.UI"><img src="https://img.shields.io/nuget/v/Going.UI?label=Going.UI&color=blue" alt="NuGet"></a>
   <a href="https://www.nuget.org/packages/Going.Basis"><img src="https://img.shields.io/nuget/v/Going.Basis?label=Going.Basis&color=blue" alt="NuGet"></a>
+  <a href="https://www.nuget.org/packages/Going.UI"><img src="https://img.shields.io/nuget/v/Going.UI?label=Going.UI&color=blue" alt="NuGet"></a>
   <a href="https://www.nuget.org/packages/Going.UI.OpenTK"><img src="https://img.shields.io/nuget/v/Going.UI.OpenTK?label=Going.UI.OpenTK&color=blue" alt="NuGet"></a>
+  <a href="https://www.nuget.org/packages/Going.UI.Forms"><img src="https://img.shields.io/nuget/v/Going.UI.Forms?label=Going.UI.Forms&color=blue" alt="NuGet"></a>
 </p>
 
 ---
@@ -37,6 +38,7 @@
 |--------|------|------|
 | **Going.UI** | 플랫폼 독립 UI 코어 (컨트롤, 컨테이너, 테마, 디자인) | `net8.0` |
 | **Going.UI.OpenTK** | OpenTK 어댑터 (임베디드/Raspberry Pi) | `net8.0` |
+| **Going.UI.Forms** | WinForms 어댑터 (Windows 데스크톱) | `net8.0-windows` |
 | **Going.Basis** | 통신 및 유틸리티 (Modbus, MQTT, CNet, MC) | `net8.0` |
 
 ## 빠른 시작
@@ -115,6 +117,7 @@ git clone https://github.com/going-kr/going-ui-skill .claude/skills/going-ui-ski
 ```
 Going.UI           — 플랫폼 독립 UI 코어
 Going.UI.OpenTK    — OpenTK 어댑터 (임베디드/Raspberry Pi)
+Going.UI.Forms     — WinForms 어댑터
 Going.Basis        — 통신 및 유틸리티
 Going.UIEditor     — 비주얼 UI 설계 도구
 ```
