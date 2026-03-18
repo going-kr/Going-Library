@@ -21,6 +21,12 @@ jobs:
       - name: Extract version
         run: echo "PKG_VERSION=${VERSION#v}" >> $GITHUB_ENV
 
+      - name: Restore dependencies
+        run: |
+          dotnet restore Going.Basis/Going.Basis.csproj
+          dotnet restore Going.UI/Going.UI.csproj
+          dotnet restore Going.UI.OpenTK/Going.UI.OpenTK.csproj
+
       - name: Pack Going.Basis
         run: dotnet pack Going.Basis/Going.Basis.csproj -c Release -o nupkgs -p:Version=${{ env.PKG_VERSION }}
 
@@ -46,6 +52,9 @@ jobs:
       - name: Extract version
         run: echo "PKG_VERSION=$($env:VERSION -replace '^v','')" >> $env:GITHUB_ENV
         shell: pwsh
+
+      - name: Restore dependencies
+        run: dotnet restore Going.UI.Forms/Going.UI.Forms.csproj
 
       - name: Pack Going.UI.Forms
         run: dotnet pack Going.UI.Forms/Going.UI.Forms.csproj -c Release -o nupkgs -p:Version=${{ env.PKG_VERSION }}
