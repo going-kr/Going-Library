@@ -35,7 +35,8 @@
       "Read(//c/Program Files/**)",
       "Read(//c/Program Files \\(x86\\)/**)",
       "Bash(cmd.exe /c \"where gh\")",
-      "Bash(\"/c/Program Files/GitHub CLI/gh.exe\" repo create going-kr/going-ui-skill --public --description \"Claude Code skill for Going Library — Industrial HMI/SCADA UI framework \\(.NET 8.0\\)\" --source . --push)"
+      "Bash(\"/c/Program Files/GitHub CLI/gh.exe\" repo create going-kr/going-ui-skill --public --description \"Claude Code skill for Going Library — Industrial HMI/SCADA UI framework \\(.NET 8.0\\)\" --source . --push)",
+      "Bash(\"/c/Program Files/GitHub CLI/gh.exe\" repo edit going-kr/going-ui-skill --description \"Going Library용 Claude Code 스킬 — 산업용 HMI/SCADA UI 프레임워크 \\(.NET 8.0\\)\")"
     ]
   }
 }
