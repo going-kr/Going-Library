@@ -17,7 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Going.UI" Version="1.0.8" />
+    <ProjectReference Include="..\Going.UI\Going.UI.csproj" />
     <PackageReference Include="SkiaSharp.Views.WindowsForms" Version="3.116.1" />
   </ItemGroup>
 

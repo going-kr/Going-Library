@@ -27,7 +27,15 @@
       "Bash(powershell -NoProfile -Command \"Add-Type -AssemblyName System.IO.Compression.FileSystem; $z = [System.IO.Compression.ZipFile]::OpenRead\\(''D:\\\\Project\\\\Going\\\\Library\\\\src\\\\Going\\\\going-ui-skill.zip''\\); foreach \\($e in $z.Entries\\) { Write-Host $e.FullName }; $z.Dispose\\(\\)\")",
       "Bash(powershell -NoProfile -Command 'Add-Type -AssemblyName System.IO.Compression.FileSystem; $z = [System.IO.Compression.ZipFile]::OpenRead\\(\"\"D:\\\\Project\\\\Going\\\\Library\\\\src\\\\Going\\\\going-ui-skill.zip\"\"\\); foreach \\($e in $z.Entries\\) { Write-Host $e.FullName }; $z.Dispose\\(\\)')",
       "Bash(wc -l \"D:\\\\Project\\\\Going\\\\library\\\\src\\\\Going\\\\going-ui-skill\"/*.md)",
-      "Bash(gh repo:*)"
+      "Bash(gh repo:*)",
+      "Bash(du -sh \"D:\\\\Project\\\\Going\\\\library\\\\src\\\\Going\\\\going-ui-skill\"/*)",
+      "Bash(mv \"D:\\\\Project\\\\Going\\\\library\\\\src\\\\going-ui-skill/going-ui-skill/\"* \"D:\\\\Project\\\\Going\\\\library\\\\src\\\\going-ui-skill/\")",
+      "Bash(rmdir \"D:\\\\Project\\\\Going\\\\library\\\\src\\\\going-ui-skill/going-ui-skill\")",
+      "Bash(where gh:*)",
+      "Read(//c/Program Files/**)",
+      "Read(//c/Program Files \\(x86\\)/**)",
+      "Bash(cmd.exe /c \"where gh\")",
+      "Bash(\"/c/Program Files/GitHub CLI/gh.exe\" repo create going-kr/going-ui-skill --public --description \"Claude Code skill for Going Library — Industrial HMI/SCADA UI framework \\(.NET 8.0\\)\" --source . --push)"
     ]
   }
 }
