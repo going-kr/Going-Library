@@ -1,0 +1,37 @@
+name: Release UIEditor
+
+on:
+  push:
+    tags: ['editor-v*']
+
+env:
+  VERSION: ${{ github.ref_name }}
+
+jobs:
+  publish-editor:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Extract version
+        run: echo "PKG_VERSION=$($env:VERSION -replace '^editor-v','')" >> $env:GITHUB_ENV
+        shell: pwsh
+
+      - name: Publish UIEditor
+        run: dotnet publish Going.UIEditor/Going.UIEditor.csproj -c Release -o publish/UIEditor -p:Version=${{ env.PKG_VERSION }}
+
+      - name: Zip UIEditor
+        run: Compress-Archive -Path publish/UIEditor/* -DestinationPath UIEditor.zip
+        shell: pwsh
+
+      - name: Create Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create ${{ github.ref_name }} UIEditor.zip --title "UIEditor ${{ env.PKG_VERSION }}" --notes "UIEditor Release ${{ env.PKG_VERSION }}" --draft=false

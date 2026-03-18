@@ -990,6 +990,28 @@ namespace Going.UIEditor.Utils
             }
         }
         #endregion
+        #region HotReload
+        public static string HotReload
+        {
+            get
+            {
+                if (lang == Lang.KO) return "핫 리로드";
+                else if (lang == Lang.EN) return "Hot Reload";
+                else return "";
+            }
+        }
+        #endregion
+        #region FileChangedReload
+        public static string FileChangedReload
+        {
+            get
+            {
+                if (lang == Lang.KO) return "외부에서 파일이 변경되었습니다.\n변경된 내용을 적용하시겠습니까?";
+                else if (lang == Lang.EN) return "The file has been modified externally.\nDo you want to reload the changes?";
+                else return "";
+            }
+        }
+        #endregion
         #endregion
     }
 

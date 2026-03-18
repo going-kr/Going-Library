@@ -36,6 +36,9 @@ namespace Going.UIEditor
         bool bDownSaveAs = false;
         bool opening = false;
         Timer tmr;
+        FileSystemWatcher? fileWatcher;
+        System.Threading.Timer? debounceTimer;
+        bool isSaving = false;
         #endregion
 
         #region Constructor
@@ -198,6 +201,7 @@ namespace Going.UIEditor
         protected override void OnClosing(CancelEventArgs e)
         {
             e.Cancel = CloseFile() == DialogResult.Cancel;
+            if (!e.Cancel) StopFileWatcher();
 
             base.OnClosing(e);
         }
@@ -455,6 +459,7 @@ namespace Going.UIEditor
 
                             Program.DataMgr.LastOpenFolder = Path.GetDirectoryName(ofd.FileName);
                             Program.DataMgr.SaveSetting();
+                            if (Program.FilePath != null) StartFileWatcher(Program.FilePath);
                         }
                     }
                 }
@@ -473,10 +478,12 @@ namespace Going.UIEditor
                 var v = design.JsonSerialize();
                 try
                 {
+                    isSaving = true;
                     File.WriteAllText(Program.FilePath, v);
                     Program.Edit = false;
                 }
                 catch (UnauthorizedAccessException) { Program.MessageBox.ShowMessageBoxOk(LM.Save, LM.SavePermissions); }
+                finally { _ = Task.Delay(TimeSpan.FromSeconds(1)).ContinueWith(_ => isSaving = false); }
             }
             else SaveAsFile();
         }
@@ -518,6 +525,7 @@ namespace Going.UIEditor
 
             if (ret != DialogResult.Cancel)
             {
+                StopFileWatcher();
                 if (p != null) dockPanel.SaveAsXml(PATH_LAYOUT);
 
                 Program.CurrentDesign = null;
@@ -557,6 +565,48 @@ namespace Going.UIEditor
                 }
             }
             catch { return null; }
+        }
+        #endregion
+        #region FileWatcher
+        void StartFileWatcher(string filePath)
+        {
+            StopFileWatcher();
+            var dir = Path.GetDirectoryName(filePath);
+            var name = Path.GetFileName(filePath);
+            if (dir == null || name == null) return;
+
+            fileWatcher = new FileSystemWatcher(dir, name)
+            {
+                NotifyFilter = NotifyFilters.LastWrite,
+                EnableRaisingEvents = true
+            };
+
+            fileWatcher.Changed += (o, e) =>
+            {
+                if (isSaving) return;
+                debounceTimer?.Dispose();
+                debounceTimer = new System.Threading.Timer(_ =>
+                {
+                    this.Invoke(() =>
+                    {
+                        if (isSaving) return;
+                        if (Program.Edit)
+                        {
+                            var ret = Program.MessageBox.ShowMessageBoxYesNo(LM.HotReload, LM.FileChangedReload);
+                            if (ret == DialogResult.Yes) HotReload();
+                        }
+                        else HotReload();
+                    });
+                }, null, 500, Timeout.Infinite);
+            };
+        }
+
+        void StopFileWatcher()
+        {
+            debounceTimer?.Dispose();
+            debounceTimer = null;
+            fileWatcher?.Dispose();
+            fileWatcher = null;
         }
         #endregion
         #region HotReload
