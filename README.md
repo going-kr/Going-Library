@@ -107,10 +107,10 @@ rtu.SetWord(1, "D0", 100);      // 장치에 쓰기
 [Going UI Skill](https://github.com/going-kr/going-ui-skill)을 사용하여 AI로 HMI 애플리케이션을 개발할 수 있습니다.
 
 ```
-/install going-kr/going-ui-skill
+/plugin install going-ui-skill
 ```
 
-.gud 파일 생성, C# 코드 작성, 통신 설정, 장치 배포를 AI가 지원합니다.
+디자인 파일(.gud) 생성, C# 코드 작성, 통신 설정, 장치 배포를 AI가 지원합니다.
 
 ## 프로젝트 구조
 
