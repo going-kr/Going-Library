@@ -106,9 +106,22 @@ rtu.SetWord(1, "D0", 100);      // 장치에 쓰기
 
 [Going UI Skill](https://github.com/going-kr/going-ui-skill)을 사용하여 AI로 HMI 애플리케이션을 개발할 수 있습니다.
 
+### 설치 방법
+
+**방법 1. Git Clone (CLI)**
+
 ```bash
+# 프로젝트 단위 — 해당 프로젝트에서만 사용
+cd your-project
 git clone https://github.com/going-kr/going-ui-skill .claude/skills/going-ui-skill
+
+# 전역 — 모든 프로젝트에서 사용
+git clone https://github.com/going-kr/going-ui-skill ~/.claude/skills/going-ui-skill
 ```
+
+**방법 2. Claude 데스크톱 앱**
+
+`설정 → 스킬 → 스킬 업로드`에서 `.zip` 파일을 드래그 앤 드롭하거나 `SKILL.md` 파일을 직접 업로드합니다.
 
 디자인 파일(.gud) 생성, C# 코드 작성, 통신 설정, 장치 배포를 AI가 지원합니다.
 
