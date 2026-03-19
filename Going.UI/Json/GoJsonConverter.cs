@@ -22,6 +22,7 @@ namespace Going.UI.Json
         static GoJsonConverter()
         {
             Options.PropertyNameCaseInsensitive = true;
+            Options.WriteIndented = true;
             Options.Converters.Add(new SKColorConverter());
             Options.Converters.Add(new SKRectConverter());
             Options.Converters.Add(new SKBitmapConverter());

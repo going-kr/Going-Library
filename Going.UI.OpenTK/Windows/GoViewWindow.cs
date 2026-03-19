@@ -243,7 +243,7 @@ namespace Going.UI.OpenTK.Windows
             if (!TouchMode && OperatingSystem.IsWindows()) ImeInputManager.Current.OnMouseDown(MouseState, KeyboardState, e);
             else TKInputManager.Current.MouseDown(x, y, mb);
 
-            Design.MouseDown(x, y, mb);
+            if (!TKInputManager.Current.IsInput) Design.MouseDown(x, y, mb);
 
 
             base.OnMouseDown(e);
@@ -259,11 +259,13 @@ namespace Going.UI.OpenTK.Windows
             if (!TouchMode && OperatingSystem.IsWindows()) ImeInputManager.Current.OnMouseUp(MouseState, KeyboardState, e);
             else TKInputManager.Current.MouseUp(x, y, mb);
 
-            Design.MouseUp(x, y, mb);
+            if (!TKInputManager.Current.IsInput)
+            {
+                Design.MouseUp(x, y, mb);
 
-            if ((DateTime.Now - dcTime).TotalMilliseconds < 300) Design.MouseDoubleClick(x, y, mb);
-            dcTime = DateTime.Now;
-
+                if ((DateTime.Now - dcTime).TotalMilliseconds < 300) Design.MouseDoubleClick(x, y, mb);
+                dcTime = DateTime.Now;
+            }
 
             base.OnMouseUp(e);
         }
@@ -277,7 +279,7 @@ namespace Going.UI.OpenTK.Windows
             if (!TouchMode && OperatingSystem.IsWindows()) ImeInputManager.Current.OnMouseMove(MouseState, KeyboardState);
             else TKInputManager.Current.MouseMove(x, y);
 
-            Design.MouseMove(x, y);
+            if (!TKInputManager.Current.IsInput) Design.MouseMove(x, y);
 
 
             base.OnMouseMove(e);
@@ -289,7 +291,7 @@ namespace Going.UI.OpenTK.Windows
             float x = MousePosition.X;
             float y = MousePosition.Y;
 
-            Design.MouseWheel(x, y, e.OffsetY);
+            if (!TKInputManager.Current.IsInput) Design.MouseWheel(x, y, e.OffsetY);
 
             base.OnMouseWheel(e);
         }
@@ -297,7 +299,7 @@ namespace Going.UI.OpenTK.Windows
         #region OnMouseLeave
         protected override void OnMouseLeave()
         {
-            Design.MouseMove(-1, -1);
+            if (!TKInputManager.Current.IsInput) Design.MouseMove(-1, -1);
             base.OnMouseLeave();
         }
         #endregion

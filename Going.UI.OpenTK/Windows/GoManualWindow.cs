@@ -227,8 +227,8 @@ namespace Going.UI.OpenTK.Windows
             float y = MousePosition.Y;
             GoMouseButton mb = ToGoMouseButton(e.Button);
 
-            if (TKInputManager.Current.IsInput) TKInputManager.Current.MouseDown(x, y, mb);
-            else Design.MouseDown(x, y, mb);
+            TKInputManager.Current.MouseDown(x, y, mb);
+            if (!TKInputManager.Current.IsInput) Design.MouseDown(x, y, mb);
 
             inv = true;
 
@@ -242,11 +242,14 @@ namespace Going.UI.OpenTK.Windows
             float y = MousePosition.Y;
             GoMouseButton mb = ToGoMouseButton(e.Button);
 
-            if (TKInputManager.Current.IsInput) TKInputManager.Current.MouseUp(x, y, mb);
-            else Design.MouseUp(x, y, mb);
+            TKInputManager.Current.MouseUp(x, y, mb);
+            if (!TKInputManager.Current.IsInput)
+            {
+                Design.MouseUp(x, y, mb);
 
-            if ((DateTime.Now - dcTime).TotalMilliseconds < 300) Design.MouseDoubleClick(x, y, mb);
-            dcTime = DateTime.Now;
+                if ((DateTime.Now - dcTime).TotalMilliseconds < 300) Design.MouseDoubleClick(x, y, mb);
+                dcTime = DateTime.Now;
+            }
 
             inv = true;
 
@@ -259,8 +262,8 @@ namespace Going.UI.OpenTK.Windows
             float x = MousePosition.X;
             float y = MousePosition.Y;
 
-            if (TKInputManager.Current.IsInput) TKInputManager.Current.MouseMove(x, y);
-            else Design.MouseMove(x, y);
+            TKInputManager.Current.MouseMove(x, y);
+            if (!TKInputManager.Current.IsInput) Design.MouseMove(x, y);
 
             inv = true;
 
@@ -273,7 +276,7 @@ namespace Going.UI.OpenTK.Windows
             float x = MousePosition.X;
             float y = MousePosition.Y;
 
-            Design.MouseWheel(x, y, e.OffsetY);
+            if (!TKInputManager.Current.IsInput) Design.MouseWheel(x, y, e.OffsetY);
             inv = true;
             base.OnMouseWheel(e);
         }
@@ -281,7 +284,7 @@ namespace Going.UI.OpenTK.Windows
         #region OnMouseLeave
         protected override void OnMouseLeave()
         {
-            Design.MouseMove(-1, -1);
+            if (!TKInputManager.Current.IsInput) Design.MouseMove(-1, -1);
             inv = true;
             base.OnMouseLeave();
         }
