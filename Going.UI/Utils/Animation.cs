@@ -3,6 +3,7 @@ using Going.UI.Themes;
 using Going.UI.Tools;
 using SkiaSharp;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata;
@@ -47,7 +48,7 @@ namespace Going.UI.Utils
 
         private string Id { get; } = Guid.NewGuid().ToString();
         private bool isPlaying = false;
-        internal static Dictionary<string, bool> States = [];
+        internal static ConcurrentDictionary<string, bool> States = new();
         public static bool IsAnimationPlaying { get; private set; }
         #endregion
 
@@ -121,11 +122,7 @@ namespace Going.UI.Utils
                 cancel = null;
             }
 
-            if (task != null)
-            {
-                Task.WhenAny(task);
-                task = null;
-            }
+            task = null;
 
             Refresh?.Invoke();
         }

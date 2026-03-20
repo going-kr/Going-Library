@@ -80,26 +80,6 @@ namespace Going.Basis.Communications.Modbus
             bySecondReturn = (byte)(CRC % 256);
         }
         #endregion
-        #region GetLRC
-        public static void GetLRC(byte[] pby, int nSize, ref byte byFirstReturn, ref byte bySecondReturn)
-        {
-            int nLRC = 0;
-            for (int i = 0; i < nSize; i++)
-            {
-                if (i % 2 == 1) continue;
-                byte[] src = new byte[pby.Length - i];
-                for (int j = i; j < pby.Length; j++)
-                    src[j - i] = pby[j];
-                int n = HexToInt(src, 2);
-                nLRC += n;
-            }
-            byte byLRC = (byte)nLRC;
-            byLRC = (byte)(-byLRC);
-            string sLRC = IntToHex(byLRC, 2);
-            byFirstReturn = (byte)sLRC[0];
-            bySecondReturn = (byte)sLRC[1];
-        }
-        #endregion
         #region HexToInt
         static int HexToInt(byte[] pby, int n)
         {

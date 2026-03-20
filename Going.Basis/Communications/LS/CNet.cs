@@ -310,6 +310,7 @@ namespace Going.Basis.Communications.LS
                                             #region READ_BLACK
                                             case CNetFunc.READ_BLOCK:
                                                 {
+                                                    if (baResponse.Length < 10) throw new FormatException("READ_BLOCK response too short");
                                                     int BlockCount = int.Parse(new string(new char[] { (char)baResponse[6], (char)baResponse[7] }));
                                                     List<int> Data = new List<int>();
                                                     int nIndexOffset = 0;
@@ -340,6 +341,7 @@ namespace Going.Basis.Communications.LS
                                             #region READ_SINGLE
                                             case CNetFunc.READ_SINGLE:
                                                 {
+                                                    if (baResponse.Length < 10) throw new FormatException("READ_SINGLE response too short");
                                                     int BlockCount = int.Parse(new string(new char[] { (char)baResponse[6], (char)baResponse[7] }));
                                                     List<int> Data = new List<int>();
                                                     int nIndexOffset = 0;
@@ -568,6 +570,7 @@ namespace Going.Basis.Communications.LS
             data[data.Length - 1] = (byte)bcc[1];
 
             List<string> d = [];
+            if (device.Length < 4) throw new FormatException($"Invalid device format: '{device}'");
             int n = Convert.ToInt32(device.Substring(3));
             for (int i = 0; i < length; i++) d.Add(device.Substring(0, 3) + (n + i));
 
@@ -662,6 +665,7 @@ namespace Going.Basis.Communications.LS
             data[data.Length - 1] = (byte)bcc[1];
 
             List<string> d = [];
+            if (device.Length < 4) throw new FormatException($"Invalid device format: '{device}'");
             int n = Convert.ToInt32(device.Substring(3));
             for (int i = 0; i < length; i++)
                 d.Add(device.Substring(0, 3) + (n + i));

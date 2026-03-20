@@ -50,8 +50,8 @@ namespace Going.Basis.Utils
                 var t = task;
                 cancel?.Cancel();
 
-                try { Task.WhenAny(t); }
-                catch (OperationCanceledException) { }
+                try { t.Wait(3000); }
+                catch { }
             }
         }
 

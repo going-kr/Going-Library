@@ -376,6 +376,7 @@ namespace Going.Basis.Communications.Modbus.RTU
                                         #region WordRead
                                         {
                                             int ByteCount = baResponse[2];
+                                            if (baResponse.Length < 3 + ByteCount) throw new FormatException("WordRead response too short");
                                             int[] data = new int[ByteCount / 2];
                                             for (int i = 0; i < data.Length; i++) data[i] = Convert.ToUInt16(baResponse[3 + i * 2] << 8 | baResponse[4 + i * 2]);
 

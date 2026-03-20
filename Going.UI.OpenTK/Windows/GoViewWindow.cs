@@ -172,15 +172,22 @@ namespace Going.UI.OpenTK.Windows
                         #endregion
 
                         #region Draw
-                        TKInputManager.Current.ScreenSize = new SKSize(Width, Height);
-
-                        using (new SKAutoCanvasRestore(canvas))
+                        if (TouchMode || !OperatingSystem.IsWindows())
                         {
-                            canvas.Translate(0, TKInputManager.Current.TranslateY);
+                            TKInputManager.Current.ScreenSize = new SKSize(Width, Height);
+
+                            using (new SKAutoCanvasRestore(canvas))
+                            {
+                                canvas.Translate(0, TKInputManager.Current.TranslateY);
+                                Design.Draw(canvas);
+                            }
+
+                            TKInputManager.Current.Draw(canvas, thm);
+                        }
+                        else
+                        {
                             Design.Draw(canvas);
                         }
-
-                        TKInputManager.Current.Draw(canvas, thm);
                         #endregion
 
                         #region Debug
@@ -240,10 +247,11 @@ namespace Going.UI.OpenTK.Windows
             float y = MousePosition.Y;
             GoMouseButton mb = ToGoMouseButton(e.Button);
 
-            if (!TouchMode && OperatingSystem.IsWindows()) ImeInputManager.Current.OnMouseDown(MouseState, KeyboardState, e);
-            else TKInputManager.Current.MouseDown(x, y, mb);
+            bool isInput;
+            if (!TouchMode && OperatingSystem.IsWindows()) { ImeInputManager.Current.OnMouseDown(MouseState, KeyboardState, e); isInput = ImeInputManager.Current.IsInput; }
+            else { TKInputManager.Current.MouseDown(x, y, mb); isInput = TKInputManager.Current.IsInput; }
 
-            if (!TKInputManager.Current.IsInput) Design.MouseDown(x, y, mb);
+            if (!isInput) Design.MouseDown(x, y, mb);
 
 
             base.OnMouseDown(e);
@@ -256,10 +264,11 @@ namespace Going.UI.OpenTK.Windows
             float y = MousePosition.Y;
             GoMouseButton mb = ToGoMouseButton(e.Button);
 
-            if (!TouchMode && OperatingSystem.IsWindows()) ImeInputManager.Current.OnMouseUp(MouseState, KeyboardState, e);
-            else TKInputManager.Current.MouseUp(x, y, mb);
+            bool isInput;
+            if (!TouchMode && OperatingSystem.IsWindows()) { ImeInputManager.Current.OnMouseUp(MouseState, KeyboardState, e); isInput = ImeInputManager.Current.IsInput; }
+            else { TKInputManager.Current.MouseUp(x, y, mb); isInput = TKInputManager.Current.IsInput; }
 
-            if (!TKInputManager.Current.IsInput)
+            if (!isInput)
             {
                 Design.MouseUp(x, y, mb);
 
@@ -276,10 +285,11 @@ namespace Going.UI.OpenTK.Windows
             float x = MousePosition.X;
             float y = MousePosition.Y;
 
-            if (!TouchMode && OperatingSystem.IsWindows()) ImeInputManager.Current.OnMouseMove(MouseState, KeyboardState);
-            else TKInputManager.Current.MouseMove(x, y);
+            bool isInput;
+            if (!TouchMode && OperatingSystem.IsWindows()) { ImeInputManager.Current.OnMouseMove(MouseState, KeyboardState); isInput = ImeInputManager.Current.IsInput; }
+            else { TKInputManager.Current.MouseMove(x, y); isInput = TKInputManager.Current.IsInput; }
 
-            if (!TKInputManager.Current.IsInput) Design.MouseMove(x, y);
+            if (!isInput) Design.MouseMove(x, y);
 
 
             base.OnMouseMove(e);
@@ -291,7 +301,8 @@ namespace Going.UI.OpenTK.Windows
             float x = MousePosition.X;
             float y = MousePosition.Y;
 
-            if (!TKInputManager.Current.IsInput) Design.MouseWheel(x, y, e.OffsetY);
+            var isInput = (!TouchMode && OperatingSystem.IsWindows()) ? ImeInputManager.Current.IsInput : TKInputManager.Current.IsInput;
+            if (!isInput) Design.MouseWheel(x, y, e.OffsetY);
 
             base.OnMouseWheel(e);
         }
@@ -299,7 +310,8 @@ namespace Going.UI.OpenTK.Windows
         #region OnMouseLeave
         protected override void OnMouseLeave()
         {
-            if (!TKInputManager.Current.IsInput) Design.MouseMove(-1, -1);
+            var isInput = (!TouchMode && OperatingSystem.IsWindows()) ? ImeInputManager.Current.IsInput : TKInputManager.Current.IsInput;
+            if (!isInput) Design.MouseMove(-1, -1);
             base.OnMouseLeave();
         }
         #endregion
