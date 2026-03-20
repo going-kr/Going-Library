@@ -27,6 +27,7 @@ namespace Going.Basis.Communications.Modbus.RTU
         public Dictionary<int, string> WordAreas { get; } = [];
 
         public Dictionary<int, Mems> Devices { get; } = [];
+        public Dictionary<int, DateTime> LastReceived { get; } = [];
         public object? Tag { get; set; } = null;
         #endregion
 
@@ -56,6 +57,7 @@ namespace Going.Basis.Communications.Modbus.RTU
         private void Modbus_BitReadReceived(object? sender, ModbusRTUMaster.BitReadEventArgs e)
         {
             if (!Devices.ContainsKey(e.Slave)) Devices.Add(e.Slave, new Mems());
+            LastReceived[e.Slave] = DateTime.Now;
 
             foreach (var baseAddr in BitAreas.Keys.OrderByDescending(x => x))
             {
@@ -71,6 +73,7 @@ namespace Going.Basis.Communications.Modbus.RTU
         private void Modbus_WordReadReceived(object? sender, ModbusRTUMaster.WordReadEventArgs e)
         {
             if (!Devices.ContainsKey(e.Slave)) Devices.Add(e.Slave, new Mems());
+            LastReceived[e.Slave] = DateTime.Now;
 
             foreach (var baseAddr in WordAreas.Keys.OrderByDescending(x => x))
             {

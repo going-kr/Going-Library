@@ -24,6 +24,7 @@ namespace Going.Basis.Communications.Modbus.TCP
         public Dictionary<int, string> WordAreas { get; } = [];
 
         public Dictionary<int, Mems> Devices { get; } = [];
+        public Dictionary<int, DateTime> LastReceived { get; } = [];
         public object? Tag { get; set; } = null;
         #endregion
 
@@ -53,6 +54,7 @@ namespace Going.Basis.Communications.Modbus.TCP
         private void Modbus_BitReadReceived(object? sender, ModbusTCPMaster.BitReadEventArgs e)
         {
             if (!Devices.ContainsKey(e.Slave)) Devices.Add(e.Slave, new Mems());
+            LastReceived[e.Slave] = DateTime.Now;
 
             foreach (var baseAddr in BitAreas.Keys.OrderByDescending(x => x))
             {
@@ -68,6 +70,7 @@ namespace Going.Basis.Communications.Modbus.TCP
         private void Modbus_WordReadReceived(object? sender, ModbusTCPMaster.WordReadEventArgs e)
         {
             if (!Devices.ContainsKey(e.Slave)) Devices.Add(e.Slave, new Mems());
+            LastReceived[e.Slave] = DateTime.Now;
 
             foreach (var baseAddr in WordAreas.Keys.OrderByDescending(x => x))
             {
