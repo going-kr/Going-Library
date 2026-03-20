@@ -102,7 +102,11 @@ rtu.SetWord(1, "D0", 100);      // 장치에 쓰기
 
 > **[개발 환경 구성 가이드](https://going-kr.github.io/Going-Library/setup.html)** — Claude Code를 사용한 자동 셋업 (스킬 설치 + UIEditor 다운로드 + 바로가기 생성)
 
-Claude Code 또는 Claude Desktop에서 위 링크를 전달하고 "개발 환경 구성해줘"라고 요청하면 자동으로 셋업됩니다.
+Claude Code에 이렇게 말하세요:
+
+```
+https://going-kr.github.io/Going-Library/setup.html 여기 보고 개발 환경 구성해줘
+```
 
 ### 수동 설치
 
