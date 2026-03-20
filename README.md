@@ -70,13 +70,9 @@ public class MainWindow : GoViewWindow
 
 **Going UI Editor**는 `.gud` 파일을 시각적으로 설계하는 도구입니다. JSON 기반 UI 레이아웃을 만들고 C# 코드를 자동 생성합니다.
 
-[Releases](https://github.com/going-kr/Going-Library/releases)에서 다운로드할 수 있습니다.
-
-### 작업 흐름
-
 ```
 1. UIEditor에서 UI 설계 (.gud 파일)
-2. MakeCode → .cs 파일 자동 생성
+2. MakeCode → C# 프로젝트 자동 생성 (NuGet 패키지 참조 포함)
 3. 이벤트 핸들러 및 통신 코드 작성
 4. 빌드 및 대상 장치에 배포
 ```
@@ -102,28 +98,30 @@ rtu.SetWord(1, "D0", 100);      // 장치에 쓰기
 | LS Electric CNet | `CNet` |
 | Mitsubishi MC | `MC` |
 
-## Claude Code 스킬
+## 개발 환경 구성
 
-[Going UI Skill](https://github.com/going-kr/going-ui-skill)을 사용하여 AI로 HMI 애플리케이션을 개발할 수 있습니다.
+> **[개발 환경 구성 가이드](https://going-kr.github.io/Going-Library/setup.html)** — Claude Code를 사용한 자동 셋업 (스킬 설치 + UIEditor 다운로드 + 바로가기 생성)
 
-### 설치 방법
+Claude Code 또는 Claude Desktop에서 위 링크를 전달하고 "개발 환경 구성해줘"라고 요청하면 자동으로 셋업됩니다.
 
-**방법 1. Git Clone (CLI)**
+### 수동 설치
+
+**Going UI Skill (Claude Code)**
 
 ```bash
-# 프로젝트 단위 — 해당 프로젝트에서만 사용
+# 프로젝트 단위
 cd your-project
 git clone https://github.com/going-kr/going-ui-skill .claude/skills/going-ui-skill
 
-# 전역 — 모든 프로젝트에서 사용
+# 전역
 git clone https://github.com/going-kr/going-ui-skill ~/.claude/skills/going-ui-skill
 ```
 
-**방법 2. Claude 데스크톱 앱**
+또는 Claude 데스크톱 앱의 `설정 → 스킬 → 스킬 업로드`에서 `.zip` 또는 `SKILL.md`를 업로드합니다.
 
-`설정 → 스킬 → 스킬 업로드`에서 `.zip` 파일을 드래그 앤 드롭하거나 `SKILL.md` 파일을 직접 업로드합니다.
+**UIEditor**
 
-디자인 파일(.gud) 생성, C# 코드 작성, 통신 설정, 장치 배포를 AI가 지원합니다.
+[Releases](https://github.com/going-kr/Going-Library/releases)에서 `UIEditor.zip`을 다운로드하여 원하는 경로에 압축 해제합니다.
 
 ## 프로젝트 구조
 
