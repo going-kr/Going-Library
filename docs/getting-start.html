@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Going Library - Getting Started</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <a class="logo" href="index.html">
+    <span class="pkg">Tutorial</span>
+    Going Library
+  </a>
+  <nav class="header-nav">
+    <a href="index.html">Home</a>
+    <a href="basis/index.html">Going.Basis</a>
+    <a href="ui/index.html">Going.UI</a>
+    <a href="setup.html">Setup</a>
+    <a href="getting-start.html" class="active">Getting Started</a>
+  </nav>
+</header>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar" data-current="getting-start.html">
+    <nav class="sidebar-nav" style="padding:16px;">
+      <h3 style="font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">Getting Started</h3>
+      <a href="#overview" style="display:block;padding:4px 8px;color:var(--text);text-decoration:none;font-size:13px;border-radius:3px;margin-bottom:2px;">시나리오 개요</a>
+      <a href="#step1" style="display:block;padding:4px 8px;color:var(--text);text-decoration:none;font-size:13px;border-radius:3px;margin-bottom:2px;">Step 1. 프로젝트 브리프</a>
+      <a href="#step2" style="display:block;padding:4px 8px;color:var(--text);text-decoration:none;font-size:13px;border-radius:3px;margin-bottom:2px;">Step 2. .gud 파일 생성</a>
+      <a href="#step3" style="display:block;padding:4px 8px;color:var(--text);text-decoration:none;font-size:13px;border-radius:3px;margin-bottom:2px;">Step 3. UIEditor + MakeCode</a>
+      <a href="#step4" style="display:block;padding:4px 8px;color:var(--text);text-decoration:none;font-size:13px;border-radius:3px;margin-bottom:2px;">Step 4. C# 코드 구현</a>
+      <a href="#step5" style="display:block;padding:4px 8px;color:var(--text);text-decoration:none;font-size:13px;border-radius:3px;margin-bottom:2px;">Step 5. 빌드 및 실행</a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <div style="max-width:800px;margin:0 auto;padding-top:20px;">
+
+      <h1 class="page-title">Getting Started</h1>
+      <p class="page-subtitle">모터 제어 패널 예제로 배우는 Going Library HMI 개발 전체 과정</p>
+
+      <div style="background:var(--panel-bg);border:1px solid var(--accent);border-radius:6px;padding:16px 20px;margin:24px 0;">
+        <p style="margin:0;color:var(--text);font-size:14px;">
+          <strong style="color:var(--accent);">시작하기 전에</strong> —
+          개발 환경이 아직 구성되지 않았다면 먼저 <a href="setup.html" style="color:var(--accent);">개발 환경 구성</a>을 완료하세요.
+        </p>
+      </div>
+
+      <!-- Overview -->
+      <h2 id="overview" style="font-size:16px;font-weight:400;color:#fff;margin:32px 0 16px;padding-bottom:8px;border-bottom:1px solid var(--border);">
+        <span style="color:var(--keyword);">시나리오 개요</span>
+      </h2>
+      <p style="color:var(--text);font-size:13px;margin-bottom:16px;">
+        이 튜토리얼에서는 <strong>모터 제어 HMI</strong>를 만듭니다. 2개 페이지로 구성된 간단한 프로젝트이지만,
+        Going Library의 핵심 기능(UI 컨트롤, Modbus 통신, 설정 관리)을 모두 다룹니다.
+      </p>
+
+      <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:16px;">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border);">
+            <th style="text-align:left;padding:8px;color:var(--text-muted);">페이지</th>
+            <th style="text-align:left;padding:8px;color:var(--text-muted);">역할</th>
+            <th style="text-align:left;padding:8px;color:var(--text-muted);">주요 컨트롤</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;color:var(--property);">PageMain</td>
+            <td style="padding:8px;">모터 모니터링 + 제어</td>
+            <td style="padding:8px;">GoLamp × 2, GoButton × 2, GoValue, GoSlider, GoLabel</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;color:var(--property);">PageSetting</td>
+            <td style="padding:8px;">통신 파라미터 설정</td>
+            <td style="padding:8px;">GoInputString, GoInputNumber × 2, GoButton × 2</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border);">
+            <th style="text-align:left;padding:8px;color:var(--text-muted);">단계</th>
+            <th style="text-align:left;padding:8px;color:var(--text-muted);">작업</th>
+            <th style="text-align:left;padding:8px;color:var(--text-muted);">환경</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;">Step 1</td><td style="padding:8px;">프로젝트 브리프 작성</td><td style="padding:8px;">Claude 채팅 / Claude Code</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;">Step 2</td><td style="padding:8px;">.gud 파일 생성</td><td style="padding:8px;">Claude 채팅 / Claude Code</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;">Step 3</td><td style="padding:8px;">UIEditor 조정 + MakeCode</td><td style="padding:8px;">사용자 (UIEditor)</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;">Step 4</td><td style="padding:8px;">C# 코드 구현</td><td style="padding:8px;">Claude Code</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;">Step 5</td><td style="padding:8px;">빌드 및 실행</td><td style="padding:8px;">사용자 / Claude Code</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Step 1 -->
+      <h2 id="step1" style="font-size:16px;font-weight:400;color:#fff;margin:32px 0 16px;padding-bottom:8px;border-bottom:1px solid var(--border);">
+        <span style="color:var(--keyword);">Step 1</span> — 프로젝트 브리프 작성
+      </h2>
+      <p style="color:var(--text);font-size:13px;margin-bottom:12px;">
+        Claude에게 <code style="background:var(--sidebar-bg);padding:2px 6px;border-radius:3px;">"새 HMI 프로젝트 시작할게요"</code>라고 말하면
+        인터뷰가 시작됩니다. Claude가 프로젝트 이름, 화면 구성, 통신 방식 등을 순서대로 질문하며 <code>project_brief.md</code>를 작성합니다.
+      </p>
+      <p style="color:var(--text-muted);font-size:12px;margin-bottom:16px;">
+        기존 자료(화면 이미지, 레지스터 맵 엑셀 등)가 있으면 함께 전달하면 더 빠릅니다.
+      </p>
+
+      <p style="color:var(--text);font-size:13px;margin-bottom:8px;"><strong>이 시나리오의 브리프 요약:</strong></p>
+      <div style="background:var(--sidebar-bg);border:1px solid var(--border);border-radius:6px;padding:16px 20px;font-size:13px;color:var(--text);">
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:6px 8px;color:var(--text-muted);width:120px;">프로젝트명</td>
+            <td style="padding:6px 8px;">MotorControl</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:6px 8px;color:var(--text-muted);">해상도</td>
+            <td style="padding:6px 8px;">1024 × 600</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:6px 8px;color:var(--text-muted);">테마</td>
+            <td style="padding:6px 8px;">Dark</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:6px 8px;color:var(--text-muted);">통신</td>
+            <td style="padding:6px 8px;">Modbus TCP (192.168.0.10:502)</td>
+          </tr>
+          <tr>
+            <td style="padding:6px 8px;color:var(--text-muted);">페이지</td>
+            <td style="padding:6px 8px;">PageMain (모니터링+제어), PageSetting (통신 설정)</td>
+          </tr>
+        </table>
+      </div>
+
+      <p style="color:var(--text);font-size:13px;margin:16px 0 8px;"><strong>레지스터 맵:</strong></p>
+      <table style="width:100%;border-collapse:collapse;font-size:12px;">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border);">
+            <th style="text-align:left;padding:6px;color:var(--text-muted);">주소</th>
+            <th style="text-align:left;padding:6px;color:var(--text-muted);">명칭</th>
+            <th style="text-align:left;padding:6px;color:var(--text-muted);">설명</th>
+            <th style="text-align:left;padding:6px;color:var(--text-muted);">R/W</th>
+            <th style="text-align:left;padding:6px;color:var(--text-muted);">FC</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:6px;"><code>0x0000</code></td><td style="padding:6px;">RunState</td><td style="padding:6px;">운전 상태 (0=정지, 1=운전)</td><td style="padding:6px;">R</td><td style="padding:6px;">FC3</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:6px;"><code>0x0001</code></td><td style="padding:6px;">CurrentRPM</td><td style="padding:6px;">현재 RPM</td><td style="padding:6px;">R</td><td style="padding:6px;">FC3</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:6px;"><code>0x0002</code></td><td style="padding:6px;">ErrorCode</td><td style="padding:6px;">에러 코드</td><td style="padding:6px;">R</td><td style="padding:6px;">FC3</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:6px;"><code>0x0010</code></td><td style="padding:6px;">TargetSpeed</td><td style="padding:6px;">목표 속도 (rpm)</td><td style="padding:6px;">R/W</td><td style="padding:6px;">FC3/FC6</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Step 2 -->
+      <h2 id="step2" style="font-size:16px;font-weight:400;color:#fff;margin:32px 0 16px;padding-bottom:8px;border-bottom:1px solid var(--border);">
+        <span style="color:var(--keyword);">Step 2</span> — .gud 파일 생성
+      </h2>
+      <p style="color:var(--text);font-size:13px;margin-bottom:12px;">
+        브리프가 완성되면 Claude가 <code>.gud</code> 파일(JSON)을 자동 생성합니다.
+        .gud는 GoDesign 직렬화 포맷으로 UIEditor에서 열 수 있습니다.
+      </p>
+      <div style="background:var(--sidebar-bg);border:1px solid var(--border);border-radius:6px;padding:16px 20px;font-size:13px;">
+<pre style="margin:0;color:var(--text);line-height:1.6;"><code>MotorControl.gud
+├── GoDesign (1024×600, Dark)
+├── Pages
+│   ├── <span style="color:var(--property);">PageMain</span>
+│   │   └── GoTableLayoutPanel (2행)
+│   │       ├── 상단: GoLamp×2, GoValue(RPM), GoLabel(상태)
+│   │       └── 하단: GoButton×2(운전/정지), GoSlider(속도)
+│   └── <span style="color:var(--property);">PageSetting</span>
+│       └── GoTableLayoutPanel
+│           ├── GoInputString(IP), GoInputNumber(Port, Timeout)
+│           └── GoButton×2(저장, 돌아가기)
+└── Windows: {} <span style="color:var(--comment);">(없음)</span></code></pre>
+      </div>
+
+      <!-- Step 3 -->
+      <h2 id="step3" style="font-size:16px;font-weight:400;color:#fff;margin:32px 0 16px;padding-bottom:8px;border-bottom:1px solid var(--border);">
+        <span style="color:var(--keyword);">Step 3</span> — UIEditor에서 조정 + MakeCode
+      </h2>
+      <p style="color:var(--text);font-size:13px;margin-bottom:12px;">
+        사용자가 직접 수행하는 단계입니다.
+      </p>
+      <ol style="color:var(--text);font-size:13px;line-height:2;padding-left:20px;">
+        <li>바탕화면의 <strong>UIEditor</strong> 바로가기로 실행</li>
+        <li><code>MotorControl.gud</code> 파일 열기</li>
+        <li>컨트롤 위치/크기 미세 조정 (드래그 앤 드롭)</li>
+        <li><strong>MakeCode</strong> 실행 → C# 프로젝트 자동 생성</li>
+      </ol>
+
+      <p style="color:var(--text);font-size:13px;margin:16px 0 8px;"><strong>생성되는 파일:</strong></p>
+      <div style="background:var(--sidebar-bg);border:1px solid var(--border);border-radius:6px;padding:16px 20px;font-size:13px;">
+<pre style="margin:0;color:var(--text);line-height:1.6;"><code>MotorControl/
+├── MotorControl.csproj       <span style="color:var(--comment);">← NuGet 참조 포함</span>
+├── design.json               <span style="color:var(--comment);">← 런타임 로드용 (수정 금지)</span>
+├── Program.cs                <span style="color:var(--comment);">← 진입점</span>
+├── MainWindow.cs             <span style="color:var(--comment);">← 사용자 파일</span>
+├── MainWindow.Designer.cs    <span style="color:var(--comment);">← 자동생성 (수정 금지)</span>
+├── Pages/
+│   ├── PageMain.cs           <span style="color:var(--comment);">← 사용자 파일</span>
+│   ├── PageMain.Designer.cs  <span style="color:var(--comment);">← 자동생성 (수정 금지)</span>
+│   ├── PageSetting.cs        <span style="color:var(--comment);">← 사용자 파일</span>
+│   └── PageSetting.Designer.cs <span style="color:var(--comment);">← 자동생성 (수정 금지)</span></code></pre>
+      </div>
+      <p style="color:var(--text-muted);font-size:12px;margin-top:8px;">
+        *.Designer.cs와 design.json은 UIEditor가 관리합니다. 직접 수정하지 마세요.
+      </p>
+
+      <!-- Step 4 -->
+      <h2 id="step4" style="font-size:16px;font-weight:400;color:#fff;margin:32px 0 16px;padding-bottom:8px;border-bottom:1px solid var(--border);">
+        <span style="color:var(--keyword);">Step 4</span> — C# 코드 구현
+      </h2>
+      <p style="color:var(--text);font-size:13px;margin-bottom:16px;">
+        MakeCode 완료 후, 생성된 프로젝트 폴더를 Claude Code 작업 디렉터리로 지정하고 코드 구현을 요청합니다.
+        Claude Code가 <code>*.cs</code> (사용자 파일)만 수정합니다.
+      </p>
+
+      <h3 style="font-size:14px;color:var(--property);margin:20px 0 8px;">Program.cs + Main</h3>
+      <pre style="background:var(--sidebar-bg);border:1px solid var(--border);border-radius:4px;padding:12px 16px;font-size:13px;overflow-x:auto;"><code><span style="color:var(--keyword);">using</span> MotorControl;
+
+Main.Init();
+
+<span style="color:var(--keyword);">using var</span> view = <span style="color:var(--keyword);">new</span> MainWindow();
+view.Run();
+
+Main.Stop();
+
+<span style="color:var(--keyword);">public static class</span> <span style="color:var(--property);">Main</span>
+{
+    <span style="color:var(--keyword);">public static</span> DataManager DataMgr { <span style="color:var(--keyword);">get</span>; } = <span style="color:var(--keyword);">new</span>();
+    <span style="color:var(--keyword);">public static</span> DeviceManager DeviceMgr { <span style="color:var(--keyword);">get</span>; } = <span style="color:var(--keyword);">new</span>();
+
+    <span style="color:var(--keyword);">public static void</span> Init()
+    {
+        DataMgr.Load();       <span style="color:var(--comment);">// 설정 로드</span>
+        DeviceMgr.Start();    <span style="color:var(--comment);">// 통신 시작</span>
+    }
+
+    <span style="color:var(--keyword);">public static void</span> Stop()
+    {
+        DeviceMgr.Stop();     <span style="color:var(--comment);">// 통신 종료</span>
+    }
+}</code></pre>
+
+      <h3 style="font-size:14px;color:var(--property);margin:20px 0 8px;">DeviceManager (Modbus TCP)</h3>
+      <pre style="background:var(--sidebar-bg);border:1px solid var(--border);border-radius:4px;padding:12px 16px;font-size:13px;overflow-x:auto;"><code><span style="color:var(--keyword);">using</span> Going.Basis.Communications;
+
+<span style="color:var(--keyword);">public class</span> <span style="color:var(--property);">DeviceManager</span>
+{
+    <span style="color:var(--keyword);">public</span> MasterTCP TCP { <span style="color:var(--keyword);">get</span>; } = <span style="color:var(--keyword);">new</span>();
+
+    <span style="color:var(--keyword);">public</span> DeviceManager()
+    {
+        TCP.WordAreas.Add(0x0000, <span style="color:var(--string);">"D"</span>);
+        TCP.BitAreas.Add(0x0000, <span style="color:var(--string);">"P"</span>);
+    }
+
+    <span style="color:var(--comment);">// 읽기 — 의미있는 프로퍼티</span>
+    <span style="color:var(--keyword);">public bool</span> IsConnected  =&gt; TCP.IsOpen;
+    <span style="color:var(--keyword);">public bool</span> IsRunning    =&gt; TCP.GetWord(1, <span style="color:var(--string);">"D0"</span>) == 1;
+    <span style="color:var(--keyword);">public int</span>  CurrentRPM   =&gt; TCP.GetWord(1, <span style="color:var(--string);">"D1"</span>) ?? 0;
+    <span style="color:var(--keyword);">public int</span>  TargetSpeed  =&gt; TCP.GetWord(1, <span style="color:var(--string);">"D16"</span>) ?? 0;
+
+    <span style="color:var(--comment);">// 쓰기</span>
+    <span style="color:var(--keyword);">public void</span> SetTargetSpeed(<span style="color:var(--keyword);">int</span> rpm) =&gt; TCP.SetWord(1, <span style="color:var(--string);">"D16"</span>, rpm);
+    <span style="color:var(--keyword);">public void</span> SetRunCmd(<span style="color:var(--keyword);">bool</span> on)      =&gt; TCP.SetBit(1, <span style="color:var(--string);">"P0"</span>, on);
+    <span style="color:var(--keyword);">public void</span> SetStopCmd(<span style="color:var(--keyword);">bool</span> on)     =&gt; TCP.SetBit(1, <span style="color:var(--string);">"P1"</span>, on);
+
+    <span style="color:var(--keyword);">public void</span> Start()
+    {
+        <span style="color:var(--keyword);">var</span> s = Main.DataMgr.Setting;
+        TCP.IP = s.IP;  TCP.Port = s.Port;  TCP.Timeout = s.Timeout;
+
+        TCP.MonitorWord_F3(1, 0x0000, 3);   <span style="color:var(--comment);">// D0~D2</span>
+        TCP.MonitorWord_F3(1, 0x0010, 1);   <span style="color:var(--comment);">// D16 (TargetSpeed)</span>
+        TCP.MonitorBit_F1(1, 0x0000, 2);    <span style="color:var(--comment);">// P0~P1</span>
+        TCP.Start();
+    }
+
+    <span style="color:var(--keyword);">public void</span> Stop() =&gt; TCP.Stop();
+}</code></pre>
+
+      <h3 style="font-size:14px;color:var(--property);margin:20px 0 8px;">PageMain.cs — UI 이벤트 + 데이터 반영</h3>
+      <pre style="background:var(--sidebar-bg);border:1px solid var(--border);border-radius:4px;padding:12px 16px;font-size:13px;overflow-x:auto;"><code><span style="color:var(--keyword);">public partial class</span> <span style="color:var(--property);">PageMain</span> : GoPage
+{
+    <span style="color:var(--keyword);">public</span> PageMain()
+    {
+        InitializeComponent();
+
+        btnStart.ButtonClicked += (s, e) =&gt; Main.DeviceMgr.SetRunCmd(<span style="color:var(--keyword);">true</span>);
+        btnStop.ButtonClicked  += (s, e) =&gt; Main.DeviceMgr.SetStopCmd(<span style="color:var(--keyword);">true</span>);
+
+        sldSpeed.ValueChanged += (s, e) =&gt;
+            Main.DeviceMgr.SetTargetSpeed((<span style="color:var(--keyword);">int</span>)sldSpeed.Value);
+    }
+
+    <span style="color:var(--comment);">// 매 프레임 호출 — 통신 데이터를 UI에 반영</span>
+    <span style="color:var(--keyword);">protected override void</span> OnUpdate()
+    {
+        <span style="color:var(--keyword);">var</span> dev = Main.DeviceMgr;
+        lampRun.OnOff  = dev.IsRunning;
+        lampStop.OnOff = !dev.IsRunning;
+        valRPM.Value   = dev.CurrentRPM;
+        sldSpeed.Value = dev.TargetSpeed;
+        lblStatus.Text = dev.IsConnected
+            ? (dev.IsRunning ? <span style="color:var(--string);">"운전 중"</span> : <span style="color:var(--string);">"정지"</span>)
+            : <span style="color:var(--string);">"통신 끊김"</span>;
+
+        <span style="color:var(--keyword);">base</span>.OnUpdate();
+    }
+}</code></pre>
+
+      <h3 style="font-size:14px;color:var(--property);margin:20px 0 8px;">PageSetting.cs — 설정 저장/로드</h3>
+      <pre style="background:var(--sidebar-bg);border:1px solid var(--border);border-radius:4px;padding:12px 16px;font-size:13px;overflow-x:auto;"><code><span style="color:var(--keyword);">public partial class</span> <span style="color:var(--property);">PageSetting</span> : GoPage
+{
+    <span style="color:var(--keyword);">public</span> PageSetting()
+    {
+        InitializeComponent();
+
+        <span style="color:var(--keyword);">var</span> s = Main.DataMgr.Setting;
+        inpIP.Value      = s.IP;
+        inpPort.Value    = s.Port;
+        inpTimeout.Value = s.Timeout;
+
+        btnSave.ButtonClicked += (s, e) =&gt;
+        {
+            Main.DataMgr.Setting.IP      = inpIP.Value;
+            Main.DataMgr.Setting.Port    = (<span style="color:var(--keyword);">int</span>)inpPort.Value;
+            Main.DataMgr.Setting.Timeout = (<span style="color:var(--keyword);">int</span>)inpTimeout.Value;
+            Main.DataMgr.Save();
+        };
+
+        btnBack.ButtonClicked += (s, e) =&gt;
+            MainWindow.Current.Design.SetPage(<span style="color:var(--string);">"PageMain"</span>);
+    }
+}</code></pre>
+
+      <!-- Step 5 -->
+      <h2 id="step5" style="font-size:16px;font-weight:400;color:#fff;margin:32px 0 16px;padding-bottom:8px;border-bottom:1px solid var(--border);">
+        <span style="color:var(--keyword);">Step 5</span> — 빌드 및 실행
+      </h2>
+      <pre style="background:var(--sidebar-bg);border:1px solid var(--border);border-radius:4px;padding:12px 16px;font-size:13px;overflow-x:auto;"><code><span style="color:var(--keyword);">cd</span> MotorControl
+dotnet build
+dotnet run</code></pre>
+      <p style="color:var(--text-muted);font-size:12px;margin-top:8px;">
+        design.json이 실행 디렉터리에 필요합니다. MakeCode가 .csproj에 빌드 복사 설정을 포함하므로 별도 작업 불필요.
+      </p>
+
+      <!-- Flow Summary -->
+      <h2 style="font-size:16px;font-weight:400;color:#fff;margin:32px 0 16px;padding-bottom:8px;border-bottom:1px solid var(--border);">
+        <span style="color:var(--text-muted);">전체 흐름 요약</span>
+      </h2>
+      <div style="background:var(--sidebar-bg);border:1px solid var(--border);border-radius:6px;padding:16px 20px;font-size:13px;">
+<pre style="margin:0;color:var(--text);line-height:1.8;"><code><span style="color:var(--accent);">"새 HMI 프로젝트 시작할게요"</span>
+  ↓ Claude가 인터뷰 진행
+<span style="color:var(--property);">project_brief.md</span> 완성
+  ↓ Claude가 JSON 생성
+<span style="color:var(--property);">MotorControl.gud</span> 생성
+  ↓ 사용자가 UIEditor에서 조정
+<span style="color:var(--property);">MakeCode</span> → C# 프로젝트 생성
+  ↓ Claude Code가 코드 구현
+<span style="color:var(--property);">Program.cs, DeviceManager, PageMain, PageSetting</span>
+  ↓
+<span style="color:var(--keyword);">dotnet build → dotnet run</span></code></pre>
+      </div>
+
+      <div style="background:var(--panel-bg);border:1px solid var(--border);border-radius:6px;padding:16px 20px;margin:24px 0;">
+        <p style="margin:0;color:var(--text);font-size:13px;">
+          라즈베리파이에 배포하려면 → <a href="setup.html" style="color:var(--accent);">ui-mcp.md</a> (gtcli 배포 가이드) 참조
+        </p>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<button class="back-to-top" id="back-to-top" title="맨 위로">↑</button>
+<script src="js/app.js"></script>
+</body>
+</html>

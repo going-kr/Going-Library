@@ -18,6 +18,7 @@
     <a href="basis/index.html">Going.Basis</a>
     <a href="ui/index.html">Going.UI</a>
     <a href="setup.html" class="active">Setup</a>
+    <a href="getting-start.html">Getting Started</a>
   </nav>
 </header>
 
@@ -29,7 +30,7 @@
       <a href="#step1" style="display:block;padding:4px 8px;color:var(--text);text-decoration:none;font-size:13px;border-radius:3px;margin-bottom:2px;">Step 1. 스킬 설치</a>
       <a href="#step2" style="display:block;padding:4px 8px;color:var(--text);text-decoration:none;font-size:13px;border-radius:3px;margin-bottom:2px;">Step 2. UIEditor 설치</a>
       <a href="#step3" style="display:block;padding:4px 8px;color:var(--text);text-decoration:none;font-size:13px;border-radius:3px;margin-bottom:2px;">Step 3. 바로가기 생성</a>
-      <a href="#step4" style="display:block;padding:4px 8px;color:var(--text);text-decoration:none;font-size:13px;border-radius:3px;margin-bottom:2px;">Step 4. 개발 시작</a>
+      <a href="#step4" style="display:block;padding:4px 8px;color:var(--text);text-decoration:none;font-size:13px;border-radius:3px;margin-bottom:2px;">Step 4. 완료 및 다음 단계</a>
       <a href="#manual" style="display:block;padding:4px 8px;color:var(--text);text-decoration:none;font-size:13px;border-radius:3px;margin-bottom:2px;">수동 설치</a>
     </nav>
   </aside>
@@ -135,15 +136,22 @@ $sc.Save()</code></pre>
 
       <!-- Step 4 -->
       <h2 id="step4" style="font-size:16px;font-weight:400;color:#fff;margin:32px 0 16px;padding-bottom:8px;border-bottom:1px solid var(--border);">
-        <span style="color:var(--keyword);">Step 4</span> — 개발 시작
+        <span style="color:var(--keyword);">Step 4</span> — 완료 및 다음 단계
       </h2>
-      <div style="background:var(--panel-bg);border:1px solid var(--border);border-radius:6px;padding:16px 20px;">
-        <ol style="margin:0;padding-left:20px;font-size:13px;color:var(--text);line-height:2;">
-          <li>바탕화면의 <strong>UIEditor</strong> 바로가기로 실행</li>
-          <li>UIEditor에서 UI 설계 → <strong>MakeCode</strong>로 C# 프로젝트 자동 생성 (NuGet 패키지 참조 포함)</li>
-          <li>생성된 프로젝트 폴더를 Claude Code 작업 디렉터리로 열면 AI 코딩 시작</li>
-        </ol>
+      <div style="background:var(--panel-bg);border:1px solid var(--accent);border-radius:6px;padding:20px 24px;margin-bottom:16px;">
+        <p style="margin:0 0 12px;color:var(--accent);font-size:14px;font-weight:600;">개발 환경이 준비되었습니다!</p>
+        <p style="margin:0 0 12px;color:var(--text);font-size:13px;">
+          Claude에게 아래와 같이 말하면 프로젝트가 시작됩니다:
+        </p>
+        <pre style="background:var(--sidebar-bg);border:1px solid var(--border);border-radius:4px;padding:12px 16px;font-size:14px;margin:0 0 12px;"><code style="color:var(--string);">"새 HMI 프로젝트 시작할게요"</code></pre>
+        <p style="margin:0;color:var(--text-muted);font-size:12px;">
+          Claude가 프로젝트 인터뷰를 진행하며, 화면 구성 · 통신 · 배포까지 함께 설계합니다.<br>
+          기존 자료(화면 이미지, 레지스터 맵 엑셀 등)가 있다면 함께 전달하면 더 빠릅니다.
+        </p>
       </div>
+      <p style="color:var(--text);font-size:13px;">
+        👉 전체 개발 과정이 궁금하다면: <a href="getting-start.html" style="color:var(--accent);">Getting Started — 모터 제어 패널 튜토리얼</a>
+      </p>
 
       <!-- 수동 설치 -->
       <h2 id="manual" style="font-size:16px;font-weight:400;color:#fff;margin:40px 0 16px;padding-bottom:8px;border-bottom:1px solid var(--border);">
@@ -151,11 +159,7 @@ $sc.Save()</code></pre>
       </h2>
 
       <h3 style="font-size:14px;color:var(--property);margin:16px 0 8px;">방법 1. Git Clone (CLI)</h3>
-      <pre style="background:var(--sidebar-bg);border:1px solid var(--border);border-radius:4px;padding:12px 16px;font-size:13px;overflow-x:auto;"><code><span style="color:var(--comment);"># 프로젝트 단위 — 해당 프로젝트에서만 사용</span>
-cd your-project
-git clone https://github.com/going-kr/going-ui-skill .claude/skills/going-ui-skill
-
-<span style="color:var(--comment);"># 전역 — 모든 프로젝트에서 사용</span>
+      <pre style="background:var(--sidebar-bg);border:1px solid var(--border);border-radius:4px;padding:12px 16px;font-size:13px;overflow-x:auto;"><code><span style="color:var(--comment);"># 글로벌 설치 — 한 번 설치하면 모든 프로젝트에서 사용</span>
 git clone https://github.com/going-kr/going-ui-skill ~/.claude/skills/going-ui-skill</code></pre>
 
       <h3 style="font-size:14px;color:var(--property);margin:16px 0 8px;">방법 2. Claude 데스크톱 앱</h3>

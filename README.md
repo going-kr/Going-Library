@@ -56,11 +56,7 @@ https://going-kr.github.io/Going-Library/setup.html 여기 보고 개발 환경 
 **Going UI Skill (Claude Code)**
 
 ```bash
-# 프로젝트 단위
-cd your-project
-git clone https://github.com/going-kr/going-ui-skill .claude/skills/going-ui-skill
-
-# 전역
+# 글로벌 설치 — 한 번 설치하면 모든 프로젝트에서 사용
 git clone https://github.com/going-kr/going-ui-skill ~/.claude/skills/going-ui-skill
 ```
 
