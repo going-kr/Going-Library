@@ -41,6 +41,35 @@
 | **Going.UI.Forms** | WinForms 어댑터 (Windows 데스크톱) | `net8.0-windows` |
 | **Going.Basis** | 통신 및 유틸리티 (Modbus, MQTT, CNet, MC) | `net8.0` |
 
+## 개발 환경 구성
+
+> **[개발 환경 구성 가이드](https://going-kr.github.io/Going-Library/setup.html)** — Claude Code를 사용한 자동 셋업 (스킬 설치 + UIEditor 다운로드 + 바로가기 생성)
+
+Claude Code에 이렇게 말하세요:
+
+```
+https://going-kr.github.io/Going-Library/setup.html 여기 보고 개발 환경 구성해줘
+```
+
+### 수동 설치
+
+**Going UI Skill (Claude Code)**
+
+```bash
+# 프로젝트 단위
+cd your-project
+git clone https://github.com/going-kr/going-ui-skill .claude/skills/going-ui-skill
+
+# 전역
+git clone https://github.com/going-kr/going-ui-skill ~/.claude/skills/going-ui-skill
+```
+
+또는 Claude 데스크톱 앱의 `설정 → 스킬 → 스킬 업로드`에서 `.zip` 또는 `SKILL.md`를 업로드합니다.
+
+**UIEditor**
+
+[Releases](https://github.com/going-kr/Going-Library/releases)에서 `UIEditor.zip`을 다운로드하여 원하는 경로에 압축 해제합니다.
+
 ## 빠른 시작
 
 ```bash
@@ -97,35 +126,6 @@ rtu.SetWord(1, "D0", 100);      // 장치에 쓰기
 | MQTT | `MQClient` |
 | LS Electric CNet | `CNet` |
 | Mitsubishi MC | `MC` |
-
-## 개발 환경 구성
-
-> **[개발 환경 구성 가이드](https://going-kr.github.io/Going-Library/setup.html)** — Claude Code를 사용한 자동 셋업 (스킬 설치 + UIEditor 다운로드 + 바로가기 생성)
-
-Claude Code에 이렇게 말하세요:
-
-```
-https://going-kr.github.io/Going-Library/setup.html 여기 보고 개발 환경 구성해줘
-```
-
-### 수동 설치
-
-**Going UI Skill (Claude Code)**
-
-```bash
-# 프로젝트 단위
-cd your-project
-git clone https://github.com/going-kr/going-ui-skill .claude/skills/going-ui-skill
-
-# 전역
-git clone https://github.com/going-kr/going-ui-skill ~/.claude/skills/going-ui-skill
-```
-
-또는 Claude 데스크톱 앱의 `설정 → 스킬 → 스킬 업로드`에서 `.zip` 또는 `SKILL.md`를 업로드합니다.
-
-**UIEditor**
-
-[Releases](https://github.com/going-kr/Going-Library/releases)에서 `UIEditor.zip`을 다운로드하여 원하는 경로에 압축 해제합니다.
 
 ## 프로젝트 구조
 
