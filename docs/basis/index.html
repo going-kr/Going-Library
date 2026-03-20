@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Going.Basis - API Documentation</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<header class="site-header">
+  <a class="logo" href="../index.html"><span class="pkg">API</span> Going Library</a>
+  <div class="search-wrapper"><input type="text" id="search-input" placeholder="클래스, 메서드 검색..."></div>
+  <nav class="header-nav">
+    <a href="../index.html">Home</a>
+    <a href="../basis/index.html" class="active">Going.Basis</a>
+    <a href="../ui/index.html">Going.UI</a>
+  </nav>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar" data-current="basis/index.html"></aside>
+  <main class="main-content">
+    <div class="breadcrumb">
+      <a href="../index.html">Going Library</a>
+      <span class="sep">›</span>
+      <span>Going.Basis</span>
+    </div>
+    <h1 class="page-title">Going.Basis</h1>
+    <p class="page-subtitle">
+      산업용 통신 프로토콜, 데이터 직렬화, 측정 필터, 암호화 유틸리티 라이브러리 &nbsp;·&nbsp;
+      <code>NuGet: Going.Basis</code> &nbsp;·&nbsp; <code>.NET 8.0</code>
+    </p>
+
+    <div class="ns-list">
+      <a class="ns-card" href="communications-ls.html">
+        <h3>Communications.LS</h3>
+        <p>LS Electric PLC용 CNet 프로토콜. 자동/수동 읽기·쓰기 스케줄링.</p>
+        <div class="class-count">CNet · CNetValue · CNetFunc</div>
+      </a>
+      <a class="ns-card" href="communications-mitsubishi.html">
+        <h3>Communications.Mitsubishi</h3>
+        <p>Mitsubishi PLC용 MC 프로토콜(3E/4E 프레임). 비트/워드 자동/수동 읽기·쓰기.</p>
+        <div class="class-count">MC · MCFunc</div>
+      </a>
+      <a class="ns-card" href="communications-modbus.html">
+        <h3>Communications.Modbus</h3>
+        <p>Modbus RTU/TCP 마스터·슬레이브. FC1~FC26 지원. CRC/LRC 유틸.</p>
+        <div class="class-count">ModbusRTUMaster · ModbusRTUSlave · ModbusTCPMaster · ModbusTCPSlave · MasterRTU · MasterTCP · SlaveRTU · SlaveTCP · ModbusCRC</div>
+      </a>
+      <a class="ns-card" href="communications-mqtt.html">
+        <h3>Communications.Mqtt</h3>
+        <p>MQTT 브로커 Publish/Subscribe. QoS 설정, 자동 재연결 지원.</p>
+        <div class="class-count">MQClient · MQSubscribe · MQReceiveArgs · MQQos</div>
+      </a>
+      <a class="ns-card" href="datas.html">
+        <h3>Datas / Memories</h3>
+        <p>INI 파일, JSON/XML/Binary 직렬화 유틸, 비트·워드 메모리 (BitMemory, WordMemory, WordRef).</p>
+        <div class="class-count">INI · Seriealize · BitMemory · WordMemory · WordRef · BitAccessor</div>
+      </a>
+      <a class="ns-card" href="extensions.html">
+        <h3>Extensions</h3>
+        <p>정수형 타입의 비트 Get/Set 및 바이트 조작 확장 메서드.</p>
+        <div class="class-count">Bits</div>
+      </a>
+      <a class="ns-card" href="measure.html">
+        <h3>Measure</h3>
+        <p>디지털 입력 채터링 제거, 아날로그 측정값 안정화 판정 클래스.</p>
+        <div class="class-count">Chattering · Stable</div>
+      </a>
+      <a class="ns-card" href="tools.html">
+        <h3>Tools</h3>
+        <p>AES 암호화, 수학/기하 유틸, 네트워크 설정, Windows 시스템 API.</p>
+        <div class="class-count">CryptoTool · MathTool · NetworkTool · WindowsTool</div>
+      </a>
+      <a class="ns-card" href="utils.html">
+        <h3>Utils</h3>
+        <p>비동기 루프 태스크, 외부 프로세스, 고해상도 타이머, 자연 정렬, 압축.</p>
+        <div class="class-count">EasyTask · ExternalProgram · HiResTimer · NaturalSortComparer · CompressionUtility</div>
+      </a>
+    </div>
+
+    <div style="margin-top:40px;padding:20px;background:var(--panel-bg);border:1px solid var(--border);border-radius:6px;">
+      <h3 style="font-size:13px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px;">의존성</h3>
+      <table style="width:100%;font-family:Consolas,monospace;font-size:13px;border-collapse:collapse;">
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:6px 12px;color:var(--property)">M2MqttDotnetCore</td>
+          <td style="padding:6px 12px;color:var(--string)">1.1.0</td>
+          <td style="padding:6px 12px;color:var(--text-muted)">MQTT 클라이언트</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 12px;color:var(--property)">System.IO.Ports</td>
+          <td style="padding:6px 12px;color:var(--string)">9.0.3</td>
+          <td style="padding:6px 12px;color:var(--text-muted)">시리얼 포트 (Modbus RTU, CNet, MC)</td>
+        </tr>
+      </table>
+    </div>
+  </main>
+</div>
+<button class="back-to-top" id="back-to-top" title="맨 위로">↑</button>
+<script src="../js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Datas - Going.UI API</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<header class="site-header">
+  <a class="logo" href="../index.html"><span class="pkg">API</span> Going Library</a>
+  <div class="search-wrapper"><input type="text" id="search-input" placeholder="클래스, 메서드 검색..."></div>
+  <nav class="header-nav">
+    <a href="../index.html">Home</a>
+    <a href="../basis/index.html">Going.Basis</a>
+    <a href="index.html" class="active">Going.UI</a>
+  </nav>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar" data-current="ui/datas.html"></aside>
+  <main class="main-content">
+    <div class="breadcrumb">
+      <a href="../index.html">Going Library</a><span class="sep">›</span>
+      <a href="index.html">Going.UI</a><span class="sep">›</span>
+      <span>Datas</span>
+    </div>
+    <h1 class="page-title">Datas</h1>
+    <p class="page-subtitle">네임스페이스 <code>Going.UI.Datas</code> — UI 데이터 모델 및 이벤트 인수 클래스</p>
+
+    <!-- GoListItem -->
+    <div id="class-GoListItem" class="class-card" data-search="golistitem class list item data">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoListItem</span></div>
+        <div class="class-desc">리스트박스, 콤보박스, 셀렉터 다이얼로그 항목 데이터 클래스</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="iconstring string"><td class="col-type">string?</td><td class="col-name">IconString <span class="accessor">get set</span></td><td class="col-desc">Font Awesome 아이콘 코드 (예: "fa-check")</td></tr>
+            <tr data-search="text string"><td class="col-type">string?</td><td class="col-name">Text <span class="accessor">get set</span></td><td class="col-desc">표시 텍스트</td></tr>
+            <tr data-search="tag object"><td class="col-type">object?</td><td class="col-name">Tag <span class="accessor">get set</span></td><td class="col-desc">사용자 정의 데이터</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Methods</div>
+          <table class="api-table">
+            <tr data-search="tostring string override"><td class="ret">string</td><td class="col-method-name">ToString</td><td class="params">()</td><td class="col-desc">Text 반환 (null이면 빈 문자열)</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- GoPadding -->
+    <div id="class-GoPadding" class="class-card" data-search="gopadding class padding margin spacing">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoPadding</span></div>
+        <div class="class-desc">컨트롤 여백(패딩/마진) 설정 클래스</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Constructors</div>
+          <table class="api-table">
+            <tr data-search="gopadding constructor"><td class="col-method-name">GoPadding</td><td class="params">()</td><td class="col-desc">기본 생성 (모두 0)</td></tr>
+            <tr data-search="gopadding constructor all"><td class="col-method-name">GoPadding</td><td class="params">(<span class="tp">float</span> all)</td><td class="col-desc">4방향 동일 값</td></tr>
+            <tr data-search="gopadding constructor ltrb"><td class="col-method-name">GoPadding</td><td class="params">(<span class="tp">float</span> left, <span class="tp">float</span> top, <span class="tp">float</span> right, <span class="tp">float</span> bottom)</td><td class="col-desc">개별 지정</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="left float"><td class="col-type">float</td><td class="col-name">Left <span class="accessor">get set</span></td><td class="col-desc">왼쪽 여백</td></tr>
+            <tr data-search="top float"><td class="col-type">float</td><td class="col-name">Top <span class="accessor">get set</span></td><td class="col-desc">위쪽 여백</td></tr>
+            <tr data-search="right float"><td class="col-type">float</td><td class="col-name">Right <span class="accessor">get set</span></td><td class="col-desc">오른쪽 여백</td></tr>
+            <tr data-search="bottom float"><td class="col-type">float</td><td class="col-name">Bottom <span class="accessor">get set</span></td><td class="col-desc">아래쪽 여백</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- GoButtonItem -->
+    <div id="class-GoButtonItem" class="class-card" data-search="gobuttonitem class button item data icon">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoButtonItem</span></div>
+        <div class="class-desc">GoInput 컨트롤의 부가 버튼 항목 데이터</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="name string"><td class="col-type">string</td><td class="col-name">Name <span class="accessor">get set</span></td><td class="col-desc">버튼 식별자</td></tr>
+            <tr data-search="iconstring string"><td class="col-type">string?</td><td class="col-name">IconString <span class="accessor">get set</span></td><td class="col-desc">Font Awesome 아이콘 코드</td></tr>
+            <tr data-search="text string"><td class="col-type">string?</td><td class="col-name">Text <span class="accessor">get set</span></td><td class="col-desc">버튼 텍스트</td></tr>
+            <tr data-search="size string"><td class="col-type">string</td><td class="col-name">Size <span class="accessor">get set</span></td><td class="col-desc">버튼 크기 문자열. 기본값: "100%"</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- Event Args -->
+    <div id="class-GoMouseEventArgs" class="class-card" data-search="gomouseeventargs class event mouse xy position">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoMouseEventArgs</span></div>
+        <div class="class-desc">마우스 이동·휠 이벤트 인수</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Constructor &amp; Properties</div>
+          <table class="api-table">
+            <tr data-search="gomouseeventargs constructor x y"><td class="col-method-name">GoMouseEventArgs</td><td class="params">(<span class="tp">float</span> x, <span class="tp">float</span> y)</td><td class="col-desc">마우스 좌표</td></tr>
+            <tr data-search="x float"><td class="col-type">float</td><td class="col-name">X <span class="accessor">get</span></td><td class="col-desc">마우스 X 좌표</td></tr>
+            <tr data-search="y float"><td class="col-type">float</td><td class="col-name">Y <span class="accessor">get</span></td><td class="col-desc">마우스 Y 좌표</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <div id="class-GoMouseClickEventArgs" class="class-card" data-search="gomouseclickeventargs class event click mouse button">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoMouseClickEventArgs</span> <span class="base">: GoMouseEventArgs</span></div>
+        <div class="class-desc">마우스 클릭 이벤트 인수</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Constructor &amp; Properties</div>
+          <table class="api-table">
+            <tr data-search="gomouseclickeventargs constructor x y button"><td class="col-method-name">GoMouseClickEventArgs</td><td class="params">(<span class="tp">float</span> x, <span class="tp">float</span> y, <span class="tp">GoMouseButton</span> button)</td><td class="col-desc">클릭 위치 및 버튼</td></tr>
+            <tr data-search="x float"><td class="col-type">float</td><td class="col-name">X <span class="accessor">get</span></td><td class="col-desc">클릭 X 좌표</td></tr>
+            <tr data-search="y float"><td class="col-type">float</td><td class="col-name">Y <span class="accessor">get</span></td><td class="col-desc">클릭 Y 좌표</td></tr>
+            <tr data-search="button gomousebutton"><td class="col-type">GoMouseButton</td><td class="col-name">Button <span class="accessor">get</span></td><td class="col-desc">클릭된 마우스 버튼</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <div id="class-GoMouseWheelEventArgs" class="class-card" data-search="gomousewheeleventargs class event mouse wheel delta">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoMouseWheelEventArgs</span> <span class="base">: GoMouseEventArgs</span></div>
+        <div class="class-desc">마우스 휠 이벤트 인수</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Constructor &amp; Properties</div>
+          <table class="api-table">
+            <tr data-search="gomousewheeleventargs constructor"><td class="col-method-name">GoMouseWheelEventArgs</td><td class="params">(<span class="tp">float</span> x, <span class="tp">float</span> y, <span class="tp">float</span> delta)</td><td class="col-desc">휠 이벤트 생성</td></tr>
+            <tr data-search="delta float"><td class="col-type">float</td><td class="col-name">Delta <span class="accessor">get</span></td><td class="col-desc">휠 변화량</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <div id="class-GoCancelableEventArgs" class="class-card" data-search="gocancelableeventargs class event cancel closing">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoCancelableEventArgs</span></div>
+        <div class="class-desc">취소 가능 이벤트 인수. GoWindow.OnClosing에서 사용.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="cancel bool"><td class="col-type">bool</td><td class="col-name">Cancel <span class="accessor">get set</span></td><td class="col-desc">이벤트 취소 여부. true로 설정하면 동작 취소.</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <div id="class-GoDragEventArgs" class="class-card" data-search="godrageventargs class event drag drop item">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoDragEventArgs</span></div>
+        <div class="class-desc">드래그&amp;드롭 이벤트 인수</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Constructor &amp; Properties</div>
+          <table class="api-table">
+            <tr data-search="godrageventargs constructor x y dragitem"><td class="col-method-name">GoDragEventArgs</td><td class="params">(<span class="tp">float</span> x, <span class="tp">float</span> y, <span class="tp">object</span> dragItem)</td><td class="col-desc">드롭 위치와 드래그 항목</td></tr>
+            <tr data-search="x float"><td class="col-type">float</td><td class="col-name">X <span class="accessor">get</span></td><td class="col-desc">드롭 X 좌표</td></tr>
+            <tr data-search="y float"><td class="col-type">float</td><td class="col-name">Y <span class="accessor">get</span></td><td class="col-desc">드롭 Y 좌표</td></tr>
+            <tr data-search="dragitem object"><td class="col-type">object</td><td class="col-name">DragItem <span class="accessor">get</span></td><td class="col-desc">드래그 중인 데이터 객체</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <div id="class-GoDrawnEventArgs" class="class-card" data-search="godrewneventargs class event draw canvas theme">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoDrawnEventArgs</span></div>
+        <div class="class-desc">컨트롤 렌더링 완료 이벤트 인수. GoControl.Drawn 이벤트에서 사용.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Constructor &amp; Properties</div>
+          <table class="api-table">
+            <tr data-search="godrewneventargs constructor canvas theme"><td class="col-method-name">GoDrawnEventArgs</td><td class="params">(<span class="tp">SKCanvas</span> canvas, <span class="tp">GoTheme</span> thm)</td><td class="col-desc">SkiaSharp 캔버스와 현재 테마</td></tr>
+            <tr data-search="canvas skcanvas"><td class="col-type">SKCanvas</td><td class="col-name">Canvas <span class="accessor">get</span></td><td class="col-desc">렌더링에 사용된 SKCanvas</td></tr>
+            <tr data-search="theme gotheme"><td class="col-type">GoTheme</td><td class="col-name">Theme <span class="accessor">get</span></td><td class="col-desc">현재 활성 테마</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <div id="class-ButtonClickEventArgs" class="class-card" data-search="buttonclickeventargs class event button click">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">ButtonClickEventArgs</span> <span class="base">: EventArgs</span></div>
+        <div class="class-desc">단일 버튼 클릭 이벤트 인수. GoGroupBox, GoPanel 등에서 사용.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="button gobuttonitem"><td class="col-type">GoButtonItem</td><td class="col-name">Button <span class="accessor">get</span></td><td class="col-desc">클릭된 버튼 항목</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <div id="class-ButtonsClickEventArgs" class="class-card" data-search="buttonsclickeventargs class event buttons click">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">ButtonsClickEventArgs</span> <span class="base">: EventArgs</span></div>
+        <div class="class-desc">버튼 그룹 클릭 이벤트 인수. GoButtons 등에서 사용.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="button gobuttonsitem"><td class="col-type">GoButtonsItem</td><td class="col-name">Button <span class="accessor">get</span></td><td class="col-desc">클릭된 버튼 항목</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <div id="class-ButtonsSelectedEventArgs" class="class-card" data-search="buttonsselectedeventargs class event buttons selected deselected">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">ButtonsSelectedEventArgs</span> <span class="base">: EventArgs</span></div>
+        <div class="class-desc">버튼 그룹 선택 변경 이벤트 인수. GoButtons 등에서 사용.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="selectedbutton gobuttonsitem"><td class="col-type">GoButtonsItem</td><td class="col-name">SelectedButton <span class="accessor">get</span></td><td class="col-desc">새로 선택된 버튼</td></tr>
+            <tr data-search="deselectedbutton gobuttonsitem"><td class="col-type">GoButtonsItem?</td><td class="col-name">DeselectedButton <span class="accessor">get</span></td><td class="col-desc">선택 해제된 이전 버튼 (없으면 null)</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="no-results" class="no-results">검색 결과가 없습니다.</div>
+  </main>
+</div>
+<button class="back-to-top" id="back-to-top" title="맨 위로">↑</button>
+<script src="../js/app.js"></script>
+</body>
+</html>

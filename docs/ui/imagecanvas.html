@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ImageCanvas - Going.UI API</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<header class="site-header">
+  <a class="logo" href="../index.html"><span class="pkg">API</span> Going Library</a>
+  <div class="search-wrapper"><input type="text" id="search-input" placeholder="클래스, 메서드 검색..."></div>
+  <nav class="header-nav">
+    <a href="../index.html">Home</a>
+    <a href="../basis/index.html">Going.Basis</a>
+    <a href="index.html" class="active">Going.UI</a>
+  </nav>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar" data-current="ui/imagecanvas.html"></aside>
+  <main class="main-content">
+    <div class="breadcrumb">
+      <a href="../index.html">Going Library</a><span class="sep">›</span>
+      <a href="index.html">Going.UI</a><span class="sep">›</span>
+      <span>ImageCanvas</span>
+    </div>
+    <h1 class="page-title">ImageCanvas</h1>
+    <p class="page-subtitle">네임스페이스 <code>Going.UI.ImageCanvas</code> — 배경 이미지 위에 오버레이되는 컨트롤 집합</p>
+    <p style="color:var(--comment); margin-bottom:1.5rem;">IcPage 또는 IcContainer 위에 배치되어 OffImage/OnImage 배경 이미지의 해당 영역을 렌더링합니다.</p>
+
+    <!-- Class: IcPage -->
+    <div id="class-IcPage" class="class-card" data-search="icpage class image canvas page background off on">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">IcPage</span> <span class="base">: GoPage</span></div>
+        <div class="class-desc">ImageCanvas 루트 페이지. OffImage 또는 배경색으로 페이지 배경을 그리며 Ic* 자식 컨트롤을 포함합니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="backgroundcolor string"><td class="col-type">string</td><td class="col-name">BackgroundColor <span class="accessor">get set</span></td><td class="col-desc">OffImage 없을 때 사용할 배경 색상. 기본값: "white"</td></tr>
+            <tr data-search="offimage string"><td class="col-type">string?</td><td class="col-name">OffImage <span class="accessor">get set</span></td><td class="col-desc">OFF 상태 배경 이미지 키</td></tr>
+            <tr data-search="onimage string"><td class="col-type">string?</td><td class="col-name">OnImage <span class="accessor">get set</span></td><td class="col-desc">ON 상태 배경 이미지 키</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- Class: IcContainer -->
+    <div id="class-IcContainer" class="class-card" data-search="iccontainer class image canvas container background off on">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">IcContainer</span> <span class="base">: GoContainer</span></div>
+        <div class="class-desc">ImageCanvas 컨테이너. IcPage와 동일하게 OffImage 배경을 렌더링하고 Ic* 컨트롤을 호스팅합니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="backgroundcolor string"><td class="col-type">string</td><td class="col-name">BackgroundColor <span class="accessor">get set</span></td><td class="col-desc">OffImage 없을 때 사용할 배경 색상. 기본값: "white"</td></tr>
+            <tr data-search="offimage string"><td class="col-type">string?</td><td class="col-name">OffImage <span class="accessor">get set</span></td><td class="col-desc">OFF 상태 배경 이미지 키</td></tr>
+            <tr data-search="onimage string"><td class="col-type">string?</td><td class="col-name">OnImage <span class="accessor">get set</span></td><td class="col-desc">ON 상태 배경 이미지 키</td></tr>
+            <tr data-search="childrens list"><td class="col-type">List&lt;IGoControl&gt;</td><td class="col-name">Childrens <span class="accessor">get</span></td><td class="col-desc">자식 컨트롤 목록</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- Class: IcButton -->
+    <div id="class-IcButton" class="class-card" data-search="icbutton class image button click">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">IcButton</span> <span class="base">: GoControl</span></div>
+        <div class="class-desc">ImageCanvas 버튼. 클릭 시 부모의 OnImage 영역을 렌더링하고 텍스트/아이콘을 오버레이합니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="iconstring string"><td class="col-type">string?</td><td class="col-name">IconString <span class="accessor">get set</span></td><td class="col-desc">아이콘 문자열 (FontAwesome)</td></tr>
+            <tr data-search="iconsize float"><td class="col-type">float</td><td class="col-name">IconSize <span class="accessor">get set</span></td><td class="col-desc">아이콘 크기 (px). 기본값: 12</td></tr>
+            <tr data-search="icondirection"><td class="col-type">GoDirectionHV</td><td class="col-name">IconDirection <span class="accessor">get set</span></td><td class="col-desc">아이콘 방향. 기본값: Horizon</td></tr>
+            <tr data-search="icongap float"><td class="col-type">float</td><td class="col-name">IconGap <span class="accessor">get set</span></td><td class="col-desc">아이콘-텍스트 간격. 기본값: 5</td></tr>
+            <tr data-search="text string"><td class="col-type">string</td><td class="col-name">Text <span class="accessor">get set</span></td><td class="col-desc">표시 텍스트. 기본값: "button"</td></tr>
+            <tr data-search="fontname string"><td class="col-type">string</td><td class="col-name">FontName <span class="accessor">get set</span></td><td class="col-desc">폰트 이름</td></tr>
+            <tr data-search="fontstyle gofongtstyle"><td class="col-type">GoFontStyle</td><td class="col-name">FontStyle <span class="accessor">get set</span></td><td class="col-desc">폰트 스타일</td></tr>
+            <tr data-search="fontsize float"><td class="col-type">float</td><td class="col-name">FontSize <span class="accessor">get set</span></td><td class="col-desc">폰트 크기. 기본값: 12</td></tr>
+            <tr data-search="textcolor string"><td class="col-type">string</td><td class="col-name">TextColor <span class="accessor">get set</span></td><td class="col-desc">텍스트 색상. 기본값: "Black"</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Events</div>
+          <table class="api-table">
+            <tr data-search="buttonclicked event"><td class="event-args">EventHandler</td><td class="col-method-name">ButtonClicked</td><td class="col-desc">버튼 클릭 시 발생</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- Class: IcLabel -->
+    <div id="class-IcLabel" class="class-card" data-search="iclabel class image label text display">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">IcLabel</span> <span class="base">: GoControl</span></div>
+        <div class="class-desc">ImageCanvas 레이블. 배경 이미지 위에 텍스트/아이콘을 렌더링합니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="iconstring string"><td class="col-type">string?</td><td class="col-name">IconString <span class="accessor">get set</span></td><td class="col-desc">아이콘 문자열</td></tr>
+            <tr data-search="iconsize float"><td class="col-type">float</td><td class="col-name">IconSize <span class="accessor">get set</span></td><td class="col-desc">아이콘 크기. 기본값: 12</td></tr>
+            <tr data-search="icondirection"><td class="col-type">GoDirectionHV</td><td class="col-name">IconDirection <span class="accessor">get set</span></td><td class="col-desc">아이콘 방향. 기본값: Horizon</td></tr>
+            <tr data-search="icongap float"><td class="col-type">float</td><td class="col-name">IconGap <span class="accessor">get set</span></td><td class="col-desc">아이콘-텍스트 간격. 기본값: 5</td></tr>
+            <tr data-search="text string"><td class="col-type">string</td><td class="col-name">Text <span class="accessor">get set</span></td><td class="col-desc">표시 텍스트. 기본값: "label"</td></tr>
+            <tr data-search="fontname string"><td class="col-type">string</td><td class="col-name">FontName <span class="accessor">get set</span></td><td class="col-desc">폰트 이름</td></tr>
+            <tr data-search="fontstyle"><td class="col-type">GoFontStyle</td><td class="col-name">FontStyle <span class="accessor">get set</span></td><td class="col-desc">폰트 스타일</td></tr>
+            <tr data-search="fontsize float"><td class="col-type">float</td><td class="col-name">FontSize <span class="accessor">get set</span></td><td class="col-desc">폰트 크기. 기본값: 12</td></tr>
+            <tr data-search="textcolor string"><td class="col-type">string</td><td class="col-name">TextColor <span class="accessor">get set</span></td><td class="col-desc">텍스트 색상. 기본값: "Black"</td></tr>
+            <tr data-search="contentalignment"><td class="col-type">GoContentAlignment</td><td class="col-name">ContentAlignment <span class="accessor">get set</span></td><td class="col-desc">텍스트 정렬. 기본값: MiddleCenter</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- Class: IcOnOff -->
+    <div id="class-IcOnOff" class="class-card" data-search="iconoff class image onoff toggle state bool">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">IcOnOff</span> <span class="base">: GoControl</span></div>
+        <div class="class-desc">ImageCanvas ON/OFF 상태 표시. OnOff 값에 따라 OffImage/OnImage 배경 영역을 전환 렌더링합니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="iconstring string"><td class="col-type">string?</td><td class="col-name">IconString <span class="accessor">get set</span></td><td class="col-desc">오버레이 아이콘 문자열</td></tr>
+            <tr data-search="iconsize float"><td class="col-type">float</td><td class="col-name">IconSize <span class="accessor">get set</span></td><td class="col-desc">아이콘 크기. 기본값: 12</td></tr>
+            <tr data-search="icondirection"><td class="col-type">GoDirectionHV</td><td class="col-name">IconDirection <span class="accessor">get set</span></td><td class="col-desc">아이콘 방향. 기본값: Horizon</td></tr>
+            <tr data-search="icongap float"><td class="col-type">float</td><td class="col-name">IconGap <span class="accessor">get set</span></td><td class="col-desc">아이콘-텍스트 간격. 기본값: 5</td></tr>
+            <tr data-search="text string"><td class="col-type">string</td><td class="col-name">Text <span class="accessor">get set</span></td><td class="col-desc">오버레이 텍스트. 기본값: "onoff"</td></tr>
+            <tr data-search="fontname string"><td class="col-type">string</td><td class="col-name">FontName / FontStyle / FontSize <span class="accessor">get set</span></td><td class="col-desc">폰트 설정</td></tr>
+            <tr data-search="textcolor string"><td class="col-type">string</td><td class="col-name">TextColor <span class="accessor">get set</span></td><td class="col-desc">텍스트 색상. 기본값: "Black"</td></tr>
+            <tr data-search="onoff bool"><td class="col-type">bool</td><td class="col-name">OnOff <span class="accessor">get set</span></td><td class="col-desc">ON/OFF 상태. 변경 시 ValueChanged 발생</td></tr>
+            <tr data-search="togglemode bool"><td class="col-type">bool</td><td class="col-name">ToggleMode <span class="accessor">get set</span></td><td class="col-desc">클릭 시 자동 토글 여부. 기본값: false</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Events</div>
+          <table class="api-table">
+            <tr data-search="valuechanged event"><td class="event-args">EventHandler</td><td class="col-method-name">ValueChanged</td><td class="col-desc">OnOff 값 변경 시 발생</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- Class: IcProgress -->
+    <div id="class-IcProgress" class="class-card" data-search="icprogress class image progress bar value min max">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">IcProgress</span> <span class="base">: GoControl</span></div>
+        <div class="class-desc">ImageCanvas 진행 막대. OffBarImage/OnBarImage 이미지를 사용하여 진행률을 렌더링합니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="fontname string"><td class="col-type">string</td><td class="col-name">FontName / FontStyle / FontSize / TextColor <span class="accessor">get set</span></td><td class="col-desc">텍스트 표시 설정</td></tr>
+            <tr data-search="onbarimage string"><td class="col-type">string?</td><td class="col-name">OnBarImage <span class="accessor">get set</span></td><td class="col-desc">채워진 영역 이미지 키</td></tr>
+            <tr data-search="offbarimage string"><td class="col-type">string?</td><td class="col-name">OffBarImage <span class="accessor">get set</span></td><td class="col-desc">빈 영역(배경 바) 이미지 키</td></tr>
+            <tr data-search="formatstring string"><td class="col-type">string</td><td class="col-name">FormatString <span class="accessor">get set</span></td><td class="col-desc">값 표시 형식 문자열. 기본값: "0"</td></tr>
+            <tr data-search="minimum double"><td class="col-type">double</td><td class="col-name">Minimum <span class="accessor">get set</span></td><td class="col-desc">최솟값. 기본값: 0</td></tr>
+            <tr data-search="maximum double"><td class="col-type">double</td><td class="col-name">Maximum <span class="accessor">get set</span></td><td class="col-desc">최댓값. 기본값: 100</td></tr>
+            <tr data-search="value double"><td class="col-type">double</td><td class="col-name">Value <span class="accessor">get set</span></td><td class="col-desc">현재 값. 변경 시 ValueChanged 발생</td></tr>
+            <tr data-search="drawtext bool"><td class="col-type">bool</td><td class="col-name">DrawText <span class="accessor">get set</span></td><td class="col-desc">값 텍스트 표시 여부. 기본값: true</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Events</div>
+          <table class="api-table">
+            <tr data-search="valuechanged event"><td class="event-args">EventHandler</td><td class="col-method-name">ValueChanged</td><td class="col-desc">Value 변경 시 발생</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- Class: IcSlider -->
+    <div id="class-IcSlider" class="class-card" data-search="icslider class image slider bar cursor value min max">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">IcSlider</span> <span class="base">: GoControl</span></div>
+        <div class="class-desc">ImageCanvas 슬라이더. OffBarImage/OnBarImage/OffCursorImage/OnCursorImage 4개 이미지로 구성.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="fontname string"><td class="col-type">string</td><td class="col-name">FontName / FontStyle / FontSize / TextColor <span class="accessor">get set</span></td><td class="col-desc">텍스트 표시 설정</td></tr>
+            <tr data-search="offbarimage string"><td class="col-type">string?</td><td class="col-name">OffBarImage <span class="accessor">get set</span></td><td class="col-desc">슬라이더 빈 바 이미지 키</td></tr>
+            <tr data-search="onbarimage string"><td class="col-type">string?</td><td class="col-name">OnBarImage <span class="accessor">get set</span></td><td class="col-desc">슬라이더 채워진 바 이미지 키</td></tr>
+            <tr data-search="offcursorimage string"><td class="col-type">string?</td><td class="col-name">OffCursorImage <span class="accessor">get set</span></td><td class="col-desc">커서 기본 이미지 키</td></tr>
+            <tr data-search="oncursorimage string"><td class="col-type">string?</td><td class="col-name">OnCursorImage <span class="accessor">get set</span></td><td class="col-desc">커서 클릭(Down) 이미지 키</td></tr>
+            <tr data-search="formatstring string"><td class="col-type">string</td><td class="col-name">FormatString <span class="accessor">get set</span></td><td class="col-desc">값 표시 형식 문자열. 기본값: "0"</td></tr>
+            <tr data-search="minimum double"><td class="col-type">double</td><td class="col-name">Minimum <span class="accessor">get set</span></td><td class="col-desc">최솟값. 기본값: 0</td></tr>
+            <tr data-search="maximum double"><td class="col-type">double</td><td class="col-name">Maximum <span class="accessor">get set</span></td><td class="col-desc">최댓값. 기본값: 100</td></tr>
+            <tr data-search="value double"><td class="col-type">double</td><td class="col-name">Value <span class="accessor">get set</span></td><td class="col-desc">현재 값. Tick이 있으면 스냅. 변경 시 ValueChanged 발생</td></tr>
+            <tr data-search="tick double"><td class="col-type">double?</td><td class="col-name">Tick <span class="accessor">get set</span></td><td class="col-desc">스냅 단위. null이면 연속값</td></tr>
+            <tr data-search="drawtext bool"><td class="col-type">bool</td><td class="col-name">DrawText <span class="accessor">get set</span></td><td class="col-desc">커서 위 값 텍스트 표시 여부. 기본값: true</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Events</div>
+          <table class="api-table">
+            <tr data-search="valuechanged event"><td class="event-args">EventHandler</td><td class="col-method-name">ValueChanged</td><td class="col-desc">Value 변경 시 발생</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- Class: IcState -->
+    <div id="class-IcState" class="class-card" data-search="icstate class image state stateimage multi">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">IcState</span> <span class="base">: GoControl</span></div>
+        <div class="class-desc">ImageCanvas 다중 상태 이미지. State 값에 따라 StateImages 목록에서 해당 이미지를 렌더링합니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="stateimages list"><td class="col-type">List&lt;StateImage&gt;</td><td class="col-name">StateImages <span class="accessor">get set</span></td><td class="col-desc">상태별 이미지 목록. StateImage: State(int), Image(string? 키)</td></tr>
+            <tr data-search="state int"><td class="col-type">int</td><td class="col-name">State <span class="accessor">get set</span></td><td class="col-desc">현재 상태 번호. StateImages에서 일치하는 항목의 이미지를 표시</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="no-results" class="no-results">검색 결과가 없습니다.</div>
+  </main>
+</div>
+<button class="back-to-top" id="back-to-top" title="맨 위로">↑</button>
+<script src="../js/app.js"></script>
+</body>
+</html>

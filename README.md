@@ -102,49 +102,11 @@ rtu.SetWord(1, "D0", 100);      // 장치에 쓰기
 | LS Electric CNet | `CNet` |
 | Mitsubishi MC | `MC` |
 
-## Claude Code로 개발 환경 구성
+## Claude Code 스킬
 
-[Going UI Skill](https://github.com/going-kr/going-ui-skill)을 사용하면 AI가 HMI 애플리케이션 개발을 지원합니다.
+[Going UI Skill](https://github.com/going-kr/going-ui-skill)을 사용하여 AI로 HMI 애플리케이션을 개발할 수 있습니다.
 
-> **Claude Code / Claude Desktop 사용자**: 이 README URL을 Claude에게 전달하고 "개발 환경 구성해줘"라고 요청하면 자동으로 셋업됩니다.
-
-<!-- claude-setup
-Claude Code가 사용자의 "개발 환경 구성" 요청을 받으면 아래 단계를 순서대로 수행하라.
-
-## 1단계: going-ui-skill 설치
-```bash
-git clone https://github.com/going-kr/going-ui-skill "$HOME/.claude/skills/going-ui-skill"
-```
-- 이미 존재하면 `git -C "$HOME/.claude/skills/going-ui-skill" pull` 로 업데이트
-
-## 2단계: UIEditor 다운로드 및 설치
-- 사용자에게 UIEditor 설치 경로를 질문 (기본값: ~/UIEditor)
-- GitHub Release에서 다운로드 및 압축 해제:
-```bash
-gh release download --pattern "UIEditor.zip" -R going-kr/Going-Library -D "<설치경로>"
-```
-- 압축 해제:
-  - Windows: `powershell -Command "Expand-Archive -Path '<설치경로>/UIEditor.zip' -DestinationPath '<설치경로>' -Force"`
-  - Linux/macOS: `unzip -o "<설치경로>/UIEditor.zip" -d "<설치경로>"`
-- zip 파일 삭제
-
-## 3단계: 바탕화면 바로가기 생성 (Windows)
-```powershell
-$ws = New-Object -ComObject WScript.Shell
-$sc = $ws.CreateShortcut("$HOME\Desktop\UIEditor.lnk")
-$sc.TargetPath = "<설치경로>\UIEditor.exe"
-$sc.WorkingDirectory = "<설치경로>"
-$sc.Save()
-```
-
-## 4단계: 완료 안내
-아래 내용을 사용자에게 안내:
-1. 바탕화면의 UIEditor 바로가기로 실행
-2. UIEditor에서 UI 설계 → MakeCode로 C# 프로젝트 자동 생성
-3. 생성된 프로젝트 폴더를 Claude Code 작업 디렉터리로 열면 AI 코딩 시작
--->
-
-### 수동 설치
+### 설치 방법
 
 **방법 1. Git Clone (CLI)**
 

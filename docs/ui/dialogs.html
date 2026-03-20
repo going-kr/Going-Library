@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dialogs - Going.UI API</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<header class="site-header">
+  <a class="logo" href="../index.html"><span class="pkg">API</span> Going Library</a>
+  <div class="search-wrapper"><input type="text" id="search-input" placeholder="클래스, 메서드 검색..."></div>
+  <nav class="header-nav">
+    <a href="../index.html">Home</a>
+    <a href="../basis/index.html">Going.Basis</a>
+    <a href="index.html" class="active">Going.UI</a>
+  </nav>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar" data-current="ui/dialogs.html"></aside>
+  <main class="main-content">
+    <div class="breadcrumb">
+      <a href="../index.html">Going Library</a><span class="sep">›</span>
+      <a href="index.html">Going.UI</a><span class="sep">›</span>
+      <span>Dialogs</span>
+    </div>
+    <h1 class="page-title">Dialogs</h1>
+    <p class="page-subtitle">네임스페이스 <code>Going.UI.Dialogs</code> — 모달 다이얼로그 (메시지, 입력, 선택)</p>
+
+    <!-- Class: GoDialogs -->
+    <div id="class-GoDialogs" class="class-card" data-search="godialogs class static dialogs messagebox inputbox selectorbox">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public static class</span> <span class="nm">GoDialogs</span></div>
+        <div class="class-desc">시스템 전역 다이얼로그 윈도우 레지스트리. MessageBox, SelectorBox, InputBox 싱글턴 인스턴스 제공.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Static Properties</div>
+          <table class="api-table">
+            <tr data-search="messagebox gowindow"><td class="col-type">Dictionary&lt;string, GoWindow&gt;</td><td class="col-name">SystemWindows <span class="accessor">get</span></td><td class="col-desc">시스템 윈도우 딕셔너리 (키: "MessageBox", "SelectorBox", "InputBox")</td></tr>
+            <tr data-search="messagebox static"><td class="col-type">GoMessageBox</td><td class="col-name">MessageBox <span class="accessor">get</span></td><td class="col-desc">전역 메시지 박스 인스턴스</td></tr>
+            <tr data-search="selectorbox static"><td class="col-type">GoSelectorBox</td><td class="col-name">SelectorBox <span class="accessor">get</span></td><td class="col-desc">전역 선택 박스 인스턴스</td></tr>
+            <tr data-search="inputbox static"><td class="col-type">GoInputBox</td><td class="col-name">InputBox <span class="accessor">get</span></td><td class="col-desc">전역 입력 박스 인스턴스</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- Class: GoMessageBox -->
+    <div id="class-GoMessageBox" class="class-card" data-search="gomessagebox class window message ok cancel yes no">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoMessageBox</span> <span class="base">: GoWindow</span></div>
+        <div class="class-desc">메시지 다이얼로그. OK / OK+Cancel / Yes+No / Yes+No+Cancel 버튼 조합 지원.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="yestext string"><td class="col-type">string</td><td class="col-name">YesText <span class="accessor">get set</span></td><td class="col-desc">예(Yes) 버튼 텍스트. 기본값: "예"</td></tr>
+            <tr data-search="notext string"><td class="col-type">string</td><td class="col-name">NoText <span class="accessor">get set</span></td><td class="col-desc">아니요(No) 버튼 텍스트. 기본값: "아니요"</td></tr>
+            <tr data-search="oktext string"><td class="col-type">string</td><td class="col-name">OkText <span class="accessor">get set</span></td><td class="col-desc">확인(OK) 버튼 텍스트. 기본값: "확인"</td></tr>
+            <tr data-search="canceltext string"><td class="col-type">string</td><td class="col-name">CancelText <span class="accessor">get set</span></td><td class="col-desc">취소(Cancel) 버튼 텍스트. 기본값: "취소"</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Methods</div>
+          <table class="api-table">
+            <tr data-search="showmessageboxok void"><td class="ret">void</td><td class="col-method-name">ShowMessageBoxOk</td><td class="params">(<span class="tp">string</span> title, <span class="tp">string</span> message, <span class="tp">Action&lt;GoDialogResult&gt;</span> result)</td><td class="col-desc">확인 버튼만 있는 메시지 박스 표시</td></tr>
+            <tr data-search="showmessageboxokcancel void"><td class="ret">void</td><td class="col-method-name">ShowMessageBoxOkCancel</td><td class="params">(<span class="tp">string</span> title, <span class="tp">string</span> message, <span class="tp">Action&lt;GoDialogResult&gt;</span> result)</td><td class="col-desc">확인+취소 버튼 메시지 박스 표시</td></tr>
+            <tr data-search="showmessageboxyneso void"><td class="ret">void</td><td class="col-method-name">ShowMessageBoxYesNo</td><td class="params">(<span class="tp">string</span> title, <span class="tp">string</span> message, <span class="tp">Action&lt;GoDialogResult&gt;</span> result)</td><td class="col-desc">예+아니요 버튼 메시지 박스 표시</td></tr>
+            <tr data-search="showmessageboxyneso cancel void"><td class="ret">void</td><td class="col-method-name">ShowMessageBoxYesNoCancel</td><td class="params">(<span class="tp">string</span> title, <span class="tp">string</span> message, <span class="tp">Action&lt;GoDialogResult&gt;</span> result)</td><td class="col-desc">예+아니요+취소 버튼 메시지 박스 표시</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- Class: GoInputBox -->
+    <div id="class-GoInputBox" class="class-card" data-search="goinputbox class window input string number bool template">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoInputBox</span> <span class="base">: GoWindow</span></div>
+        <div class="class-desc">값 입력 다이얼로그. 문자열·숫자·불리언·제네릭 템플릿 타입 입력 지원.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="oktext string"><td class="col-type">string</td><td class="col-name">OkText <span class="accessor">get set</span></td><td class="col-desc">확인 버튼 텍스트. 기본값: "확인"</td></tr>
+            <tr data-search="canceltext string"><td class="col-type">string</td><td class="col-name">CancelText <span class="accessor">get set</span></td><td class="col-desc">취소 버튼 텍스트. 기본값: "취소"</td></tr>
+            <tr data-search="itemheight int"><td class="col-type">int</td><td class="col-name">ItemHeight <span class="accessor">get set</span></td><td class="col-desc">각 입력 항목 높이 (px). 기본값: 40</td></tr>
+            <tr data-search="itemtitlewidth int"><td class="col-type">int</td><td class="col-name">ItemTitleWidth <span class="accessor">get set</span></td><td class="col-desc">항목 타이틀 너비 (px). 기본값: 80</td></tr>
+            <tr data-search="itemvaluewidth int"><td class="col-type">int</td><td class="col-name">ItemValueWidth <span class="accessor">get set</span></td><td class="col-desc">항목 값 영역 너비 (px). 기본값: 150</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Methods — 타입별 표시</div>
+          <table class="api-table">
+            <tr data-search="showstring void string"><td class="ret">void</td><td class="col-method-name">ShowString</td><td class="params">(<span class="tp">string</span> title, <span class="tp">Action&lt;string?&gt;</span> result)</td><td class="col-desc">문자열 입력 박스 표시</td></tr>
+            <tr data-search="showstring void string value"><td class="ret">void</td><td class="col-method-name">ShowString</td><td class="params">(<span class="tp">string</span> title, <span class="tp">string?</span> value, <span class="tp">Action&lt;string?&gt;</span> result)</td><td class="col-desc">초기값 지정 문자열 입력 박스</td></tr>
+            <tr data-search="shownumber void numeric"><td class="ret">void</td><td class="col-method-name">ShowNumber&lt;T&gt;</td><td class="params">(<span class="tp">string</span> title, <span class="tp">Action&lt;T?&gt;</span> result) <span class="kw">where</span> T : struct</td><td class="col-desc">숫자 입력 박스 (byte~decimal)</td></tr>
+            <tr data-search="shownumber void numeric value"><td class="ret">void</td><td class="col-method-name">ShowNumber&lt;T&gt;</td><td class="params">(<span class="tp">string</span> title, <span class="tp">T?</span> value, <span class="tp">Action&lt;T?&gt;</span> result) <span class="kw">where</span> T : struct</td><td class="col-desc">초기값 지정 숫자 입력 박스</td></tr>
+            <tr data-search="shownumber void numeric min max"><td class="ret">void</td><td class="col-method-name">ShowNumber&lt;T&gt;</td><td class="params">(<span class="tp">string</span> title, <span class="tp">T?</span> min, <span class="tp">T?</span> max, <span class="tp">Action&lt;T?&gt;</span> result) <span class="kw">where</span> T : struct</td><td class="col-desc">범위 지정 숫자 입력 박스</td></tr>
+            <tr data-search="shownumber void numeric value min max"><td class="ret">void</td><td class="col-method-name">ShowNumber&lt;T&gt;</td><td class="params">(<span class="tp">string</span> title, <span class="tp">T?</span> value, <span class="tp">T?</span> min, <span class="tp">T?</span> max, <span class="tp">Action&lt;T?&gt;</span> result)</td><td class="col-desc">값·범위 지정 숫자 입력 박스</td></tr>
+            <tr data-search="showbool void bool"><td class="ret">void</td><td class="col-method-name">ShowBool</td><td class="params">(<span class="tp">string</span> title, <span class="tp">Action&lt;bool?&gt;</span> result)</td><td class="col-desc">불리언 입력 박스 표시</td></tr>
+            <tr data-search="showbool void bool value"><td class="ret">void</td><td class="col-method-name">ShowBool</td><td class="params">(<span class="tp">string</span> title, <span class="tp">bool</span> value, <span class="tp">Action&lt;bool?&gt;</span> result)</td><td class="col-desc">초기값 지정 불리언 입력 박스</td></tr>
+            <tr data-search="showbool void bool on off"><td class="ret">void</td><td class="col-method-name">ShowBool</td><td class="params">(<span class="tp">string</span> title, <span class="tp">string</span> onText, <span class="tp">string</span> offText, <span class="tp">Action&lt;bool?&gt;</span> result)</td><td class="col-desc">텍스트 지정 불리언 입력 박스</td></tr>
+            <tr data-search="showbool void bool value on off"><td class="ret">void</td><td class="col-method-name">ShowBool</td><td class="params">(<span class="tp">string</span> title, <span class="tp">bool</span> value, <span class="tp">string</span> onText, <span class="tp">string</span> offText, <span class="tp">Action&lt;bool?&gt;</span> result)</td><td class="col-desc">초기값·텍스트 지정 불리언 입력 박스</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Methods — 템플릿 타입 표시</div>
+          <table class="api-table">
+            <tr data-search="showinputbox void template class"><td class="ret">void</td><td class="col-method-name">Showinputbox&lt;T&gt;</td><td class="params">(<span class="tp">string</span> title, <span class="tp">Action&lt;T?&gt;</span> result) <span class="kw">where</span> T : class</td><td class="col-desc">제네릭 클래스 프로퍼티 기반 입력 박스</td></tr>
+            <tr data-search="showinputbox void template class columns"><td class="ret">void</td><td class="col-method-name">Showinputbox&lt;T&gt;</td><td class="params">(<span class="tp">string</span> title, <span class="tp">int</span> columnCount, <span class="tp">Action&lt;T?&gt;</span> result) <span class="kw">where</span> T : class</td><td class="col-desc">컬럼 수 지정 템플릿 입력 박스</td></tr>
+            <tr data-search="showinputbox void template class value"><td class="ret">void</td><td class="col-method-name">Showinputbox&lt;T&gt;</td><td class="params">(<span class="tp">string</span> title, <span class="tp">T?</span> value, <span class="tp">Action&lt;T?&gt;</span> result) <span class="kw">where</span> T : class</td><td class="col-desc">초기값 지정 템플릿 입력 박스</td></tr>
+            <tr data-search="showinputbox void template class infos"><td class="ret">void</td><td class="col-method-name">Showinputbox&lt;T&gt;</td><td class="params">(<span class="tp">string</span> title, <span class="tp">Dictionary&lt;string, InputBoxInfo&gt;?</span> infos, <span class="tp">Action&lt;T?&gt;</span> result) <span class="kw">where</span> T : class</td><td class="col-desc">항목 메타정보 지정 템플릿 입력 박스</td></tr>
+            <tr data-search="showinputbox void template class value infos"><td class="ret">void</td><td class="col-method-name">Showinputbox&lt;T&gt;</td><td class="params">(<span class="tp">string</span> title, <span class="tp">T?</span> value, <span class="tp">Dictionary&lt;string, InputBoxInfo&gt;?</span> infos, <span class="tp">Action&lt;T?&gt;</span> result) <span class="kw">where</span> T : class</td><td class="col-desc">초기값·항목 메타정보 지정 템플릿 입력 박스</td></tr>
+            <tr data-search="showinputbox void template class full"><td class="ret">void</td><td class="col-method-name">Showinputbox&lt;T&gt;</td><td class="params">(<span class="tp">string</span> title, <span class="tp">int</span> columnCount, <span class="tp">T?</span> value, <span class="tp">Dictionary&lt;string, InputBoxInfo&gt;?</span> infos, <span class="tp">Action&lt;T?&gt;</span> result) <span class="kw">where</span> T : class</td><td class="col-desc">전체 매개변수 템플릿 입력 박스. InputBoxInfo: Title, Minimum, Maximum, FormatString, OnText, OffText, Items</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- Class: GoSelectorBox -->
+    <div id="class-GoSelectorBox" class="class-card" data-search="goselectorbox class window selector check radio combo list">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoSelectorBox</span> <span class="base">: GoWindow</span></div>
+        <div class="class-desc">항목 선택 다이얼로그. 체크박스(다중), 라디오버튼(단일), 콤보(드롭다운) 모드 지원.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="oktext string"><td class="col-type">string</td><td class="col-name">OkText <span class="accessor">get set</span></td><td class="col-desc">확인 버튼 텍스트. 기본값: "확인"</td></tr>
+            <tr data-search="canceltext string"><td class="col-type">string</td><td class="col-name">CancelText <span class="accessor">get set</span></td><td class="col-desc">취소 버튼 텍스트. 기본값: "취소"</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Methods — Check (다중 선택)</div>
+          <table class="api-table">
+            <tr data-search="showcheck void list golistitem"><td class="ret">void</td><td class="col-method-name">ShowCheck</td><td class="params">(<span class="tp">string</span> title, <span class="tp">int</span> columnCount, <span class="tp">List&lt;GoListItem&gt;</span> items, <span class="tp">List&lt;GoListItem&gt;?</span> selectedItems, <span class="tp">Action&lt;List&lt;GoListItem&gt;?&gt;</span> result)</td><td class="col-desc">GoListItem 목록 체크박스 선택</td></tr>
+            <tr data-search="showcheck void enum"><td class="ret">void</td><td class="col-method-name">ShowCheck&lt;T&gt;</td><td class="params">(<span class="tp">string</span> title, <span class="tp">int</span> columnCount, <span class="tp">List&lt;T&gt;?</span> selectedItems, <span class="tp">Action&lt;List&lt;T&gt;?&gt;</span> result, <span class="tp">Func&lt;T, string&gt;?</span> textConverter = null) <span class="kw">where</span> T : struct, Enum</td><td class="col-desc">Enum 값 체크박스 선택</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Methods — Radio (단일 선택)</div>
+          <table class="api-table">
+            <tr data-search="showradio void list golistitem"><td class="ret">void</td><td class="col-method-name">ShowRadio</td><td class="params">(<span class="tp">string</span> title, <span class="tp">int</span> columnCount, <span class="tp">List&lt;GoListItem&gt;</span> items, <span class="tp">GoListItem?</span> selectedItem, <span class="tp">Action&lt;GoListItem?&gt;</span> result)</td><td class="col-desc">GoListItem 목록 라디오 선택</td></tr>
+            <tr data-search="showradio void enum"><td class="ret">void</td><td class="col-method-name">ShowRadio&lt;T&gt;</td><td class="params">(<span class="tp">string</span> title, <span class="tp">int</span> columnCount, <span class="tp">T?</span> selectedItem, <span class="tp">Action&lt;T?&gt;</span> result, <span class="tp">Func&lt;T, string&gt;?</span> textConverter = null) <span class="kw">where</span> T : struct, Enum</td><td class="col-desc">Enum 값 라디오 선택</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Methods — Combo (드롭다운 선택)</div>
+          <table class="api-table">
+            <tr data-search="showcombo void list golistitem"><td class="ret">void</td><td class="col-method-name">ShowCombo</td><td class="params">(<span class="tp">string</span> title, <span class="tp">List&lt;GoListItem&gt;</span> items, <span class="tp">GoListItem?</span> selectedItem, <span class="tp">Action&lt;GoListItem?&gt;</span> result)</td><td class="col-desc">GoListItem 목록 콤보박스 선택</td></tr>
+            <tr data-search="showcombo void enum"><td class="ret">void</td><td class="col-method-name">ShowCombo&lt;T&gt;</td><td class="params">(<span class="tp">string</span> title, <span class="tp">T?</span> selectedItem, <span class="tp">Action&lt;T?&gt;</span> result, <span class="tp">Func&lt;T, string&gt;?</span> textConverter = null) <span class="kw">where</span> T : struct, Enum</td><td class="col-desc">Enum 값 콤보박스 선택</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="no-results" class="no-results">검색 결과가 없습니다.</div>
+  </main>
+</div>
+<button class="back-to-top" id="back-to-top" title="맨 위로">↑</button>
+<script src="../js/app.js"></script>
+</body>
+</html>
