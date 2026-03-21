@@ -20,6 +20,8 @@ namespace Going.UIEditor
         public static GoDesign? CurrentDesign { get; set; }
         public static string? FilePath { get; set; }
         public static bool Edit { get; set; }
+        public static bool ClaudeInstalled { get; private set; }
+        public static string? ClaudePath { get; private set; }
 
         public static DataManager DataMgr { get; set; }
         public static GoInputBox InputBox { get; set; }
@@ -47,6 +49,9 @@ namespace Going.UIEditor
             GoThemeW.Current.Highlight = GoThemeW.Current.Select;
             FontPath.Build();
 
+            ClaudePath = FindClaude();
+            ClaudeInstalled = ClaudePath != null;
+
             DataMgr = new DataManager();
 
             InputBox = new GoInputBox();
@@ -64,6 +69,30 @@ namespace Going.UIEditor
             MainForm = new FormMain();
 
             Application.Run(MainForm);
+        }
+
+        static string? FindClaude()
+        {
+            var wingetPkgs = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "Microsoft", "WinGet", "Packages");
+            if (Directory.Exists(wingetPkgs))
+            {
+                foreach (var d in Directory.GetDirectories(wingetPkgs, "Anthropic.ClaudeCode*"))
+                {
+                    var exe = Path.Combine(d, "claude.exe");
+                    if (File.Exists(exe)) return exe;
+                }
+            }
+
+            var pathDirs = Environment.GetEnvironmentVariable("PATH")?.Split(';') ?? [];
+            foreach (var d in pathDirs)
+            {
+                var p = Path.Combine(d, "claude.exe");
+                if (File.Exists(p)) return p;
+            }
+
+            return null;
         }
     }
 }

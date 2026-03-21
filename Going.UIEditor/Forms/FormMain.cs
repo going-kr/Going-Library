@@ -10,6 +10,7 @@ using Going.UIEditor.Utils;
 using Going.UIEditor.Windows;
 using SkiaSharp;
 using System.ComponentModel;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -32,6 +33,8 @@ namespace Going.UIEditor
         ExplorerWindow? explorer;
         ToolBoxWindow? toolBox;
         PropertiesWindow? properties;
+        PromptWindow? prompt;
+
         List<EditorWindow> editors = [];
         bool bDownSaveAs = false;
         bool opening = false;
@@ -104,7 +107,7 @@ namespace Going.UIEditor
                     toolBox.FormClosed += (o, s) => { toolBox.Dispose(); toolBox = null; };
                     toolBox.Show(dockPanel, DockState.Float);
                 }
-                else explorer?.Focus();
+                else toolBox?.Focus();
             };
 
             tsmiProperties.Click += (o, s) =>
@@ -115,7 +118,7 @@ namespace Going.UIEditor
                     properties.FormClosed += (o, s) => { properties.Dispose(); properties = null; };
                     properties.Show(dockPanel, DockState.Float);
                 }
-                else explorer?.Focus();
+                else properties?.Focus();
             };
             #endregion
             #region Project
@@ -125,6 +128,18 @@ namespace Going.UIEditor
             #region Tools
             tsmiResourceManager.Click += (o, s) => ResourceManager();
             tsmiProgramSetting.Click += (o, s) => ProgramSetting();
+            tsmiClaude.Click += (o, s) =>
+            {
+                if (prompt == null || prompt.IsDisposed)
+                {
+                    prompt = new PromptWindow();
+                    prompt.Show(dockPanel, WeifenLuo.WinFormsUI.Docking.DockState.DockBottom);
+                }
+                else
+                {
+                    prompt.Activate();
+                }
+            };
             #endregion
             #endregion
 
@@ -243,6 +258,11 @@ namespace Going.UIEditor
                                 properties = new PropertiesWindow { Title = LM.Properties };
                                 properties.FormClosed += (o, s) => { properties.Dispose(); properties = null; };
                                 return properties;
+                            case "Going.UIEditor.Windows.PromptWindow":
+                                if (!Program.ClaudeInstalled) return null;
+                                prompt = new PromptWindow();
+                                prompt.FormClosed += (o, s) => { prompt.Dispose(); prompt = null; };
+                                return prompt;
                             default:
                                 return null;
                         }
@@ -369,6 +389,8 @@ namespace Going.UIEditor
             tsmiTool.Text = $"{LM.Tool}(&T)";
             tsmiResourceManager.Text = $"{LM.Resources}(&R)";
             tsmiProgramSetting.Text = $"{LM.ProgramSetting}(&S)";
+            tsmiClaude.Text = $"{LM.Claude}(&C)";
+            tsmiClaude.Visible = Program.ClaudeInstalled;
             #endregion
             #region Help
             tsmiHelp.Text = $"{LM.Help}(&H)";
@@ -575,14 +597,16 @@ namespace Going.UIEditor
             var name = Path.GetFileName(filePath);
             if (dir == null || name == null) return;
 
-            fileWatcher = new FileSystemWatcher(dir, name)
+            fileWatcher = new FileSystemWatcher(dir, "*" + Path.GetExtension(name))
             {
-                NotifyFilter = NotifyFilters.LastWrite,
+                NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size | NotifyFilters.FileName | NotifyFilters.CreationTime,
+                InternalBufferSize = 65536,
                 EnableRaisingEvents = true
             };
 
-            fileWatcher.Changed += (o, e) =>
+            void OnFileChanged(object? o, FileSystemEventArgs e)
             {
+                if (!string.Equals(e.Name, name, StringComparison.OrdinalIgnoreCase)) return;
                 if (isSaving) return;
                 debounceTimer?.Dispose();
                 debounceTimer = new System.Threading.Timer(_ =>
@@ -598,7 +622,11 @@ namespace Going.UIEditor
                         else HotReload();
                     });
                 }, null, 500, Timeout.Infinite);
-            };
+            }
+
+            fileWatcher.Changed += OnFileChanged;
+            fileWatcher.Created += OnFileChanged;
+            fileWatcher.Renamed += (o, e) => OnFileChanged(o, e);
         }
 
         void StopFileWatcher()

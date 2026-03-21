@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xterm/xterm@5.5.0/css/xterm.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/@xterm/xterm@5.5.0/lib/xterm.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@xterm/addon-fit@0.10.0/lib/addon-fit.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@xterm/addon-unicode11@0.8.0/lib/addon-unicode11.min.js"></script>
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; background: #1e1e1e; overflow: hidden; }
+  #terminal { height: 100%; }
+</style>
+</head>
+<body>
+<div id="terminal"></div>
+<script>
+const term = new Terminal({
+  fontSize: 14,
+  fontFamily: "'D2Coding', 'NanumGothicCoding', 'Consolas', monospace",
+  theme: { background: '#1e1e1e', foreground: '#d4d4d4' },
+  cursorBlink: true,
+  allowProposedApi: true
+});
+
+// Unicode 11 support for Korean wide characters
+const unicode11Addon = new Unicode11Addon.Unicode11Addon();
+term.loadAddon(unicode11Addon);
+term.unicode.activeVersion = '11';
+
+const fitAddon = new FitAddon.FitAddon();
+term.loadAddon(fitAddon);
+term.open(document.getElementById('terminal'));
+fitAddon.fit();
+
+// Notify C# of terminal size
+function reportSize() {
+  fitAddon.fit();
+  window.chrome.webview.postMessage(JSON.stringify({
+    type: 'resize',
+    cols: term.cols,
+    rows: term.rows
+  }));
+}
+
+window.addEventListener('resize', reportSize);
+new ResizeObserver(reportSize).observe(document.getElementById('terminal'));
+
+// C# → xterm.js (output)
+window.writeToTerminal = (data) => {
+  term.write(data);
+};
+
+// xterm.js → C# (raw input, ConPTY handles echo)
+term.onData(data => {
+  window.chrome.webview.postMessage(data);
+});
+
+// Report initial size after a short delay
+setTimeout(reportSize, 100);
+</script>
+</body>
+</html>

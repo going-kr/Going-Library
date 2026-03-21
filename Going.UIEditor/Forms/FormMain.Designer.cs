@@ -31,6 +31,7 @@
             UI.Datas.GoButtonItem goButtonItem1 = new UI.Datas.GoButtonItem();
             pnlTool = new Going.UI.Forms.Containers.GoContainer();
             goTableLayoutPanel1 = new Going.UI.Forms.Containers.GoTableLayoutPanel();
+            btnHotReload = new Going.UI.Forms.Controls.GoButton();
             btnTheme = new Going.UI.Forms.Controls.GoButton();
             btnValidCheck = new Going.UI.Forms.Controls.GoButton();
             btnResourceManager = new Going.UI.Forms.Controls.GoButton();
@@ -76,9 +77,9 @@
             tsmiTool = new ToolStripMenuItem();
             tsmiResourceManager = new ToolStripMenuItem();
             tsmiProgramSetting = new ToolStripMenuItem();
+            tsmiClaude = new ToolStripMenuItem();
             tsmiHelp = new ToolStripMenuItem();
             tsmiProgramInfo = new ToolStripMenuItem();
-            btnHotReload = new Going.UI.Forms.Controls.GoButton();
             pnlTool.SuspendLayout();
             goTableLayoutPanel1.SuspendLayout();
             pnlStatus.SuspendLayout();
@@ -135,6 +136,33 @@
             goTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             goTableLayoutPanel1.Size = new Size(1414, 40);
             goTableLayoutPanel1.TabIndex = 1;
+            // 
+            // btnHotReload
+            // 
+            btnHotReload.BackColor = Color.FromArgb(32, 32, 32);
+            btnHotReload.BackgroundColor = "window";
+            btnHotReload.BackgroundDraw = false;
+            btnHotReload.Bordercolor = "Base3";
+            btnHotReload.BorderOnly = true;
+            btnHotReload.BorderWidth = 1F;
+            btnHotReload.ButtonColor = "Base3";
+            btnHotReload.ContentAlignment = UI.Enums.GoContentAlignment.MiddleCenter;
+            btnHotReload.Dock = DockStyle.Fill;
+            btnHotReload.FillStyle = UI.Datas.GoButtonFillStyle.Flat;
+            btnHotReload.FontName = "나눔고딕";
+            btnHotReload.FontSize = 12F;
+            btnHotReload.FontStyle = UI.Enums.GoFontStyle.Normal;
+            btnHotReload.IconDirection = UI.Enums.GoDirectionHV.Horizon;
+            btnHotReload.IconGap = 5F;
+            btnHotReload.IconSize = 20F;
+            btnHotReload.IconString = "fa-rotate";
+            btnHotReload.Location = new Point(283, 3);
+            btnHotReload.Name = "btnHotReload";
+            btnHotReload.Round = UI.Enums.GoRoundType.All;
+            btnHotReload.Size = new Size(34, 34);
+            btnHotReload.TabIndex = 9;
+            btnHotReload.TabStop = false;
+            btnHotReload.TextColor = "Fore";
             // 
             // btnTheme
             // 
@@ -697,7 +725,7 @@
             // 
             // tsmiTool
             // 
-            tsmiTool.DropDownItems.AddRange(new ToolStripItem[] { tsmiResourceManager, tsmiProgramSetting });
+            tsmiTool.DropDownItems.AddRange(new ToolStripItem[] { tsmiResourceManager, tsmiProgramSetting, tsmiClaude });
             tsmiTool.Name = "tsmiTool";
             tsmiTool.Size = new Size(57, 20);
             tsmiTool.Text = "도구(&T)";
@@ -707,7 +735,7 @@
             tsmiResourceManager.Font = new Font("나눔고딕", 9F);
             tsmiResourceManager.ForeColor = Color.FromArgb(150, 150, 150);
             tsmiResourceManager.Name = "tsmiResourceManager";
-            tsmiResourceManager.Size = new Size(158, 22);
+            tsmiResourceManager.Size = new Size(180, 22);
             tsmiResourceManager.Text = "리소스 관리자(&R)";
             // 
             // tsmiProgramSetting
@@ -715,8 +743,16 @@
             tsmiProgramSetting.Font = new Font("나눔고딕", 9F);
             tsmiProgramSetting.ForeColor = Color.FromArgb(150, 150, 150);
             tsmiProgramSetting.Name = "tsmiProgramSetting";
-            tsmiProgramSetting.Size = new Size(158, 22);
+            tsmiProgramSetting.Size = new Size(180, 22);
             tsmiProgramSetting.Text = "프로그램 설정(&S)";
+            // 
+            // tsmiClaude
+            // 
+            tsmiClaude.Font = new Font("나눔고딕", 9F);
+            tsmiClaude.ForeColor = Color.FromArgb(150, 150, 150);
+            tsmiClaude.Name = "tsmiClaude";
+            tsmiClaude.Size = new Size(180, 22);
+            tsmiClaude.Text = "클로드(&C)";
             // 
             // tsmiHelp
             // 
@@ -732,33 +768,6 @@
             tsmiProgramInfo.Name = "tsmiProgramInfo";
             tsmiProgramInfo.Size = new Size(154, 22);
             tsmiProgramInfo.Text = "프로그램 정보(&I)";
-            // 
-            // btnHotReload
-            // 
-            btnHotReload.BackColor = Color.FromArgb(32, 32, 32);
-            btnHotReload.BackgroundColor = "window";
-            btnHotReload.BackgroundDraw = false;
-            btnHotReload.Bordercolor = "Base3";
-            btnHotReload.BorderOnly = true;
-            btnHotReload.BorderWidth = 1F;
-            btnHotReload.ButtonColor = "Base3";
-            btnHotReload.ContentAlignment = UI.Enums.GoContentAlignment.MiddleCenter;
-            btnHotReload.Dock = DockStyle.Fill;
-            btnHotReload.FillStyle = UI.Datas.GoButtonFillStyle.Flat;
-            btnHotReload.FontName = "나눔고딕";
-            btnHotReload.FontSize = 12F;
-            btnHotReload.FontStyle = UI.Enums.GoFontStyle.Normal;
-            btnHotReload.IconDirection = UI.Enums.GoDirectionHV.Horizon;
-            btnHotReload.IconGap = 5F;
-            btnHotReload.IconSize = 20F;
-            btnHotReload.IconString = "fa-rotate";
-            btnHotReload.Location = new Point(283, 3);
-            btnHotReload.Name = "btnHotReload";
-            btnHotReload.Round = UI.Enums.GoRoundType.All;
-            btnHotReload.Size = new Size(34, 34);
-            btnHotReload.TabIndex = 9;
-            btnHotReload.TabStop = false;
-            btnHotReload.TextColor = "Fore";
             // 
             // FormMain
             // 
@@ -836,5 +845,6 @@
         private UI.Forms.Controls.GoButton btnValidCheck;
         private UI.Forms.Controls.GoButton btnTheme;
         private UI.Forms.Controls.GoButton btnHotReload;
+        private ToolStripMenuItem tsmiClaude;
     }
 }

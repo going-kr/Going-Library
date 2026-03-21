@@ -300,6 +300,17 @@ namespace Going.UIEditor.Utils
             }
         }
         #endregion
+        #region Claude
+        public static string Claude
+        {
+            get
+            {
+                if (lang == Lang.KO) return "클로드";
+                else if (lang == Lang.EN) return "Claude";
+                else return "";
+            }
+        }
+        #endregion
         #region ProgramSetting
         public const string ProgramSettingK = "프로그램 설정";
         public const string ProgramSettingE = "Program Setting";
