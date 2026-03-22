@@ -31,7 +31,7 @@ namespace Going.UIEditor.Windows
             flushTimer.Start();
 
             Load += async (s, e) => await InitAsync();
-            FormClosing += (s, e) => Cleanup();
+            FormClosing += (s, e) => Cleanup(disposeTimer: true);
 
             Title = "Claude";
             TitleIconString = "fa-terminal";
@@ -90,14 +90,36 @@ namespace Going.UIEditor.Windows
             };
         }
 
+        public async Task RestartTerminal()
+        {
+            var FilePaht = Program.FilePath;
+
+            Cleanup();
+            if (ready)
+            {
+                await webView.CoreWebView2.ExecuteScriptAsync("term.clear()");
+                await StartTerminal();
+            }
+        }
+
         private async Task StartTerminal()
         {
-            var dir = Program.FilePath != null ? Path.GetDirectoryName(Program.FilePath) : Environment.CurrentDirectory;
+            if (!Program.ClaudeInstalled || Program.ClaudePath == null)
+            {
+                WriteToXterm("Claude CLI가 설치되어 있지 않습니다.\r\nwinget install Anthropic.ClaudeCode\r\n");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(Program.FilePath))
+            {
+                WriteToXterm("프로젝트를 먼저 저장한 후 Claude를 사용할 수 있습니다.\r\n");
+                return;
+            }
+
+            var dir = Path.GetDirectoryName(Program.FilePath);
 
             try
             {
-                if (!Program.ClaudeInstalled || Program.ClaudePath == null) return;
-
                 var systemPrompt = "본 세션은 going-ui-skill을 이용하여 개발하는 HMI 프로그램이다";
                 var options = new PtyOptions
                 {
@@ -159,12 +181,16 @@ namespace Going.UIEditor.Windows
             webView.CoreWebView2.ExecuteScriptAsync($"writeToTerminal({escaped})");
         }
 
-        private void Cleanup()
+        private void Cleanup(bool disposeTimer = false)
         {
-            flushTimer?.Stop();
-            flushTimer?.Dispose();
             try { ptyConnection?.Dispose(); } catch { }
             ptyConnection = null;
+
+            if (disposeTimer)
+            {
+                flushTimer?.Stop();
+                flushTimer?.Dispose();
+            }
         }
     }
 }
