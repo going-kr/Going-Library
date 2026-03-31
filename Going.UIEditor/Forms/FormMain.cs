@@ -528,6 +528,10 @@ namespace Going.UIEditor
                     {
                         File.WriteAllText(Program.FilePath, v);
                         Program.Edit = false;
+
+                        // SaveAs로 경로 변경 시 PromptWindow 재시작
+                        if (prompt != null && !prompt.IsDisposed)
+                            _ = prompt.RestartTerminal();
                     }
                     catch (UnauthorizedAccessException) { Program.MessageBox.ShowMessageBoxOk(LM.Save, LM.SavePermissions); }
                 }
