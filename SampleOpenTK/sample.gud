@@ -1,1 +1,1514 @@
-{"Name":"Sample","Design":"{\u0022Pages\u0022:{\u0022PageTrendGraph\u0022:{\u0022Type\u0022:\u0022GoPage\u0022,\u0022Value\u0022:{\u0022Childrens\u0022:[{\u0022Type\u0022:\u0022GoTableLayoutPanel\u0022,\u0022Value\u0022:{\u0022Columns\u0022:[\u0022100%\u0022,\u002240px\u0022,\u002240px\u0022,\u002240px\u0022],\u0022Rows\u0022:[\u0022100%\u0022,\u002240px\u0022],\u0022Childrens\u0022:{\u0022indexes\u0022:{\u0022209359b2-d0a8-41a5-b075-65a498915b1e\u0022:{\u0022Row\u0022:0,\u0022Column\u0022:1,\u0022RowSpan\u0022:1,\u0022ColSpan\u0022:1},\u002222114064-51a5-46e1-9182-63bf4fdcf292\u0022:{\u0022Row\u0022:0,\u0022Column\u0022:2,\u0022RowSpan\u0022:1,\u0022ColSpan\u0022:1},\u00221db5a074-780b-42df-9fad-bb22259acfc6\u0022:{\u0022Row\u0022:0,\u0022Column\u0022:3,\u0022RowSpan\u0022:1,\u0022ColSpan\u0022:1},\u0022ada64582-1f5e-40d8-8621-1a57a9ddc674\u0022:{\u0022Row\u0022:1,\u0022Column\u0022:1,\u0022RowSpan\u0022:1,\u0022ColSpan\u0022:1},\u0022af98b7d0-7d5b-4595-804e-6533b8ea332c\u0022:{\u0022Row\u0022:1,\u0022Column\u0022:2,\u0022RowSpan\u0022:1,\u0022ColSpan\u0022:1},\u0022d26938dc-ba7f-4c44-9819-096cbed2ef99\u0022:{\u0022Row\u0022:1,\u0022Column\u0022:3,\u0022RowSpan\u0022:1,\u0022ColSpan\u0022:1},\u0022d6eeb07d-d125-404f-bcf3-3e017b61abe6\u0022:{\u0022Row\u0022:0,\u0022Column\u0022:0,\u0022RowSpan\u0022:2,\u0022ColSpan\u0022:1}},\u0022ls\u0022:[{\u0022Type\u0022:\u0022GoSlider\u0022,\u0022Value\u0022:{\u0022IconString\u0022:null,\u0022IconSize\u0022:12,\u0022IconGap\u0022:5,\u0022IconDirection\u0022:0,\u0022Text\u0022:\u0022slider\u0022,\u0022FontName\u0022:\u0022\\uB098\\uB214\\uACE0\\uB515\u0022,\u0022FontSize\u0022:12,\u0022BackgroundDraw\u0022:false,\u0022BorderOnly\u0022:false,\u0022TextColor\u0022:\u0022Fore\u0022,\u0022BoxColor\u0022:\u0022Back\u0022,\u0022SliderColor\u0022:\u0022red\u0022,\u0022ProgressColor\u0022:\u0022base1\u0022,\u0022BorderColor\u0022:\u0022danger\u0022,\u0022Round\u0022:1,\u0022Direction\u0022:1,\u0022ShowValueLabel\u0022:true,\u0022ValueFormat\u0022:\u00220\u0022,\u0022BarSize\u0022:10,\u0022HandleRadius\u0022:15,\u0022EnableShadow\u0022:true,\u0022HandleHoverScale\u0022:1.05,\u0022Tick\u0022:null,\u0022ShowTicks\u0022:false,\u0022TickCount\u0022:5,\u0022TickSize\u0022:10,\u0022Value\u0022:30,\u0022ValueString\u0022:\u002230\u0022,\u0022Minimum\u0022:0,\u0022Maximum\u0022:100,\u0022Id\u0022:\u0022209359b2-d0a8-41a5-b075-65a498915b1e\u0022,\u0022Name\u0022:\u0022sldTemp\u0022,\u0022Visible\u0022:true,\u0022Enabled\u0022:true,\u0022UseLongClick\u0022:false,\u0022LongClickTime\u0022:null,\u0022Selectable\u0022:true,\u0022Bounds\u0022:\u0022641,3,675,345\u0022,\u0022Dock\u0022:0,\u0022Margin\u0022:{\u0022Left\u0022:3,\u0022Top\u0022:3,\u0022Right\u0022:3,\u0022Bottom\u0022:3}}},{\u0022Type\u0022:\u0022GoSlider\u0022,\u0022Value\u0022:{\u0022IconString\u0022:null,\u0022IconSize\u0022:12,\u0022IconGap\u0022:5,\u0022IconDirection\u0022:0,\u0022Text\u0022:\u0022slider\u0022,\u0022FontName\u0022:\u0022\\uB098\\uB214\\uACE0\\uB515\u0022,\u0022FontSize\u0022:12,\u0022BackgroundDraw\u0022:false,\u0022BorderOnly\u0022:false,\u0022TextColor\u0022:\u0022Fore\u0022,\u0022BoxColor\u0022:\u0022Back\u0022,\u0022SliderColor\u0022:\u0022deepskyblue\u0022,\u0022ProgressColor\u0022:\u0022base1\u0022,\u0022BorderColor\u0022:\u0022danger\u0022,\u0022Round\u0022:1,\u0022Direction\u0022:1,\u0022ShowValueLabel\u0022:true,\u0022ValueFormat\u0022:\u00220\u0022,\u0022BarSize\u0022:10,\u0022HandleRadius\u0022:15,\u0022EnableShadow\u0022:true,\u0022HandleHoverScale\u0022:1.05,\u0022Tick\u0022:null,\u0022ShowTicks\u0022:false,\u0022TickCount\u0022:5,\u0022TickSize\u0022:10,\u0022Value\u0022:30,\u0022ValueString\u0022:\u002230\u0022,\u0022Minimum\u0022:0,\u0022Maximum\u0022:100,\u0022Id\u0022:\u002222114064-51a5-46e1-9182-63bf4fdcf292\u0022,\u0022Name\u0022:\u0022sldHum\u0022,\u0022Visible\u0022:true,\u0022Enabled\u0022:true,\u0022UseLongClick\u0022:false,\u0022LongClickTime\u0022:null,\u0022Selectable\u0022:true,\u0022Bounds\u0022:\u0022681,3,715,345\u0022,\u0022Dock\u0022:0,\u0022Margin\u0022:{\u0022Left\u0022:3,\u0022Top\u0022:3,\u0022Right\u0022:3,\u0022Bottom\u0022:3}}},{\u0022Type\u0022:\u0022GoSlider\u0022,\u0022Value\u0022:{\u0022IconString\u0022:null,\u0022IconSize\u0022:12,\u0022IconGap\u0022:5,\u0022IconDirection\u0022:0,\u0022Text\u0022:\u0022slider\u0022,\u0022FontName\u0022:\u0022\\uB098\\uB214\\uACE0\\uB515\u0022,\u0022FontSize\u0022:12,\u0022BackgroundDraw\u0022:false,\u0022BorderOnly\u0022:false,\u0022TextColor\u0022:\u0022Fore\u0022,\u0022BoxColor\u0022:\u0022Back\u0022,\u0022SliderColor\u0022:\u0022orange\u0022,\u0022ProgressColor\u0022:\u0022base1\u0022,\u0022BorderColor\u0022:\u0022danger\u0022,\u0022Round\u0022:1,\u0022Direction\u0022:1,\u0022ShowValueLabel\u0022:true,\u0022ValueFormat\u0022:\u00220\u0022,\u0022BarSize\u0022:10,\u0022HandleRadius\u0022:15,\u0022EnableShadow\u0022:true,\u0022HandleHoverScale\u0022:1.05,\u0022Tick\u0022:null,\u0022ShowTicks\u0022:false,\u0022TickCount\u0022:5,\u0022TickSize\u0022:10,\u0022Value\u0022:30,\u0022ValueString\u0022:\u002230\u0022,\u0022Minimum\u0022:0,\u0022Maximum\u0022:100,\u0022Id\u0022:\u00221db5a074-780b-42df-9fad-bb22259acfc6\u0022,\u0022Name\u0022:\u0022sldRad\u0022,\u0022Visible\u0022:true,\u0022Enabled\u0022:true,\u0022UseLongClick\u0022:false,\u0022LongClickTime\u0022:null,\u0022Selectable\u0022:true,\u0022Bounds\u0022:\u0022721,3,755,345\u0022,\u0022Dock\u0022:0,\u0022Margin\u0022:{\u0022Left\u0022:3,\u0022Top\u0022:3,\u0022Right\u0022:3,\u0022Bottom\u0022:3}}},{\u0022Type\u0022:\u0022GoLabel\u0022,\u0022Value\u0022:{\u0022IconString\u0022:null,\u0022IconSize\u0022:12,\u0022IconDirection\u0022:0,\u0022IconGap\u0022:5,\u0022Text\u0022:\u0022\\uC628\\uB3C4\u0022,\u0022FontName\u0022:\u0022\\uB098\\uB214\\uACE0\\uB515\u0022,\u0022FontStyle\u0022:0,\u0022FontSize\u0022:12,\u0022TextPadding\u0022:{\u0022Left\u0022:0,\u0022Top\u0022:0,\u0022Right\u0022:0,\u0022Bottom\u0022:0},\u0022TextColor\u0022:\u0022red\u0022,\u0022LabelColor\u0022:\u0022Base2\u0022,\u0022BorderColor\u0022:\u0022Base2\u0022,\u0022Round\u0022:1,\u0022BorderWidth\u0022:1,\u0022BackgroundDraw\u0022:false,\u0022BorderOnly\u0022:false,\u0022ContentAlignment\u0022:4,\u0022AutoFontSize\u0022:0,\u0022AutoIconSize\u0022:0,\u0022Id\u0022:\u0022ada64582-1f5e-40d8-8621-1a57a9ddc674\u0022,\u0022Name\u0022:null,\u0022Visible\u0022:true,\u0022Enabled\u0022:true,\u0022UseLongClick\u0022:false,\u0022LongClickTime\u0022:null,\u0022Selectable\u0022:false,\u0022Bounds\u0022:\u0022641,351,675,385\u0022,\u0022Dock\u0022:0,\u0022Margin\u0022:{\u0022Left\u0022:3,\u0022Top\u0022:3,\u0022Right\u0022:3,\u0022Bottom\u0022:3}}},{\u0022Type\u0022:\u0022GoLabel\u0022,\u0022Value\u0022:{\u0022IconString\u0022:null,\u0022IconSize\u0022:12,\u0022IconDirection\u0022:0,\u0022IconGap\u0022:5,\u0022Text\u0022:\u0022\\uC2B5\\uB3C4\u0022,\u0022FontName\u0022:\u0022\\uB098\\uB214\\uACE0\\uB515\u0022,\u0022FontStyle\u0022:0,\u0022FontSize\u0022:12,\u0022TextPadding\u0022:{\u0022Left\u0022:0,\u0022Top\u0022:0,\u0022Right\u0022:0,\u0022Bottom\u0022:0},\u0022TextColor\u0022:\u0022deepskyblue\u0022,\u0022LabelColor\u0022:\u0022Base2\u0022,\u0022BorderColor\u0022:\u0022Base2\u0022,\u0022Round\u0022:1,\u0022BorderWidth\u0022:1,\u0022BackgroundDraw\u0022:false,\u0022BorderOnly\u0022:false,\u0022ContentAlignment\u0022:4,\u0022AutoFontSize\u0022:0,\u0022AutoIconSize\u0022:0,\u0022Id\u0022:\u0022af98b7d0-7d5b-4595-804e-6533b8ea332c\u0022,\u0022Name\u0022:null,\u0022Visible\u0022:true,\u0022Enabled\u0022:true,\u0022UseLongClick\u0022:false,\u0022LongClickTime\u0022:null,\u0022Selectable\u0022:false,\u0022Bounds\u0022:\u0022681,351,715,385\u0022,\u0022Dock\u0022:0,\u0022Margin\u0022:{\u0022Left\u0022:3,\u0022Top\u0022:3,\u0022Right\u0022:3,\u0022Bottom\u0022:3}}},{\u0022Type\u0022:\u0022GoLabel\u0022,\u0022Value\u0022:{\u0022IconString\u0022:null,\u0022IconSize\u0022:12,\u0022IconDirection\u0022:0,\u0022IconGap\u0022:5,\u0022Text\u0022:\u0022\\uAD11\\uB7C9\u0022,\u0022FontName\u0022:\u0022\\uB098\\uB214\\uACE0\\uB515\u0022,\u0022FontStyle\u0022:0,\u0022FontSize\u0022:12,\u0022TextPadding\u0022:{\u0022Left\u0022:0,\u0022Top\u0022:0,\u0022Right\u0022:0,\u0022Bottom\u0022:0},\u0022TextColor\u0022:\u0022orange\u0022,\u0022LabelColor\u0022:\u0022Base2\u0022,\u0022BorderColor\u0022:\u0022Base2\u0022,\u0022Round\u0022:1,\u0022BorderWidth\u0022:1,\u0022BackgroundDraw\u0022:false,\u0022BorderOnly\u0022:false,\u0022ContentAlignment\u0022:4,\u0022AutoFontSize\u0022:0,\u0022AutoIconSize\u0022:0,\u0022Id\u0022:\u0022d26938dc-ba7f-4c44-9819-096cbed2ef99\u0022,\u0022Name\u0022:null,\u0022Visible\u0022:true,\u0022Enabled\u0022:true,\u0022UseLongClick\u0022:false,\u0022LongClickTime\u0022:null,\u0022Selectable\u0022:false,\u0022Bounds\u0022:\u0022721,351,755,385\u0022,\u0022Dock\u0022:0,\u0022Margin\u0022:{\u0022Left\u0022:3,\u0022Top\u0022:3,\u0022Right\u0022:3,\u0022Bottom\u0022:3}}},{\u0022Type\u0022:\u0022GoTrendGraph\u0022,\u0022Value\u0022:{\u0022GridColor\u0022:\u0022Base3\u0022,\u0022TextColor\u0022:\u0022Fore\u0022,\u0022RemarkColor\u0022:\u0022Base2\u0022,\u0022GraphColor\u0022:\u0022Back\u0022,\u0022FontName\u0022:\u0022\\uB098\\uB214\\uACE0\\uB515\u0022,\u0022FontStyle\u0022:0,\u0022FontSize\u0022:12,\u0022MaximumXScale\u0022:\u002200:01:00\u0022,\u0022XScale\u0022:\u002200:00:01\u0022,\u0022XAxisGraduationTime\u0022:\u002200:00:00.2000000\u0022,\u0022YAxisGraduationCount\u0022:10,\u0022TimeFormatString\u0022:\u0022HH:MM:ss\u0022,\u0022ValueFormatString\u0022:null,\u0022Interval\u0022:10,\u0022IsStart\u0022:false,\u0022Series\u0022:[{\u0022Name\u0022:\u0022Temp\u0022,\u0022Alias\u0022:\u0022\\uC628\\uB3C4\u0022,\u0022Color\u0022:\u0022Red\u0022,\u0022Visible\u0022:true,\u0022Minimum\u0022:0,\u0022Maximum\u0022:100},{\u0022Name\u0022:\u0022Hum\u0022,\u0022Alias\u0022:\u0022\\uC2B5\\uB3C4\u0022,\u0022Color\u0022:\u0022deepskyblue\u0022,\u0022Visible\u0022:true,\u0022Minimum\u0022:0,\u0022Maximum\u0022:100},{\u0022Name\u0022:\u0022Rad\u0022,\u0022Alias\u0022:\u0022\\uAD11\\uB7C9\u0022,\u0022Color\u0022:\u0022orange\u0022,\u0022Visible\u0022:true,\u0022Minimum\u0022:0,\u0022Maximum\u0022:100}],\u0022Id\u0022:\u0022d6eeb07d-d125-404f-bcf3-3e017b61abe6\u0022,\u0022Name\u0022:\u0022grpTrend\u0022,\u0022Visible\u0022:true,\u0022Enabled\u0022:true,\u0022UseLongClick\u0022:false,\u0022LongClickTime\u0022:null,\u0022Selectable\u0022:true,\u0022Bounds\u0022:\u00223,3,635,385\u0022,\u0022Dock\u0022:0,\u0022Margin\u0022:{\u0022Left\u0022:3,\u0022Top\u0022:3,\u0022Right\u0022:3,\u0022Bottom\u0022:3}}}]},\u0022Id\u0022:\u002250b3282e-5256-4eae-bde7-21a728e2ada8\u0022,\u0022Name\u0022:null,\u0022Visible\u0022:true,\u0022Enabled\u0022:true,\u0022UseLongClick\u0022:false,\u0022LongClickTime\u0022:null,\u0022Selectable\u0022:false,\u0022Bounds\u0022:\u002220,20,779,409\u0022,\u0022Dock\u0022:5,\u0022Margin\u0022:{\u0022Left\u0022:20,\u0022Top\u0022:20,\u0022Right\u0022:20,\u0022Bottom\u0022:20}}}],\u0022BackgroundImage\u0022:null,\u0022Id\u0022:\u00223a635ac9-8742-42ef-bde1-fa26045222f5\u0022,\u0022Name\u0022:\u0022PageTrendGraph\u0022,\u0022Visible\u0022:true,\u0022Enabled\u0022:true,\u0022UseLongClick\u0022:false,\u0022LongClickTime\u0022:null,\u0022Selectable\u0022:false,\u0022Bounds\u0022:\u00220,50,800,480\u0022,\u0022Dock\u0022:0,\u0022Margin\u0022:{\u0022Left\u0022:3,\u0022Top\u0022:3,\u0022Right\u0022:3,\u0022Bottom\u0022:3}}},\u0022PageDataGrid\u0022:{\u0022Type\u0022:\u0022GoPage\u0022,\u0022Value\u0022:{\u0022Childrens\u0022:[{\u0022Type\u0022:\u0022GoDataGrid\u0022,\u0022Value\u0022:{\u0022FontName\u0022:\u0022\\uB098\\uB214\\uACE0\\uB515\u0022,\u0022FontStyle\u0022:0,\u0022FontSize\u0022:12,\u0022TextColor\u0022:\u0022Fore\u0022,\u0022RowColor\u0022:\u0022Base2\u0022,\u0022SummaryRowColor\u0022:\u0022Base1\u0022,\u0022ColumnColor\u0022:\u0022Base1\u0022,\u0022SelectedRowColor\u0022:\u0022Select\u0022,\u0022BoxColor\u0022:\u0022Base2\u0022,\u0022ScrollBarColor\u0022:\u0022Base1\u0022,\u0022RowHeight\u0022:30,\u0022ColumnHeight\u0022:30,\u0022ScrollMode\u0022:1,\u0022SelectionMode\u0022:2,\u0022ColumnGroups\u0022:[],\u0022Columns\u0022:[],\u0022SummaryRows\u0022:[],\u0022Id\u0022:\u00224a44f4cd-742b-4619-bc9d-2dcdb5c34045\u0022,\u0022Name\u0022:\u0022dg\u0022,\u0022Visible\u0022:true,\u0022Enabled\u0022:true,\u0022UseLongClick\u0022:false,\u0022LongClickTime\u0022:null,\u0022Selectable\u0022:true,\u0022Bounds\u0022:\u002220,20,779,409\u0022,\u0022Dock\u0022:5,\u0022Margin\u0022:{\u0022Left\u0022:20,\u0022Top\u0022:20,\u0022Right\u0022:20,\u0022Bottom\u0022:20}}}],\u0022BackgroundImage\u0022:null,\u0022Id\u0022:\u00229b83b685-8bf8-41c2-b45c-af103792b423\u0022,\u0022Name\u0022:\u0022PageDataGrid\u0022,\u0022Visible\u0022:true,\u0022Enabled\u0022:true,\u0022UseLongClick\u0022:false,\u0022LongClickTime\u0022:null,\u0022Selectable\u0022:false,\u0022Bounds\u0022:\u00220,50,800,480\u0022,\u0022Dock\u0022:0,\u0022Margin\u0022:{\u0022Left\u0022:3,\u0022Top\u0022:3,\u0022Right\u0022:3,\u0022Bottom\u0022:3}}},\u0022PageBarGraph\u0022:{\u0022Type\u0022:\u0022GoPage\u0022,\u0022Value\u0022:{\u0022Childrens\u0022:[{\u0022Type\u0022:\u0022GoBarGraph\u0022,\u0022Value\u0022:{\u0022GridColor\u0022:\u0022Base3\u0022,\u0022TextColor\u0022:\u0022Fore\u0022,\u0022RemarkColor\u0022:\u0022Base2\u0022,\u0022GraphColor\u0022:\u0022Back\u0022,\u0022FontName\u0022:\u0022\\uB098\\uB214\\uACE0\\uB515\u0022,\u0022FontStyle\u0022:0,\u0022FontSize\u0022:12,\u0022GraduationCount\u0022:10,\u0022FormatString\u0022:null,\u0022Mode\u0022:1,\u0022Direction\u0022:1,\u0022Series\u0022:[{\u0022Name\u0022:\u0022Temp\u0022,\u0022Alias\u0022:\u0022\\uC628\\uB3C4\u0022,\u0022Color\u0022:\u0022Red\u0022,\u0022Visible\u0022:true},{\u0022Name\u0022:\u0022Hum\u0022,\u0022Alias\u0022:\u0022\\uC2B5\\uB3C4\u0022,\u0022Color\u0022:\u0022deepskyblue\u0022,\u0022Visible\u0022:true},{\u0022Name\u0022:\u0022Rad\u0022,\u0022Alias\u0022:\u0022\\uAD11\\uB7C9\u0022,\u0022Color\u0022:\u0022orange\u0022,\u0022Visible\u0022:true}],\u0022BarSize\u0022:20,\u0022BarGap\u0022:20,\u0022Minimum\u0022:0,\u0022Maximum\u0022:100,\u0022Id\u0022:\u0022223b8ee0-381d-48cd-83e8-f39841e1d396\u0022,\u0022Name\u0022:\u0022grpBar\u0022,\u0022Visible\u0022:true,\u0022Enabled\u0022:true,\u0022UseLongClick\u0022:false,\u0022LongClickTime\u0022:null,\u0022Selectable\u0022:true,\u0022Bounds\u0022:\u002220,20,779,409\u0022,\u0022Dock\u0022:5,\u0022Margin\u0022:{\u0022Left\u0022:20,\u0022Top\u0022:20,\u0022Right\u0022:20,\u0022Bottom\u0022:20}}}],\u0022BackgroundImage\u0022:null,\u0022Id\u0022:\u002238cf0191-efec-498e-9d73-812f51c2feba\u0022,\u0022Name\u0022:\u0022PageBarGraph\u0022,\u0022Visible\u0022:true,\u0022Enabled\u0022:true,\u0022UseLongClick\u0022:false,\u0022LongClickTime\u0022:null,\u0022Selectable\u0022:false,\u0022Bounds\u0022:\u00220,50,800,480\u0022,\u0022Dock\u0022:0,\u0022Margin\u0022:{\u0022Left\u0022:3,\u0022Top\u0022:3,\u0022Right\u0022:3,\u0022Bottom\u0022:3}}},\u0022PageLineGraph\u0022:{\u0022Type\u0022:\u0022GoPage\u0022,\u0022Value\u0022:{\u0022Childrens\u0022:[{\u0022Type\u0022:\u0022GoLineGraph\u0022,\u0022Value\u0022:{\u0022GridColor\u0022:\u0022Base3\u0022,\u0022TextColor\u0022:\u0022Fore\u0022,\u0022RemarkColor\u0022:\u0022Base2\u0022,\u0022GraphColor\u0022:\u0022Back\u0022,\u0022FontName\u0022:\u0022\\uB098\\uB214\\uACE0\\uB515\u0022,\u0022FontStyle\u0022:0,\u0022FontSize\u0022:12,\u0022GraduationCount\u0022:10,\u0022FormatString\u0022:null,\u0022Series\u0022:[{\u0022Name\u0022:\u0022Temp\u0022,\u0022Alias\u0022:\u0022\\uC628\\uB3C4\u0022,\u0022Color\u0022:\u0022Red\u0022,\u0022Visible\u0022:true,\u0022Minimum\u0022:0,\u0022Maximum\u0022:100},{\u0022Name\u0022:\u0022Hum\u0022,\u0022Alias\u0022:\u0022\\uC2B5\\uB3C4\u0022,\u0022Color\u0022:\u0022deepskyblue\u0022,\u0022Visible\u0022:true,\u0022Minimum\u0022:0,\u0022Maximum\u0022:100},{\u0022Name\u0022:\u0022Rad\u0022,\u0022Alias\u0022:\u0022\\uAD11\\uB7C9\u0022,\u0022Color\u0022:\u0022orange\u0022,\u0022Visible\u0022:true,\u0022Minimum\u0022:0,\u0022Maximum\u0022:100}],\u0022PointWidth\u0022:70,\u0022Id\u0022:\u0022f8114ede-301f-4085-87b3-13c949a35aca\u0022,\u0022Name\u0022:\u0022grpLine\u0022,\u0022Visible\u0022:true,\u0022Enabled\u0022:true,\u0022UseLongClick\u0022:false,\u0022LongClickTime\u0022:null,\u0022Selectable\u0022:true,\u0022Bounds\u0022:\u002220,20,779,409\u0022,\u0022Dock\u0022:5,\u0022Margin\u0022:{\u0022Left\u0022:20,\u0022Top\u0022:20,\u0022Right\u0022:20,\u0022Bottom\u0022:20}}}],\u0022BackgroundImage\u0022:null,\u0022Id\u0022:\u0022c12a751f-4b6e-4f37-9c4c-f446a280074f\u0022,\u0022Name\u0022:\u0022PageLineGraph\u0022,\u0022Visible\u0022:true,\u0022Enabled\u0022:true,\u0022UseLongClick\u0022:false,\u0022LongClickTime\u0022:null,\u0022Selectable\u0022:false,\u0022Bounds\u0022:\u00220,50,800,480\u0022,\u0022Dock\u0022:0,\u0022Margin\u0022:{\u0022Left\u0022:3,\u0022Top\u0022:3,\u0022Right\u0022:3,\u0022Bottom\u0022:3}}},\u0022PageTimeGraph\u0022:{\u0022Type\u0022:\u0022GoPage\u0022,\u0022Value\u0022:{\u0022Childrens\u0022:[{\u0022Type\u0022:\u0022GoTimeGraph\u0022,\u0022Value\u0022:{\u0022GridColor\u0022:\u0022Base3\u0022,\u0022TextColor\u0022:\u0022Fore\u0022,\u0022RemarkColor\u0022:\u0022Base2\u0022,\u0022GraphColor\u0022:\u0022Back\u0022,\u0022FontName\u0022:\u0022\\uB098\\uB214\\uACE0\\uB515\u0022,\u0022FontStyle\u0022:0,\u0022FontSize\u0022:12,\u0022XScale\u0022:\u002201:00:00\u0022,\u0022XAxisGraduationTime\u0022:\u002200:10:00\u0022,\u0022YAxisGraduationCount\u0022:10,\u0022TimeFormatString\u0022:\u0022M/d\\r\\nHH:mm\u0022,\u0022ValueFormatString\u0022:null,\u0022Series\u0022:[{\u0022Name\u0022:\u0022Temp\u0022,\u0022Alias\u0022:\u0022\\uC628\\uB3C4\u0022,\u0022Color\u0022:\u0022Red\u0022,\u0022Visible\u0022:true,\u0022Minimum\u0022:0,\u0022Maximum\u0022:100},{\u0022Name\u0022:\u0022Hum\u0022,\u0022Alias\u0022:\u0022\\uC2B5\\uB3C4\u0022,\u0022Color\u0022:\u0022deepskyblue\u0022,\u0022Visible\u0022:true,\u0022Minimum\u0022:0,\u0022Maximum\u0022:100},{\u0022Name\u0022:\u0022Rad\u0022,\u0022Alias\u0022:\u0022\\uAD11\\uB7C9\u0022,\u0022Color\u0022:\u0022orange\u0022,\u0022Visible\u0022:true,\u0022Minimum\u0022:0,\u0022Maximum\u0022:100}],\u0022Id\u0022:\u00220adb653f-9619-487b-986b-68f9e018714d\u0022,\u0022Name\u0022:\u0022grpTime\u0022,\u0022Visible\u0022:true,\u0022Enabled\u0022:true,\u0022UseLongClick\u0022:false,\u0022LongClickTime\u0022:null,\u0022Selectable\u0022:true,\u0022Bounds\u0022:\u002220,20,779,409\u0022,\u0022Dock\u0022:5,\u0022Margin\u0022:{\u0022Left\u0022:20,\u0022Top\u0022:20,\u0022Right\u0022:20,\u0022Bottom\u0022:20}}}],\u0022BackgroundImage\u0022:null,\u0022Id\u0022:\u00222d78652f-b617-4366-a00d-379d4fad6ce2\u0022,\u0022Name\u0022:\u0022PageTimeGraph\u0022,\u0022Visible\u0022:true,\u0022Enabled\u0022:true,\u0022UseLongClick\u0022:false,\u0022LongClickTime\u0022:null,\u0022Selectable\u0022:false,\u0022Bounds\u0022:\u00220,50,800,480\u0022,\u0022Dock\u0022:0,\u0022Margin\u0022:{\u0022Left\u0022:3,\u0022Top\u0022:3,\u0022Right\u0022:3,\u0022Bottom\u0022:3}}},\u0022PageGauge\u0022:{\u0022Type\u0022:\u0022GoPage\u0022,\u0022Value\u0022:{\u0022Childrens\u0022:[{\u0022Type\u0022:\u0022GoGauge\u0022,\u0022Value\u0022:{\u0022FontName\u0022:\u0022\\uB098\\uB214\\uACE0\\uB515\u0022,\u0022FontStyle\u0022:0,\u0022FontSize\u0022:24,\u0022Title\u0022:\u0022Gauge\u0022,\u0022TitleFontSize\u0022:11,\u0022TextColor\u0022:\u0022Fore\u0022,\u0022FillColor\u0022:\u0022Good\u0022,\u0022EmptyColor\u0022:\u0022Base1\u0022,\u0022BorderColor\u0022:\u0022Base1\u0022,\u0022Value\u0022:0,\u0022Minimum\u0022:0,\u0022Maximum\u0022:100,\u0022Format\u0022:\u00220\u0022,\u0022StartAngle\u0022:135,\u0022SweepAngle\u0022:270,\u0022BarSize\u0022:24,\u0022Gap\u0022:40,\u0022Id\u0022:\u0022da92b458-af36-4449-9211-b94d363eb753\u0022,\u0022Name\u0022:\u0022gauge\u0022,\u0022Visible\u0022:true,\u0022Enabled\u0022:true,\u0022UseLongClick\u0022:false,\u0022LongClickTime\u0022:null,\u0022Selectable\u0022:false,\u0022Bounds\u0022:\u002288,119,268,299\u0022,\u0022Dock\u0022:0,\u0022Margin\u0022:{\u0022Left\u0022:3,\u0022Top\u0022:3,\u0022Right\u0022:3,\u0022Bottom\u0022:3}}},{\u0022Type\u0022:\u0022GoKnob\u0022,\u0022Value\u0022:{\u0022FontName\u0022:\u0022\\uB098\\uB214\\uACE0\\uB515\u0022,\u0022FontStyle\u0022:0,\u0022FontSize\u0022:24,\u0022TextColor\u0022:\u0022Fore\u0022,\u0022KnobColor\u0022:\u0022Base3\u0022,\u0022CursorColor\u0022:\u0022Fore\u0022,\u0022Value\u0022:0,\u0022Minimum\u0022:0,\u0022Maximum\u0022:100,\u0022Tick\u0022:null,\u0022Format\u0022:\u00220\u0022,\u0022SweepAngle\u0022:270,\u0022DrawText\u0022:true,\u0022Id\u0022:\u00220f6960b0-a671-4612-81dd-f6513fa70b0e\u0022,\u0022Name\u0022:\u0022knob\u0022,\u0022Visible\u0022:true,\u0022Enabled\u0022:true,\u0022UseLongClick\u0022:false,\u0022LongClickTime\u0022:null,\u0022Selectable\u0022:true,\u0022Bounds\u0022:\u0022508,119,688,299\u0022,\u0022Dock\u0022:0,\u0022Margin\u0022:{\u0022Left\u0022:3,\u0022Top\u0022:3,\u0022Right\u0022:3,\u0022Bottom\u0022:3}}},{\u0022Type\u0022:\u0022GoMeter\u0022,\u0022Value\u0022:{\u0022FontName\u0022:\u0022\\uB098\\uB214\\uACE0\\uB515\u0022,\u0022FontStyle\u0022:0,\u0022FontSize\u0022:24,\u0022Title\u0022:\u0022Meter\u0022,\u0022TitleFontSize\u0022:11,\u0022RemarkFontSize\u0022:10,\u0022TextColor\u0022:\u0022Fore\u0022,\u0022NeedleColor\u0022:\u0022Fore\u0022,\u0022NeedlePointColor\u0022:\u0022Red\u0022,\u0022RemarkColor\u0022:\u0022Base5\u0022,\u0022Value\u0022:0,\u0022Minimum\u0022:0,\u0022Maximum\u0022:100,\u0022GraduationLarge\u0022:10,\u0022GraduationSmall\u0022:2,\u0022Format\u0022:\u00220\u0022,\u0022Gap\u0022:5,\u0022Id\u0022:\u0022cdd929df-c526-4bbb-9fb1-763c029bd067\u0022,\u0022Name\u0022:\u0022meter\u0022,\u0022Visible\u0022:true,\u0022Enabled\u0022:true,\u0022UseLongClick\u0022:false,\u0022LongClickTime\u0022:null,\u0022Selectable\u0022:false,\u0022Bounds\u0022:\u0022298,119,478,299\u0022,\u0022Dock\u0022:0,\u0022Margin\u0022:{\u0022Left\u0022:3,\u0022Top\u0022:3,\u0022Right\u0022:3,\u0022Bottom\u0022:3}}}],\u0022BackgroundImage\u0022:null,\u0022Id\u0022:\u0022da4d32d7-b025-438a-9e42-a5be833a6b78\u0022,\u0022Name\u0022:\u0022PageGauge\u0022,\u0022Visible\u0022:true,\u0022Enabled\u0022:true,\u0022UseLongClick\u0022:false,\u0022LongClickTime\u0022:null,\u0022Selectable\u0022:false,\u0022Bounds\u0022:\u00220,50,800,480\u0022,\u0022Dock\u0022:0,\u0022Margin\u0022:{\u0022Left\u0022:3,\u0022Top\u0022:3,\u0022Right\u0022:3,\u0022Bottom\u0022:3}}},\u0022PageSwitchPanel\u0022:{\u0022Type\u0022:\u0022GoPage\u0022,\u0022Value\u0022:{\u0022Childrens\u0022:[{\u0022Type\u0022:\u0022GoTableLayoutPanel\u0022,\u0022Value\u0022:{\u0022Columns\u0022:[\u002225%\u0022,\u002225%\u0022,\u002225%\u0022,\u002225%\u0022],\u0022Rows\u0022:[\u0022100%\u0022,\u002280px\u0022],\u0022Childrens\u0022:{\u0022indexes\u0022:{\u0022b1ed88ef-6e6f-4ebc-978a-1f12be1d102c\u0022:{\u0022Row\u0022:0,\u0022Column\u0022:0,\u0022RowSpan\u0022:1,\u0022ColSpan\u0022:4},\u0022df4d1f9a-d47e-4a62-89a3-c33ba8df8aa2\u0022:{\u0022Row\u0022:1,\u0022Column\u0022:0,\u0022RowSpan\u0022:1,\u0022ColSpan\u0022:1},\u002201c3a2ac-7813-4c28-b381-19bdb70d2377\u0022:{\u0022Row\u0022:1,\u0022Column\u0022:1,\u0022RowSpan\u0022:1,\u0022ColSpan\u0022:1},\u00220bf8486e-7b03-4242-8426-c88e63727f10\u0022:{\u0022Row\u0022:1,\u0022Column\u0022:2,\u0022RowSpan\u0022:1,\u0022ColSpan\u0022:1},\u0022011800a8-7c27-4184-8632-a170f8cbfe7a\u0022:{\u0022Row\u0022:1,\u0022Column\u0022:3,\u0022RowSpan\u0022:1,\u0022ColSpan\u0022:1}},\u0022ls\u0022:[{\u0022Type\u0022:\u0022GoSwitchPanel\u0022,\u0022Value\u0022:{\u0022Pages\u0022:[{\u0022Name\u0022:\u0022pnl1\u0022,\u0022Childrens\u0022:[{\u0022Type\u0022:\u0022GoLabel\u0022,\u0022Value\u0022:{\u0022IconString\u0022:null,\u0022IconSize\u0022:12,\u0022IconDirection\u0022:0,\u0022IconGap\u0022:5,\u0022Text\u0022:\u0022Page 1\u0022,\u0022FontName\u0022:\u0022\\uB098\\uB214\\uACE0\\uB515\u0022,\u0022FontStyle\u0022:0,\u0022FontSize\u0022:18,\u0022TextPadding\u0022:{\u0022Left\u0022:0,\u0022Top\u0022:0,\u0022Right\u0022:0,\u0022Bottom\u0022:0},\u0022TextColor\u0022:\u0022Fore\u0022,\u0022LabelColor\u0022:\u0022Base2\u0022,\u0022BorderColor\u0022:\u0022Base2\u0022,\u0022Round\u0022:1,\u0022BorderWidth\u0022:1,\u0022BackgroundDraw\u0022:false,\u0022BorderOnly\u0022:false,\u0022ContentAlignment\u0022:3,\u0022AutoFontSize\u0022:0,\u0022AutoIconSize\u0022:0,\u0022Id\u0022:\u002274bec6ac-6f22-4433-a3bd-82fbddfce7cd\u0022,\u0022Name\u0022:null,\u0022Visible\u0022:true,\u0022Enabled\u0022:true,\u0022UseLongClick\u0022:false,\u0022LongClickTime\u0022:null,\u0022Selectable\u0022:false,\u0022Bounds\u0022:\u002210,10,94.5,40\u0022,\u0022Dock\u0022:0,\u0022Margin\u0022:{\u0022Left\u0022:3,\u0022Top\u0022:3,\u0022Right\u0022:3,\u0022Bottom\u0022:3}}}]},{\u0022Name\u0022:\u0022pnl2\u0022,\u0022Childrens\u0022:[{\u0022Type\u0022:\u0022GoLabel\u0022,\u0022Value\u0022:{\u0022IconString\u0022:null,\u0022IconSize\u0022:12,\u0022IconDirection\u0022:0,\u0022IconGap\u0022:5,\u0022Text\u0022:\u0022Page 2\u0022,\u0022FontName\u0022:\u0022\\uB098\\uB214\\uACE0\\uB515\u0022,\u0022FontStyle\u0022:0,\u0022FontSize\u0022:18,\u0022TextPadding\u0022:{\u0022Left\u0022:0,\u0022Top\u0022:0,\u0022Right\u0022:0,\u0022Bottom\u0022:0},\u0022TextColor\u0022:\u0022Fore\u0022,\u0022LabelColor\u0022:\u0022Base2\u0022,\u0022BorderColor\u0022:\u0022Base2\u0022,\u0022Round\u0022:1,\u0022BorderWidth\u0022:1,\u0022BackgroundDraw\u0022:false,\u0022BorderOnly\u0022:false,\u0022ContentAlignment\u0022:3,\u0022AutoFontSize\u0022:0,\u0022AutoIconSize\u0022:0,\u0022Id\u0022:\u002206b6f9ff-be94-4966-8720-e8a65e15d31d\u0022,\u0022Name\u0022:null,\u0022Visible\u0022:true,\u0022Enabled\u0022:true,\u0022UseLongClick\u0022:false,\u0022LongClickTime\u0022:null,\u0022Selectable\u0022:false,\u0022Bounds\u0022:\u002210,10,94.5,40\u0022,\u0022Dock\u0022:0,\u0022Margin\u0022:{\u0022Left\u0022:3,\u0022Top\u0022:3,\u0022Right\u0022:3,\u0022Bottom\u0022:3}}}]},{\u0022Name\u0022:\u0022pnl3\u0022,\u0022Childrens\u0022:[{\u0022Type\u0022:\u0022GoLabel\u0022,\u0022Value\u0022:{\u0022IconString\u0022:null,\u0022IconSize\u0022:12,\u0022IconDirection\u0022:0,\u0022IconGap\u0022:5,\u0022Text\u0022:\u0022Page 3\u0022,\u0022FontName\u0022:\u0022\\uB098\\uB214\\uACE0\\uB515\u0022,\u0022FontStyle\u0022:0,\u0022FontSize\u0022:18,\u0022TextPadding\u0022:{\u0022Left\u0022:0,\u0022Top\u0022:0,\u0022Right\u0022:0,\u0022Bottom\u0022:0},\u0022TextColor\u0022:\u0022Fore\u0022,\u0022LabelColor\u0022:\u0022Base2\u0022,\u0022BorderColor\u0022:\u0022Base2\u0022,\u0022Round\u0022:1,\u0022BorderWidth\u0022:1,\u0022BackgroundDraw\u0022:false,\u0022BorderOnly\u0022:false,\u0022ContentAlignment\u0022:3,\u0022AutoFontSize\u0022:0,\u0022AutoIconSize\u0022:0,\u0022Id\u0022:\u00224204bd33-6e65-44ed-8e54-29eafdf43c3e\u0022,\u0022Name\u0022:null,\u0022Visible\u0022:true,\u0022Enabled\u0022:true,\u0022UseLongClick\u0022:false,\u0022LongClickTime\u0022:null,\u0022Selectable\u0022:false,\u0022Bounds\u0022:\u002210,10,94.5,40\u0022,\u0022Dock\u0022:0,\u0022Margin\u0022:{\u0022Left\u0022:3,\u0022Top\u0022:3,\u0022Right\u0022:3,\u0022Bottom\u0022:3}}}]},{\u0022Name\u0022:\u0022pnl4\u0022,\u0022Childrens\u0022:[{\u0022Type\u0022:\u0022GoLabel\u0022,\u0022Value\u0022:{\u0022IconString\u0022:null,\u0022IconSize\u0022:12,\u0022IconDirection\u0022:0,\u0022IconGap\u0022:5,\u0022Text\u0022:\u0022Page 4\u0022,\u0022FontName\u0022:\u0022\\uB098\\uB214\\uACE0\\uB515\u0022,\u0022FontStyle\u0022:0,\u0022FontSize\u0022:18,\u0022TextPadding\u0022:{\u0022Left\u0022:0,\u0022Top\u0022:0,\u0022Right\u0022:0,\u0022Bottom\u0022:0},\u0022TextColor\u0022:\u0022Fore\u0022,\u0022LabelColor\u0022:\u0022Base2\u0022,\u0022BorderColor\u0022:\u0022Base2\u0022,\u0022Round\u0022:1,\u0022BorderWidth\u0022:1,\u0022BackgroundDraw\u0022:false,\u0022BorderOnly\u0022:false,\u0022ContentAlignment\u0022:3,\u0022AutoFontSize\u0022:0,\u0022AutoIconSize\u0022:0,\u0022Id\u0022:\u002257efef22-261c-4f60-8512-cfef13796575\u0022,\u0022Name\u0022:null,\u0022Visible\u0022:true,\u0022Enabled\u0022:true,\u0022UseLongClick\u0022:false,\u0022LongClickTime\u0022:null,\u0022Selectable\u0022:false,\u0022Bounds\u0022:\u002210,10,94.5,40\u0022,\u0022Dock\u0022:0,\u0022Margin\u0022:{\u0022Left\u0022:3,\u0022Top\u0022:3,\u0022Right\u0022:3,\u0022Bottom\u0022:3}}}]}],\u0022Id\u0022:\u0022b1ed88ef-6e6f-4ebc-978a-1f12be1d102c\u0022,\u0022Name\u0022:\u0022swpnl\u0022,\u0022Visible\u0022:true,\u0022Enabled\u0022:true,\u0022UseLongClick\u0022:false,\u0022LongClickTime\u0022:null,\u0022Selectable\u0022:false,\u0022Bounds\u0022:\u00223,3,775,325\u0022,\u0022Dock\u0022:0,\u0022Margin\u0022:{\u0022Left\u0022:3,\u0022Top\u0022:3,\u0022Right\u0022:3,\u0022Bottom\u0022:3}}},{\u0022Type\u0022:\u0022GoRadioButton\u0022,\u0022Value\u0022:{\u0022IconString\u0022:null,\u0022IconSize\u0022:12,\u0022IconDirection\u0022:0,\u0022IconGap\u0022:5,\u0022Text\u0022:\u0022Page1\u0022,\u0022FontName\u0022:\u0022\\uB098\\uB214\\uACE0\\uB515\u0022,\u0022FontStyle\u0022:0,\u0022FontSize\u0022:12,\u0022TextColor\u0022:\u0022Fore\u0022,\u0022ButtonColor\u0022:\u0022Base3\u0022,\u0022CheckedButtonColor\u0022:\u0022Select\u0022,\u0022BorderColor\u0022:\u0022Base3\u0022,\u0022CheckedBorderColor\u0022:\u0022Select\u0022,\u0022Round\u0022:1,\u0022BorderWidth\u0022:1,\u0022FillStyle\u0022:0,\u0022Checked\u0022:false,\u0022AutoFontSize\u0022:0,\u0022AutoIconSize\u0022:0,\u0022Id\u0022:\u0022df4d1f9a-d47e-4a62-89a3-c33ba8df8aa2\u0022,\u0022Name\u0022:\u0022btnPage1\u0022,\u0022Visible\u0022:true,\u0022Enabled\u0022:true,\u0022UseLongClick\u0022:false,\u0022LongClickTime\u0022:null,\u0022Selectable\u0022:true,\u0022Bounds\u0022:\u00223,331,192,405\u0022,\u0022Dock\u0022:0,\u0022Margin\u0022:{\u0022Left\u0022:3,\u0022Top\u0022:3,\u0022Right\u0022:3,\u0022Bottom\u0022:3}}},{\u0022Type\u0022:\u0022GoRadioButton\u0022,\u0022Value\u0022:{\u0022IconString\u0022:null,\u0022IconSize\u0022:12,\u0022IconDirection\u0022:0,\u0022IconGap\u0022:5,\u0022Text\u0022:\u0022Page2\u0022,\u0022FontName\u0022:\u0022\\uB098\\uB214\\uACE0\\uB515\u0022,\u0022FontStyle\u0022:0,\u0022FontSize\u0022:12,\u0022TextColor\u0022:\u0022Fore\u0022,\u0022ButtonColor\u0022:\u0022Base3\u0022,\u0022CheckedButtonColor\u0022:\u0022Select\u0022,\u0022BorderColor\u0022:\u0022Base3\u0022,\u0022CheckedBorderColor\u0022:\u0022Select\u0022,\u0022Round\u0022:1,\u0022BorderWidth\u0022:1,\u0022FillStyle\u0022:0,\u0022Checked\u0022:false,\u0022AutoFontSize\u0022:0,\u0022AutoIconSize\u0022:0,\u0022Id\u0022:\u002201c3a2ac-7813-4c28-b381-19bdb70d2377\u0022,\u0022Name\u0022:\u0022btnPage2\u0022,\u0022Visible\u0022:true,\u0022Enabled\u0022:true,\u0022UseLongClick\u0022:false,\u0022LongClickTime\u0022:null,\u0022Selectable\u0022:true,\u0022Bounds\u0022:\u0022198,331,386,405\u0022,\u0022Dock\u0022:0,\u0022Margin\u0022:{\u0022Left\u0022:3,\u0022Top\u0022:3,\u0022Right\u0022:3,\u0022Bottom\u0022:3}}},{\u0022Type\u0022:\u0022GoRadioButton\u0022,\u0022Value\u0022:{\u0022IconString\u0022:null,\u0022IconSize\u0022:12,\u0022IconDirection\u0022:0,\u0022IconGap\u0022:5,\u0022Text\u0022:\u0022Page3\u0022,\u0022FontName\u0022:\u0022\\uB098\\uB214\\uACE0\\uB515\u0022,\u0022FontStyle\u0022:0,\u0022FontSize\u0022:12,\u0022TextColor\u0022:\u0022Fore\u0022,\u0022ButtonColor\u0022:\u0022Base3\u0022,\u0022CheckedButtonColor\u0022:\u0022Select\u0022,\u0022BorderColor\u0022:\u0022Base3\u0022,\u0022CheckedBorderColor\u0022:\u0022Select\u0022,\u0022Round\u0022:1,\u0022BorderWidth\u0022:1,\u0022FillStyle\u0022:0,\u0022Checked\u0022:false,\u0022AutoFontSize\u0022:0,\u0022AutoIconSize\u0022:0,\u0022Id\u0022:\u00220bf8486e-7b03-4242-8426-c88e63727f10\u0022,\u0022Name\u0022:\u0022btnPage3\u0022,\u0022Visible\u0022:true,\u0022Enabled\u0022:true,\u0022UseLongClick\u0022:false,\u0022LongClickTime\u0022:null,\u0022Selectable\u0022:true,\u0022Bounds\u0022:\u0022392,331,580,405\u0022,\u0022Dock\u0022:0,\u0022Margin\u0022:{\u0022Left\u0022:3,\u0022Top\u0022:3,\u0022Right\u0022:3,\u0022Bottom\u0022:3}}},{\u0022Type\u0022:\u0022GoRadioButton\u0022,\u0022Value\u0022:{\u0022IconString\u0022:null,\u0022IconSize\u0022:12,\u0022IconDirection\u0022:0,\u0022IconGap\u0022:5,\u0022Text\u0022:\u0022Page4\u0022,\u0022FontName\u0022:\u0022\\uB098\\uB214\\uACE0\\uB515\u0022,\u0022FontStyle\u0022:0,\u0022FontSize\u0022:12,\u0022TextColor\u0022:\u0022Fore\u0022,\u0022ButtonColor\u0022:\u0022Base3\u0022,\u0022CheckedButtonColor\u0022:\u0022Select\u0022,\u0022BorderColor\u0022:\u0022Base3\u0022,\u0022CheckedBorderColor\u0022:\u0022Select\u0022,\u0022Round\u0022:1,\u0022BorderWidth\u0022:1,\u0022FillStyle\u0022:0,\u0022Checked\u0022:false,\u0022AutoFontSize\u0022:0,\u0022AutoIconSize\u0022:0,\u0022Id\u0022:\u0022011800a8-7c27-4184-8632-a170f8cbfe7a\u0022,\u0022Name\u0022:\u0022btnPage4\u0022,\u0022Visible\u0022:true,\u0022Enabled\u0022:true,\u0022UseLongClick\u0022:false,\u0022LongClickTime\u0022:null,\u0022Selectable\u0022:true,\u0022Bounds\u0022:\u0022586,331,775,405\u0022,\u0022Dock\u0022:0,\u0022Margin\u0022:{\u0022Left\u0022:3,\u0022Top\u0022:3,\u0022Right\u0022:3,\u0022Bottom\u0022:3}}}]},\u0022Id\u0022:\u002248ddb8e2-916f-4425-8b07-9eef9f415a3f\u0022,\u0022Name\u0022:null,\u0022Visible\u0022:true,\u0022Enabled\u0022:true,\u0022UseLongClick\u0022:false,\u0022LongClickTime\u0022:null,\u0022Selectable\u0022:false,\u0022Bounds\u0022:\u002210,10,789,419\u0022,\u0022Dock\u0022:5,\u0022Margin\u0022:{\u0022Left\u0022:10,\u0022Top\u0022:10,\u0022Right\u0022:10,\u0022Bottom\u0022:10}}}],\u0022BackgroundImage\u0022:null,\u0022Id\u0022:\u00224bc78491-6a29-4913-b652-f5fca30294e6\u0022,\u0022Name\u0022:\u0022PageSwitchPanel\u0022,\u0022Visible\u0022:true,\u0022Enabled\u0022:true,\u0022UseLongClick\u0022:false,\u0022LongClickTime\u0022:null,\u0022Selectable\u0022:false,\u0022Bounds\u0022:\u00220,50,800,480\u0022,\u0022Dock\u0022:0,\u0022Margin\u0022:{\u0022Left\u0022:3,\u0022Top\u0022:3,\u0022Right\u0022:3,\u0022Bottom\u0022:3}}}},\u0022Windows\u0022:{},\u0022Images\u0022:{},\u0022Fonts\u0022:{},\u0022TitleBar\u0022:{\u0022BarSize\u0022:50,\u0022Title\u0022:\u0022Sample\u0022,\u0022TitleImage\u0022:null,\u0022LeftExpandIconString\u0022:\u0022fa-bars\u0022,\u0022LeftCollapseIconString\u0022:\u0022fa-chevron-left\u0022,\u0022RightExpandIconString\u0022:\u0022fa-ellipsis-vertical\u0022,\u0022RightCollapseIconString\u0022:\u0022fa-chevron-right\u0022,\u0022IconSize\u0022:16,\u0022TextColor\u0022:\u0022Fore\u0022,\u0022FontName\u0022:\u0022\\uB098\\uB214\\uACE0\\uB515\u0022,\u0022FontStyle\u0022:0,\u0022FontSize\u0022:16,\u0022Childrens\u0022:[{\u0022Type\u0022:\u0022GoNavigator\u0022,\u0022Value\u0022:{\u0022IconSize\u0022:12,\u0022IconDirection\u0022:0,\u0022IconGap\u0022:5,\u0022FontName\u0022:\u0022\\uB098\\uB214\\uACE0\\uB515\u0022,\u0022FontStyle\u0022:0,\u0022FontSize\u0022:12,\u0022TextColor\u0022:\u0022Fore\u0022,\u0022Indent\u0022:20,\u0022MenuGap\u0022:30,\u0022Menus\u0022:[{\u0022IconString\u0022:null,\u0022Text\u0022:\u0022Gauge\u0022,\u0022Tag\u0022:null,\u0022PageName\u0022:\u0022PageGauge\u0022},{\u0022IconString\u0022:null,\u0022Text\u0022:\u0022BarGraph\u0022,\u0022Tag\u0022:null,\u0022PageName\u0022:\u0022PageBarGraph\u0022},{\u0022IconString\u0022:null,\u0022Text\u0022:\u0022LineGraph\u0022,\u0022Tag\u0022:null,\u0022PageName\u0022:\u0022PageLineGraph\u0022},{\u0022IconString\u0022:null,\u0022Text\u0022:\u0022TimeGraph\u0022,\u0022Tag\u0022:null,\u0022PageName\u0022:\u0022PageTimeGraph\u0022},{\u0022IconString\u0022:null,\u0022Text\u0022:\u0022TrendGraph\u0022,\u0022Tag\u0022:null,\u0022PageName\u0022:\u0022PageTrendGraph\u0022},{\u0022IconString\u0022:null,\u0022Text\u0022:\u0022SwitchPanel\u0022,\u0022Tag\u0022:null,\u0022PageName\u0022:\u0022PageSwitchPanel\u0022},{\u0022IconString\u0022:null,\u0022Text\u0022:\u0022DataGrid\u0022,\u0022Tag\u0022:null,\u0022PageName\u0022:\u0022PageDataGrid\u0022}],\u0022Direction\u0022:0,\u0022Id\u0022:\u00228496a09a-d5e6-49f7-81cc-90e2ee5ab022\u0022,\u0022Name\u0022:null,\u0022Visible\u0022:true,\u0022Enabled\u0022:true,\u0022UseLongClick\u0022:false,\u0022LongClickTime\u0022:null,\u0022Selectable\u0022:false,\u0022Bounds\u0022:\u00223,3,720.744,46\u0022,\u0022Dock\u0022:5,\u0022Margin\u0022:{\u0022Left\u0022:3,\u0022Top\u0022:3,\u0022Right\u0022:3,\u0022Bottom\u0022:3}}}],\u0022Id\u0022:\u00222ff19f45-4c04-42d6-bd7f-e79c068865fc\u0022,\u0022Name\u0022:null,\u0022Visible\u0022:true,\u0022Enabled\u0022:true,\u0022UseLongClick\u0022:false,\u0022LongClickTime\u0022:null,\u0022Selectable\u0022:false,\u0022Bounds\u0022:\u00220,0,800,50\u0022,\u0022Dock\u0022:0,\u0022Margin\u0022:{\u0022Left\u0022:3,\u0022Top\u0022:3,\u0022Right\u0022:3,\u0022Bottom\u0022:3}},\u0022LeftSideBar\u0022:{\u0022BarSize\u0022:150,\u0022Fixed\u0022:false,\u0022Opening\u0022:false,\u0022Closing\u0022:false,\u0022Childrens\u0022:[],\u0022Id\u0022:\u0022f14be30b-0970-4406-ba1e-29983c42b341\u0022,\u0022Name\u0022:null,\u0022Visible\u0022:false,\u0022Enabled\u0022:true,\u0022UseLongClick\u0022:false,\u0022LongClickTime\u0022:null,\u0022Selectable\u0022:false,\u0022Bounds\u0022:\u00220,50,0,480\u0022,\u0022Dock\u0022:0,\u0022Margin\u0022:{\u0022Left\u0022:3,\u0022Top\u0022:3,\u0022Right\u0022:3,\u0022Bottom\u0022:3}},\u0022RightSideBar\u0022:{\u0022BarSize\u0022:150,\u0022Fixed\u0022:false,\u0022Opening\u0022:false,\u0022Closing\u0022:false,\u0022Childrens\u0022:[],\u0022Id\u0022:\u0022954d67b3-6255-4042-af1a-dd482b33715f\u0022,\u0022Name\u0022:null,\u0022Visible\u0022:false,\u0022Enabled\u0022:true,\u0022UseLongClick\u0022:false,\u0022LongClickTime\u0022:null,\u0022Selectable\u0022:false,\u0022Bounds\u0022:\u0022800,50,800,480\u0022,\u0022Dock\u0022:0,\u0022Margin\u0022:{\u0022Left\u0022:3,\u0022Top\u0022:3,\u0022Right\u0022:3,\u0022Bottom\u0022:3}},\u0022Footer\u0022:{\u0022BarSize\u0022:40,\u0022Childrens\u0022:[],\u0022Id\u0022:\u0022a0a1dd3a-76c1-4a58-b5c2-8e7f58c15796\u0022,\u0022Name\u0022:null,\u0022Visible\u0022:false,\u0022Enabled\u0022:true,\u0022UseLongClick\u0022:false,\u0022LongClickTime\u0022:null,\u0022Selectable\u0022:false,\u0022Bounds\u0022:\u00220,480,800,480\u0022,\u0022Dock\u0022:0,\u0022Margin\u0022:{\u0022Left\u0022:3,\u0022Top\u0022:3,\u0022Right\u0022:3,\u0022Bottom\u0022:3}},\u0022UseTitleBar\u0022:true,\u0022UseLeftSideBar\u0022:false,\u0022UseRightSideBar\u0022:false,\u0022UseFooter\u0022:false,\u0022BarColor\u0022:\u0022Base2\u0022,\u0022OverlaySideBar\u0022:false,\u0022ExpandLeftSideBar\u0022:false,\u0022ExpandRightSideBar\u0022:false,\u0022CustomTheme\u0022:null}","Width":800,"Height":480,"ProjectFolder":"D:\\Project\\Going\\library\\src\\Going\\SampleOpenTK"}
+{
+  "Name": "Sample",
+  "DesignWidth": 800,
+  "DesignHeight": 480,
+  "ProjectFolder": "D:\\Project\\Going\\library\\src\\Going\\SampleOpenTK",
+  "Pages": {
+    "PageTrendGraph": {
+      "Type": "GoPage",
+      "Value": {
+        "Childrens": [
+          {
+            "Type": "GoTableLayoutPanel",
+            "Value": {
+              "Columns": [
+                "100%",
+                "40px",
+                "40px",
+                "40px"
+              ],
+              "Rows": [
+                "100%",
+                "40px"
+              ],
+              "Childrens": {
+                "indexes": {
+                  "209359b2-d0a8-41a5-b075-65a498915b1e": {
+                    "Row": 0,
+                    "Column": 1,
+                    "RowSpan": 1,
+                    "ColSpan": 1
+                  },
+                  "22114064-51a5-46e1-9182-63bf4fdcf292": {
+                    "Row": 0,
+                    "Column": 2,
+                    "RowSpan": 1,
+                    "ColSpan": 1
+                  },
+                  "1db5a074-780b-42df-9fad-bb22259acfc6": {
+                    "Row": 0,
+                    "Column": 3,
+                    "RowSpan": 1,
+                    "ColSpan": 1
+                  },
+                  "ada64582-1f5e-40d8-8621-1a57a9ddc674": {
+                    "Row": 1,
+                    "Column": 1,
+                    "RowSpan": 1,
+                    "ColSpan": 1
+                  },
+                  "af98b7d0-7d5b-4595-804e-6533b8ea332c": {
+                    "Row": 1,
+                    "Column": 2,
+                    "RowSpan": 1,
+                    "ColSpan": 1
+                  },
+                  "d26938dc-ba7f-4c44-9819-096cbed2ef99": {
+                    "Row": 1,
+                    "Column": 3,
+                    "RowSpan": 1,
+                    "ColSpan": 1
+                  },
+                  "d6eeb07d-d125-404f-bcf3-3e017b61abe6": {
+                    "Row": 0,
+                    "Column": 0,
+                    "RowSpan": 2,
+                    "ColSpan": 1
+                  }
+                },
+                "ls": [
+                  {
+                    "Type": "GoSlider",
+                    "Value": {
+                      "IconString": null,
+                      "IconSize": 12,
+                      "IconGap": 5,
+                      "IconDirection": 0,
+                      "Text": "slider",
+                      "FontName": "\uB098\uB214\uACE0\uB515",
+                      "FontSize": 12,
+                      "BackgroundDraw": false,
+                      "BorderOnly": false,
+                      "TextColor": "Fore",
+                      "BoxColor": "Back",
+                      "SliderColor": "red",
+                      "ProgressColor": "base1",
+                      "BorderColor": "danger",
+                      "Round": 1,
+                      "Direction": 1,
+                      "ShowValueLabel": true,
+                      "ValueFormat": "0",
+                      "BarSize": 10,
+                      "HandleRadius": 15,
+                      "EnableShadow": true,
+                      "HandleHoverScale": 1.05,
+                      "Tick": null,
+                      "ShowTicks": false,
+                      "TickCount": 5,
+                      "TickSize": 10,
+                      "Value": 30,
+                      "ValueString": "30",
+                      "Minimum": 0,
+                      "Maximum": 100,
+                      "Id": "209359b2-d0a8-41a5-b075-65a498915b1e",
+                      "Name": "sldTemp",
+                      "Visible": true,
+                      "Enabled": true,
+                      "UseLongClick": false,
+                      "LongClickTime": null,
+                      "Selectable": true,
+                      "Bounds": "641,3,675,345",
+                      "Dock": 0,
+                      "Margin": {
+                        "Left": 3,
+                        "Top": 3,
+                        "Right": 3,
+                        "Bottom": 3
+                      }
+                    }
+                  },
+                  {
+                    "Type": "GoSlider",
+                    "Value": {
+                      "IconString": null,
+                      "IconSize": 12,
+                      "IconGap": 5,
+                      "IconDirection": 0,
+                      "Text": "slider",
+                      "FontName": "\uB098\uB214\uACE0\uB515",
+                      "FontSize": 12,
+                      "BackgroundDraw": false,
+                      "BorderOnly": false,
+                      "TextColor": "Fore",
+                      "BoxColor": "Back",
+                      "SliderColor": "deepskyblue",
+                      "ProgressColor": "base1",
+                      "BorderColor": "danger",
+                      "Round": 1,
+                      "Direction": 1,
+                      "ShowValueLabel": true,
+                      "ValueFormat": "0",
+                      "BarSize": 10,
+                      "HandleRadius": 15,
+                      "EnableShadow": true,
+                      "HandleHoverScale": 1.05,
+                      "Tick": null,
+                      "ShowTicks": false,
+                      "TickCount": 5,
+                      "TickSize": 10,
+                      "Value": 30,
+                      "ValueString": "30",
+                      "Minimum": 0,
+                      "Maximum": 100,
+                      "Id": "22114064-51a5-46e1-9182-63bf4fdcf292",
+                      "Name": "sldHum",
+                      "Visible": true,
+                      "Enabled": true,
+                      "UseLongClick": false,
+                      "LongClickTime": null,
+                      "Selectable": true,
+                      "Bounds": "681,3,715,345",
+                      "Dock": 0,
+                      "Margin": {
+                        "Left": 3,
+                        "Top": 3,
+                        "Right": 3,
+                        "Bottom": 3
+                      }
+                    }
+                  },
+                  {
+                    "Type": "GoSlider",
+                    "Value": {
+                      "IconString": null,
+                      "IconSize": 12,
+                      "IconGap": 5,
+                      "IconDirection": 0,
+                      "Text": "slider",
+                      "FontName": "\uB098\uB214\uACE0\uB515",
+                      "FontSize": 12,
+                      "BackgroundDraw": false,
+                      "BorderOnly": false,
+                      "TextColor": "Fore",
+                      "BoxColor": "Back",
+                      "SliderColor": "orange",
+                      "ProgressColor": "base1",
+                      "BorderColor": "danger",
+                      "Round": 1,
+                      "Direction": 1,
+                      "ShowValueLabel": true,
+                      "ValueFormat": "0",
+                      "BarSize": 10,
+                      "HandleRadius": 15,
+                      "EnableShadow": true,
+                      "HandleHoverScale": 1.05,
+                      "Tick": null,
+                      "ShowTicks": false,
+                      "TickCount": 5,
+                      "TickSize": 10,
+                      "Value": 30,
+                      "ValueString": "30",
+                      "Minimum": 0,
+                      "Maximum": 100,
+                      "Id": "1db5a074-780b-42df-9fad-bb22259acfc6",
+                      "Name": "sldRad",
+                      "Visible": true,
+                      "Enabled": true,
+                      "UseLongClick": false,
+                      "LongClickTime": null,
+                      "Selectable": true,
+                      "Bounds": "721,3,755,345",
+                      "Dock": 0,
+                      "Margin": {
+                        "Left": 3,
+                        "Top": 3,
+                        "Right": 3,
+                        "Bottom": 3
+                      }
+                    }
+                  },
+                  {
+                    "Type": "GoLabel",
+                    "Value": {
+                      "IconString": null,
+                      "IconSize": 12,
+                      "IconDirection": 0,
+                      "IconGap": 5,
+                      "Text": "\uC628\uB3C4",
+                      "FontName": "\uB098\uB214\uACE0\uB515",
+                      "FontStyle": 0,
+                      "FontSize": 12,
+                      "TextPadding": {
+                        "Left": 0,
+                        "Top": 0,
+                        "Right": 0,
+                        "Bottom": 0
+                      },
+                      "TextColor": "red",
+                      "LabelColor": "Base2",
+                      "BorderColor": "Base2",
+                      "Round": 1,
+                      "BorderWidth": 1,
+                      "BackgroundDraw": false,
+                      "BorderOnly": false,
+                      "ContentAlignment": 4,
+                      "AutoFontSize": 0,
+                      "AutoIconSize": 0,
+                      "Id": "ada64582-1f5e-40d8-8621-1a57a9ddc674",
+                      "Name": null,
+                      "Visible": true,
+                      "Enabled": true,
+                      "UseLongClick": false,
+                      "LongClickTime": null,
+                      "Selectable": false,
+                      "Bounds": "641,351,675,385",
+                      "Dock": 0,
+                      "Margin": {
+                        "Left": 3,
+                        "Top": 3,
+                        "Right": 3,
+                        "Bottom": 3
+                      }
+                    }
+                  },
+                  {
+                    "Type": "GoLabel",
+                    "Value": {
+                      "IconString": null,
+                      "IconSize": 12,
+                      "IconDirection": 0,
+                      "IconGap": 5,
+                      "Text": "\uC2B5\uB3C4",
+                      "FontName": "\uB098\uB214\uACE0\uB515",
+                      "FontStyle": 0,
+                      "FontSize": 12,
+                      "TextPadding": {
+                        "Left": 0,
+                        "Top": 0,
+                        "Right": 0,
+                        "Bottom": 0
+                      },
+                      "TextColor": "deepskyblue",
+                      "LabelColor": "Base2",
+                      "BorderColor": "Base2",
+                      "Round": 1,
+                      "BorderWidth": 1,
+                      "BackgroundDraw": false,
+                      "BorderOnly": false,
+                      "ContentAlignment": 4,
+                      "AutoFontSize": 0,
+                      "AutoIconSize": 0,
+                      "Id": "af98b7d0-7d5b-4595-804e-6533b8ea332c",
+                      "Name": null,
+                      "Visible": true,
+                      "Enabled": true,
+                      "UseLongClick": false,
+                      "LongClickTime": null,
+                      "Selectable": false,
+                      "Bounds": "681,351,715,385",
+                      "Dock": 0,
+                      "Margin": {
+                        "Left": 3,
+                        "Top": 3,
+                        "Right": 3,
+                        "Bottom": 3
+                      }
+                    }
+                  },
+                  {
+                    "Type": "GoLabel",
+                    "Value": {
+                      "IconString": null,
+                      "IconSize": 12,
+                      "IconDirection": 0,
+                      "IconGap": 5,
+                      "Text": "\uAD11\uB7C9",
+                      "FontName": "\uB098\uB214\uACE0\uB515",
+                      "FontStyle": 0,
+                      "FontSize": 12,
+                      "TextPadding": {
+                        "Left": 0,
+                        "Top": 0,
+                        "Right": 0,
+                        "Bottom": 0
+                      },
+                      "TextColor": "orange",
+                      "LabelColor": "Base2",
+                      "BorderColor": "Base2",
+                      "Round": 1,
+                      "BorderWidth": 1,
+                      "BackgroundDraw": false,
+                      "BorderOnly": false,
+                      "ContentAlignment": 4,
+                      "AutoFontSize": 0,
+                      "AutoIconSize": 0,
+                      "Id": "d26938dc-ba7f-4c44-9819-096cbed2ef99",
+                      "Name": null,
+                      "Visible": true,
+                      "Enabled": true,
+                      "UseLongClick": false,
+                      "LongClickTime": null,
+                      "Selectable": false,
+                      "Bounds": "721,351,755,385",
+                      "Dock": 0,
+                      "Margin": {
+                        "Left": 3,
+                        "Top": 3,
+                        "Right": 3,
+                        "Bottom": 3
+                      }
+                    }
+                  },
+                  {
+                    "Type": "GoTrendGraph",
+                    "Value": {
+                      "GridColor": "Base3",
+                      "TextColor": "Fore",
+                      "RemarkColor": "Base2",
+                      "GraphColor": "Back",
+                      "FontName": "\uB098\uB214\uACE0\uB515",
+                      "FontStyle": 0,
+                      "FontSize": 12,
+                      "MaximumXScale": "00:01:00",
+                      "XScale": "00:00:01",
+                      "XAxisGraduationTime": "00:00:00.2000000",
+                      "YAxisGraduationCount": 10,
+                      "TimeFormatString": "HH:MM:ss",
+                      "ValueFormatString": null,
+                      "Interval": 10,
+                      "IsStart": false,
+                      "Series": [
+                        {
+                          "Name": "Temp",
+                          "Alias": "\uC628\uB3C4",
+                          "Color": "Red",
+                          "Visible": true,
+                          "Minimum": 0,
+                          "Maximum": 100
+                        },
+                        {
+                          "Name": "Hum",
+                          "Alias": "\uC2B5\uB3C4",
+                          "Color": "deepskyblue",
+                          "Visible": true,
+                          "Minimum": 0,
+                          "Maximum": 100
+                        },
+                        {
+                          "Name": "Rad",
+                          "Alias": "\uAD11\uB7C9",
+                          "Color": "orange",
+                          "Visible": true,
+                          "Minimum": 0,
+                          "Maximum": 100
+                        }
+                      ],
+                      "Id": "d6eeb07d-d125-404f-bcf3-3e017b61abe6",
+                      "Name": "grpTrend",
+                      "Visible": true,
+                      "Enabled": true,
+                      "UseLongClick": false,
+                      "LongClickTime": null,
+                      "Selectable": true,
+                      "Bounds": "3,3,635,385",
+                      "Dock": 0,
+                      "Margin": {
+                        "Left": 3,
+                        "Top": 3,
+                        "Right": 3,
+                        "Bottom": 3
+                      }
+                    }
+                  }
+                ]
+              },
+              "Id": "50b3282e-5256-4eae-bde7-21a728e2ada8",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": false,
+              "Bounds": "20,20,779,409",
+              "Dock": 5,
+              "Margin": {
+                "Left": 20,
+                "Top": 20,
+                "Right": 20,
+                "Bottom": 20
+              }
+            }
+          }
+        ],
+        "BackgroundImage": null,
+        "Id": "3a635ac9-8742-42ef-bde1-fa26045222f5",
+        "Name": "PageTrendGraph",
+        "Visible": true,
+        "Enabled": true,
+        "UseLongClick": false,
+        "LongClickTime": null,
+        "Selectable": false,
+        "Bounds": "0,50,800,480",
+        "Dock": 0,
+        "Margin": {
+          "Left": 3,
+          "Top": 3,
+          "Right": 3,
+          "Bottom": 3
+        }
+      }
+    },
+    "PageDataGrid": {
+      "Type": "GoPage",
+      "Value": {
+        "Childrens": [
+          {
+            "Type": "GoDataGrid",
+            "Value": {
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 12,
+              "TextColor": "Fore",
+              "RowColor": "Base2",
+              "SummaryRowColor": "Base1",
+              "ColumnColor": "Base1",
+              "SelectedRowColor": "Select",
+              "BoxColor": "Base2",
+              "ScrollBarColor": "Base1",
+              "RowHeight": 30,
+              "ColumnHeight": 30,
+              "ScrollMode": 1,
+              "SelectionMode": 2,
+              "ColumnGroups": [],
+              "Columns": [],
+              "SummaryRows": [],
+              "Id": "4a44f4cd-742b-4619-bc9d-2dcdb5c34045",
+              "Name": "dg",
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": true,
+              "Bounds": "20,20,779,409",
+              "Dock": 5,
+              "Margin": {
+                "Left": 20,
+                "Top": 20,
+                "Right": 20,
+                "Bottom": 20
+              }
+            }
+          }
+        ],
+        "BackgroundImage": null,
+        "Id": "9b83b685-8bf8-41c2-b45c-af103792b423",
+        "Name": "PageDataGrid",
+        "Visible": true,
+        "Enabled": true,
+        "UseLongClick": false,
+        "LongClickTime": null,
+        "Selectable": false,
+        "Bounds": "0,50,800,480",
+        "Dock": 0,
+        "Margin": {
+          "Left": 3,
+          "Top": 3,
+          "Right": 3,
+          "Bottom": 3
+        }
+      }
+    },
+    "PageBarGraph": {
+      "Type": "GoPage",
+      "Value": {
+        "Childrens": [
+          {
+            "Type": "GoBarGraph",
+            "Value": {
+              "GridColor": "Base3",
+              "TextColor": "Fore",
+              "RemarkColor": "Base2",
+              "GraphColor": "Back",
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 12,
+              "GraduationCount": 10,
+              "FormatString": null,
+              "Mode": 1,
+              "Direction": 1,
+              "Series": [
+                {
+                  "Name": "Temp",
+                  "Alias": "\uC628\uB3C4",
+                  "Color": "Red",
+                  "Visible": true
+                },
+                {
+                  "Name": "Hum",
+                  "Alias": "\uC2B5\uB3C4",
+                  "Color": "deepskyblue",
+                  "Visible": true
+                },
+                {
+                  "Name": "Rad",
+                  "Alias": "\uAD11\uB7C9",
+                  "Color": "orange",
+                  "Visible": true
+                }
+              ],
+              "BarSize": 20,
+              "BarGap": 20,
+              "Minimum": 0,
+              "Maximum": 100,
+              "Id": "223b8ee0-381d-48cd-83e8-f39841e1d396",
+              "Name": "grpBar",
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": true,
+              "Bounds": "20,20,779,409",
+              "Dock": 5,
+              "Margin": {
+                "Left": 20,
+                "Top": 20,
+                "Right": 20,
+                "Bottom": 20
+              }
+            }
+          }
+        ],
+        "BackgroundImage": null,
+        "Id": "38cf0191-efec-498e-9d73-812f51c2feba",
+        "Name": "PageBarGraph",
+        "Visible": true,
+        "Enabled": true,
+        "UseLongClick": false,
+        "LongClickTime": null,
+        "Selectable": false,
+        "Bounds": "0,50,800,480",
+        "Dock": 0,
+        "Margin": {
+          "Left": 3,
+          "Top": 3,
+          "Right": 3,
+          "Bottom": 3
+        }
+      }
+    },
+    "PageLineGraph": {
+      "Type": "GoPage",
+      "Value": {
+        "Childrens": [
+          {
+            "Type": "GoLineGraph",
+            "Value": {
+              "GridColor": "Base3",
+              "TextColor": "Fore",
+              "RemarkColor": "Base2",
+              "GraphColor": "Back",
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 12,
+              "GraduationCount": 10,
+              "FormatString": null,
+              "Series": [
+                {
+                  "Name": "Temp",
+                  "Alias": "\uC628\uB3C4",
+                  "Color": "Red",
+                  "Visible": true,
+                  "Minimum": 0,
+                  "Maximum": 100
+                },
+                {
+                  "Name": "Hum",
+                  "Alias": "\uC2B5\uB3C4",
+                  "Color": "deepskyblue",
+                  "Visible": true,
+                  "Minimum": 0,
+                  "Maximum": 100
+                },
+                {
+                  "Name": "Rad",
+                  "Alias": "\uAD11\uB7C9",
+                  "Color": "orange",
+                  "Visible": true,
+                  "Minimum": 0,
+                  "Maximum": 100
+                }
+              ],
+              "PointWidth": 70,
+              "Id": "f8114ede-301f-4085-87b3-13c949a35aca",
+              "Name": "grpLine",
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": true,
+              "Bounds": "20,20,779,409",
+              "Dock": 5,
+              "Margin": {
+                "Left": 20,
+                "Top": 20,
+                "Right": 20,
+                "Bottom": 20
+              }
+            }
+          }
+        ],
+        "BackgroundImage": null,
+        "Id": "c12a751f-4b6e-4f37-9c4c-f446a280074f",
+        "Name": "PageLineGraph",
+        "Visible": true,
+        "Enabled": true,
+        "UseLongClick": false,
+        "LongClickTime": null,
+        "Selectable": false,
+        "Bounds": "0,50,800,480",
+        "Dock": 0,
+        "Margin": {
+          "Left": 3,
+          "Top": 3,
+          "Right": 3,
+          "Bottom": 3
+        }
+      }
+    },
+    "PageTimeGraph": {
+      "Type": "GoPage",
+      "Value": {
+        "Childrens": [
+          {
+            "Type": "GoTimeGraph",
+            "Value": {
+              "GridColor": "Base3",
+              "TextColor": "Fore",
+              "RemarkColor": "Base2",
+              "GraphColor": "Back",
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 12,
+              "XScale": "01:00:00",
+              "XAxisGraduationTime": "00:10:00",
+              "YAxisGraduationCount": 10,
+              "TimeFormatString": "M/d\r\nHH:mm",
+              "ValueFormatString": null,
+              "Series": [
+                {
+                  "Name": "Temp",
+                  "Alias": "\uC628\uB3C4",
+                  "Color": "Red",
+                  "Visible": true,
+                  "Minimum": 0,
+                  "Maximum": 100
+                },
+                {
+                  "Name": "Hum",
+                  "Alias": "\uC2B5\uB3C4",
+                  "Color": "deepskyblue",
+                  "Visible": true,
+                  "Minimum": 0,
+                  "Maximum": 100
+                },
+                {
+                  "Name": "Rad",
+                  "Alias": "\uAD11\uB7C9",
+                  "Color": "orange",
+                  "Visible": true,
+                  "Minimum": 0,
+                  "Maximum": 100
+                }
+              ],
+              "Id": "0adb653f-9619-487b-986b-68f9e018714d",
+              "Name": "grpTime",
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": true,
+              "Bounds": "20,20,779,409",
+              "Dock": 5,
+              "Margin": {
+                "Left": 20,
+                "Top": 20,
+                "Right": 20,
+                "Bottom": 20
+              }
+            }
+          }
+        ],
+        "BackgroundImage": null,
+        "Id": "2d78652f-b617-4366-a00d-379d4fad6ce2",
+        "Name": "PageTimeGraph",
+        "Visible": true,
+        "Enabled": true,
+        "UseLongClick": false,
+        "LongClickTime": null,
+        "Selectable": false,
+        "Bounds": "0,50,800,480",
+        "Dock": 0,
+        "Margin": {
+          "Left": 3,
+          "Top": 3,
+          "Right": 3,
+          "Bottom": 3
+        }
+      }
+    },
+    "PageGauge": {
+      "Type": "GoPage",
+      "Value": {
+        "Childrens": [
+          {
+            "Type": "GoGauge",
+            "Value": {
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 24,
+              "Title": "Gauge",
+              "TitleFontSize": 11,
+              "TextColor": "Fore",
+              "FillColor": "Good",
+              "EmptyColor": "Base1",
+              "BorderColor": "Base1",
+              "Value": 0,
+              "Minimum": 0,
+              "Maximum": 100,
+              "Format": "0",
+              "StartAngle": 135,
+              "SweepAngle": 270,
+              "BarSize": 24,
+              "Gap": 40,
+              "Id": "da92b458-af36-4449-9211-b94d363eb753",
+              "Name": "gauge",
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": false,
+              "Bounds": "88,119,268,299",
+              "Dock": 0,
+              "Margin": {
+                "Left": 3,
+                "Top": 3,
+                "Right": 3,
+                "Bottom": 3
+              }
+            }
+          },
+          {
+            "Type": "GoKnob",
+            "Value": {
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 24,
+              "TextColor": "Fore",
+              "KnobColor": "Base3",
+              "CursorColor": "Fore",
+              "Value": 0,
+              "Minimum": 0,
+              "Maximum": 100,
+              "Tick": null,
+              "Format": "0",
+              "SweepAngle": 270,
+              "DrawText": true,
+              "Id": "0f6960b0-a671-4612-81dd-f6513fa70b0e",
+              "Name": "knob",
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": true,
+              "Bounds": "508,119,688,299",
+              "Dock": 0,
+              "Margin": {
+                "Left": 3,
+                "Top": 3,
+                "Right": 3,
+                "Bottom": 3
+              }
+            }
+          },
+          {
+            "Type": "GoMeter",
+            "Value": {
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 24,
+              "Title": "Meter",
+              "TitleFontSize": 11,
+              "RemarkFontSize": 10,
+              "TextColor": "Fore",
+              "NeedleColor": "Fore",
+              "NeedlePointColor": "Red",
+              "RemarkColor": "Base5",
+              "Value": 0,
+              "Minimum": 0,
+              "Maximum": 100,
+              "GraduationLarge": 10,
+              "GraduationSmall": 2,
+              "Format": "0",
+              "Gap": 5,
+              "Id": "cdd929df-c526-4bbb-9fb1-763c029bd067",
+              "Name": "meter",
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": false,
+              "Bounds": "298,119,478,299",
+              "Dock": 0,
+              "Margin": {
+                "Left": 3,
+                "Top": 3,
+                "Right": 3,
+                "Bottom": 3
+              }
+            }
+          }
+        ],
+        "BackgroundImage": null,
+        "Id": "da4d32d7-b025-438a-9e42-a5be833a6b78",
+        "Name": "PageGauge",
+        "Visible": true,
+        "Enabled": true,
+        "UseLongClick": false,
+        "LongClickTime": null,
+        "Selectable": false,
+        "Bounds": "0,50,800,480",
+        "Dock": 0,
+        "Margin": {
+          "Left": 3,
+          "Top": 3,
+          "Right": 3,
+          "Bottom": 3
+        }
+      }
+    },
+    "PageSwitchPanel": {
+      "Type": "GoPage",
+      "Value": {
+        "Childrens": [
+          {
+            "Type": "GoTableLayoutPanel",
+            "Value": {
+              "Columns": [
+                "25%",
+                "25%",
+                "25%",
+                "25%"
+              ],
+              "Rows": [
+                "100%",
+                "80px"
+              ],
+              "Childrens": {
+                "indexes": {
+                  "b1ed88ef-6e6f-4ebc-978a-1f12be1d102c": {
+                    "Row": 0,
+                    "Column": 0,
+                    "RowSpan": 1,
+                    "ColSpan": 4
+                  },
+                  "df4d1f9a-d47e-4a62-89a3-c33ba8df8aa2": {
+                    "Row": 1,
+                    "Column": 0,
+                    "RowSpan": 1,
+                    "ColSpan": 1
+                  },
+                  "01c3a2ac-7813-4c28-b381-19bdb70d2377": {
+                    "Row": 1,
+                    "Column": 1,
+                    "RowSpan": 1,
+                    "ColSpan": 1
+                  },
+                  "0bf8486e-7b03-4242-8426-c88e63727f10": {
+                    "Row": 1,
+                    "Column": 2,
+                    "RowSpan": 1,
+                    "ColSpan": 1
+                  },
+                  "011800a8-7c27-4184-8632-a170f8cbfe7a": {
+                    "Row": 1,
+                    "Column": 3,
+                    "RowSpan": 1,
+                    "ColSpan": 1
+                  }
+                },
+                "ls": [
+                  {
+                    "Type": "GoSwitchPanel",
+                    "Value": {
+                      "Pages": [
+                        {
+                          "Name": "pnl1",
+                          "Childrens": [
+                            {
+                              "Type": "GoListBox",
+                              "Value": {
+                                "IconSize": 12,
+                                "IconGap": 5,
+                                "FontName": "\uB098\uB214\uACE0\uB515",
+                                "FontStyle": 0,
+                                "FontSize": 12,
+                                "TextColor": "Fore",
+                                "BoxColor": "Base1",
+                                "BorderColor": "Base3",
+                                "SelectColor": "Select",
+                                "Round": 1,
+                                "BackgroundDraw": true,
+                                "ItemHeight": 30,
+                                "ItemAlignment": 4,
+                                "SelectionMode": 1,
+                                "Items": [],
+                                "Id": "2a828d5b-f4ea-44db-b146-fafada350f3b",
+                                "Name": "listBox",
+                                "Visible": true,
+                                "Enabled": true,
+                                "UseLongClick": false,
+                                "LongClickTime": null,
+                                "Selectable": true,
+                                "Bounds": "10,10,762,312",
+                                "Dock": 0,
+                                "Margin": {
+                                  "Left": 3,
+                                  "Top": 3,
+                                  "Right": 3,
+                                  "Bottom": 3
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "Name": "pnl2",
+                          "Childrens": [
+                            {
+                              "Type": "GoLabel",
+                              "Value": {
+                                "IconString": null,
+                                "IconSize": 12,
+                                "IconDirection": 0,
+                                "IconGap": 5,
+                                "Text": "Page 2",
+                                "FontName": "\uB098\uB214\uACE0\uB515",
+                                "FontStyle": 0,
+                                "FontSize": 18,
+                                "TextPadding": {
+                                  "Left": 0,
+                                  "Top": 0,
+                                  "Right": 0,
+                                  "Bottom": 0
+                                },
+                                "TextColor": "Fore",
+                                "LabelColor": "Base2",
+                                "BorderColor": "Base2",
+                                "Round": 1,
+                                "BorderWidth": 1,
+                                "BackgroundDraw": false,
+                                "BorderOnly": false,
+                                "ContentAlignment": 3,
+                                "AutoFontSize": 0,
+                                "AutoIconSize": 0,
+                                "Id": "06b6f9ff-be94-4966-8720-e8a65e15d31d",
+                                "Name": null,
+                                "Visible": true,
+                                "Enabled": true,
+                                "UseLongClick": false,
+                                "LongClickTime": null,
+                                "Selectable": false,
+                                "Bounds": "10,10,94.5,40",
+                                "Dock": 0,
+                                "Margin": {
+                                  "Left": 3,
+                                  "Top": 3,
+                                  "Right": 3,
+                                  "Bottom": 3
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "Name": "pnl3",
+                          "Childrens": [
+                            {
+                              "Type": "GoLabel",
+                              "Value": {
+                                "IconString": null,
+                                "IconSize": 12,
+                                "IconDirection": 0,
+                                "IconGap": 5,
+                                "Text": "Page 3",
+                                "FontName": "\uB098\uB214\uACE0\uB515",
+                                "FontStyle": 0,
+                                "FontSize": 18,
+                                "TextPadding": {
+                                  "Left": 0,
+                                  "Top": 0,
+                                  "Right": 0,
+                                  "Bottom": 0
+                                },
+                                "TextColor": "Fore",
+                                "LabelColor": "Base2",
+                                "BorderColor": "Base2",
+                                "Round": 1,
+                                "BorderWidth": 1,
+                                "BackgroundDraw": false,
+                                "BorderOnly": false,
+                                "ContentAlignment": 3,
+                                "AutoFontSize": 0,
+                                "AutoIconSize": 0,
+                                "Id": "4204bd33-6e65-44ed-8e54-29eafdf43c3e",
+                                "Name": null,
+                                "Visible": true,
+                                "Enabled": true,
+                                "UseLongClick": false,
+                                "LongClickTime": null,
+                                "Selectable": false,
+                                "Bounds": "10,10,94.5,40",
+                                "Dock": 0,
+                                "Margin": {
+                                  "Left": 3,
+                                  "Top": 3,
+                                  "Right": 3,
+                                  "Bottom": 3
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "Name": "pnl4",
+                          "Childrens": [
+                            {
+                              "Type": "GoLabel",
+                              "Value": {
+                                "IconString": null,
+                                "IconSize": 12,
+                                "IconDirection": 0,
+                                "IconGap": 5,
+                                "Text": "Page 4",
+                                "FontName": "\uB098\uB214\uACE0\uB515",
+                                "FontStyle": 0,
+                                "FontSize": 18,
+                                "TextPadding": {
+                                  "Left": 0,
+                                  "Top": 0,
+                                  "Right": 0,
+                                  "Bottom": 0
+                                },
+                                "TextColor": "Fore",
+                                "LabelColor": "Base2",
+                                "BorderColor": "Base2",
+                                "Round": 1,
+                                "BorderWidth": 1,
+                                "BackgroundDraw": false,
+                                "BorderOnly": false,
+                                "ContentAlignment": 3,
+                                "AutoFontSize": 0,
+                                "AutoIconSize": 0,
+                                "Id": "57efef22-261c-4f60-8512-cfef13796575",
+                                "Name": null,
+                                "Visible": true,
+                                "Enabled": true,
+                                "UseLongClick": false,
+                                "LongClickTime": null,
+                                "Selectable": false,
+                                "Bounds": "10,10,94.5,40",
+                                "Dock": 0,
+                                "Margin": {
+                                  "Left": 3,
+                                  "Top": 3,
+                                  "Right": 3,
+                                  "Bottom": 3
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ],
+                      "Id": "b1ed88ef-6e6f-4ebc-978a-1f12be1d102c",
+                      "Name": "swpnl",
+                      "Visible": true,
+                      "Enabled": true,
+                      "UseLongClick": false,
+                      "LongClickTime": null,
+                      "Selectable": false,
+                      "Bounds": "3,3,775,325",
+                      "Dock": 0,
+                      "Margin": {
+                        "Left": 3,
+                        "Top": 3,
+                        "Right": 3,
+                        "Bottom": 3
+                      }
+                    }
+                  },
+                  {
+                    "Type": "GoRadioButton",
+                    "Value": {
+                      "IconString": null,
+                      "IconSize": 12,
+                      "IconDirection": 0,
+                      "IconGap": 5,
+                      "Text": "Page1",
+                      "FontName": "\uB098\uB214\uACE0\uB515",
+                      "FontStyle": 0,
+                      "FontSize": 12,
+                      "TextColor": "Fore",
+                      "ButtonColor": "Base3",
+                      "CheckedButtonColor": "Select",
+                      "BorderColor": "Base3",
+                      "CheckedBorderColor": "Select",
+                      "Round": 1,
+                      "BorderWidth": 1,
+                      "FillStyle": 0,
+                      "Checked": false,
+                      "AutoFontSize": 0,
+                      "AutoIconSize": 0,
+                      "Id": "df4d1f9a-d47e-4a62-89a3-c33ba8df8aa2",
+                      "Name": "btnPage1",
+                      "Visible": true,
+                      "Enabled": true,
+                      "UseLongClick": false,
+                      "LongClickTime": null,
+                      "Selectable": true,
+                      "Bounds": "3,331,192,405",
+                      "Dock": 0,
+                      "Margin": {
+                        "Left": 3,
+                        "Top": 3,
+                        "Right": 3,
+                        "Bottom": 3
+                      }
+                    }
+                  },
+                  {
+                    "Type": "GoRadioButton",
+                    "Value": {
+                      "IconString": null,
+                      "IconSize": 12,
+                      "IconDirection": 0,
+                      "IconGap": 5,
+                      "Text": "Page2",
+                      "FontName": "\uB098\uB214\uACE0\uB515",
+                      "FontStyle": 0,
+                      "FontSize": 12,
+                      "TextColor": "Fore",
+                      "ButtonColor": "Base3",
+                      "CheckedButtonColor": "Select",
+                      "BorderColor": "Base3",
+                      "CheckedBorderColor": "Select",
+                      "Round": 1,
+                      "BorderWidth": 1,
+                      "FillStyle": 0,
+                      "Checked": false,
+                      "AutoFontSize": 0,
+                      "AutoIconSize": 0,
+                      "Id": "01c3a2ac-7813-4c28-b381-19bdb70d2377",
+                      "Name": "btnPage2",
+                      "Visible": true,
+                      "Enabled": true,
+                      "UseLongClick": false,
+                      "LongClickTime": null,
+                      "Selectable": true,
+                      "Bounds": "198,331,386,405",
+                      "Dock": 0,
+                      "Margin": {
+                        "Left": 3,
+                        "Top": 3,
+                        "Right": 3,
+                        "Bottom": 3
+                      }
+                    }
+                  },
+                  {
+                    "Type": "GoRadioButton",
+                    "Value": {
+                      "IconString": null,
+                      "IconSize": 12,
+                      "IconDirection": 0,
+                      "IconGap": 5,
+                      "Text": "Page3",
+                      "FontName": "\uB098\uB214\uACE0\uB515",
+                      "FontStyle": 0,
+                      "FontSize": 12,
+                      "TextColor": "Fore",
+                      "ButtonColor": "Base3",
+                      "CheckedButtonColor": "Select",
+                      "BorderColor": "Base3",
+                      "CheckedBorderColor": "Select",
+                      "Round": 1,
+                      "BorderWidth": 1,
+                      "FillStyle": 0,
+                      "Checked": false,
+                      "AutoFontSize": 0,
+                      "AutoIconSize": 0,
+                      "Id": "0bf8486e-7b03-4242-8426-c88e63727f10",
+                      "Name": "btnPage3",
+                      "Visible": true,
+                      "Enabled": true,
+                      "UseLongClick": false,
+                      "LongClickTime": null,
+                      "Selectable": true,
+                      "Bounds": "392,331,580,405",
+                      "Dock": 0,
+                      "Margin": {
+                        "Left": 3,
+                        "Top": 3,
+                        "Right": 3,
+                        "Bottom": 3
+                      }
+                    }
+                  },
+                  {
+                    "Type": "GoRadioButton",
+                    "Value": {
+                      "IconString": null,
+                      "IconSize": 12,
+                      "IconDirection": 0,
+                      "IconGap": 5,
+                      "Text": "Page4",
+                      "FontName": "\uB098\uB214\uACE0\uB515",
+                      "FontStyle": 0,
+                      "FontSize": 12,
+                      "TextColor": "Fore",
+                      "ButtonColor": "Base3",
+                      "CheckedButtonColor": "Select",
+                      "BorderColor": "Base3",
+                      "CheckedBorderColor": "Select",
+                      "Round": 1,
+                      "BorderWidth": 1,
+                      "FillStyle": 0,
+                      "Checked": false,
+                      "AutoFontSize": 0,
+                      "AutoIconSize": 0,
+                      "Id": "011800a8-7c27-4184-8632-a170f8cbfe7a",
+                      "Name": "btnPage4",
+                      "Visible": true,
+                      "Enabled": true,
+                      "UseLongClick": false,
+                      "LongClickTime": null,
+                      "Selectable": true,
+                      "Bounds": "586,331,775,405",
+                      "Dock": 0,
+                      "Margin": {
+                        "Left": 3,
+                        "Top": 3,
+                        "Right": 3,
+                        "Bottom": 3
+                      }
+                    }
+                  }
+                ]
+              },
+              "Id": "48ddb8e2-916f-4425-8b07-9eef9f415a3f",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": false,
+              "Bounds": "10,10,789,419",
+              "Dock": 5,
+              "Margin": {
+                "Left": 10,
+                "Top": 10,
+                "Right": 10,
+                "Bottom": 10
+              }
+            }
+          }
+        ],
+        "BackgroundImage": null,
+        "Id": "4bc78491-6a29-4913-b652-f5fca30294e6",
+        "Name": "PageSwitchPanel",
+        "Visible": true,
+        "Enabled": true,
+        "UseLongClick": false,
+        "LongClickTime": null,
+        "Selectable": false,
+        "Bounds": "0,50,800,480",
+        "Dock": 0,
+        "Margin": {
+          "Left": 3,
+          "Top": 3,
+          "Right": 3,
+          "Bottom": 3
+        }
+      }
+    }
+  },
+  "Windows": {},
+  "Images": {},
+  "Fonts": {},
+  "TitleBar": {
+    "BarSize": 50,
+    "Title": "Sample",
+    "TitleImage": null,
+    "LeftExpandIconString": "fa-bars",
+    "LeftCollapseIconString": "fa-chevron-left",
+    "RightExpandIconString": "fa-ellipsis-vertical",
+    "RightCollapseIconString": "fa-chevron-right",
+    "IconSize": 16,
+    "TextColor": "Fore",
+    "FontName": "\uB098\uB214\uACE0\uB515",
+    "FontStyle": 0,
+    "FontSize": 16,
+    "Childrens": [
+      {
+        "Type": "GoNavigator",
+        "Value": {
+          "IconSize": 12,
+          "IconDirection": 0,
+          "IconGap": 5,
+          "FontName": "\uB098\uB214\uACE0\uB515",
+          "FontStyle": 0,
+          "FontSize": 12,
+          "TextColor": "Fore",
+          "Indent": 20,
+          "MenuGap": 30,
+          "Menus": [
+            {
+              "IconString": null,
+              "Text": "Gauge",
+              "Tag": null,
+              "PageName": "PageGauge"
+            },
+            {
+              "IconString": null,
+              "Text": "BarGraph",
+              "Tag": null,
+              "PageName": "PageBarGraph"
+            },
+            {
+              "IconString": null,
+              "Text": "LineGraph",
+              "Tag": null,
+              "PageName": "PageLineGraph"
+            },
+            {
+              "IconString": null,
+              "Text": "TimeGraph",
+              "Tag": null,
+              "PageName": "PageTimeGraph"
+            },
+            {
+              "IconString": null,
+              "Text": "TrendGraph",
+              "Tag": null,
+              "PageName": "PageTrendGraph"
+            },
+            {
+              "IconString": null,
+              "Text": "SwitchPanel",
+              "Tag": null,
+              "PageName": "PageSwitchPanel"
+            },
+            {
+              "IconString": null,
+              "Text": "DataGrid",
+              "Tag": null,
+              "PageName": "PageDataGrid"
+            }
+          ],
+          "Direction": 0,
+          "Id": "8496a09a-d5e6-49f7-81cc-90e2ee5ab022",
+          "Name": null,
+          "Visible": true,
+          "Enabled": true,
+          "UseLongClick": false,
+          "LongClickTime": null,
+          "Selectable": false,
+          "Bounds": "3,3,720.744,46",
+          "Dock": 5,
+          "Margin": {
+            "Left": 3,
+            "Top": 3,
+            "Right": 3,
+            "Bottom": 3
+          }
+        }
+      }
+    ],
+    "Id": "2ff19f45-4c04-42d6-bd7f-e79c068865fc",
+    "Name": null,
+    "Visible": true,
+    "Enabled": true,
+    "UseLongClick": false,
+    "LongClickTime": null,
+    "Selectable": false,
+    "Bounds": "0,0,800,50",
+    "Dock": 0,
+    "Margin": {
+      "Left": 3,
+      "Top": 3,
+      "Right": 3,
+      "Bottom": 3
+    }
+  },
+  "LeftSideBar": {
+    "BarSize": 150,
+    "Fixed": false,
+    "Opening": false,
+    "Closing": false,
+    "Childrens": [],
+    "Id": "f14be30b-0970-4406-ba1e-29983c42b341",
+    "Name": null,
+    "Visible": false,
+    "Enabled": true,
+    "UseLongClick": false,
+    "LongClickTime": null,
+    "Selectable": false,
+    "Bounds": "0,50,0,480",
+    "Dock": 0,
+    "Margin": {
+      "Left": 3,
+      "Top": 3,
+      "Right": 3,
+      "Bottom": 3
+    }
+  },
+  "RightSideBar": {
+    "BarSize": 150,
+    "Fixed": false,
+    "Opening": false,
+    "Closing": false,
+    "Childrens": [],
+    "Id": "954d67b3-6255-4042-af1a-dd482b33715f",
+    "Name": null,
+    "Visible": false,
+    "Enabled": true,
+    "UseLongClick": false,
+    "LongClickTime": null,
+    "Selectable": false,
+    "Bounds": "800,50,800,480",
+    "Dock": 0,
+    "Margin": {
+      "Left": 3,
+      "Top": 3,
+      "Right": 3,
+      "Bottom": 3
+    }
+  },
+  "Footer": {
+    "BarSize": 40,
+    "Childrens": [],
+    "Id": "a0a1dd3a-76c1-4a58-b5c2-8e7f58c15796",
+    "Name": null,
+    "Visible": false,
+    "Enabled": true,
+    "UseLongClick": false,
+    "LongClickTime": null,
+    "Selectable": false,
+    "Bounds": "0,480,800,480",
+    "Dock": 0,
+    "Margin": {
+      "Left": 3,
+      "Top": 3,
+      "Right": 3,
+      "Bottom": 3
+    }
+  },
+  "UseTitleBar": true,
+  "UseLeftSideBar": false,
+  "UseRightSideBar": false,
+  "UseFooter": false,
+  "BarColor": "Base2",
+  "OverlaySideBar": false,
+  "ExpandLeftSideBar": false,
+  "ExpandRightSideBar": false,
+  "CustomTheme": null
+}
