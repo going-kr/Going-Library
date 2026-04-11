@@ -14,24 +14,40 @@ using System.Threading.Tasks;
 
 namespace Going.UI.Controls
 {
+    /// <summary>
+    /// 램프(표시등)가 포함된 버튼 컨트롤. On/Off 상태를 램프 색상으로 표시합니다.
+    /// </summary>
     public class GoLampButton : GoControl
     {
         #region Properties
+        /// <summary>버튼에 표시할 텍스트</summary>
         [GoMultiLineProperty(PCategory.Control, 0)] public string Text { get; set; } = "button";
+        /// <summary>글꼴 이름</summary>
         [GoFontNameProperty(PCategory.Control, 1)] public string FontName { get; set; } = "나눔고딕";
+        /// <summary>글꼴 스타일</summary>
         [GoProperty(PCategory.Control, 2)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        /// <summary>글꼴 크기</summary>
         [GoProperty(PCategory.Control, 3)] public float FontSize { get; set; } = 12;
 
+        /// <summary>텍스트 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 4)] public string TextColor { get; set; } = "Fore";
+        /// <summary>버튼 배경 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 5)] public string ButtonColor { get; set; } = "Base3";
+        /// <summary>테두리 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 6)] public string BorderColor { get; set; } = "Base3";
+        /// <summary>켜짐 상태 램프 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 7)] public string OnColor { get; set; } = "Good";
+        /// <summary>꺼짐 상태 램프 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 8)] public string OffColor { get; set; } = "Base2";
+        /// <summary>모서리 둥글기 유형</summary>
         [GoProperty(PCategory.Control, 9)] public GoRoundType Round { get; set; } = GoRoundType.All;
+        /// <summary>테두리 두께</summary>
         [GoProperty(PCategory.Control, 10)] public float BorderWidth { get; set; } = 1F;
+        /// <summary>버튼 채우기 스타일</summary>
         [GoProperty(PCategory.Control, 11)] public GoButtonFillStyle FillStyle { get; set; } = GoButtonFillStyle.Flat;
 
         private bool bOnOff = false;
+        /// <summary>램프의 On/Off 상태. 값이 변경되면 <see cref="OnOffChanged"/> 이벤트가 발생합니다.</summary>
         [GoProperty(PCategory.Control, 12)]
         public bool OnOff
         {
@@ -45,15 +61,20 @@ namespace Going.UI.Controls
             }
         }
 
+        /// <summary>램프 크기 (픽셀)</summary>
         [GoProperty(PCategory.Control, 13)] public int LampSize { get; set; } = 24;
+        /// <summary>램프와 텍스트 사이 간격</summary>
         [GoProperty(PCategory.Control, 14)] public int Gap { get; set; } = 10;
 
+        /// <summary>자동 글꼴 크기 설정</summary>
         [GoProperty(PCategory.Control, 15)] public GoAutoFontSize AutoFontSize { get; set; } = GoAutoFontSize.NotUsed;
 
         #endregion
 
         #region Event
+        /// <summary>버튼이 클릭되었을 때 발생하는 이벤트</summary>
         public event EventHandler? ButtonClicked;
+        /// <summary>On/Off 상태가 변경되었을 때 발생하는 이벤트</summary>
         public event EventHandler? OnOffChanged;
         #endregion
 

@@ -17,29 +17,80 @@ using System.Xml.Linq;
 
 namespace Going.UI.Controls
 {
+    /// <summary>
+    /// 도구 상자 컨트롤. 카테고리별로 도구 항목을 그룹화하여 표시하고, 드래그 앤 드롭을 지원합니다.
+    /// </summary>
     public class GoToolBox : GoControl
     {
         #region Properties
+        /// <summary>
+        /// 아이콘 크기를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 0)] public float IconSize { get; set; } = 12;
+        /// <summary>
+        /// 아이콘과 텍스트 사이의 간격을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 1)] public float IconGap { get; set; } = 5;
+        /// <summary>
+        /// 글꼴 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoFontNameProperty(PCategory.Control, 2)] public string FontName { get; set; } = "나눔고딕";
+        /// <summary>
+        /// 글꼴 스타일을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 3)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        /// <summary>
+        /// 글꼴 크기를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 4)] public float FontSize { get; set; } = 12;
 
+        /// <summary>
+        /// 텍스트 색상의 테마 색상 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 5)] public string TextColor { get; set; } = "Fore";
+        /// <summary>
+        /// 배경 상자 색상의 테마 색상 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 6)] public string BoxColor { get; set; } = "Base1";
+        /// <summary>
+        /// 테두리 색상의 테마 색상 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 7)] public string BorderColor { get; set; } = "Base3";
+        /// <summary>
+        /// 선택 항목 배경 색상의 테마 색상 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 8)] public string SelectColor { get; set; } = "Select";
+        /// <summary>
+        /// 카테고리 헤더 색상의 테마 색상 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 9)] public string CategoryColor { get; set; } = "Base2";
+        /// <summary>
+        /// 모서리 둥글기 타입을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 10)] public GoRoundType Round { get; set; } = GoRoundType.All;
 
+        /// <summary>
+        /// 배경을 그릴지 여부를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 11)] public bool BackgroundDraw { get; set; } = true;
 
+        /// <summary>
+        /// 각 항목의 높이(픽셀)를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 12)] public float ItemHeight { get; set; } = 30;
+        /// <summary>
+        /// 도구 카테고리 컬렉션을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 13)] public ObservableList<GoToolCategory> Categories { get; set; } = [];
 
+        /// <summary>
+        /// 드래그 모드 사용 여부를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 14)] public bool DragMode { get; set; } = true;
 
+        /// <summary>
+        /// 스크롤 위치를 가져오거나 설정합니다.
+        /// </summary>
         [JsonIgnore] public double ScrollPosition { get => scroll.ScrollPosition; set => scroll.ScrollPosition = value; }
         [JsonIgnore] internal double ScrollPositionWithOffset => scroll.ScrollPositionWithOffset;
 
@@ -53,10 +104,22 @@ namespace Going.UI.Controls
         private SKPath path = new SKPath();
         #endregion
 
-        #region Event 
+        #region Event
+        /// <summary>
+        /// 도구 항목의 드래그가 시작되었을 때 발생합니다.
+        /// </summary>
         public event EventHandler<ToolItemEventArgs>? DragStart;
+        /// <summary>
+        /// 도구 항목이 클릭되었을 때 발생합니다.
+        /// </summary>
         public event EventHandler<ToolItemEventArgs>? ItemClicked;
+        /// <summary>
+        /// 도구 항목이 길게 클릭되었을 때 발생합니다.
+        /// </summary>
         public event EventHandler<ToolItemEventArgs>? ItemLongClicked;
+        /// <summary>
+        /// 도구 항목이 더블 클릭되었을 때 발생합니다.
+        /// </summary>
         public event EventHandler<ToolItemEventArgs>? ItemDoubleClicked;
         #endregion
 
@@ -231,6 +294,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Areas
+        /// <inheritdoc/>
         public override Dictionary<string, SKRect> Areas()
         {
             var dic = base.Areas();

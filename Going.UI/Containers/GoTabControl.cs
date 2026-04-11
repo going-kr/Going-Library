@@ -18,24 +18,63 @@ using System.Threading.Tasks;
 
 namespace Going.UI.Containers
 {
+    /// <summary>
+    /// 여러 탭 페이지를 전환하며 표시하는 탭 컨트롤입니다. 탭 위치를 상/하/좌/우로 설정할 수 있습니다.
+    /// </summary>
     public class GoTabControl : GoContainer
     {
         #region Properties
+        /// <summary>
+        /// 탭 아이콘 배치 방향을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 0)] public GoDirectionHV IconDirection { get; set; }
+        /// <summary>
+        /// 아이콘 크기를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 1)] public float IconSize { get; set; } = 12;
+        /// <summary>
+        /// 아이콘과 텍스트 사이의 간격을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 2)] public float IconGap { get; set; } = 5;
 
+        /// <summary>
+        /// 글꼴 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoFontNameProperty(PCategory.Control, 3)] public string FontName { get; set; } = "나눔고딕";
+        /// <summary>
+        /// 글꼴 스타일을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 4)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        /// <summary>
+        /// 글꼴 크기를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 5)] public float FontSize { get; set; } = 12;
 
+        /// <summary>
+        /// 텍스트 색상을 가져오거나 설정합니다. 테마 색상 이름을 사용합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 6)] public string TextColor { get; set; } = "Fore";
+        /// <summary>
+        /// 탭 배경 색상을 가져오거나 설정합니다. 테마 색상 이름을 사용합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 7)] public string TabColor { get; set; } = "Base2";
+        /// <summary>
+        /// 탭 테두리 색상을 가져오거나 설정합니다. 테마 색상 이름을 사용합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 8)] public string TabBorderColor { get; set; } = "Base3";
+        /// <summary>
+        /// 탭 네비게이션의 위치를 가져오거나 설정합니다. (Up, Down, Left, Right)
+        /// </summary>
         [GoProperty(PCategory.Control, 9)] public GoDirection TabPosition { get; set; } = GoDirection.Up;
 
+        /// <summary>
+        /// 탭 네비게이션 영역의 크기(너비 또는 높이)를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 10)] public float NavSize { get; set; } = 40;
-        
+
+        /// <summary>
+        /// 현재 선택된 탭 페이지를 가져오거나 설정합니다. 변경 시 <see cref="TabChanging"/> 및 <see cref="TabChanged"/> 이벤트가 발생합니다.
+        /// </summary>
         [JsonIgnore]
         public GoTabPage? SelectedTab
         {
@@ -58,16 +97,31 @@ namespace Going.UI.Containers
             }
         }
 
+        /// <summary>
+        /// 선택된 탭 페이지의 자식 컨트롤 컬렉션을 가져옵니다. 선택된 탭이 없으면 빈 컬렉션을 반환합니다.
+        /// </summary>
         [JsonIgnore] public override IEnumerable<IGoControl> Childrens => SelectedTab?.Childrens ?? [];
 
+        /// <summary>
+        /// 자식 컨트롤이 배치되는 패널 영역을 가져옵니다.
+        /// </summary>
         [JsonIgnore] public override SKRect PanelBounds => Areas()["Panel"];
 
         //[GoProperty(PCategory.Misc, 11),JsonInclude] public List<GoTabPage> TabPages { get; } = [];
+        /// <summary>
+        /// 탭 페이지 목록을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 11)] public List<GoTabPage> TabPages { get; set; } = [];
         #endregion
 
         #region Event
+        /// <summary>
+        /// 탭이 변경된 후 발생하는 이벤트입니다.
+        /// </summary>
         public event EventHandler? TabChanged;
+        /// <summary>
+        /// 탭이 변경되기 전에 발생하는 이벤트입니다. Cancel을 true로 설정하면 변경을 취소할 수 있습니다.
+        /// </summary>
         public event EventHandler<CancelEventArgs>? TabChanging;
         #endregion
 
@@ -79,6 +133,9 @@ namespace Going.UI.Containers
         #region Constructor
         //[JsonConstructor]
         //public GoTabControl(List<GoTabPage> tabPages) : this() => this.TabPages = tabPages;
+        /// <summary>
+        /// <see cref="GoTabControl"/>의 새 인스턴스를 초기화합니다.
+        /// </summary>
         public GoTabControl() { }
         #endregion
 
@@ -353,6 +410,10 @@ namespace Going.UI.Containers
         #endregion
 
         #region SetTab
+        /// <summary>
+        /// 이름으로 탭을 선택합니다.
+        /// </summary>
+        /// <param name="name">선택할 탭의 이름</param>
         public void SetTab(string name)
         {
             if(name != null)
@@ -366,19 +427,42 @@ namespace Going.UI.Containers
     }
 
     #region class : GoTabPage
-    public class GoTabPage 
+    /// <summary>
+    /// GoTabControl에서 사용되는 탭 페이지 클래스입니다. 이름, 아이콘, 텍스트 및 자식 컨트롤을 포함합니다.
+    /// </summary>
+    public class GoTabPage
     {
+        /// <summary>
+        /// 탭 페이지의 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Basic, 0)] public string Name { get; set; }
+        /// <summary>
+        /// 탭에 표시할 아이콘 문자열을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Basic, 1)] public string? IconString { get; set; }
+        /// <summary>
+        /// 탭에 표시할 텍스트를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Basic, 2)] public string? Text { get; set; }
         internal bool Hover { get; set; }
 
+        /// <summary>
+        /// 자식 컨트롤 목록을 가져옵니다.
+        /// </summary>
         [JsonInclude] public List<IGoControl> Childrens { get; } = [];
 
+        /// <summary>
+        /// 자식 컨트롤 목록을 사용하여 <see cref="GoTabPage"/>의 새 인스턴스를 초기화합니다. JSON 역직렬화에 사용됩니다.
+        /// </summary>
+        /// <param name="childrens">자식 컨트롤 목록</param>
         [JsonConstructor]
         public GoTabPage(List<IGoControl> childrens) : this() => Childrens = childrens ?? [];
+        /// <summary>
+        /// <see cref="GoTabPage"/>의 새 인스턴스를 초기화합니다.
+        /// </summary>
         public GoTabPage() { }
 
+        /// <inheritdoc/>
         public override string ToString() => Name;
     }
     #endregion

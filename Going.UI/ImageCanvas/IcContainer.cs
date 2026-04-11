@@ -12,12 +12,27 @@ using System.Threading.Tasks;
 
 namespace Going.UI.ImageCanvas
 {
+    /// <summary>
+    /// 이미지 캔버스용 컨테이너 컨트롤입니다. Off/On 이미지를 배경으로 사용하며 자식 컨트롤을 포함할 수 있습니다.
+    /// </summary>
     public class IcContainer : GoContainer
     {
-        [GoProperty(PCategory.Control, 0)] public string BackgroundColor { get; set; } = "white";
+        /// <summary>
+        /// 배경 색상을 가져오거나 설정합니다. 이미지가 없을 때 사용됩니다.
+        /// </summary>
+        [GoProperty(PCategory.Control, 0)] public string BackgroundColor { get; set; } = "Back";
+        /// <summary>
+        /// 비활성(Off) 상태 배경 이미지 리소스 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoImageProperty(PCategory.Control, 1)] public string? OffImage { get; set; }
+        /// <summary>
+        /// 활성(On) 상태 배경 이미지 리소스 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoImageProperty(PCategory.Control, 2)] public string? OnImage { get; set; }
 
+        /// <summary>
+        /// 자식 컨트롤 목록을 가져옵니다.
+        /// </summary>
         [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
 
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)

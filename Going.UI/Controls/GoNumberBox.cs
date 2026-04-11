@@ -15,25 +15,38 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Going.UI.Controls
 {
+    /// <summary>
+    /// 숫자 입력 박스 컨트롤. +/- 버튼으로 값을 증감할 수 있으며, 길게 누르면 자동 반복됩니다.
+    /// </summary>
     public class GoNumberBox : GoControl
     {
-        #region Const 
+        #region Const
         const int CHKTM = 500;
         #endregion
 
         #region Properties
+        /// <summary>글꼴 이름</summary>
         [GoFontNameProperty(PCategory.Control, 0)] public string FontName { get; set; } = "나눔고딕";
+        /// <summary>글꼴 스타일</summary>
         [GoProperty(PCategory.Control, 1)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        /// <summary>글꼴 크기</summary>
         [GoProperty(PCategory.Control, 2)] public float FontSize { get; set; } = 12;
 
+        /// <summary>레이아웃 배치 방향 (가로/세로)</summary>
         [GoProperty(PCategory.Control, 3)] public GoDirectionHV Direction { get; set; } = GoDirectionHV.Horizon;
+        /// <summary>텍스트 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 4)] public string TextColor { get; set; } = "Fore";
+        /// <summary>테두리 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 5)] public string BorderColor { get; set; } = "Base3";
+        /// <summary>버튼 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 6)] public string ButtonColor { get; set; } = "Base3";
+        /// <summary>값 표시 영역 배경 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 7)] public string ValueColor { get; set; } = "Base1";
+        /// <summary>모서리 둥글기 유형</summary>
         [GoProperty(PCategory.Control, 8)] public GoRoundType Round { get; set; } = GoRoundType.All;
 
         private double nVal = 0;
+        /// <summary>현재 값. 값이 변경되면 <see cref="ValueChanged"/> 이벤트가 발생합니다.</summary>
         [GoProperty(PCategory.Control, 10)]
         public double Value
         {
@@ -48,12 +61,18 @@ namespace Going.UI.Controls
             }
         }
 
+        /// <summary>최솟값</summary>
         [GoProperty(PCategory.Control, 11)] public double Minimum { get; set; } = 0D;
+        /// <summary>최댓값</summary>
         [GoProperty(PCategory.Control, 12)] public double Maximum { get; set; } = 100D;
+        /// <summary>증감 단위</summary>
         [GoProperty(PCategory.Control, 13)] public double Tick { get; set; } = 1D;
+        /// <summary>값 표시 형식 문자열</summary>
         [GoProperty(PCategory.Control, 14)] public string? Format { get; set; }
+        /// <summary>+/- 버튼 크기 (픽셀)</summary>
         [GoProperty(PCategory.Control, 15)] public float ButtonSize { get; set; } = 40;
 
+        /// <summary>자동 글꼴 크기 설정</summary>
         [GoProperty(PCategory.Control, 16)] public GoAutoFontSize AutoFontSize { get; set; } = GoAutoFontSize.NotUsed;
 
         #endregion
@@ -67,6 +86,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Event
+        /// <summary>값이 변경되었을 때 발생하는 이벤트</summary>
         public event EventHandler? ValueChanged;
         #endregion
 

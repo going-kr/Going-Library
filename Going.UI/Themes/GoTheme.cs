@@ -17,68 +17,205 @@ using System.Reflection;
 
 namespace Going.UI.Themes
 {
+    /// <summary>
+    /// UI 테마의 색상 및 스타일 속성을 정의하는 클래스입니다.
+    /// </summary>
     public class GoTheme
     {
         #region Const
+        /// <summary>
+        /// 비활성 상태의 알파 값입니다.
+        /// </summary>
         public const int DisableAlpha = 180;
         #endregion
 
         #region Properties
+        /// <summary>
+        /// 다크 테마 여부를 가져오거나 설정합니다.
+        /// </summary>
         public bool Dark { get; set; }
 
+        /// <summary>
+        /// 전경색을 가져오거나 설정합니다.
+        /// </summary>
         public SKColor Fore { get; set; }
+        /// <summary>
+        /// 배경색을 가져오거나 설정합니다.
+        /// </summary>
         public SKColor Back { get; set; }
+        /// <summary>
+        /// 창 배경색을 가져오거나 설정합니다.
+        /// </summary>
         public SKColor Window { get; set; }
+        /// <summary>
+        /// 창 테두리색을 가져오거나 설정합니다.
+        /// </summary>
         public SKColor WindowBorder { get; set; }
+        /// <summary>
+        /// 포인트 색상을 가져오거나 설정합니다.
+        /// </summary>
         public SKColor Point { get; set; }
+        /// <summary>
+        /// 타이틀 색상을 가져오거나 설정합니다.
+        /// </summary>
         public SKColor Title { get; set; }
 
+        /// <summary>
+        /// 기본 색상 0단계를 가져오거나 설정합니다.
+        /// </summary>
         public SKColor Base0 { get; set; }
+        /// <summary>
+        /// 기본 색상 1단계를 가져오거나 설정합니다.
+        /// </summary>
         public SKColor Base1 { get; set; }
+        /// <summary>
+        /// 기본 색상 2단계를 가져오거나 설정합니다.
+        /// </summary>
         public SKColor Base2 { get; set; }
+        /// <summary>
+        /// 기본 색상 3단계를 가져오거나 설정합니다.
+        /// </summary>
         public SKColor Base3 { get; set; }
+        /// <summary>
+        /// 기본 색상 4단계를 가져오거나 설정합니다.
+        /// </summary>
         public SKColor Base4 { get; set; }
+        /// <summary>
+        /// 기본 색상 5단계를 가져오거나 설정합니다.
+        /// </summary>
         public SKColor Base5 { get; set; }
 
+        /// <summary>
+        /// 사용자 정의 색상 1을 가져오거나 설정합니다.
+        /// </summary>
         public SKColor User1 { get; set; } = SKColors.Red;
+        /// <summary>
+        /// 사용자 정의 색상 2를 가져오거나 설정합니다.
+        /// </summary>
         public SKColor User2 { get; set; } = SKColors.Green;
+        /// <summary>
+        /// 사용자 정의 색상 3을 가져오거나 설정합니다.
+        /// </summary>
         public SKColor User3 { get; set; } = SKColors.Blue;
+        /// <summary>
+        /// 사용자 정의 색상 4를 가져오거나 설정합니다.
+        /// </summary>
         public SKColor User4 { get; set; } = SKColors.Magenta;
+        /// <summary>
+        /// 사용자 정의 색상 5를 가져오거나 설정합니다.
+        /// </summary>
         public SKColor User5 { get; set; } = SKColors.Yellow;
+        /// <summary>
+        /// 사용자 정의 색상 6을 가져오거나 설정합니다.
+        /// </summary>
         public SKColor User6 { get; set; } = SKColors.Cyan;
+        /// <summary>
+        /// 사용자 정의 색상 7을 가져오거나 설정합니다.
+        /// </summary>
         public SKColor User7 { get; set; } = SKColors.Teal;
+        /// <summary>
+        /// 사용자 정의 색상 8을 가져오거나 설정합니다.
+        /// </summary>
         public SKColor User8 { get; set; } = SKColors.DeepSkyBlue;
+        /// <summary>
+        /// 사용자 정의 색상 9를 가져오거나 설정합니다.
+        /// </summary>
         public SKColor User9 { get; set; } = SKColors.DarkRed;
 
+        /// <summary>
+        /// 스크롤바 배경색을 가져오거나 설정합니다.
+        /// </summary>
         public SKColor ScrollBar { get; set; }
+        /// <summary>
+        /// 스크롤바 커서 색상을 가져오거나 설정합니다.
+        /// </summary>
         public SKColor ScrollCursor { get; set; }
 
+        /// <summary>
+        /// 위험 상태 색상을 가져오거나 설정합니다.
+        /// </summary>
         public SKColor Danger { get; set; }
+        /// <summary>
+        /// 경고 상태 색상을 가져오거나 설정합니다.
+        /// </summary>
         public SKColor Warning { get; set; }
+        /// <summary>
+        /// 정상 상태 색상을 가져오거나 설정합니다.
+        /// </summary>
         public SKColor Good { get; set; }
+        /// <summary>
+        /// 오류 상태 색상을 가져오거나 설정합니다.
+        /// </summary>
         public SKColor Error { get; set; }
 
+        /// <summary>
+        /// 하이라이트 색상을 가져오거나 설정합니다.
+        /// </summary>
         public SKColor Highlight { get; set; }
+        /// <summary>
+        /// 선택 색상을 가져오거나 설정합니다.
+        /// </summary>
         public SKColor Select { get; set; }
 
+        /// <summary>
+        /// 모서리 둥글기 값을 가져오거나 설정합니다.
+        /// </summary>
         public int Corner { get; set; } = 5;
+        /// <summary>
+        /// 알파 값을 가져오거나 설정합니다.
+        /// </summary>
         public int Alpha { get; set; }
+        /// <summary>
+        /// 그림자 알파 값을 가져오거나 설정합니다.
+        /// </summary>
         public byte ShadowAlpha { get; set; }
+        /// <summary>
+        /// 클릭 시 밝기 변화량을 가져오거나 설정합니다.
+        /// </summary>
         public float DownBrightness { get; set; }
+        /// <summary>
+        /// 테두리 밝기 변화량을 가져오거나 설정합니다.
+        /// </summary>
         public float BorderBrightness { get; set; }
+        /// <summary>
+        /// 호버 시 테두리 밝기 변화량을 가져오거나 설정합니다.
+        /// </summary>
         public float HoverBorderBrightness { get; set; }
+        /// <summary>
+        /// 호버 시 채우기 밝기 변화량을 가져오거나 설정합니다.
+        /// </summary>
         public float HoverFillBrightness { get; set; }
+        /// <summary>
+        /// 단계 선 밝기 변화량을 가져오거나 설정합니다.
+        /// </summary>
         public float StageLineBrightness { get; set; }
+        /// <summary>
+        /// 그라데이션 밝은 부분의 밝기 비율을 가져오거나 설정합니다.
+        /// </summary>
         public float GradientLightBrightness { get; set; } = 0.2F;
+        /// <summary>
+        /// 그라데이션 어두운 부분의 밝기 비율을 가져오거나 설정합니다.
+        /// </summary>
         public float GradientDarkBrightness { get; set; } = -0.2F;
         #endregion
 
         #region Static
+        /// <summary>
+        /// 기본 다크 테마 인스턴스를 가져옵니다.
+        /// </summary>
         public static GoTheme DarkTheme { get; } = new DarkTheme();
+        /// <summary>
+        /// 현재 적용 중인 테마를 가져오거나 설정합니다.
+        /// </summary>
         public static GoTheme Current { get; set; } = DarkTheme;
         #endregion
 
         #region Color(string)
+        /// <summary>
+        /// 문자열을 SKColor로 변환합니다. 테마 색상 이름, HEX 코드, RGB/ARGB 값 등을 지원합니다.
+        /// </summary>
+        /// <param name="color">색상 문자열 (예: "fore", "#FF0000", "255,0,0")</param>
+        /// <returns>변환된 색상</returns>
         public SKColor ToColor(string? color)
         {
             SKColor ret = Fore;
@@ -180,6 +317,9 @@ namespace Going.UI.Themes
 
     }
 
+    /// <summary>
+    /// 기본 다크 테마를 정의하는 클래스입니다.
+    /// </summary>
     public class DarkTheme : GoTheme
     {
         public DarkTheme()

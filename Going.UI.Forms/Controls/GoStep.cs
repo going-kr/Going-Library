@@ -24,7 +24,7 @@ namespace Going.UI.Forms.Controls
         #endregion
 
         #region Event
-        public event EventHandler? StepChagend { add => Control.StepChagend += value; remove => Control.StepChagend -= value; }
+        public event EventHandler? StepChanged { add => Control.StepChanged += value; remove => Control.StepChanged -= value; }
         #endregion
 
         #region Constructor

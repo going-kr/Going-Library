@@ -16,17 +16,27 @@ using System.Threading.Tasks;
 
 namespace Going.UI.Datas
 {
+    /// <summary>
+    /// 트리뷰 컨트롤에서 사용되는 트리 노드 클래스입니다.
+    /// </summary>
     public class GoTreeNode
     {
         #region Properties
+        /// <summary>노드에 표시할 텍스트</summary>
         [GoProperty(PCategory.Basic, 0)] public string? Text { get; set; }
+        /// <summary>노드에 표시할 아이콘 문자열</summary>
         [GoProperty(PCategory.Basic, 1)] public string? IconString { get; set; }
+        /// <summary>사용자 정의 데이터를 저장하기 위한 태그 객체</summary>
         public object? Tag { get; set; }
+        /// <summary>자식 노드 컬렉션</summary>
         [GoProperty(PCategory.Basic, 2)] public ObservableList<GoTreeNode> Nodes { get; set; } = [];
+        /// <summary>노드의 확장(펼침) 상태</summary>
         [GoProperty(PCategory.Basic, 3)] public bool Expand { get; set; } = true;
-        
+
+        /// <summary>트리 내 노드의 깊이 (루트 노드는 0)</summary>
         [JsonIgnore] public int Depth => Parent == null ? 0 : Parent.Depth + 1;
         [JsonIgnore] internal bool Changed { get => Nodes.Changed; set => Nodes.Changed = value; }
+        /// <summary>부모 노드 (루트 노드이면 null)</summary>
         [JsonIgnore] public GoTreeNode? Parent { get; internal set; }
 
         [JsonIgnore]
@@ -241,8 +251,13 @@ namespace Going.UI.Datas
         #endregion
     }
 
+    /// <summary>
+    /// 트리 노드 이벤트 인자 클래스입니다.
+    /// </summary>
+    /// <param name="itm">이벤트가 발생한 트리 노드</param>
     public class TreeNodeEventArgs(GoTreeNode itm) : EventArgs
     {
+        /// <summary>이벤트가 발생한 트리 노드</summary>
         public GoTreeNode Item { get; } = itm;
     }
 }

@@ -14,21 +14,57 @@ using System.Threading.Tasks;
 
 namespace Going.UI.Controls
 {
+    /// <summary>
+    /// 네비게이터 컨트롤. 메뉴 항목을 통해 페이지 이동 기능을 제공합니다.
+    /// </summary>
     public class GoNavigator : GoControl
     {
         #region Properties
+        /// <summary>
+        /// 아이콘 크기를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 0)] public float IconSize { get; set; } = 12;
+        /// <summary>
+        /// 아이콘 배치 방향을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 1)] public GoDirectionHV IconDirection { get; set; }
+        /// <summary>
+        /// 아이콘과 텍스트 사이의 간격을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 2)] public float IconGap { get; set; } = 5;
+        /// <summary>
+        /// 글꼴 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoFontNameProperty(PCategory.Control, 3)] public string FontName { get; set; } = "나눔고딕";
+        /// <summary>
+        /// 글꼴 스타일을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 4)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        /// <summary>
+        /// 글꼴 크기를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 5)] public float FontSize { get; set; } = 12;
+        /// <summary>
+        /// 텍스트 색상의 테마 색상 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 6)] public string TextColor { get; set; } = "Fore";
+        /// <summary>
+        /// 좌측 들여쓰기 크기를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 7)] public float Indent { get; set; } = 20;
+        /// <summary>
+        /// 메뉴 항목 사이의 간격을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 8)] public float MenuGap { get; set; } = 30F;
 
+        /// <summary>
+        /// 메뉴 항목 컬렉션을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 9)] public ObservableList<GoMenuItem> Menus { get; set; } = [];
 
+        /// <summary>
+        /// 메뉴 배치 방향(수평/수직)을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 10)] public GoDirectionHV Direction { get; set; } = GoDirectionHV.Horizon;
         #endregion
 
@@ -291,11 +327,12 @@ namespace Going.UI.Controls
         #endregion
 
         #region Areas
+        /// <inheritdoc/>
         public override Dictionary<string, SKRect> Areas()
         {
             var dic = base.Areas();
             var rtContent = dic["Content"];
-            
+
             if (Direction == GoDirectionHV.Horizon)
             {
                 var rts = Util.Columns(rtContent, [$"{Indent}px", "100%", "40px", "40px"]);

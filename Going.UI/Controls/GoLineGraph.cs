@@ -18,23 +18,59 @@ using System.Drawing;
 
 namespace Going.UI.Controls
 {
+    /// <summary>
+    /// 라인 그래프 컨트롤. 데이터를 꺾은선 그래프로 시각화합니다.
+    /// </summary>
     public class GoLineGraph : GoControl
     {
         #region Properties
+        /// <summary>
+        /// 그리드 색상의 테마 색상 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 0)] public string GridColor { get; set; } = "Base3";
+        /// <summary>
+        /// 텍스트 색상의 테마 색상 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 1)] public string TextColor { get; set; } = "Fore";
+        /// <summary>
+        /// 범례 배경 색상의 테마 색상 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 2)] public string RemarkColor { get; set; } = "Base2";
+        /// <summary>
+        /// 그래프 배경 색상의 테마 색상 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 3)] public string GraphColor { get; set; } = "Back";
 
+        /// <summary>
+        /// 글꼴 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoFontNameProperty(PCategory.Control, 4)] public string FontName { get; set; } = "나눔고딕";
+        /// <summary>
+        /// 글꼴 스타일을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 5)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        /// <summary>
+        /// 글꼴 크기를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 6)] public float FontSize { get; set; } = 12;
 
+        /// <summary>
+        /// Y축 눈금 개수를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 7)] public int GraduationCount { get; set; } = 10;
+        /// <summary>
+        /// 값 표시 형식 문자열을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 8)] public string? FormatString { get; set; } = null;
 
+        /// <summary>
+        /// 그래프 시리즈 목록을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 9)] public List<GoLineGraphSeries> Series { get; set; } = [];
 
+        /// <summary>
+        /// 데이터 포인트 간격 너비(픽셀)를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 10)] public int PointWidth { get; set; } = 70;
         #endregion
 
@@ -392,6 +428,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Areas
+        /// <inheritdoc/>
         public override Dictionary<string, SKRect> Areas()
         {
             var dic = base.Areas();
@@ -433,6 +470,12 @@ namespace Going.UI.Controls
 
         #region Method
         #region SetDataSource
+        /// <summary>
+        /// 데이터 소스를 설정합니다.
+        /// </summary>
+        /// <typeparam name="T">데이터 항목의 타입</typeparam>
+        /// <param name="XAxisName">X축으로 사용할 string 타입 속성 이름</param>
+        /// <param name="values">데이터 컬렉션</param>
         public void SetDataSource<T>(string XAxisName, IEnumerable<T> values)
         {
             if (Series.Count > 0)

@@ -13,15 +13,33 @@ using System.Threading.Tasks;
 
 namespace Going.UI.Containers
 {
+    /// <summary>
+    /// 수평 및 수직 스크롤을 지원하는 패널 컨테이너입니다. 콘텐츠가 영역을 초과하면 스크롤바가 자동으로 나타납니다.
+    /// </summary>
     public class GoScrollablePanel : GoContainer
     {
         #region Properties
+        /// <summary>
+        /// 기본 너비를 가져오거나 설정합니다. null이면 컨트롤 너비를 사용합니다. 실제 너비보다 크면 축소 스케일이 적용됩니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 0)] public float? BaseWidth { get; set; }
+        /// <summary>
+        /// 에디터 모드에서 사용할 높이를 가져오거나 설정합니다. 디자인 모드 전용입니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 1)] public float? EditorHeight { get; set; }
 
+        /// <summary>
+        /// 자식 컨트롤 목록을 가져옵니다.
+        /// </summary>
         [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
 
+        /// <summary>
+        /// 현재 스크롤 오프셋 위치를 가져옵니다.
+        /// </summary>
         [JsonIgnore] public override SKPoint ViewPosition => new SKPoint(-Convert.ToSingle(hscroll.ScrollPositionWithOffset), -Convert.ToSingle(vscroll.ScrollPositionWithOffset));
+        /// <summary>
+        /// 자식 컨트롤이 배치되는 패널 영역을 가져옵니다.
+        /// </summary>
         [JsonIgnore] public override SKRect PanelBounds => Areas()["Panel"];
         #endregion
 
@@ -33,8 +51,15 @@ namespace Going.UI.Containers
         #endregion
 
         #region Constructor
+        /// <summary>
+        /// 자식 컨트롤 목록을 사용하여 <see cref="GoScrollablePanel"/>의 새 인스턴스를 초기화합니다. JSON 역직렬화에 사용됩니다.
+        /// </summary>
+        /// <param name="childrens">자식 컨트롤 목록</param>
         [JsonConstructor]
         public GoScrollablePanel(List<IGoControl> childrens) : this() => Childrens = childrens ?? [];
+        /// <summary>
+        /// <see cref="GoScrollablePanel"/>의 새 인스턴스를 초기화합니다. 스크롤바를 구성합니다.
+        /// </summary>
         public GoScrollablePanel()
         {
             hscroll.GetScrollTotal = () => vwmax;

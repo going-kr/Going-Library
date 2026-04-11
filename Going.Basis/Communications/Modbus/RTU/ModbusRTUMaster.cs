@@ -11,70 +11,132 @@ using System.Threading.Tasks;
 
 namespace Going.Basis.Communications.Modbus.RTU
 {
+    /// <summary>
+    /// 시리얼 포트(RS-232/RS-485) 기반의 Modbus RTU 마스터 통신 클래스입니다.
+    /// Auto/Manual 작업 큐를 통해 슬레이브 장치와 폴링 방식으로 통신합니다.
+    /// </summary>
     public class ModbusRTUMaster : IDisposable
     {
         #region class : Work
+        /// <summary>
+        /// Modbus 통신 작업 단위를 나타내는 클래스입니다.
+        /// </summary>
+        /// <param name="id">메시지 식별자</param>
+        /// <param name="data">전송할 Modbus 프레임 데이터</param>
+        /// <param name="rescnt">예상 응답 바이트 수</param>
         public class Work(int id, byte[] data, int rescnt)
         {
+            /// <summary>작업을 식별하는 메시지 ID</summary>
             public int MessageID { get; private set; } = id;
+            /// <summary>전송할 Modbus 프레임 데이터</summary>
             public byte[] Data { get; private set; } = data;
+            /// <summary>예상되는 응답 바이트 수</summary>
             public int ResponseCount { get; private set; } = rescnt;
+            /// <summary>타임아웃 발생 시 재시도 횟수 (null이면 재시도 안 함)</summary>
             public int? RepeatCount { get; set; } = null;
+            /// <summary>이 작업에 대한 개별 타임아웃 값 (ms, null이면 기본값 사용)</summary>
             public int? Timeout { get; set; } = null;
         }
         #endregion
         #region class : EventArgs
+        /// <summary>
+        /// 비트 읽기(FC1/FC2) 응답 수신 시 전달되는 이벤트 인자입니다.
+        /// </summary>
         public class BitReadEventArgs(Work WorkItem, bool[] Datas) : System.EventArgs
         {
+            /// <summary>요청 메시지 ID</summary>
             public int MessageID => WorkItem.MessageID;
+            /// <summary>슬레이브 주소</summary>
             public int Slave => WorkItem.Data[0];
+            /// <summary>Modbus 함수 코드</summary>
             public ModbusFunction Function => (ModbusFunction)WorkItem.Data[1];
+            /// <summary>시작 주소</summary>
             public int StartAddress => WorkItem.Data[2] << 8 | WorkItem.Data[3];
+            /// <summary>읽기 길이</summary>
             public int Length => WorkItem.Data[4] << 8 | WorkItem.Data[5];
+            /// <summary>수신된 비트 데이터 배열</summary>
             public bool[] ReceiveData => Datas;
         }
 
+        /// <summary>
+        /// 워드 읽기(FC3/FC4) 응답 수신 시 전달되는 이벤트 인자입니다.
+        /// </summary>
         public class WordReadEventArgs(Work WorkItem, int[] Datas) : System.EventArgs
         {
+            /// <summary>요청 메시지 ID</summary>
             public int MessageID => WorkItem.MessageID;
+            /// <summary>슬레이브 주소</summary>
             public int Slave => WorkItem.Data[0];
+            /// <summary>Modbus 함수 코드</summary>
             public ModbusFunction Function => (ModbusFunction)WorkItem.Data[1];
+            /// <summary>시작 주소</summary>
             public int StartAddress => WorkItem.Data[2] << 8 | WorkItem.Data[3];
+            /// <summary>읽기 길이</summary>
             public int Length => WorkItem.Data[4] << 8 | WorkItem.Data[5];
 
+            /// <summary>수신된 워드 데이터 배열</summary>
             public int[] ReceiveData => Datas;
         }
 
+        /// <summary>
+        /// 단일 비트 쓰기(FC5) 응답 수신 시 전달되는 이벤트 인자입니다.
+        /// </summary>
         public class BitWriteEventArgs(Work WorkItem) : System.EventArgs
         {
+            /// <summary>요청 메시지 ID</summary>
             public int MessageID => WorkItem.MessageID;
+            /// <summary>슬레이브 주소</summary>
             public int Slave => WorkItem.Data[0];
+            /// <summary>Modbus 함수 코드</summary>
             public ModbusFunction Function => (ModbusFunction)WorkItem.Data[1];
+            /// <summary>시작 주소</summary>
             public int StartAddress => WorkItem.Data[2] << 8 | WorkItem.Data[3];
+            /// <summary>쓰기 값</summary>
             public bool WriteValue => (WorkItem.Data[4] << 8 | WorkItem.Data[5]) == 0xFF00;
         }
 
+        /// <summary>
+        /// 단일 워드 쓰기(FC6) 응답 수신 시 전달되는 이벤트 인자입니다.
+        /// </summary>
         public class WordWriteEventArgs(Work WorkItem) : System.EventArgs
         {
+            /// <summary>요청 메시지 ID</summary>
             public int MessageID => WorkItem.MessageID;
+            /// <summary>슬레이브 주소</summary>
             public int Slave => WorkItem.Data[0];
+            /// <summary>Modbus 함수 코드</summary>
             public ModbusFunction Function => (ModbusFunction)WorkItem.Data[1];
+            /// <summary>시작 주소</summary>
             public int StartAddress => WorkItem.Data[2] << 8 | WorkItem.Data[3];
+            /// <summary>쓰기 값</summary>
             public int WriteValue => WorkItem.Data[4] << 8 | WorkItem.Data[5];
         }
 
+        /// <summary>
+        /// 다중 비트 쓰기(FC15) 응답 수신 시 전달되는 이벤트 인자입니다.
+        /// </summary>
         public class MultiBitWriteEventArgs : System.EventArgs
         {
+            /// <summary>요청 메시지 ID</summary>
             public int MessageID => WorkItem.MessageID;
+            /// <summary>슬레이브 주소</summary>
             public int Slave => WorkItem.Data[0];
+            /// <summary>Modbus 함수 코드</summary>
             public ModbusFunction Function => (ModbusFunction)WorkItem.Data[1];
+            /// <summary>시작 주소</summary>
             public int StartAddress => WorkItem.Data[2] << 8 | WorkItem.Data[3];
+            /// <summary>쓰기 길이</summary>
             public int Length => WorkItem.Data[4] << 8 | WorkItem.Data[5];
 
+            /// <summary>쓰기 값 배열</summary>
             public bool[] WriteValues { get; private set; }
 
             private Work WorkItem;
 
+            /// <summary>
+            /// <see cref="MultiBitWriteEventArgs"/> 클래스의 새 인스턴스를 초기화합니다.
+            /// </summary>
+            /// <param name="WorkItem">원본 작업 항목</param>
             public MultiBitWriteEventArgs(Work WorkItem)
             {
                 this.WorkItem = WorkItem;
@@ -91,18 +153,31 @@ namespace Going.Basis.Communications.Modbus.RTU
             }
         }
 
+        /// <summary>
+        /// 다중 워드 쓰기(FC16) 응답 수신 시 전달되는 이벤트 인자입니다.
+        /// </summary>
         public class MultiWordWriteEventArgs : System.EventArgs
         {
+            /// <summary>요청 메시지 ID</summary>
             public int MessageID => WorkItem.MessageID;
+            /// <summary>슬레이브 주소</summary>
             public int Slave => WorkItem.Data[0];
+            /// <summary>Modbus 함수 코드</summary>
             public ModbusFunction Function => (ModbusFunction)WorkItem.Data[1];
+            /// <summary>시작 주소</summary>
             public int StartAddress => WorkItem.Data[2] << 8 | WorkItem.Data[3];
+            /// <summary>쓰기 길이</summary>
             public int Length => WorkItem.Data[4] << 8 | WorkItem.Data[5];
 
+            /// <summary>쓰기 값 배열</summary>
             public int[] WriteValues { get; private set; }
 
             private Work WorkItem;
 
+            /// <summary>
+            /// <see cref="MultiWordWriteEventArgs"/> 클래스의 새 인스턴스를 초기화합니다.
+            /// </summary>
+            /// <param name="WorkItem">원본 작업 항목</param>
             public MultiWordWriteEventArgs(Work WorkItem)
             {
                 this.WorkItem = WorkItem;
@@ -117,52 +192,89 @@ namespace Going.Basis.Communications.Modbus.RTU
             }
         }
 
+        /// <summary>
+        /// 워드 비트 설정(FC26) 응답 수신 시 전달되는 이벤트 인자입니다.
+        /// </summary>
         public class WordBitSetEventArgs(Work WorkItem) : System.EventArgs
         {
+            /// <summary>요청 메시지 ID</summary>
             public int MessageID => WorkItem.MessageID;
+            /// <summary>슬레이브 주소</summary>
             public int Slave => WorkItem.Data[0];
+            /// <summary>Modbus 함수 코드</summary>
             public ModbusFunction Function => (ModbusFunction)WorkItem.Data[1];
+            /// <summary>시작 주소</summary>
             public int StartAddress => WorkItem.Data[2] << 8 | WorkItem.Data[3];
+            /// <summary>대상 비트 인덱스 (0~15)</summary>
             public int BitIndex => WorkItem.Data[4];
+            /// <summary>쓰기 값</summary>
             public bool WriteValue => (WorkItem.Data[5] << 8 | WorkItem.Data[6]) == 0xFF00;
 
         }
 
+        /// <summary>
+        /// 통신 타임아웃 발생 시 전달되는 이벤트 인자입니다.
+        /// </summary>
         public class TimeoutEventArgs(Work WorkItem) : System.EventArgs
         {
+            /// <summary>요청 메시지 ID</summary>
             public int MessageID => WorkItem.MessageID;
+            /// <summary>슬레이브 주소</summary>
             public int Slave => WorkItem.Data[0];
+            /// <summary>Modbus 함수 코드</summary>
             public ModbusFunction Function => (ModbusFunction)WorkItem.Data[1];
+            /// <summary>시작 주소</summary>
             public int StartAddress => WorkItem.Data[2] << 8 | WorkItem.Data[3];
         }
 
+        /// <summary>
+        /// CRC 오류 발생 시 전달되는 이벤트 인자입니다.
+        /// </summary>
         public class CRCErrorEventArgs(Work WorkItem) : System.EventArgs
         {
+            /// <summary>요청 메시지 ID</summary>
             public int MessageID => WorkItem.MessageID;
+            /// <summary>슬레이브 주소</summary>
             public int Slave => WorkItem.Data[0];
+            /// <summary>Modbus 함수 코드</summary>
             public ModbusFunction Function => (ModbusFunction)WorkItem.Data[1];
+            /// <summary>시작 주소</summary>
             public int StartAddress => WorkItem.Data[2] << 8 | WorkItem.Data[3];
         }
         #endregion
 
         #region Properties
+        /// <summary>시리얼 포트 이름 (예: "COM1")</summary>
         public string Port { get => ser.PortName; set => ser.PortName = value; }
+        /// <summary>통신 속도 (bps)</summary>
         public int Baudrate { get => ser.BaudRate; set => ser.BaudRate = value; }
+        /// <summary>패리티 비트 설정</summary>
         public Parity Parity { get => ser.Parity; set => ser.Parity = value; }
+        /// <summary>데이터 비트 수</summary>
         public int DataBits { get => ser.DataBits; set => ser.DataBits = value; }
+        /// <summary>정지 비트 설정</summary>
         public StopBits StopBits { get => ser.StopBits; set => ser.StopBits = value; }
 
+        /// <summary>응답 타임아웃 (밀리초, 기본값: 100)</summary>
         public int Timeout { get; set; } = 100;
+        /// <summary>폴링 간격 (밀리초, 기본값: 10)</summary>
         public int Interval { get; set; } = 10;
+        /// <summary>수신 버퍼 크기 (바이트, 기본값: 1024)</summary>
         public int BufferSize { get; set; } = 1024;
 
+        /// <summary>시리얼 포트가 열려 있는지 여부</summary>
         public bool IsOpen => !OperatingSystem.IsBrowser() && ser.IsOpen;
+        /// <summary>통신 루프가 시작되었는지 여부</summary>
         public bool IsStart { get; private set; }
+        /// <summary>연결 끊김 시 자동 재접속 여부</summary>
         public bool AutoReconnect { get; set; }
 
+        /// <summary>Dispose 되었는지 여부</summary>
         public bool IsDisposed { get; private set; }
 
+        /// <summary>모듈 고유 식별자</summary>
         public string ModuleId { get; } = Guid.NewGuid().ToString();
+        /// <summary>사용자 정의 태그 객체</summary>
         public object? Tag { get; set; } = null;
         #endregion
 
@@ -173,28 +285,40 @@ namespace Going.Basis.Communications.Modbus.RTU
         List<Work> AutoWorkList = [];
         List<Work> ManualWorkList = [];
 
-        byte[] baResponse = new byte[0];
+        byte[] baResponse = [];
 
         Task? task;
         CancellationTokenSource? cancel;
         #endregion
 
         #region Event
+        /// <summary>비트 읽기(FC1/FC2) 응답 수신 시 발생합니다.</summary>
         public event EventHandler<BitReadEventArgs>? BitReadReceived;
+        /// <summary>워드 읽기(FC3/FC4) 응답 수신 시 발생합니다.</summary>
         public event EventHandler<WordReadEventArgs>? WordReadReceived;
+        /// <summary>단일 비트 쓰기(FC5) 응답 수신 시 발생합니다.</summary>
         public event EventHandler<BitWriteEventArgs>? BitWriteReceived;
+        /// <summary>단일 워드 쓰기(FC6) 응답 수신 시 발생합니다.</summary>
         public event EventHandler<WordWriteEventArgs>? WordWriteReceived;
+        /// <summary>다중 비트 쓰기(FC15) 응답 수신 시 발생합니다.</summary>
         public event EventHandler<MultiBitWriteEventArgs>? MultiBitWriteReceived;
+        /// <summary>다중 워드 쓰기(FC16) 응답 수신 시 발생합니다.</summary>
         public event EventHandler<MultiWordWriteEventArgs>? MultiWordWriteReceived;
+        /// <summary>워드 비트 설정(FC26) 응답 수신 시 발생합니다.</summary>
         public event EventHandler<WordBitSetEventArgs>? WordBitSetReceived;
+        /// <summary>통신 타임아웃 발생 시 발생합니다.</summary>
         public event EventHandler<TimeoutEventArgs>? TimeoutReceived;
+        /// <summary>CRC 오류 발생 시 발생합니다.</summary>
         public event EventHandler<CRCErrorEventArgs>? CRCErrorReceived;
 
+        /// <summary>시리얼 포트가 열렸을 때 발생합니다.</summary>
         public event EventHandler? DeviceOpened;
+        /// <summary>시리얼 포트가 닫혔을 때 발생합니다.</summary>
         public event EventHandler? DeviceClosed;
         #endregion
 
         #region Construct
+        /// <summary>Modbus RTU 마스터 인스턴스를 생성한다.</summary>
         public ModbusRTUMaster()
         {
 
@@ -203,6 +327,9 @@ namespace Going.Basis.Communications.Modbus.RTU
 
         #region Method
         #region Start / Stop
+        /// <summary>
+        /// 시리얼 포트를 열고 Modbus 마스터 통신 루프를 시작합니다.
+        /// </summary>
         public void Start()
         {
             if (!IsOpen && !IsStart)
@@ -233,7 +360,7 @@ namespace Going.Basis.Communications.Modbus.RTU
                                         await Task.Delay(Interval, token);
                                     }
                                     catch (SchedulerStopException) { break; }
-                                    catch (Exception ex) { }
+                                    catch { }
                                 }
                             }
 
@@ -252,6 +379,9 @@ namespace Going.Basis.Communications.Modbus.RTU
             }
         }
 
+        /// <summary>
+        /// 통신 루프를 중지하고 시리얼 포트를 닫습니다.
+        /// </summary>
         public void Stop()
         {
             IsStart = false;
@@ -447,6 +577,11 @@ namespace Going.Basis.Communications.Modbus.RTU
         #endregion
 
         #region ContainAutoID
+        /// <summary>
+        /// 자동 작업 목록에 지정된 메시지 ID가 존재하는지 확인합니다.
+        /// </summary>
+        /// <param name="MessageID">확인할 메시지 ID</param>
+        /// <returns>해당 ID가 존재하면 true</returns>
         public bool ContainAutoID(int MessageID)
         {
             bool ret = false;
@@ -461,6 +596,11 @@ namespace Going.Basis.Communications.Modbus.RTU
         }
         #endregion
         #region RemoveManual
+        /// <summary>
+        /// 수동 작업 목록에서 지정된 메시지 ID의 작업을 제거합니다.
+        /// </summary>
+        /// <param name="MessageID">제거할 메시지 ID</param>
+        /// <returns>제거된 항목이 있으면 true</returns>
         public bool RemoveManual(int MessageID)
         {
             bool ret = false;
@@ -476,6 +616,11 @@ namespace Going.Basis.Communications.Modbus.RTU
         }
         #endregion
         #region RemoveAuto
+        /// <summary>
+        /// 자동 작업 목록에서 지정된 메시지 ID의 작업을 제거합니다.
+        /// </summary>
+        /// <param name="MessageID">제거할 메시지 ID</param>
+        /// <returns>제거된 항목이 있으면 true</returns>
         public bool RemoveAuto(int MessageID)
         {
             bool ret = false;
@@ -491,13 +636,25 @@ namespace Going.Basis.Communications.Modbus.RTU
         }
         #endregion
         #region Clear
+        /// <summary>수동 작업 목록을 모두 비웁니다.</summary>
         public void ClearManual() { ManualWorkList.Clear(); }
+        /// <summary>자동 작업 목록을 모두 비웁니다.</summary>
         public void ClearAuto() { AutoWorkList.Clear(); }
+        /// <summary>현재 작업 큐를 모두 비웁니다.</summary>
         public void ClearWorkSchedule() { WorkQueue.Clear(); }
         #endregion
 
         #region AutoBitRead
+        /// <summary>
+        /// FC1(코일 읽기)을 사용하여 자동 반복 비트 읽기 작업을 등록합니다.
+        /// </summary>
+        /// <param name="id">메시지 식별자</param>
+        /// <param name="slave">슬레이브 주소</param>
+        /// <param name="startAddr">시작 주소</param>
+        /// <param name="length">읽을 비트 수</param>
+        /// <param name="timeout">개별 타임아웃 (ms, null이면 기본값 사용)</param>
         public void AutoBitRead_FC1(int id, int slave, int startAddr, int length, int? timeout = null) => AutoBitRead(id, slave, 1, startAddr, length, timeout);
+        /// <inheritdoc cref="AutoBitRead_FC1"/>
         public void AutoBitRead_FC2(int id, int slave, int startAddr, int length, int? timeout = null) => AutoBitRead(id, slave, 2, startAddr, length, timeout);
         private void AutoBitRead(int id, int slave, byte fn, int startAddr, int length, int? timeout)
         {
@@ -521,7 +678,16 @@ namespace Going.Basis.Communications.Modbus.RTU
         }
         #endregion
         #region AutoWordRead
+        /// <summary>
+        /// FC3(보유 레지스터 읽기)을 사용하여 자동 반복 워드 읽기 작업을 등록합니다.
+        /// </summary>
+        /// <param name="id">메시지 식별자</param>
+        /// <param name="slave">슬레이브 주소</param>
+        /// <param name="startAddr">시작 주소</param>
+        /// <param name="length">읽을 워드 수</param>
+        /// <param name="timeout">개별 타임아웃 (ms, null이면 기본값 사용)</param>
         public void AutoWordRead_FC3(int id, int slave, int startAddr, int length, int? timeout = null) => AutoWordRead(id, slave, 3, startAddr, length, timeout);
+        /// <inheritdoc cref="AutoWordRead_FC3"/>
         public void AutoWordRead_FC4(int id, int slave, int startAddr, int length, int? timeout = null) => AutoWordRead(id, slave, 4, startAddr, length, timeout);
         private void AutoWordRead(int id, int slave, byte fn, int startAddr, int length, int? timeout)
         {
@@ -543,7 +709,17 @@ namespace Going.Basis.Communications.Modbus.RTU
         }
         #endregion
         #region ManualBitRead
+        /// <summary>
+        /// FC1(코일 읽기)을 사용하여 수동 비트 읽기 작업을 등록합니다.
+        /// </summary>
+        /// <param name="id">메시지 식별자</param>
+        /// <param name="slave">슬레이브 주소</param>
+        /// <param name="startAddr">시작 주소</param>
+        /// <param name="length">읽을 비트 수</param>
+        /// <param name="repeatCount">타임아웃 시 재시도 횟수</param>
+        /// <param name="timeout">개별 타임아웃 (ms, null이면 기본값 사용)</param>
         public void ManualBitRead_FC1(int id, int slave, int startAddr, int length, int? repeatCount = null, int? timeout = null) => ManualBitRead(id, slave, 1, startAddr, length, repeatCount, timeout);
+        /// <inheritdoc cref="ManualBitRead_FC1"/>
         public void ManualBitRead_FC2(int id, int slave, int startAddr, int length, int? repeatCount = null, int? timeout = null) => ManualBitRead(id, slave, 2, startAddr, length, repeatCount, timeout);
         private void ManualBitRead(int id, int slave, byte fn, int startAddr, int length, int? repeatCount, int? timeout)
         {
@@ -567,7 +743,17 @@ namespace Going.Basis.Communications.Modbus.RTU
         }
         #endregion
         #region ManualWordRead
+        /// <summary>
+        /// FC3(보유 레지스터 읽기)을 사용하여 수동 워드 읽기 작업을 등록합니다.
+        /// </summary>
+        /// <param name="id">메시지 식별자</param>
+        /// <param name="slave">슬레이브 주소</param>
+        /// <param name="startAddr">시작 주소</param>
+        /// <param name="length">읽을 워드 수</param>
+        /// <param name="repeatCount">타임아웃 시 재시도 횟수</param>
+        /// <param name="timeout">개별 타임아웃 (ms, null이면 기본값 사용)</param>
         public void ManualWordRead_FC3(int id, int slave, int startAddr, int length, int? repeatCount = null, int? timeout = null) => ManualWordRead(id, slave, 3, startAddr, length, repeatCount, timeout);
+        /// <inheritdoc cref="ManualWordRead_FC3"/>
         public void ManualWordRead_FC4(int id, int slave, int startAddr, int length, int? repeatCount = null, int? timeout = null) => ManualWordRead(id, slave, 4, startAddr, length, repeatCount, timeout);
         private void ManualWordRead(int id, int slave, byte fn, int startAddr, int length, int? repeatCount, int? timeout)
         {
@@ -589,6 +775,15 @@ namespace Going.Basis.Communications.Modbus.RTU
         }
         #endregion
         #region ManualBitWrite
+        /// <summary>
+        /// FC5를 사용하여 단일 비트(코일) 쓰기 작업을 수동 목록에 등록합니다.
+        /// </summary>
+        /// <param name="id">메시지 식별자</param>
+        /// <param name="slave">슬레이브 주소</param>
+        /// <param name="startAddr">대상 주소</param>
+        /// <param name="value">쓸 값 (true=ON, false=OFF)</param>
+        /// <param name="repeatCount">타임아웃 시 재시도 횟수</param>
+        /// <param name="timeout">개별 타임아웃 (ms, null이면 기본값 사용)</param>
         public void ManualBitWrite_FC5(int id, int slave, int startAddr, bool value, int? repeatCount = null, int? timeout = null)
         {
             byte[] data = new byte[8];
@@ -609,6 +804,15 @@ namespace Going.Basis.Communications.Modbus.RTU
         }
         #endregion
         #region ManualWordWrite
+        /// <summary>
+        /// FC6을 사용하여 단일 워드(레지스터) 쓰기 작업을 수동 목록에 등록합니다.
+        /// </summary>
+        /// <param name="id">메시지 식별자</param>
+        /// <param name="slave">슬레이브 주소</param>
+        /// <param name="startAddr">대상 주소</param>
+        /// <param name="value">쓸 값</param>
+        /// <param name="repeatCount">타임아웃 시 재시도 횟수</param>
+        /// <param name="timeout">개별 타임아웃 (ms, null이면 기본값 사용)</param>
         public void ManualWordWrite_FC6(int id, int slave, int startAddr, int value, int? repeatCount = null, int? timeout = null)
         {
             byte[] data = new byte[8];
@@ -628,6 +832,15 @@ namespace Going.Basis.Communications.Modbus.RTU
         }
         #endregion
         #region ManualMultiBitWrite_FC15
+        /// <summary>
+        /// FC15를 사용하여 다중 비트(코일) 쓰기 작업을 수동 목록에 등록합니다.
+        /// </summary>
+        /// <param name="id">메시지 식별자</param>
+        /// <param name="slave">슬레이브 주소</param>
+        /// <param name="startAddr">시작 주소</param>
+        /// <param name="values">쓸 비트 값 배열</param>
+        /// <param name="repeatCount">타임아웃 시 재시도 횟수</param>
+        /// <param name="timeout">개별 타임아웃 (ms, null이면 기본값 사용)</param>
         public void ManualMultiBitWrite_FC15(int id, int slave, int startAddr, bool[] values, int? repeatCount = null, int? timeout = null)
         {
             int Length = values.Length / 8;
@@ -666,6 +879,15 @@ namespace Going.Basis.Communications.Modbus.RTU
         }
         #endregion
         #region ManualMultiWordWrite_FC16
+        /// <summary>
+        /// FC16을 사용하여 다중 워드(레지스터) 쓰기 작업을 수동 목록에 등록합니다.
+        /// </summary>
+        /// <param name="id">메시지 식별자</param>
+        /// <param name="slave">슬레이브 주소</param>
+        /// <param name="startAddr">시작 주소</param>
+        /// <param name="values">쓸 워드 값 배열</param>
+        /// <param name="repeatCount">타임아웃 시 재시도 횟수</param>
+        /// <param name="timeout">개별 타임아웃 (ms, null이면 기본값 사용)</param>
         public void ManualMultiWordWrite_FC16(int id, int slave, int startAddr, int[] values, int? repeatCount = null, int? timeout = null)
         {
             byte[] data = new byte[9 + values.Length * 2];
@@ -693,6 +915,16 @@ namespace Going.Basis.Communications.Modbus.RTU
         }
         #endregion
         #region ManualWordBitSet_FC26
+        /// <summary>
+        /// FC26을 사용하여 워드 내 특정 비트 설정 작업을 수동 목록에 등록합니다.
+        /// </summary>
+        /// <param name="id">메시지 식별자</param>
+        /// <param name="slave">슬레이브 주소</param>
+        /// <param name="startAddr">대상 워드 주소</param>
+        /// <param name="bitIndex">설정할 비트 인덱스 (0~15)</param>
+        /// <param name="value">설정할 값 (true=ON, false=OFF)</param>
+        /// <param name="repeatCount">타임아웃 시 재시도 횟수</param>
+        /// <param name="timeout">개별 타임아웃 (ms, null이면 기본값 사용)</param>
         public void ManualWordBitSet_FC26(int id, int slave, int startAddr, byte bitIndex, bool value, int? repeatCount = null, int? timeout = null)
         {
             byte[] data = new byte[9];
@@ -716,6 +948,9 @@ namespace Going.Basis.Communications.Modbus.RTU
         #endregion
 
         #region Dispose
+        /// <summary>
+        /// 통신을 중지하고 사용 중인 리소스를 해제합니다.
+        /// </summary>
         public void Dispose()
         {
             IsDisposed = true;

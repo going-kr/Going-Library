@@ -14,19 +14,49 @@ using System.Threading.Tasks;
 
 namespace Going.UI.Controls
 {
+    /// <summary>
+    /// 스텝 표시 컨트롤. 단계별 진행 상태를 시각적으로 표시합니다.
+    /// </summary>
     public class GoStep : GoControl
     {
         #region Properties
+        /// <summary>
+        /// 이전 버튼의 아이콘 문자열을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 0)] public string? PrevIconString { get; set; } = "fa-chevron-left";
+        /// <summary>
+        /// 다음 버튼의 아이콘 문자열을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 1)] public string? NextIconString { get; set; } = "fa-chevron-right";
 
+        /// <summary>
+        /// 버튼 색상의 테마 색상 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 2)] public string ButtonColor { get; set; } = "Base3";
+        /// <summary>
+        /// 비선택 스텝의 색상 테마 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 3)] public string StepColor { get; set; } = "Base2";
+        /// <summary>
+        /// 선택된 스텝의 색상 테마 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 4)] public string SelectColor { get; set; } = "Select";
+        /// <summary>
+        /// 스텝 표시를 원형으로 할지 여부를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 5)] public bool IsCircle { get; set; } = false;
+        /// <summary>
+        /// 이전/다음 버튼 사용 여부를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 6)] public bool UseButton { get; set; } = true;
 
+        /// <summary>
+        /// 전체 스텝 수를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 8)] public int StepCount { get; set; } = 7;
+        /// <summary>
+        /// 현재 선택된 스텝 인덱스를 가져오거나 설정합니다. 값이 변경되면 <see cref="StepChanged"/> 이벤트가 발생합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 7)]
         public int Step
         {
@@ -37,7 +67,7 @@ namespace Going.UI.Controls
                 if (nStep != v)
                 {
                     nStep = v;
-                    StepChagend?.Invoke(this, EventArgs.Empty);
+                    StepChanged?.Invoke(this, EventArgs.Empty);
                 }
             }
         }
@@ -49,8 +79,11 @@ namespace Going.UI.Controls
         private bool bHoverP = false, bHoverN = false;
         #endregion
 
-        #region Event 
-        public event EventHandler? StepChagend;
+        #region Event
+        /// <summary>
+        /// <see cref="Step"/> 값이 변경되었을 때 발생합니다.
+        /// </summary>
+        public event EventHandler? StepChanged;
         #endregion
 
         #region Constructor
@@ -161,6 +194,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Areas
+        /// <inheritdoc/>
         public override Dictionary<string, SKRect> Areas()
         {
             var dic = base.Areas();

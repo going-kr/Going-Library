@@ -15,31 +15,52 @@ using System.Threading.Tasks;
 
 namespace Going.UI.Controls
 {
+    /// <summary>
+    /// 값 표시 컨트롤의 추상 기본 클래스. 제목, 값 영역, 버튼 영역으로 구성됩니다.
+    /// </summary>
     public abstract class GoValue : GoControl
     {
         #region Properties
+        /// <summary>아이콘 문자열 (FontAwesome 등)</summary>
         [GoProperty(PCategory.Control, 0)] public string? IconString { get; set; }
+        /// <summary>아이콘 크기</summary>
         [GoProperty(PCategory.Control, 1)] public float IconSize { get; set; } = 12;
+        /// <summary>아이콘과 텍스트 사이 간격</summary>
         [GoProperty(PCategory.Control, 2)] public float IconGap { get; set; } = 5;
 
+        /// <summary>글꼴 이름</summary>
         [GoFontNameProperty(PCategory.Control, 3)] public string FontName { get; set; } = "나눔고딕";
+        /// <summary>글꼴 스타일</summary>
         [GoProperty(PCategory.Control, 4)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        /// <summary>글꼴 크기</summary>
         [GoProperty(PCategory.Control, 5)] public float FontSize { get; set; } = 12;
 
+        /// <summary>레이아웃 배치 방향 (가로/세로)</summary>
         [GoProperty(PCategory.Control, 6)] public GoDirectionHV Direction { get; set; } = GoDirectionHV.Horizon;
+        /// <summary>텍스트 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 7)] public string TextColor { get; set; } = "Fore";
+        /// <summary>테두리 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 8)] public string BorderColor { get; set; } = "Base3";
+        /// <summary>제목/버튼 영역 채우기 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 9)] public string FillColor { get; set; } = "Base3";
+        /// <summary>값 영역 배경 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 10)] public string ValueColor { get; set; } = "Base2";
+        /// <summary>모서리 둥글기 유형</summary>
         [GoProperty(PCategory.Control, 11)] public GoRoundType Round { get; set; } = GoRoundType.All;
 
+        /// <summary>제목 영역 크기 (픽셀). null이면 제목 영역을 표시하지 않습니다.</summary>
         [GoProperty(PCategory.Control, 12)] public float? TitleSize { get; set; }
+        /// <summary>제목 텍스트</summary>
         [GoProperty(PCategory.Control, 13)] public string? Title { get; set; }
 
+        /// <summary>버튼 영역 크기 (픽셀). null이면 버튼 영역을 표시하지 않습니다.</summary>
         [GoProperty(PCategory.Control, 14)] public float? ButtonSize { get; set; }
+        /// <summary>버튼 항목 목록</summary>
         [GoProperty(PCategory.Control, 15)] public List<GoButtonItem> Buttons { get; set; } = [];
 
+        /// <summary>자동 글꼴 크기 설정</summary>
         [GoProperty(PCategory.Control, 16)] public GoAutoFontSize AutoFontSize { get; set; } = GoAutoFontSize.NotUsed;
+        /// <summary>자동 아이콘 크기 설정</summary>
         [GoProperty(PCategory.Control, 17)] public GoAutoFontSize AutoIconSize { get; set; } = GoAutoFontSize.NotUsed;
 
         [JsonIgnore] private bool UseTitle => TitleSize.HasValue && TitleSize.Value > 0;
@@ -58,7 +79,9 @@ namespace Going.UI.Controls
         #endregion
 
         #region Event
+        /// <summary>버튼이 클릭되었을 때 발생하는 이벤트</summary>
         public event EventHandler<ButtonClickEventArgs>? ButtonClicked;
+        /// <summary>값 영역이 클릭되었을 때 발생하는 이벤트</summary>
         public event EventHandler? ValueClicked;
         #endregion
 
@@ -264,9 +287,13 @@ namespace Going.UI.Controls
         #endregion
     }
 
+    /// <summary>
+    /// 문자열 값을 표시하는 컨트롤
+    /// </summary>
     public class GoValueString : GoValue
     {
         #region Properties
+        /// <summary>표시할 문자열 값</summary>
         [GoProperty(PCategory.Control, 18)] public string? Value { get; set; }
         #endregion
 
@@ -282,16 +309,26 @@ namespace Going.UI.Controls
         #endregion
     }
 
+    /// <summary>
+    /// 숫자 값을 표시하는 컨트롤. 단위 표시를 지원합니다.
+    /// </summary>
+    /// <typeparam name="T">숫자 자료형 (sbyte, short, int, long, byte, ushort, uint, ulong, float, double, decimal)</typeparam>
     public class GoValueNumber<T> : GoValue where T : struct
     {
         #region Properties
+        /// <summary>표시할 숫자 값</summary>
         [GoProperty(PCategory.Control, 18)] public T Value { get; set; }
+        /// <summary>값 표시 형식 문자열</summary>
         [GoProperty(PCategory.Control, 19)] public string? FormatString { get; set; } = null;
 
+        /// <summary>단위 텍스트</summary>
         [GoProperty(PCategory.Control, 20)] public string? Unit { get; set; }
+        /// <summary>단위 글꼴 크기</summary>
         [GoProperty(PCategory.Control, 21)] public float UnitFontSize { get; set; } = 12;
+        /// <summary>단위 표시 영역 크기 (픽셀). null이면 단위를 표시하지 않습니다.</summary>
         [GoProperty(PCategory.Control, 22)] public float? UnitSize { get; set; } = null;
 
+        /// <summary>자동 단위 글꼴 크기 설정</summary>
         [GoProperty(PCategory.Control, 23)] public GoAutoFontSize AutoUnitFontSize { get; set; } = GoAutoFontSize.NotUsed;
 
         #endregion
@@ -353,14 +390,22 @@ namespace Going.UI.Controls
         #endregion
     }
      
+    /// <summary>
+    /// 불리언(ON/OFF) 값을 표시하는 컨트롤
+    /// </summary>
     public class GoValueBoolean : GoValue
     {
         #region Properties
+        /// <summary>표시할 불리언 값</summary>
         [GoProperty(PCategory.Control, 18)] public bool Value { get; set; }
 
+        /// <summary>On 상태 텍스트</summary>
         [GoProperty(PCategory.Control, 19)] public string? OnText { get; set; } = "ON";
+        /// <summary>Off 상태 텍스트</summary>
         [GoProperty(PCategory.Control, 20)] public string? OffText { get; set; } = "OFF";
+        /// <summary>On 상태 아이콘 문자열</summary>
         [GoProperty(PCategory.Control, 21)] public string? OnIconString { get; set; }
+        /// <summary>Off 상태 아이콘 문자열</summary>
         [GoProperty(PCategory.Control, 22)] public string? OffIconString { get; set; }
         #endregion
 

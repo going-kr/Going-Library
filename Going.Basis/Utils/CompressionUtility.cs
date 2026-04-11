@@ -8,27 +8,47 @@ using System.Threading.Tasks;
 
 namespace Going.Basis.Utils
 {
+    /// <summary>
+    /// JSON 직렬화 데이터의 GZip 압축/해제 유틸리티.
+    /// 임계값(1KB) 이상의 데이터만 압축하며, 압축 효과가 10% 미만이면 원본을 사용한다.
+    /// </summary>
     public static class CompressionUtility
     {
         private const int CompressionThreshold = 1024; // 1KB - 이보다 작으면 압축하지 않음
 
+        /// <summary>압축 결과를 담는 클래스</summary>
         public class CompressionResult
         {
+            /// <summary>Base64 인코딩된 데이터 (압축 또는 원본)</summary>
             public string? Data { get; set; }
+            /// <summary>GZip 압축 적용 여부</summary>
             public bool IsCompressed { get; set; }
+            /// <summary>원본 데이터 크기 (바이트)</summary>
             public int OriginalSize { get; set; }
+            /// <summary>처리 후 데이터 크기 (바이트)</summary>
             public int ProcessedSize { get; set; }
+            /// <summary>압축률 (ProcessedSize / OriginalSize)</summary>
             public double CompressionRatio => OriginalSize > 0 ? (double)ProcessedSize / OriginalSize : 1.0;
         }
 
+        /// <summary>압축 해제 결과를 담는 제네릭 클래스</summary>
+        /// <typeparam name="T">역직렬화 대상 타입</typeparam>
         public class DecompressionResult<T>
         {
+            /// <summary>역직렬화된 데이터 객체</summary>
             public T? Data { get; set; }
+            /// <summary>원본이 압축되어 있었는지 여부</summary>
             public bool WasCompressed { get; set; }
+            /// <summary>압축 전 원본 크기 (바이트)</summary>
             public int OriginalSize { get; set; }
+            /// <summary>압축 해제 후 크기 (바이트)</summary>
             public int DecompressedSize { get; set; }
         }
 
+        /// <summary>객체를 JSON으로 직렬화한 후 GZip 압축하여 Base64 문자열로 반환한다.</summary>
+        /// <typeparam name="T">직렬화할 객체 타입</typeparam>
+        /// <param name="obj">직렬화할 객체</param>
+        /// <returns>압축 결과 (데이터, 압축 여부, 크기 정보 포함)</returns>
         public static CompressionResult CompressJson<T>(T obj)
         {
             try
@@ -93,6 +113,12 @@ namespace Going.Basis.Utils
             }
         }
 
+        /// <summary>Base64 인코딩된 데이터를 압축 해제하고 JSON 역직렬화하여 객체로 반환한다.</summary>
+        /// <typeparam name="T">역직렬화 대상 타입</typeparam>
+        /// <param name="base64Data">Base64 인코딩된 데이터 문자열</param>
+        /// <param name="isCompressed">데이터가 GZip 압축되어 있는지 여부</param>
+        /// <param name="originalSize">압축 전 원본 크기</param>
+        /// <returns>압축 해제 및 역직렬화 결과</returns>
         public static DecompressionResult<T> DecompressJson<T>(string base64Data, bool isCompressed, int originalSize)
         {
             try
@@ -139,11 +165,19 @@ namespace Going.Basis.Utils
             }
         }
 
+        /// <summary>데이터 크기가 압축 임계값(1KB) 이상인지 확인한다.</summary>
+        /// <param name="dataSize">데이터 크기 (바이트)</param>
+        /// <returns>압축이 필요하면 true</returns>
         public static bool ShouldCompress(int dataSize)
         {
             return dataSize >= CompressionThreshold;
         }
 
+        /// <summary>압축 결과에 대한 요약 정보 문자열을 반환한다.</summary>
+        /// <param name="originalSize">원본 크기 (바이트)</param>
+        /// <param name="processedSize">처리 후 크기 (바이트)</param>
+        /// <param name="isCompressed">압축 적용 여부</param>
+        /// <returns>압축률과 절약 크기를 포함한 정보 문자열</returns>
         public static string GetCompressionInfo(int originalSize, int processedSize, bool isCompressed)
         {
             if (!isCompressed)

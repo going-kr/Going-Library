@@ -23,35 +23,59 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Going.UI.Controls
 {
+    /// <summary>
+    /// 입력 컨트롤의 추상 기본 클래스. 제목, 값 영역, 버튼 영역으로 구성됩니다.
+    /// </summary>
     public abstract class GoInput : GoControl
     {
         #region Properties
+        /// <summary>아이콘 문자열 (FontAwesome 등)</summary>
         [GoProperty(PCategory.Control, 0)] public string? IconString { get; set; }
+        /// <summary>아이콘 크기</summary>
         [GoProperty(PCategory.Control, 1)] public float IconSize { get; set; } = 12;
+        /// <summary>아이콘과 텍스트 사이 간격</summary>
         [GoProperty(PCategory.Control, 2)] public float IconGap { get; set; } = 5;
 
+        /// <summary>글꼴 이름</summary>
         [GoFontNameProperty(PCategory.Control, 3)] public string FontName { get; set; } = "나눔고딕";
+        /// <summary>글꼴 스타일</summary>
         [GoProperty(PCategory.Control, 4)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        /// <summary>글꼴 크기</summary>
         [GoProperty(PCategory.Control, 5)] public float FontSize { get; set; } = 12;
 
+        /// <summary>레이아웃 배치 방향 (가로/세로)</summary>
         [GoProperty(PCategory.Control, 6)] public GoDirectionHV Direction { get; set; } = GoDirectionHV.Horizon;
+        /// <summary>텍스트 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 7)] public string TextColor { get; set; } = "Fore";
+        /// <summary>테두리 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 8)] public string BorderColor { get; set; } = "Base3";
+        /// <summary>제목/버튼 영역 채우기 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 9)] public string FillColor { get; set; } = "Base3";
+        /// <summary>값 영역 배경 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 10)] public string ValueColor { get; set; } = "Base1";
+        /// <summary>모서리 둥글기 유형</summary>
         [GoProperty(PCategory.Control, 11)] public GoRoundType Round { get; set; } = GoRoundType.All;
 
+        /// <summary>제목 영역 크기 (픽셀). null이면 제목 영역을 표시하지 않습니다.</summary>
         [GoProperty(PCategory.Control, 12)] public float? TitleSize { get; set; }
+        /// <summary>제목 텍스트</summary>
         [GoProperty(PCategory.Control, 13)] public string? Title { get; set; }
 
+        /// <summary>버튼 영역 크기 (픽셀). null이면 버튼 영역을 표시하지 않습니다.</summary>
         [GoProperty(PCategory.Control, 14)] public float? ButtonSize { get; set; }
+        /// <summary>버튼 항목 목록</summary>
         [GoProperty(PCategory.Control, 15)] public List<GoButtonItem> Buttons { get; set; } = [];
 
+        /// <summary>자동 글꼴 크기 설정</summary>
         [GoProperty(PCategory.Control, 16)] public GoAutoFontSize AutoFontSize { get; set; } = GoAutoFontSize.NotUsed;
+        /// <summary>자동 아이콘 크기 설정</summary>
         [GoProperty(PCategory.Control, 17)] public GoAutoFontSize AutoIconSize { get; set; } = GoAutoFontSize.NotUsed;
 
+        /// <summary>입력 값의 유효성 여부</summary>
         [JsonIgnore] public virtual bool Valid => true;
+        /// <summary>키보드 입력을 사용하는지 여부</summary>
         [JsonIgnore] public virtual bool IsKeyboardInput => false;
+        /// <summary>입력 모드에서 텍스트를 숨길지 여부 (내부 사용)</summary>
         [JsonIgnore, Browsable(false), EditorBrowsable(EditorBrowsableState.Never)] public bool _InputModeInvisibleText_ { get; set; } = false;
         [JsonIgnore] private bool UseTitle => TitleSize.HasValue && TitleSize.Value > 0;
         [JsonIgnore] private bool UseButton => ButtonSize.HasValue && ButtonSize.Value > 0 && Buttons.Count > 0;
@@ -69,6 +93,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Event
+        /// <summary>버튼이 클릭되었을 때 발생하는 이벤트</summary>
         public event EventHandler<ButtonClickEventArgs>? ButtonClicked;
         #endregion
 
@@ -276,10 +301,14 @@ namespace Going.UI.Controls
         #endregion
     }
 
+    /// <summary>
+    /// 문자열 입력 컨트롤. 키보드를 통해 텍스트를 입력받습니다.
+    /// </summary>
     public class GoInputString : GoInput
     {
         #region Properties
         private string sVal = "";
+        /// <summary>입력 값</summary>
         [GoProperty(PCategory.Control, 18)]
         public string Value
         {
@@ -294,12 +323,15 @@ namespace Going.UI.Controls
             }
         }
 
+        /// <summary>키보드 입력 사용 여부</summary>
         [JsonIgnore] public override bool IsKeyboardInput => true;
         #endregion
 
         #region Event
+        /// <summary>값이 변경되었을 때 발생하는 이벤트</summary>
         public event EventHandler? ValueChanged;
 
+        /// <summary>값 편집 시 호출되는 필터 이벤트. false를 반환하면 값 변경이 거부됩니다.</summary>
         public event Func<string, bool>? Editing;
         #endregion
 
@@ -307,7 +339,7 @@ namespace Going.UI.Controls
         protected override void OnDrawValue(SKCanvas canvas, GoTheme thm, SKRect rtValue)
         {
             var cText = thm.ToColor(TextColor);
-         
+
             var fsz = Util.FontSize(AutoFontSize, rtValue.Height) ?? FontSize;
             var isz = Util.FontSize(AutoIconSize, rtValue.Height) ?? IconSize;
 
@@ -327,10 +359,15 @@ namespace Going.UI.Controls
         #endregion
     }
 
+    /// <summary>
+    /// 숫자 입력 컨트롤. 최솟값, 최댓값, 단위 표시를 지원합니다.
+    /// </summary>
+    /// <typeparam name="T">숫자 자료형 (sbyte, short, int, long, byte, ushort, uint, ulong, float, double, decimal)</typeparam>
     public class GoInputNumber<T> : GoInput where T : struct
     {
         #region Properties
         private T sVal = default(T);
+        /// <summary>입력 값</summary>
         [GoProperty(PCategory.Control, 18)]
         public T Value
         {
@@ -345,21 +382,30 @@ namespace Going.UI.Controls
             }
         }
 
+        /// <summary>최솟값. null이면 제한 없음.</summary>
         [GoProperty(PCategory.Control, 19)] public T? Minimum { get; set; } = null;
+        /// <summary>최댓값. null이면 제한 없음.</summary>
         [GoProperty(PCategory.Control, 20)] public T? Maximum { get; set; } = null;
 
+        /// <summary>값 표시 형식 문자열</summary>
         [GoProperty(PCategory.Control, 21)] public string? FormatString { get; set; } = null;
 
+        /// <summary>입력 값의 유효성 여부</summary>
         [JsonIgnore] public override bool Valid => bValid;
+        /// <summary>키보드 입력 사용 여부</summary>
         [JsonIgnore] public override bool IsKeyboardInput => true;
 
+        /// <summary>단위 텍스트</summary>
         [GoProperty(PCategory.Control, 22)] public string? Unit { get; set; }
+        /// <summary>단위 표시 영역 크기 (픽셀). null이면 단위를 표시하지 않습니다.</summary>
         [GoProperty(PCategory.Control, 23)] public float? UnitSize { get; set; } = null;
         #endregion
 
         #region Event
+        /// <summary>값이 변경되었을 때 발생하는 이벤트</summary>
         public event EventHandler? ValueChanged;
 
+        /// <summary>값 편집 시 호출되는 필터 이벤트. false를 반환하면 값 변경이 거부됩니다.</summary>
         public event Func<T, bool>? Editing;
         #endregion
 
@@ -454,10 +500,14 @@ namespace Going.UI.Controls
         #endregion
     }
 
+    /// <summary>
+    /// 불리언(ON/OFF) 입력 컨트롤. On/Off 영역을 클릭하여 값을 전환합니다.
+    /// </summary>
     public class GoInputBoolean : GoInput
     {
         #region Properties
         private bool sVal = false;
+        /// <summary>입력 값</summary>
         [GoProperty(PCategory.Control, 18)]
         public bool Value
         {
@@ -476,15 +526,21 @@ namespace Going.UI.Controls
             }
         }
 
+        /// <summary>On 상태 텍스트</summary>
         [GoProperty(PCategory.Control, 19)] public string? OnText { get; set; } = "ON";
+        /// <summary>Off 상태 텍스트</summary>
         [GoProperty(PCategory.Control, 20)] public string? OffText { get; set; } = "OFF";
+        /// <summary>On 상태 아이콘 문자열</summary>
         [GoProperty(PCategory.Control, 21)] public string? OnIconString { get; set; }
+        /// <summary>Off 상태 아이콘 문자열</summary>
         [GoProperty(PCategory.Control, 22)] public string? OffIconString { get; set; }
         #endregion
-        
+
         #region Event
+        /// <summary>값이 변경되었을 때 발생하는 이벤트</summary>
         public event EventHandler? ValueChanged;
 
+        /// <summary>값 편집 시 호출되는 필터 이벤트. false를 반환하면 값 변경이 거부됩니다.</summary>
         public event Func<bool, bool>? Editing;
         #endregion
 
@@ -561,13 +617,18 @@ namespace Going.UI.Controls
         #endregion
     }
 
+    /// <summary>
+    /// 콤보박스(드롭다운) 입력 컨트롤. 목록에서 항목을 선택합니다.
+    /// </summary>
     // 콤보BOX에 Input이 들어갈 수 있음
     public class GoInputCombo : GoInput
     {
         #region Properties
+        /// <summary>콤보박스 항목 목록</summary>
         [GoProperty(PCategory.Control, 18)] public List<GoListItem> Items { get; set; } = [];
 
         private int nSelIndex = -1;
+        /// <summary>선택된 항목의 인덱스. -1이면 선택된 항목 없음.</summary>
         [JsonIgnore]
         public int SelectedIndex
         {
@@ -582,15 +643,20 @@ namespace Going.UI.Controls
             }
         }
 
+        /// <summary>선택된 항목. 선택된 항목이 없으면 null.</summary>
         [JsonIgnore] public GoListItem? SelectedItem => SelectedIndex >= 0 && SelectedIndex < Items.Count ? Items[SelectedIndex] : null;
 
+        /// <summary>드롭다운 항목 높이 (픽셀)</summary>
         [GoProperty(PCategory.Control, 19)] public int ItemHeight { get; set; } = 30;
+        /// <summary>드롭다운에 표시할 최대 항목 수</summary>
         [GoProperty(PCategory.Control, 20)] public int MaximumViewCount { get; set; } = 8;
         #endregion
 
         #region Event
+        /// <summary>선택된 인덱스가 변경되었을 때 발생하는 이벤트</summary>
         public event EventHandler? SelectedIndexChanged;
 
+        /// <summary>드롭다운이 열리기 전에 발생하는 이벤트. Cancel을 true로 설정하면 드롭다운이 열리지 않습니다.</summary>
         public event EventHandler<GoCancelableEventArgs>? DropDownOpening;
         #endregion
 

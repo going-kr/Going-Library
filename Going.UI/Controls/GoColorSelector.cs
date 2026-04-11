@@ -17,6 +17,9 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Going.UI.Controls
 {
+    /// <summary>
+    /// 색상 선택 컨트롤. 색상 팔레트와 색조(Hue) 바를 통해 색상을 선택할 수 있습니다.
+    /// </summary>
     public class GoColorSelector : GoControl
     {
         #region Const
@@ -25,19 +28,43 @@ namespace Going.UI.Controls
         #endregion
 
         #region Properties
+        /// <summary>
+        /// 글꼴 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoFontNameProperty(PCategory.Control, 0)] public string FontName { get; set; } = "나눔고딕";
+        /// <summary>
+        /// 글꼴 스타일을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 1)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        /// <summary>
+        /// 글꼴 크기를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 2)] public float FontSize { get; set; } = 12;
 
+        /// <summary>
+        /// 텍스트 색상의 테마 색상 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 3)] public string TextColor { get; set; } = "Fore";
+        /// <summary>
+        /// 입력 영역 배경 색상의 테마 색상 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 4)] public string InputColor { get; set; } = "Base1";
+        /// <summary>
+        /// 테두리 색상의 테마 색상 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 5)] public string BorderColor { get; set; } = "Base3";
 
+        /// <summary>
+        /// 콘텐츠 정렬 방식을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 6)] public GoContentAlignment ContentAlignment { get; set; } = GoContentAlignment.MiddleCenter;
 
         [JsonIgnore, Browsable(false), EditorBrowsable(EditorBrowsableState.Never)] public bool _InputModeInvisibleText_ { get; set; } = false;
         [JsonIgnore, Browsable(false), EditorBrowsable(EditorBrowsableState.Never)] public string? _InputColor_ => sInput;
 
+        /// <summary>
+        /// 현재 선택된 색상 값을 가져오거나 설정합니다.
+        /// </summary>
         [JsonIgnore]
         [GoProperty(PCategory.Control, 7)]
         public SKColor Value
@@ -389,6 +416,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Areas
+        /// <inheritdoc/>
         public override Dictionary<string, SKRect> Areas()
         {
             var dic = base.Areas();

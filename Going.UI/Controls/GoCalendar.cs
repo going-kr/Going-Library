@@ -13,24 +13,66 @@ using System.Threading.Tasks;
 
 namespace Going.UI.Controls
 {
+    /// <summary>
+    /// 달력 컨트롤. 월별 날짜를 표시하고 날짜 선택 기능을 제공합니다.
+    /// </summary>
     public class GoCalendar : GoControl
     {
         #region Properties
+        /// <summary>
+        /// 글꼴 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoFontNameProperty(PCategory.Control, 0)] public string FontName { get; set; } = "나눔고딕";
+        /// <summary>
+        /// 글꼴 스타일을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 1)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        /// <summary>
+        /// 글꼴 크기를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 2)] public float FontSize { get; set; } = 12;
 
+        /// <summary>
+        /// 텍스트 색상의 테마 색상 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 3)] public string TextColor { get; set; } = "Fore";
+        /// <summary>
+        /// 배경 상자 색상의 테마 색상 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 4)] public string BoxColor { get; set; } = "Base3";
+        /// <summary>
+        /// 선택된 날짜의 배경 색상 테마 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 5)] public string SelectColor { get; set; } = "Select";
+        /// <summary>
+        /// 모서리 둥글기 타입을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 6)] public GoRoundType Round { get; set; } = GoRoundType.All;
 
+        /// <summary>
+        /// 배경을 그릴지 여부를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 7)] public bool BackgroundDraw { get; set; } = true;
+        /// <summary>
+        /// 다중 날짜 선택 허용 여부를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 8)] public bool MultiSelect { get; set; } = false;
+        /// <summary>
+        /// 선택 없음 허용 여부를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 9)] public bool NoneSelect { get; set; } = false;
 
+        /// <summary>
+        /// 현재 표시 중인 연도를 가져옵니다.
+        /// </summary>
         [JsonIgnore] public int CurrentYear { get; private set; } = DateTime.Now.Year;
+        /// <summary>
+        /// 현재 표시 중인 월을 가져옵니다.
+        /// </summary>
         [JsonIgnore] public int CurrentMonth { get; private set; } = DateTime.Now.Month;
+        /// <summary>
+        /// 선택된 날짜 목록을 가져옵니다.
+        /// </summary>
         [JsonIgnore] public List<DateTime> SelectedDays { get; } = new List<DateTime>();
         #endregion
 
@@ -40,6 +82,9 @@ namespace Going.UI.Controls
         #endregion
 
         #region Event
+        /// <summary>
+        /// 선택된 날짜가 변경되었을 때 발생합니다.
+        /// </summary>
         public event EventHandler? SelectedDaysChanged;
         #endregion
 
@@ -174,6 +219,7 @@ namespace Going.UI.Controls
         }
         #endregion
         #region Areas
+        /// <inheritdoc/>
         public override Dictionary<string, SKRect> Areas()
         {
             var dic = base.Areas();

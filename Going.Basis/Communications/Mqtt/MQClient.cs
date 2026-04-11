@@ -13,41 +13,74 @@ using uPLibrary.Networking.M2Mqtt.Messages;
 namespace Going.Basis.Communications.Mqtt
 {
     #region enum : MQQos
+    /// <summary>
+    /// MQTT 메시지의 서비스 품질(QoS) 레벨을 나타내는 열거형
+    /// </summary>
     public enum MQQos : byte
     {
+        /// <summary>최소 한 번 전달 (QoS 1)</summary>
         LeastOnce = MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE,
+        /// <summary>최대 한 번 전달 (QoS 0)</summary>
         MostOnce = MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE,
+        /// <summary>정확히 한 번 전달 (QoS 2)</summary>
         ExactlyOnce = MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE,
+        /// <summary>구독 실패</summary>
         GrantedFailure = MqttMsgBase.QOS_LEVEL_GRANTED_FAILURE
     }
     #endregion
     #region class : MQSubscribe
+    /// <summary>
+    /// MQTT 구독 정보를 나타내는 클래스
+    /// </summary>
+    /// <param name="topic">구독할 토픽 경로</param>
+    /// <param name="qos">서비스 품질 레벨. 기본값은 MostOnce(QoS 0)</param>
     public class MQSubscribe(string topic, MQQos qos = MQQos.MostOnce)
     {
+        /// <summary>구독 토픽 경로를 가져옵니다.</summary>
         public string Topic { get; private set; } = topic;
+        /// <summary>서비스 품질 레벨을 가져옵니다.</summary>
         public MQQos Qos { get; private set; } = qos;
     }
     #endregion
     #region class : MQReceiveArgs
+    /// <summary>
+    /// MQTT 메시지 수신 시 발생하는 이벤트 인자
+    /// </summary>
+    /// <param name="Topic">수신된 메시지의 토픽</param>
+    /// <param name="Datas">수신된 메시지의 페이로드 바이트 배열</param>
     public class MQReceiveArgs(string Topic, byte[] Datas) : EventArgs
     {
+        /// <summary>수신된 메시지의 토픽을 가져옵니다.</summary>
         public string Topic { get; private set; } = Topic;
+        /// <summary>수신된 메시지의 페이로드 바이트 배열을 가져옵니다.</summary>
         public byte[] Datas { get; private set; } = Datas;
     }
     #endregion
 
+    /// <summary>
+    /// MQTT 브로커에 연결하여 메시지를 발행(Publish) 및 구독(Subscribe)하는 클라이언트 클래스.
+    /// M2Mqtt 라이브러리를 기반으로 자동 재연결 기능을 제공합니다.
+    /// </summary>
     public class MQClient
     {
         #region Properties
+        /// <summary>MQTT 브로커의 호스트 이름 또는 IP 주소를 가져오거나 설정합니다. 기본값은 "127.0.0.1"입니다.</summary>
         public string BrokerHostName { get; set; } = "127.0.0.1";
+        /// <summary>클라이언트가 시작되었는지 여부를 가져옵니다.</summary>
         public bool IsStart { get; private set; }
+        /// <summary>MQTT 브로커에 연결되어 있는지 여부를 가져옵니다.</summary>
         public bool IsConnected => client != null ? client.IsConnected : false;
 
+        /// <summary>MQTT 클라이언트 식별자를 가져옵니다.</summary>
         public string? ClientID { get; private set; }
+        /// <summary>인증에 사용되는 사용자 이름을 가져옵니다.</summary>
         public string? UserName { get; private set; }
+        /// <summary>인증에 사용되는 비밀번호를 가져옵니다.</summary>
         public string? Password { get; private set; }
+        /// <summary>현재 등록된 구독 목록을 가져옵니다.</summary>
         public List<MQSubscribe> Subscribes { get; } = [];
 
+        /// <summary>사용자 정의 태그 데이터를 가져오거나 설정합니다.</summary>
         public object? Tag { get; set; } = null;
         #endregion
 
@@ -59,12 +92,18 @@ namespace Going.Basis.Communications.Mqtt
         #endregion
 
         #region Event
+        /// <summary>MQTT 브로커에 연결되었을 때 발생합니다.</summary>
         public event EventHandler? Connected;
+        /// <summary>MQTT 브로커와의 연결이 끊어졌을 때 발생합니다.</summary>
         public event EventHandler? Disconnected;
+        /// <summary>구독 중인 토픽에서 메시지를 수신했을 때 발생합니다.</summary>
         public event EventHandler<MQReceiveArgs>? Received;
         #endregion
 
         #region Constructor
+        /// <summary>
+        /// MQClient 클래스의 새 인스턴스를 초기화합니다.
+        /// </summary>
         public MQClient()
         {
         }
@@ -72,8 +111,22 @@ namespace Going.Basis.Communications.Mqtt
 
         #region Method
         #region Start / Stop
+        /// <summary>
+        /// 자동 생성된 클라이언트 ID로 MQTT 브로커에 연결을 시작합니다.
+        /// </summary>
         public void Start() => Start(null, null, null);
+        /// <summary>
+        /// 지정한 클라이언트 ID로 MQTT 브로커에 연결을 시작합니다.
+        /// </summary>
+        /// <param name="clientID">MQTT 클라이언트 식별자. null이면 GUID가 자동 생성됩니다.</param>
         public void Start(string? clientID) => Start(clientID, null, null);
+        /// <summary>
+        /// 지정한 클라이언트 ID와 인증 정보로 MQTT 브로커에 연결을 시작합니다.
+        /// 연결이 끊어지면 자동으로 재연결을 시도합니다.
+        /// </summary>
+        /// <param name="clientID">MQTT 클라이언트 식별자. null이면 GUID가 자동 생성됩니다.</param>
+        /// <param name="userName">인증 사용자 이름. null이면 인증 없이 연결합니다.</param>
+        /// <param name="password">인증 비밀번호</param>
         public void Start(string? clientID, string? userName, string? password)
         {
             try
@@ -122,7 +175,7 @@ namespace Going.Basis.Communications.Mqtt
                                             client.MqttMsgPublishReceived += (o, s) => Received?.Invoke(this, new MQReceiveArgs(s.Topic, s.Message));
                                         }
                                     }
-                                    catch (Exception ex) { }
+                                    catch { }
                                     #endregion
                                 }
                             }
@@ -144,16 +197,19 @@ namespace Going.Basis.Communications.Mqtt
                         if (client != null && client.IsConnected)
                         {
                             try { client.Disconnect(); }
-                            catch (Exception ex) { }
+                            catch { }
                         }
                         client = null;
 
                     }, cancel.Token);
                 }
             }
-            catch (Exception ex) { }
+            catch { }
         }
 
+        /// <summary>
+        /// MQTT 브로커와의 연결을 종료하고 클라이언트를 정지합니다.
+        /// </summary>
         public void Stop()
         {
             IsStart = false;
@@ -172,27 +228,58 @@ namespace Going.Basis.Communications.Mqtt
         #endregion
 
         #region Publish
+        /// <summary>
+        /// 지정한 토픽에 바이트 배열 메시지를 발행합니다.
+        /// </summary>
+        /// <param name="Topic">발행할 토픽 경로</param>
+        /// <param name="Data">발행할 메시지 바이트 배열</param>
+        /// <param name="qos">서비스 품질 레벨. 기본값은 MostOnce(QoS 0)</param>
+        /// <param name="retain">메시지 보존 여부</param>
         public void Publish(string Topic, byte[] Data, MQQos qos = MQQos.MostOnce, bool retain = false)
         {
             if (client != null && client.IsConnected)
                 client.Publish(Topic, Data, (byte)qos, retain);
         }
 
+        /// <summary>
+        /// 지정한 토픽에 문자열 메시지를 UTF-8로 인코딩하여 발행합니다.
+        /// </summary>
+        /// <param name="Topic">발행할 토픽 경로</param>
+        /// <param name="Data">발행할 메시지 문자열</param>
+        /// <param name="qos">서비스 품질 레벨. 기본값은 MostOnce(QoS 0)</param>
+        /// <param name="retain">메시지 보존 여부</param>
         public void Publish(string Topic, string Data, MQQos qos = MQQos.MostOnce, bool retain = false) => Publish(Topic, Encoding.UTF8.GetBytes(Data), qos, retain);
         #endregion
 
         #region Subscribe
+        /// <summary>
+        /// 지정한 구독 정보로 토픽을 구독합니다. 이미 연결되어 있으면 즉시 구독이 적용됩니다.
+        /// </summary>
+        /// <param name="sub">구독할 토픽과 QoS 정보</param>
         public void Subscribe(MQSubscribe sub)
         {
             Subscribes.Add(sub);
             if (client != null && client.IsConnected)
                 client.Subscribe([sub.Topic], [(byte)sub.Qos]);
         }
+        /// <summary>
+        /// 지정한 토픽을 기본 QoS(MostOnce)로 구독합니다.
+        /// </summary>
+        /// <param name="Topic">구독할 토픽 경로</param>
         public void Subscribe(string Topic) => Subscribe(new MQSubscribe(Topic));
+        /// <summary>
+        /// 지정한 토픽을 지정한 QoS 레벨로 구독합니다.
+        /// </summary>
+        /// <param name="Topic">구독할 토픽 경로</param>
+        /// <param name="Qos">서비스 품질 레벨</param>
         public void Subscribe(string Topic, MQQos Qos) => Subscribe(new MQSubscribe(Topic, Qos));
         #endregion
 
         #region Unsubscribe
+        /// <summary>
+        /// 지정한 토픽의 구독을 해제합니다.
+        /// </summary>
+        /// <param name="Topic">구독 해제할 토픽 경로</param>
         public void Unsubscribe(string Topic)
         {
             var v = Subscribes.FirstOrDefault(x => x.Topic == Topic);
@@ -203,6 +290,9 @@ namespace Going.Basis.Communications.Mqtt
             }
         }
 
+        /// <summary>
+        /// 모든 토픽의 구독을 해제하고 구독 목록을 비웁니다.
+        /// </summary>
         public void UnsubscribeClear()
         {
             if (Subscribes.Count > 0)
@@ -216,6 +306,12 @@ namespace Going.Basis.Communications.Mqtt
         #endregion
 
         #region Static Method
+        /// <summary>
+        /// 지정한 MQTT 브로커에 테스트 연결을 시도합니다.
+        /// </summary>
+        /// <param name="BrokerIP">브로커 IP 주소</param>
+        /// <param name="ClientID">테스트에 사용할 클라이언트 식별자</param>
+        /// <returns>연결에 성공하면 true, 실패하면 false</returns>
         public static bool Test(string BrokerIP, string ClientID)
         {
             bool ret = false;

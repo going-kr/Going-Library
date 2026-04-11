@@ -12,22 +12,61 @@ using System.Threading.Tasks;
 
 namespace Going.UI.ImageCanvas
 {
+    /// <summary>
+    /// 이미지 캔버스에서 사용되는 슬라이더 컨트롤입니다. 커서 이미지를 드래그하여 값을 조절할 수 있습니다.
+    /// </summary>
     public class IcSlider : GoControl
     {
         #region Properties
+        /// <summary>
+        /// 글꼴 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoFontNameProperty(PCategory.Control, 0)] public string FontName { get; set; } = "나눔고딕";
+        /// <summary>
+        /// 글꼴 스타일을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 1)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        /// <summary>
+        /// 글꼴 크기를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 2)] public float FontSize { get; set; } = 12;
-        [GoProperty(PCategory.Control, 3)] public string TextColor { get; set; } = "Black";
+        /// <summary>
+        /// 텍스트 색상을 가져오거나 설정합니다. 테마 색상 이름을 사용합니다.
+        /// </summary>
+        [GoProperty(PCategory.Control, 3)] public string TextColor { get; set; } = "Fore";
 
+        /// <summary>
+        /// 비활성(배경) 상태 바 이미지 리소스 이름을 가져오거나 설정합니다. null이면 부모의 Off 이미지를 사용합니다.
+        /// </summary>
         [GoImageProperty(PCategory.Control, 4)] public string? OffBarImage { get; set; }
+        /// <summary>
+        /// 활성(채움) 상태 바 이미지 리소스 이름을 가져오거나 설정합니다. null이면 부모의 On 이미지를 사용합니다.
+        /// </summary>
         [GoImageProperty(PCategory.Control, 5)] public string? OnBarImage { get; set; }
+        /// <summary>
+        /// 비활성 상태의 커서 이미지 리소스 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoImageProperty(PCategory.Control, 6)] public string? OffCursorImage { get; set; }
+        /// <summary>
+        /// 활성(누름) 상태의 커서 이미지 리소스 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoImageProperty(PCategory.Control, 7)] public string? OnCursorImage { get; set; }
 
+        /// <summary>
+        /// 값 표시 서식 문자열을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 8)] public string FormatString { get; set; } = "0";
+        /// <summary>
+        /// 최솟값을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 9)] public double Minimum { get; set; } = 0D;
+        /// <summary>
+        /// 최댓값을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 10)] public double Maximum { get; set; } = 100D;
+        /// <summary>
+        /// 현재 값을 가져오거나 설정합니다. 값이 변경되면 <see cref="ValueChanged"/> 이벤트가 발생합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 11)]
         public double Value
         {
@@ -43,8 +82,14 @@ namespace Going.UI.ImageCanvas
             }
         }
 
+        /// <summary>
+        /// 눈금 간격을 가져오거나 설정합니다. 설정 시 값이 해당 간격으로 스냅됩니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 12)] public double? Tick { get; set; }
 
+        /// <summary>
+        /// 현재 값 텍스트를 표시할지 여부를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 13)] public bool DrawText { get; set; } = true;
         #endregion
 
@@ -54,6 +99,9 @@ namespace Going.UI.ImageCanvas
         #endregion
 
         #region Event
+        /// <summary>
+        /// <see cref="Value"/> 값이 변경되었을 때 발생하는 이벤트입니다.
+        /// </summary>
         public event EventHandler? ValueChanged;
         #endregion
 

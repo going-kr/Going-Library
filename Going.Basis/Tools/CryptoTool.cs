@@ -8,14 +8,30 @@ using System.Threading.Tasks;
 
 namespace Going.Basis.Tools
 {
+    /// <summary>
+    /// 암호화/인코딩 유틸리티 클래스.
+    /// Base64 인코딩/디코딩, AES-256/AES-128 암호화/복호화(CBC 모드, PKCS7 패딩)를 제공한다.
+    /// </summary>
     public class CryptoTool
     {
         #region Base64String
         #region Encode
+        /// <summary>문자열을 Base64로 인코딩한다.</summary>
+        /// <param name="data">인코딩할 문자열</param>
+        /// <param name="enc">문자 인코딩 (기본값: UTF-8)</param>
+        /// <returns>Base64 인코딩된 문자열</returns>
         public static string? EncodeBase64String(string data, Encoding? enc = null) => Convert.ToBase64String((enc ?? Encoding.UTF8).GetBytes(data));
+        /// <summary>바이트 배열을 Base64로 인코딩한다.</summary>
+        /// <param name="data">인코딩할 바이트 배열</param>
+        /// <returns>Base64 인코딩된 문자열</returns>
         public static string? EncodeBase64String(byte[] data) => Convert.ToBase64String(data);
         #endregion
         #region Decode
+        /// <summary>Base64 문자열을 디코딩한다.</summary>
+        /// <typeparam name="T">반환 타입 (string 또는 byte[])</typeparam>
+        /// <param name="data">Base64 인코딩된 문자열</param>
+        /// <param name="enc">문자 인코딩 (기본값: UTF-8). T가 string일 때 사용</param>
+        /// <returns>디코딩된 결과</returns>
         public static T? DecodeBase64String<T>(string data, Encoding? enc = null)
         {
             T? ret = default;
@@ -27,6 +43,11 @@ namespace Going.Basis.Tools
         #endregion
 
         #region AES256
+        /// <summary>AES-256(CBC, PKCS7) 방식으로 문자열을 암호화한다. IV는 결과 앞에 포함된다.</summary>
+        /// <param name="input">암호화할 평문</param>
+        /// <param name="key">암호화 키 (SHA-256 해시로 256비트 키 생성)</param>
+        /// <param name="enc">문자 인코딩 (기본값: UTF-8)</param>
+        /// <returns>Base64 인코딩된 암호문 (IV 포함)</returns>
         public static string EncryptAES256(string input, string key, Encoding? enc = null)
         {
             enc ??= Encoding.UTF8;
@@ -54,6 +75,11 @@ namespace Going.Basis.Tools
             }
         }
 
+        /// <summary>AES-256(CBC, PKCS7) 방식으로 암호문을 복호화한다. 입력 앞 16바이트를 IV로 사용한다.</summary>
+        /// <param name="input">Base64 인코딩된 암호문 (IV 포함)</param>
+        /// <param name="key">복호화 키 (SHA-256 해시로 256비트 키 생성)</param>
+        /// <param name="enc">문자 인코딩 (기본값: UTF-8)</param>
+        /// <returns>복호화된 평문</returns>
         public static string DecryptAES256(string input, string key, Encoding? enc = null)
         {
             enc ??= Encoding.UTF8;
@@ -89,6 +115,11 @@ namespace Going.Basis.Tools
         #endregion
 
         #region AES128
+        /// <summary>AES-128(CBC, PKCS7) 방식으로 문자열을 암호화한다. IV는 결과 앞에 포함된다.</summary>
+        /// <param name="input">암호화할 평문</param>
+        /// <param name="key">암호화 키 (MD5 해시로 128비트 키 생성)</param>
+        /// <param name="enc">문자 인코딩 (기본값: UTF-8)</param>
+        /// <returns>Base64 인코딩된 암호문 (IV 포함)</returns>
         public static string EncryptAES128(string input, string key, Encoding? enc = null)
         {
             enc ??= Encoding.UTF8;
@@ -116,6 +147,11 @@ namespace Going.Basis.Tools
             }
         }
 
+        /// <summary>AES-128(CBC, PKCS7) 방식으로 암호문을 복호화한다. 입력 앞 16바이트를 IV로 사용한다.</summary>
+        /// <param name="input">Base64 인코딩된 암호문 (IV 포함)</param>
+        /// <param name="key">복호화 키 (MD5 해시로 128비트 키 생성)</param>
+        /// <param name="enc">문자 인코딩 (기본값: UTF-8)</param>
+        /// <returns>복호화된 평문</returns>
         public static string DecryptAES128(string input, string key, Encoding? enc = null)
         {
             enc ??= Encoding.UTF8;

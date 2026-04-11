@@ -15,33 +15,55 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Going.UI.Controls
 {
+    /// <summary>
+    /// 여러 개의 버튼을 하나의 그룹으로 묶어 표시하는 다중 버튼 컨트롤. 일반 버튼, 토글, 라디오 모드를 지원합니다.
+    /// </summary>
     public class GoButtons : GoControl
     {
         #region Properties
+        /// <summary>아이콘 크기</summary>
         [GoProperty(PCategory.Control, 0)] public float IconSize { get; set; } = 12;
+        /// <summary>아이콘 배치 방향</summary>
         [GoProperty(PCategory.Control, 1)] public GoDirectionHV IconDirection { get; set; }
+        /// <summary>아이콘과 텍스트 사이 간격</summary>
         [GoProperty(PCategory.Control, 2)] public float IconGap { get; set; } = 5;
+        /// <summary>글꼴 이름</summary>
         [GoFontNameProperty(PCategory.Control, 3)] public string FontName { get; set; } = "나눔고딕";
+        /// <summary>글꼴 스타일</summary>
         [GoProperty(PCategory.Control, 4)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        /// <summary>글꼴 크기</summary>
         [GoProperty(PCategory.Control, 5)] public float FontSize { get; set; } = 12;
 
+        /// <summary>텍스트 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 6)] public string TextColor { get; set; } = "Fore";
+        /// <summary>버튼 배경 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 7)] public string ButtonColor { get; set; } = "Base3";
+        /// <summary>테두리 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 8)] public string BorderColor { get; set; } = "Base3";
+        /// <summary>선택된 버튼 배경 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 9)] public string SelectedButtonColor { get; set; } = "Select";
+        /// <summary>선택된 버튼 테두리 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 8)] public string SelectedBorderColor { get; set; } = "Select";
+        /// <summary>모서리 둥글기 유형</summary>
         [GoProperty(PCategory.Control, 10)] public GoRoundType Round { get; set; } = GoRoundType.All;
+        /// <summary>테두리 두께</summary>
         [GoProperty(PCategory.Control, 11)] public float BorderWidth { get; set; } = 1F;
+        /// <summary>버튼 채우기 스타일</summary>
         [GoProperty(PCategory.Control, 12)] public GoButtonFillStyle FillStyle { get; set; } = GoButtonFillStyle.Flat;
 
+        /// <summary>버튼 항목 목록</summary>
         [GoProperty(PCategory.Control, 13)] public List<GoButtonsItem> Buttons { get; set; } = [];
 
+        /// <summary>버튼 배치 방향 (가로/세로)</summary>
         [GoProperty(PCategory.Control, 14)] public GoDirectionHV Direction { get; set; } = GoDirectionHV.Horizon;
+        /// <summary>버튼 동작 모드 (일반 버튼, 토글, 라디오)</summary>
         [GoProperty(PCategory.Control, 15)] public GoButtonsMode Mode { get; set; } = GoButtonsMode.Button;
         #endregion
 
         #region Event
+        /// <summary>버튼이 클릭되었을 때 발생하는 이벤트</summary>
         public event EventHandler<ButtonsClickEventArgs>? ButtonClicked;
+        /// <summary>선택 상태가 변경되었을 때 발생하는 이벤트</summary>
         public event EventHandler<ButtonsSelectedEventArgs>? SelectedChanged;
         #endregion
 

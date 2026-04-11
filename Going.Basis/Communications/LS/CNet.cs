@@ -12,22 +12,49 @@ using static Going.Basis.Communications.LS.CNet;
 namespace Going.Basis.Communications.LS
 {
     #region enum : CNetFunc
+    /// <summary>
+    /// CNet 프로토콜의 통신 기능 종류를 나타내는 열거형
+    /// </summary>
     public enum CNetFunc
     {
-        NONE, READ_SINGLE, READ_BLOCK, WRITE_SINGLE, WRITE_BLOCK,
+        /// <summary>없음</summary>
+        NONE,
+        /// <summary>개별 디바이스 읽기 (RSS)</summary>
+        READ_SINGLE,
+        /// <summary>연속 디바이스 블록 읽기 (RSB)</summary>
+        READ_BLOCK,
+        /// <summary>개별 디바이스 쓰기 (WSS)</summary>
+        WRITE_SINGLE,
+        /// <summary>연속 디바이스 블록 쓰기 (WSB)</summary>
+        WRITE_BLOCK,
     }
     #endregion
     #region class : CNetValue
+    /// <summary>
+    /// CNet 프로토콜에서 개별 쓰기(WSS) 시 사용되는 디바이스-값 쌍을 나타내는 클래스
+    /// </summary>
+    /// <param name="dev">PLC 디바이스 주소 (예: "%MW100")</param>
+    /// <param name="value">쓰기할 값</param>
     public class CNetValue(string dev, int value)
     {
+        /// <summary>PLC 디바이스 주소를 가져옵니다.</summary>
         public string Device { get; private set; } = dev;
+        /// <summary>디바이스에 쓰기할 값을 가져옵니다.</summary>
         public int Value { get; private set; } = value;
     }
     #endregion
     #region class : Exception
+    /// <summary>
+    /// 통신 스케줄러의 루프를 중단시키기 위한 내부 예외 클래스
+    /// </summary>
     public class SchedulerStopException : Exception { }
     #endregion
 
+    /// <summary>
+    /// LS Electric PLC용 CNet 프로토콜 시리얼 통신 클래스.
+    /// RSS(개별읽기), RSB(블록읽기), WSS(개별쓰기), WSB(블록쓰기) 명령을 지원하며,
+    /// 자동(Auto) 반복 폴링과 수동(Manual) 일회성 작업 큐를 관리합니다.
+    /// </summary>
     public class CNet : IDisposable
     {
         #region const : Special Code
@@ -52,58 +79,122 @@ namespace Going.Basis.Communications.LS
         }
         #endregion
         #region class : EventArgs
+        /// <summary>
+        /// 데이터 읽기 응답 수신 시 발생하는 이벤트 인자
+        /// </summary>
+        /// <param name="ID">메시지 식별자</param>
+        /// <param name="Slave">슬레이브 국번</param>
+        /// <param name="Func">실행된 CNet 기능</param>
+        /// <param name="Data">읽어온 데이터 배열</param>
+        /// <param name="ReadAddress">읽기 대상 디바이스 주소 배열</param>
         public class DataReadEventArgs(int ID, int Slave, CNetFunc Func, int[] Data, string[]? ReadAddress) : EventArgs
         {
+            /// <summary>메시지 식별자를 가져옵니다.</summary>
             public int MessageID { get; private set; } = ID;
+            /// <summary>슬레이브 국번을 가져옵니다.</summary>
             public int Slave { get; private set; } = Slave;
+            /// <summary>실행된 CNet 기능을 가져옵니다.</summary>
             public CNetFunc Function { get; private set; } = Func;
+            /// <summary>읽어온 데이터 배열을 가져옵니다.</summary>
             public int[] Data { get; private set; } = Data;
+            /// <summary>읽기 대상 디바이스 주소 배열을 가져옵니다.</summary>
             public string[]? ReadAddress { get; private set; } = ReadAddress;
         }
+        /// <summary>
+        /// 쓰기 응답 수신 시 발생하는 이벤트 인자
+        /// </summary>
+        /// <param name="ID">메시지 식별자</param>
+        /// <param name="Slave">슬레이브 국번</param>
+        /// <param name="Func">실행된 CNet 기능</param>
         public class WriteEventArgs(int ID, int Slave, CNetFunc Func) : EventArgs
         {
+            /// <summary>메시지 식별자를 가져옵니다.</summary>
             public int MessageID { get; private set; } = ID;
+            /// <summary>슬레이브 국번을 가져옵니다.</summary>
             public int Slave { get; private set; } = Slave;
+            /// <summary>실행된 CNet 기능을 가져옵니다.</summary>
             public CNetFunc Function { get; private set; } = Func;
         }
+        /// <summary>
+        /// 통신 타임아웃 발생 시의 이벤트 인자
+        /// </summary>
+        /// <param name="ID">메시지 식별자</param>
+        /// <param name="Slave">슬레이브 국번</param>
+        /// <param name="Func">실행된 CNet 기능</param>
         public class TimeoutEventArgs(int ID, int Slave, CNetFunc Func) : EventArgs
         {
+            /// <summary>메시지 식별자를 가져옵니다.</summary>
             public int MessageID { get; private set; } = ID;
+            /// <summary>슬레이브 국번을 가져옵니다.</summary>
             public int Slave { get; private set; } = Slave;
+            /// <summary>실행된 CNet 기능을 가져옵니다.</summary>
             public CNetFunc Function { get; private set; } = Func;
         }
+        /// <summary>
+        /// BCC(Block Check Character) 오류 발생 시의 이벤트 인자
+        /// </summary>
+        /// <param name="ID">메시지 식별자</param>
+        /// <param name="Slave">슬레이브 국번</param>
+        /// <param name="Func">실행된 CNet 기능</param>
         public class BCCErrorEventArgs(int ID, int Slave, CNetFunc Func) : EventArgs
         {
+            /// <summary>메시지 식별자를 가져옵니다.</summary>
             public int MessageID { get; private set; } = ID;
+            /// <summary>슬레이브 국번을 가져옵니다.</summary>
             public int Slave { get; private set; } = Slave;
+            /// <summary>실행된 CNet 기능을 가져옵니다.</summary>
             public CNetFunc Function { get; private set; } = Func;
         }
+        /// <summary>
+        /// PLC에서 NAK(부정 응답) 수신 시의 이벤트 인자
+        /// </summary>
+        /// <param name="ID">메시지 식별자</param>
+        /// <param name="Slave">슬레이브 국번</param>
+        /// <param name="Func">실행된 CNet 기능</param>
+        /// <param name="ErrCode">PLC가 반환한 오류 코드</param>
         public class NAKEventArgs(int ID, int Slave, CNetFunc Func, int ErrCode) : EventArgs
         {
+            /// <summary>메시지 식별자를 가져옵니다.</summary>
             public int MessageID { get; private set; } = ID;
+            /// <summary>슬레이브 국번을 가져옵니다.</summary>
             public int Slave { get; private set; } = Slave;
+            /// <summary>실행된 CNet 기능을 가져옵니다.</summary>
             public CNetFunc Function { get; private set; } = Func;
+            /// <summary>PLC가 반환한 오류 코드를 가져옵니다.</summary>
             public int ErrorCode { get; private set; } = ErrCode;
         }
         #endregion
         
         #region Properties
+        /// <summary>시리얼 포트 이름을 가져오거나 설정합니다. (예: "COM1")</summary>
         public string Port { get => ser.PortName; set => ser.PortName = value; }
+        /// <summary>통신 속도(bps)를 가져오거나 설정합니다.</summary>
         public int Baudrate { get => ser.BaudRate; set => ser.BaudRate = value; }
+        /// <summary>패리티 비트 설정을 가져오거나 설정합니다.</summary>
         public Parity Parity { get => ser.Parity; set => ser.Parity = value; }
+        /// <summary>데이터 비트 수를 가져오거나 설정합니다.</summary>
         public int DataBits { get => ser.DataBits; set => ser.DataBits = value; }
+        /// <summary>스톱 비트 설정을 가져오거나 설정합니다.</summary>
         public StopBits StopBits { get => ser.StopBits; set => ser.StopBits = value; }
 
+        /// <summary>응답 대기 타임아웃 시간(밀리초)을 가져오거나 설정합니다. 기본값은 100입니다.</summary>
         public int Timeout { get; set; } = 100;
+        /// <summary>통신 폴링 간격(밀리초)을 가져오거나 설정합니다. 기본값은 10입니다.</summary>
         public int Interval { get; set; } = 10;
+        /// <summary>수신 버퍼 크기(바이트)를 가져오거나 설정합니다. 기본값은 1024입니다.</summary>
         public int BufferSize { get; set; } = 1024;
 
+        /// <summary>시리얼 포트가 열려 있는지 여부를 가져옵니다.</summary>
         public bool IsOpen => ser.IsOpen;
+        /// <summary>통신 스케줄러가 실행 중인지 여부를 가져옵니다.</summary>
         public bool IsStart { get; private set; }
+        /// <summary>연결 끊김 시 자동 재연결 여부를 가져오거나 설정합니다.</summary>
         public bool AutoReconnect { get; set; }
 
+        /// <summary>객체가 Dispose되었는지 여부를 가져옵니다.</summary>
         public bool IsDisposed { get; private set; }
 
+        /// <summary>사용자 정의 태그 데이터를 가져오거나 설정합니다.</summary>
         public object? Tag { get; set; } = null;
         #endregion
 
@@ -114,24 +205,34 @@ namespace Going.Basis.Communications.LS
         List<Work> AutoWorkList = [];
         List<Work> ManualWorkList = [];
 
-        byte[] baResponse = new byte[0];
+        byte[] baResponse = [];
 
         Task? task;
         CancellationTokenSource? cancel;
         #endregion
 
         #region Event
+        /// <summary>PLC로부터 데이터 읽기 응답을 수신했을 때 발생합니다.</summary>
         public event EventHandler<DataReadEventArgs>? DataReceived;
+        /// <summary>PLC에 쓰기 완료 응답을 수신했을 때 발생합니다.</summary>
         public event EventHandler<WriteEventArgs>? WriteResponseReceived;
+        /// <summary>응답 대기 타임아웃이 발생했을 때 발생합니다.</summary>
         public event EventHandler<TimeoutEventArgs>? TimeoutReceived;
+        /// <summary>BCC(Block Check Character) 검증 오류가 발생했을 때 발생합니다.</summary>
         public event EventHandler<BCCErrorEventArgs>? BCCErrorReceived;
+        /// <summary>PLC로부터 NAK(부정 응답)을 수신했을 때 발생합니다.</summary>
         public event EventHandler<NAKEventArgs>? NAKReceived;
 
+        /// <summary>시리얼 포트가 열렸을 때 발생합니다.</summary>
         public event EventHandler? DeviceOpened;
+        /// <summary>시리얼 포트가 닫혔을 때 발생합니다.</summary>
         public event EventHandler? DeviceClosed;
         #endregion
 
         #region Construct
+        /// <summary>
+        /// CNet 클래스의 새 인스턴스를 초기화합니다.
+        /// </summary>
         public CNet()
         {
 
@@ -140,6 +241,10 @@ namespace Going.Basis.Communications.LS
 
         #region Method
         #region Start / Stop
+        /// <summary>
+        /// 시리얼 포트를 열고 통신 스케줄러를 시작합니다.
+        /// 자동 작업 큐에 등록된 명령을 반복 실행하며, 수동 작업을 우선 처리합니다.
+        /// </summary>
         public void Start()
         {
             if (!IsOpen && !IsStart)
@@ -170,7 +275,7 @@ namespace Going.Basis.Communications.LS
                                         await Task.Delay(Interval, token);
                                     }
                                     catch (SchedulerStopException) { break; }
-                                    catch (Exception ex) { }
+                                    catch { }
                                 }
                             }
 
@@ -187,6 +292,9 @@ namespace Going.Basis.Communications.LS
             }
         }
 
+        /// <summary>
+        /// 통신 스케줄러를 정지하고 시리얼 포트를 닫습니다.
+        /// </summary>
         public void Stop()
         {
             IsStart = false;
@@ -433,6 +541,11 @@ namespace Going.Basis.Communications.LS
         #endregion
 
         #region ContainAutoID
+        /// <summary>
+        /// 지정한 메시지 ID가 자동 작업 목록에 존재하는지 확인합니다.
+        /// </summary>
+        /// <param name="MessageID">확인할 메시지 식별자</param>
+        /// <returns>자동 작업 목록에 존재하면 true, 그렇지 않으면 false</returns>
         public bool ContainAutoID(int MessageID)
         {
             bool ret = false;
@@ -447,6 +560,11 @@ namespace Going.Basis.Communications.LS
         }
         #endregion
         #region RemoveManual
+        /// <summary>
+        /// 지정한 메시지 ID의 수동 작업을 목록에서 제거합니다.
+        /// </summary>
+        /// <param name="MessageID">제거할 메시지 식별자</param>
+        /// <returns>제거에 성공하면 true, 해당 ID가 없으면 false</returns>
         public bool RemoveManual(int MessageID)
         {
             bool ret = false;
@@ -462,6 +580,11 @@ namespace Going.Basis.Communications.LS
         }
         #endregion
         #region RemoveAuto
+        /// <summary>
+        /// 지정한 메시지 ID의 자동 작업을 목록에서 제거합니다.
+        /// </summary>
+        /// <param name="MessageID">제거할 메시지 식별자</param>
+        /// <returns>제거에 성공하면 true, 해당 ID가 없으면 false</returns>
         public bool RemoveAuto(int MessageID)
         {
             bool ret = false;
@@ -477,12 +600,22 @@ namespace Going.Basis.Communications.LS
         }
         #endregion
         #region Clear
+        /// <summary>수동 작업 목록을 모두 비웁니다.</summary>
         public void ClearManual() { ManualWorkList.Clear(); }
+        /// <summary>자동 작업 목록을 모두 비웁니다.</summary>
         public void ClearAuto() { AutoWorkList.Clear(); }
+        /// <summary>현재 대기 중인 작업 큐를 모두 비웁니다.</summary>
         public void ClearWorkSchedule() { WorkQueue.Clear(); }
         #endregion
 
         #region AutoRSS(id, slave, device)
+        /// <summary>
+        /// 자동 작업 목록에 단일 디바이스 개별 읽기(RSS) 명령을 등록합니다.
+        /// </summary>
+        /// <param name="id">메시지 식별자</param>
+        /// <param name="slave">슬레이브 국번</param>
+        /// <param name="device">읽기 대상 디바이스 주소 (예: "%MW100")</param>
+        /// <param name="timeout">응답 대기 타임아웃(밀리초). null이면 기본값 사용</param>
         public void AutoRSS(int id, int slave, string device, int? timeout = null)
         {
             var strbul = new StringBuilder();
@@ -512,6 +645,13 @@ namespace Going.Basis.Communications.LS
         }
         #endregion
         #region AutoRSS(id, slave, devices)
+        /// <summary>
+        /// 자동 작업 목록에 복수 디바이스 개별 읽기(RSS) 명령을 등록합니다.
+        /// </summary>
+        /// <param name="id">메시지 식별자</param>
+        /// <param name="slave">슬레이브 국번</param>
+        /// <param name="devices">읽기 대상 디바이스 주소 배열</param>
+        /// <param name="timeout">응답 대기 타임아웃(밀리초). null이면 기본값 사용</param>
         public void AutoRSS(int id, int slave, string[] devices, int? timeout = null)
         {
             var strbul = new StringBuilder();
@@ -544,6 +684,14 @@ namespace Going.Basis.Communications.LS
         }
         #endregion
         #region AutoRSB(id, slave, device, Length)
+        /// <summary>
+        /// 자동 작업 목록에 연속 디바이스 블록 읽기(RSB) 명령을 등록합니다.
+        /// </summary>
+        /// <param name="id">메시지 식별자</param>
+        /// <param name="slave">슬레이브 국번</param>
+        /// <param name="device">시작 디바이스 주소 (예: "%MW100")</param>
+        /// <param name="length">연속으로 읽을 디바이스 개수</param>
+        /// <param name="timeout">응답 대기 타임아웃(밀리초). null이면 기본값 사용</param>
         public void AutoRSB(int id, int slave, string device, int length, int? timeout = null)
         {
             var strbul = new StringBuilder();
@@ -578,6 +726,14 @@ namespace Going.Basis.Communications.LS
         }
         #endregion
         #region ManualRSS(id, slave, device)
+        /// <summary>
+        /// 수동 작업 목록에 단일 디바이스 개별 읽기(RSS) 명령을 등록합니다. 일회성으로 실행됩니다.
+        /// </summary>
+        /// <param name="id">메시지 식별자</param>
+        /// <param name="slave">슬레이브 국번</param>
+        /// <param name="device">읽기 대상 디바이스 주소</param>
+        /// <param name="repeatCount">타임아웃 시 재시도 횟수. null이면 재시도하지 않음</param>
+        /// <param name="timeout">응답 대기 타임아웃(밀리초). null이면 기본값 사용</param>
         public void ManualRSS(int id, int slave, string device, int? repeatCount = null, int? timeout = null)
         {
             var strbul = new StringBuilder();
@@ -607,6 +763,14 @@ namespace Going.Basis.Communications.LS
         }
         #endregion
         #region ManualRSS(id, slave, devices)
+        /// <summary>
+        /// 수동 작업 목록에 복수 디바이스 개별 읽기(RSS) 명령을 등록합니다. 일회성으로 실행됩니다.
+        /// </summary>
+        /// <param name="id">메시지 식별자</param>
+        /// <param name="slave">슬레이브 국번</param>
+        /// <param name="devices">읽기 대상 디바이스 주소 배열</param>
+        /// <param name="repeatCount">타임아웃 시 재시도 횟수. null이면 재시도하지 않음</param>
+        /// <param name="timeout">응답 대기 타임아웃(밀리초). null이면 기본값 사용</param>
         public void ManualRSS(int id, int slave, string[] devices, int? repeatCount = null, int? timeout = null)
         {
             var strbul = new StringBuilder();
@@ -639,6 +803,15 @@ namespace Going.Basis.Communications.LS
         }
         #endregion
         #region ManualRSB(id, slave, device, length)
+        /// <summary>
+        /// 수동 작업 목록에 연속 디바이스 블록 읽기(RSB) 명령을 등록합니다. 일회성으로 실행됩니다.
+        /// </summary>
+        /// <param name="id">메시지 식별자</param>
+        /// <param name="slave">슬레이브 국번</param>
+        /// <param name="device">시작 디바이스 주소</param>
+        /// <param name="length">연속으로 읽을 디바이스 개수</param>
+        /// <param name="repeatCount">타임아웃 시 재시도 횟수. null이면 재시도하지 않음</param>
+        /// <param name="timeout">응답 대기 타임아웃(밀리초). null이면 기본값 사용</param>
         public void ManualRSB(int id, int slave, string device, int length, int? repeatCount = null, int? timeout = null)
         {
             var strbul = new StringBuilder();
@@ -674,6 +847,15 @@ namespace Going.Basis.Communications.LS
         }
         #endregion
         #region ManualWSS(id, slave, device, value)
+        /// <summary>
+        /// 수동 작업 목록에 단일 디바이스 개별 쓰기(WSS) 명령을 등록합니다. 일회성으로 실행됩니다.
+        /// </summary>
+        /// <param name="id">메시지 식별자</param>
+        /// <param name="slave">슬레이브 국번</param>
+        /// <param name="device">쓰기 대상 디바이스 주소</param>
+        /// <param name="value">쓰기할 값</param>
+        /// <param name="repeatCount">타임아웃 시 재시도 횟수. null이면 재시도하지 않음</param>
+        /// <param name="timeout">응답 대기 타임아웃(밀리초). null이면 기본값 사용</param>
         public void ManualWSS(int id, int slave, string device, int value, int? repeatCount = null, int? timeout = null)
         {
             var strbul = new StringBuilder();
@@ -711,6 +893,14 @@ namespace Going.Basis.Communications.LS
         }
         #endregion
         #region ManualWSS(id, slave, values)
+        /// <summary>
+        /// 수동 작업 목록에 복수 디바이스 개별 쓰기(WSS) 명령을 등록합니다. 일회성으로 실행됩니다.
+        /// </summary>
+        /// <param name="id">메시지 식별자</param>
+        /// <param name="slave">슬레이브 국번</param>
+        /// <param name="values">쓰기할 디바이스-값 쌍 컬렉션</param>
+        /// <param name="repeatCount">타임아웃 시 재시도 횟수. null이면 재시도하지 않음</param>
+        /// <param name="timeout">응답 대기 타임아웃(밀리초). null이면 기본값 사용</param>
         public void ManualWSS(int id, int slave, IEnumerable<CNetValue> values, int? repeatCount = null, int? timeout = null)
         {
             var strbul = new StringBuilder();
@@ -745,6 +935,15 @@ namespace Going.Basis.Communications.LS
         }
         #endregion
         #region ManualWSB(id, slave, device, values)
+        /// <summary>
+        /// 수동 작업 목록에 연속 디바이스 블록 쓰기(WSB) 명령을 등록합니다. 일회성으로 실행됩니다.
+        /// </summary>
+        /// <param name="id">메시지 식별자</param>
+        /// <param name="slave">슬레이브 국번</param>
+        /// <param name="device">시작 디바이스 주소</param>
+        /// <param name="values">쓰기할 값 배열</param>
+        /// <param name="repeatCount">타임아웃 시 재시도 횟수. null이면 재시도하지 않음</param>
+        /// <param name="timeout">응답 대기 타임아웃(밀리초). null이면 기본값 사용</param>
         public void ManualWSB(int id, int slave, string device, int[] values, int? repeatCount = null, int? timeout = null)
         {
             var strbul = new StringBuilder();
@@ -776,6 +975,9 @@ namespace Going.Basis.Communications.LS
         #endregion
 
         #region Dispose
+        /// <summary>
+        /// 통신을 정지하고 시리얼 포트 등 관련 리소스를 해제합니다.
+        /// </summary>
         public void Dispose()
         {
             IsDisposed = true;

@@ -13,10 +13,19 @@ using System.Threading.Tasks;
 
 namespace Going.UI.ImageCanvas
 {
+    /// <summary>
+    /// 상태 값에 따라 서로 다른 이미지를 표시하는 이미지 캔버스 컨트롤입니다.
+    /// </summary>
     public class IcState : GoControl
     {
         #region Properties
+        /// <summary>
+        /// 상태별 이미지 목록을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 0)] public List<StateImage> StateImages { get; set; } = [];
+        /// <summary>
+        /// 현재 상태 값을 가져오거나 설정합니다. 이 값에 해당하는 이미지가 표시됩니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 1)] public int State { get; set; }
         #endregion
 
@@ -41,9 +50,18 @@ namespace Going.UI.ImageCanvas
         #endregion
     }
 
+    /// <summary>
+    /// 특정 상태에 대응하는 이미지를 정의하는 클래스입니다.
+    /// </summary>
     public class StateImage
     {
+        /// <summary>
+        /// 이미지 리소스 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoImageProperty(PCategory.Control, 0)] public string? Image { get; set; }
+        /// <summary>
+        /// 이 이미지가 표시될 상태 값을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 1)] public int State { get; set; }
     }
 }

@@ -16,13 +16,24 @@ using System.Threading.Tasks;
 
 namespace Going.UI.Containers
 {
-    // 컨테이너지만 컨트롤 중 하나라서 GoControl을 상속합니다.
+    /// <summary>
+    /// 자식 컨트롤을 포함할 수 있는 컨테이너의 추상 기본 클래스입니다. GoControl을 상속하며 IGoContainer를 구현합니다.
+    /// </summary>
     public abstract class GoContainer : GoControl, IGoContainer
     {
         #region Properties
+        /// <summary>
+        /// 자식 컨트롤 컬렉션을 가져옵니다.
+        /// </summary>
         public virtual IEnumerable<IGoControl> Childrens { get; } = [];
 
+        /// <summary>
+        /// 자식 컨트롤이 배치되는 패널 영역을 가져옵니다.
+        /// </summary>
         [JsonIgnore] public virtual SKRect PanelBounds => Util.FromRect(0, 0, Width, Height);
+        /// <summary>
+        /// 현재 뷰의 스크롤 오프셋 위치를 가져옵니다.
+        /// </summary>
         [JsonIgnore] public virtual SKPoint ViewPosition => new SKPoint(0, 0);
         #endregion
 
@@ -140,12 +151,18 @@ namespace Going.UI.Containers
                 c.Left = bnds.Left + c.Margin.Left;
                 c.Top = bnds.Top + c.Margin.Top;
                 c.Right = bnds.Right - c.Margin.Right;
-                c.Bottom = bnds.Bottom- c.Margin.Bottom;
+                c.Bottom = bnds.Bottom - c.Margin.Bottom;
             }
         }
         #endregion
 
         #region ApplyDocking
+        /// <summary>
+        /// 자식 컨트롤에 도킹 스타일을 적용하고 남은 영역을 반환합니다.
+        /// </summary>
+        /// <param name="c">도킹을 적용할 자식 컨트롤</param>
+        /// <param name="rt">현재 사용 가능한 영역</param>
+        /// <returns>도킹 적용 후 남은 영역</returns>
         protected SKRect ApplyDocking(IGoControl c, SKRect rt)
         {
             var m = c.Margin;

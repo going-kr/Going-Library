@@ -13,20 +13,45 @@ using System.Threading.Tasks;
 
 namespace Going.UI.Containers
 {
+    /// <summary>
+    /// 콘텐츠를 지정된 기준 크기로 자동 확대/축소하여 표시하는 스케일 패널입니다.
+    /// </summary>
     public class GoScalePanel : GoContainer
     {
         #region Properties
+        /// <summary>
+        /// 자식 컨트롤 목록을 가져옵니다.
+        /// </summary>
         [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
+        /// <summary>
+        /// 기준 너비를 가져오거나 설정합니다. null이면 컨트롤 너비를 사용합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 0)] public int? BaseWidth { get; set; }
+        /// <summary>
+        /// 기준 높이를 가져오거나 설정합니다. null이면 컨트롤 높이를 사용합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 1)] public int? BaseHeight { get; set; }
+        /// <summary>
+        /// 스케일된 패널의 정렬 방식을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 2)] public GoContentAlignment PanelAlignment { get; set; } = GoContentAlignment.MiddleCenter;
 
+        /// <summary>
+        /// 자식 컨트롤이 배치되는 패널 영역을 가져옵니다. 디자인 모드에서는 에디터 영역, 런타임에서는 스케일 영역을 반환합니다.
+        /// </summary>
         [JsonIgnore] public override SKRect PanelBounds => Design?.DesignMode ?? false ? Areas()["Editor"] : Areas()["Scale"];
         #endregion
 
         #region Constructor
+        /// <summary>
+        /// 자식 컨트롤 목록을 사용하여 <see cref="GoScalePanel"/>의 새 인스턴스를 초기화합니다. JSON 역직렬화에 사용됩니다.
+        /// </summary>
+        /// <param name="childrens">자식 컨트롤 목록</param>
         [JsonConstructor]
         public GoScalePanel(List<IGoControl> childrens) : this() => Childrens = childrens ?? [];
+        /// <summary>
+        /// <see cref="GoScalePanel"/>의 새 인스턴스를 초기화합니다.
+        /// </summary>
         public GoScalePanel() { }
         #endregion
 

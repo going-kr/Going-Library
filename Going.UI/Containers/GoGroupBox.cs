@@ -17,38 +17,96 @@ using System.Threading.Tasks;
 
 namespace Going.UI.Containers
 {
+    /// <summary>
+    /// 제목 텍스트와 테두리로 자식 컨트롤을 그룹화하는 그룹 박스 컨테이너입니다.
+    /// </summary>
     public class GoGroupBox : GoContainer
     {
         #region Properties
+        /// <summary>
+        /// 제목 영역에 표시할 아이콘 문자열을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 0)] public string? IconString { get; set; }
+        /// <summary>
+        /// 아이콘 크기를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 1)] public float IconSize { get; set; } = 12;
+        /// <summary>
+        /// 아이콘과 텍스트 사이의 간격을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 2)] public float IconGap { get; set; } = 5;
 
+        /// <summary>
+        /// 제목 텍스트를 가져오거나 설정합니다.
+        /// </summary>
         [GoMultiLineProperty(PCategory.Control, 3)] public string Text { get; set; } = "Panel";
+        /// <summary>
+        /// 글꼴 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoFontNameProperty(PCategory.Control, 4)] public string FontName { get; set; } = "나눔고딕";
+        /// <summary>
+        /// 글꼴 스타일을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 5)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        /// <summary>
+        /// 글꼴 크기를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 6)] public float FontSize { get; set; } = 12;
 
+        /// <summary>
+        /// 텍스트 색상을 가져오거나 설정합니다. 테마 색상 이름을 사용합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 7)] public string TextColor { get; set; } = "Fore";
+        /// <summary>
+        /// 테두리 색상을 가져오거나 설정합니다. 테마 색상 이름을 사용합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 8)] public string BorderColor { get; set; } = "Base3";
+        /// <summary>
+        /// 모서리 라운드 타입을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 9)] public GoRoundType Round { get; set; } = GoRoundType.All;
 
+        /// <summary>
+        /// 제목 영역에 표시할 버튼 항목 목록을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 10)] public List<GoButtonItem> Buttons { get; set; } = [];
+        /// <summary>
+        /// 버튼 영역의 전체 너비를 가져오거나 설정합니다. null이면 버튼이 표시되지 않습니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 11)] public float? ButtonWidth { get; set; }
+        /// <summary>
+        /// 테두리 두께를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 12)] public float BorderWidth { get; set; } = 1;
 
+        /// <summary>
+        /// 자식 컨트롤 목록을 가져옵니다.
+        /// </summary>
         [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
 
+        /// <summary>
+        /// 자식 컨트롤이 배치되는 패널 영역을 가져옵니다.
+        /// </summary>
         [JsonIgnore] public override SKRect PanelBounds => Areas()["Panel"];
         #endregion
 
         #region Event
+        /// <summary>
+        /// 제목 영역의 버튼이 클릭되었을 때 발생하는 이벤트입니다.
+        /// </summary>
         public event EventHandler<ButtonClickEventArgs>? ButtonClicked;
         #endregion
 
         #region Constructor
+        /// <summary>
+        /// 자식 컨트롤 목록을 사용하여 <see cref="GoGroupBox"/>의 새 인스턴스를 초기화합니다. JSON 역직렬화에 사용됩니다.
+        /// </summary>
+        /// <param name="childrens">자식 컨트롤 목록</param>
         [JsonConstructor]
         public GoGroupBox(List<IGoControl> childrens) : this() => Childrens = childrens ?? [];
+        /// <summary>
+        /// <see cref="GoGroupBox"/>의 새 인스턴스를 초기화합니다.
+        /// </summary>
         public GoGroupBox() { Selectable = false; }
         #endregion
 

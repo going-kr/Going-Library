@@ -23,6 +23,9 @@ using System.Xml.Schema;
 
 namespace Going.UI.Controls
 {
+    /// <summary>
+    /// 데이터 그리드 컨트롤. 테이블 형태로 데이터를 표시하고 편집, 정렬, 선택 기능을 제공합니다.
+    /// </summary>
     public class GoDataGrid : GoControl
     {
         #region Const
@@ -32,31 +35,91 @@ namespace Going.UI.Controls
         #endregion
 
         #region Properties
+        /// <summary>
+        /// 글꼴 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoFontNameProperty(PCategory.Control, 0)] public string FontName { get; set; } = "나눔고딕";
+        /// <summary>
+        /// 글꼴 스타일을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 1)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        /// <summary>
+        /// 글꼴 크기를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 2)] public float FontSize { get; set; } = 12;
 
+        /// <summary>
+        /// 텍스트 색상의 테마 색상 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 3)] public string TextColor { get; set; } = "Fore";
+        /// <summary>
+        /// 행 배경 색상의 테마 색상 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 4)] public string RowColor { get; set; } = "Base2";
+        /// <summary>
+        /// 요약 행 배경 색상의 테마 색상 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 5)] public string SummaryRowColor { get; set; } = "Base1";
+        /// <summary>
+        /// 컬럼 헤더 색상의 테마 색상 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 6)] public string ColumnColor { get; set; } = "Base1";
+        /// <summary>
+        /// 선택된 행의 배경 색상 테마 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 7)] public string SelectedRowColor { get; set; } = "Select";
+        /// <summary>
+        /// 전체 배경 색상의 테마 색상 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 8)] public string BoxColor { get; set; } = "Base2";
+        /// <summary>
+        /// 스크롤바 색상의 테마 색상 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 9)] public string ScrollBarColor { get; set; } = "Base1";
 
+        /// <summary>
+        /// 행 높이(픽셀)를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 10)] public float RowHeight { get; set; } = 30F;
+        /// <summary>
+        /// 컬럼 헤더 높이(픽셀)를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 11)] public float ColumnHeight { get; set; } = 30F;
 
+        /// <summary>
+        /// 스크롤 모드를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 12)] public ScrollMode ScrollMode { get; set; } = ScrollMode.Vertical;
+        /// <summary>
+        /// 행 선택 모드를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 13)] public GoDataGridSelectionMode SelectionMode { get; set; } = GoDataGridSelectionMode.Single;
 
+        /// <summary>
+        /// 컬럼 그룹 컬렉션을 가져옵니다.
+        /// </summary>
         public ObservableList<GoDataGridColumn> ColumnGroups { get; private set; } = [];
+        /// <summary>
+        /// 컬럼 컬렉션을 가져옵니다.
+        /// </summary>
         public ObservableList<GoDataGridColumn> Columns { get; private set; } = [];
+        /// <summary>
+        /// 요약 행 컬렉션을 가져옵니다.
+        /// </summary>
         public List<GoDataGridSummaryRow> SummaryRows { get; private set; } = [];
 
+        /// <summary>
+        /// 데이터 행 컬렉션을 가져옵니다.
+        /// </summary>
         [JsonIgnore] public List<GoDataGridRow> Rows { get; private set; } = [];
         [JsonIgnore] internal Type? DataType { get; private set; }
+        /// <summary>
+        /// 현재 입력 중인 객체를 가져옵니다.
+        /// </summary>
         [JsonIgnore] public object? InputObject { get; internal set; }
+        /// <summary>
+        /// 현재 화면에 표시되는 행 목록을 가져옵니다.
+        /// </summary>
         [JsonIgnore] public List<GoDataGridRow> ViewRows => mrows;
 
         [JsonIgnore, Browsable(false), EditorBrowsable(EditorBrowsableState.Never)] public bool _InputModeInvisibleText_ { get; set; } = false;
@@ -87,21 +150,63 @@ namespace Going.UI.Controls
         #endregion
 
         #region Event
+        /// <summary>
+        /// 선택된 행이 변경되었을 때 발생합니다.
+        /// </summary>
         public event EventHandler? SelectedChanged;
+        /// <summary>
+        /// 정렬이 변경되었을 때 발생합니다.
+        /// </summary>
         public event EventHandler? SortChanged;
 
+        /// <summary>
+        /// 컬럼 헤더가 클릭되었을 때 발생합니다.
+        /// </summary>
         public event EventHandler<GoDataGridColumnMouseEventArgs>? ColumnMouseClick;
+        /// <summary>
+        /// 셀이 클릭되었을 때 발생합니다.
+        /// </summary>
         public event EventHandler<GoDataGridCellMouseEventArgs>? CellMouseClick;
+        /// <summary>
+        /// 셀이 더블 클릭되었을 때 발생합니다.
+        /// </summary>
         public event EventHandler<GoDataGridCellMouseEventArgs>? CellMouseDoubleClick;
+        /// <summary>
+        /// 셀이 길게 클릭되었을 때 발생합니다.
+        /// </summary>
         public event EventHandler<GoDataGridCellMouseEventArgs>? CellMouseLongClick;
+        /// <summary>
+        /// 셀 내부 버튼이 클릭되었을 때 발생합니다.
+        /// </summary>
         public event EventHandler<GoDataGridCellButtonClickEventArgs>? CellButtonClick;
+        /// <summary>
+        /// 셀의 값이 변경되었을 때 발생합니다.
+        /// </summary>
         public event EventHandler<GoDataGridCellValueChangedEventArgs>? ValueChanged;
 
+        /// <summary>
+        /// 날짜/시간 드롭다운이 열릴 때 발생합니다.
+        /// </summary>
         public event EventHandler<GoDataGridDateTimeDropDownOpeningEventArgs>? DateTimeDropDownOpening;
+        /// <summary>
+        /// 색상 드롭다운이 열릴 때 발생합니다.
+        /// </summary>
         public event EventHandler<GoDataGridColorDropDownOpeningEventArgs>? ColorDropDownOpening;
+        /// <summary>
+        /// 콤보 드롭다운이 열릴 때 발생합니다.
+        /// </summary>
         public event EventHandler<GoDataGridComboDropDownOpeningEventArgs>? ComboDropDownOpening;
+        /// <summary>
+        /// 날짜/시간 드롭다운 표시 여부를 결정하는 이벤트입니다.
+        /// </summary>
         public event Func<GoDataGridCell, bool>? GetDateTimeDropDownVisible;
+        /// <summary>
+        /// 색상 드롭다운 표시 여부를 결정하는 이벤트입니다.
+        /// </summary>
         public event Func<GoDataGridCell, bool>? GetColorDropDownVisible;
+        /// <summary>
+        /// 콤보 드롭다운 표시 여부를 결정하는 이벤트입니다.
+        /// </summary>
         public event Func<GoDataGridCell, bool>? GetComboDropDownVisible;
         #endregion
 
@@ -751,6 +856,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Areas
+        /// <inheritdoc/>
         public override Dictionary<string, SKRect> Areas()
         {
             var dic = base.Areas();
@@ -988,8 +1094,18 @@ namespace Going.UI.Controls
 
         #region Internal
         [EditorBrowsable( EditorBrowsableState.Never), Browsable(false)]
+        /// <summary>
+        /// 셀 버튼 클릭 이벤트를 발생시킵니다.
+        /// </summary>
+        /// <param name="cell">클릭된 셀</param>
         public void InvokeButtonClick(GoDataGridCell cell) => CellButtonClick?.Invoke(this, new GoDataGridCellButtonClickEventArgs(cell));
         [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
+        /// <summary>
+        /// 셀 값 변경 이벤트를 발생시킵니다.
+        /// </summary>
+        /// <param name="cell">값이 변경된 셀</param>
+        /// <param name="oldValue">이전 값</param>
+        /// <param name="newValue">새 값</param>
         public void InvokeValueChange(GoDataGridCell cell, object? oldValue, object? newValue) => ValueChanged?.Invoke(this, new GoDataGridCellValueChangedEventArgs(cell, oldValue, newValue));
         [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
         public void InvokeEditText(GoDataGridCell cell, string? value)
@@ -1170,6 +1286,11 @@ namespace Going.UI.Controls
 
         #region Public
         #region SetDataSource<T>
+        /// <summary>
+        /// 데이터 소스를 설정합니다. 컬럼 정의에 맞는 속성을 가진 객체 컬렉션을 바인딩합니다.
+        /// </summary>
+        /// <typeparam name="T">데이터 항목의 타입</typeparam>
+        /// <param name="values">데이터 컬렉션</param>
         public void SetDataSource<T>(IEnumerable<T> values)
         {
             #region bounds
@@ -1286,6 +1407,9 @@ namespace Going.UI.Controls
         #endregion
 
         #region RefreshRows
+        /// <summary>
+        /// 행 데이터를 새로고침합니다. 데이터 소스의 변경 사항을 그리드에 반영합니다.
+        /// </summary>
         public void RefreshRows()
         {
             #region bounds
@@ -1397,6 +1521,11 @@ namespace Going.UI.Controls
         #endregion
 
         #region InputCell
+        /// <summary>
+        /// 셀에 키보드 입력을 전달합니다.
+        /// </summary>
+        /// <param name="cell">대상 셀</param>
+        /// <param name="s">입력 문자열</param>
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void InputCell(GoDataGridCell cell, string s)
         {

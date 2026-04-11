@@ -13,10 +13,19 @@ using System.Threading.Tasks;
 
 namespace Going.UI.Dialogs
 {
+    /// <summary>
+    /// 선택 다이얼로그. 체크박스, 라디오 버튼, 콤보박스 방식으로 항목을 선택할 수 있는 윈도우를 제공합니다.
+    /// </summary>
     public class GoSelectorBox : GoWindow
     {
         #region Properties
+        /// <summary>
+        /// 확인 버튼의 텍스트를 가져오거나 설정합니다.
+        /// </summary>
         public string OkText { get => btnOk.Text; set => btnOk.Text = value; }
+        /// <summary>
+        /// 취소 버튼의 텍스트를 가져오거나 설정합니다.
+        /// </summary>
         public string CancelText { get => btnCancel.Text; set => btnCancel.Text = value; }
         #endregion
 
@@ -68,6 +77,14 @@ namespace Going.UI.Dialogs
 
         #region Method
         #region ShowCheck
+        /// <summary>
+        /// 체크박스 방식의 다중 선택 다이얼로그를 표시합니다.
+        /// </summary>
+        /// <param name="title">다이얼로그 제목</param>
+        /// <param name="columnCount">레이아웃 열 수</param>
+        /// <param name="items">선택 가능한 항목 목록</param>
+        /// <param name="selectedItems">초기 선택된 항목 목록</param>
+        /// <param name="result">선택 결과 콜백. 취소 시 null이 전달됩니다.</param>
         public void ShowCheck(string title, int columnCount, List<GoListItem> items, List<GoListItem>? selectedItems, Action<List<GoListItem>?> result)
         {
             this.Text = title;
@@ -102,6 +119,15 @@ namespace Going.UI.Dialogs
             Show(w, h);
         }
 
+        /// <summary>
+        /// 열거형 타입의 체크박스 방식 다중 선택 다이얼로그를 표시합니다.
+        /// </summary>
+        /// <typeparam name="T">열거형 타입</typeparam>
+        /// <param name="title">다이얼로그 제목</param>
+        /// <param name="columnCount">레이아웃 열 수</param>
+        /// <param name="selectedItems">초기 선택된 항목 목록</param>
+        /// <param name="result">선택 결과 콜백. 취소 시 null이 전달됩니다.</param>
+        /// <param name="textCnverter">열거형 값을 텍스트로 변환하는 함수</param>
         public void ShowCheck<T>(string title, int columnCount, List<T>? selectedItems, Action<List<T>?> result, Func<T, string>? textCnverter = null) where T : struct, Enum
         {
             List<GoListItem> items = Enum.GetValues<T>().Select(x => new GoListItem { Text = textCnverter != null ? textCnverter(x) : x.ToString(), Tag = x }).ToList();
@@ -119,6 +145,14 @@ namespace Going.UI.Dialogs
         }
         #endregion
         #region ShowRadio
+        /// <summary>
+        /// 라디오 버튼 방식의 단일 선택 다이얼로그를 표시합니다.
+        /// </summary>
+        /// <param name="title">다이얼로그 제목</param>
+        /// <param name="columnCount">레이아웃 열 수</param>
+        /// <param name="items">선택 가능한 항목 목록</param>
+        /// <param name="selectedItem">초기 선택된 항목</param>
+        /// <param name="result">선택 결과 콜백. 취소 시 null이 전달됩니다.</param>
         public void ShowRadio(string title, int columnCount, List<GoListItem> items, GoListItem? selectedItem, Action<GoListItem?> result)
         {
             this.Text = title;
@@ -153,6 +187,15 @@ namespace Going.UI.Dialogs
             Show(w, h);
         }
 
+        /// <summary>
+        /// 열거형 타입의 라디오 버튼 방식 단일 선택 다이얼로그를 표시합니다.
+        /// </summary>
+        /// <typeparam name="T">열거형 타입</typeparam>
+        /// <param name="title">다이얼로그 제목</param>
+        /// <param name="columnCount">레이아웃 열 수</param>
+        /// <param name="selectedItem">초기 선택된 항목</param>
+        /// <param name="result">선택 결과 콜백. 취소 시 null이 전달됩니다.</param>
+        /// <param name="textCnverter">열거형 값을 텍스트로 변환하는 함수</param>
         public void ShowRadio<T>(string title, int columnCount, T? selectedItem, Action<T?> result, Func<T, string>? textCnverter = null) where T : struct, Enum
         {
             var items = Enum.GetValues<T>().Select(x => new GoListItem { Text = textCnverter != null ? textCnverter(x) : x.ToString(), Tag = x }).ToList();
@@ -165,6 +208,13 @@ namespace Going.UI.Dialogs
         }
         #endregion
         #region ShowCombo
+        /// <summary>
+        /// 콤보박스 방식의 단일 선택 다이얼로그를 표시합니다.
+        /// </summary>
+        /// <param name="title">다이얼로그 제목</param>
+        /// <param name="items">선택 가능한 항목 목록</param>
+        /// <param name="selectedItem">초기 선택된 항목</param>
+        /// <param name="result">선택 결과 콜백. 취소 시 null이 전달됩니다.</param>
         public void ShowCombo(string title, List<GoListItem> items, GoListItem? selectedItem, Action<GoListItem?> result)
         {
             this.Text = title;
@@ -186,6 +236,14 @@ namespace Going.UI.Dialogs
             Show(w, h);
         }
 
+        /// <summary>
+        /// 열거형 타입의 콤보박스 방식 단일 선택 다이얼로그를 표시합니다.
+        /// </summary>
+        /// <typeparam name="T">열거형 타입</typeparam>
+        /// <param name="title">다이얼로그 제목</param>
+        /// <param name="selectedItem">초기 선택된 항목</param>
+        /// <param name="result">선택 결과 콜백. 취소 시 null이 전달됩니다.</param>
+        /// <param name="textCnverter">열거형 값을 텍스트로 변환하는 함수</param>
         public void ShowCombo<T>(string title, T? selectedItem, Action<T?> result, Func<T, string>? textCnverter = null) where T : struct, Enum
         {
             var items = Enum.GetValues<T>().Select(x => new GoListItem { Text = textCnverter != null ? textCnverter(x) : x.ToString(), Tag = x }).ToList();

@@ -16,17 +16,41 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Going.UI.Controls
 {
+    /// <summary>
+    /// 원형 그래프(도넛 차트) 컨트롤. 데이터를 원형 비율로 시각화합니다.
+    /// </summary>
     public class GoCircleGraph : GoControl
     {
         #region Properties
+        /// <summary>
+        /// 그리드 색상의 테마 색상 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 0)] public string GridColor { get; set; } = "Base3";
+        /// <summary>
+        /// 텍스트 색상의 테마 색상 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 1)] public string TextColor { get; set; } = "Fore";
+        /// <summary>
+        /// 범례 배경 색상의 테마 색상 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 2)] public string RemarkColor { get; set; } = "Base2";
 
+        /// <summary>
+        /// 글꼴 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoFontNameProperty(PCategory.Control, 3)] public string FontName { get; set; } = "나눔고딕";
+        /// <summary>
+        /// 글꼴 스타일을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 4)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        /// <summary>
+        /// 글꼴 크기를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 5)] public float FontSize { get; set; } = 12;
 
+        /// <summary>
+        /// 그래프 시리즈 목록을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 6)] public List<GoGraphSeries> Series { get; set; } = [];
         #endregion
 
@@ -254,6 +278,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Areas
+        /// <inheritdoc/>
         public override Dictionary<string, SKRect> Areas()
         {
             var dic = base.Areas();
@@ -292,6 +317,12 @@ namespace Going.UI.Controls
 
         #region Method
         #region SetDataSource
+        /// <summary>
+        /// 데이터 소스를 설정합니다.
+        /// </summary>
+        /// <typeparam name="T">데이터 항목의 타입</typeparam>
+        /// <param name="CategoryAxisName">카테고리 축으로 사용할 string 타입 속성 이름</param>
+        /// <param name="values">데이터 컬렉션</param>
         public void SetDataSource<T>(string CategoryAxisName, IEnumerable<T> values)
         {
             if (Series.Count > 0)

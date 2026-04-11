@@ -12,11 +12,23 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Going.UI.Controls
 {
+    /// <summary>
+    /// 이미지 표시 컨트롤. 이미지를 다양한 스케일 모드로 표시합니다.
+    /// </summary>
     public class GoPicture : GoControl
     {
         #region Properties
+        /// <summary>
+        /// 표시할 이미지의 리소스 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoImageProperty(PCategory.Control, 0)] public string? Image { get; set; }
+        /// <summary>
+        /// 이미지 스케일 모드를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 1)] public GoImageScaleMode ScaleMode { get; set; } = GoImageScaleMode.Real;
+        /// <summary>
+        /// 모서리 둥글기 타입을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 2)] public GoRoundType Round { get; set; } = GoRoundType.Rect;
         #endregion
 

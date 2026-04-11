@@ -9,17 +9,27 @@ using System.Threading.Tasks;
 
 namespace Going.Basis.Communications.Modbus.TCP
 {
+    /// <summary>
+    /// Modbus TCP 슬레이브 래퍼 클래스입니다.
+    /// BitMemory/WordMemory 기반 메모리 영역을 사용하여 마스터 요청에 자동 응답합니다.
+    /// </summary>
     public class SlaveTCP
     {
         #region Properties
+        /// <summary>슬레이브 주소 (기본값: 1)</summary>
         public int Slave { get; set; } = 1;
+        /// <summary>수신 대기 포트 번호</summary>
         public int LocalPort { get => modbus.LocalPort; set => modbus.LocalPort = value; }
 
+        /// <summary>통신 루프가 시작되었는지 여부</summary>
         public bool IsStart => modbus.IsStart;
 
+        /// <summary>비트 메모리 영역 (키: Modbus 시작 주소, 값: BitMemory 인스턴스)</summary>
         public Dictionary<int, BitMemory> BitAreas { get; } = [];
+        /// <summary>워드 메모리 영역 (키: Modbus 시작 주소, 값: WordMemory 인스턴스)</summary>
         public Dictionary<int, WordMemory> WordAreas { get; } = [];
 
+        /// <summary>사용자 정의 태그 객체</summary>
         public object? Tag { get; set; } = null;
         #endregion
 
@@ -28,11 +38,14 @@ namespace Going.Basis.Communications.Modbus.TCP
         #endregion
 
         #region Event
+        /// <summary>클라이언트 TCP 소켓이 연결되었을 때 발생합니다.</summary>
         public event EventHandler<EventArgs>? SocketConnected;
+        /// <summary>클라이언트 TCP 소켓 연결이 끊어졌을 때 발생합니다.</summary>
         public event EventHandler<EventArgs>? SocketDisconnected;
         #endregion
 
         #region Constructor
+        /// <summary>Modbus TCP 슬레이브 래퍼 인스턴스를 생성한다.</summary>
         public SlaveTCP()
         {
             modbus = new ModbusTCPSlave();
@@ -175,7 +188,9 @@ namespace Going.Basis.Communications.Modbus.TCP
         #endregion
 
         #region Method
+        /// <summary>통신을 시작합니다.</summary>
         public void Start() => modbus.Start();
+        /// <summary>통신을 중지합니다.</summary>
         public void Stop() => modbus.Stop();
         #endregion
     }

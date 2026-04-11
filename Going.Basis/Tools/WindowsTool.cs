@@ -7,9 +7,15 @@ using System.Threading.Tasks;
 
 namespace Going.Basis.Tools
 {
+    /// <summary>
+    /// Windows 시스템 유틸리티 클래스.
+    /// 시스템 시간 설정, 절전 모드 방지/허용 기능을 제공한다. Win32 API를 사용한다.
+    /// </summary>
     public class WindowsTool
     {
         #region SetLocalTime
+        /// <summary>시스템 로컬 시간을 설정한다. 관리자 권한이 필요하다.</summary>
+        /// <param name="Time">설정할 시간</param>
         public static void SetLocalTime(DateTime Time)
         {
             var v = new SYSTEMTIME()
@@ -27,6 +33,8 @@ namespace Going.Basis.Tools
         }
         #endregion
         #region SetSystemTime
+        /// <summary>시스템 UTC 시간을 설정한다. 관리자 권한이 필요하다.</summary>
+        /// <param name="Time">설정할 UTC 시간</param>
         public static void SetSystemTime(DateTime Time)
         {
             var v = new SYSTEMTIME()
@@ -45,6 +53,7 @@ namespace Going.Basis.Tools
         #endregion
 
         #region PreventSleep
+        /// <summary>시스템 절전 모드 및 화면 꺼짐을 방지한다.</summary>
         public static void PreventSleep()
         {
             Win32Tool.SetThreadExecutionState(ExecutionStateKinds.ES_CONTINUOUS |
@@ -54,6 +63,7 @@ namespace Going.Basis.Tools
         }
         #endregion
         #region AllowSleep
+        /// <summary>절전 모드 방지를 해제하여 시스템이 정상적으로 절전될 수 있도록 한다.</summary>
         public static void AllowSleep()
         {
             Win32Tool.SetThreadExecutionState(ExecutionStateKinds.ES_CONTINUOUS);

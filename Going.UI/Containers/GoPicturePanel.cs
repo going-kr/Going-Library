@@ -13,12 +13,27 @@ using System.Threading.Tasks;
 
 namespace Going.UI.Containers
 {
+    /// <summary>
+    /// 배경 이미지를 표시하는 패널 컨테이너입니다. 다양한 이미지 스케일 모드를 지원합니다.
+    /// </summary>
     public class GoPicturePanel : GoContainer
     {
         #region Properties
+        /// <summary>
+        /// 자식 컨트롤 목록을 가져옵니다.
+        /// </summary>
         [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
+        /// <summary>
+        /// 배경 이미지 리소스 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoImageProperty(PCategory.Control, 0)] public string? Image { get; set; }
+        /// <summary>
+        /// 이미지 스케일 모드를 가져오거나 설정합니다. (Real, CenterImage, Stretch, Zoom)
+        /// </summary>
         [GoProperty(PCategory.Control, 1)] public GoImageScaleMode ScaleMode { get; set; } = GoImageScaleMode.Real;
+        /// <summary>
+        /// 모서리 라운드 타입을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 2)] public GoRoundType Round { get; set; } = GoRoundType.All;
         #endregion
 
@@ -27,8 +42,15 @@ namespace Going.UI.Containers
         #endregion
 
         #region Constructor
+        /// <summary>
+        /// 자식 컨트롤 목록을 사용하여 <see cref="GoPicturePanel"/>의 새 인스턴스를 초기화합니다. JSON 역직렬화에 사용됩니다.
+        /// </summary>
+        /// <param name="childrens">자식 컨트롤 목록</param>
         [JsonConstructor]
         public GoPicturePanel(List<IGoControl> childrens) : this() => Childrens = childrens ?? [];
+        /// <summary>
+        /// <see cref="GoPicturePanel"/>의 새 인스턴스를 초기화합니다.
+        /// </summary>
         public GoPicturePanel() { }
         #endregion
 

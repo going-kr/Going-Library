@@ -7,8 +7,16 @@ using System.Threading.Tasks;
 
 namespace Going.UI.Tools
 {
+    /// <summary>
+    /// 이미지 데이터를 처리하여 프레임을 추출하는 유틸리티 클래스입니다. 단일 이미지 및 애니메이션 GIF 등 멀티프레임 이미지를 지원합니다.
+    /// </summary>
     public class ImageExtractor
     {
+        /// <summary>
+        /// 메모리의 이미지 데이터에서 모든 프레임을 추출합니다.
+        /// </summary>
+        /// <param name="imageData">이미지 바이트 배열</param>
+        /// <returns>추출된 SKImage 프레임 목록</returns>
         public static List<SKImage> ProcessImageFromMemory(byte[] imageData)
         {
             var frames = new List<SKImage>();

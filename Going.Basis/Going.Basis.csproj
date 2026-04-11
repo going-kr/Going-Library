@@ -10,6 +10,7 @@
     <PackageIconUrl>https://raw.githubusercontent.com/Going-kr/Going-Library/master/icon/Going_logo_blue.png</PackageIconUrl>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Description>Communication and utility library</Description>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
   </PropertyGroup>
 

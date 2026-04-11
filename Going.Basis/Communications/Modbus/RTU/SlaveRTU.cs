@@ -9,21 +9,36 @@ using System.Threading.Tasks;
 
 namespace Going.Basis.Communications.Modbus.RTU
 {
+    /// <summary>
+    /// Modbus RTU 슬레이브 래퍼 클래스입니다.
+    /// BitMemory/WordMemory 기반 메모리 영역을 사용하여 마스터 요청에 자동 응답합니다.
+    /// </summary>
     public class SlaveRTU
     {
         #region Properties
+        /// <summary>슬레이브 주소 (기본값: 1)</summary>
         public int Slave { get; set; } = 1;
+        /// <summary>시리얼 포트 이름 (예: "COM1")</summary>
         public string Port { get => modbus.Port; set => modbus.Port = value; }
+        /// <summary>통신 속도 (bps)</summary>
         public int Baudrate { get => modbus.Baudrate; set => modbus.Baudrate = value; }
+        /// <summary>패리티 비트 설정</summary>
         public Parity Parity { get => modbus.Parity; set => modbus.Parity = value; }
+        /// <summary>데이터 비트 수</summary>
         public int DataBits { get => modbus.DataBits; set => modbus.DataBits = value; }
+        /// <summary>정지 비트 설정</summary>
         public StopBits StopBits { get => modbus.StopBits; set => modbus.StopBits = value; }
 
+        /// <summary>통신 루프가 시작되었는지 여부</summary>
         public bool IsStart => modbus.IsStart;
+        /// <summary>시리얼 포트가 열려 있는지 여부</summary>
         public bool IsOpen => modbus.IsOpen;
 
+        /// <summary>비트 메모리 영역 (키: Modbus 시작 주소, 값: BitMemory 인스턴스)</summary>
         public Dictionary<int, BitMemory> BitAreas { get; } = [];
+        /// <summary>워드 메모리 영역 (키: Modbus 시작 주소, 값: WordMemory 인스턴스)</summary>
         public Dictionary<int, WordMemory> WordAreas { get; } = [];
+        /// <summary>사용자 정의 태그 객체</summary>
         public object? Tag { get; set; } = null;
         #endregion
 
@@ -32,11 +47,14 @@ namespace Going.Basis.Communications.Modbus.RTU
         #endregion
 
         #region Event
+        /// <summary>시리얼 포트가 닫혔을 때 발생합니다.</summary>
         public event EventHandler? DeviceClosed;
+        /// <summary>시리얼 포트가 열렸을 때 발생합니다.</summary>
         public event EventHandler? DeviceOpened;
         #endregion
 
         #region Constructor
+        /// <summary>Modbus RTU 슬레이브 래퍼 인스턴스를 생성한다.</summary>
         public SlaveRTU()
         {
             modbus = new ModbusRTUSlave();
@@ -179,7 +197,9 @@ namespace Going.Basis.Communications.Modbus.RTU
         #endregion
 
         #region Method
+        /// <summary>통신을 시작합니다.</summary>
         public void Start() => modbus.Start();
+        /// <summary>통신을 중지합니다.</summary>
         public void Stop() => modbus.Stop();
         #endregion
     }

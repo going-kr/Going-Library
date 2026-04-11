@@ -15,9 +15,18 @@ using System.Reflection;
 
 namespace Going.UI.Json
 {
+    /// <summary>
+    /// Going.UI 컨트롤의 JSON 직렬화/역직렬화를 위한 변환기 설정 클래스입니다.
+    /// </summary>
     public class GoJsonConverter
     {
+        /// <summary>
+        /// JSON 직렬화/역직렬화에 사용되는 옵션을 가져옵니다.
+        /// </summary>
         public static JsonSerializerOptions Options { get; } = new JsonSerializerOptions();
+        /// <summary>
+        /// 등록된 컨트롤 타입 이름과 타입 매핑 사전을 가져옵니다.
+        /// </summary>
         public static Dictionary<string, Type> ControlTypes { get; } = [];
         static GoJsonConverter()
         {
@@ -132,6 +141,9 @@ namespace Going.UI.Json
     }
 
     #region SKColorConverter
+    /// <summary>
+    /// SKColor와 JSON 간의 변환을 처리하는 변환기입니다. 색상을 uint 값으로 직렬화합니다.
+    /// </summary>
     public class SKColorConverter : JsonConverter<SKColor>
     {
         public override SKColor Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) => new SKColor(reader.GetUInt32());
@@ -139,6 +151,9 @@ namespace Going.UI.Json
     }
     #endregion
     #region SKRectConverter
+    /// <summary>
+    /// SKRect와 JSON 간의 변환을 처리하는 변환기입니다. 사각형을 "Left,Top,Right,Bottom" 문자열로 직렬화합니다.
+    /// </summary>
     public class SKRectConverter : JsonConverter<SKRect>
     {
         public override SKRect Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -155,7 +170,10 @@ namespace Going.UI.Json
         }
     }
     #endregion
-    #region SKBitmapConverter 
+    #region SKBitmapConverter
+    /// <summary>
+    /// SKBitmap과 JSON 간의 변환을 처리하는 변환기입니다. 비트맵을 Base64 문자열로 직렬화합니다.
+    /// </summary>
     public class SKBitmapConverter : JsonConverter<SKBitmap>
     {
         public override SKBitmap? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -182,7 +200,10 @@ namespace Going.UI.Json
         }
     }
     #endregion
-    #region SKImageConverter 
+    #region SKImageConverter
+    /// <summary>
+    /// SKImage와 JSON 간의 변환을 처리하는 변환기입니다. 이미지를 Base64 문자열로 직렬화합니다.
+    /// </summary>
     public class SKImageConverter : JsonConverter<SKImage>
     {
         public override SKImage? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -208,6 +229,9 @@ namespace Going.UI.Json
     }
     #endregion
     #region GoControlConverter
+    /// <summary>
+    /// IGoControl 인터페이스 구현체와 JSON 간의 다형성 변환을 처리하는 변환기입니다.
+    /// </summary>
     public class GoControlConverter : JsonConverter<IGoControl>
     {
         public override IGoControl Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -264,6 +288,9 @@ namespace Going.UI.Json
     }
     #endregion
     #region GoPagesConverter
+    /// <summary>
+    /// GoPage 딕셔너리와 JSON 간의 변환을 처리하는 변환기입니다.
+    /// </summary>
     public class GoPagesConverter : JsonConverter<Dictionary<string, GoPage>>
     {
         public override Dictionary<string, GoPage> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -349,6 +376,9 @@ namespace Going.UI.Json
     }
     #endregion
     #region GoWindowsConverter
+    /// <summary>
+    /// GoWindow 딕셔너리와 JSON 간의 변환을 처리하는 변환기입니다.
+    /// </summary>
     public class GoWindowsConverter : JsonConverter<Dictionary<string, GoWindow>>
     {
         public override Dictionary<string, GoWindow> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -434,6 +464,9 @@ namespace Going.UI.Json
     }
     #endregion
     #region GoTableLayoutControlCollectionConverter
+    /// <summary>
+    /// GoTableLayoutControlCollection과 JSON 간의 변환을 처리하는 변환기입니다.
+    /// </summary>
     public class GoTableLayoutControlCollectionConverter : JsonConverter<GoTableLayoutControlCollection>
     {
         public override GoTableLayoutControlCollection Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -462,6 +495,9 @@ namespace Going.UI.Json
     }
     #endregion
     #region GoGridLayoutControlCollectionConverter
+    /// <summary>
+    /// GoGridLayoutControlCollection과 JSON 간의 변환을 처리하는 변환기입니다.
+    /// </summary>
     public class GoGridLayoutControlCollectionConverter : JsonConverter<GoGridLayoutControlCollection>
     {
         public override GoGridLayoutControlCollection Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)

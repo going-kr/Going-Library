@@ -13,6 +13,9 @@ using System.Threading.Tasks;
 
 namespace Going.UI.Dialogs
 {
+    /// <summary>
+    /// 텍스트/숫자/불리언/템플릿 입력 다이얼로그. 다양한 타입의 값을 입력받을 수 있는 윈도우를 제공합니다.
+    /// </summary>
     public class GoInputBox : GoWindow
     {
         #region Const
@@ -21,11 +24,26 @@ namespace Going.UI.Dialogs
         #endregion
 
         #region Properties
+        /// <summary>
+        /// 확인 버튼의 텍스트를 가져오거나 설정합니다.
+        /// </summary>
         public string OkText { get => btnOk.Text; set => btnOk.Text = value; }
+        /// <summary>
+        /// 취소 버튼의 텍스트를 가져오거나 설정합니다.
+        /// </summary>
         public string CancelText { get => btnCancel.Text; set => btnCancel.Text = value; }
 
+        /// <summary>
+        /// 템플릿 입력 시 각 항목의 높이를 가져오거나 설정합니다.
+        /// </summary>
         public int ItemHeight { get; set; } = 40;
+        /// <summary>
+        /// 템플릿 입력 시 각 항목 제목의 너비를 가져오거나 설정합니다.
+        /// </summary>
         public int ItemTitleWidth { get; set; } = 80;
+        /// <summary>
+        /// 템플릿 입력 시 각 항목 값의 너비를 가져오거나 설정합니다.
+        /// </summary>
         public int ItemValueWidth { get; set; } = 150;
         #endregion
 
@@ -135,11 +153,55 @@ namespace Going.UI.Dialogs
 
         #region Method
         #region Show[Class]
+        /// <summary>
+        /// 클래스 타입의 속성들을 입력받는 다이얼로그를 표시합니다.
+        /// </summary>
+        /// <typeparam name="T">입력받을 클래스 타입</typeparam>
+        /// <param name="title">다이얼로그 제목</param>
+        /// <param name="result">입력 결과 콜백. 취소 시 null이 전달됩니다.</param>
         public void Showinputbox<T>(string title, Action<T?> result) where T : class => Showinputbox<T>(title, 1, null, null, result);
+        /// <summary>
+        /// 클래스 타입의 속성들을 지정한 열 수로 입력받는 다이얼로그를 표시합니다.
+        /// </summary>
+        /// <typeparam name="T">입력받을 클래스 타입</typeparam>
+        /// <param name="title">다이얼로그 제목</param>
+        /// <param name="columnCount">레이아웃 열 수</param>
+        /// <param name="result">입력 결과 콜백. 취소 시 null이 전달됩니다.</param>
         public void Showinputbox<T>(string title, int columnCount, Action<T?> result) where T : class => Showinputbox<T>(title, columnCount, null, null, result);
+        /// <summary>
+        /// 클래스 타입의 속성들을 초기값과 함께 입력받는 다이얼로그를 표시합니다.
+        /// </summary>
+        /// <typeparam name="T">입력받을 클래스 타입</typeparam>
+        /// <param name="title">다이얼로그 제목</param>
+        /// <param name="value">초기값</param>
+        /// <param name="result">입력 결과 콜백. 취소 시 null이 전달됩니다.</param>
         public void Showinputbox<T>(string title, T? value, Action<T?> result) where T : class => Showinputbox<T>(title, 1, value, null, result);
+        /// <summary>
+        /// 클래스 타입의 속성들을 추가 정보와 함께 입력받는 다이얼로그를 표시합니다.
+        /// </summary>
+        /// <typeparam name="T">입력받을 클래스 타입</typeparam>
+        /// <param name="title">다이얼로그 제목</param>
+        /// <param name="infos">속성별 추가 정보 딕셔너리</param>
+        /// <param name="result">입력 결과 콜백. 취소 시 null이 전달됩니다.</param>
         public void Showinputbox<T>(string title, Dictionary<string, InputBoxInfo>? infos, Action<T?> result) where T : class => Showinputbox<T>(title, 1, null, infos, result);
+        /// <summary>
+        /// 클래스 타입의 속성들을 초기값 및 추가 정보와 함께 입력받는 다이얼로그를 표시합니다.
+        /// </summary>
+        /// <typeparam name="T">입력받을 클래스 타입</typeparam>
+        /// <param name="title">다이얼로그 제목</param>
+        /// <param name="value">초기값</param>
+        /// <param name="infos">속성별 추가 정보 딕셔너리</param>
+        /// <param name="result">입력 결과 콜백. 취소 시 null이 전달됩니다.</param>
         public void Showinputbox<T>(string title, T? value, Dictionary<string, InputBoxInfo>? infos, Action<T?> result) where T : class => Showinputbox<T>(title, 1, value, infos, result);
+        /// <summary>
+        /// 클래스 타입의 속성들을 열 수, 초기값, 추가 정보와 함께 입력받는 다이얼로그를 표시합니다.
+        /// </summary>
+        /// <typeparam name="T">입력받을 클래스 타입</typeparam>
+        /// <param name="title">다이얼로그 제목</param>
+        /// <param name="columnCount">레이아웃 열 수</param>
+        /// <param name="value">초기값</param>
+        /// <param name="infos">속성별 추가 정보 딕셔너리</param>
+        /// <param name="result">입력 결과 콜백. 취소 시 null이 전달됩니다.</param>
         public void Showinputbox<T>(string title, int columnCount, T? value, Dictionary<string, InputBoxInfo>? infos, Action<T?> result) where T : class
         {
             this.Text = title;
@@ -451,7 +513,18 @@ namespace Going.UI.Dialogs
         }
         #endregion
         #region Show[Type]
+        /// <summary>
+        /// 문자열 입력 다이얼로그를 표시합니다.
+        /// </summary>
+        /// <param name="title">다이얼로그 제목</param>
+        /// <param name="result">입력 결과 콜백. 취소 시 null이 전달됩니다.</param>
         public void ShowString(string title, Action<string?> result) => ShowString(title, null, result);
+        /// <summary>
+        /// 초기값이 있는 문자열 입력 다이얼로그를 표시합니다.
+        /// </summary>
+        /// <param name="title">다이얼로그 제목</param>
+        /// <param name="value">초기 문자열 값</param>
+        /// <param name="result">입력 결과 콜백. 취소 시 null이 전달됩니다.</param>
         public void ShowString(string title, string? value, Action<string?> result)
         {
             this.Text = title;
@@ -469,9 +542,39 @@ namespace Going.UI.Dialogs
             Show(w, h);
         }
 
+        /// <summary>
+        /// 숫자 입력 다이얼로그를 표시합니다.
+        /// </summary>
+        /// <typeparam name="T">숫자 타입</typeparam>
+        /// <param name="title">다이얼로그 제목</param>
+        /// <param name="result">입력 결과 콜백. 취소 시 null이 전달됩니다.</param>
         public void ShowNumber<T>(string title, Action<T?> result) where T : struct => ShowNumber<T>(title, null, null, null, result);
+        /// <summary>
+        /// 초기값이 있는 숫자 입력 다이얼로그를 표시합니다.
+        /// </summary>
+        /// <typeparam name="T">숫자 타입</typeparam>
+        /// <param name="title">다이얼로그 제목</param>
+        /// <param name="value">초기값</param>
+        /// <param name="result">입력 결과 콜백. 취소 시 null이 전달됩니다.</param>
         public void ShowNumber<T>(string title, T? value, Action<T?> result) where T : struct => ShowNumber<T>(title, value, null, null, result);
+        /// <summary>
+        /// 최소/최대값 범위가 있는 숫자 입력 다이얼로그를 표시합니다.
+        /// </summary>
+        /// <typeparam name="T">숫자 타입</typeparam>
+        /// <param name="title">다이얼로그 제목</param>
+        /// <param name="min">최소값</param>
+        /// <param name="max">최대값</param>
+        /// <param name="result">입력 결과 콜백. 취소 시 null이 전달됩니다.</param>
         public void ShowNumber<T>(string title, T? min, T? max, Action<T?> result) where T : struct => ShowNumber<T>(title, null, min, max, result);
+        /// <summary>
+        /// 초기값과 최소/최대값 범위가 있는 숫자 입력 다이얼로그를 표시합니다.
+        /// </summary>
+        /// <typeparam name="T">숫자 타입</typeparam>
+        /// <param name="title">다이얼로그 제목</param>
+        /// <param name="value">초기값</param>
+        /// <param name="min">최소값</param>
+        /// <param name="max">최대값</param>
+        /// <param name="result">입력 결과 콜백. 취소 시 null이 전달됩니다.</param>
         public void ShowNumber<T>(string title, T? value, T? min, T? max, Action<T?> result) where T : struct
         {
             this.Text = title;
@@ -494,9 +597,35 @@ namespace Going.UI.Dialogs
             Show(w, h);
         }
 
+        /// <summary>
+        /// 불리언 입력 다이얼로그를 표시합니다.
+        /// </summary>
+        /// <param name="title">다이얼로그 제목</param>
+        /// <param name="result">입력 결과 콜백. 취소 시 null이 전달됩니다.</param>
         public void ShowBool(string title, Action<bool?> result) => ShowBool(title, false, "True", "False", result);
+        /// <summary>
+        /// 초기값이 있는 불리언 입력 다이얼로그를 표시합니다.
+        /// </summary>
+        /// <param name="title">다이얼로그 제목</param>
+        /// <param name="value">초기 불리언 값</param>
+        /// <param name="result">입력 결과 콜백. 취소 시 null이 전달됩니다.</param>
         public void ShowBool(string title, bool value, Action<bool?> result) => ShowBool(title, value, "True", "False", result);
+        /// <summary>
+        /// ON/OFF 텍스트를 지정하여 불리언 입력 다이얼로그를 표시합니다.
+        /// </summary>
+        /// <param name="title">다이얼로그 제목</param>
+        /// <param name="onText">ON 상태 표시 텍스트</param>
+        /// <param name="offText">OFF 상태 표시 텍스트</param>
+        /// <param name="result">입력 결과 콜백. 취소 시 null이 전달됩니다.</param>
         public void ShowBool(string title, string onText, string offText, Action<bool?> result) => ShowBool(title, false, onText, offText, result);
+        /// <summary>
+        /// 초기값과 ON/OFF 텍스트를 지정하여 불리언 입력 다이얼로그를 표시합니다.
+        /// </summary>
+        /// <param name="title">다이얼로그 제목</param>
+        /// <param name="value">초기 불리언 값</param>
+        /// <param name="onText">ON 상태 표시 텍스트</param>
+        /// <param name="offText">OFF 상태 표시 텍스트</param>
+        /// <param name="result">입력 결과 콜백. 취소 시 null이 전달됩니다.</param>
         public void ShowBool(string title, bool value, string onText, string offText, Action<bool?> result)
         {
             this.Text = title;

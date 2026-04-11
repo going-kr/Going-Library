@@ -6,638 +6,645 @@ using System.Threading.Tasks;
 
 namespace Going.UI.Enums
 {
+    /// <summary>
+    /// 키보드 보조 키(modifier key) 플래그를 정의하는 열거형입니다.
+    /// </summary>
     [Flags]
     public enum GoKeyModifiers
     {
         /// <summary>
-        /// if one or more Shift keys were held down.
+        /// Shift 키가 눌린 상태
         /// </summary>
         Shift = 0x0001,
 
         /// <summary>
-        /// If one or more Control keys were held down.
+        /// Control 키가 눌린 상태
         /// </summary>
         Control = 0x0002,
 
         /// <summary>
-        /// If one or more Alt keys were held down.
+        /// Alt 키가 눌린 상태
         /// </summary>
         Alt = 0x0004,
 
         /// <summary>
-        /// If one or more Super keys were held down.
+        /// Super(Windows) 키가 눌린 상태
         /// </summary>
         Super = 0x0008,
 
         /// <summary>
-        ///     If caps lock is enabled.
+        /// Caps Lock이 활성화된 상태
         /// </summary>
         CapsLock = 0x0010,
 
         /// <summary>
-        ///     If num lock is enabled.
+        /// Num Lock이 활성화된 상태
         /// </summary>
         NumLock = 0x0020,
     }
+
+    /// <summary>
+    /// 키보드 키 코드를 정의하는 열거형입니다.
+    /// </summary>
     public enum GoKeys : int
     {
         /// <summary>
-        /// An unknown key.
+        /// 알 수 없는 키
         /// </summary>
         Unknown = -1,
 
         /// <summary>
-        /// The spacebar key.
+        /// 스페이스바 키
         /// </summary>
         Space = 32,
 
         /// <summary>
-        /// The apostrophe key.
+        /// 아포스트로피(') 키
         /// </summary>
         Apostrophe = 39 /* ' */,
 
         /// <summary>
-        /// The comma key.
+        /// 쉼표(,) 키
         /// </summary>
         Comma = 44 /* , */,
 
         /// <summary>
-        /// The minus key.
+        /// 빼기(-) 키
         /// </summary>
         Minus = 45 /* - */,
 
         /// <summary>
-        /// The period key.
+        /// 마침표(.) 키
         /// </summary>
         Period = 46 /* . */,
 
         /// <summary>
-        /// The slash key.
+        /// 슬래시(/) 키
         /// </summary>
         Slash = 47 /* / */,
 
         /// <summary>
-        /// The 0 key.
+        /// 숫자 0 키
         /// </summary>
         D0 = 48,
 
         /// <summary>
-        /// The 1 key.
+        /// 숫자 1 키
         /// </summary>
         D1 = 49,
 
         /// <summary>
-        /// The 2 key.
+        /// 숫자 2 키
         /// </summary>
         D2 = 50,
 
         /// <summary>
-        /// The 3 key.
+        /// 숫자 3 키
         /// </summary>
         D3 = 51,
 
         /// <summary>
-        /// The 4 key.
+        /// 숫자 4 키
         /// </summary>
         D4 = 52,
 
         /// <summary>
-        /// The 5 key.
+        /// 숫자 5 키
         /// </summary>
         D5 = 53,
 
         /// <summary>
-        /// The 6 key.
+        /// 숫자 6 키
         /// </summary>
         D6 = 54,
 
         /// <summary>
-        /// The 7 key.
+        /// 숫자 7 키
         /// </summary>
         D7 = 55,
 
         /// <summary>
-        /// The 8 key.
+        /// 숫자 8 키
         /// </summary>
         D8 = 56,
 
         /// <summary>
-        /// The 9 key.
+        /// 숫자 9 키
         /// </summary>
         D9 = 57,
 
         /// <summary>
-        /// The semicolon key.
+        /// 세미콜론(;) 키
         /// </summary>
         Semicolon = 59 /* ; */,
 
         /// <summary>
-        /// The equal key.
+        /// 등호(=) 키
         /// </summary>
         Equal = 61 /* = */,
 
         /// <summary>
-        /// The A key.
+        /// A 키
         /// </summary>
         A = 65,
 
         /// <summary>
-        /// The B key.
+        /// B 키
         /// </summary>
         B = 66,
 
         /// <summary>
-        /// The C key.
+        /// C 키
         /// </summary>
         C = 67,
 
         /// <summary>
-        /// The D key.
+        /// D 키
         /// </summary>
         D = 68,
 
         /// <summary>
-        /// The E key.
+        /// E 키
         /// </summary>
         E = 69,
 
         /// <summary>
-        /// The F key.
+        /// F 키
         /// </summary>
         F = 70,
 
         /// <summary>
-        /// The G key.
+        /// G 키
         /// </summary>
         G = 71,
 
         /// <summary>
-        /// The H key.
+        /// H 키
         /// </summary>
         H = 72,
 
         /// <summary>
-        /// The I key.
+        /// I 키
         /// </summary>
         I = 73,
 
         /// <summary>
-        /// The J key.
+        /// J 키
         /// </summary>
         J = 74,
 
         /// <summary>
-        /// The K key.
+        /// K 키
         /// </summary>
         K = 75,
 
         /// <summary>
-        /// The L key.
+        /// L 키
         /// </summary>
         L = 76,
 
         /// <summary>
-        /// The M key.
+        /// M 키
         /// </summary>
         M = 77,
 
         /// <summary>
-        /// The N key.
+        /// N 키
         /// </summary>
         N = 78,
 
         /// <summary>
-        /// The O key.
+        /// O 키
         /// </summary>
         O = 79,
 
         /// <summary>
-        /// The P key.
+        /// P 키
         /// </summary>
         P = 80,
 
         /// <summary>
-        /// The Q key.
+        /// Q 키
         /// </summary>
         Q = 81,
 
         /// <summary>
-        /// The R key.
+        /// R 키
         /// </summary>
         R = 82,
 
         /// <summary>
-        /// The S key.
+        /// S 키
         /// </summary>
         S = 83,
 
         /// <summary>
-        /// The T key.
+        /// T 키
         /// </summary>
         T = 84,
 
         /// <summary>
-        /// The U key.
+        /// U 키
         /// </summary>
         U = 85,
 
         /// <summary>
-        /// The V key.
+        /// V 키
         /// </summary>
         V = 86,
 
         /// <summary>
-        /// The W key.
+        /// W 키
         /// </summary>
         W = 87,
 
         /// <summary>
-        /// The X key.
+        /// X 키
         /// </summary>
         X = 88,
 
         /// <summary>
-        /// The Y key.
+        /// Y 키
         /// </summary>
         Y = 89,
 
         /// <summary>
-        /// The Z key.
+        /// Z 키
         /// </summary>
         Z = 90,
 
         /// <summary>
-        /// The left bracket(opening bracket) key.
+        /// 왼쪽 대괄호([) 키
         /// </summary>
         LeftBracket = 91 /* [ */,
 
         /// <summary>
-        /// The backslash.
+        /// 백슬래시(\) 키
         /// </summary>
         Backslash = 92 /* \ */,
 
         /// <summary>
-        /// The right bracket(closing bracket) key.
+        /// 오른쪽 대괄호(]) 키
         /// </summary>
         RightBracket = 93 /* ] */,
 
         /// <summary>
-        /// The grave accent key.
+        /// 백틱(`) 키
         /// </summary>
         GraveAccent = 96 /* ` */,
 
         /// <summary>
-        /// The escape key.
+        /// Escape 키
         /// </summary>
         Escape = 256,
 
         /// <summary>
-        /// The enter key.
+        /// Enter 키
         /// </summary>
         Enter = 257,
 
         /// <summary>
-        /// The tab key.
+        /// Tab 키
         /// </summary>
         Tab = 258,
 
         /// <summary>
-        /// The backspace key.
+        /// Backspace 키
         /// </summary>
         Backspace = 259,
 
         /// <summary>
-        /// The insert key.
+        /// Insert 키
         /// </summary>
         Insert = 260,
 
         /// <summary>
-        /// The delete key.
+        /// Delete 키
         /// </summary>
         Delete = 261,
 
         /// <summary>
-        /// The right arrow key.
+        /// 오른쪽 화살표 키
         /// </summary>
         Right = 262,
 
         /// <summary>
-        /// The left arrow key.
+        /// 왼쪽 화살표 키
         /// </summary>
         Left = 263,
 
         /// <summary>
-        /// The down arrow key.
+        /// 아래쪽 화살표 키
         /// </summary>
         Down = 264,
 
         /// <summary>
-        /// The up arrow key.
+        /// 위쪽 화살표 키
         /// </summary>
         Up = 265,
 
         /// <summary>
-        /// The page up key.
+        /// Page Up 키
         /// </summary>
         PageUp = 266,
 
         /// <summary>
-        /// The page down key.
+        /// Page Down 키
         /// </summary>
         PageDown = 267,
 
         /// <summary>
-        /// The home key.
+        /// Home 키
         /// </summary>
         Home = 268,
 
         /// <summary>
-        /// The end key.
+        /// End 키
         /// </summary>
         End = 269,
 
         /// <summary>
-        /// The caps lock key.
+        /// Caps Lock 키
         /// </summary>
         CapsLock = 280,
 
         /// <summary>
-        /// The scroll lock key.
+        /// Scroll Lock 키
         /// </summary>
         ScrollLock = 281,
 
         /// <summary>
-        /// The num lock key.
+        /// Num Lock 키
         /// </summary>
         NumLock = 282,
 
         /// <summary>
-        /// The print screen key.
+        /// Print Screen 키
         /// </summary>
         PrintScreen = 283,
 
         /// <summary>
-        /// The pause key.
+        /// Pause 키
         /// </summary>
         Pause = 284,
 
         /// <summary>
-        /// The F1 key.
+        /// F1 키
         /// </summary>
         F1 = 290,
 
         /// <summary>
-        /// The F2 key.
+        /// F2 키
         /// </summary>
         F2 = 291,
 
         /// <summary>
-        /// The F3 key.
+        /// F3 키
         /// </summary>
         F3 = 292,
 
         /// <summary>
-        /// The F4 key.
+        /// F4 키
         /// </summary>
         F4 = 293,
 
         /// <summary>
-        /// The F5 key.
+        /// F5 키
         /// </summary>
         F5 = 294,
 
         /// <summary>
-        /// The F6 key.
+        /// F6 키
         /// </summary>
         F6 = 295,
 
         /// <summary>
-        /// The F7 key.
+        /// F7 키
         /// </summary>
         F7 = 296,
 
         /// <summary>
-        /// The F8 key.
+        /// F8 키
         /// </summary>
         F8 = 297,
 
         /// <summary>
-        /// The F9 key.
+        /// F9 키
         /// </summary>
         F9 = 298,
 
         /// <summary>
-        /// The F10 key.
+        /// F10 키
         /// </summary>
         F10 = 299,
 
         /// <summary>
-        /// The F11 key.
+        /// F11 키
         /// </summary>
         F11 = 300,
 
         /// <summary>
-        /// The F12 key.
+        /// F12 키
         /// </summary>
         F12 = 301,
 
         /// <summary>
-        /// The F13 key.
+        /// F13 키
         /// </summary>
         F13 = 302,
 
         /// <summary>
-        /// The F14 key.
+        /// F14 키
         /// </summary>
         F14 = 303,
 
         /// <summary>
-        /// The F15 key.
+        /// F15 키
         /// </summary>
         F15 = 304,
 
         /// <summary>
-        /// The F16 key.
+        /// F16 키
         /// </summary>
         F16 = 305,
 
         /// <summary>
-        /// The F17 key.
+        /// F17 키
         /// </summary>
         F17 = 306,
 
         /// <summary>
-        /// The F18 key.
+        /// F18 키
         /// </summary>
         F18 = 307,
 
         /// <summary>
-        /// The F19 key.
+        /// F19 키
         /// </summary>
         F19 = 308,
 
         /// <summary>
-        /// The F20 key.
+        /// F20 키
         /// </summary>
         F20 = 309,
 
         /// <summary>
-        /// The F21 key.
+        /// F21 키
         /// </summary>
         F21 = 310,
 
         /// <summary>
-        /// The F22 key.
+        /// F22 키
         /// </summary>
         F22 = 311,
 
         /// <summary>
-        /// The F23 key.
+        /// F23 키
         /// </summary>
         F23 = 312,
 
         /// <summary>
-        /// The F24 key.
+        /// F24 키
         /// </summary>
         F24 = 313,
 
         /// <summary>
-        /// The F25 key.
+        /// F25 키
         /// </summary>
         F25 = 314,
 
         /// <summary>
-        /// The 0 key on the key pad.
+        /// 키패드 0 키
         /// </summary>
         KeyPad0 = 320,
 
         /// <summary>
-        /// The 1 key on the key pad.
+        /// 키패드 1 키
         /// </summary>
         KeyPad1 = 321,
 
         /// <summary>
-        /// The 2 key on the key pad.
+        /// 키패드 2 키
         /// </summary>
         KeyPad2 = 322,
 
         /// <summary>
-        /// The 3 key on the key pad.
+        /// 키패드 3 키
         /// </summary>
         KeyPad3 = 323,
 
         /// <summary>
-        /// The 4 key on the key pad.
+        /// 키패드 4 키
         /// </summary>
         KeyPad4 = 324,
 
         /// <summary>
-        /// The 5 key on the key pad.
+        /// 키패드 5 키
         /// </summary>
         KeyPad5 = 325,
 
         /// <summary>
-        /// The 6 key on the key pad.
+        /// 키패드 6 키
         /// </summary>
         KeyPad6 = 326,
 
         /// <summary>
-        /// The 7 key on the key pad.
+        /// 키패드 7 키
         /// </summary>
         KeyPad7 = 327,
 
         /// <summary>
-        /// The 8 key on the key pad.
+        /// 키패드 8 키
         /// </summary>
         KeyPad8 = 328,
 
         /// <summary>
-        /// The 9 key on the key pad.
+        /// 키패드 9 키
         /// </summary>
         KeyPad9 = 329,
 
         /// <summary>
-        /// The decimal key on the key pad.
+        /// 키패드 소수점(.) 키
         /// </summary>
         KeyPadDecimal = 330,
 
         /// <summary>
-        /// The divide key on the key pad.
+        /// 키패드 나누기(/) 키
         /// </summary>
         KeyPadDivide = 331,
 
         /// <summary>
-        /// The multiply key on the key pad.
+        /// 키패드 곱하기(*) 키
         /// </summary>
         KeyPadMultiply = 332,
 
         /// <summary>
-        /// The subtract key on the key pad.
+        /// 키패드 빼기(-) 키
         /// </summary>
         KeyPadSubtract = 333,
 
         /// <summary>
-        /// The add key on the key pad.
+        /// 키패드 더하기(+) 키
         /// </summary>
         KeyPadAdd = 334,
 
         /// <summary>
-        /// The enter key on the key pad.
+        /// 키패드 Enter 키
         /// </summary>
         KeyPadEnter = 335,
 
         /// <summary>
-        /// The equal key on the key pad.
+        /// 키패드 등호(=) 키
         /// </summary>
         KeyPadEqual = 336,
 
         /// <summary>
-        /// The left shift key.
+        /// 왼쪽 Shift 키
         /// </summary>
         LeftShift = 340,
 
         /// <summary>
-        /// The left control key.
+        /// 왼쪽 Control 키
         /// </summary>
         LeftControl = 341,
 
         /// <summary>
-        /// The left alt key.
+        /// 왼쪽 Alt 키
         /// </summary>
         LeftAlt = 342,
 
         /// <summary>
-        /// The left super key.
+        /// 왼쪽 Super(Windows) 키
         /// </summary>
         LeftSuper = 343,
 
         /// <summary>
-        /// The right shift key.
+        /// 오른쪽 Shift 키
         /// </summary>
         RightShift = 344,
 
         /// <summary>
-        /// The right control key.
+        /// 오른쪽 Control 키
         /// </summary>
         RightControl = 345,
 
         /// <summary>
-        /// The right alt key.
+        /// 오른쪽 Alt 키
         /// </summary>
         RightAlt = 346,
 
         /// <summary>
-        /// The right super key.
+        /// 오른쪽 Super(Windows) 키
         /// </summary>
         RightSuper = 347,
 
         /// <summary>
-        /// The menu key.
+        /// 메뉴 키
         /// </summary>
         Menu = 348,
 
         /// <summary>
-        /// The last valid key in this enum.
+        /// 이 열거형의 마지막 유효 키
         /// </summary>
         LastKey = Menu
     }

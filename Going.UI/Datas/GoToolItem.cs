@@ -19,16 +19,24 @@ using static System.Net.Mime.MediaTypeNames;
 namespace Going.UI.Datas
 {
     #region class : ToolItem
+    /// <summary>
+    /// 도구 상자 컨트롤에서 사용되는 도구 항목 클래스입니다.
+    /// </summary>
     public class GoToolItem
     {
         #region Properties
+        /// <summary>도구 항목에 표시할 텍스트</summary>
         [GoProperty(PCategory.Basic, 0)] public string? Text { get; set; }
+        /// <summary>도구 항목에 표시할 아이콘 문자열</summary>
         [GoProperty(PCategory.Basic, 1)] public string? IconString { get; set; }
+        /// <summary>사용자 정의 데이터를 저장하기 위한 태그 객체</summary>
         public object? Tag { get; set; }
 
         [JsonIgnore] internal SKRect Bounds { get; set; }
         [JsonIgnore] internal GoToolBox? ToolBox { get; set; }
+        /// <summary>이 항목이 속한 카테고리</summary>
         [JsonIgnore] public GoToolCategory? Category { get; internal set; }
+        /// <summary>항목의 커스텀 그리기 이벤트</summary>
         public event Action<SKCanvas, GoTheme, GoToolBox, GoToolItem, SKRect>? ItemDraw;
         #endregion
 
@@ -110,13 +118,21 @@ namespace Going.UI.Datas
     }
     #endregion
     #region class : ToolCategory
+    /// <summary>
+    /// 도구 상자의 카테고리(그룹)를 나타내는 클래스입니다.
+    /// </summary>
     public class GoToolCategory
     {
         #region Properties
+        /// <summary>카테고리에 표시할 텍스트</summary>
         [GoProperty(PCategory.Basic, 0)] public string? Text { get; set; }
+        /// <summary>카테고리에 표시할 아이콘 문자열</summary>
         [GoProperty(PCategory.Basic, 1)] public string? IconString { get; set; }
+        /// <summary>사용자 정의 데이터를 저장하기 위한 태그 객체</summary>
         public object? Tag { get; set; }
+        /// <summary>카테고리에 포함된 도구 항목 컬렉션</summary>
         [GoProperty(PCategory.Basic, 2)] public ObservableList<GoToolItem> Items { get; set; } = [];
+        /// <summary>카테고리의 확장(펼침) 상태</summary>
         [GoProperty(PCategory.Basic, 3)] public bool Expand { get; set; } = true;
 
         [JsonIgnore] internal bool Changed { get => Items.Changed; set => Items.Changed = value; }
@@ -267,8 +283,13 @@ namespace Going.UI.Datas
     }
     #endregion
 
+    /// <summary>
+    /// 도구 항목 이벤트 인자 클래스입니다.
+    /// </summary>
+    /// <param name="itm">이벤트가 발생한 도구 항목</param>
     public class ToolItemEventArgs(GoToolItem itm) : EventArgs
     {
+        /// <summary>이벤트가 발생한 도구 항목</summary>
         public GoToolItem Item { get; } = itm;
     }
 }

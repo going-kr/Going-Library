@@ -8,8 +8,14 @@ using System.Threading.Tasks;
 
 namespace Going.UI.Icons
 {
+    /// <summary>
+    /// Font Awesome 5 아이콘 폰트를 제공하는 클래스입니다. fas, far, fab 스타일을 지원합니다.
+    /// </summary>
     public class FontAwesome : IIconFont
     {
+        /// <summary>
+        /// 아이콘 폰트 이름을 가져옵니다.
+        /// </summary>
         public string Name => "FontAwesome 5";
 
         #region Member Variable
@@ -2070,6 +2076,11 @@ namespace Going.UI.Icons
 
         #region Method
         #region Contains
+        /// <summary>
+        /// 지정된 아이콘 문자열이 이 폰트에 존재하는지 확인합니다.
+        /// </summary>
+        /// <param name="IconString">아이콘 문자열 (예: "fas fa-home")</param>
+        /// <returns>아이콘이 존재하면 true</returns>
         public bool Contains(string IconString)
         {
             var ret = false;
@@ -2101,6 +2112,11 @@ namespace Going.UI.Icons
         }
         #endregion
         #region GetIcon
+        /// <summary>
+        /// 아이콘 문자열에 해당하는 GoIcon 객체를 반환합니다.
+        /// </summary>
+        /// <param name="IconString">아이콘 문자열 (예: "fas fa-home")</param>
+        /// <returns>GoIcon 객체, 없으면 null</returns>
         public GoIcon? GetIcon(string IconString)
         {
             SKTypeface? vfont = null;

@@ -12,12 +12,27 @@ using System.Threading.Tasks;
 
 namespace Going.UI.Dialogs
 {
+    /// <summary>
+    /// 메시지 박스 다이얼로그. OK, OK/Cancel, Yes/No, Yes/No/Cancel 등 다양한 버튼 조합을 지원합니다.
+    /// </summary>
     public class GoMessageBox : GoWindow
     {
         #region Properties
+        /// <summary>
+        /// '예' 버튼의 텍스트를 가져오거나 설정합니다.
+        /// </summary>
         public string YesText { get => btnYes.Text; set => btnYes.Text = value; }
+        /// <summary>
+        /// '아니요' 버튼의 텍스트를 가져오거나 설정합니다.
+        /// </summary>
         public string NoText { get => btnNo.Text; set => btnNo.Text = value; }
+        /// <summary>
+        /// '확인' 버튼의 텍스트를 가져오거나 설정합니다.
+        /// </summary>
         public string OkText { get => btnOK.Text; set => btnOK.Text = value; }
+        /// <summary>
+        /// '취소' 버튼의 텍스트를 가져오거나 설정합니다.
+        /// </summary>
         public string CancelText { get => btnCancel.Text; set => btnCancel.Text = value; }
         #endregion
 
@@ -73,6 +88,12 @@ namespace Going.UI.Dialogs
             return (w, h);
         }
 
+        /// <summary>
+        /// 확인 버튼만 있는 메시지 박스를 표시합니다.
+        /// </summary>
+        /// <param name="title">메시지 박스 제목</param>
+        /// <param name="message">표시할 메시지</param>
+        /// <param name="result">다이얼로그 결과 콜백</param>
         public void ShowMessageBoxOk(string title, string message, Action<GoDialogResult> result)
         {
             var (w, h) = show(title, message, result);
@@ -84,6 +105,12 @@ namespace Going.UI.Dialogs
             Show(w, h);
         }
 
+        /// <summary>
+        /// 확인/취소 버튼이 있는 메시지 박스를 표시합니다.
+        /// </summary>
+        /// <param name="title">메시지 박스 제목</param>
+        /// <param name="message">표시할 메시지</param>
+        /// <param name="result">다이얼로그 결과 콜백</param>
         public void ShowMessageBoxOkCancel(string title, string message, Action<GoDialogResult> result)
         {
             var (w, h) = show(title, message, result);
@@ -96,6 +123,12 @@ namespace Going.UI.Dialogs
             Show(w, h);
         }
 
+        /// <summary>
+        /// 예/아니요 버튼이 있는 메시지 박스를 표시합니다.
+        /// </summary>
+        /// <param name="title">메시지 박스 제목</param>
+        /// <param name="message">표시할 메시지</param>
+        /// <param name="result">다이얼로그 결과 콜백</param>
         public void ShowMessageBoxYesNo(string title, string message, Action<GoDialogResult> result)
         {
             var (w, h) = show(title, message, result);
@@ -108,6 +141,12 @@ namespace Going.UI.Dialogs
             Show(w, h);
         }
 
+        /// <summary>
+        /// 예/아니요/취소 버튼이 있는 메시지 박스를 표시합니다.
+        /// </summary>
+        /// <param name="title">메시지 박스 제목</param>
+        /// <param name="message">표시할 메시지</param>
+        /// <param name="result">다이얼로그 결과 콜백</param>
         public void ShowMessageBoxYesNoCancel(string title, string message, Action<GoDialogResult> result)
         {
             var (w, h) = show(title, message, result);

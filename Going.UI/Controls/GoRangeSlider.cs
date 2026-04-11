@@ -8,56 +8,86 @@ using System.Globalization;
 
 namespace Going.UI.Controls
 {
+    /// <summary>
+    /// 범위 슬라이더 컨트롤. 두 개의 핸들을 사용하여 범위(하한값~상한값)를 선택할 수 있습니다.
+    /// </summary>
     public class GoRangeSlider : GoControl, IDisposable
     {
         #region Properties
 
         #region 아이콘 설정
+        /// <summary>아이콘 문자열 (FontAwesome 등)</summary>
         [GoProperty(PCategory.Control, 0)] public string? IconString { get; set; }
+        /// <summary>아이콘 크기</summary>
         [GoProperty(PCategory.Control, 1)] public float IconSize { get; set; } = 12;
+        /// <summary>아이콘과 텍스트 사이 간격</summary>
         [GoProperty(PCategory.Control, 2)] public float IconGap { get; set; } = 5;
+        /// <summary>아이콘 배치 방향</summary>
         [GoProperty(PCategory.Control, 3)] public GoDirectionHV IconDirection { get; set; }
         #endregion
 
         #region 슬라이더 라벨 설정
+        /// <summary>슬라이더 라벨 텍스트</summary>
         [GoMultiLineProperty(PCategory.Control, 4)] public string Text { get; set; } = "slider";
+        /// <summary>글꼴 이름</summary>
         [GoFontNameProperty(PCategory.Control, 5)] public string FontName { get; set; } = "나눔고딕";
+        /// <summary>글꼴 크기</summary>
         [GoProperty(PCategory.Control, 6)] public float FontSize { get; set; } = 12;
         #endregion
 
         #region 슬라이더 배경 설정
+        /// <summary>배경 그리기 여부</summary>
         [GoProperty(PCategory.Control, 7)] public bool BackgroundDraw { get; set; }
+        /// <summary>테두리만 그리기 여부</summary>
         [GoProperty(PCategory.Control, 8)] public bool BorderOnly { get; set; }
         #endregion
 
         #region 슬라이더 설정
+        /// <summary>텍스트 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 9)] public string TextColor { get; set; } = "Fore";
+        /// <summary>배경 박스 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 10)] public string BoxColor { get; set; } = "Back";
+        /// <summary>슬라이더 핸들 및 진행 바 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 11)] public string SliderColor { get; set; } = "Base5";
+        /// <summary>트랙 배경 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 12)] public string ProgressColor { get; set; } = "Base1";
+        /// <summary>테두리 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 13)] public string BorderColor { get; set; } = "danger";
+        /// <summary>모서리 둥글기 유형</summary>
         [GoProperty(PCategory.Control, 14)] public GoRoundType Round { get; set; } = GoRoundType.All;
+        /// <summary>슬라이더 방향 (가로/세로)</summary>
         [GoProperty(PCategory.Control, 15)] public GoDirectionHV Direction { get; set; } = GoDirectionHV.Horizon;
         #endregion
 
         #region 슬라이더 표시 설정(외형)
+        /// <summary>핸들에 값 라벨 표시 여부</summary>
         [GoProperty(PCategory.Control, 16)] public bool ShowValueLabel { get; set; } = true;
+        /// <summary>값 표시 형식 문자열</summary>
         [GoProperty(PCategory.Control, 17)] public string ValueFormat { get; set; } = "0";
+        /// <summary>트랙 바 두께 (픽셀)</summary>
         [GoProperty(PCategory.Control, 18)] public int BarSize { get; set; } = 4;
+        /// <summary>핸들 반지름 (픽셀)</summary>
         [GoProperty(PCategory.Control, 19)] public float HandleRadius { get; set; } = 15f;
+        /// <summary>그림자 효과 사용 여부</summary>
         [GoProperty(PCategory.Control, 20)] public bool EnableShadow { get; set; } = true;
+        /// <summary>호버 시 핸들 확대 비율</summary>
         [GoProperty(PCategory.Control, 21)] public float HandleHoverScale { get; set; } = 1.05f;
         #endregion
 
         #region 틱(단계) 설정
+        /// <summary>증감 단위. null이면 연속 값을 사용합니다.</summary>
         [GoProperty(PCategory.Control, 22)] public double? Tick { get; set; } = null;
+        /// <summary>틱 표시 여부</summary>
         [GoProperty(PCategory.Control, 23)] public bool ShowTicks { get; set; } = false;
+        /// <summary>틱 개수</summary>
         [GoProperty(PCategory.Control, 24)] public int TickCount { get; set; } = 5;
+        /// <summary>틱 표시 크기 (픽셀)</summary>
         [GoProperty(PCategory.Control, 25)] public float TickSize { get; set; } = 10f;
         #endregion
 
         #region 슬라이더 값 설정(외부)
         private double sLowerValue;
+        /// <summary>하한값. 값이 변경되면 <see cref="LowerValueChanged"/> 및 <see cref="RangeChanged"/> 이벤트가 발생합니다.</summary>
         [GoProperty(PCategory.Control, 26)]
         public double LowerValue
         {
@@ -75,6 +105,7 @@ namespace Going.UI.Controls
             }
         }
         private double sUpperValue;
+        /// <summary>상한값. 값이 변경되면 <see cref="UpperValueChanged"/> 및 <see cref="RangeChanged"/> 이벤트가 발생합니다.</summary>
         [GoProperty(PCategory.Control, 27)]
         public double UpperValue
         {
@@ -91,6 +122,7 @@ namespace Going.UI.Controls
             }
         }
         private string? sLowerValueString;
+        /// <summary>하한값의 형식화된 문자열 표현</summary>
         [GoProperty(PCategory.Control, 28)]
         public string? LowerValueString
         {
@@ -102,6 +134,7 @@ namespace Going.UI.Controls
             }
         }
         private string? sUpperValueString;
+        /// <summary>상한값의 형식화된 문자열 표현</summary>
         [GoProperty(PCategory.Control, 29)]
         public string? UpperValueString
         {
@@ -113,6 +146,7 @@ namespace Going.UI.Controls
             }
         }
         private double sMinimum;
+        /// <summary>최솟값</summary>
         [GoProperty(PCategory.Control, 30)]
         public double Minimum
         {
@@ -127,6 +161,7 @@ namespace Going.UI.Controls
             }
         }
         private double sMaximum = 100D;
+        /// <summary>최댓값</summary>
         [GoProperty(PCategory.Control, 31)]
         public double Maximum
         {
@@ -149,7 +184,8 @@ namespace Going.UI.Controls
         private SKRect upperHandleRect;
         private const float TrackHeight = 4f;
         private int MinHeightForLabelBelow { get; set; } = 80;  // 라벨을 아래에 표시하기 위한 최소 높이
-        [GoProperty(PCategory.Control, 32)] public float MinHandleSeparation { get; set; } = 0.05f; // 핸들 간 최소 간격 (정규화된 값 0-1)
+        /// <summary>핸들 간 최소 간격 (정규화된 값 0~1)</summary>
+        [GoProperty(PCategory.Control, 32)] public float MinHandleSeparation { get; set; } = 0.05f;
         #endregion
 
         #region 슬라이더 상태값 설정
@@ -175,10 +211,15 @@ namespace Going.UI.Controls
 
         #region Event
 
+        /// <summary>하한값이 변경되었을 때 발생하는 이벤트</summary>
         public event EventHandler? LowerValueChanged;
+        /// <summary>상한값이 변경되었을 때 발생하는 이벤트</summary>
         public event EventHandler? UpperValueChanged;
+        /// <summary>범위(하한값 또는 상한값)가 변경되었을 때 발생하는 이벤트</summary>
         public event EventHandler? RangeChanged;
+        /// <summary>슬라이더 드래그가 시작되었을 때 발생하는 이벤트</summary>
         public event EventHandler? SliderDragStarted;
+        /// <summary>슬라이더 드래그가 완료되었을 때 발생하는 이벤트</summary>
         public event EventHandler? SliderDragCompleted;
 
         #endregion
@@ -717,6 +758,11 @@ namespace Going.UI.Controls
         #region User Interaction Methods
 
         #region SetRange
+        /// <summary>
+        /// 하한값과 상한값을 동시에 설정합니다.
+        /// </summary>
+        /// <param name="lower">하한값</param>
+        /// <param name="upper">상한값</param>
         public void SetRange(double lower, double upper)
         {
             lower = MathClamp(lower, Minimum, Maximum);
@@ -751,6 +797,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Dispose
+        /// <summary>범위 슬라이더에서 사용하는 리소스를 해제합니다.</summary>
         public void Dispose()
         {
             trackPaint.Dispose();

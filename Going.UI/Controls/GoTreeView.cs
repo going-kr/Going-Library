@@ -14,30 +14,84 @@ using System.Threading.Tasks;
 
 namespace Going.UI.Controls
 {
+    /// <summary>
+    /// 트리뷰 컨트롤. 계층 구조의 노드를 표시하고 선택, 드래그 기능을 제공합니다.
+    /// </summary>
     public class GoTreeView : GoControl
     {
         #region Properties
+        /// <summary>
+        /// 아이콘 크기를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 0)] public float IconSize { get; set; } = 12;
+        /// <summary>
+        /// 아이콘과 텍스트 사이의 간격을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 1)] public float IconGap { get; set; } = 5;
+        /// <summary>
+        /// 글꼴 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoFontNameProperty(PCategory.Control, 2)] public string FontName { get; set; } = "나눔고딕";
+        /// <summary>
+        /// 글꼴 스타일을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 3)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        /// <summary>
+        /// 글꼴 크기를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 4)] public float FontSize { get; set; } = 12;
 
+        /// <summary>
+        /// 텍스트 색상의 테마 색상 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 5)] public string TextColor { get; set; } = "Fore";
+        /// <summary>
+        /// 배경 상자 색상의 테마 색상 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 6)] public string BoxColor { get; set; } = "Base1";
+        /// <summary>
+        /// 테두리 색상의 테마 색상 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 7)] public string BorderColor { get; set; } = "Base3";
+        /// <summary>
+        /// 선택 항목 배경 색상의 테마 색상 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 8)] public string SelectColor { get; set; } = "Select";
+        /// <summary>
+        /// 모서리 둥글기 타입을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 9)] public GoRoundType Round { get; set; } = GoRoundType.All;
 
+        /// <summary>
+        /// 배경을 그릴지 여부를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 10)] public bool BackgroundDraw { get; set; } = true;
+        /// <summary>
+        /// 드래그 모드 사용 여부를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 11)] public bool DragMode { get; set; } = false;
 
+        /// <summary>
+        /// 각 항목의 높이(픽셀)를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 12)] public float ItemHeight { get; set; } = 30;
+        /// <summary>
+        /// 트리 노드 컬렉션을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 13)] public ObservableList<GoTreeNode> Nodes { get; set; } = [];
 
+        /// <summary>
+        /// 항목 선택 모드를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 14)] public GoItemSelectionMode SelectionMode { get; set; } = GoItemSelectionMode.Single;
+        /// <summary>
+        /// 현재 선택된 노드 목록을 가져옵니다.
+        /// </summary>
         [JsonIgnore] public List<GoTreeNode> SelectedNodes { get; } = [];
 
+        /// <summary>
+        /// 스크롤 위치를 가져오거나 설정합니다.
+        /// </summary>
         [JsonIgnore] public double ScrollPosition { get => scroll.ScrollPosition; set => scroll.ScrollPosition = value; }
         [JsonIgnore] internal double ScrollPositionWithOffset => scroll.ScrollPositionWithOffset;
 
@@ -53,12 +107,27 @@ namespace Going.UI.Controls
         private SKPath path = new SKPath();
         #endregion
 
-        #region Event 
+        #region Event
+        /// <summary>
+        /// 선택된 노드가 변경되었을 때 발생합니다.
+        /// </summary>
         public event EventHandler? SelectedChanged;
 
+        /// <summary>
+        /// 노드 드래그가 시작되었을 때 발생합니다.
+        /// </summary>
         public event EventHandler<TreeNodeEventArgs>? DragStart;
+        /// <summary>
+        /// 노드가 클릭되었을 때 발생합니다.
+        /// </summary>
         public event EventHandler<TreeNodeEventArgs>? ItemClicked;
+        /// <summary>
+        /// 노드가 길게 클릭되었을 때 발생합니다.
+        /// </summary>
         public event EventHandler<TreeNodeEventArgs>? ItemLongClicked;
+        /// <summary>
+        /// 노드가 더블 클릭되었을 때 발생합니다.
+        /// </summary>
         public event EventHandler<TreeNodeEventArgs>? ItemDoubleClicked;
         #endregion
 
@@ -254,6 +323,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Areas
+        /// <inheritdoc/>
         public override Dictionary<string, SKRect> Areas()
         {
             var dic = base.Areas();
@@ -406,6 +476,12 @@ namespace Going.UI.Controls
         #endregion
 
         #region GetTreeNode
+        /// <summary>
+        /// 지정된 좌표에 있는 트리 노드를 가져옵니다.
+        /// </summary>
+        /// <param name="x">X 좌표</param>
+        /// <param name="y">Y 좌표</param>
+        /// <returns>해당 좌표의 트리 노드. 없으면 null을 반환합니다.</returns>
         public GoTreeNode? GetTreeNode(int x, int y)
         {
             var rts = Areas();

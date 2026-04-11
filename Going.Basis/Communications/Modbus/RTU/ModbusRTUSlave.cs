@@ -11,63 +11,114 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Going.Basis.Communications.Modbus.RTU
 {
+    /// <summary>
+    /// 시리얼 포트(RS-232/RS-485) 기반의 Modbus RTU 슬레이브 통신 클래스입니다.
+    /// 마스터의 요청을 수신하여 이벤트를 통해 처리하고 응답을 반환합니다.
+    /// </summary>
     public class ModbusRTUSlave
     {
         #region class : EventArgs
+        /// <summary>
+        /// 비트 읽기(FC1/FC2) 요청 수신 시 전달되는 이벤트 인자입니다.
+        /// </summary>
         public class BitReadRequestArgs(byte[] Data) : System.EventArgs
         {
+            /// <summary>슬레이브 주소</summary>
             public int Slave => Data[0];
+            /// <summary>Modbus 함수 코드</summary>
             public ModbusFunction Function => (ModbusFunction)Data[1];
+            /// <summary>시작 주소</summary>
             public int StartAddress => Data[2] << 8 | Data[3];
+            /// <summary>읽기 길이</summary>
             public int Length => Data[4] << 8 | Data[5];
 
+            /// <summary>처리 성공 여부 (핸들러에서 설정)</summary>
             public bool Success { get; set; }
+            /// <summary>응답할 비트 데이터 (핸들러에서 설정)</summary>
             public bool[]? ResponseData { get; set; }
         }
 
+        /// <summary>
+        /// 워드 읽기(FC3/FC4) 요청 수신 시 전달되는 이벤트 인자입니다.
+        /// </summary>
         public class WordReadRequestArgs(byte[] Data) : System.EventArgs
         {
+            /// <summary>슬레이브 주소</summary>
             public int Slave => Data[0];
+            /// <summary>Modbus 함수 코드</summary>
             public ModbusFunction Function => (ModbusFunction)Data[1];
+            /// <summary>시작 주소</summary>
             public int StartAddress => Data[2] << 8 | Data[3];
+            /// <summary>읽기 길이</summary>
             public int Length => Data[4] << 8 | Data[5];
 
+            /// <summary>처리 성공 여부 (핸들러에서 설정)</summary>
             public bool Success { get; set; }
+            /// <summary>응답할 워드 데이터 (핸들러에서 설정)</summary>
             public int[]? ResponseData { get; set; }
         }
 
+        /// <summary>
+        /// 단일 비트 쓰기(FC5) 요청 수신 시 전달되는 이벤트 인자입니다.
+        /// </summary>
         public class BitWriteRequestArgs(byte[] Data) : System.EventArgs
         {
+            /// <summary>슬레이브 주소</summary>
             public int Slave => Data[0];
+            /// <summary>Modbus 함수 코드</summary>
             public ModbusFunction Function => (ModbusFunction)Data[1];
+            /// <summary>대상 주소</summary>
             public int StartAddress => Data[2] << 8 | Data[3];
+            /// <summary>쓰기 값</summary>
             public bool WriteValue => (Data[4] << 8 | Data[5]) == 0xFF00;
 
+            /// <summary>처리 성공 여부 (핸들러에서 설정)</summary>
             public bool Success { get; set; }
         }
 
+        /// <summary>
+        /// 단일 워드 쓰기(FC6) 요청 수신 시 전달되는 이벤트 인자입니다.
+        /// </summary>
         public class WordWriteRequestArgs(byte[] Data) : System.EventArgs
         {
+            /// <summary>슬레이브 주소</summary>
             public int Slave => Data[0];
+            /// <summary>Modbus 함수 코드</summary>
             public ModbusFunction Function => (ModbusFunction)Data[1];
+            /// <summary>대상 주소</summary>
             public int StartAddress => Data[2] << 8 | Data[3];
+            /// <summary>쓰기 값</summary>
             public ushort WriteValue => Convert.ToUInt16(Data[4] << 8 | Data[5]);
 
+            /// <summary>처리 성공 여부 (핸들러에서 설정)</summary>
             public bool Success { get; set; }
         }
 
+        /// <summary>
+        /// 다중 비트 쓰기(FC15) 요청 수신 시 전달되는 이벤트 인자입니다.
+        /// </summary>
         public class MultiBitWriteRequestArgs : System.EventArgs
         {
+            /// <summary>슬레이브 주소</summary>
             public int Slave => Data[0];
+            /// <summary>Modbus 함수 코드</summary>
             public ModbusFunction Function => (ModbusFunction)Data[1];
+            /// <summary>시작 주소</summary>
             public int StartAddress => Data[2] << 8 | Data[3];
+            /// <summary>쓰기 길이</summary>
             public int Length => Data[4] << 8 | Data[5];
+            /// <summary>쓰기 값 배열</summary>
             public bool[] WriteValues { get; private set; }
 
+            /// <summary>처리 성공 여부 (핸들러에서 설정)</summary>
             public bool Success { get; set; }
 
             byte[] Data;
 
+            /// <summary>
+            /// <see cref="MultiBitWriteRequestArgs"/> 클래스의 새 인스턴스를 초기화합니다.
+            /// </summary>
+            /// <param name="Data">수신된 원본 프레임 데이터</param>
             public MultiBitWriteRequestArgs(byte[] Data)
             {
                 this.Data = Data;
@@ -81,18 +132,31 @@ namespace Going.Basis.Communications.Modbus.RTU
             }
         }
 
+        /// <summary>
+        /// 다중 워드 쓰기(FC16) 요청 수신 시 전달되는 이벤트 인자입니다.
+        /// </summary>
         public class MultiWordWriteRequestArgs : System.EventArgs
         {
+            /// <summary>슬레이브 주소</summary>
             public int Slave => Data[0];
+            /// <summary>Modbus 함수 코드</summary>
             public ModbusFunction Function => (ModbusFunction)Data[1];
+            /// <summary>시작 주소</summary>
             public int StartAddress => Data[2] << 8 | Data[3];
+            /// <summary>쓰기 길이</summary>
             public int Length => Data[4] << 8 | Data[5];
+            /// <summary>쓰기 값 배열</summary>
             public ushort[] WriteValues { get; private set; }
 
+            /// <summary>처리 성공 여부 (핸들러에서 설정)</summary>
             public bool Success { get; set; }
 
             byte[] Data;
 
+            /// <summary>
+            /// <see cref="MultiWordWriteRequestArgs"/> 클래스의 새 인스턴스를 초기화합니다.
+            /// </summary>
+            /// <param name="Data">수신된 원본 프레임 데이터</param>
             public MultiWordWriteRequestArgs(byte[] Data)
             {
                 this.Data = Data;
@@ -107,28 +171,45 @@ namespace Going.Basis.Communications.Modbus.RTU
             }
         }
 
+        /// <summary>
+        /// 워드 비트 설정(FC26) 요청 수신 시 전달되는 이벤트 인자입니다.
+        /// </summary>
         public class WordBitSetRequestArgs(byte[] Data) : System.EventArgs
         {
+            /// <summary>슬레이브 주소</summary>
             public int Slave => Data[0];
+            /// <summary>Modbus 함수 코드</summary>
             public ModbusFunction Function => (ModbusFunction)Data[1];
+            /// <summary>대상 워드 주소</summary>
             public int StartAddress => Data[2] << 8 | Data[3];
+            /// <summary>대상 비트 인덱스 (0~15)</summary>
             public int BitIndex => Data[4];
+            /// <summary>설정할 값</summary>
             public bool WriteValue => (Data[5] << 8 | Data[6]) == 0xFF00;
 
+            /// <summary>처리 성공 여부 (핸들러에서 설정)</summary>
             public bool Success { get; set; }
         }
         #endregion
 
         #region Properties
+        /// <summary>시리얼 포트 이름 (예: "COM1")</summary>
         public string Port { get => ser.PortName; set => ser.PortName = value; }
+        /// <summary>통신 속도 (bps)</summary>
         public int Baudrate { get => ser.BaudRate; set => ser.BaudRate = value; }
+        /// <summary>패리티 비트 설정</summary>
         public Parity Parity { get => ser.Parity; set => ser.Parity = value; }
+        /// <summary>데이터 비트 수</summary>
         public int DataBits { get => ser.DataBits; set => ser.DataBits = value; }
+        /// <summary>정지 비트 설정</summary>
         public StopBits StopBits { get => ser.StopBits; set => ser.StopBits = value; }
 
+        /// <summary>시리얼 포트가 열려 있는지 여부</summary>
         public bool IsOpen => ser.IsOpen;
+        /// <summary>통신 루프가 시작되었는지 여부</summary>
         public bool IsStart { get; private set; }
 
+        /// <summary>사용자 정의 태그 객체</summary>
         public object? Tag { get; set; } = null;
         #endregion
 
@@ -140,19 +221,29 @@ namespace Going.Basis.Communications.Modbus.RTU
         #endregion
 
         #region Event
+        /// <summary>비트 읽기(FC1/FC2) 요청 수신 시 발생합니다.</summary>
         public event EventHandler<BitReadRequestArgs>? BitReadRequest;
+        /// <summary>워드 읽기(FC3/FC4) 요청 수신 시 발생합니다.</summary>
         public event EventHandler<WordReadRequestArgs>? WordReadRequest;
+        /// <summary>단일 비트 쓰기(FC5) 요청 수신 시 발생합니다.</summary>
         public event EventHandler<BitWriteRequestArgs>? BitWriteRequest;
+        /// <summary>단일 워드 쓰기(FC6) 요청 수신 시 발생합니다.</summary>
         public event EventHandler<WordWriteRequestArgs>? WordWriteRequest;
+        /// <summary>다중 비트 쓰기(FC15) 요청 수신 시 발생합니다.</summary>
         public event EventHandler<MultiBitWriteRequestArgs>? MultiBitWriteRequest;
+        /// <summary>다중 워드 쓰기(FC16) 요청 수신 시 발생합니다.</summary>
         public event EventHandler<MultiWordWriteRequestArgs>? MultiWordWriteRequest;
+        /// <summary>워드 비트 설정(FC26) 요청 수신 시 발생합니다.</summary>
         public event EventHandler<WordBitSetRequestArgs>? WordBitSetRequest;
 
+        /// <summary>시리얼 포트가 열렸을 때 발생합니다.</summary>
         public event EventHandler? DeviceOpened;
+        /// <summary>시리얼 포트가 닫혔을 때 발생합니다.</summary>
         public event EventHandler? DeviceClosed;
         #endregion
 
         #region Constructor
+        /// <summary>Modbus RTU 슬레이브 인스턴스를 생성한다.</summary>
         public ModbusRTUSlave()
         {
         }
@@ -160,6 +251,9 @@ namespace Going.Basis.Communications.Modbus.RTU
 
         #region Method
         #region Start
+        /// <summary>
+        /// 시리얼 포트를 열고 Modbus 슬레이브 수신 루프를 시작합니다.
+        /// </summary>
         public void Start()
         {
             if (!IsOpen && !IsStart)
@@ -563,6 +657,9 @@ namespace Going.Basis.Communications.Modbus.RTU
         }
         #endregion
         #region Stop
+        /// <summary>
+        /// 수신 루프를 중지하고 시리얼 포트를 닫습니다.
+        /// </summary>
         public void Stop()
         {
             IsStart = false;
@@ -583,6 +680,12 @@ namespace Going.Basis.Communications.Modbus.RTU
 
         #region Static Method
         #region ProcessBitReads
+        /// <summary>
+        /// 비트 읽기 요청을 기본 배열에서 처리합니다.
+        /// </summary>
+        /// <param name="args">비트 읽기 요청 인자</param>
+        /// <param name="BaseAddress">배열의 기준 주소</param>
+        /// <param name="BaseArray">비트 데이터 원본 배열</param>
         public static void ProcessBitReads(BitReadRequestArgs args, int BaseAddress, bool[] BaseArray)
         {
             var BA = new bool[Convert.ToInt32(Math.Ceiling(BaseArray.Length / 8.0) * 8.0)];
@@ -597,6 +700,12 @@ namespace Going.Basis.Communications.Modbus.RTU
         }
         #endregion
         #region ProcessWordReads
+        /// <summary>
+        /// 워드 읽기 요청을 기본 배열에서 처리합니다.
+        /// </summary>
+        /// <param name="args">워드 읽기 요청 인자</param>
+        /// <param name="BaseAddress">배열의 기준 주소</param>
+        /// <param name="BaseArray">워드 데이터 원본 배열</param>
         public static void ProcessWordReads(WordReadRequestArgs args, int BaseAddress, int[] BaseArray)
         {
             if (args.StartAddress >= BaseAddress && args.StartAddress + args.Length < BaseAddress + BaseArray.Length)
@@ -609,6 +718,12 @@ namespace Going.Basis.Communications.Modbus.RTU
         }
         #endregion
         #region ProcessBitWrite
+        /// <summary>
+        /// 단일 비트 쓰기 요청을 기본 배열에 처리합니다.
+        /// </summary>
+        /// <param name="args">비트 쓰기 요청 인자</param>
+        /// <param name="BaseAddress">배열의 기준 주소</param>
+        /// <param name="BaseArray">비트 데이터 대상 배열</param>
         public static void ProcessBitWrite(BitWriteRequestArgs args, int BaseAddress, bool[] BaseArray)
         {
             if (args.StartAddress >= BaseAddress && args.StartAddress < BaseAddress + BaseArray.Length)
@@ -619,6 +734,12 @@ namespace Going.Basis.Communications.Modbus.RTU
         }
         #endregion
         #region ProcessWordWrite
+        /// <summary>
+        /// 단일 워드 쓰기 요청을 기본 배열에 처리합니다.
+        /// </summary>
+        /// <param name="args">워드 쓰기 요청 인자</param>
+        /// <param name="BaseAddress">배열의 기준 주소</param>
+        /// <param name="BaseArray">워드 데이터 대상 배열</param>
         public static void ProcessWordWrite(WordWriteRequestArgs args, int BaseAddress, int[] BaseArray)
         {
             if (args.StartAddress >= BaseAddress && args.StartAddress < BaseAddress + BaseArray.Length)
@@ -629,6 +750,12 @@ namespace Going.Basis.Communications.Modbus.RTU
         }
         #endregion
         #region ProcessMultiBitWrite
+        /// <summary>
+        /// 다중 비트 쓰기 요청을 기본 배열에 처리합니다.
+        /// </summary>
+        /// <param name="args">다중 비트 쓰기 요청 인자</param>
+        /// <param name="BaseAddress">배열의 기준 주소</param>
+        /// <param name="BaseArray">비트 데이터 대상 배열</param>
         public static void ProcessMultiBitWrite(MultiBitWriteRequestArgs args, int BaseAddress, bool[] BaseArray)
         {
             if (args.StartAddress >= BaseAddress && args.StartAddress + args.Length < BaseAddress + BaseArray.Length)
@@ -639,6 +766,12 @@ namespace Going.Basis.Communications.Modbus.RTU
         }
         #endregion
         #region ProcessMultiWordWrite
+        /// <summary>
+        /// 다중 워드 쓰기 요청을 기본 배열에 처리합니다.
+        /// </summary>
+        /// <param name="args">다중 워드 쓰기 요청 인자</param>
+        /// <param name="BaseAddress">배열의 기준 주소</param>
+        /// <param name="BaseArray">워드 데이터 대상 배열</param>
         public static void ProcessMultiWordWrite(MultiWordWriteRequestArgs args, int BaseAddress, int[] BaseArray)
         {
             if (args.StartAddress >= BaseAddress && args.StartAddress + args.Length < BaseAddress + BaseArray.Length)
@@ -649,6 +782,12 @@ namespace Going.Basis.Communications.Modbus.RTU
         }
         #endregion
         #region ProcessWordBitSet
+        /// <summary>
+        /// 워드 비트 설정 요청을 기본 배열에 처리합니다.
+        /// </summary>
+        /// <param name="args">워드 비트 설정 요청 인자</param>
+        /// <param name="BaseAddress">배열의 기준 주소</param>
+        /// <param name="BaseArray">워드 데이터 대상 배열</param>
         public static void ProcessWordBitSet(WordBitSetRequestArgs args, int BaseAddress, int[] BaseArray)
         {
             if (args.StartAddress >= BaseAddress && args.StartAddress < BaseAddress + BaseArray.Length && args.BitIndex >= 0 && args.BitIndex < 16)

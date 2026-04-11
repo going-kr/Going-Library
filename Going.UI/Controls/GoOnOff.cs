@@ -13,28 +13,48 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Going.UI.Controls
 {
+    /// <summary>
+    /// On/Off 슬라이딩 컨트롤. 커서를 드래그하거나 클릭하여 On/Off 상태를 전환합니다.
+    /// </summary>
     public class GoOnOff : GoControl
     {
         #region Properties
+        /// <summary>텍스트 표시 여부</summary>
         [GoProperty(PCategory.Control, 0)] public bool DrawText { get; set; } = true;
+        /// <summary>On 상태 텍스트</summary>
         [GoProperty(PCategory.Control, 1)] public string OnText { get; set; } = "On";
+        /// <summary>Off 상태 텍스트</summary>
         [GoProperty(PCategory.Control, 2)] public string OffText { get; set; } = "Off";
+        /// <summary>글꼴 이름</summary>
         [GoFontNameProperty(PCategory.Control, 3)] public string FontName { get; set; } = "나눔고딕";
+        /// <summary>글꼴 스타일</summary>
         [GoProperty(PCategory.Control, 4)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        /// <summary>글꼴 크기</summary>
         [GoProperty(PCategory.Control, 5)] public float FontSize { get; set; } = 12;
 
+        /// <summary>텍스트 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 6)] public string TextColor { get; set; } = "Fore";
+        /// <summary>배경 박스 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 7)] public string BoxColor { get; set; } = "Base1";
+        /// <summary>테두리 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 8)] public string BorderColor { get; set; } = "Base3";
+        /// <summary>슬라이딩 커서 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 9)] public string CursorColor { get; set; } = "Base3";
+        /// <summary>On 상태 색상 (테마 색상 키 또는 색상명)</summary>
         [GoProperty(PCategory.Control, 10)] public string OnColor { get; set; } = "lime";
+        /// <summary>Off 상태 색상 (테마 색상 키 또는 색상명)</summary>
         [GoProperty(PCategory.Control, 11)] public string OffColor { get; set; } = "gray";
+        /// <summary>커서에 아이콘 표시 여부</summary>
         [GoProperty(PCategory.Control, 12)] public bool CursorIconDraw { get; set; } = true;
+        /// <summary>커서 아이콘 문자열</summary>
         [GoProperty(PCategory.Control, 13)] public string CursorIconString { get; set; } = "fa-power-off";
+        /// <summary>커서 아이콘 크기. null이면 커서 높이의 절반을 사용합니다.</summary>
         [GoProperty(PCategory.Control, 14)] public float? CursorIconSize { get; set; }
+        /// <summary>모서리 둥글기. null이면 컨트롤 높이를 사용합니다.</summary>
         [GoProperty(PCategory.Control, 15)] public float? Corner { get; set; }
 
         private bool bOnOff = false;
+        /// <summary>On/Off 상태. 값이 변경되면 애니메이션과 함께 <see cref="OnOffChanged"/> 이벤트가 발생합니다.</summary>
         [GoProperty(PCategory.Control, 16)]
         public bool OnOff
         {
@@ -53,7 +73,9 @@ namespace Going.UI.Controls
             }
         }
 
+        /// <summary>자동 글꼴 크기 설정</summary>
         [GoProperty(PCategory.Control, 17)] public GoAutoFontSize AutoFontSize { get; set; } = GoAutoFontSize.NotUsed;
+        /// <summary>자동 커서 아이콘 크기 설정</summary>
         [GoProperty(PCategory.Control, 17)] public GoAutoFontSize AutoCursorIconSize { get; set; } = GoAutoFontSize.NotUsed;
         #endregion
 
@@ -69,6 +91,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Event
+        /// <summary>On/Off 상태가 변경되었을 때 발생하는 이벤트</summary>
         public event EventHandler? OnOffChanged;
         #endregion
 

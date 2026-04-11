@@ -13,9 +13,19 @@ using System.Threading.Tasks;
 
 namespace Going.UI.Tools
 {
+    /// <summary>
+    /// SkiaSharp SKPath 생성 유틸리티 클래스입니다. 박스, 체크, 원, 게이지, 탭 등의 경로를 생성합니다.
+    /// </summary>
     public class PathTool
     {
         #region Box
+        /// <summary>
+        /// 둥근 모서리를 가진 사각형 경로를 생성합니다.
+        /// </summary>
+        /// <param name="path">경로 객체</param>
+        /// <param name="rect">사각형 영역</param>
+        /// <param name="round">모서리 둥글기 타입</param>
+        /// <param name="corner">모서리 둥글기 크기</param>
         public static void Box(SKPath path, SKRect rect, GoRoundType round, float corner)
         {
             path.Reset();
@@ -40,6 +50,11 @@ namespace Going.UI.Tools
         }
         #endregion
         #region Check
+        /// <summary>
+        /// 체크 표시(V) 경로를 생성합니다.
+        /// </summary>
+        /// <param name="path">경로 객체</param>
+        /// <param name="rect">체크 표시를 그릴 사각형 영역</param>
         public static void Check(SKPath path, SKRect rect)
         {
             path.Reset();
@@ -59,6 +74,13 @@ namespace Going.UI.Tools
         }
         #endregion
         #region Circle
+        /// <summary>
+        /// 원 경로를 생성합니다.
+        /// </summary>
+        /// <param name="path">경로 객체</param>
+        /// <param name="x">중심 X 좌표</param>
+        /// <param name="y">중심 Y 좌표</param>
+        /// <param name="r">반지름</param>
         public static void Circle(SKPath path, float x, float y, float r)
         {
             path.Reset();
@@ -66,6 +88,12 @@ namespace Going.UI.Tools
         }
         #endregion
         #region RoundedPolygon
+        /// <summary>
+        /// 둥근 모서리를 가진 다각형 경로를 생성합니다.
+        /// </summary>
+        /// <param name="retval">경로 객체</param>
+        /// <param name="points">다각형 꼭짓점 배열</param>
+        /// <param name="radius">모서리 둥글기 반지름</param>
         public static void RoundedPolygon(SKPath retval, SKPoint[] points, float radius)
         {
             retval.Reset();
@@ -147,6 +175,14 @@ namespace Going.UI.Tools
         #endregion
 
         #region Gauge
+        /// <summary>
+        /// 게이지 호 경로를 생성합니다.
+        /// </summary>
+        /// <param name="path">경로 객체</param>
+        /// <param name="rtGauge">게이지 경계 사각형</param>
+        /// <param name="startAngle">시작 각도</param>
+        /// <param name="sweepAngle">호의 각도</param>
+        /// <param name="barSize">게이지 바 두께</param>
         public static void Gauge(SKPath path, SKRect rtGauge, float startAngle, float sweepAngle, float barSize)
         {
             path.Reset();
@@ -176,6 +212,18 @@ namespace Going.UI.Tools
         }
         #endregion
         #region Needle
+        /// <summary>
+        /// 게이지 바늘 경로를 생성합니다.
+        /// </summary>
+        /// <param name="path">경로 객체</param>
+        /// <param name="rtContent">콘텐츠 영역</param>
+        /// <param name="rtGauge">게이지 경계 사각형</param>
+        /// <param name="value">현재 값</param>
+        /// <param name="minimum">최솟값</param>
+        /// <param name="maximum">최댓값</param>
+        /// <param name="startAngle">시작 각도</param>
+        /// <param name="sweepAngle">호의 각도</param>
+        /// <param name="remarkFontSize">눈금 글꼴 크기</param>
         public static void Needle(SKPath path, SKRect rtContent, SKRect rtGauge,
             double value, double minimum, double maximum, float startAngle, float sweepAngle, float remarkFontSize)
         {
@@ -201,6 +249,12 @@ namespace Going.UI.Tools
         }
         #endregion
         #region Knob
+        /// <summary>
+        /// 노브(원형 다이얼) 경로를 생성합니다.
+        /// </summary>
+        /// <param name="path">경로 객체</param>
+        /// <param name="rtContent">콘텐츠 영역</param>
+        /// <param name="rtKnob">노브 경계 사각형</param>
         public static void Knob(SKPath path, SKRect rtContent, SKRect rtKnob)
         {
             path.Reset();
@@ -210,6 +264,14 @@ namespace Going.UI.Tools
         }
         #endregion
         #region KnobCursor
+        /// <summary>
+        /// 노브 커서 경로를 생성합니다.
+        /// </summary>
+        /// <param name="path">경로 객체</param>
+        /// <param name="pt1">시작점</param>
+        /// <param name="pt2">끝점</param>
+        /// <param name="vang">각도</param>
+        /// <param name="width">커서 너비</param>
         public static void KnobCursor(SKPath path, SKPoint pt1, SKPoint pt2, float vang, int width)
         {
             path.Reset();
@@ -225,6 +287,13 @@ namespace Going.UI.Tools
         #endregion
 
         #region Tab
+        /// <summary>
+        /// 탭 모양의 경로를 생성합니다.
+        /// </summary>
+        /// <param name="path">경로 객체</param>
+        /// <param name="rtTab">탭 경계 사각형</param>
+        /// <param name="tabPosition">탭 위치 방향</param>
+        /// <param name="corner">모서리 둥글기 크기</param>
         public static void Tab(SKPath path, SKRect rtTab,  GoDirection tabPosition, float corner)
         {
             path.Reset();

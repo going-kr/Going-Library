@@ -13,20 +13,53 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Going.UI.ImageCanvas
 {
+    /// <summary>
+    /// 이미지 캔버스에서 진행률을 표시하는 프로그레스바 컨트롤입니다. 부모 또는 독립 이미지를 사용하여 채움 영역을 표현합니다.
+    /// </summary>
     public class IcProgress : GoControl
     {
         #region Properties
+        /// <summary>
+        /// 글꼴 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoFontNameProperty(PCategory.Control, 0)] public string FontName { get; set; } = "나눔고딕";
+        /// <summary>
+        /// 글꼴 스타일을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 1)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        /// <summary>
+        /// 글꼴 크기를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 2)] public float FontSize { get; set; } = 12;
-        [GoProperty(PCategory.Control, 3)] public string TextColor { get; set; } = "Black";
+        /// <summary>
+        /// 텍스트 색상을 가져오거나 설정합니다. 테마 색상 이름을 사용합니다.
+        /// </summary>
+        [GoProperty(PCategory.Control, 3)] public string TextColor { get; set; } = "Fore";
 
+        /// <summary>
+        /// 활성(채움) 상태 바 이미지 리소스 이름을 가져오거나 설정합니다. null이면 부모의 On 이미지를 사용합니다.
+        /// </summary>
         [GoImageProperty(PCategory.Control, 4)] public string? OnBarImage { get; set; }
+        /// <summary>
+        /// 비활성(배경) 상태 바 이미지 리소스 이름을 가져오거나 설정합니다. null이면 부모의 Off 이미지를 사용합니다.
+        /// </summary>
         [GoImageProperty(PCategory.Control, 5)] public string? OffBarImage { get; set; }
 
+        /// <summary>
+        /// 값 표시 서식 문자열을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 6)] public string FormatString { get; set; } = "0";
+        /// <summary>
+        /// 최솟값을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 7)] public double Minimum { get; set; } = 0D;
+        /// <summary>
+        /// 최댓값을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 8)] public double Maximum { get; set; } = 100D;
+        /// <summary>
+        /// 현재 값을 가져오거나 설정합니다. 값이 변경되면 <see cref="ValueChanged"/> 이벤트가 발생합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 9)]
         public double Value
         {
@@ -41,6 +74,9 @@ namespace Going.UI.ImageCanvas
             }
         }
 
+        /// <summary>
+        /// 현재 값 텍스트를 표시할지 여부를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 10)] public bool DrawText { get; set; } = true;
         #endregion
 
@@ -49,6 +85,9 @@ namespace Going.UI.ImageCanvas
         #endregion
 
         #region Event
+        /// <summary>
+        /// <see cref="Value"/> 값이 변경되었을 때 발생하는 이벤트입니다.
+        /// </summary>
         public event EventHandler? ValueChanged;
         #endregion
 

@@ -17,32 +17,86 @@ using System.Threading.Tasks;
 
 namespace Going.UI.Controls
 {
+    /// <summary>
+    /// 트렌드 그래프 컨트롤. 실시간으로 데이터를 수집하여 시간 축 기반의 꺾은선 그래프로 표시합니다.
+    /// </summary>
     public class GoTrendGraph : GoControl
     {
         #region Properties
+        /// <summary>
+        /// 그리드 색상의 테마 색상 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 0)] public string GridColor { get; set; } = "Base3";
+        /// <summary>
+        /// 텍스트 색상의 테마 색상 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 1)] public string TextColor { get; set; } = "Fore";
+        /// <summary>
+        /// 범례 배경 색상의 테마 색상 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 2)] public string RemarkColor { get; set; } = "Base2";
+        /// <summary>
+        /// 그래프 배경 색상의 테마 색상 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 3)] public string GraphColor { get; set; } = "Back";
 
+        /// <summary>
+        /// 글꼴 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoFontNameProperty(PCategory.Control, 4)] public string FontName { get; set; } = "나눔고딕";
+        /// <summary>
+        /// 글꼴 스타일을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 5)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        /// <summary>
+        /// 글꼴 크기를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 6)] public float FontSize { get; set; } = 12;
 
+        /// <summary>
+        /// 데이터를 보관할 최대 시간 범위를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 7)] public TimeSpan MaximumXScale { get; set; } = new TimeSpan(1, 0, 0, 0);
+        /// <summary>
+        /// X축에 표시할 시간 범위를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 8)] public TimeSpan XScale { get; set; } = new TimeSpan(1, 0, 0);
+        /// <summary>
+        /// X축 눈금 간격 시간을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 9)] public TimeSpan XAxisGraduationTime { get; set; } = new TimeSpan(0, 10, 0);
+        /// <summary>
+        /// Y축 눈금 개수를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 10)] public int YAxisGraduationCount { get; set; } = 10;
+        /// <summary>
+        /// 시간 축 표시 형식 문자열을 가져오거나 설정합니다.
+        /// </summary>
         [GoMultiLineProperty(PCategory.Control, 11)] public string? TimeFormatString { get; set; } = null;
+        /// <summary>
+        /// 값 표시 형식 문자열을 가져오거나 설정합니다.
+        /// </summary>
         [GoMultiLineProperty(PCategory.Control, 12)] public string? ValueFormatString { get; set; } = null;
 
+        /// <summary>
+        /// 데이터 수집 간격(밀리초)을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 13)] public int Interval { get; set; } = 1000;
+        /// <summary>
+        /// 트렌드 수집이 실행 중인지 여부를 가져옵니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 14)] public bool IsStart { get; private set; } = false;
 
+        /// <summary>
+        /// 그래프 시리즈 목록을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 15)] public List<GoLineGraphSeries> Series { get; set; } = [];
 
         #region Pause
         private bool bPause = false;
+        /// <summary>
+        /// 데이터 수집 일시정지 여부를 가져오거나 설정합니다. 일시정지 해제 시 누적된 데이터가 반영됩니다.
+        /// </summary>
         [JsonIgnore]
         public bool Pause
         {
@@ -490,6 +544,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Areas
+        /// <inheritdoc/>
         public override Dictionary<string, SKRect> Areas()
         {
             var dic = base.Areas();
@@ -531,6 +586,11 @@ namespace Going.UI.Controls
 
         #region Method
         #region Start
+        /// <summary>
+        /// 트렌드 데이터 수집을 시작합니다.
+        /// </summary>
+        /// <typeparam name="T">데이터 소스 객체의 타입</typeparam>
+        /// <param name="value">데이터를 읽어올 소스 객체</param>
         public void Start<T>(T value)
         {
             if (!IsStart)
@@ -591,6 +651,9 @@ namespace Going.UI.Controls
         }
         #endregion
         #region Stop
+        /// <summary>
+        /// 트렌드 데이터 수집을 중지합니다.
+        /// </summary>
         public void Stop()
         {
             try { cancel?.Cancel(false); }
@@ -608,6 +671,11 @@ namespace Going.UI.Controls
         }
         #endregion
         #region SetData
+        /// <summary>
+        /// 데이터 소스 객체를 교체합니다. Start 호출 후에만 사용할 수 있습니다.
+        /// </summary>
+        /// <typeparam name="T">데이터 소스 객체의 타입</typeparam>
+        /// <param name="Data">새로운 데이터 소스 객체</param>
         public void SetData<T>(T Data)
         {
             if (IsStart && this.value != null && this.value.GetType() == typeof(T))

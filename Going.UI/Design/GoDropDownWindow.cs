@@ -18,12 +18,27 @@ using System.Threading.Tasks;
 namespace Going.UI.Design
 {
     #region GoDropDownWindow
+    /// <summary>
+    /// 드롭다운 윈도우 컨트롤. 컨트롤 아래에 팝업으로 표시되는 윈도우를 제공합니다.
+    /// </summary>
     public class GoDropDownWindow : GoContainer
     {
+        /// <summary>
+        /// 윈도우 배경색을 가져오거나 설정합니다.
+        /// </summary>
         public string WindowColor { get; set; } = "Window";
+        /// <summary>
+        /// 윈도우 테두리 색상을 가져오거나 설정합니다.
+        /// </summary>
         public string BorderColor { get; set; } = "WindowBorder";
+        /// <summary>
+        /// 윈도우 모서리 둥글기 타입을 가져오거나 설정합니다.
+        /// </summary>
         public GoRoundType Round { get; set; } = GoRoundType.All;
 
+        /// <summary>
+        /// 자식 컨트롤 목록을 가져옵니다.
+        /// </summary>
         [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
 
         [JsonConstructor]
@@ -67,12 +82,21 @@ namespace Going.UI.Design
         }
 
 
+        /// <summary>
+        /// 드롭다운 윈도우를 표시합니다.
+        /// </summary>
         public virtual void Show() => GoDesign.ActiveDesign?.ShowDropDownWindow(this);
+        /// <summary>
+        /// 드롭다운 윈도우를 숨깁니다.
+        /// </summary>
         public virtual void Hide() => GoDesign.ActiveDesign?.HideDropDownWindow(this);
     }
     #endregion
 
     #region GoComboBoxDropDownWindow
+    /// <summary>
+    /// 콤보박스용 드롭다운 윈도우. 리스트박스를 포함하여 항목 선택 기능을 제공합니다.
+    /// </summary>
     public class GoComboBoxDropDownWindow : GoDropDownWindow
     {
         private GoListBox lb;
@@ -90,6 +114,18 @@ namespace Going.UI.Design
             };
         }
 
+        /// <summary>
+        /// 콤보박스 드롭다운을 지정한 위치와 항목 목록으로 표시합니다.
+        /// </summary>
+        /// <param name="screenBounds">드롭다운이 표시될 기준 영역</param>
+        /// <param name="fontName">폰트 이름</param>
+        /// <param name="fontStyle">폰트 스타일</param>
+        /// <param name="fontSize">폰트 크기</param>
+        /// <param name="itemHeight">항목 높이</param>
+        /// <param name="maximumViewCount">최대 표시 항목 수</param>
+        /// <param name="items">선택 가능한 항목 목록</param>
+        /// <param name="selectedItem">현재 선택된 항목</param>
+        /// <param name="result">선택 결과 콜백</param>
         public void Show(SKRect screenBounds, string fontName, GoFontStyle fontStyle, float fontSize, float itemHeight, int maximumViewCount,
                          List<GoListItem> items, GoListItem? selectedItem,
                          Action<GoListItem?> result)
@@ -128,6 +164,9 @@ namespace Going.UI.Design
     #endregion
 
     #region GoColorDropDownWindow
+    /// <summary>
+    /// 색상 선택용 드롭다운 윈도우. 색상 선택기와 확인/취소 버튼을 포함합니다.
+    /// </summary>
     public class GoColorDropDownWindow : GoDropDownWindow
     {
         private GoColorSelector cs;
@@ -163,6 +202,15 @@ namespace Going.UI.Design
             };
         }
 
+        /// <summary>
+        /// 색상 선택 드롭다운을 지정한 위치와 초기 색상으로 표시합니다.
+        /// </summary>
+        /// <param name="screenBounds">드롭다운이 표시될 기준 영역</param>
+        /// <param name="fontName">폰트 이름</param>
+        /// <param name="fontStyle">폰트 스타일</param>
+        /// <param name="fontSize">폰트 크기</param>
+        /// <param name="value">초기 색상 값</param>
+        /// <param name="result">선택 결과 콜백. 취소 시 null이 전달됩니다.</param>
         public void Show(SKRect screenBounds, string fontName, GoFontStyle fontStyle, float fontSize, SKColor value, Action<SKColor?> result)
         {
             feedback = result;
@@ -187,6 +235,9 @@ namespace Going.UI.Design
     #endregion
 
     #region GoDateTimeDropDownWindow
+    /// <summary>
+    /// 날짜/시간 선택용 드롭다운 윈도우. 달력과 시/분/초 입력을 포함합니다.
+    /// </summary>
     public class GoDateTimeDropDownWindow : GoDropDownWindow
     {
         private GoTableLayoutPanel tbl;
@@ -226,6 +277,16 @@ namespace Going.UI.Design
             };
         }
 
+        /// <summary>
+        /// 날짜/시간 선택 드롭다운을 지정한 위치와 초기 값으로 표시합니다.
+        /// </summary>
+        /// <param name="screenBounds">드롭다운이 표시될 기준 영역</param>
+        /// <param name="fontName">폰트 이름</param>
+        /// <param name="fontStyle">폰트 스타일</param>
+        /// <param name="fontSize">폰트 크기</param>
+        /// <param name="value">초기 날짜/시간 값</param>
+        /// <param name="style">날짜/시간 선택 종류 (DateTime, Date, Time)</param>
+        /// <param name="result">선택 결과 콜백. 취소 시 null이 전달됩니다.</param>
         public void Show(SKRect screenBounds, string fontName, GoFontStyle fontStyle, float fontSize, DateTime value, GoDateTimeKind style, Action<DateTime?> result)
         {
             feedback = result;

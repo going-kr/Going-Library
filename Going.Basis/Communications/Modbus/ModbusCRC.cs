@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Going.Basis.Communications.Modbus
 {
+    /// <summary>
+    /// Modbus RTU 프로토콜의 CRC-16 오류 검출 코드를 계산하는 유틸리티 클래스입니다.
+    /// </summary>
     public class ModbusCRC
     {
         #region CRC Table
@@ -47,6 +50,13 @@ namespace Going.Basis.Communications.Modbus
         #endregion
 
         #region GetCRC
+        /// <summary>
+        /// 바이트 배열에 대한 Modbus CRC-16 값을 계산합니다.
+        /// </summary>
+        /// <param name="pby">CRC를 계산할 바이트 배열</param>
+        /// <param name="nSize">계산에 사용할 바이트 수</param>
+        /// <param name="byFirstReturn">CRC 상위 바이트 (출력)</param>
+        /// <param name="bySecondReturn">CRC 하위 바이트 (출력)</param>
         public static void GetCRC(byte[] pby, int nSize, ref byte byFirstReturn, ref byte bySecondReturn)
         {
             int uIndex;
@@ -64,6 +74,14 @@ namespace Going.Basis.Communications.Modbus
         }
         #endregion
         #region GetCRC
+        /// <summary>
+        /// 바이트 리스트의 지정된 범위에 대한 Modbus CRC-16 값을 계산합니다.
+        /// </summary>
+        /// <param name="pby">CRC를 계산할 바이트 리스트</param>
+        /// <param name="startindex">계산 시작 인덱스</param>
+        /// <param name="nSize">계산에 사용할 바이트 수</param>
+        /// <param name="byFirstReturn">CRC 상위 바이트 (출력)</param>
+        /// <param name="bySecondReturn">CRC 하위 바이트 (출력)</param>
         public static void GetCRC(List<byte> pby, int startindex, int nSize, ref byte byFirstReturn, ref byte bySecondReturn)
         {
             int uIndex;

@@ -12,6 +12,9 @@ using System.Threading.Tasks;
 
 namespace Going.UI.Utils
 {
+    /// <summary>
+    /// 터치 및 마우스 기반 스크롤 동작을 처리하는 클래스입니다. 관성 스크롤과 스크롤바 드래그를 지원합니다.
+    /// </summary>
     public class Scroll
     {
         #region Const
@@ -24,19 +27,52 @@ namespace Going.UI.Utils
         #endregion
 
         #region Properties
+        /// <summary>
+        /// 스크롤바의 너비 또는 높이를 가져오거나 설정합니다.
+        /// </summary>
         public static int SC_WH { get; set; } = 12;
 
+        /// <summary>
+        /// 스크롤바 드래그 중인지 여부를 가져옵니다.
+        /// </summary>
         public bool IsScrolling => scDown != null;
+        /// <summary>
+        /// 터치 스크롤 중인지 여부를 가져옵니다.
+        /// </summary>
         public bool IsTouchScrolling => tcDown != null;
+        /// <summary>
+        /// 터치 관성 스크롤이 진행 중인지 여부를 가져옵니다.
+        /// </summary>
         public bool IsTouchMoving => IsTouchStart;
+        /// <summary>
+        /// 터치 모드 활성화 여부를 가져오거나 설정합니다.
+        /// </summary>
         public static bool TouchMode { get; set; } = true;
 
+        /// <summary>
+        /// 스크롤 방향을 가져오거나 설정합니다.
+        /// </summary>
         public ScrollDirection Direction { get; set; } = ScrollDirection.Vertical;
 
+        /// <summary>
+        /// 전체 스크롤 가능 크기를 반환하는 함수를 가져오거나 설정합니다.
+        /// </summary>
         public Func<double>? GetScrollTotal { get; set; }
+        /// <summary>
+        /// 보이는 영역의 크기를 반환하는 함수를 가져오거나 설정합니다.
+        /// </summary>
         public Func<double>? GetScrollView { get; set; }
+        /// <summary>
+        /// 마우스 휠 한 틱의 스크롤 양을 반환하는 함수를 가져오거나 설정합니다.
+        /// </summary>
         public Func<double>? GetScrollTick { get; set; }
+        /// <summary>
+        /// 스크롤 스케일 팩터를 반환하는 함수를 가져오거나 설정합니다.
+        /// </summary>
         public Func<double>? GetScrollScaleFactor { get; set; }
+        /// <summary>
+        /// 범위 제한 무시 여부를 반환하는 함수를 가져오거나 설정합니다.
+        /// </summary>
         public Func<bool>? GetConstrainIgnore { get; set; }
 
         public bool ConstrainIgnore => GetConstrainIgnore != null ? GetConstrainIgnore() : false;
@@ -125,8 +161,14 @@ namespace Going.UI.Utils
         }
 
 
+        /// <summary>
+        /// 스크롤이 필요한지 여부를 가져옵니다. 전체 크기가 뷰 크기보다 클 때 true입니다.
+        /// </summary>
         public bool ScrollVisible => ScrollTotal > ScrollView;
 
+        /// <summary>
+        /// 화면 갱신 콜백 액션입니다.
+        /// </summary>
         public Action? Refresh;
         #endregion
 
@@ -148,7 +190,13 @@ namespace Going.UI.Utils
         #endregion
 
         #region Event
+        /// <summary>
+        /// 스크롤 위치가 변경되었을 때 발생하는 이벤트입니다.
+        /// </summary>
         public event Action? ScrollChanged;
+        /// <summary>
+        /// 스크롤이 끝났을 때 발생하는 이벤트입니다.
+        /// </summary>
         public event Action? ScrollEnded;
         #endregion
 
@@ -611,11 +659,31 @@ namespace Going.UI.Utils
         #endregion
     }
 
-    #region enum : ScrollDirection 
-    public enum ScrollDirection { Horizon, Vertical }
+    #region enum : ScrollDirection
+    /// <summary>
+    /// 스크롤 방향을 정의합니다.
+    /// </summary>
+    public enum ScrollDirection
+    {
+        /// <summary>수평 스크롤</summary>
+        Horizon,
+        /// <summary>수직 스크롤</summary>
+        Vertical
+    }
     #endregion
-    #region enum : ScrollMode 
-    public enum ScrollMode { Horizon, Vertical, Both }
+    #region enum : ScrollMode
+    /// <summary>
+    /// 스크롤 모드를 정의합니다.
+    /// </summary>
+    public enum ScrollMode
+    {
+        /// <summary>수평 스크롤</summary>
+        Horizon,
+        /// <summary>수직 스크롤</summary>
+        Vertical,
+        /// <summary>수평 및 수직 스크롤</summary>
+        Both
+    }
     #endregion
     #region class : SCDI
     internal class SCDI

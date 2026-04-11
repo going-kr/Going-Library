@@ -27,6 +27,9 @@ namespace Going.UI.Datas
 {
     #region Base
     #region class : GoDataGridCell
+    /// <summary>
+    /// 데이터 그리드 셀의 추상 기본 클래스입니다.
+    /// </summary>
     public abstract class GoDataGridCell
     {
         #region Const
@@ -35,27 +38,43 @@ namespace Going.UI.Datas
         #endregion
 
         #region Properties
+        /// <summary>셀의 이름 (데이터 바인딩 프로퍼티명)</summary>
         public string? Name { get; set; }
+        /// <summary>키보드 입력을 사용하는 셀인지 여부</summary>
         public virtual bool IsKeyboardInput { get; } = false;
 
+        /// <summary>열 병합 수</summary>
         public int ColSpan { get; set; } = 1;
+        /// <summary>행 병합 수</summary>
         public int RowSpan { get; set; } = 1;
+        /// <summary>셀이 속한 열 인덱스</summary>
         [JsonIgnore] public int ColumnIndex => Row.Cells.IndexOf(this);
+        /// <summary>셀이 속한 행 인덱스</summary>
         [JsonIgnore] public int RowIndex => Row.RowIndex;
 
+        /// <summary>셀 표시 여부</summary>
         public bool Visible { get; set; } = true;
+        /// <summary>셀 활성화 여부</summary>
         public bool Enabled { get; set; } = true;
+        /// <summary>사용자 정의 데이터를 저장하기 위한 태그 객체</summary>
         [JsonIgnore] public object? Tag { get; set; }
 
+        /// <summary>셀 배경색</summary>
         public string CellBackColor { get; set; }
+        /// <summary>선택 시 셀 배경색</summary>
         public string SelectedCellBackColor { get; set; }
+        /// <summary>셀 텍스트 색상</summary>
         public string CellTextColor { get; set; }
 
+        /// <summary>셀이 속한 데이터 그리드</summary>
         [JsonIgnore] public GoDataGrid Grid { get; private set; }
+        /// <summary>셀이 속한 행</summary>
         [JsonIgnore] public GoDataGridRow Row { get; private set; }
+        /// <summary>셀이 속한 열</summary>
         [JsonIgnore] public GoDataGridColumn Column { get; private set; }
 
         [JsonIgnore] protected PropertyInfo? ValueInfo { get; }
+        /// <summary>셀에 바인딩된 데이터 값</summary>
         [JsonIgnore]
         public object? Value
         {
@@ -67,6 +86,7 @@ namespace Going.UI.Datas
             }
         }
 
+        /// <summary>셀의 화면 영역</summary>
         [JsonIgnore]
         public SKRect Bounds
         {
@@ -90,6 +110,12 @@ namespace Going.UI.Datas
         #endregion
 
         #region Constructor
+        /// <summary>
+        /// 데이터 그리드 셀을 초기화합니다.
+        /// </summary>
+        /// <param name="Grid">소속 데이터 그리드</param>
+        /// <param name="Row">소속 행</param>
+        /// <param name="Column">소속 열</param>
         public GoDataGridCell(GoDataGrid Grid, GoDataGridRow Row, GoDataGridColumn Column)
         {
             this.Grid = Grid;
@@ -183,6 +209,9 @@ namespace Going.UI.Datas
     }
     #endregion
     #region class : GoDataGridColumn
+    /// <summary>
+    /// 데이터 그리드 열의 추상 기본 클래스입니다.
+    /// </summary>
     public abstract class GoDataGridColumn
     {
         #region Const
@@ -191,24 +220,39 @@ namespace Going.UI.Datas
         #endregion
 
         #region Properties
+        /// <summary>열의 이름 (데이터 바인딩 프로퍼티명)</summary>
         public string? Name { get; set; }
+        /// <summary>열 그룹 이름 (헤더 그룹화에 사용)</summary>
         public string? GroupName { get; set; }
+        /// <summary>열 헤더에 표시할 텍스트</summary>
         public string? HeaderText { get; set; }
+        /// <summary>열 너비 (퍼센트 또는 픽셀)</summary>
         public string? Size { get; set; } = "100%";
 
+        /// <summary>필터 사용 여부</summary>
         public bool UseFilter { get; set; }
+        /// <summary>필터 텍스트</summary>
         public string? FilterText { get; set; }
 
+        /// <summary>정렬 사용 여부</summary>
         public bool UseSort { get; set; }
+        /// <summary>현재 정렬 상태</summary>
         public GoDataGridColumnSortState SortState { get; set; } = GoDataGridColumnSortState.None;
+        /// <summary>정렬 우선순위</summary>
         public int SortOrder { get; }
 
+        /// <summary>열 텍스트 색상</summary>
         public string? TextColor { get; set; }
+        /// <summary>열 고정 여부</summary>
         public bool Fixed { get; set; }
 
+        /// <summary>이 열에 사용되는 셀 타입</summary>
         [JsonIgnore] public Type? CellType { get; set; }
+        /// <summary>열이 속한 데이터 그리드</summary>
         [JsonIgnore] public GoDataGrid? Grid { get; internal set; }
+        /// <summary>열 헤더의 화면 영역</summary>
         [JsonIgnore] public SKRect Bounds { get; internal set; }
+        /// <summary>필터 영역의 화면 영역</summary>
         [JsonIgnore] public SKRect FilterBounds { get; internal set; }
         [JsonIgnore] internal int Depth { get; set; }
         #endregion
@@ -329,40 +373,67 @@ namespace Going.UI.Datas
     }
     #endregion
     #region class : GoDataGridRow
+    /// <summary>
+    /// 데이터 그리드의 행을 나타내는 클래스입니다.
+    /// </summary>
     public class GoDataGridRow
     {
         #region Properties
+        /// <summary>행 인덱스</summary>
         public int RowIndex { get; internal set; }
+        /// <summary>행 높이</summary>
         public float RowHeight { get; set; }
+        /// <summary>행에 포함된 셀 목록</summary>
         [JsonIgnore] public List<GoDataGridCell> Cells { get; private set; } = [];
+        /// <summary>행에 바인딩된 원본 데이터 객체</summary>
         [JsonIgnore] public object? Source { get; internal set; }
+        /// <summary>사용자 정의 데이터를 저장하기 위한 태그 객체</summary>
         [JsonIgnore] public object? Tag { get; set; }
+        /// <summary>행 선택 상태</summary>
         [JsonIgnore] public bool Selected { get; set; }
+        /// <summary>행이 속한 데이터 그리드</summary>
         [JsonIgnore] public GoDataGrid? Grid { get; internal set; }
+        /// <summary>행의 화면 영역</summary>
         [JsonIgnore] public SKRect Bounds { get; internal set; }
         #endregion
     }
     #endregion
     #region class : GoDataGridSummaryCell
+    /// <summary>
+    /// 데이터 그리드 요약 셀의 추상 기본 클래스입니다.
+    /// </summary>
     public abstract class GoDataGridSummaryCell
     {
         #region Properties
+        /// <summary>셀의 이름 (데이터 바인딩 프로퍼티명)</summary>
         public string? Name { get; set; }
 
+        /// <summary>열 병합 수</summary>
         public int ColSpan { get; set; } = 1;
+        /// <summary>행 병합 수</summary>
         public int RowSpan { get; set; } = 1;
+        /// <summary>셀이 속한 열 인덱스</summary>
         [JsonIgnore] public int ColumnIndex => Row.Cells.IndexOf(this);
+        /// <summary>셀이 속한 요약 행 인덱스</summary>
         [JsonIgnore] public int RowIndex => Grid.SummaryRows.IndexOf(Row);
 
+        /// <summary>셀 표시 여부</summary>
         public bool Visible { get; set; } = true;
+        /// <summary>셀 활성화 여부</summary>
         public bool Enabled { get; set; } = true;
+        /// <summary>사용자 정의 데이터를 저장하기 위한 태그 객체</summary>
         [JsonIgnore] public object? Tag { get; set; }
 
+        /// <summary>셀 배경색</summary>
         public string CellBackColor { get; set; }
+        /// <summary>셀 텍스트 색상</summary>
         public string CellTextColor { get; set; }
 
+        /// <summary>셀이 속한 데이터 그리드</summary>
         [JsonIgnore] public GoDataGrid Grid { get; private set; }
+        /// <summary>셀이 속한 요약 행</summary>
         [JsonIgnore] public GoDataGridSummaryRow Row { get; private set; }
+        /// <summary>셀이 속한 열</summary>
         [JsonIgnore] public GoDataGridColumn Column { get; private set; }
         [JsonIgnore]
         internal SKRect Bounds
@@ -387,6 +458,12 @@ namespace Going.UI.Datas
         #endregion
 
         #region Constructor
+        /// <summary>
+        /// 데이터 그리드 요약 셀을 초기화합니다.
+        /// </summary>
+        /// <param name="Grid">소속 데이터 그리드</param>
+        /// <param name="Row">소속 요약 행</param>
+        /// <param name="Column">소속 열</param>
         public GoDataGridSummaryCell(GoDataGrid Grid, GoDataGridSummaryRow Row, GoDataGridColumn Column)
         {
             this.Grid = Grid;
@@ -458,27 +535,39 @@ namespace Going.UI.Datas
         protected virtual void OnMouseUp(float x, float y, GoMouseButton button) { }
         protected virtual void OnMouseMove(float x, float y) { }
 
+        /// <summary>요약 값을 계산합니다.</summary>
         public virtual void Calculate() { }
         #endregion
         #endregion
     }
     #endregion
     #region class : GoDataGridSummaryRow
+    /// <summary>
+    /// 데이터 그리드 요약 행의 추상 기본 클래스입니다.
+    /// </summary>
     public abstract class GoDataGridSummaryRow
     {
         #region Properties
+        /// <summary>요약 행 인덱스</summary>
         public int RowIndex { get; internal set; }
+        /// <summary>요약 행 높이</summary>
         public int RowHeight { get; set; }
+        /// <summary>요약 행에 포함된 셀 목록</summary>
         [JsonIgnore] public List<GoDataGridSummaryCell> Cells { get; private set; } = [];
+        /// <summary>요약 행이 속한 데이터 그리드</summary>
         [JsonIgnore] public GoDataGrid? Grid { get; internal set; }
+        /// <summary>제목 표시 시작 열 인덱스</summary>
         public int TitleColumnIndex { get; set; } = 0;
+        /// <summary>제목이 차지하는 열 수</summary>
         public int TitleColSpan { get; set; } = 1;
+        /// <summary>요약 행 제목 텍스트</summary>
         public string Title { get; set; } = "";
 
         [JsonIgnore] internal SKRect Bounds { get; set; }
         #endregion
 
         #region Method
+        /// <summary>요약 행의 모든 셀 값을 계산합니다.</summary>
         public void Calculate()
         {
             foreach (var c in Cells) c.Calculate();
@@ -490,13 +579,18 @@ namespace Going.UI.Datas
 
     #region Summary 
     #region Label
+    /// <summary>
+    /// 텍스트 레이블을 표시하는 요약 셀 클래스입니다.
+    /// </summary>
     public class GoDataGridLabelSummaryCell : GoDataGridSummaryCell
     {
         #region Properties
+        /// <summary>표시할 텍스트</summary>
         public string Text { get; internal set; }
         #endregion
 
         #region Constructor
+        /// <summary>레이블 요약 셀을 초기화합니다.</summary>
         public GoDataGridLabelSummaryCell(GoDataGrid Grid, GoDataGridSummaryRow Row, GoDataGridColumn Column) : base(Grid, Row, Column)
         {
         }
@@ -514,15 +608,20 @@ namespace Going.UI.Datas
     }
     #endregion
     #region Sum
+    /// <summary>합계 요약 행 클래스입니다.</summary>
     public class GoDataGridSumSummaryRow : GoDataGridSummaryRow { }
-    public class GoDataGridSumSummaryCell : GoDataGridSummaryCell 
+    /// <summary>합계를 계산하여 표시하는 요약 셀 클래스입니다.</summary>
+    public class GoDataGridSumSummaryCell : GoDataGridSummaryCell
     {
         #region Properties
+        /// <summary>계산된 합계 값</summary>
         public decimal Value { get; private set; }
+        /// <summary>값 표시 형식 문자열</summary>
         public string? FormatString { get; internal set; }
         #endregion
 
         #region Constructor
+        /// <summary>합계 요약 셀을 초기화합니다.</summary>
         public GoDataGridSumSummaryCell(GoDataGrid Grid, GoDataGridSummaryRow Row, GoDataGridColumn Column) : base(Grid, Row, Column)
         {
         }
@@ -549,15 +648,20 @@ namespace Going.UI.Datas
     }
     #endregion
     #region Average
+    /// <summary>평균 요약 행 클래스입니다.</summary>
     public class GoDataGridAverageSummaryRow : GoDataGridSummaryRow { }
-    public class GoDataGridAverageSummaryCell : GoDataGridSummaryCell 
+    /// <summary>평균을 계산하여 표시하는 요약 셀 클래스입니다.</summary>
+    public class GoDataGridAverageSummaryCell : GoDataGridSummaryCell
     {
         #region Properties
+        /// <summary>계산된 평균 값</summary>
         public decimal Value { get; private set; }
+        /// <summary>값 표시 형식 문자열</summary>
         public string? FormatString { get; internal set; }
         #endregion
 
         #region Constructor
+        /// <summary>평균 요약 셀을 초기화합니다.</summary>
         public GoDataGridAverageSummaryCell(GoDataGrid Grid, GoDataGridSummaryRow Row, GoDataGridColumn Column) : base(Grid, Row, Column)
         {
         }
@@ -587,6 +691,9 @@ namespace Going.UI.Datas
 
     #region Rows
     #region Label
+    /// <summary>
+    /// 읽기 전용 텍스트 레이블 셀 클래스입니다.
+    /// </summary>
     public class GoDataGridLabelCell : GoDataGridCell
     {
         #region Constructor
@@ -614,10 +721,15 @@ namespace Going.UI.Datas
         #endregion
     }
 
+    /// <summary>
+    /// 읽기 전용 텍스트 레이블 열 클래스입니다.
+    /// </summary>
     public class GoDataGridLabelColumn : GoDataGridColumn
     {
         #region Properties
+        /// <summary>값을 표시 텍스트로 변환하는 함수</summary>
         public Func<object?, string?>? TextConverter { get; set; }
+        /// <summary>값 표시 형식 문자열</summary>
         public string? FormatString { get; set; }
         #endregion
 
@@ -630,6 +742,10 @@ namespace Going.UI.Datas
     }
     #endregion
     #region Number
+    /// <summary>
+    /// 읽기 전용 숫자 표시 셀 클래스입니다.
+    /// </summary>
+    /// <typeparam name="T">숫자 값 타입</typeparam>
     public class GoDataGridNumberCell<T> : GoDataGridCell where T : struct
     {
         #region Constructor
@@ -650,8 +766,13 @@ namespace Going.UI.Datas
         #endregion
     }
 
+    /// <summary>
+    /// 읽기 전용 숫자 표시 열 클래스입니다.
+    /// </summary>
+    /// <typeparam name="T">숫자 값 타입</typeparam>
     public class GoDataGridNumberColumn<T> : GoDataGridColumn where T : struct
     {
+        /// <summary>값 표시 형식 문자열</summary>
         public string? FormatString { get; set; }
         #region Constructor
         public GoDataGridNumberColumn()
@@ -662,14 +783,23 @@ namespace Going.UI.Datas
     }
     #endregion
     #region Button
+    /// <summary>
+    /// 버튼을 포함하는 셀 클래스입니다.
+    /// </summary>
     public class GoDataGridButtonCell : GoDataGridCell
     {
         #region Properties
+        /// <summary>버튼 배경색</summary>
         public string ButtonColor { get; set; } = "Base3";
+        /// <summary>행 선택 시 버튼 배경색</summary>
         public string SelectButtonColor { get; set; } = "Select";
+        /// <summary>버튼에 표시할 텍스트</summary>
         public string? Text { get; set; }
+        /// <summary>버튼에 표시할 아이콘 문자열</summary>
         public string? IconString { get; set; }
+        /// <summary>아이콘 크기</summary>
         public int IconSize { get; set; } = 12;
+        /// <summary>아이콘과 텍스트 사이 간격</summary>
         public int IconGap { get; set; } = 5;
         #endregion
 
@@ -735,14 +865,23 @@ namespace Going.UI.Datas
         #endregion
     }
 
+    /// <summary>
+    /// 버튼을 포함하는 열 클래스입니다.
+    /// </summary>
     public class GoDataGridButtonColumn : GoDataGridColumn
     {
         #region Properties
+        /// <summary>버튼 배경색</summary>
         public string ButtonColor { get; set; } = "Base3";
+        /// <summary>행 선택 시 버튼 배경색</summary>
         public string SelectButtonColor { get; set; } = "Select-light";
-        public string? Text { get; set; } 
+        /// <summary>버튼에 표시할 텍스트</summary>
+        public string? Text { get; set; }
+        /// <summary>버튼에 표시할 아이콘 문자열</summary>
         public string? IconString { get; set; }
+        /// <summary>아이콘 크기</summary>
         public int IconSize { get; set; } = 12;
+        /// <summary>아이콘과 텍스트 사이 간격</summary>
         public int IconGap { get; set; } = 5;
         #endregion
 
@@ -755,9 +894,13 @@ namespace Going.UI.Datas
     }
     #endregion
     #region Lamp
+    /// <summary>
+    /// 불리언 값을 램프(표시등)로 표시하는 셀 클래스입니다.
+    /// </summary>
     public class GoDataGridLampCell : GoDataGridCell
     {
         #region Properties
+        /// <summary>활성화 시 램프 색상</summary>
         public string OnColor { get; set; } = "Good";
         #endregion 
 
@@ -796,9 +939,13 @@ namespace Going.UI.Datas
         #endregion
     }
 
+    /// <summary>
+    /// 불리언 값을 램프(표시등)로 표시하는 열 클래스입니다.
+    /// </summary>
     public class GoDataGridLampColumn : GoDataGridColumn
     {
         #region Properties
+        /// <summary>활성화 시 램프 색상</summary>
         public string OnColor { get; set; } = "Good";
         #endregion 
 
@@ -811,6 +958,9 @@ namespace Going.UI.Datas
     }
     #endregion
     #region CheckBox
+    /// <summary>
+    /// 체크박스를 포함하는 셀 클래스입니다.
+    /// </summary>
     public class GoDataGridCheckBoxCell : GoDataGridCell
     {
         #region Properties
@@ -860,6 +1010,9 @@ namespace Going.UI.Datas
         #endregion
     }
 
+    /// <summary>
+    /// 체크박스를 포함하는 열 클래스입니다.
+    /// </summary>
     public class GoDataGridCheckBoxColumn : GoDataGridColumn
     {
         #region Properties
@@ -874,6 +1027,9 @@ namespace Going.UI.Datas
     }
     #endregion
     #region InputText
+    /// <summary>
+    /// 텍스트 입력 셀 클래스입니다.
+    /// </summary>
     public class GoDataGridInputTextCell : GoDataGridCell
     {
         #region Properties
@@ -928,6 +1084,9 @@ namespace Going.UI.Datas
         #endregion
     }
 
+    /// <summary>
+    /// 텍스트 입력 열 클래스입니다.
+    /// </summary>
     public class GoDataGridInputTextColumn : GoDataGridColumn
     {
         #region Constructor
@@ -939,11 +1098,18 @@ namespace Going.UI.Datas
     }
     #endregion
     #region InputNumber
+    /// <summary>
+    /// 숫자 입력 셀 클래스입니다.
+    /// </summary>
+    /// <typeparam name="T">숫자 값 타입</typeparam>
     public class GoDataGridInputNumberCell<T> : GoDataGridCell where T : struct
     {
         #region Properties
+        /// <summary>입력 가능한 최솟값</summary>
         public T? Minimum { get; set; }
+        /// <summary>입력 가능한 최댓값</summary>
         public T? Maximum { get; set; }
+        /// <summary>값 표시 형식 문자열</summary>
         public string? FormatString { get; set; }
         public override bool IsKeyboardInput => true;
         #endregion
@@ -1000,11 +1166,18 @@ namespace Going.UI.Datas
         #endregion
     }
 
+    /// <summary>
+    /// 숫자 입력 열 클래스입니다.
+    /// </summary>
+    /// <typeparam name="T">숫자 값 타입</typeparam>
     public class GoDataGridInputNumberColumn<T>: GoDataGridColumn where T : struct
     {
         #region Properties
+        /// <summary>입력 가능한 최솟값</summary>
         public T? Minimum { get; set; }
+        /// <summary>입력 가능한 최댓값</summary>
         public T? Maximum { get; set; }
+        /// <summary>값 표시 형식 문자열</summary>
         public string? FormatString { get; set; }
         #endregion 
 
@@ -1017,10 +1190,15 @@ namespace Going.UI.Datas
     }
     #endregion
     #region InputBool
+    /// <summary>
+    /// 불리언 값 입력 셀 클래스입니다. On/Off 텍스트를 표시합니다.
+    /// </summary>
     public class GoDataGridInputBoolCell : GoDataGridCell
     {
         #region Properties
+        /// <summary>true일 때 표시할 텍스트</summary>
         public string? OnText { get; set; } = "On";
+        /// <summary>false일 때 표시할 텍스트</summary>
         public string? OffText { get; set; } = "Off";
         #endregion 
 
@@ -1092,10 +1270,15 @@ namespace Going.UI.Datas
         #endregion
     }
 
+    /// <summary>
+    /// 불리언 값 입력 열 클래스입니다.
+    /// </summary>
     public class GoDataGridInputBoolColumn : GoDataGridColumn
     {
         #region Properties
+        /// <summary>true일 때 표시할 텍스트</summary>
         public string? OnText { get; set; } = "On";
+        /// <summary>false일 때 표시할 텍스트</summary>
         public string? OffText { get; set; } = "Off";
         #endregion 
 
@@ -1108,11 +1291,17 @@ namespace Going.UI.Datas
     }
     #endregion
     #region InputTime
+    /// <summary>
+    /// 날짜/시간 입력 셀 클래스입니다.
+    /// </summary>
     public class GoDataGridInputTimeCell : GoDataGridCell
     {
         #region Properties
+        /// <summary>날짜/시간 표시 유형</summary>
         public GoDateTimeKind DateTimeStyle { get; set; } = GoDateTimeKind.DateTime;
+        /// <summary>날짜 표시 형식</summary>
         public string DateFormat { get; set; } = "yyyy-MM-dd";
+        /// <summary>시간 표시 형식</summary>
         public string TimeFormat { get; set; } = "HH:mm:ss";
         #endregion
 
@@ -1216,11 +1405,17 @@ namespace Going.UI.Datas
         #endregion
     }
 
+    /// <summary>
+    /// 날짜/시간 입력 열 클래스입니다.
+    /// </summary>
     public class GoDataGridInputTimeColumn : GoDataGridColumn
     {
         #region Properties
+        /// <summary>날짜/시간 표시 유형</summary>
         public GoDateTimeKind DateTimeStyle { get; set; } = GoDateTimeKind.DateTime;
+        /// <summary>날짜 표시 형식</summary>
         public string DateFormat { get; set; } = "yyyy-MM-dd";
+        /// <summary>시간 표시 형식</summary>
         public string TimeFormat { get; set; } = "HH:mm:ss";
         #endregion 
 
@@ -1233,6 +1428,9 @@ namespace Going.UI.Datas
     }
     #endregion
     #region InputColor
+    /// <summary>
+    /// 색상 입력 셀 클래스입니다.
+    /// </summary>
     public class GoDataGridInputColorCell : GoDataGridCell
     {
         #region Properties
@@ -1327,6 +1525,9 @@ namespace Going.UI.Datas
         #endregion
     }
 
+    /// <summary>
+    /// 색상 입력 열 클래스입니다.
+    /// </summary>
     public class GoDataGridInputColorColumn : GoDataGridColumn
     {
         #region Properties
@@ -1341,6 +1542,9 @@ namespace Going.UI.Datas
     }
     #endregion
     #region InputCombo
+    /// <summary>
+    /// 콤보박스(드롭다운) 입력 셀 클래스입니다.
+    /// </summary>
     public class GoDataGridInputComboCell : GoDataGridCell
     {
         #region Properties
@@ -1432,12 +1636,19 @@ namespace Going.UI.Datas
         #endregion
     }
 
+    /// <summary>
+    /// 콤보박스(드롭다운) 입력 열 클래스입니다.
+    /// </summary>
     public class GoDataGridInputComboColumn : GoDataGridColumn
     {
         #region Properties
+        /// <summary>콤보박스에 표시할 항목 목록</summary>
         public List<GoDataGridInputComboItem> Items { get; set; } = [];
+        /// <summary>항목 필터링 함수</summary>
         public Func<GoDataGridInputComboItem, bool>? Filter { get; set; }
+        /// <summary>드롭다운에 표시할 최대 항목 수</summary>
         public int MaximumViewCount { get; set; } = 8;
+        /// <summary>드롭다운 항목의 높이</summary>
         public int ItemHeight { get; set; } = 30;
         #endregion 
 
@@ -1449,66 +1660,140 @@ namespace Going.UI.Datas
         #endregion
     }
 
+    /// <summary>
+    /// 콤보박스 항목 클래스입니다. 표시 텍스트와 실제 값을 분리하여 관리합니다.
+    /// </summary>
     public class GoDataGridInputComboItem : GoListItem
     {
+        /// <summary>항목에 연결된 실제 값</summary>
         public object? Value { get; set; }
     }
     #endregion
     #endregion
 
     #region EventArgs
+    /// <summary>
+    /// 셀 내 버튼 클릭 이벤트 인자 클래스입니다.
+    /// </summary>
+    /// <param name="cell">클릭된 셀</param>
     public class GoDataGridCellButtonClickEventArgs(GoDataGridCell cell) : EventArgs
     {
+        /// <summary>클릭된 셀</summary>
         public GoDataGridCell Cell { get; private set; } = cell;
     }
 
+    /// <summary>
+    /// 열 헤더 마우스 이벤트 인자 클래스입니다.
+    /// </summary>
+    /// <param name="column">이벤트가 발생한 열</param>
     public class GoDataGridColumnMouseEventArgs(GoDataGridColumn column) : EventArgs
     {
+        /// <summary>이벤트가 발생한 열</summary>
         public GoDataGridColumn Column { get; private set; } = column;
     }
 
+    /// <summary>
+    /// 셀 마우스 이벤트 인자 클래스입니다.
+    /// </summary>
+    /// <param name="cell">이벤트가 발생한 셀</param>
     public class GoDataGridCellMouseEventArgs(GoDataGridCell cell) : EventArgs
     {
+        /// <summary>이벤트가 발생한 셀</summary>
         public GoDataGridCell Cell { get; private set; } = cell;
     }
 
+    /// <summary>
+    /// 셀 값 변경 이벤트 인자 클래스입니다.
+    /// </summary>
+    /// <param name="cell">값이 변경된 셀</param>
+    /// <param name="oldValue">이전 값</param>
+    /// <param name="newValue">새 값</param>
     public class GoDataGridCellValueChangedEventArgs(GoDataGridCell cell, object? oldValue, object? newValue) : EventArgs
     {
+        /// <summary>값이 변경된 셀</summary>
         public GoDataGridCell Cell { get; private set; } = cell;
+        /// <summary>이전 값</summary>
         public object? OldValue { get; private set; } = oldValue;
+        /// <summary>새 값</summary>
         public object? NewValue { get; private set; } = newValue;
     }
 
+    /// <summary>
+    /// 행 더블클릭 이벤트 인자 클래스입니다.
+    /// </summary>
+    /// <param name="row">더블클릭된 행</param>
     public class GoDataGridRowDoubleClickEventArgs(GoDataGridRow row) : EventArgs
     {
+        /// <summary>더블클릭된 행</summary>
         public GoDataGridRow Row { get; private set; } = row;
     }
 
+    /// <summary>
+    /// 날짜/시간 드롭다운 열림 이벤트 인자 클래스입니다. 취소 가능합니다.
+    /// </summary>
+    /// <param name="cell">대상 셀</param>
+    /// <param name="rt">드롭다운 표시 영역</param>
+    /// <param name="value">현재 날짜/시간 값</param>
+    /// <param name="style">날짜/시간 표시 유형</param>
+    /// <param name="action">선택 완료 시 호출할 콜백</param>
     public class GoDataGridDateTimeDropDownOpeningEventArgs(GoDataGridCell cell, SKRect rt, DateTime value, GoDateTimeKind style, Action<DateTime?> action) : GoCancelableEventArgs
     {
+        /// <summary>대상 셀</summary>
         public GoDataGridCell Cell { get; } = cell;
+        /// <summary>드롭다운 표시 영역</summary>
         public SKRect Bounds { get; } = rt;
+        /// <summary>현재 날짜/시간 값</summary>
         public DateTime Value { get; } = value;
+        /// <summary>날짜/시간 표시 유형</summary>
         public GoDateTimeKind Style { get; } = style;
+        /// <summary>선택 완료 시 호출할 콜백</summary>
         public Action<DateTime?> Action { get; } = action;
     }
 
+    /// <summary>
+    /// 색상 드롭다운 열림 이벤트 인자 클래스입니다. 취소 가능합니다.
+    /// </summary>
+    /// <param name="cell">대상 셀</param>
+    /// <param name="rt">드롭다운 표시 영역</param>
+    /// <param name="value">현재 색상 값</param>
+    /// <param name="action">선택 완료 시 호출할 콜백</param>
     public class GoDataGridColorDropDownOpeningEventArgs(GoDataGridCell cell, SKRect rt, SKColor value, Action<SKColor?> action) : GoCancelableEventArgs
     {
+        /// <summary>대상 셀</summary>
         public GoDataGridCell Cell { get; } = cell;
+        /// <summary>드롭다운 표시 영역</summary>
         public SKRect Bounds { get; } = rt;
+        /// <summary>현재 색상 값</summary>
         public SKColor Value { get; } = value;
+        /// <summary>선택 완료 시 호출할 콜백</summary>
         public Action<SKColor?> Action { get; } = action;
     }
 
+    /// <summary>
+    /// 콤보박스 드롭다운 열림 이벤트 인자 클래스입니다. 취소 가능합니다.
+    /// </summary>
+    /// <param name="cell">대상 셀</param>
+    /// <param name="rt">드롭다운 표시 영역</param>
+    /// <param name="itemHeight">항목 높이</param>
+    /// <param name="maximumViewCount">최대 표시 항목 수</param>
+    /// <param name="items">콤보박스 항목 목록</param>
+    /// <param name="selectedItem">현재 선택된 항목</param>
+    /// <param name="action">선택 완료 시 호출할 콜백</param>
     public class GoDataGridComboDropDownOpeningEventArgs(GoDataGridCell cell, SKRect rt, float itemHeight, int maximumViewCount, List<GoDataGridInputComboItem> items, GoDataGridInputComboItem? selectedItem, Action<GoDataGridInputComboItem?> action) : GoCancelableEventArgs
     {
+        /// <summary>대상 셀</summary>
         public GoDataGridCell Cell { get; } = cell;
+        /// <summary>드롭다운 표시 영역</summary>
         public SKRect Bounds { get; } = rt;
+        /// <summary>항목 높이</summary>
         public float ItemHeight { get; } = itemHeight;
+        /// <summary>최대 표시 항목 수</summary>
         public int MaximumViewCount { get; } = maximumViewCount;
+        /// <summary>콤보박스 항목 목록</summary>
         public List<GoDataGridInputComboItem> Items { get; } = items;
+        /// <summary>현재 선택된 항목</summary>
         public GoDataGridInputComboItem? SelectedItem { get; } = selectedItem;
+        /// <summary>선택 완료 시 호출할 콜백</summary>
         public Action<GoDataGridInputComboItem?> Action { get; } = action;
     }
 

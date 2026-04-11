@@ -14,27 +14,72 @@ using System.Threading.Tasks;
 
 namespace Going.UI.Design
 {
+    /// <summary>
+    /// 타이틀바 컨트롤. 디자인 상단에 표시되며 제목, 사이드바 확장/축소 버튼을 포함합니다.
+    /// </summary>
     public class GoTitleBar : GoContainer
     {
         #region Properties
+        /// <summary>
+        /// 타이틀바 높이를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 0)] public float BarSize { get; set; } = 50F;
 
+        /// <summary>
+        /// 타이틀 텍스트를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 1)] public string Title { get; set; } = "Title";
+        /// <summary>
+        /// 타이틀 이미지 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoImageProperty(PCategory.Control, 2)] public string? TitleImage { get; set; } = null;
 
+        /// <summary>
+        /// 왼쪽 사이드바 확장 아이콘 문자열을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 3)] public string LeftExpandIconString { get; set; } = "fa-bars";
+        /// <summary>
+        /// 왼쪽 사이드바 축소 아이콘 문자열을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 4)] public string LeftCollapseIconString { get; set; } = "fa-chevron-left";
+        /// <summary>
+        /// 오른쪽 사이드바 확장 아이콘 문자열을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 5)] public string RightExpandIconString { get; set; } = "fa-ellipsis-vertical";
+        /// <summary>
+        /// 오른쪽 사이드바 축소 아이콘 문자열을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 6)] public string RightCollapseIconString { get; set; } = "fa-chevron-right";
+        /// <summary>
+        /// 아이콘 크기를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 7)] public float IconSize { get; set; } = 16;
 
+        /// <summary>
+        /// 텍스트 색상을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 8)] public string TextColor { get; set; } = "Fore";
+        /// <summary>
+        /// 폰트 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoFontNameProperty(PCategory.Control, 9)] public string FontName { get; set; } = "나눔고딕";
+        /// <summary>
+        /// 폰트 스타일을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 10)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        /// <summary>
+        /// 폰트 크기를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 11)] public float FontSize { get; set; } = 16;
 
+        /// <summary>
+        /// 패널 영역의 바운드를 가져옵니다.
+        /// </summary>
         [JsonIgnore] public override SKRect PanelBounds => Areas()["Panel"];
 
+        /// <summary>
+        /// 자식 컨트롤 목록을 가져옵니다.
+        /// </summary>
         [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
         #endregion
 
@@ -157,20 +202,41 @@ namespace Going.UI.Design
     }
 
 
+    /// <summary>
+    /// 사이드바 컨트롤. 디자인 좌측 또는 우측에 표시되며 확장/축소 애니메이션을 지원합니다.
+    /// </summary>
     public class GoSideBar : GoContainer
     {
         #region Properties
+        /// <summary>
+        /// 사이드바 너비를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 0)] public float BarSize { get; set; } = 150F;
+        /// <summary>
+        /// 사이드바를 고정 표시할지 여부를 가져오거나 설정합니다. true이면 항상 확장 상태입니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 1)] public bool Fixed { get; set; } = false;
 
         internal float RealBarSize => Fixed ? BarSize : (ani.IsPlaying ? (ani.Variable == "Expand" ? ani.Value(AnimationAccel.DCL, 0F, BarSize)
                                                                                                    : ani.Value(AnimationAccel.DCL, BarSize, 0F))
                                                                        : (Expand ? BarSize : 0));
+        /// <summary>
+        /// 사이드바가 열리는 중인지 여부를 가져옵니다.
+        /// </summary>
         public bool Opening => !Fixed && ani.IsPlaying && ani.Variable == "Expand";
+        /// <summary>
+        /// 사이드바가 닫히는 중인지 여부를 가져옵니다.
+        /// </summary>
         public bool Closing => !Fixed && ani.IsPlaying && ani.Variable == "Collapse";
 
+        /// <summary>
+        /// 자식 컨트롤 목록을 가져옵니다.
+        /// </summary>
         [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
 
+        /// <summary>
+        /// 사이드바 확장 여부를 가져오거나 설정합니다. Fixed가 true이면 항상 true입니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 2)]
         [JsonIgnore]
         public bool Expand
@@ -217,11 +283,20 @@ namespace Going.UI.Design
         #endregion
     }
 
+    /// <summary>
+    /// 푸터 컨트롤. 디자인 하단에 표시되는 바 영역입니다.
+    /// </summary>
     public class GoFooter : GoContainer
     {
         #region Properties
+        /// <summary>
+        /// 푸터 높이를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 0)] public float BarSize { get; set; } = 40F;
 
+        /// <summary>
+        /// 자식 컨트롤 목록을 가져옵니다.
+        /// </summary>
         [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
         #endregion
 

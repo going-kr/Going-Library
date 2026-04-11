@@ -13,18 +13,29 @@ using System.Threading.Tasks;
 
 namespace Going.UI.Controls
 {
+    /// <summary>
+    /// 체크박스 컨트롤. 체크 표시와 텍스트를 함께 표시합니다.
+    /// </summary>
     public class GoCheckBox : GoControl
     {
         #region Properties
+        /// <summary>체크박스 옆에 표시할 텍스트</summary>
         [GoMultiLineProperty(PCategory.Control, 0)] public string Text { get; set; } = "checkbox";
+        /// <summary>글꼴 이름</summary>
         [GoFontNameProperty(PCategory.Control, 1)] public string FontName { get; set; } = "나눔고딕";
+        /// <summary>글꼴 스타일</summary>
         [GoProperty(PCategory.Control, 2)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        /// <summary>글꼴 크기</summary>
         [GoProperty(PCategory.Control, 3)] public float FontSize { get; set; } = 12;
 
+        /// <summary>텍스트 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 4)] public string TextColor { get; set; } = "Fore";
+        /// <summary>체크박스 배경 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 5)] public string BoxColor { get; set; } = "Base1";
+        /// <summary>체크 표시 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 6)] public string CheckColor { get; set; } = "Fore";
 
+        /// <summary>체크 상태. 값이 변경되면 <see cref="CheckedChanged"/> 이벤트가 발생합니다.</summary>
         [GoProperty(PCategory.Control, 7)]
         public bool Checked
         {
@@ -37,14 +48,19 @@ namespace Going.UI.Controls
                 }
             }
         }
+        /// <summary>체크박스 크기 (픽셀)</summary>
         [GoProperty(PCategory.Control, 8)] public int BoxSize { get; set; } = 24;
+        /// <summary>체크박스와 텍스트 사이 간격</summary>
         [GoProperty(PCategory.Control, 9)] public int Gap { get; set; } = 10;
+        /// <summary>콘텐츠 정렬 방식</summary>
         [GoProperty(PCategory.Control, 10)] public GoContentAlignment ContentAlignment { get; set; } = GoContentAlignment.MiddleCenter;
 
+        /// <summary>자동 글꼴 크기 설정</summary>
         [GoProperty(PCategory.Control, 11)] public GoAutoFontSize AutoFontSize { get; set; } = GoAutoFontSize.NotUsed;
         #endregion
 
         #region Event
+        /// <summary>체크 상태가 변경되었을 때 발생하는 이벤트</summary>
         public event EventHandler? CheckedChanged;
         #endregion
 

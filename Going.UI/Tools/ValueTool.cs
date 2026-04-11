@@ -7,10 +7,26 @@ using System.Xml;
 
 namespace Going.UI.Tools
 {
+    /// <summary>
+    /// 값 변환 유틸리티 클래스입니다. 다양한 숫자 타입의 문자열 변환, 파싱, 유효성 검증, 범위 제한을 지원합니다.
+    /// </summary>
     public class ValueTool
     {
         #region ToString
+        /// <summary>
+        /// 값을 지정된 형식 문자열로 변환합니다.
+        /// </summary>
+        /// <typeparam name="T">값의 타입</typeparam>
+        /// <param name="Value">변환할 값</param>
+        /// <param name="FormatString">형식 문자열</param>
+        /// <returns>형식화된 문자열</returns>
         public static string? ToString<T>(T Value, string? FormatString) => ToString((object?)Value, FormatString);
+        /// <summary>
+        /// 값을 지정된 형식 문자열로 변환합니다. 숫자, 문자열, bool, DateTime, TimeSpan 타입을 지원합니다.
+        /// </summary>
+        /// <param name="Value">변환할 값</param>
+        /// <param name="FormatString">형식 문자열</param>
+        /// <returns>형식화된 문자열</returns>
         public static string? ToString(object? Value, string? FormatString)
         {
             var ret = "";
@@ -41,6 +57,12 @@ namespace Going.UI.Tools
         #endregion
 
         #region FromString
+        /// <summary>
+        /// 문자열을 지정된 구조체 타입으로 변환합니다. 숫자, bool, DateTime, TimeSpan 타입을 지원합니다.
+        /// </summary>
+        /// <typeparam name="T">변환 대상 구조체 타입</typeparam>
+        /// <param name="value">변환할 문자열</param>
+        /// <returns>변환된 값, 실패 시 null</returns>
         public static T? FromString<T>(string? value)  where T : struct
         {
             T? ret = null;
@@ -69,6 +91,14 @@ namespace Going.UI.Tools
         #endregion
 
         #region Valid
+        /// <summary>
+        /// 값이 최솟값과 최댓값 범위 내에 있는지 검증합니다.
+        /// </summary>
+        /// <typeparam name="T">값의 숫자 타입</typeparam>
+        /// <param name="Value">검증할 값</param>
+        /// <param name="Minimum">최솟값 (null이면 타입의 최솟값 사용)</param>
+        /// <param name="Maximum">최댓값 (null이면 타입의 최댓값 사용)</param>
+        /// <returns>값이 범위 내에 있으면 true</returns>
         public static bool Valid<T>(T Value, T? Minimum, T? Maximum) where T : struct
         {
             var Valid = false;
@@ -89,6 +119,14 @@ namespace Going.UI.Tools
         #endregion
 
         #region Constrain
+        /// <summary>
+        /// 값을 최솟값과 최댓값 범위 내로 제한합니다.
+        /// </summary>
+        /// <typeparam name="T">값의 숫자 타입</typeparam>
+        /// <param name="Value">제한할 값</param>
+        /// <param name="Minimum">최솟값 (null이면 타입의 최솟값 사용)</param>
+        /// <param name="Maximum">최댓값 (null이면 타입의 최댓값 사용)</param>
+        /// <returns>범위 내로 제한된 값</returns>
         public static T Constrain<T>(T Value, T? Minimum, T? Maximum) where T : struct
         {
             T ret= Value;

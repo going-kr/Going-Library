@@ -12,10 +12,19 @@ using System.Threading.Tasks;
 
 namespace Going.UI.Design
 {
+    /// <summary>
+    /// 페이지 컨트롤. 디자인 내에서 화면 단위를 구성하며 배경 이미지를 지원합니다.
+    /// </summary>
     public class GoPage : GoContainer
     {
         #region Properties
+        /// <summary>
+        /// 자식 컨트롤 목록을 가져옵니다.
+        /// </summary>
         [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
+        /// <summary>
+        /// 배경 이미지 이름을 가져오거나 설정합니다.
+        /// </summary>
         public string? BackgroundImage { get; set; }
         #endregion
 

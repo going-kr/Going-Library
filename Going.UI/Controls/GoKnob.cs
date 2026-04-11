@@ -15,6 +15,9 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Going.UI.Controls
 {
+    /// <summary>
+    /// 노브(다이얼) 컨트롤. 회전식 다이얼을 통해 값을 조절할 수 있습니다.
+    /// </summary>
     public class GoKnob : GoControl
     {
         #region Const
@@ -22,15 +25,36 @@ namespace Going.UI.Controls
         #endregion
 
         #region Properties
+        /// <summary>
+        /// 글꼴 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoFontNameProperty(PCategory.Control, 0)] public string FontName { get; set; } = "나눔고딕";
+        /// <summary>
+        /// 글꼴 스타일을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 1)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        /// <summary>
+        /// 글꼴 크기를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 2)] public float FontSize { get; set; } = 12;
 
+        /// <summary>
+        /// 텍스트 색상의 테마 색상 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 3)] public string TextColor { get; set; } = "Fore";
+        /// <summary>
+        /// 노브 본체 색상의 테마 색상 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 4)] public string KnobColor { get; set; } = "Base3";
+        /// <summary>
+        /// 노브 커서(지시선) 색상의 테마 색상 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 5)] public string CursorColor { get; set; } = "Fore";
 
         private double nValue = 0;
+        /// <summary>
+        /// 현재 값을 가져오거나 설정합니다. 값이 변경되면 <see cref="ValueChanged"/> 이벤트가 발생합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 6)]
         public double Value
         {
@@ -45,17 +69,38 @@ namespace Going.UI.Controls
             }
         }
 
+        /// <summary>
+        /// 최소값을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 7)] public double Minimum { get; set; } = 0;
+        /// <summary>
+        /// 최대값을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 8)] public double Maximum { get; set; } = 100;
+        /// <summary>
+        /// 값 변경 단위(틱)를 가져오거나 설정합니다. null이면 연속적으로 변경됩니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 9)] public double? Tick { get; set; } = null;
 
+        /// <summary>
+        /// 값 표시 형식 문자열을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 10)] public string Format { get; set; } = "0";
+        /// <summary>
+        /// 노브의 회전 범위 각도를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 11)] public int SweepAngle { get; set; } = 270;
 
+        /// <summary>
+        /// 값 텍스트 표시 여부를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 12)] public bool DrawText { get; set; } = true;
         #endregion
 
         #region Event
+        /// <summary>
+        /// <see cref="Value"/> 속성 값이 변경되었을 때 발생합니다.
+        /// </summary>
         public event EventHandler? ValueChanged;
         #endregion
 
@@ -237,6 +282,7 @@ namespace Going.UI.Controls
             base.OnDispose();
         }
 
+        /// <inheritdoc/>
         public override Dictionary<string, SKRect> Areas()
         {
             var rts = base.Areas();

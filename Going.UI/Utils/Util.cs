@@ -23,10 +23,22 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Going.UI.Utils
 {
+    /// <summary>
+    /// Going.UI 프레임워크의 핵심 유틸리티 클래스입니다. 색상 변환, 사각형 생성, 폰트 관리, 텍스트/아이콘 그리기, 레이아웃 계산 등의 기능을 제공합니다.
+    /// </summary>
     public class Util
     {
+        /// <summary>
+        /// 이미지 샘플링에 사용되는 기본 옵션입니다.
+        /// </summary>
         public readonly static SKSamplingOptions Sampling = new(SKCubicResampler.Mitchell);
+        /// <summary>
+        /// 시스템 폰트 캐시 딕셔너리입니다.
+        /// </summary>
         public static Dictionary<string, Dictionary<GoFontStyle, SKTypeface>> FontCache { get; } = new(StringComparer.OrdinalIgnoreCase);
+        /// <summary>
+        /// 외부 폰트 딕셔너리입니다.
+        /// </summary>
         public static Dictionary<string, Dictionary<GoFontStyle, SKTypeface>> ExternalFonts { get; } = new(StringComparer.OrdinalIgnoreCase);
 
         private static SKTypeface DefaultFontR;
@@ -54,25 +66,66 @@ namespace Going.UI.Utils
         #region Method
         #region From
         #region FromArgb
+        /// <summary>
+        /// SKColor를 System.Drawing.Color로 변환합니다.
+        /// </summary>
         public static Color FromArgb(SKColor c) => Color.FromArgb(c.Alpha, c.Red, c.Green, c.Blue);
 
+        /// <summary>
+        /// System.Drawing.Color를 SKColor로 변환합니다.
+        /// </summary>
         public static SKColor FromArgb(Color c) => new SKColor(c.R, c.G, c.B, c.A);
+        /// <summary>
+        /// 정수 색상 값을 SKColor로 변환합니다.
+        /// </summary>
         public static SKColor FromArgb(int c) => new SKColor(Convert.ToByte(((uint)c & 0xFF0000) >> 16), Convert.ToByte(((uint)c & 0xFF00) >> 8), Convert.ToByte(((uint)c & 0xFF)), Convert.ToByte(((uint)c & 0xFF000000) >> 24));
+        /// <summary>
+        /// ARGB 바이트 값으로 SKColor를 생성합니다.
+        /// </summary>
         public static SKColor FromArgb(byte a, byte r, byte g, byte b) => new SKColor(r, g, b, a);
+        /// <summary>
+        /// 기존 색상에 알파 값을 적용한 SKColor를 생성합니다.
+        /// </summary>
         public static SKColor FromArgb(byte a, SKColor c) => new SKColor(c.Red, c.Green, c.Blue, a);
+        /// <summary>
+        /// RGB 바이트 값으로 SKColor를 생성합니다.
+        /// </summary>
         public static SKColor FromArgb(byte r, byte g, byte b) => new SKColor(r, g, b);
         #endregion
 
         #region FromRect
+        /// <summary>
+        /// SKRect를 복사합니다.
+        /// </summary>
         public static SKRect FromRect(SKRect rt) => new SKRect(rt.Left, rt.Top, rt.Right, rt.Bottom);
+        /// <summary>
+        /// Rectangle을 SKRect로 변환합니다.
+        /// </summary>
         public static SKRect FromRect(Rectangle rt) => new SKRect(rt.Left, rt.Top, rt.Right, rt.Bottom);
+        /// <summary>
+        /// RectangleF를 SKRect로 변환합니다.
+        /// </summary>
         public static SKRect FromRect(RectangleF rt) => new SKRect(rt.Left, rt.Top, rt.Right, rt.Bottom);
+        /// <summary>
+        /// 정수 좌표와 크기로 SKRect를 생성합니다.
+        /// </summary>
         public static SKRect FromRect(int x, int y, int width, int height) => FromRect(new Rectangle(x, y, width, height));
+        /// <summary>
+        /// 실수 좌표와 크기로 SKRect를 생성합니다.
+        /// </summary>
         public static SKRect FromRect(float x, float y, float width, float height) => FromRect(new RectangleF(x, y, width, height));
+        /// <summary>
+        /// SKRect에 패딩을 적용한 SKRect를 생성합니다.
+        /// </summary>
         public static SKRect FromRect(SKRect rt, GoPadding pad) => new SKRect(rt.Left + pad.Left, rt.Top + pad.Top, rt.Right - pad.Right, rt.Bottom - pad.Bottom);
         #endregion
 
         #region FromBitmap
+        /// <summary>
+        /// 파일 경로에서 SKBitmap을 로드합니다.
+        /// </summary>
+        /// <param name="path">이미지 파일 경로</param>
+        /// <returns>로드된 비트맵, 실패 시 null</returns>
         public static SKBitmap? FromBitmap(string path)
         {
             SKBitmap? ret = null;
@@ -80,6 +133,11 @@ namespace Going.UI.Utils
             catch { }
             return ret;
         }
+        /// <summary>
+        /// Base64 문자열에서 SKBitmap을 로드합니다.
+        /// </summary>
+        /// <param name="base64">Base64로 인코딩된 이미지 데이터</param>
+        /// <returns>로드된 비트맵, 실패 시 null</returns>
         public static SKBitmap? FromBitmap64(string base64)
         {
             SKBitmap? ret = null;
@@ -87,6 +145,12 @@ namespace Going.UI.Utils
             catch { }
             return ret;
         }
+        /// <summary>
+        /// 어셈블리 리소스에서 SKBitmap을 로드합니다.
+        /// </summary>
+        /// <param name="asm">리소스가 포함된 어셈블리</param>
+        /// <param name="name">리소스 이름</param>
+        /// <returns>로드된 비트맵, 실패 시 null</returns>
         public static SKBitmap? FromAssemblyBitmap(Assembly asm, string name)
         {
             SKBitmap? ret = null;
@@ -97,6 +161,11 @@ namespace Going.UI.Utils
         #endregion
 
         #region FromImage
+        /// <summary>
+        /// 파일 경로에서 SKImage를 로드합니다.
+        /// </summary>
+        /// <param name="path">이미지 파일 경로</param>
+        /// <returns>로드된 이미지, 실패 시 null</returns>
         public static SKImage? FromImage(string path)
         {
             SKImage? ret = null;
@@ -104,6 +173,11 @@ namespace Going.UI.Utils
             catch { }
             return ret;
         }
+        /// <summary>
+        /// Base64 문자열에서 SKImage를 로드합니다.
+        /// </summary>
+        /// <param name="base64">Base64로 인코딩된 이미지 데이터</param>
+        /// <returns>로드된 이미지, 실패 시 null</returns>
         public static SKImage? FromImage64(string base64)
         {
             SKImage? ret = null;
@@ -111,6 +185,12 @@ namespace Going.UI.Utils
             catch { }
             return ret;
         }
+        /// <summary>
+        /// 어셈블리 리소스에서 SKImage를 로드합니다.
+        /// </summary>
+        /// <param name="asm">리소스가 포함된 어셈블리</param>
+        /// <param name="name">리소스 이름</param>
+        /// <returns>로드된 이미지, 실패 시 null</returns>
         public static SKImage? FromAssemblyImage(Assembly asm, string name)
         {
             SKImage? ret = null;
@@ -123,6 +203,10 @@ namespace Going.UI.Utils
 
         #region Text
         #region SetExternalFonts
+        /// <summary>
+        /// 외부 폰트를 등록합니다. 기존 외부 폰트는 해제됩니다.
+        /// </summary>
+        /// <param name="fonts">폰트 이름과 폰트 데이터 바이트 배열 목록의 딕셔너리</param>
         public static void SetExternalFonts(Dictionary<string, List<byte[]>> fonts)
         {
             List<SKTypeface> disposeItems = [];
@@ -163,6 +247,9 @@ namespace Going.UI.Utils
             foreach (var v in disposeItems) v.Dispose();
         }
 
+        /// <summary>
+        /// 등록된 외부 폰트를 해제합니다. 기본 나눔고딕 폰트는 유지됩니다.
+        /// </summary>
         public static void UnloadExternalFonts()
         {
             List<SKTypeface> disposeItems = [];
@@ -191,6 +278,12 @@ namespace Going.UI.Utils
         #endregion
 
         #region GetTypeface
+        /// <summary>
+        /// 폰트 이름과 스타일에 해당하는 SKTypeface를 가져옵니다.
+        /// </summary>
+        /// <param name="fontName">폰트 이름</param>
+        /// <param name="fontStyle">폰트 스타일</param>
+        /// <returns>해당하는 SKTypeface</returns>
         public static SKTypeface GetTypeface(string fontName, GoFontStyle fontStyle)
         {
             SKTypeface ret = DefaultFontR;
@@ -223,6 +316,18 @@ namespace Going.UI.Utils
         #endregion
 
         #region DrawText
+        /// <summary>
+        /// 캔버스에 텍스트를 그립니다.
+        /// </summary>
+        /// <param name="canvas">SkiaSharp 캔버스</param>
+        /// <param name="text">출력할 텍스트</param>
+        /// <param name="fontName">폰트 이름</param>
+        /// <param name="fontStyle">폰트 스타일</param>
+        /// <param name="fontSize">폰트 크기</param>
+        /// <param name="bounds">텍스트를 그릴 영역</param>
+        /// <param name="color">텍스트 색상</param>
+        /// <param name="align">텍스트 정렬</param>
+        /// <param name="wordWrap">자동 줄바꿈 여부</param>
         public static void DrawText(SKCanvas canvas, string? text, string fontName, GoFontStyle fontStyle, float fontSize, SKRect bounds, SKColor color, GoContentAlignment align = GoContentAlignment.MiddleCenter, bool wordWrap = true)
         {
             var tf = GetTypeface(fontName, fontStyle);
@@ -263,6 +368,9 @@ namespace Going.UI.Utils
             canvas.RestoreToCount(sp);
         }
 
+        /// <summary>
+        /// 캔버스에 테두리가 있는 텍스트를 그립니다.
+        /// </summary>
         public static void DrawText(SKCanvas canvas, string? text, string fontName, GoFontStyle fontStyle, float fontSize, SKRect bounds, SKColor color, SKColor bordercolor, float bordersize=1, GoContentAlignment align = GoContentAlignment.MiddleCenter, bool wordWrap = true)
         {
             var tf = GetTypeface(fontName, fontStyle);
@@ -327,6 +435,9 @@ namespace Going.UI.Utils
         #endregion
 
         #region DrawIcon
+        /// <summary>
+        /// 캔버스에 아이콘을 그립니다.
+        /// </summary>
         public static void DrawIcon(SKCanvas canvas, string? iconString, float iconSize, SKRect bounds, SKColor color, GoContentAlignment align = GoContentAlignment.MiddleCenter)
         {
             var fi = iconString != null ? GoIconManager.GetIcon(iconString) : null;
@@ -515,6 +626,9 @@ namespace Going.UI.Utils
         #endregion
 
         #region DrawTextIcon
+        /// <summary>
+        /// 캔버스에 텍스트와 아이콘을 함께 그립니다.
+        /// </summary>
         public static void DrawTextIcon(SKCanvas canvas, string? text, string fontName, GoFontStyle fontStyle, float fontSize, string? iconString, float iconSize, GoDirectionHV direction, float gap, SKRect bounds, SKColor color, GoContentAlignment align = GoContentAlignment.MiddleCenter, bool wordWrap = true)
         {
             var fi = iconString != null ? GoIconManager.GetIcon(iconString) : null;
@@ -556,6 +670,9 @@ namespace Going.UI.Utils
         #endregion
 
         #region MeasureText
+        /// <summary>
+        /// 텍스트의 렌더링 크기를 측정합니다.
+        /// </summary>
         public static SKSize MeasureText(string text, string fontName, GoFontStyle fontStyle, float fontSize)
         {
             var tf = GetTypeface(fontName, fontStyle);
@@ -573,6 +690,9 @@ namespace Going.UI.Utils
         #endregion
 
         #region MeasureTextIcon
+        /// <summary>
+        /// 텍스트와 아이콘을 합친 렌더링 크기를 측정합니다.
+        /// </summary>
         public static SKSize MeasureTextIcon(string? text, string fontName, GoFontStyle fontStyle, float fontSize, string? iconString, float iconSize, GoDirectionHV direction, float gap)
         {
             var ico = GoIconManager.GetIcon(iconString);
@@ -732,6 +852,9 @@ namespace Going.UI.Utils
         #endregion
 
         #region Box
+        /// <summary>
+        /// 캔버스에 버튼을 그립니다. 플랫, 그라데이션 등의 스타일을 지원합니다.
+        /// </summary>
         public static void DrawButton(SKCanvas canvas, GoTheme thm, SKRect bounds, SKColor fillcolor, SKColor borderColor, GoRoundType round, float corner, bool clean = true, float borderSize = 1F, GoButtonFillStyle style = GoButtonFillStyle.Flat, bool bDown = false)
         {
             using var p = new SKPaint();
@@ -887,7 +1010,13 @@ namespace Going.UI.Utils
             }
         }
 
+        /// <summary>
+        /// 캔버스에 단색 박스를 그립니다.
+        /// </summary>
         public static void DrawBox(SKCanvas canvas, SKRect bounds, SKColor color, GoRoundType round, float corner, bool clean = true, float borderSize = 1F) => DrawBox(canvas, bounds, color, color, round, corner, clean, borderSize);
+        /// <summary>
+        /// 캔버스에 채우기 및 테두리 색상이 있는 박스를 그립니다.
+        /// </summary>
         public static void DrawBox(SKCanvas canvas, SKRect bounds, SKColor fillcolor, SKColor borderColor, GoRoundType round, float corner, bool clean = true, float borderSize = 1F)
         {
             using var p = new SKPaint();
@@ -983,6 +1112,9 @@ namespace Going.UI.Utils
         #endregion
 
         #region Circle
+        /// <summary>
+        /// 캔버스에 원을 그립니다.
+        /// </summary>
         public static void DrawCircle(SKCanvas canvas, SKRect bounds, SKColor color, bool clean = true)
         {
             using var p = new SKPaint();
@@ -998,6 +1130,9 @@ namespace Going.UI.Utils
             p.Color = color;
             canvas.DrawOval(bounds, p);
         }
+        /// <summary>
+        /// 캔버스에 지정된 중심과 반지름으로 원을 그립니다.
+        /// </summary>
         public static void DrawCircle(SKCanvas canvas, float x, float y, float radius, SKColor color, bool clean = true)
         {
             using var p = new SKPaint();
@@ -1020,6 +1155,13 @@ namespace Going.UI.Utils
         #region Devide
         #region Base
         #region Grid
+        /// <summary>
+        /// 사각형을 열과 행으로 분할하여 그리드 셀 배열을 생성합니다.
+        /// </summary>
+        /// <param name="bounds">분할할 사각형</param>
+        /// <param name="cols">열 크기 정의 배열 (예: "100px", "1*", "2*")</param>
+        /// <param name="rows">행 크기 정의 배열</param>
+        /// <returns>그리드 셀 사각형 2차원 배열</returns>
         public static SKRect[,] Grid(SKRect bounds, string[] cols, string[] rows)
         {
             int colCount = cols.Length;
@@ -1045,6 +1187,12 @@ namespace Going.UI.Utils
         }
         #endregion
         #region Columns
+        /// <summary>
+        /// 사각형을 열로 분할합니다.
+        /// </summary>
+        /// <param name="bounds">분할할 사각형</param>
+        /// <param name="cols">열 크기 정의 배열</param>
+        /// <returns>열 사각형 배열</returns>
         public static SKRect[] Columns(SKRect bounds, string[] cols)
         {
             int colCount = cols.Length;
@@ -1063,6 +1211,12 @@ namespace Going.UI.Utils
         }
         #endregion
         #region Rows
+        /// <summary>
+        /// 사각형을 행으로 분할합니다.
+        /// </summary>
+        /// <param name="bounds">분할할 사각형</param>
+        /// <param name="rows">행 크기 정의 배열</param>
+        /// <returns>행 사각형 배열</returns>
         public static SKRect[] Rows(SKRect bounds, string[] rows)
         {
             int rowCount = rows.Length;
@@ -1281,6 +1435,9 @@ namespace Going.UI.Utils
             return rtT;
         }
 
+        /// <summary>
+        /// 두 사각형을 합쳐 두 사각형을 모두 포함하는 최소 사각형을 반환합니다.
+        /// </summary>
         public static SKRect Merge(SKRect rt1, SKRect rt2)
         {
             var L = Math.Min(rt1.Left, rt2.Left);
@@ -1295,6 +1452,9 @@ namespace Going.UI.Utils
 
         #region Round
         #region Rounds
+        /// <summary>
+        /// 방향과 모서리 타입에 따라 분할된 각 항목의 모서리 둥글기 배열을 생성합니다.
+        /// </summary>
         public static GoRoundType[] Rounds(GoDirectionHV dir, GoRoundType round, int count)
         {
             var ret = new GoRoundType[count];
@@ -1346,6 +1506,9 @@ namespace Going.UI.Utils
         #endregion
 
         #region SetRound
+        /// <summary>
+        /// SKRoundRect에 모서리 둥글기를 설정합니다.
+        /// </summary>
         public static void SetRound(SKRoundRect rt, GoRoundType round, float corner)
         {
             switch (round)
@@ -1367,13 +1530,28 @@ namespace Going.UI.Utils
         #endregion
 
         #region Int
+        /// <summary>
+        /// float 값을 정수로 변환합니다.
+        /// </summary>
         public static int Int(float v) => Convert.ToInt32(v);
+        /// <summary>
+        /// SKPoint의 좌표를 정수로 변환합니다.
+        /// </summary>
         public static SKPoint Int(SKPoint v) => new SKPoint(Convert.ToInt32(v.X), Convert.ToInt32(v.Y));
+        /// <summary>
+        /// SKSize의 크기를 정수로 변환합니다.
+        /// </summary>
         public static SKSize Int(SKSize v) => new SKSize(Convert.ToInt32(v.Width), Convert.ToInt32(v.Height));
+        /// <summary>
+        /// SKRect의 좌표를 정수로 변환합니다.
+        /// </summary>
         public static SKRect Int(SKRect v) => new SKRect(Convert.ToInt32(v.Left), Convert.ToInt32(v.Top), Convert.ToInt32(v.Right), Convert.ToInt32(v.Bottom));
         #endregion
 
         #region Lamp
+        /// <summary>
+        /// 캔버스에 램프(표시등)를 그립니다.
+        /// </summary>
         public static void DrawLamp(SKCanvas canvas, GoTheme thm, SKRect bounds, SKColor OnLampColor, SKColor OffLampColor, bool OnOff, bool Shadow = true)
         {
             #region Brightness
@@ -1436,6 +1614,9 @@ namespace Going.UI.Utils
         #endregion
 
         #region FindRect
+        /// <summary>
+        /// 사각형 목록에서 대상 사각형과 겹치는 범위의 시작/끝 인덱스를 이진 탐색으로 찾습니다.
+        /// </summary>
         public static (int StartIndex, int EndIndex) FindRect(List<SKRect> rects, SKRect targetRect)
         {
             int start = BinarySearch(rects, targetRect.Top, true);
@@ -1483,6 +1664,9 @@ namespace Going.UI.Utils
         #endregion
 
         #region Color
+        /// <summary>
+        /// SKColor를 HSV(색상, 채도, 명도) double 값으로 변환합니다.
+        /// </summary>
         public static void ToHsvDouble(SKColor color, out double h, out double s, out double v)
         {
             double EPSILON = 0.001;
@@ -1525,6 +1709,9 @@ namespace Going.UI.Utils
             v = v * 100f;
         }
 
+        /// <summary>
+        /// HSV(색상, 채도, 명도) double 값을 SKColor로 변환합니다.
+        /// </summary>
         public static SKColor FromHsvDouble(double h, double s, double v)
         {
             double EPSILON = 0.001;
@@ -1590,6 +1777,9 @@ namespace Going.UI.Utils
         #endregion
 
         #region FontSize
+        /// <summary>
+        /// 자동 폰트 크기를 높이 기반으로 계산합니다.
+        /// </summary>
         public static float? FontSize(GoAutoFontSize sz, float height)
         {
             float? ret = null;
@@ -1611,6 +1801,9 @@ namespace Going.UI.Utils
         #endregion
 
         #region AllControls
+        /// <summary>
+        /// 컨테이너 내의 모든 컨트롤을 재귀적으로 수집합니다.
+        /// </summary>
         public static List<IGoControl> AllControls(IGoContainer? container)
         {
             var ls = new List<IGoControl>();
@@ -1625,6 +1818,9 @@ namespace Going.UI.Utils
             return ls;
         }
 
+        /// <summary>
+        /// 탭 페이지 내의 모든 컨트롤을 재귀적으로 수집합니다.
+        /// </summary>
         public static List<IGoControl> AllControls(GoTabPage container)
         {
             var ls = new List<IGoControl>();
@@ -1639,6 +1835,9 @@ namespace Going.UI.Utils
             return ls;
         }
 
+        /// <summary>
+        /// 서브 페이지 내의 모든 컨트롤을 재귀적으로 수집합니다.
+        /// </summary>
         public static List<IGoControl> AllControls(GoSubPage container)
         {
             var ls = new List<IGoControl>();

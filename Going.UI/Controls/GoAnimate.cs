@@ -11,14 +11,35 @@ using System.Threading.Tasks;
 
 namespace Going.UI.Controls
 {
+    /// <summary>
+    /// 애니메이션 컨트롤. ON/OFF 상태에 따라 이미지 시퀀스를 애니메이션으로 표시합니다.
+    /// </summary>
     public class GoAnimate : GoControl
     {
         #region Properties
+        /// <summary>
+        /// ON 상태에서 표시할 이미지(프레임 시퀀스)의 리소스 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoImageProperty(PCategory.Control, 0)] public string? OnImage { get; set; }
+        /// <summary>
+        /// OFF 상태에서 표시할 이미지의 리소스 이름을 가져오거나 설정합니다.
+        /// </summary>
         [GoImageProperty(PCategory.Control, 1)] public string? OffImage { get; set; }
+        /// <summary>
+        /// 이미지 스케일 모드를 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 2)] public GoImageScaleMode ScaleMode { get; set; } = GoImageScaleMode.Real;
+        /// <summary>
+        /// 모서리 둥글기 타입을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 3)] public GoRoundType Round { get; set; } = GoRoundType.Rect;
+        /// <summary>
+        /// 프레임 전환 간격(밀리초)을 가져오거나 설정합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 4)] public int Time { get; set; } = 30;
+        /// <summary>
+        /// ON/OFF 상태를 가져오거나 설정합니다. 값이 변경되면 <see cref="OnOffChanged"/> 이벤트가 발생합니다.
+        /// </summary>
         [GoProperty(PCategory.Control, 5)]
         public bool OnOff
         {
@@ -38,6 +59,9 @@ namespace Going.UI.Controls
         #endregion
 
         #region Event
+        /// <summary>
+        /// <see cref="OnOff"/> 속성 값이 변경되었을 때 발생합니다.
+        /// </summary>
         public event EventHandler? OnOffChanged;
         #endregion
 

@@ -11,26 +11,46 @@ using System.Threading.Tasks;
 
 namespace Going.Basis.Communications.TextComm.TCP
 {
+    /// <summary>
+    /// TCP 기반 STX/ETX 텍스트 통신 슬레이브 클래스.
+    /// TCP 서버로 동작하며, 마스터의 요청을 수신하고 이벤트를 통해 응답을 처리합니다.
+    /// </summary>
     public class TextCommTCPSlave
     {
         #region class : EventArgs
+        /// <summary>
+        /// 마스터로부터 메시지 요청을 수신했을 때의 이벤트 인자.
+        /// ResponseMessage에 응답을 설정하면 마스터에게 자동으로 전송됩니다.
+        /// </summary>
+        /// <param name="Slave">슬레이브 ID</param>
+        /// <param name="Command">명령 코드</param>
+        /// <param name="Message">요청 메시지 문자열</param>
         public class MessageRequestArgs(int Slave, int Command, string Message) : EventArgs
         {
+            /// <summary>슬레이브 ID를 가져옵니다.</summary>
             public int Slave { get; private set; } = Slave;
+            /// <summary>명령 코드를 가져옵니다.</summary>
             public int Command { get; private set; } = Command;
+            /// <summary>마스터로부터 수신한 요청 메시지를 가져옵니다.</summary>
             public string RequestMessage { get; private set; } = Message;
+            /// <summary>마스터에게 전송할 응답 메시지를 가져오거나 설정합니다. null이면 응답을 전송하지 않습니다.</summary>
             public string? ResponseMessage { get; set; } = null;
         }
         #endregion
 
         #region Properties
+        /// <summary>수신 대기할 로컬 포트 번호를 가져오거나 설정합니다. 기본값은 7897입니다.</summary>
         public int LocalPort { get; set; } = 7897;
+        /// <summary>수신 버퍼 크기(바이트)를 가져오거나 설정합니다. 기본값은 8192입니다.</summary>
         public int BufferSize { get; set; } = 8192;
 
+        /// <summary>슬레이브 서버가 실행 중인지 여부를 가져옵니다.</summary>
         public bool IsStart { get; private set; }
 
+        /// <summary>메시지 문자열의 인코딩을 가져오거나 설정합니다. 기본값은 ASCII입니다.</summary>
         public Encoding MessageEncoding { get; set; } = Encoding.ASCII;
 
+        /// <summary>사용자 정의 태그 데이터를 가져오거나 설정합니다.</summary>
         public object? Tag { get; set; } = null;
         #endregion
 
@@ -42,12 +62,18 @@ namespace Going.Basis.Communications.TextComm.TCP
         #endregion
 
         #region Event
+        /// <summary>마스터로부터 메시지 요청을 수신했을 때 발생합니다.</summary>
         public event EventHandler<MessageRequestArgs>? MessageRequest;
+        /// <summary>마스터 클라이언트가 연결되었을 때 발생합니다.</summary>
         public event EventHandler<SocketEventArgs>? SocketConnected;
+        /// <summary>마스터 클라이언트 연결이 끊어졌을 때 발생합니다.</summary>
         public event EventHandler<SocketEventArgs>? SocketDisconnected;
         #endregion
 
         #region Constructor
+        /// <summary>
+        /// TextCommTCPSlave 클래스의 새 인스턴스를 초기화합니다.
+        /// </summary>
         public TextCommTCPSlave()
         {
         }
@@ -55,6 +81,10 @@ namespace Going.Basis.Communications.TextComm.TCP
 
         #region Method
         #region Start
+        /// <summary>
+        /// TCP 서버 소켓을 열고 마스터 연결 수신을 시작합니다.
+        /// 연결된 각 마스터 클라이언트는 별도 태스크에서 처리됩니다.
+        /// </summary>
         public void Start()
         {
             if (!IsStart)
@@ -96,6 +126,9 @@ namespace Going.Basis.Communications.TextComm.TCP
         }
         #endregion
         #region Stop
+        /// <summary>
+        /// TCP 서버를 정지하고 모든 클라이언트 연결을 종료합니다.
+        /// </summary>
         public void Stop()
         {
             IsStart = false;

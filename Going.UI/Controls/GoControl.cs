@@ -13,47 +13,108 @@ using System.Text.Json.Serialization;
 
 namespace Going.UI.Controls
 {
+    /// <summary>
+    /// 프로퍼티 카테고리 상수를 정의하는 클래스
+    /// </summary>
     public class PCategory
     {
+        /// <summary>ID 카테고리</summary>
         public const string ID = "ID";
+        /// <summary>기본 카테고리</summary>
         public const string Basic = "Basic";
+        /// <summary>위치/크기 카테고리</summary>
         public const string Bounds = "Bounds";
+        /// <summary>컨트롤 카테고리</summary>
         public const string Control = "Control";
 
+        /// <summary>카테고리 이름 목록</summary>
         public static List<string> Names = [ID, Basic, Bounds, Control];
+        /// <summary>
+        /// 카테고리 이름으로 인덱스를 반환합니다.
+        /// </summary>
+        /// <param name="category">카테고리 이름</param>
+        /// <returns>카테고리 인덱스</returns>
         public static int Index(string category) => Names.IndexOf(category);
     }
 
+    /// <summary>
+    /// 디자인 편집기에서 프로퍼티의 카테고리와 정렬 순서를 지정하는 어트리뷰트
+    /// </summary>
+    /// <param name="category">프로퍼티 카테고리</param>
+    /// <param name="order">카테고리 내 정렬 순서</param>
     public class GoPropertyAttribute(string category, int order) : Attribute
     {
+        /// <summary>프로퍼티 카테고리</summary>
         public string Category { get; set; } = category;
+        /// <summary>카테고리 내 정렬 순서</summary>
         public int Order { get; set; } = order;
     }
 
+    /// <summary>
+    /// 크기 프로퍼티를 나타내는 어트리뷰트
+    /// </summary>
+    /// <param name="category">프로퍼티 카테고리</param>
+    /// <param name="order">카테고리 내 정렬 순서</param>
     public class GoSizePropertyAttribute(string category, int order) : GoPropertyAttribute(category, order) { }
+    /// <summary>
+    /// 복수 크기 프로퍼티를 나타내는 어트리뷰트
+    /// </summary>
+    /// <param name="category">프로퍼티 카테고리</param>
+    /// <param name="order">카테고리 내 정렬 순서</param>
     public class GoSizesPropertyAttribute(string category, int order) : GoPropertyAttribute(category, order) { }
+    /// <summary>
+    /// 이미지 프로퍼티를 나타내는 어트리뷰트
+    /// </summary>
+    /// <param name="category">프로퍼티 카테고리</param>
+    /// <param name="order">카테고리 내 정렬 순서</param>
     public class GoImagePropertyAttribute(string category, int order) : GoPropertyAttribute(category, order) { }
+    /// <summary>
+    /// 글꼴 이름 프로퍼티를 나타내는 어트리뷰트
+    /// </summary>
+    /// <param name="category">프로퍼티 카테고리</param>
+    /// <param name="order">카테고리 내 정렬 순서</param>
     public class GoFontNamePropertyAttribute(string category, int order) : GoPropertyAttribute(category, order) { }
+    /// <summary>
+    /// 여러 줄 텍스트 프로퍼티를 나타내는 어트리뷰트
+    /// </summary>
+    /// <param name="category">프로퍼티 카테고리</param>
+    /// <param name="order">카테고리 내 정렬 순서</param>
     public class GoMultiLinePropertyAttribute(string category, int order) : GoPropertyAttribute(category, order) { }
 
+    /// <summary>
+    /// 모든 Going.UI 컨트롤의 기본 클래스. 위치, 크기, 마우스/키보드 이벤트 처리 등 공통 기능을 제공합니다.
+    /// </summary>
     public class GoControl : IGoControl, IDisposable
     {
         #region Properties
+        /// <summary>전역 롱클릭 판정 시간 (밀리초)</summary>
         public static int GlobalLongClickTime { get; set; } = 1000;
 
+        /// <summary>컨트롤의 고유 식별자</summary>
         public Guid Id { get; init; } = Guid.NewGuid();
+        /// <summary>컨트롤 이름</summary>
         [GoProperty(PCategory.Basic, 0)] public string? Name { get; set; }
+        /// <summary>컨트롤 표시 여부</summary>
         [GoProperty(PCategory.Basic, 1)] public virtual bool Visible { get; set; } = true;
+        /// <summary>컨트롤 활성화 여부</summary>
         [GoProperty(PCategory.Basic, 2)] public virtual bool Enabled { get; set; } = true;
+        /// <summary>롱클릭 사용 여부</summary>
         [GoProperty(PCategory.Basic, 3)] public bool UseLongClick { get; set; } = false;
+        /// <summary>롱클릭 판정 시간 (밀리초). null이면 <see cref="GlobalLongClickTime"/>을 사용합니다.</summary>
         [GoProperty(PCategory.Basic, 4)] public int? LongClickTime { get; set; } = null;
 
+        /// <summary>디자인 편집기에서 선택 가능 여부</summary>
         public bool Selectable { get; protected set; } = false;
+        /// <summary>사용자 정의 데이터를 저장하는 태그</summary>
         [JsonIgnore] public object? Tag { get; set; }
+        /// <summary>화면 기준 X 좌표</summary>
         [JsonIgnore] public float ScreenX => Parent != null && Parent is GoControl pc ? pc.ScreenX + Parent.PanelBounds.Left + X : X;
+        /// <summary>화면 기준 Y 좌표</summary>
         [JsonIgnore] public float ScreenY => Parent != null && Parent is GoControl pc ? pc.ScreenY + Parent.PanelBounds.Top + Y : Y;
 
+        /// <summary>컨트롤의 경계 영역</summary>
         [GoProperty(PCategory.Bounds, 0)] public SKRect Bounds { get => bounds; set => bounds = value; }
+        /// <summary>컨트롤의 X 좌표 (왼쪽 위치)</summary>
         [GoProperty(PCategory.Bounds, 1), JsonIgnore]
         public float X
         {
@@ -67,6 +128,7 @@ namespace Going.UI.Controls
             }
         }
 
+        /// <summary>컨트롤의 Y 좌표 (위쪽 위치)</summary>
         [GoProperty(PCategory.Bounds, 2), JsonIgnore]
         public float Y
         {
@@ -80,18 +142,30 @@ namespace Going.UI.Controls
             }
         }
 
+        /// <summary>컨트롤 너비</summary>
         [GoProperty(PCategory.Bounds, 3), JsonIgnore] public float Width { get => bounds.Width; set => bounds.Right = value + bounds.Left; }
+        /// <summary>컨트롤 높이</summary>
         [GoProperty(PCategory.Bounds, 4), JsonIgnore] public float Height { get => bounds.Height; set => bounds.Bottom = value + bounds.Top; }
+        /// <summary>컨트롤 왼쪽 좌표</summary>
         [GoProperty(PCategory.Bounds, 5), JsonIgnore] public float Left { get => bounds.Left; set => bounds.Left = value; }
+        /// <summary>컨트롤 위쪽 좌표</summary>
         [GoProperty(PCategory.Bounds, 6), JsonIgnore] public float Top { get => bounds.Top; set => bounds.Top = value; }
+        /// <summary>컨트롤 오른쪽 좌표</summary>
         [GoProperty(PCategory.Bounds, 7), JsonIgnore] public float Right { get => bounds.Right; set => bounds.Right = value; }
+        /// <summary>컨트롤 아래쪽 좌표</summary>
         [GoProperty(PCategory.Bounds, 8), JsonIgnore] public float Bottom { get => bounds.Bottom; set => bounds.Bottom = value; }
+        /// <summary>컨트롤의 도킹 스타일</summary>
         [GoProperty(PCategory.Bounds, 9)] public GoDockStyle Dock { get; set; } = GoDockStyle.None;
+        /// <summary>컨트롤의 외부 여백</summary>
         [GoProperty(PCategory.Bounds, 10)] public GoPadding Margin { get; set; } = new(3, 3, 3, 3);
-        
+
+        /// <summary>첫 번째 렌더링 여부</summary>
         [JsonIgnore] public bool FirstRender { get; internal set; } = true;
+        /// <summary>컨트롤 화면 표시 상태</summary>
         [JsonIgnore] public bool View { get; internal set; } = true;
+        /// <summary>부모 컨테이너</summary>
         [JsonIgnore] public IGoContainer? Parent { get; internal set; }
+        /// <summary>디자인 편집기 객체</summary>
         [JsonIgnore] public GoDesign? Design { get; internal set; }
 
         [JsonIgnore] internal bool _MouseDown_ => bDown;
@@ -100,16 +174,26 @@ namespace Going.UI.Controls
         #endregion
 
         #region Event
+        /// <summary>마우스 클릭 시 발생하는 이벤트</summary>
         public event EventHandler<GoMouseClickEventArgs>? MouseClicked;
+        /// <summary>마우스 롱클릭 시 발생하는 이벤트</summary>
         public event EventHandler<GoMouseClickEventArgs>? MouseLongClicked;
+        /// <summary>롱클릭이 취소되었을 때 발생하는 이벤트</summary>
         public event EventHandler<GoMouseClickEventArgs>? MouseLongClickCanceled;
+        /// <summary>마우스 버튼을 눌렀을 때 발생하는 이벤트</summary>
         public event EventHandler<GoMouseClickEventArgs>? MouseDown;
+        /// <summary>마우스 버튼을 놓았을 때 발생하는 이벤트</summary>
         public event EventHandler<GoMouseClickEventArgs>? MouseUp;
+        /// <summary>마우스 더블클릭 시 발생하는 이벤트</summary>
         public event EventHandler<GoMouseClickEventArgs>? MouseDoubleClicked;
+        /// <summary>마우스가 이동할 때 발생하는 이벤트</summary>
         public event EventHandler<GoMouseEventArgs>? MouseMove;
+        /// <summary>마우스 휠 스크롤 시 발생하는 이벤트</summary>
         public event EventHandler<GoMouseEventArgs>? MouseWheel;
+        /// <summary>컨트롤이 그려진 후 발생하는 이벤트</summary>
         public event EventHandler<GoDrawnEventArgs>? Drawn;
 
+        /// <summary>드래그 앤 드롭 시 발생하는 이벤트</summary>
         public event EventHandler<GoDragEventArgs>? DragDrop;
         #endregion
 
@@ -143,6 +227,10 @@ namespace Going.UI.Controls
         #endregion
 
         #region Fire
+        /// <summary>
+        /// 컨트롤을 초기화합니다. 부모 컨테이너에서 호출됩니다.
+        /// </summary>
+        /// <param name="design">디자인 편집기 객체</param>
         // 여기서 Parent에서 Design객체를 처음 만들어서 여기서 다른 객체에서 사용됨
         public void FireInit(GoDesign? design)
         {
@@ -150,6 +238,11 @@ namespace Going.UI.Controls
             OnInit(design);
         }
 
+        /// <summary>
+        /// 컨트롤을 그립니다.
+        /// </summary>
+        /// <param name="canvas">SkiaSharp 캔버스</param>
+        /// <param name="thm">테마</param>
         public void FireDraw(SKCanvas canvas, GoTheme thm)
         {
             if (Visible)
@@ -163,11 +256,20 @@ namespace Going.UI.Controls
             }
         }
 
+        /// <summary>컨트롤이 표시될 때 호출합니다.</summary>
         public void FireShow() { OnShow(); }
+        /// <summary>컨트롤이 숨겨질 때 호출합니다.</summary>
         public void FireHide() { OnHide(); }
 
+        /// <summary>컨트롤의 상태를 업데이트합니다.</summary>
         public void FireUpdate() { OnUpdate(); }
         
+        /// <summary>
+        /// 마우스 버튼 누름 이벤트를 발생시킵니다.
+        /// </summary>
+        /// <param name="x">마우스 X 좌표</param>
+        /// <param name="y">마우스 Y 좌표</param>
+        /// <param name="button">눌린 마우스 버튼</param>
         public void FireMouseDown(float x, float y, GoMouseButton button)
         {
             if (Visible)
@@ -206,6 +308,12 @@ namespace Going.UI.Controls
             }
         }
 
+        /// <summary>
+        /// 마우스 버튼 놓음 이벤트를 발생시킵니다.
+        /// </summary>
+        /// <param name="x">마우스 X 좌표</param>
+        /// <param name="y">마우스 Y 좌표</param>
+        /// <param name="button">놓은 마우스 버튼</param>
         public void FireMouseUp(float x, float y, GoMouseButton button)
         {
             if (Visible)
@@ -224,6 +332,12 @@ namespace Going.UI.Controls
             }
         }
 
+        /// <summary>
+        /// 마우스 더블클릭 이벤트를 발생시킵니다.
+        /// </summary>
+        /// <param name="x">마우스 X 좌표</param>
+        /// <param name="y">마우스 Y 좌표</param>
+        /// <param name="button">클릭한 마우스 버튼</param>
         public void FireMouseDoubleClick(float x, float y, GoMouseButton button)
         {
             if (Visible)
@@ -232,6 +346,11 @@ namespace Going.UI.Controls
             }
         }
         
+        /// <summary>
+        /// 마우스 이동 이벤트를 발생시킵니다.
+        /// </summary>
+        /// <param name="x">마우스 X 좌표</param>
+        /// <param name="y">마우스 Y 좌표</param>
         public void FireMouseMove(float x, float y)
         {
             if (Visible)
@@ -240,6 +359,12 @@ namespace Going.UI.Controls
             }
         }
         
+        /// <summary>
+        /// 마우스 휠 이벤트를 발생시킵니다.
+        /// </summary>
+        /// <param name="x">마우스 X 좌표</param>
+        /// <param name="y">마우스 Y 좌표</param>
+        /// <param name="delta">휠 스크롤 량</param>
         public void FireMouseWheel(float x, float y, float delta)
         {
             if (Visible)
@@ -248,6 +373,13 @@ namespace Going.UI.Controls
             }
         }
         
+        /// <summary>
+        /// 키 누름 이벤트를 발생시킵니다.
+        /// </summary>
+        /// <param name="Shift">Shift 키 눌림 여부</param>
+        /// <param name="Control">Control 키 눌림 여부</param>
+        /// <param name="Alt">Alt 키 눌림 여부</param>
+        /// <param name="key">눌린 키</param>
         public void FireKeyDown(bool Shift, bool Control, bool Alt, GoKeys key)
         {
             if (Visible)
@@ -256,6 +388,13 @@ namespace Going.UI.Controls
             }
         }
 
+        /// <summary>
+        /// 키 놓음 이벤트를 발생시킵니다.
+        /// </summary>
+        /// <param name="Shift">Shift 키 눌림 여부</param>
+        /// <param name="Control">Control 키 눌림 여부</param>
+        /// <param name="Alt">Alt 키 눌림 여부</param>
+        /// <param name="key">놓은 키</param>
         public void FireKeyUp(bool Shift, bool Control, bool Alt, GoKeys key)
         {
             if (Visible)
@@ -264,6 +403,7 @@ namespace Going.UI.Controls
             }
         }
 
+        /// <summary>리소스를 해제합니다.</summary>
         public void Dispose()
         {
             OnDispose();
@@ -271,11 +411,23 @@ namespace Going.UI.Controls
         #endregion
 
         #region Areas
+        /// <summary>
+        /// 컨트롤의 영역 사전을 반환합니다. 기본적으로 "Content" 영역을 포함합니다.
+        /// </summary>
+        /// <returns>영역 이름과 사각형으로 구성된 사전</returns>
         public virtual Dictionary<string, SKRect> Areas() => new() { { "Content", Util.FromRect(0, 0, Width - 1, Height - 1) } };
         #endregion
 
         #region Etc
+        /// <summary>
+        /// 컨트롤의 화면 표시 상태를 설정합니다.
+        /// </summary>
+        /// <param name="view">표시 여부</param>
         public void SetView(bool view) => View = view;
+        /// <summary>
+        /// 화면 갱신 콜백 메서드를 설정합니다.
+        /// </summary>
+        /// <param name="method">갱신 시 호출할 메서드</param>
         public void SetInvalidate(Action? method) => actInv = method;
 
         protected void Invalidate()
@@ -290,6 +442,10 @@ namespace Going.UI.Controls
         #endregion
 
         #region SetParent
+        /// <summary>
+        /// 부모 컨테이너를 설정합니다. 내부 사용 전용입니다.
+        /// </summary>
+        /// <param name="parent">부모 컨테이너</param>
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public void SetParent(IGoContainer? parent) => Parent = parent;
         #endregion

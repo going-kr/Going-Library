@@ -7,18 +7,53 @@ using System.Threading.Tasks;
 
 namespace Going.UI.Tools
 {
+    /// <summary>
+    /// 2D 충돌 감지 유틸리티 클래스입니다. 사각형, 원, 타원, 선분, 다각형 간의 충돌 검사를 지원합니다.
+    /// </summary>
     public class CollisionTool
     {
         #region Check
         #region Check(Rectangle, X, Y)
+        /// <summary>
+        /// 사각형 영역 안에 점이 포함되는지 확인합니다.
+        /// </summary>
+        /// <param name="rt">사각형 영역</param>
+        /// <param name="pt">확인할 점</param>
+        /// <returns>점이 사각형 안에 있으면 true</returns>
         public static bool Check(SKRect rt, SKPoint pt) => CollisionTool.Check(rt, pt.X, pt.Y);
+        /// <summary>
+        /// 사각형 영역 안에 좌표가 포함되는지 확인합니다.
+        /// </summary>
+        /// <param name="rt">사각형 영역</param>
+        /// <param name="x">X 좌표</param>
+        /// <param name="y">Y 좌표</param>
+        /// <returns>좌표가 사각형 안에 있으면 true</returns>
         public static bool Check(SKRect rt, float x, float y) => rt.Left <= x && rt.Top <= y && rt.Left + rt.Width >= x && rt.Top + rt.Height >= y;
+        /// <summary>
+        /// 사각형 영역 안에 정수 좌표가 포함되는지 확인합니다.
+        /// </summary>
+        /// <param name="rt">사각형 영역</param>
+        /// <param name="x">X 좌표</param>
+        /// <param name="y">Y 좌표</param>
+        /// <returns>좌표가 사각형 안에 있으면 true</returns>
         public static bool Check(SKRect rt, int x, int y) => rt.Left <= x && rt.Top <= y && rt.Left + rt.Width >= x && rt.Top + rt.Height >= y;
         #endregion
         #region Check(Rectangle, Rectangle)
+        /// <summary>
+        /// 두 사각형이 겹치는지 확인합니다.
+        /// </summary>
+        /// <param name="rt1">첫 번째 사각형</param>
+        /// <param name="rt2">두 번째 사각형</param>
+        /// <returns>두 사각형이 겹치면 true</returns>
         public static bool Check(SKRect rt1, SKRect rt2) => (rt2.Right >= rt1.Left && rt1.Right >= rt2.Left && rt2.Bottom >= rt1.Top && rt1.Bottom >= rt2.Top);
         #endregion
         #region CheckCircle(Rectangle, Point)
+        /// <summary>
+        /// 사각형 내접원 안에 점이 포함되는지 확인합니다.
+        /// </summary>
+        /// <param name="rt1">원을 내접시킬 사각형</param>
+        /// <param name="pt">확인할 점</param>
+        /// <returns>점이 원 안에 있으면 true</returns>
         public static bool CheckCircle(SKRect rt1, SKPoint pt)
         {
             var gap = Math.Min(rt1.Width, rt1.Height) / 2;
@@ -27,6 +62,12 @@ namespace Going.UI.Tools
         }
         #endregion
         #region CheckEllipse
+        /// <summary>
+        /// 타원 안에 점이 포함되는지 확인합니다.
+        /// </summary>
+        /// <param name="ellipse">타원의 경계 사각형</param>
+        /// <param name="pt">확인할 점</param>
+        /// <returns>점이 타원 안에 있으면 true</returns>
         public static bool CheckEllipse(SKRect ellipse, SKPoint pt)
         {
             EllipseCollision e = new EllipseCollision(10);
@@ -34,6 +75,12 @@ namespace Going.UI.Tools
             return e.Collide(cp.X, cp.Y, ellipse.Width / 2F, ellipse.Height / 2F, pt.X, pt.Y, 0.1);
         }
 
+        /// <summary>
+        /// 두 타원이 겹치는지 확인합니다.
+        /// </summary>
+        /// <param name="ellipse1">첫 번째 타원의 경계 사각형</param>
+        /// <param name="ellipse2">두 번째 타원의 경계 사각형</param>
+        /// <returns>두 타원이 겹치면 true</returns>
         public static bool CheckEllipse(SKRect ellipse1, SKRect ellipse2)
         {
             EllipseCollision e = new EllipseCollision(10);
@@ -43,18 +90,77 @@ namespace Going.UI.Tools
         }
         #endregion
         #region CheckVertical
+        /// <summary>
+        /// 두 사각형의 수직 영역이 겹치는지 확인합니다.
+        /// </summary>
+        /// <param name="rt1">첫 번째 사각형</param>
+        /// <param name="rt2">두 번째 사각형</param>
+        /// <returns>수직으로 겹치면 true</returns>
         public static bool CheckVertical(SKRect rt1, SKRect rt2) { return (rt2.Bottom >= rt1.Top && rt1.Bottom >= rt2.Top); }
+        /// <summary>
+        /// 두 수직 범위가 겹치는지 확인합니다.
+        /// </summary>
+        /// <param name="Top1">첫 번째 상단 값</param>
+        /// <param name="Bottom1">첫 번째 하단 값</param>
+        /// <param name="Top2">두 번째 상단 값</param>
+        /// <param name="Bottom2">두 번째 하단 값</param>
+        /// <returns>수직으로 겹치면 true</returns>
         public static bool CheckVertical(int Top1, int Bottom1, int Top2, int Bottom2) { return (Bottom2 >= Top1 && Bottom1 >= Top2); }
+        /// <summary>
+        /// 두 수직 범위가 겹치는지 확인합니다.
+        /// </summary>
+        /// <param name="Top1">첫 번째 상단 값</param>
+        /// <param name="Bottom1">첫 번째 하단 값</param>
+        /// <param name="Top2">두 번째 상단 값</param>
+        /// <param name="Bottom2">두 번째 하단 값</param>
+        /// <returns>수직으로 겹치면 true</returns>
         public static bool CheckVertical(float Top1, float Bottom1, float Top2, float Bottom2) { return (Bottom2 >= Top1 && Bottom1 >= Top2); }
         #endregion
         #region CheckHorizon
+        /// <summary>
+        /// 두 사각형의 수평 영역이 겹치는지 확인합니다.
+        /// </summary>
+        /// <param name="rt1">첫 번째 사각형</param>
+        /// <param name="rt2">두 번째 사각형</param>
+        /// <returns>수평으로 겹치면 true</returns>
         public static bool CheckHorizon(SKRect rt1, SKRect rt2) { return (rt2.Right >= rt1.Left && rt1.Right >= rt2.Left); }
+        /// <summary>
+        /// 두 수평 범위가 겹치는지 확인합니다.
+        /// </summary>
+        /// <param name="Left1">첫 번째 좌측 값</param>
+        /// <param name="Right1">첫 번째 우측 값</param>
+        /// <param name="Left2">두 번째 좌측 값</param>
+        /// <param name="Right2">두 번째 우측 값</param>
+        /// <returns>수평으로 겹치면 true</returns>
         public static bool CheckHorizon(int Left1, int Right1, int Left2, int Right2) { return (Right2 >= Left1 && Right1 >= Left2); }
+        /// <summary>
+        /// 두 수평 범위가 겹치는지 확인합니다.
+        /// </summary>
+        /// <param name="Left1">첫 번째 좌측 값</param>
+        /// <param name="Right1">첫 번째 우측 값</param>
+        /// <param name="Left2">두 번째 좌측 값</param>
+        /// <param name="Right2">두 번째 우측 값</param>
+        /// <returns>수평으로 겹치면 true</returns>
         public static bool CheckHorizon(float Left1, float Right1, float Left2, float Right2) { return (Right2 >= Left1 && Right1 >= Left2); }
         #endregion
         #region CheckLine
+        /// <summary>
+        /// 점이 선분으로부터 지정된 거리 이내에 있는지 확인합니다.
+        /// </summary>
+        /// <param name="p1">선분의 시작점</param>
+        /// <param name="p2">선분의 끝점</param>
+        /// <param name="Location">확인할 점</param>
+        /// <param name="Dist">허용 거리</param>
+        /// <returns>점이 선분 근처에 있으면 true</returns>
         public static bool CheckLine(SKPoint p1, SKPoint p2, SKPoint Location, float Dist) { return Math.Abs(MathTool.GetDistance(p1, p2, Location)) < Dist; }
 
+        /// <summary>
+        /// 선분이 사각형과 교차하는지 확인합니다.
+        /// </summary>
+        /// <param name="p1">선분의 시작점</param>
+        /// <param name="p2">선분의 끝점</param>
+        /// <param name="rt">사각형 영역</param>
+        /// <returns>선분이 사각형과 교차하면 true</returns>
         public static bool CheckLine(SKPoint p1, SKPoint p2, SKRect rt)
         {
             var left = CheckLine(p1, p2, new SKPoint(rt.Left, rt.Top), new SKPoint(rt.Left, rt.Bottom));
@@ -65,6 +171,14 @@ namespace Going.UI.Tools
             return left || right || top || bottom || (rt.Contains(p1) || rt.Contains(p2));
         }
 
+        /// <summary>
+        /// 두 선분이 교차하는지 확인합니다.
+        /// </summary>
+        /// <param name="Line1Start">첫 번째 선분의 시작점</param>
+        /// <param name="Line1End">첫 번째 선분의 끝점</param>
+        /// <param name="Line2Start">두 번째 선분의 시작점</param>
+        /// <param name="Line2End">두 번째 선분의 끝점</param>
+        /// <returns>두 선분이 교차하면 true</returns>
         public static bool CheckLine(SKPoint Line1Start, SKPoint Line1End, SKPoint Line2Start, SKPoint Line2End)
         {
             var x1 = Line1Start.X;
@@ -85,6 +199,12 @@ namespace Going.UI.Tools
         }
         #endregion
         #region CheckPolygon
+        /// <summary>
+        /// 두 다각형이 겹치는지 확인합니다. SAT(Separating Axis Theorem) 알고리즘을 사용합니다.
+        /// </summary>
+        /// <param name="poly1">첫 번째 다각형의 꼭짓점 배열</param>
+        /// <param name="poly2">두 번째 다각형의 꼭짓점 배열</param>
+        /// <returns>두 다각형이 겹치면 true</returns>
         public static bool CheckPolygon(SKPoint[] poly1, SKPoint[] poly2)
         {
             PolygonForCollision p1 = new PolygonForCollision();
