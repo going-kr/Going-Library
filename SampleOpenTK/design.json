@@ -1329,6 +1329,28 @@
           "Bottom": 3
         }
       }
+    },
+    "PageFlow": {
+      "Type": "GoPage",
+      "Value": {
+        "Childrens": [],
+        "BackgroundImage": null,
+        "Id": "f6a8412d-be68-49c0-b41e-0cea2e9a3b1b",
+        "Name": "PageFlow",
+        "Visible": true,
+        "Enabled": true,
+        "UseLongClick": false,
+        "LongClickTime": null,
+        "Selectable": false,
+        "Bounds": "0,50,800,480",
+        "Dock": 0,
+        "Margin": {
+          "Left": 3,
+          "Top": 3,
+          "Right": 3,
+          "Bottom": 3
+        }
+      }
     }
   },
   "Windows": {},
@@ -1402,6 +1424,12 @@
               "Text": "DataGrid",
               "Tag": null,
               "PageName": "PageDataGrid"
+            },
+            {
+              "IconString": null,
+              "Text": "Flow",
+              "Tag": null,
+              "PageName": "PageFlow"
             }
           ],
           "Direction": 0,

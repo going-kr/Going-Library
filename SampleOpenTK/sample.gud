@@ -1329,6 +1329,180 @@
           "Bottom": 3
         }
       }
+    },
+    "PageFlow": {
+      "Type": "GoPage",
+      "Value": {
+        "Childrens": [
+          {
+            "Type": "FsFlowSystemPanel",
+            "Value": {
+              "Childrens": [
+                {
+                  "Type": "FsSiloTank",
+                  "Value": {
+                    "FontName": "\uB098\uB214\uACE0\uB515",
+                    "FontStyle": 0,
+                    "FontSize": 18,
+                    "TextColor": "Fore",
+                    "FillColor": "DeepSkyBlue",
+                    "EmptyColor": "Base1",
+                    "FrameColor": "Base4",
+                    "Value": 0,
+                    "Minimum": 0,
+                    "Maximum": 100,
+                    "Format": "0",
+                    "UseInlet": false,
+                    "InletPosition": 1,
+                    "UseMixer": false,
+                    "MixerOnOff": false,
+                    "Id": "3de96546-6182-4aa5-893a-eb4e62069958",
+                    "Name": null,
+                    "Visible": true,
+                    "Enabled": true,
+                    "UseLongClick": false,
+                    "LongClickTime": null,
+                    "Selectable": false,
+                    "Bounds": "16,10,166,160",
+                    "Dock": 0,
+                    "Margin": {
+                      "Left": 3,
+                      "Top": 3,
+                      "Right": 3,
+                      "Bottom": 3
+                    }
+                  }
+                },
+                {
+                  "Type": "FsSiloTank",
+                  "Value": {
+                    "FontName": "\uB098\uB214\uACE0\uB515",
+                    "FontStyle": 0,
+                    "FontSize": 18,
+                    "TextColor": "Fore",
+                    "FillColor": "DeepSkyBlue",
+                    "EmptyColor": "Base1",
+                    "FrameColor": "Base4",
+                    "Value": 0,
+                    "Minimum": 0,
+                    "Maximum": 100,
+                    "Format": "0",
+                    "UseInlet": false,
+                    "InletPosition": 1,
+                    "UseMixer": false,
+                    "MixerOnOff": false,
+                    "Id": "1eca4ebd-8b1e-4138-9d41-8ac71824eeca",
+                    "Name": null,
+                    "Visible": true,
+                    "Enabled": true,
+                    "UseLongClick": false,
+                    "LongClickTime": null,
+                    "Selectable": false,
+                    "Bounds": "16,212,166,362",
+                    "Dock": 0,
+                    "Margin": {
+                      "Left": 3,
+                      "Top": 3,
+                      "Right": 3,
+                      "Bottom": 3
+                    }
+                  }
+                },
+                {
+                  "Type": "FsValve",
+                  "Value": {
+                    "OnColor": "Lime",
+                    "OffColor": "Red",
+                    "FrameColor": "Base4",
+                    "OnOff": false,
+                    "Rotate": 0,
+                    "Id": "9dee4649-bb20-448e-b7cd-0493204deb2b",
+                    "Name": null,
+                    "Visible": true,
+                    "Enabled": true,
+                    "UseLongClick": false,
+                    "LongClickTime": null,
+                    "Selectable": false,
+                    "Bounds": "230,149,309,223",
+                    "Dock": 0,
+                    "Margin": {
+                      "Left": 3,
+                      "Top": 3,
+                      "Right": 3,
+                      "Bottom": 3
+                    }
+                  }
+                },
+                {
+                  "Type": "FsValve",
+                  "Value": {
+                    "OnColor": "Lime",
+                    "OffColor": "Red",
+                    "FrameColor": "Base4",
+                    "OnOff": false,
+                    "Rotate": 0,
+                    "Id": "d44bc38f-e7b0-4ab5-b442-fdf97de78750",
+                    "Name": null,
+                    "Visible": true,
+                    "Enabled": true,
+                    "UseLongClick": false,
+                    "LongClickTime": null,
+                    "Selectable": false,
+                    "Bounds": "230,339,309,413",
+                    "Dock": 0,
+                    "Margin": {
+                      "Left": 3,
+                      "Top": 3,
+                      "Right": 3,
+                      "Bottom": 3
+                    }
+                  }
+                }
+              ],
+              "BaseWidth": null,
+              "BaseHeight": null,
+              "PanelAlignment": 4,
+              "PipeSize": 20,
+              "FrameSize": 5,
+              "EmptyColor": "Base1",
+              "MixedColor": "Magenta",
+              "FrameColor": "Base4",
+              "Connections": [],
+              "Id": "377106fa-2716-47d9-ac56-8cd733bfbe76",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": false,
+              "Bounds": "3,3,796,426",
+              "Dock": 5,
+              "Margin": {
+                "Left": 3,
+                "Top": 3,
+                "Right": 3,
+                "Bottom": 3
+              }
+            }
+          }
+        ],
+        "BackgroundImage": null,
+        "Id": "f6a8412d-be68-49c0-b41e-0cea2e9a3b1b",
+        "Name": "PageFlow",
+        "Visible": true,
+        "Enabled": true,
+        "UseLongClick": false,
+        "LongClickTime": null,
+        "Selectable": false,
+        "Bounds": "0,50,800,480",
+        "Dock": 0,
+        "Margin": {
+          "Left": 3,
+          "Top": 3,
+          "Right": 3,
+          "Bottom": 3
+        }
+      }
     }
   },
   "Windows": {},
@@ -1402,6 +1576,12 @@
               "Text": "DataGrid",
               "Tag": null,
               "PageName": "PageDataGrid"
+            },
+            {
+              "IconString": null,
+              "Text": "Flow",
+              "Tag": null,
+              "PageName": "PageFlow"
             }
           ],
           "Direction": 0,

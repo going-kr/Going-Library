@@ -1,6 +1,7 @@
 ﻿using Going.UI.Controls;
 using Going.UI.Datas;
 using Going.UI.Enums;
+using Going.UI.FlowSystem;
 using Going.UI.ImageCanvas;
 using Going.UIEditor.Utils;
 using System;
@@ -35,6 +36,7 @@ namespace Going.UIEditor.Windows
             toolBox.Categories.Add(new GoToolCategory { Text = LM.Controls });
             toolBox.Categories.Add(new GoToolCategory { Text = LM.Containers });
             toolBox.Categories.Add(new GoToolCategory { Text = LM.ImageCanvas });
+            toolBox.Categories.Add(new GoToolCategory { Text = "FlowSystem" });
             #endregion
 
             #region LoadItem
@@ -73,6 +75,13 @@ namespace Going.UIEditor.Windows
                 toolBox.Categories[2].Items.AddRange(lsIcContainers.Select(x => new GoToolItem { Text = x.IsGenericType ? x.Name.Split('`').FirstOrDefault() + $"<{NumberTypeName(x.GenericTypeArguments[0])}>" : x.Name, Tag = x }));
                 toolBox.Categories[2].Items.AddRange(lsIcControls.Select(x => new GoToolItem { Text = x.IsGenericType ? x.Name.Split('`').FirstOrDefault() + $"<{NumberTypeName(x.GenericTypeArguments[0])}>" : x.Name, Tag = x }));
 
+                var lsFsControls = types.Where(x => x.FullName?.StartsWith("Going.UI.FlowSystem.") ?? false)
+                    .Where(x => FindType(x, typeof(FsFlowObject)) && !FindType(x, typeof(Going.UI.Containers.GoContainer)) && !x.IsAbstract && !x.IsGenericType).ToList();
+                var lsFsContainers = types.Where(x => x.FullName?.StartsWith("Going.UI.FlowSystem.") ?? false)
+                    .Where(x => FindType(x, typeof(Going.UI.Containers.GoContainer)) && !x.IsAbstract && !x.IsGenericType).ToList();
+
+                toolBox.Categories[3].Items.AddRange(lsFsContainers.Select(x => new GoToolItem { Text = x.Name.StartsWith("Fs") ? x.Name[2..] : x.Name, Tag = x }));
+                toolBox.Categories[3].Items.AddRange(lsFsControls.Select(x => new GoToolItem { Text = x.Name.StartsWith("Fs") ? x.Name[2..] : x.Name, Tag = x }));
             }
             #endregion
 

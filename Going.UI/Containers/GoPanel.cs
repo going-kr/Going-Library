@@ -62,32 +62,40 @@ namespace Going.UI.Containers
         /// </summary>
         [GoProperty(PCategory.Control, 8)] public string PanelColor { get; set; } = "Base2";
         /// <summary>
+        /// 테두리 색상을 가져오거나 설정합니다. 테마 색상 이름을 사용합니다.
+        /// </summary>
+        [GoProperty(PCategory.Control, 9)] public string BorderColor { get; set; } = "Base3";
+        /// <summary>
         /// 모서리 라운드 타입을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 9)] public GoRoundType Round { get; set; } = GoRoundType.All;
+        [GoProperty(PCategory.Control, 10)] public GoRoundType Round { get; set; } = GoRoundType.All;
 
         /// <summary>
         /// 배경을 그릴지 여부를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 10)] public bool BackgroundDraw { get; set; } = true;
+        [GoProperty(PCategory.Control, 11)] public bool BackgroundDraw { get; set; } = true;
         /// <summary>
         /// 테두리만 그릴지 여부를 가져오거나 설정합니다. true이면 배경을 투명하게 하고 테두리만 표시합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 11)] public bool BorderOnly { get; set; } = false;
+        [GoProperty(PCategory.Control, 12)] public bool BorderOnly { get; set; } = false;
 
         /// <summary>
         /// 제목 영역의 높이를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 12)] public float TitleHeight { get; set; } = 40;
+        [GoProperty(PCategory.Control, 13)] public float TitleHeight { get; set; } = 40;
+        /// <summary>
+        /// 제목 영역과 콘텐츠 영역 사이의 구분선 표시 여부를 가져오거나 설정합니다.
+        /// </summary>
+        [GoProperty(PCategory.Control, 14)] public bool TitleDivider { get; set; } = true;
 
         /// <summary>
         /// 제목 영역에 표시할 버튼 항목 목록을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 13)] public List<GoButtonItem> Buttons { get; set; } = [];
+        [GoProperty(PCategory.Control, 15)] public List<GoButtonItem> Buttons { get; set; } = [];
         /// <summary>
         /// 버튼 영역의 전체 너비를 가져오거나 설정합니다. null이면 버튼이 표시되지 않습니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 14)] public float? ButtonWidth { get; set; }
+        [GoProperty(PCategory.Control, 16)] public float? ButtonWidth { get; set; }
 
         /// <summary>
         /// 자식 컨트롤 목록을 가져옵니다.
@@ -125,7 +133,7 @@ namespace Going.UI.Containers
         {
             var cText = thm.ToColor(TextColor);
             var cPanel = thm.ToColor(PanelColor);
-            var cBorder = cPanel.BrightnessTransmit(thm.BorderBrightness); 
+            var cBorder = thm.ToColor(BorderColor);
             var rts = Areas();
             var rtBox = rts["Content"];
             var rtTitle = rts["Title"];
@@ -135,13 +143,16 @@ namespace Going.UI.Containers
 
             if (BackgroundDraw)
             {
-                Util.DrawBox(canvas, rtBox, BorderOnly ? SKColors.Transparent : cPanel, cPanel, Round, thm.Corner);
+                Util.DrawBox(canvas, rtBox, BorderOnly ? SKColors.Transparent : cPanel, cBorder, Round, thm.Corner);
 
-                using var p = new SKPaint { IsAntialias = false };
-                using var pe = SKPathEffect.CreateDash([3, 3], 2);
-                p.PathEffect = pe;
-                p.Color = cBorder;
-                canvas.DrawLine(rtTitle.Left + 10, rtTitle.Bottom, rtTitle.Right - 10, rtTitle.Bottom, p);
+                if (TitleDivider)
+                {
+                    using var p = new SKPaint { IsAntialias = false };
+                    using var pe = SKPathEffect.CreateDash([3, 3], 2);
+                    p.PathEffect = pe;
+                    p.Color = cBorder;
+                    canvas.DrawLine(rtTitle.Left + 10, rtTitle.Bottom, rtTitle.Right - 10, rtTitle.Bottom, p);
+                }
             }
             Util.DrawTextIcon(canvas, Text, FontName, FontStyle, FontSize, IconString, IconSize, GoDirectionHV.Horizon, IconGap, rtTitleText, cText, GoContentAlignment.MiddleLeft);
 

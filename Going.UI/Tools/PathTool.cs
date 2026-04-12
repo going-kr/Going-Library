@@ -336,6 +336,408 @@ namespace Going.UI.Tools
             }
         }
         #endregion
+
+        #region FlowSystem
+
+        #region CylinderFrame
+        /// <summary>
+        /// 원통형 탱크의 외곽 및 내곽 프레임 경로를 생성합니다.
+        /// </summary>
+        /// <param name="pathOut">외곽 경로 객체</param>
+        /// <param name="pathIn">내곽 경로 객체</param>
+        /// <param name="bounds">탱크 경계 사각형</param>
+        /// <param name="frameSize">프레임 두께</param>
+        /// <param name="pipeSize">배관 크기</param>
+        public static void CylinderFrame(SKPath pathOut, SKPath pathIn, SKRect bounds, float frameSize, float pipeSize)
+        {
+            var innerBounds = bounds; innerBounds.Inflate(-frameSize, -frameSize);
+            Cylinder(pathOut, bounds, pipeSize, 10);
+            Cylinder(pathIn, innerBounds, pipeSize, 10 * (innerBounds.Width / bounds.Width));
+        }
+
+        /// <summary>
+        /// 둥근 모서리를 가진 원통형 경로를 생성합니다.
+        /// </summary>
+        private static void Cylinder(SKPath path, SKRect bounds, float pipeSize, float corner)
+        {
+            path.Reset();
+            path.AddRoundRect(bounds, corner, corner);
+        }
+        #endregion
+
+        #region SiloFrame
+        /// <summary>
+        /// 사일로형 탱크의 외곽 및 내곽 프레임 경로를 생성합니다.
+        /// 상단은 반원형, 하단은 역삼각형(콘) 형태입니다.
+        /// </summary>
+        /// <param name="pathOut">외곽 경로 객체</param>
+        /// <param name="pathIn">내곽 경로 객체</param>
+        /// <param name="bounds">탱크 경계 사각형</param>
+        /// <param name="frameSize">프레임 두께</param>
+        /// <param name="pipeSize">배관 크기</param>
+        public static void SiloFrame(SKPath pathOut, SKPath pathIn, SKRect bounds, float frameSize, float pipeSize)
+        {
+            var innerBounds = bounds; innerBounds.Inflate(-frameSize, -frameSize);
+            Silo(pathOut, bounds, pipeSize);
+            Silo(pathIn, innerBounds, pipeSize);
+        }
+
+        /// <summary>
+        /// 사일로 형태의 경로를 생성합니다.
+        /// </summary>
+        private static void Silo(SKPath path, SKRect bounds, float pipeSize)
+        {
+            float x = bounds.Left;
+            float y = bounds.Top;
+            float width = bounds.Width;
+            float height = bounds.Height;
+
+            float pipeWidth = pipeSize;
+            float topCapHeight = height * 0.15f;
+            float bodyHeight = height * 0.60f;
+            float topY = y + topCapHeight;
+            float bodyBottom = topY + bodyHeight;
+            float coneBottom = y + height;
+            float pipeLeft = x + (width - pipeWidth) / 2;
+            float pipeRight = x + (width + pipeWidth) / 2;
+
+            path.Reset();
+
+            path.MoveTo(x, topY);
+            path.ArcTo(
+                new SKRect(x, y, x + width, y + topCapHeight * 2),
+                180, 180, false);
+            path.LineTo(x + width, bodyBottom);
+            path.LineTo(pipeRight, coneBottom);
+            path.LineTo(pipeLeft, coneBottom);
+            path.LineTo(x, bodyBottom);
+            path.Close();
+        }
+        #endregion
+
+        #region LiquidWave
+        private static DateTime _baseTime = DateTime.Now;
+
+        /// <summary>
+        /// 탱크 내부의 액체 파동 경로를 생성합니다.
+        /// 믹서 동작 여부에 따라 파형 속도와 높이가 달라집니다.
+        /// </summary>
+        /// <param name="path">경로 객체</param>
+        /// <param name="bounds">액체 영역 경계 사각형</param>
+        /// <param name="level">현재 수위 값</param>
+        /// <param name="min">최소 수위</param>
+        /// <param name="max">최대 수위</param>
+        /// <param name="mixonoff">믹서 동작 여부</param>
+        public static void LiquidWave(SKPath path, SKRect bounds, double level, double min, double max, bool mixonoff)
+        {
+            path.Reset();
+
+            var w = mixonoff ? (DateTime.Now - _baseTime).TotalMilliseconds % 300D / 300D * MathF.PI * 2D :
+                               (DateTime.Now - _baseTime).TotalMilliseconds % 2000D / 2000D * MathF.PI * 2D;
+            float wavePhase = Convert.ToSingle(w);
+            float waveHeight = mixonoff ? 3F : 2F;
+            int waveCount = mixonoff ? 3 : 2;
+
+            double percent = 0;
+            if (max > min) percent = Math.Clamp((level - min) / (max - min) * 100f, 0, 100);
+            if (percent <= 0) return;
+
+            float x = bounds.Left;
+            float y = bounds.Top;
+            float width = bounds.Width;
+            float height = bounds.Height;
+
+            float liquidTop = y + height - Convert.ToSingle(height * percent / 100.0);
+
+            path.MoveTo(x, liquidTop);
+            DrawWaveLine(path, x, x + width, liquidTop, wavePhase, waveHeight, waveCount);
+            path.LineTo(x + width, y + height);
+            path.LineTo(x, y + height);
+            path.Close();
+        }
+
+        /// <summary>
+        /// 믹서(교반기) 날개 형태의 경로를 생성합니다.
+        /// 중앙 축을 기준으로 좌우 대칭 날개와 중심 원으로 구성됩니다.
+        /// </summary>
+        /// <param name="path">경로 객체</param>
+        /// <param name="center">믹서 중심점</param>
+        /// <param name="wingW">날개 너비</param>
+        /// <param name="wingH">날개 높이(팁 반경)</param>
+        /// <param name="frameSize">프레임 두께</param>
+        public static void Mixer(SKPath path, SKPoint center, float wingW, float wingH, float frameSize)
+        {
+            float centerX = center.X;
+            float centerY = center.Y;
+
+            float wingLength = wingW;
+            float tipRadius = wingH;
+            float rootWidth = frameSize / 2F;
+
+            path.Reset();
+
+            path.MoveTo(centerX, centerY - rootWidth);
+
+            path.CubicTo(
+                centerX + wingLength * 0.3f, centerY - rootWidth,
+                centerX + wingLength - tipRadius, centerY - tipRadius * 1.5f,
+                centerX + wingLength - tipRadius, centerY - tipRadius
+            );
+
+            path.ArcTo(
+                new SKRect(centerX + wingLength - tipRadius * 2, centerY - tipRadius,
+                           centerX + wingLength, centerY + tipRadius),
+                270, 180, false);
+
+            path.CubicTo(
+                centerX + wingLength - tipRadius, centerY + tipRadius * 1.5f,
+                centerX + wingLength * 0.3f, centerY + rootWidth,
+                centerX, centerY + rootWidth
+            );
+
+            path.LineTo(centerX, centerY + rootWidth);
+
+            path.CubicTo(
+                centerX - wingLength * 0.3f, centerY + rootWidth,
+                centerX - (wingLength - tipRadius), centerY + tipRadius * 1.5f,
+                centerX - (wingLength - tipRadius), centerY + tipRadius
+            );
+
+            path.ArcTo(
+                new SKRect(centerX - wingLength, centerY - tipRadius,
+                           centerX - wingLength + tipRadius * 2, centerY + tipRadius),
+                90, 180, false);
+
+            path.CubicTo(
+                centerX - (wingLength - tipRadius), centerY - tipRadius * 1.5f,
+                centerX - wingLength * 0.3f, centerY - rootWidth,
+                centerX, centerY - rootWidth
+            );
+
+            path.Close();
+
+            path.AddCircle(centerX, centerY, rootWidth * 2f);
+        }
+
+        /// <summary>
+        /// 사인파 형태의 파동 선을 그립니다.
+        /// </summary>
+        private static void DrawWaveLine(SKPath path, float startX, float endX, float baseY, float phase, float height, int waveCount)
+        {
+            float width = endX - startX;
+            int segments = Math.Max(30, (int)(width / 3));
+
+            for (int i = 1; i <= segments; i++)
+            {
+                float t = i / (float)segments;
+                float currentX = startX + width * t;
+
+                float angle = (t * waveCount * 2 * MathF.PI) + phase;
+                float waveY = baseY + MathF.Sin(angle) * height;
+
+                path.LineTo(currentX, waveY);
+            }
+        }
+        #endregion
+
+        #region GlobeValve
+        /// <summary>
+        /// 글로브 밸브 형태의 경로를 생성합니다. 중앙 원형 본체, 좌우 배관 연결부, 상단 핸들로 구성됩니다.
+        /// </summary>
+        /// <param name="path">경로 객체</param>
+        /// <param name="bounds">밸브 경계 사각형</param>
+        /// <param name="pipeSize">배관 크기</param>
+        /// <param name="frameSize">프레임 두께</param>
+        /// <param name="handleSize">핸들 너비</param>
+        public static void GlobeValve(SKPath path, SKRect bounds, float pipeSize, float frameSize, float handleSize)
+        {
+            path.Reset();
+
+            var center = new SKPoint(bounds.MidX, bounds.MidY);
+            float radius = (pipeSize + 10) / 2f;
+            float halfPipe = pipeSize / 2f;
+            float gap = pipeSize / 4f;
+
+            float handleWidth = handleSize;
+            float handleHeight = 10f;
+            float stemDistance = 5f;
+            float stemWidth = pipeSize / 3f;
+            float cornerRadius = 4f;
+
+            float halfStem = stemWidth / 2f;
+            float stemAngleRad = (float)Math.Asin(halfStem / radius);
+            float stemAngleDeg = (float)(stemAngleRad * 180 / Math.PI);
+            float stemIntersectY = (float)Math.Sqrt(radius * radius - halfStem * halfStem);
+
+            float bodyAngleRad = (float)Math.Atan2(halfPipe, pipeSize + gap);
+            float bodyAngleDeg = (float)(bodyAngleRad * 180 / Math.PI);
+
+            var oval = new SKRect(center.X - radius, center.Y - radius, center.X + radius, center.Y + radius);
+
+            // 상단 핸들
+            float handleBottomY = center.Y - radius - stemDistance;
+            float handleTopY = handleBottomY - handleHeight;
+
+            path.MoveTo(center.X + halfStem, center.Y - stemIntersectY);
+            path.LineTo(center.X + halfStem, handleBottomY);
+
+            path.LineTo(center.X + (handleWidth / 2f) - cornerRadius, handleBottomY);
+            path.ArcTo(new SKRect(center.X + (handleWidth / 2f) - cornerRadius * 2, handleBottomY - cornerRadius * 2, center.X + (handleWidth / 2f), handleBottomY), 90, -90, false);
+            path.LineTo(center.X + (handleWidth / 2f), handleTopY + cornerRadius);
+            path.ArcTo(new SKRect(center.X + (handleWidth / 2f) - cornerRadius * 2, handleTopY, center.X + (handleWidth / 2f), handleTopY + cornerRadius * 2), 0, -90, false);
+            path.LineTo(center.X - (handleWidth / 2f) + cornerRadius, handleTopY);
+            path.ArcTo(new SKRect(center.X - (handleWidth / 2f), handleTopY, center.X - (handleWidth / 2f) + cornerRadius * 2, handleTopY + cornerRadius * 2), 270, -90, false);
+            path.LineTo(center.X - (handleWidth / 2f), handleBottomY - cornerRadius);
+            path.ArcTo(new SKRect(center.X - (handleWidth / 2f), handleBottomY - cornerRadius * 2, center.X - (handleWidth / 2f) + cornerRadius * 2, handleBottomY), 180, -90, false);
+
+            path.LineTo(center.X - halfStem, handleBottomY);
+            path.LineTo(center.X - halfStem, center.Y - stemIntersectY);
+
+            // 좌측 바디
+            path.ArcTo(oval, 270 - stemAngleDeg, -(90 - bodyAngleDeg - stemAngleDeg), false);
+
+            float leftBodyX = center.X - gap - pipeSize;
+            path.QuadTo(leftBodyX + (pipeSize / 2), center.Y - halfPipe, leftBodyX, center.Y - halfPipe);
+            path.LineTo(leftBodyX, center.Y + halfPipe);
+            path.QuadTo(leftBodyX + (pipeSize / 2), center.Y + halfPipe, center.X - radius * (float)Math.Cos(bodyAngleRad), center.Y + radius * (float)Math.Sin(bodyAngleRad));
+
+            // 하단 원호
+            path.ArcTo(oval, 180 - bodyAngleDeg, -(180 - 2 * bodyAngleDeg), false);
+
+            // 우측 바디
+            float rightBodyX = center.X + gap + pipeSize;
+            path.QuadTo(rightBodyX - (pipeSize / 2), center.Y + halfPipe, rightBodyX, center.Y + halfPipe);
+            path.LineTo(rightBodyX, center.Y - halfPipe);
+            path.QuadTo(rightBodyX - (pipeSize / 2), center.Y - halfPipe, center.X + radius * (float)Math.Cos(bodyAngleRad), center.Y - radius * (float)Math.Sin(bodyAngleRad));
+
+            path.ArcTo(oval, bodyAngleDeg, -(bodyAngleDeg - (stemAngleDeg - 90)), false);
+            path.Close();
+        }
+        #endregion
+
+        #region CPump
+        /// <summary>
+        /// 원심 펌프 형태의 경로를 생성합니다. 원형 본체에 토출구와 흡입구가 연결됩니다.
+        /// </summary>
+        /// <param name="path">경로 객체</param>
+        /// <param name="bounds">펌프 경계 사각형</param>
+        /// <param name="pipeSize">배관 크기</param>
+        /// <param name="frameSize">프레임 두께</param>
+        /// <param name="useInlet">흡입구 사용 여부</param>
+        /// <param name="reverse">좌우 반전 여부</param>
+        public static void CPump(SKPath path, SKRect bounds, float pipeSize, float frameSize, bool useInlet, bool reverse)
+        {
+            path.Reset();
+
+            float centerX = bounds.MidX;
+            float centerY = bounds.MidY;
+            float radius = pipeSize * 1.5f;
+            float dir = reverse ? -1f : 1f;
+
+            SKRect bodyRect = new SKRect(centerX - radius, centerY - radius, centerX + radius, centerY + radius);
+
+            path.MoveTo(centerX, centerY - radius);
+
+            // 토출구
+            path.LineTo(centerX + (radius * dir), centerY - radius);
+            path.LineTo(centerX + (radius * dir) + (frameSize * dir), centerY - radius);
+            path.LineTo(centerX + (radius * dir) + (frameSize * dir), centerY - radius + pipeSize);
+            path.LineTo(centerX + (radius * dir), centerY - radius + pipeSize);
+
+            if (!reverse)
+                path.ArcTo(bodyRect, -25f, 115f, false);
+            else
+                path.ArcTo(bodyRect, 205f, -115f, false);
+
+            if (useInlet)
+            {
+                // 흡입구
+                path.LineTo(centerX - (radius * dir), centerY + radius);
+                path.LineTo(centerX - (radius * dir) - (frameSize * dir), centerY + radius);
+                path.LineTo(centerX - (radius * dir) - (frameSize * dir), centerY + radius - pipeSize);
+                path.LineTo(centerX - (radius * dir), centerY + radius - pipeSize);
+
+                if (!reverse)
+                    path.ArcTo(bodyRect, 155f, 115f, false);
+                else
+                    path.ArcTo(bodyRect, 25f, -115f, false);
+            }
+            else
+            {
+                path.ArcTo(bodyRect, 90f, reverse ? -180f : 180f, false);
+            }
+
+            path.Close();
+        }
+        #endregion
+
+        #region Impeller
+        /// <summary>
+        /// 팬 임펠러(회전 날개) 형태의 경로를 생성합니다.
+        /// </summary>
+        /// <param name="path">경로 객체</param>
+        /// <param name="center">중심점</param>
+        /// <param name="radius">임펠러 반지름</param>
+        /// <param name="bladeCount">날개 수</param>
+        public static void Impeller(SKPath path, SKPoint center, float radius, int bladeCount)
+        {
+            path.Reset();
+
+            if (path == null) throw new ArgumentNullException(nameof(path));
+            if (bladeCount <= 0) return;
+
+            float hubRadius = radius * 0.12f;
+            float angleStep = 360f / bladeCount;
+
+            float innerWidth = angleStep * 0.05f;
+            float outerWidth = angleStep * 0.65f;
+            float curvature = 35f;
+
+            for (int i = 0; i < bladeCount; i++)
+            {
+                float baseAngle = i * angleStep;
+
+                float startAngleInner = baseAngle;
+                float endAngleInner = baseAngle + innerWidth;
+                float startAngleOuter = baseAngle + curvature;
+                float endAngleOuter = baseAngle + curvature + outerWidth;
+
+                SKPoint pInnerStart = GetPolarPoint(center, hubRadius, startAngleInner);
+                if (i == 0) path.MoveTo(pInnerStart);
+                else path.LineTo(pInnerStart);
+
+                SKPoint pOuterStart = GetPolarPoint(center, radius, startAngleOuter);
+                SKPoint cpFront = GetPolarPoint(center, radius * 0.6f, startAngleInner);
+                path.QuadTo(cpFront, pOuterStart);
+
+                SKRect outerRect = new SKRect(center.X - radius, center.Y - radius, center.X + radius, center.Y + radius);
+                path.ArcTo(outerRect, startAngleOuter, outerWidth, false);
+
+                SKPoint pInnerEnd = GetPolarPoint(center, hubRadius, endAngleInner);
+                SKPoint cpBack = GetPolarPoint(center, radius * 0.5f, endAngleOuter - (outerWidth * 0.2f));
+                path.QuadTo(cpBack, pInnerEnd);
+
+                SKRect innerRect = new SKRect(center.X - hubRadius, center.Y - hubRadius, center.X + hubRadius, center.Y + hubRadius);
+                path.ArcTo(innerRect, endAngleInner, -innerWidth, false);
+            }
+
+            path.Close();
+        }
+
+        /// <summary>
+        /// 극좌표(중심, 거리, 각도)를 직교 좌표로 변환합니다.
+        /// </summary>
+        private static SKPoint GetPolarPoint(SKPoint center, float distance, float degrees)
+        {
+            float radians = degrees * (float)Math.PI / 180f;
+            return new SKPoint(
+                center.X + distance * (float)Math.Cos(radians),
+                center.Y + distance * (float)Math.Sin(radians)
+            );
+        }
+        #endregion
+
+        #endregion
     }
 
     #region struct : Vector

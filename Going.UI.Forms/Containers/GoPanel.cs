@@ -32,12 +32,14 @@ namespace Going.UI.Forms.Containers
 
         public string TextColor { get => control.TextColor; set { if (control.TextColor != value) { control.TextColor = value; Invalidate(); } } }
         public string PanelColor { get => control.PanelColor; set { if (control.PanelColor != value) { control.PanelColor = value; Invalidate(); } } }
+        public string BorderColor { get => control.BorderColor; set { if (control.BorderColor != value) { control.BorderColor = value; Invalidate(); } } }
         public GoRoundType Round { get => control.Round; set { if (control.Round != value) { control.Round = value; Invalidate(); } } }
 
         public bool BackgroundDraw { get => control.BackgroundDraw; set { if (control.BackgroundDraw != value) { control.BackgroundDraw = value; Invalidate(); } } }
         public bool BorderOnly { get => control.BorderOnly; set { if (control.BorderOnly != value) { control.BorderOnly = value; Invalidate(); } } }
 
         public float TitleHeight { get => control.TitleHeight; set { if (control.TitleHeight != value) { control.TitleHeight = value; Invalidate(); } } }
+        public bool TitleDivider { get => control.TitleDivider; set { if (control.TitleDivider != value) { control.TitleDivider = value; Invalidate(); } } }
 
         [Editor(typeof(CollectionEditor), typeof(UITypeEditor))]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]

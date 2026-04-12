@@ -4,6 +4,8 @@ using Going.UI.Controls;
 using Going.UI.Datas;
 using Going.UI.Design;
 using Going.UI.Enums;
+using Going.UI.Extensions;
+using Going.UI.FlowSystem;
 using Going.UI.Forms;
 using Going.UI.Forms.Controls;
 using Going.UI.Json;
@@ -51,6 +53,8 @@ namespace Going.UIEditor.Windows
         public bool CanRedo => actmgr.CanRedo;
 
         public int SelectedItemCount => sels.Count;
+
+        public bool ConnectionMode { get; set; } = false;
         #endregion
 
         #region Member Variable
@@ -67,6 +71,16 @@ namespace Going.UIEditor.Windows
 
         Scroll vscroll = new Scroll() { Direction = ScrollDirection.Vertical };
         Scroll hscroll = new Scroll() { Direction = ScrollDirection.Horizon };
+
+        // FlowSystem
+        SKRect rtConnectionBtn;
+        SelPort? selectedPort;
+        SelConn? selectedConn;
+        List<PipeNode> inputNodes = [];
+        List<FsFlowObject> flows = [];
+        FlowAnchor? dragAnchorConn;
+        float mx, my;
+        SKPath path = new SKPath();
         #endregion
 
         #region Constructor
@@ -178,6 +192,34 @@ namespace Going.UIEditor.Windows
                     p.Color = thm.Back;
                     canvas.DrawRect(rt.Value, p);
                     p.ImageFilter = null;
+                }
+                #endregion
+
+                #region ConnectionMode Button
+                {
+                    var btnW = 30f;
+                    var btnH = 24f;
+                    var btnX = Width - btnW - 30;
+                    var btnY = 5;
+                    rtConnectionBtn = new SKRect(btnX, btnY, btnX + btnW, btnY + btnH);
+
+                    var cBtn = ConnectionMode ? thm.Select : thm.Base3;
+                    var vmp2 = PointToClient(MousePosition);
+                    if (CollisionTool.Check(rtConnectionBtn, vmp2.X, vmp2.Y))
+                        cBtn = cBtn.BrightnessTransmit(0.3f);
+
+                    p.IsStroke = false;
+                    p.Color = Util.FromArgb(ConnectionMode ? (byte)60 : (byte)30, cBtn);
+                    var rrr = new SKRoundRect(rtConnectionBtn, 4);
+                    canvas.DrawRoundRect(rrr, p);
+
+                    p.IsStroke = true;
+                    p.StrokeWidth = 1;
+                    p.Color = cBtn;
+                    canvas.DrawRoundRect(rrr, p);
+
+                    p.IsStroke = false;
+                    Util.DrawIcon(canvas, "fa-diagram-project", 12, rtConnectionBtn, cBtn);
                 }
                 #endregion
 
@@ -496,9 +538,212 @@ namespace Going.UIEditor.Windows
                             }
                             #endregion
                         }
+
+                        #region FlowSystem overlay
+                        if (ConnectionMode)
+                        {
+                            #region Connection
+                            p.IsAntialias = true;
+                            if (selectedPort != null)
+                            {
+                                #region 연결하기
+                                var sp = selectedPort;
+                                if (sp.Control.Parent is FsFlowSystemPanel fs)
+                                {
+                                    var ox = fs.ScreenX + fs.PanelBounds.Left;
+                                    var oy = fs.ScreenY + fs.PanelBounds.Top;
+
+                                    using (new SKAutoCanvasRestore(canvas))
+                                    {
+                                        canvas.Translate(ox, oy);
+
+                                        #region selected port
+                                        p.IsStroke = false;
+                                        p.Color = SKColors.Red;
+                                        canvas.DrawCircle(sp.Port.Position, ANC_SZ, p);
+
+                                        p.IsStroke = true;
+                                        p.StrokeWidth = 2;
+                                        p.Color = SKColors.Red;
+                                        canvas.DrawCircle(sp.Port.Position, ANC_SZ + 3, p);
+                                        #endregion
+
+                                        #region other ports
+                                        var vpts = flows.Where(x => x.Parent == fs && x != selectedPort.Control)
+                                                              .SelectMany(vc => vc.IoPorts().Where(x => !fs.HasConnection(vc.Id, x.Name)))
+                                                              .Where(port => validPort(sp.Port.Type, port.Type))
+                                                              .ToList();
+
+                                        foreach (var port in vpts)
+                                        {
+                                            p.IsStroke = false;
+                                            p.Color = port.Type == PortType.Output ? SKColors.Magenta : SKColors.Cyan;
+                                            canvas.DrawCircle(port.Position, ANC_SZ, p);
+
+                                            p.IsStroke = true;
+                                            p.StrokeWidth = 1;
+                                            p.Color = SKColors.Black;
+                                            canvas.DrawCircle(port.Position, ANC_SZ, p);
+                                        }
+                                        #endregion
+
+                                        #region Nodes
+                                        {
+                                            var nds = inputNodes.ToList();
+
+                                            var end = vpts.FirstOrDefault(p => CollisionTool.Check(MathTool.MakeRectangle(p.Position, ANC_SZ * 2), mx - ox, my - oy));
+                                            if (end == null)
+                                            {
+                                                var pnd = pipe_create(mx, my);
+                                                if (pnd != null) nds.Add(pnd);
+                                            }
+                                            else nds = PipeTool.Normalize(selectedPort.Port, nds, end);
+                                            var ps = PipeTool.Lines(selectedPort.Port, nds, end);
+
+                                            p.IsStroke = true;
+                                            p.StrokeWidth = 1F;
+                                            p.Color = SKColors.Red;
+                                            canvas.DrawPoints(SKPointMode.Polygon, [.. ps], p);
+                                        }
+                                        #endregion
+                                    }
+                                }
+                                #endregion
+                            }
+                            else if(selectedConn != null)
+                            {
+                                #region 편집하기
+                                if (selectedConn.Panel is FsFlowSystemPanel fs)
+                                {
+                                    var ox = fs.ScreenX + fs.PanelBounds.Left;
+                                    var oy = fs.ScreenY + fs.PanelBounds.Top;
+
+                                    if (dragAnchorConn != null)
+                                    {
+                                        var a = dragAnchorConn;
+                                        var conn = selectedConn.Connection;
+
+                                        #region 앵커 드래그
+                                        using (new SKAutoCanvasRestore(canvas))
+                                        {
+                                            canvas.Translate(ox, oy);
+
+                                            #region Line
+                                            var nds = selectedConn.Connection.Nodes.Select(x => new PipeNode { Direction = x.Direction, Position = x.Position }).ToList();
+                                            nds[dragAnchorConn.Index].Position = a.Direction == GoDirectionHV.Horizon ? mx - ox : my - oy;
+
+                                            var vsc = fs.GetControl(conn.StartControlId);
+                                            var vec = fs.GetControl(conn.EndControlId);
+                                            var vsp = vsc?.GetPort(conn.StartPortName);
+                                            var vep = vec?.GetPort(conn.EndPortName);
+
+                                            if (vsp != null && vep != null)
+                                            {
+                                                nds = PipeTool.Normalize(vsp, nds, vep);
+                                                var pts = PipeTool.Lines(vsp, nds, vep);
+                                                var ps = PipeTool.Smooth(vsp, vep, pts);
+
+                                                path.Reset();
+                                                path.AddPoly([.. ps], false);
+                                                p.IsStroke = true;
+                                                p.StrokeWidth = 1;
+                                                p.Color = SKColors.Red;
+                                                canvas.DrawPath(path, p);
+                                            }
+                                            #endregion
+                                        }
+                                        #endregion
+                                    }
+                                    else
+                                    {
+                                        #region 앵커 선택
+                                        if (selectedConn.Connection.DrawingPoints.Count > 0)
+                                        {
+                                            var conn = selectedConn.Connection;
+                                            var vsc = fs.GetControl(conn.StartControlId);
+                                            var vec = fs.GetControl(conn.EndControlId);
+                                            var vsp = vsc?.GetPort(conn.StartPortName);
+                                            var vep = vec?.GetPort(conn.EndPortName);
+
+                                            using (new SKAutoCanvasRestore(canvas))
+                                            {
+                                                canvas.Translate(ox, oy);
+
+                                                #region Line
+                                                path.Reset();
+
+                                                var ps = selectedConn.Connection.DrawingPoints;
+                                                path.AddPoly([.. ps], false);
+
+                                                p.IsStroke = true;
+                                                p.StrokeWidth = 1;
+                                                p.Color = SKColors.Red;
+                                                canvas.DrawPath(path, p);
+                                                #endregion
+
+                                                #region Anchor
+                                                var ancs = selectedConn.Connection.GetAnchors();
+                                                foreach (var a in ancs)
+                                                {
+                                                    p.IsStroke = false;
+                                                    p.Color = SKColors.White;
+                                                    canvas.DrawCircle(a.Position, ANC_SZ, p);
+
+                                                    p.IsStroke = true;
+                                                    p.StrokeWidth = 1;
+                                                    p.Color = SKColors.Black;
+                                                    canvas.DrawCircle(a.Position, ANC_SZ, p);
+                                                }
+                                                #endregion
+                                            }
+                                        }
+                                        #endregion
+                                    }
+                                }
+                                #endregion
+                            }
+                            else
+                            {
+                                #region 선택 (포트/노드)
+                                foreach (var vc in flows)
+                                {
+                                    #region rt
+                                    var vrt = Util.FromRect(vc.ScreenX, vc.ScreenY, vc.Width, vc.Height);
+                                    var (vx, vy) = containerviewpos(vc.Parent);
+                                    vrt.Offset(-vx, -vy);
+                                    #endregion
+
+                                    #region port
+                                    using (new SKAutoCanvasRestore(canvas))
+                                    {
+                                        if (vc.Parent is FsFlowSystemPanel fs)
+                                        {
+                                            canvas.Translate(fs.ScreenX + fs.PanelBounds.Left, fs.ScreenY + fs.PanelBounds.Top);
+
+                                            foreach (var port in vc.IoPorts().Where(x => !fs.HasConnection(vc.Id, x.Name)))
+                                            {
+                                                p.IsStroke = false;
+                                                p.Color = port.Type == PortType.Output ? SKColors.Magenta : SKColors.Cyan;
+                                                canvas.DrawCircle(port.Position, ANC_SZ, p);
+
+                                                p.IsStroke = true;
+                                                p.StrokeWidth = 1;
+                                                p.Color = SKColors.Black;
+                                                canvas.DrawCircle(port.Position, ANC_SZ, p);
+                                            }
+                                        }
+                                    }
+                                    #endregion
+                                }
+                                #endregion
+                            }
+                            p.IsAntialias = false;
+                            #endregion
+                        }
+                        #endregion
                     }
 
-                    
+
                 }
             }
 
@@ -515,7 +760,14 @@ namespace Going.UIEditor.Windows
             {
                 var (rt, rtvs, rths) = GetBounds();
 
-                if (rtvs.HasValue && CollisionTool.Check(rtvs.Value, e.X, e.Y)) vscroll.MouseDown(e.X, e.Y, rtvs.Value);
+                if (CollisionTool.Check(rtConnectionBtn, e.X, e.Y))
+                {
+                    flows = search_control(container()).Where(xc => xc.Parent is FsFlowSystemPanel && xc is FsFlowObject).Select(x => (FsFlowObject)x).ToList();
+                    ConnectionMode = !ConnectionMode;
+                    if (!ConnectionMode) { selectedPort = null; inputNodes.Clear(); selectedConn = null; dragAnchorConn = null; }
+                    Invalidate();
+                }
+                else if (rtvs.HasValue && CollisionTool.Check(rtvs.Value, e.X, e.Y)) vscroll.MouseDown(e.X, e.Y, rtvs.Value);
                 else if (rths.HasValue && CollisionTool.Check(rths.Value, e.X, e.Y)) hscroll.MouseDown(e.X, e.Y, rths.Value);
                 else if (rt.HasValue)
                 {
@@ -525,15 +777,142 @@ namespace Going.UIEditor.Windows
 
                     int x = Convert.ToInt32(e.X - rt.Value.Left - hspos);
                     int y = Convert.ToInt32(e.Y - rt.Value.Top - vspos);
+                    mx = x; my = y;
                     ptDown = new SKPoint(x, y);
                     #endregion
 
+                    if (ConnectionMode)
+                    {
+                        #region Connection
+                        if (selectedPort != null)
+                        {
+                            #region 연결하기
+                            var sp = selectedPort;
+                            if (sp.Control.Parent is FsFlowSystemPanel fs)
+                            {
+                                #region var
+                                var ox = fs.ScreenX + fs.PanelBounds.Left;
+                                var oy = fs.ScreenY + fs.PanelBounds.Top;
+                                var vpts = flows.Where(x => x.Parent == fs && x != selectedPort.Control)
+                                              .SelectMany(vc => vc.IoPorts().Where(x=>!fs.HasConnection(vc.Id, x.Name)).Select(x => new SelPort(vc, x)))
+                                              .Where(port => validPort(sp.Port.Type, port.Port.Type))
+                                              .ToList();
+
+                                var end = vpts.FirstOrDefault(p => CollisionTool.Check(MathTool.MakeRectangle(p.Port.Position, ANC_SZ * 2), mx - ox, my - oy));
+                                #endregion
+
+                                if (end == null)
+                                {
+                                    #region 추가
+                                    var pnd = pipe_create(mx, my);
+                                    if (pnd != null) inputNodes.Add(pnd);
+                                    #endregion
+                                }
+                                else
+                                {
+                                    #region 완료
+                                    var rls = PipeTool.Normalize(sp.Port, inputNodes, end.Port);
+                                    inputNodes.Clear();
+                                    selectedPort = null;
+
+                                    TransAction(() =>
+                                    {
+                                        AddConnection(fs, new FlowConnection
+                                        {
+                                            StartControlId = sp.Control.Id,
+                                            StartPortName = sp.Port.Name,
+                                            EndControlId = end.Control.Id,
+                                            EndPortName = end.Port.Name,
+                                            Nodes = rls,
+                                        });
+                                    });
+                                    #endregion
+                                }
+                            }
+                            #endregion
+                        }
+                        else if(selectedConn != null)
+                        {
+                            #region 편집하기
+                            if (selectedConn.Panel is FsFlowSystemPanel fs)
+                            {
+                                var ox = fs.ScreenX + fs.PanelBounds.Left;
+                                var oy = fs.ScreenY + fs.PanelBounds.Top;
+
+                                if (dragAnchorConn != null)
+                                {
+                                    #region 앵커 드래그
+
+                                    #endregion
+                                }
+                                else
+                                {
+                                    #region 앵커 선택
+                                    if (selectedConn.Connection.Collision(x - ox, y - oy, fs.PipeSize / 2))
+                                    {
+                                        var ancs = selectedConn.Connection.GetAnchors();
+                                        foreach (var a in ancs)
+                                            if (CollisionTool.Check(MathTool.MakeRectangle(a.Position, ANC_SZ * 2), x - ox, y - oy))
+                                            {
+                                                dragAnchorConn = a;
+                                                break;
+                                            }
+                                    }
+                                    else selectedConn = null;
+                                    #endregion
+                                }
+                            }
+                            #endregion
+                        }
+                        else
+                        {
+                            #region 선택 (포트/노드)
+                            #region 포트
+                            foreach (var vc in flows)
+                            {
+                                if (vc.Parent is FsFlowSystemPanel fs)
+                                {
+                                    var ox = fs.ScreenX + fs.PanelBounds.Left;
+                                    var oy = fs.ScreenY + fs.PanelBounds.Top;
+
+                                    foreach (var p in vc.IoPorts().Where(x => !fs.HasConnection(vc.Id, x.Name)))
+                                    {
+                                        if (CollisionTool.Check(MathTool.MakeRectangle(p.Position, ANC_SZ * 2), x - ox, y - oy))
+                                        {
+                                            selectedPort = new SelPort(vc, p);
+                                            inputNodes.Clear();
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            #endregion
+
+                            #region Node
+                            if (selectedPort == null)
+                            {
+                                var tc = target_controlstack(x, y).LastOrDefault();
+                                if(tc is FsFlowSystemPanel fs)
+                                {
+                                    var ox = fs.ScreenX + fs.PanelBounds.Left;
+                                    var oy = fs.ScreenY + fs.PanelBounds.Top;
+                                    var conn = fs.Connections.FirstOrDefault(c => c.Collision(x - ox, y - oy, fs.PipeSize / 2));
+                                    selectedConn = conn != null ? new SelConn(fs, conn) : null;
+                                }
+                            }
+                            #endregion
+                            #endregion
+                        }
+                        #endregion
+                    }
+                    else
+                    {
                     #region anchor search
                     Anchor? a = selanchor(x, y);
                     if (a != null) dragAnchor = a;
                     #endregion
 
-                    #region spcial container (spnl/tab/swpnl) mouse event 
+                    #region spcial container (spnl/tab/swpnl) mouse event
                     if (a == null)
                     {
                         var tc2 = target_controlstack(x, y + 20).LastOrDefault(xc => xc is GoSwitchPanel);
@@ -627,6 +1006,7 @@ namespace Going.UIEditor.Windows
                         }
                     }
                     #endregion
+                    }
                 }
             }
             base.OnMouseDown(e);
@@ -649,54 +1029,137 @@ namespace Going.UIEditor.Windows
 
                     int x = Convert.ToInt32(e.X - rt.Value.Left - hspos);
                     int y = Convert.ToInt32(e.Y - rt.Value.Top - vspos);
+                    mx = x; my = y;
                     if (ptDown.HasValue) ptMove = new SKPoint(x, y);
                     #endregion
 
-                    #region anchor cursor
-                    var cur = Cursors.Default;
-                    if (dragAnchor != null)
+                    if (ConnectionMode)
                     {
-                        if (ptDown.HasValue && ptMove.HasValue)
+                        #region Connection
+                        #region port cursor
+                        var cur = Cursors.Default;
+                        if (selectedPort != null)
                         {
-                            dragAnchorProc(dragAnchor, ptDown.Value, ptMove.Value,
-                            #region tpnl
-                                (vcon, vc, tidx) =>
-                                {
-                                    cur = tidx != null ? cursor(dragAnchor.Name) : Cursors.No;
-                                },
-                            #endregion
-                            #region gpnl
-                                (vcon, vc, gidx) =>
-                                {
-                                    cur = gidx != null ? cursor(dragAnchor.Name) : Cursors.No;
-                                },
-                            #endregion
-                            #region Other    
-                                (vcon, vc, srt, nrt, gx, gy) => { cur = cursor(dragAnchor.Name); }
+                            #region 연결하기
+                            var sp = selectedPort;
+                            if (sp.Control.Parent is FsFlowSystemPanel fs)
+                            {
+                                #region var
+                                var ox = fs.ScreenX + fs.PanelBounds.Left;
+                                var oy = fs.ScreenY + fs.PanelBounds.Top;
+                                var vpts = flows.Where(x => x.Parent == fs && x != selectedPort.Control)
+                                              .SelectMany(vc => vc.IoPorts().Where(x => !fs.HasConnection(vc.Id, x.Name)).Select(x => new SelPort(vc, x)))
+                                              .Where(port => validPort(sp.Port.Type, port.Port.Type))
+                                              .ToList();
                                 #endregion
-                            );
+
+                                foreach (var p in vpts)
+                                    if (CollisionTool.Check(MathTool.MakeRectangle(p.Port.Position, ANC_SZ * 2), mx - ox, my - oy))
+                                        cur = Cursors.Hand;
+                            }
+                            #endregion
                         }
+                        else if(selectedConn != null)
+                        {
+                            #region 편집하기
+                            if (selectedConn.Panel is FsFlowSystemPanel fs)
+                            {
+                                var ox = fs.ScreenX + fs.PanelBounds.Left;
+                                var oy = fs.ScreenY + fs.PanelBounds.Top;
+
+                                if (dragAnchorConn != null)
+                                {
+                                    #region 앵커 드래그
+                                    cur = dragAnchorConn.Direction == GoDirectionHV.Vertical ? Cursors.SizeNS : Cursors.SizeWE;
+                                    #endregion
+                                }
+                                else
+                                {
+                                    #region 앵커 선택
+                                    if (selectedConn.Connection.Points.Count > 0)
+                                    {
+                                        var ancs = selectedConn.Connection.GetAnchors();
+                                        foreach (var a in ancs)
+                                            if (CollisionTool.Check(MathTool.MakeRectangle(a.Position, ANC_SZ * 2), x - ox, y - oy))
+                                                cur = a.Direction == GoDirectionHV.Vertical ? Cursors.SizeNS : Cursors.SizeWE;
+                                    }
+                                    #endregion
+                                }
+                            }
+                            #endregion
+                        }
+                        else
+                        {
+                            #region 선택 (포트/노드)
+                            foreach (var vc in flows)
+                            {
+                                if (vc.Parent is FsFlowSystemPanel fs)
+                                {
+                                    var ox = fs.ScreenX + fs.PanelBounds.Left;
+                                    var oy = fs.ScreenY + fs.PanelBounds.Top;
+
+                                    foreach (var p in vc.IoPorts().Where(x => !fs.HasConnection(vc.Id, x.Name)))
+                                        if (CollisionTool.Check(MathTool.MakeRectangle(p.Position, ANC_SZ * 2), x - ox, y - oy))
+                                            cur = Cursors.Hand;
+                                }
+                            }
+                            #endregion
+                        }
+
+                        Cursor = cur;
+                        #endregion
+                        #endregion
                     }
                     else
                     {
-                        Anchor? a = selanchor(x, y);
-                        if (a != null) cur = cursor(a.Name);
-                    }
-                    Cursor = cur;
-                    #endregion
-
-                    #region spcial container (spnl/tab/swpnl) mouse event 
-                    if (dragAnchor == null)
-                    {                       
-                        if (downControl is GoScrollablePanel spnl)
+                        #region Editor
+                        #region anchor cursor
+                        var cur = Cursors.Default;
+                        if (dragAnchor != null)
                         {
-                            var (sx, sy) = containerpos(spnl.Parent!, x, y);
-                            sx -= Convert.ToInt32(spnl.Left);
-                            sy -= Convert.ToInt32(spnl.Top);
-                            spnl.FireMouseMove(sx, sy);
+                            if (ptDown.HasValue && ptMove.HasValue)
+                            {
+                                dragAnchorProc(dragAnchor, ptDown.Value, ptMove.Value,
+                                #region tpnl
+                                    (vcon, vc, tidx) =>
+                                    {
+                                        cur = tidx != null ? cursor(dragAnchor.Name) : Cursors.No;
+                                    },
+                                #endregion
+                                #region gpnl
+                                    (vcon, vc, gidx) =>
+                                    {
+                                        cur = gidx != null ? cursor(dragAnchor.Name) : Cursors.No;
+                                    },
+                                #endregion
+                                #region Other
+                                    (vcon, vc, srt, nrt, gx, gy) => { cur = cursor(dragAnchor.Name); }
+                                    #endregion
+                                );
+                            }
                         }
+                        else
+                        {
+                            Anchor? a = selanchor(x, y);
+                            if (a != null) cur = cursor(a.Name);
+                        }
+                        Cursor = cur;
+                        #endregion
+
+                        #region spcial container (spnl/tab/swpnl) mouse event
+                        if (dragAnchor == null)
+                        {
+                            if (downControl is GoScrollablePanel spnl)
+                            {
+                                var (sx, sy) = containerpos(spnl.Parent!, x, y);
+                                sx -= Convert.ToInt32(spnl.Left);
+                                sy -= Convert.ToInt32(spnl.Top);
+                                spnl.FireMouseMove(sx, sy);
+                            }
+                        }
+                        #endregion
+                        #endregion
                     }
-                    #endregion
                 }
             }
             base.OnMouseMove(e);
@@ -720,8 +1183,75 @@ namespace Going.UIEditor.Windows
 
                     int x = Convert.ToInt32(e.X - rt.Value.Left - hspos);
                     int y = Convert.ToInt32(e.Y - rt.Value.Top - vspos);
+                    mx = x; my = y;
                     #endregion
 
+                    if (ConnectionMode)
+                    {
+                        #region Connection
+                        if (selectedPort != null)
+                        {
+                            #region 연결하기
+
+                            #endregion
+                        }
+                        else if (selectedConn != null)
+                        {
+                            #region 편집하기
+                            if (selectedConn.Panel is FsFlowSystemPanel fs)
+                            {
+                                var ox = fs.ScreenX + fs.PanelBounds.Left;
+                                var oy = fs.ScreenY + fs.PanelBounds.Top;
+
+                                if (dragAnchorConn != null)
+                                {
+                                    var a = dragAnchorConn;
+                                    var conn = selectedConn.Connection;
+
+                                    #region 앵커 드래그
+                                    var nds = selectedConn.Connection.Nodes.Select(x => new PipeNode { Direction = x.Direction, Position = x.Position }).ToList();
+                                    nds[dragAnchorConn.Index].Position = a.Direction == GoDirectionHV.Horizon ? mx - ox : my - oy;
+
+                                    var vsc = fs.GetControl(conn.StartControlId);
+                                    var vec = fs.GetControl(conn.EndControlId);
+                                    var vsp = vsc?.GetPort(conn.StartPortName);
+                                    var vep = vec?.GetPort(conn.EndPortName);
+
+                                    if (vsp != null && vep != null)
+                                    {
+                                        nds = PipeTool.Normalize(vsp, nds, vep);
+
+                                        var pi = typeof(FlowConnection).GetProperty("Nodes");
+                                        if(pi != null)
+
+                                        TransAction(() =>
+                                        {
+                                            var ov = conn.Nodes;
+                                            var nv = nds;
+                                            EditObject(conn, pi, ov, nv);
+                                        });
+                                    }
+                                    #endregion
+                                }
+                                else
+                                {
+                                    #region 앵커 선택
+
+                                    #endregion
+                                }
+                            }
+                            #endregion
+                        }
+                        else
+                        {
+                            #region 선택 (포트/노드)
+
+                            #endregion
+                        }
+                        #endregion
+                    }
+                    else
+                    {
 
                     if (dragAnchor != null)
                     {
@@ -844,6 +1374,7 @@ namespace Going.UIEditor.Windows
                         #endregion
                     }
 
+                    }
                 }
 
                 ContextMenuStrip = null;
@@ -862,6 +1393,7 @@ namespace Going.UIEditor.Windows
 
                 downControl = null;
                 dragAnchor = null;
+                dragAnchorConn = null;
                 ptDown = ptMove = null;
                 #endregion
             }
@@ -929,7 +1461,47 @@ namespace Going.UIEditor.Windows
 
                         case Keys.Control | Keys.A: SelectAll(); break;
 
-                        case Keys.Delete: Delete(); break;
+                        case Keys.Delete:
+                            if (selectedConn != null)
+                            {
+                                DeleteConnection(selectedConn.Panel, selectedConn.Connection);
+                                selectedConn = null;
+                                dragAnchorConn = null;
+                            }
+                            else Delete();
+                            break;
+
+                        case Keys.Escape:
+                            if (selectedPort != null) { selectedPort = null; inputNodes.Clear(); Invalidate(); }
+                            if (selectedConn != null) { selectedConn = null; dragAnchorConn = null; Invalidate(); }
+                            break;
+
+                        case Keys.R:
+                            TransAction(() =>
+                            {
+                                foreach (var sel in sels.OfType<IRotatable>())
+                                {
+                                    var pi = sel.GetType().GetProperty("Rotate");
+                                    if (pi != null)
+                                    {
+                                        var old = sel.Rotate;
+                                        var next = (ObjectRotate)(((int)old + 1) % 4);
+                                        EditObject(sel, pi, old, next);
+                                    }
+                                }
+                            });
+                            break;
+
+                        case Keys.V:
+                            TransAction(() =>
+                            {
+                                foreach (var sel in sels)
+                                {
+                                    if (sel is FsPump pump) { var pi = typeof(FsPump).GetProperty("OnOff"); if (pi != null) EditObject(pump, pi, pump.OnOff, !pump.OnOff); }
+                                    else if (sel is FsValve valve) { var pi = typeof(FsValve).GetProperty("OnOff"); if (pi != null) EditObject(valve, pi, valve.OnOff, !valve.OnOff); }
+                                }
+                            });
+                            break;
 
                         case Keys.Left: ControlMove(-1, 0); break;
                         case Keys.Right: ControlMove(1, 0); break;
@@ -1199,6 +1771,92 @@ namespace Going.UIEditor.Windows
                 Program.Edit = true;
             }
         }
+
+        public void AddConnection(FsFlowSystemPanel pnl, FlowConnection conn)
+        {
+            var p = Program.CurrentDesign;
+            if (p != null)
+            {
+                actmgr.RecordAction(new ConnectionAddAction(pnl, conn));
+                Program.Edit = true;
+            }
+        }
+
+        public void DeleteConnection(FsFlowSystemPanel pnl, FlowConnection conn)
+        {
+            var p = Program.CurrentDesign;
+            if (p != null)
+            {
+                actmgr.RecordAction(new ConnectionDeleteAction(pnl, conn));
+                Program.Edit = true;
+            }
+        }
+
+        #region validPort
+        bool validPort(PortType src, PortType target)
+        {
+            if (src == PortType.Input)
+            {
+                return target == PortType.Output || target == PortType.Bidirectional;
+            }
+            else if (src == PortType.Output)
+            {
+                return target == PortType.Input || target == PortType.Bidirectional;
+            }
+            else return true;
+        }
+        #endregion
+
+        #region pipe_create
+        PipeNode? pipe_create(float x, float y)
+        {
+            if (selectedPort == null) return null;
+            if (!(selectedPort.Control.Parent is FsFlowSystemPanel fs)) return null;
+
+            var op = new SKPoint(mx - fs.ScreenX - fs.PanelBounds.Left, my - fs.ScreenY - fs.PanelBounds.Top);
+
+            if (inputNodes.Count > 0)
+            {
+                var ln = inputNodes.Last();
+                var lp = PipeTool.Lines(selectedPort.Port, inputNodes, null).LastOrDefault();
+                var angle = MathTool.StandardAngle(MathTool.GetAngle(lp, op));
+                if (angle >= 315 || angle < 45)
+                {
+                    if (ln.Direction == PortDirection.R) return null;
+                    return new PipeNode { Direction = PortDirection.R, Position = MathTool.Constrain(op.X, lp.X, fs.Width) };
+                }
+                else if (angle >= 45 && angle < 135)
+                {
+                    if (ln.Direction == PortDirection.B) return null;
+                    return new PipeNode { Direction = PortDirection.B, Position = MathTool.Constrain(op.Y, lp.Y, fs.Height) };
+                }
+                else if (angle >= 135 && angle < 225)
+                {
+                    if (ln.Direction == PortDirection.L) return null;
+                    return new PipeNode { Direction = PortDirection.L, Position = MathTool.Constrain(op.X, 0, lp.X) };
+                }
+                else
+                {
+                    if (ln.Direction == PortDirection.T) return null;
+                    return new PipeNode { Direction = PortDirection.T, Position = MathTool.Constrain(op.Y, 0, lp.Y) };
+                }
+            }
+            else
+            {
+                var sp = selectedPort;
+                var pos = 0F;
+                switch (sp.Port.Direction)
+                {
+                    case PortDirection.L: pos = MathTool.Constrain(op.X, 0, sp.Port.Position.X); break;
+                    case PortDirection.R: pos = MathTool.Constrain(op.X, sp.Port.Position.X, fs.Width); break;
+                    case PortDirection.T: pos = MathTool.Constrain(op.Y, 0, sp.Port.Position.Y); break;
+                    case PortDirection.B: pos = MathTool.Constrain(op.Y, sp.Port.Position.Y, fs.Height); break;
+                }
+                return new PipeNode { Direction = sp.Port.Direction, Position = pos };
+            }
+
+        }
+        #endregion
 
         public void SelectedControl(IEnumerable<object> olds, IEnumerable<object> news)
         {
@@ -2224,6 +2882,7 @@ namespace Going.UIEditor.Windows
         PropertyInfo pi;
         object? newval;
         object? oldval;
+        Dictionary<Guid, List<PipeNode>> pipes = [];
 
         public EditAction(object targetItem, PropertyInfo pi, object? oldval, object? newval)
         {
@@ -2231,17 +2890,43 @@ namespace Going.UIEditor.Windows
             this.pi = pi;
             this.newval = newval;
             this.oldval = oldval;
+
+            if (targetItem is FsFlowObject fo && fo.Parent is FsFlowSystemPanel fs)
+            {
+                foreach (var conn in fs.GetConnections(fo.Id))
+                    pipes[conn.Id] = conn.Nodes.Select(n => new PipeNode { Direction = n.Direction, Position = n.Position }).ToList();
+            }
         }
 
         protected override void ExecuteCore()
         {
             pi.SetValue(targetItem, newval);
+            if (targetItem is FsFlowObject fo2 && fo2.Parent is FsFlowSystemPanel fs2)
+            {
+                foreach (var conn in fs2.GetConnections(fo2.Id))
+                {
+                    var cs = fs2.GetControl(conn.StartControlId);
+                    var ce = fs2.GetControl(conn.EndControlId);
+                    var ps = cs?.GetPort(conn.StartPortName);
+                    var pe = ce?.GetPort(conn.EndPortName);
+                    if (ps != null && pe != null)
+                        conn.Nodes = PipeTool.Normalize(ps, conn.Nodes, pe);
+                }
+            }
             Debug.WriteLine($"do : mvoe");
         }
 
         protected override void UnExecuteCore()
         {
             pi.SetValue(targetItem, oldval);
+            if (targetItem is FsFlowObject fo3 && fo3.Parent is FsFlowSystemPanel fs3)
+            {
+                foreach (var conn in fs3.GetConnections(fo3.Id))
+                {
+                    if (pipes.TryGetValue(conn.Id, out var v))
+                        conn.Nodes = v;
+                }
+            }
             Debug.WriteLine($"undo : mvoe");
         }
     }
@@ -2633,6 +3318,56 @@ namespace Going.UIEditor.Windows
         }
     }
     #endregion
+    #region ConnectionAddAction
+    public class ConnectionAddAction : AbstractAction
+    {
+        FsFlowSystemPanel container;
+        FlowConnection connection;
+
+        public ConnectionAddAction(FsFlowSystemPanel container, FlowConnection connection)
+        {
+            this.container = container;
+            this.connection = connection;
+        }
+
+        protected override void ExecuteCore()
+        {
+            container.Connections.Add(connection);
+            container.RefreshCache();
+        }
+
+        protected override void UnExecuteCore()
+        {
+            container.Connections.Remove(connection);
+            container.RefreshCache();
+        }
+    }
+    #endregion
+    #region ConnectionDeleteAction
+    public class ConnectionDeleteAction : AbstractAction
+    {
+        FsFlowSystemPanel container;
+        FlowConnection connection;
+
+        public ConnectionDeleteAction(FsFlowSystemPanel container, FlowConnection connection)
+        {
+            this.container = container;
+            this.connection = connection;
+        }
+
+        protected override void ExecuteCore()
+        {
+            container.Connections.Remove(connection);
+            container.RefreshCache();
+        }
+
+        protected override void UnExecuteCore()
+        {
+            container.Connections.Add(connection);
+            container.RefreshCache();
+        }
+    }
+    #endregion
     #region BringToFrontAction
     public class BringToFrontAction : AbstractAction
     {
@@ -2874,6 +3609,20 @@ namespace Going.UIEditor.Windows
         public float Dist { get; set; }
         public float DistR { get; set; }
         public string GapMode { get; set; }
+    }
+    #endregion
+
+    #region FlowSystem Helper
+    class SelPort(FsFlowObject c, ConnectPort p)
+    {
+        public FsFlowObject Control => c;
+        public ConnectPort Port => p;
+    }
+
+    class SelConn(FsFlowSystemPanel pnl, FlowConnection conn)
+    {
+        public FsFlowSystemPanel Panel => pnl;
+        public FlowConnection Connection => conn;
     }
     #endregion
     #endregion
