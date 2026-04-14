@@ -1,4 +1,4 @@
-﻿using Going.UI.Enums;
+using Going.UI.Enums;
 using Going.UI.Extensions;
 using Going.UI.Themes;
 using Going.UI.Tools;
@@ -121,12 +121,16 @@ namespace Going.UI.Controls
         #endregion
 
         #region Constructor
+        /// <summary>
+        /// <see cref="GoGauge"/> 클래스의 새 인스턴스를 초기화합니다.
+        /// </summary>
         public GoGauge()
         {
         }
         #endregion
 
         #region Override
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             var cText = thm.ToColor(TextColor);
@@ -199,6 +203,7 @@ namespace Going.UI.Controls
             return rts;
         }
 
+        /// <inheritdoc/>
         protected override void OnDispose()
         {
             pathEmpty.Dispose();

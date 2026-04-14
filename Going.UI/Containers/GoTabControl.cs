@@ -141,6 +141,7 @@ namespace Going.UI.Containers
 
         #region Override
         #region Init
+        /// <inheritdoc/>
         protected override void OnInit(GoDesign? design)
         {
             base.OnInit(design);
@@ -155,6 +156,7 @@ namespace Going.UI.Containers
         #endregion
 
         #region Draw
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             var cText = thm.ToColor(TextColor);
@@ -262,6 +264,7 @@ namespace Going.UI.Containers
         #endregion
 
         #region Override
+        /// <inheritdoc/>
         protected override void OnLayout()
         {
             var rts = Areas();
@@ -285,6 +288,7 @@ namespace Going.UI.Containers
             //base.OnLayout();
         }
 
+        /// <inheritdoc/>
         protected override void OnDispose()
         {
             //base.OnDispose();
@@ -299,6 +303,7 @@ namespace Going.UI.Containers
         #endregion
 
         #region Mouse
+        /// <inheritdoc/>
         protected override void OnMouseMove(float x, float y)
         {
             base.OnMouseMove(x, y);
@@ -311,6 +316,7 @@ namespace Going.UI.Containers
             });
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseClick(float x, float y, GoMouseButton button)
         {
             if (!(Design?.DesignMode ?? false)) base.OnMouseClick(x, y, button);
@@ -325,6 +331,7 @@ namespace Going.UI.Containers
         #endregion
 
         #region Areas
+        /// <inheritdoc/>
         public override Dictionary<string, SKRect> Areas()
         {
             var dic = base.Areas();

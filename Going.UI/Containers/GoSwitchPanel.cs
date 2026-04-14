@@ -83,6 +83,7 @@ namespace Going.UI.Containers
 
         #region Override
         #region Init
+        /// <inheritdoc/>
         protected override void OnInit(GoDesign? design)
         {
             base.OnInit(design);
@@ -97,6 +98,7 @@ namespace Going.UI.Containers
         #endregion
 
         #region Draw
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             if (FirstRender && SelectedPage == null) SelectedPage = Pages.FirstOrDefault();
@@ -105,6 +107,7 @@ namespace Going.UI.Containers
         #endregion
 
         #region OnDispose
+        /// <inheritdoc/>
         protected override void OnDispose()
         {
             //base.OnDispose();

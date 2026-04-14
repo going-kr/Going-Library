@@ -1,4 +1,4 @@
-﻿using Going.UI.Managers;
+using Going.UI.Managers;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -27,6 +27,9 @@ namespace Going.UI.Icons
         #endregion
 
         #region Constructor
+        /// <summary>
+        /// <see cref="FontAwesome"/> 클래스의 새 인스턴스를 초기화합니다.
+        /// </summary>
         public FontAwesome()
         {
             #region FontAwesome / Material Icon(Fill)

@@ -1,4 +1,4 @@
-﻿using Going.UI.Controls;
+using Going.UI.Controls;
 using Going.UI.Design;
 using Going.UI.Themes;
 using Going.UI.Utils;
@@ -43,6 +43,7 @@ namespace Going.UI.ImageCanvas
         public IcPage() { }
         #endregion
 
+        /// <inheritdoc/>
         protected override void OnBackgroundDraw(SKCanvas canvas, GoTheme thm)
         {
             using var p = new SKPaint { };

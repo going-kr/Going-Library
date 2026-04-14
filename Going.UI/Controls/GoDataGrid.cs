@@ -122,6 +122,7 @@ namespace Going.UI.Controls
         /// </summary>
         [JsonIgnore] public List<GoDataGridRow> ViewRows => mrows;
 
+        /// <summary>내부용: 입력 모드에서 텍스트를 숨길지 여부를 가져오거나 설정합니다.</summary>
         [JsonIgnore, Browsable(false), EditorBrowsable(EditorBrowsableState.Never)] public bool _InputModeInvisibleText_ { get; set; } = false;
         #endregion
 
@@ -211,6 +212,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Constructor
+        /// <summary><see cref="GoDataGrid"/> 클래스의 새 인스턴스를 초기화합니다.</summary>
         public GoDataGrid()
         {
             Selectable = true;
@@ -242,6 +244,7 @@ namespace Going.UI.Controls
 
         #region Override
         #region Draw
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             #region var
@@ -443,6 +446,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Mouse
+        /// <inheritdoc/>
         protected override void OnMouseDown(float x, float y, GoMouseButton button)
         {
             #region var
@@ -513,6 +517,7 @@ namespace Going.UI.Controls
             base.OnMouseDown(x, y, button);
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseUp(float x, float y, GoMouseButton button)
         {
             #region var
@@ -580,6 +585,7 @@ namespace Going.UI.Controls
             base.OnMouseUp(x, y, button);
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseMove(float x, float y)
         {
             #region var
@@ -647,6 +653,7 @@ namespace Going.UI.Controls
             base.OnMouseMove(x, y);
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseClick(float x, float y, GoMouseButton button)
         {
             #region var
@@ -733,6 +740,7 @@ namespace Going.UI.Controls
             base.OnMouseClick(x, y, button);
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseDoubleClick(float x, float y, GoMouseButton button)
         {
             #region var
@@ -771,6 +779,7 @@ namespace Going.UI.Controls
             base.OnMouseDoubleClick(x, y, button);
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseLongClick(float x, float y, GoMouseButton button)
         {
             #region var
@@ -809,6 +818,7 @@ namespace Going.UI.Controls
             base.OnMouseLongClick(x, y, button);
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseWheel(float x, float y, float delta)
         {
             #region var
@@ -840,6 +850,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Key
+        /// <inheritdoc/>
         protected override void OnKeyDown(bool Shift, bool Control, bool Alt, GoKeys key)
         {
             bShift = Shift;
@@ -847,6 +858,7 @@ namespace Going.UI.Controls
             base.OnKeyDown(Shift, Control, Alt, key);
         }
 
+        /// <inheritdoc/>
         protected override void OnKeyUp(bool Shift, bool Control, bool Alt, GoKeys key)
         {
             bShift = Shift;
@@ -955,6 +967,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Dispose
+        /// <inheritdoc/>
         protected override void OnDispose()
         {
             base.OnDispose();
@@ -1093,20 +1106,25 @@ namespace Going.UI.Controls
         #endregion
 
         #region Internal
-        [EditorBrowsable( EditorBrowsableState.Never), Browsable(false)]
         /// <summary>
         /// 셀 버튼 클릭 이벤트를 발생시킵니다.
         /// </summary>
         /// <param name="cell">클릭된 셀</param>
+        [EditorBrowsable( EditorBrowsableState.Never), Browsable(false)]
         public void InvokeButtonClick(GoDataGridCell cell) => CellButtonClick?.Invoke(this, new GoDataGridCellButtonClickEventArgs(cell));
-        [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
+
         /// <summary>
         /// 셀 값 변경 이벤트를 발생시킵니다.
         /// </summary>
         /// <param name="cell">값이 변경된 셀</param>
         /// <param name="oldValue">이전 값</param>
         /// <param name="newValue">새 값</param>
+        [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
         public void InvokeValueChange(GoDataGridCell cell, object? oldValue, object? newValue) => ValueChanged?.Invoke(this, new GoDataGridCellValueChangedEventArgs(cell, oldValue, newValue));
+
+        /// <summary>지정된 셀에 대해 텍스트 편집 입력을 시작합니다.</summary>
+        /// <param name="cell">편집 대상 셀.</param>
+        /// <param name="value">초기 값.</param>
         [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
         public void InvokeEditText(GoDataGridCell cell, string? value)
         {
@@ -1130,6 +1148,10 @@ namespace Going.UI.Controls
         }
 
 
+        /// <summary>지정된 셀에 대해 텍스트 편집 입력을 시작하고 콜백을 지정합니다.</summary>
+        /// <param name="cell">편집 대상 셀.</param>
+        /// <param name="value">초기 값.</param>
+        /// <param name="act">편집 완료 시 호출할 콜백.</param>
         [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
         public void InvokeEditText(GoDataGridCell cell, string? value, Action<string> act)
         {
@@ -1146,6 +1168,12 @@ namespace Going.UI.Controls
             GoInputEventer.Current.FireInputString(this, rt, act, value);
         }
 
+        /// <summary>지정된 셀에 대해 숫자 편집 입력을 시작합니다.</summary>
+        /// <typeparam name="T">숫자 형식.</typeparam>
+        /// <param name="cell">편집 대상 셀.</param>
+        /// <param name="value">초기 값.</param>
+        /// <param name="min">최소 값.</param>
+        /// <param name="max">최대 값.</param>
         [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
         public void InvokeEditNumber<T>(GoDataGridCell cell, T value, T? min, T? max) where T : struct
         {
@@ -1183,6 +1211,13 @@ namespace Going.UI.Controls
             }, value, min, max);
         }
 
+        /// <summary>지정된 셀에 대해 숫자 편집 입력을 시작하고 콜백을 지정합니다.</summary>
+        /// <typeparam name="T">숫자 형식.</typeparam>
+        /// <param name="cell">편집 대상 셀.</param>
+        /// <param name="value">초기 값.</param>
+        /// <param name="min">최소 값.</param>
+        /// <param name="max">최대 값.</param>
+        /// <param name="act">편집 완료 시 호출할 콜백.</param>
         [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
         public void InvokeEditNumber<T>(GoDataGridCell cell, T value, T? min, T? max, Action<string> act) where T : struct
         {
@@ -1199,6 +1234,11 @@ namespace Going.UI.Controls
             GoInputEventer.Current.FireInputNumber(this, rt, act, value, min, max);
         }
 
+        /// <summary>지정된 영역에 텍스트 편집 입력을 시작합니다.</summary>
+        /// <param name="cell">편집 대상 셀.</param>
+        /// <param name="value">초기 값.</param>
+        /// <param name="rt">입력 영역.</param>
+        /// <param name="act">편집 완료 시 호출할 콜백.</param>
         [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
         public void InvokeEditText(GoDataGridCell cell, string? value, SKRect rt, Action<string> act)
         {
@@ -1209,6 +1249,14 @@ namespace Going.UI.Controls
             GoInputEventer.Current.FireInputString(this, vrt, act, value);
         }
 
+        /// <summary>지정된 영역에 숫자 편집 입력을 시작합니다.</summary>
+        /// <typeparam name="T">숫자 형식.</typeparam>
+        /// <param name="cell">편집 대상 셀.</param>
+        /// <param name="value">초기 값.</param>
+        /// <param name="min">최소 값.</param>
+        /// <param name="max">최대 값.</param>
+        /// <param name="rt">입력 영역.</param>
+        /// <param name="act">편집 완료 시 호출할 콜백.</param>
         [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
         public void InvokeEditNumber<T>(GoDataGridCell cell, T value, T? min, T? max, SKRect rt, Action<string> act) where T : struct
         {
@@ -1219,6 +1267,11 @@ namespace Going.UI.Controls
             GoInputEventer.Current.FireInputNumber(this, vrt, act, value, min, max);
         }
 
+        /// <summary>행 좌표를 화면 좌표로 변환합니다.</summary>
+        /// <param name="fix">고정 열 여부.</param>
+        /// <param name="x">행 내 X 좌표.</param>
+        /// <param name="y">행 내 Y 좌표.</param>
+        /// <returns>화면 상의 좌표.</returns>
         [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
         public SKPoint RowToScreen(bool fix, float x, float y)
         {
@@ -1234,8 +1287,18 @@ namespace Going.UI.Controls
             return new SKPoint(x, y);
         }
 
+        /// <summary>지정된 셀의 DateTime 드롭다운 표시 여부를 가져옵니다.</summary>
+        /// <param name="cell">대상 셀.</param>
+        /// <returns>드롭다운이 표시 중이면 true.</returns>
         [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
         public bool DateTimeDropDownVisible(GoDataGridCell cell) => GetDateTimeDropDownVisible != null ? GetDateTimeDropDownVisible(cell) : dwndTime.Visible && dwndTimeCell == cell;
+
+        /// <summary>DateTime 드롭다운을 엽니다.</summary>
+        /// <param name="cell">대상 셀.</param>
+        /// <param name="rt">드롭다운 위치 영역.</param>
+        /// <param name="value">초기 값.</param>
+        /// <param name="style">표시 방식.</param>
+        /// <param name="action">선택된 값 콜백.</param>
         [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
         public void DateTimeDropDownOpen(GoDataGridCell cell, SKRect rt, DateTime value, GoDateTimeKind style,  Action<DateTime?> action)
         {
@@ -1250,8 +1313,17 @@ namespace Going.UI.Controls
                 dwndTime.Show(vrt, FontName, FontStyle, FontSize, value, style, action);
             }
         }
+        /// <summary>지정된 셀의 색상 드롭다운 표시 여부를 가져옵니다.</summary>
+        /// <param name="cell">대상 셀.</param>
+        /// <returns>드롭다운이 표시 중이면 true.</returns>
         [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
         public bool ColorDropDownVisible(GoDataGridCell cell) => GetColorDropDownVisible != null ? GetColorDropDownVisible(cell) : dwndColor.Visible && dwndColorCell == cell;
+
+        /// <summary>색상 드롭다운을 엽니다.</summary>
+        /// <param name="cell">대상 셀.</param>
+        /// <param name="rt">드롭다운 위치 영역.</param>
+        /// <param name="value">초기 색상.</param>
+        /// <param name="action">선택된 색상 콜백.</param>
         [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
         public void ColorDropDownOpen(GoDataGridCell cell, SKRect rt, SKColor value, Action<SKColor?> action)
         {
@@ -1266,8 +1338,20 @@ namespace Going.UI.Controls
                 dwndColor.Show(vrt, FontName, FontStyle, FontSize, value, action);
             }
         }
+        /// <summary>지정된 셀의 콤보 드롭다운 표시 여부를 가져옵니다.</summary>
+        /// <param name="cell">대상 셀.</param>
+        /// <returns>드롭다운이 표시 중이면 true.</returns>
         [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
         public bool ComboDropDownVisible(GoDataGridCell cell) => GetComboDropDownVisible != null ? GetComboDropDownVisible(cell) : dwndCombo.Visible && dwndComboCell == cell;
+
+        /// <summary>콤보 드롭다운을 엽니다.</summary>
+        /// <param name="cell">대상 셀.</param>
+        /// <param name="rt">드롭다운 위치 영역.</param>
+        /// <param name="itemHeight">항목 높이.</param>
+        /// <param name="maximumViewCount">한 번에 표시할 최대 항목 수.</param>
+        /// <param name="items">콤보 항목 목록.</param>
+        /// <param name="selectedItem">현재 선택된 항목.</param>
+        /// <param name="action">선택된 항목 콜백.</param>
         [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
         public void ComboDropDownOpen(GoDataGridCell cell, SKRect rt, float itemHeight, int maximumViewCount, List<GoDataGridInputComboItem> items, GoDataGridInputComboItem? selectedItem, Action<GoDataGridInputComboItem?> action)
         {

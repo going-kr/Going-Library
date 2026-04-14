@@ -38,6 +38,7 @@ namespace Going.UI.Containers
         #endregion
 
         #region Override
+        /// <inheritdoc/>
         protected override void OnInit(GoDesign? design)
         {
             base.OnInit(design);
@@ -45,6 +46,7 @@ namespace Going.UI.Containers
             GUI.Init(design, this);
         }
 
+        /// <inheritdoc/>
         protected override void OnShow()
         {
             base.OnShow();
@@ -52,6 +54,7 @@ namespace Going.UI.Containers
             GUI.Show(this);
         }
 
+        /// <inheritdoc/>
         protected override void OnHide()
         {
             base.OnHide();
@@ -59,6 +62,7 @@ namespace Going.UI.Containers
             GUI.Hide(this);
         }
 
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             base.OnDraw(canvas, thm);
@@ -72,6 +76,7 @@ namespace Going.UI.Containers
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnUpdate()
         {
             base.OnUpdate();
@@ -79,6 +84,7 @@ namespace Going.UI.Containers
             GUI.Update(this);
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseDown(float x, float y, GoMouseButton button)
         {
             base.OnMouseDown(x, y, button);
@@ -86,6 +92,7 @@ namespace Going.UI.Containers
             GUI.MouseDown(this, x - PanelBounds.Left, y - PanelBounds.Top, button);
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseUp(float x, float y, GoMouseButton button)
         {
             base.OnMouseUp(x, y, button);
@@ -93,6 +100,7 @@ namespace Going.UI.Containers
             GUI.MouseUp(this, x - PanelBounds.Left, y - PanelBounds.Top, button);
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseDoubleClick(float x, float y, GoMouseButton button)
         {
             base.OnMouseDoubleClick(x, y, button);
@@ -100,6 +108,7 @@ namespace Going.UI.Containers
             GUI.MouseDoubleClick(this, x - PanelBounds.Left, y - PanelBounds.Top, button);
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseMove(float x, float y)
         {
             base.OnMouseMove(x, y);
@@ -107,6 +116,7 @@ namespace Going.UI.Containers
             GUI.MouseMove(this, x - PanelBounds.Left, y - PanelBounds.Top);
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseWheel(float x, float y, float delta)
         {
             base.OnMouseWheel(x, y, delta);
@@ -114,6 +124,7 @@ namespace Going.UI.Containers
             GUI.MouseWheel(this, x - PanelBounds.Left, y - PanelBounds.Top, delta);
         }
 
+        /// <inheritdoc/>
         protected override void OnKeyDown(bool Shift, bool Control, bool Alt, GoKeys key)
         {
             base.OnKeyDown(Shift, Control, Alt, key);
@@ -121,6 +132,7 @@ namespace Going.UI.Containers
             GUI.KeyDown(this, Shift, Control, Alt, key);
         }
 
+        /// <inheritdoc/>
         protected override void OnKeyUp(bool Shift, bool Control, bool Alt, GoKeys key)
         {
             base.OnKeyUp(Shift, Control, Alt, key);
@@ -128,6 +140,7 @@ namespace Going.UI.Containers
             GUI.KeyUp(this, Shift, Control, Alt, key);
         }
 
+        /// <inheritdoc/>
         protected override void OnDispose()
         {
             base.OnDispose();
@@ -137,6 +150,9 @@ namespace Going.UI.Containers
         #endregion
 
         #region Virtual
+        /// <summary>
+        /// 자식 컨트롤들의 위치와 크기를 배치합니다. Dock 스타일에 따라 각 컨트롤의 경계를 설정합니다.
+        /// </summary>
         protected virtual void OnLayout()
         {
             var rts = Areas();

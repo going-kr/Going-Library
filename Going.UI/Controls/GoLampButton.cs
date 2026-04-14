@@ -79,6 +79,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Constructor
+        /// <summary>GoLampButton 클래스의 새 인스턴스를 초기화합니다.</summary>
         public GoLampButton()
         {
             Selectable = true;
@@ -91,6 +92,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Override
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             var cText = thm.ToColor(TextColor).BrightnessTransmit(bDown ? thm.DownBrightness : 0);
@@ -161,6 +163,7 @@ namespace Going.UI.Controls
             base.OnDraw(canvas, thm);
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseDown(float x, float y, GoMouseButton button)
         {
             var rts = Areas();
@@ -171,6 +174,7 @@ namespace Going.UI.Controls
             base.OnMouseDown(x, y, button);
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseUp(float x, float y, GoMouseButton button)
         {
             var rts = Areas();
@@ -185,6 +189,7 @@ namespace Going.UI.Controls
             base.OnMouseUp(x, y, button);
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseMove(float x, float y)
         {
             var rts = Areas();
@@ -195,6 +200,7 @@ namespace Going.UI.Controls
             base.OnMouseMove(x, y);
         }
 
+        /// <inheritdoc/>
         public override Dictionary<string, SKRect> Areas()
         {
             var rts = base.Areas();

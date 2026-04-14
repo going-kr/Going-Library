@@ -1,4 +1,4 @@
-﻿using Going.UI.Controls;
+using Going.UI.Controls;
 using Going.UI.Enums;
 using Going.UI.Extensions;
 using Going.UI.Themes;
@@ -69,6 +69,7 @@ namespace Going.UI.ImageCanvas
         #endregion
 
         #region Override
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             var rts = Areas();
@@ -98,6 +99,7 @@ namespace Going.UI.ImageCanvas
             base.OnDraw(canvas, thm);
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseDown(float x, float y, GoMouseButton button)
         {
             var rts = Areas();
@@ -107,6 +109,7 @@ namespace Going.UI.ImageCanvas
             base.OnMouseDown(x, y, button);
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseUp(float x, float y, GoMouseButton button)
         {
             var rts = Areas();

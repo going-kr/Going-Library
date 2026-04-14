@@ -74,6 +74,7 @@ namespace Going.UI.Controls
 
         #region Override
         #region OnDraw
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             var rts = Areas();
@@ -124,6 +125,7 @@ namespace Going.UI.Controls
             base.OnDraw(canvas, thm);
         }
 
+        /// <inheritdoc/>
         protected override void OnUpdate()
         {
             if (OnOff)
@@ -142,6 +144,7 @@ namespace Going.UI.Controls
             base.OnUpdate();
         }
 
+        /// <inheritdoc/>
         protected override void OnDispose()
         {
             path.Dispose();

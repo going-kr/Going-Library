@@ -1,4 +1,4 @@
-﻿using Going.UI.Enums;
+using Going.UI.Enums;
 using Going.UI.Themes;
 using Going.UI.Tools;
 using Going.UI.Utils;
@@ -91,12 +91,16 @@ namespace Going.UI.Controls
         #endregion
 
         #region Constructor
+        /// <summary>
+        /// <see cref="GoLamp"/> 클래스의 새 인스턴스를 초기화합니다.
+        /// </summary>
         public GoLamp()
         {
         }
         #endregion
 
         #region Override
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             var cText = thm.ToColor(TextColor);

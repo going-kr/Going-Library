@@ -86,6 +86,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Constructor
+        /// <summary><see cref="GoInput"/> 클래스의 새 인스턴스를 초기화합니다.</summary>
         public GoInput()
         {
             Selectable = true;
@@ -99,6 +100,7 @@ namespace Going.UI.Controls
 
         #region Override
         #region OnDraw
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             #region var
@@ -197,6 +199,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region OnMouseDown
+        /// <inheritdoc/>
         protected override void OnMouseDown(float x, float y, GoMouseButton button)
         {
             #region Button
@@ -218,6 +221,7 @@ namespace Going.UI.Controls
         }
         #endregion
         #region OnMouseUp
+        /// <inheritdoc/>
         protected override void OnMouseUp(float x, float y, GoMouseButton button)
         {
             #region Button
@@ -247,6 +251,7 @@ namespace Going.UI.Controls
         }
         #endregion
         #region OnMouseMove
+        /// <inheritdoc/>
         protected override void OnMouseMove(float x, float y)
         {
             #region Button
@@ -264,6 +269,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Areas
+        /// <inheritdoc/>
         public override Dictionary<string, SKRect> Areas()
         {
             var dic = base.Areas();
@@ -280,7 +286,15 @@ namespace Going.UI.Controls
         #endregion
 
         #region Abstract
+        /// <summary>값 영역을 그립니다. 파생 클래스에서 구현합니다.</summary>
+        /// <param name="canvas">SkiaSharp 캔버스</param>
+        /// <param name="thm">테마</param>
+        /// <param name="valueBounds">값 영역 경계</param>
         protected abstract void OnDrawValue(SKCanvas canvas, GoTheme thm, SKRect valueBounds);
+        /// <summary>값 영역이 클릭되었을 때 호출됩니다. 파생 클래스에서 구현합니다.</summary>
+        /// <param name="x">마우스 X 좌표</param>
+        /// <param name="y">마우스 Y 좌표</param>
+        /// <param name="button">클릭한 마우스 버튼</param>
         protected abstract void OnValueClick(float x, float y, GoMouseButton button);
         #endregion
 
@@ -336,6 +350,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region OnDrawValue
+        /// <inheritdoc/>
         protected override void OnDrawValue(SKCanvas canvas, GoTheme thm, SKRect rtValue)
         {
             var cText = thm.ToColor(TextColor);
@@ -350,6 +365,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region OnValueClick
+        /// <inheritdoc/>
         protected override void OnValueClick(float x, float y, GoMouseButton button)
         {
             GoInputEventer.Current.FireInputString(this, Areas()["Value"], (s) => {
@@ -415,6 +431,8 @@ namespace Going.UI.Controls
         #endregion
 
         #region Constructor
+        /// <summary><see cref="GoInputNumber{T}"/> 클래스의 새 인스턴스를 초기화합니다.</summary>
+        /// <exception cref="Exception">지원하지 않는 자료형 T인 경우 발생합니다.</exception>
         public GoInputNumber()
         {
             if (typeof(T) == typeof(sbyte)) { }
@@ -433,6 +451,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region OnDrawValue
+        /// <inheritdoc/>
         protected override void OnDrawValue(SKCanvas canvas, GoTheme thm, SKRect rtValue)
         {
             using var p = new SKPaint { IsAntialias = false };
@@ -462,6 +481,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region OnValueClick
+        /// <inheritdoc/>
         protected override void OnValueClick(float x, float y, GoMouseButton button)
         {
             var rtValue = Areas()["Value"];
@@ -549,14 +569,16 @@ namespace Going.UI.Controls
         #endregion
 
         #region Constructor
+        /// <summary><see cref="GoInputBoolean"/> 클래스의 새 인스턴스를 초기화합니다.</summary>
         public GoInputBoolean()
         {
-            ani.Refresh = () => 
+            ani.Refresh = () =>
             Invalidate();
         }
         #endregion
 
         #region OnDrawValue
+        /// <inheritdoc/>
         protected override void OnDrawValue(SKCanvas canvas, GoTheme thm, SKRect rtValue)
         {
             using var p = new SKPaint { IsAntialias = false };
@@ -595,6 +617,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region OnValueClick
+        /// <inheritdoc/>
         protected override void OnValueClick(float x, float y, GoMouseButton button)
         {
             var rtValue = Areas()["Value"];
@@ -665,6 +688,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region OnDrawValue
+        /// <inheritdoc/>
         protected override void OnDrawValue(SKCanvas canvas, GoTheme thm, SKRect rtValue)
         {
             using var p = new SKPaint { IsAntialias = false };
@@ -700,6 +724,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region OnValueClick
+        /// <inheritdoc/>
         protected override void OnValueClick(float x, float y, GoMouseButton button)
         {
             var rtValue = Areas()["Value"];
@@ -732,12 +757,17 @@ namespace Going.UI.Controls
         #endregion
     }
 
+    /// <summary>
+    /// 좌우 화살표로 항목을 선택하는 셀렉터 입력 컨트롤.
+    /// </summary>
     public class GoInputSelector : GoInput
     {
         #region Properties
+        /// <summary>선택 가능한 항목 목록</summary>
         [GoProperty(PCategory.Control, 18)] public List<GoListItem> Items { get; set; } = [];
 
         private int nSelIndex = -1;
+        /// <summary>선택된 항목의 인덱스. -1이면 선택된 항목 없음.</summary>
         [JsonIgnore]
         public int SelectedIndex
         {
@@ -752,10 +782,12 @@ namespace Going.UI.Controls
             }
         }
 
+        /// <summary>선택된 항목. 선택된 항목이 없으면 null.</summary>
         [JsonIgnore] public GoListItem? SelectedItem => SelectedIndex >= 0 && SelectedIndex < Items.Count ? Items[SelectedIndex] : null;
         #endregion
 
         #region Event
+        /// <summary>선택된 인덱스가 변경되었을 때 발생하는 이벤트</summary>
         public event EventHandler? SelectedIndexChanged;
         #endregion
 
@@ -767,6 +799,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Constructor
+        /// <summary><see cref="GoInputSelector"/> 클래스의 새 인스턴스를 초기화합니다.</summary>
         public GoInputSelector()
         {
             ani.Refresh = () => Invalidate();
@@ -775,6 +808,7 @@ namespace Going.UI.Controls
 
         #region Override
         #region OnDrawValue
+        /// <inheritdoc/>
         protected override void OnDrawValue(SKCanvas canvas, GoTheme thm, SKRect rtValue)
         {
             using var p = new SKPaint { IsAntialias = false };
@@ -861,6 +895,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region OnMouseDown
+        /// <inheritdoc/>
         protected override void OnMouseDown(float x, float y, GoMouseButton button)
         {
             base.OnMouseDown(x, y, button);
@@ -872,6 +907,7 @@ namespace Going.UI.Controls
         }
         #endregion
         #region OnMouseUp
+        /// <inheritdoc/>
         protected override void OnMouseUp(float x, float y, GoMouseButton button)
         {
             base.OnMouseUp(x, y, button);
@@ -915,6 +951,7 @@ namespace Going.UI.Controls
         }
         #endregion
         #region OnMouseMove
+        /// <inheritdoc/>
         protected override void OnMouseMove(float x, float y)
         {
             base.OnMouseMove(x, y);
@@ -924,6 +961,7 @@ namespace Going.UI.Controls
         }
         #endregion
         #region OnValueClick
+        /// <inheritdoc/>
         protected override void OnValueClick(float x, float y, GoMouseButton button)
         {
         }
@@ -939,13 +977,17 @@ namespace Going.UI.Controls
         #endregion
     }
 
+    /// <summary>
+    /// 색상 입력 컨트롤. 드롭다운을 통해 색상을 선택합니다.
+    /// </summary>
     public class GoInputColor : GoInput
     {
         #region Properties
+        /// <summary>선택된 색상 값</summary>
         [GoProperty(PCategory.Control, 18)]
         public SKColor Value
         {
-            get => cValue; 
+            get => cValue;
             set
             {
                 if(cValue != value)
@@ -958,8 +1000,10 @@ namespace Going.UI.Controls
         #endregion
 
         #region Event
+        /// <summary>값이 변경되었을 때 발생하는 이벤트</summary>
         public event EventHandler? ValueChanged;
 
+        /// <summary>드롭다운이 열리기 전에 발생하는 이벤트. Cancel을 true로 설정하면 드롭다운이 열리지 않습니다.</summary>
         public event EventHandler<GoCancelableEventArgs>? DropDownOpening;
         #endregion
 
@@ -969,6 +1013,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region OnDrawValue
+        /// <inheritdoc/>
         protected override void OnDrawValue(SKCanvas canvas, GoTheme thm, SKRect rtValue)
         {
             using var p = new SKPaint { IsAntialias = false };
@@ -1006,6 +1051,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region OnValueClick
+        /// <inheritdoc/>
         protected override void OnValueClick(float x, float y, GoMouseButton button)
         {
             var rtValue = Areas()["Value"];
@@ -1038,9 +1084,13 @@ namespace Going.UI.Controls
         #endregion
     }
 
+    /// <summary>
+    /// 날짜/시간 입력 컨트롤. 드롭다운을 통해 날짜 또는 시간을 선택합니다.
+    /// </summary>
     public class GoInputDateTime : GoInput
     {
         #region Properties
+        /// <summary>선택된 날짜/시간 값</summary>
         [GoProperty(PCategory.Control, 18)]
         public DateTime Value
         {
@@ -1055,14 +1105,19 @@ namespace Going.UI.Controls
             }
         }
 
+        /// <summary>날짜/시간 표시 스타일 (날짜만/시간만/날짜+시간)</summary>
         [GoProperty(PCategory.Control, 19)] public GoDateTimeKind DateTimeStyle { get; set; } = GoDateTimeKind.DateTime;
+        /// <summary>날짜 표시 형식 문자열</summary>
         [GoProperty(PCategory.Control, 20)] public string DateFormat { get; set; } = "yyyy-MM-dd";
+        /// <summary>시간 표시 형식 문자열</summary>
         [GoProperty(PCategory.Control, 21)] public string TimeFormat { get; set; } = "HH:mm:ss";
         #endregion
 
         #region Event
+        /// <summary>값이 변경되었을 때 발생하는 이벤트</summary>
         public event EventHandler? ValueChanged;
 
+        /// <summary>드롭다운이 열리기 전에 발생하는 이벤트. Cancel을 true로 설정하면 드롭다운이 열리지 않습니다.</summary>
         public event EventHandler<GoCancelableEventArgs>? DropDownOpening;
         #endregion
 
@@ -1072,6 +1127,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region OnDrawValue
+        /// <inheritdoc/>
         protected override void OnDrawValue(SKCanvas canvas, GoTheme thm, SKRect rtValue)
         {
             using var p = new SKPaint { IsAntialias = false };
@@ -1121,6 +1177,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region OnValueClick
+        /// <inheritdoc/>
         protected override void OnValueClick(float x, float y, GoMouseButton button)
         {
             var rtValue = Areas()["Value"];

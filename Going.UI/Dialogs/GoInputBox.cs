@@ -1,4 +1,4 @@
-﻿using Going.UI.Containers;
+using Going.UI.Containers;
 using Going.UI.Controls;
 using Going.UI.Datas;
 using Going.UI.Design;
@@ -62,6 +62,9 @@ namespace Going.UI.Dialogs
         #endregion
 
         #region Constructor
+        /// <summary>
+        /// <see cref="GoInputBox"/> 클래스의 새 인스턴스를 초기화합니다.
+        /// </summary>
         public GoInputBox()
         {
             IconString = "fa-pen-to-square";

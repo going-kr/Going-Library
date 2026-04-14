@@ -1,4 +1,4 @@
-﻿using Going.UI.Containers;
+using Going.UI.Containers;
 using Going.UI.Controls;
 using Going.UI.Datas;
 using Going.UI.Dialogs;
@@ -108,6 +108,7 @@ namespace Going.UI.Design
         /// 현재 드래그 중인지 여부를 가져옵니다.
         /// </summary>
         [JsonIgnore] public bool IsDrag => dragItem != null;
+        /// <summary>UIEditor 에서 디자인 모드로 사용 중인지 여부를 가져오거나 설정합니다.</summary>
         [JsonIgnore, EditorBrowsable(EditorBrowsableState.Never)] public bool DesignMode { get; set; } = false;
 
         /// <summary>
@@ -167,8 +168,14 @@ namespace Going.UI.Design
         #endregion
 
         #region Constructor
+        /// <summary>
+        /// <see cref="GoDesign"/> 클래스의 새 인스턴스를 초기화합니다.
+        /// </summary>
         public GoDesign() => ActiveDesign = this;
 
+        /// <summary>
+        /// <see cref="GoDesign"/> 클래스의 새 인스턴스를 초기화합니다.
+        /// </summary>
         [JsonConstructor]
         public GoDesign(Dictionary<string, GoPage> pages, 
                         Dictionary<string, List<SKImage>> images, Dictionary<string, List<byte[]>> fonts,
@@ -435,6 +442,7 @@ namespace Going.UI.Design
             #endregion
         }
 
+        /// <inheritdoc/>
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void DrawPage(SKCanvas canvas, GoTheme thm, GoPage? page = null)
         {
@@ -830,6 +838,7 @@ namespace Going.UI.Design
         #endregion
 
         #region Dispose
+        /// <inheritdoc/>
         public void Dispose()
         {
             foreach (var page in Pages.Values) page.Dispose();
@@ -1100,6 +1109,7 @@ namespace Going.UI.Design
         #endregion
 
         #region LayoutBounds
+        /// <summary>UIEditor 에서 사용할 레이아웃 경계 영역을 반환합니다.</summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         public (SKRect rtL, SKRect rtT, SKRect rtR, SKRect rtB, SKRect rtF, SKRect rtFR) LayoutBounds() => bounds();
         #endregion

@@ -1,4 +1,4 @@
-﻿using Going.UI.Enums;
+using Going.UI.Enums;
 using Going.UI.Extensions;
 using Going.UI.Themes;
 using Going.UI.Tools;
@@ -189,6 +189,9 @@ namespace Going.UI.Controls
 
         #region Constructor
 
+        /// <summary>
+        /// <see cref="GoSlider"/> 클래스의 새 인스턴스를 초기화합니다.
+        /// </summary>
         public GoSlider()
         {
             Selectable = true;
@@ -208,6 +211,7 @@ namespace Going.UI.Controls
         #region Override
 
         #region OnDraw
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             DrawSlider(canvas, thm);
@@ -215,6 +219,7 @@ namespace Going.UI.Controls
         }
         #endregion
         #region OnMouseDown
+        /// <inheritdoc/>
         protected override void OnMouseDown(float x, float y, GoMouseButton button)
         {
             mx = x;
@@ -240,6 +245,7 @@ namespace Going.UI.Controls
         }
         #endregion
         #region OnMouseMove
+        /// <inheritdoc/>
         protected override void OnMouseMove(float x, float y)
         {
             mx = x;
@@ -255,6 +261,7 @@ namespace Going.UI.Controls
         }
         #endregion
         #region OnMouseUp
+        /// <inheritdoc/>
         protected override void OnMouseUp(float x, float y, GoMouseButton button)
         {
             mx = x;

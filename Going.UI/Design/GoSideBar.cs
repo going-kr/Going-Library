@@ -1,4 +1,4 @@
-﻿using Going.UI.Containers;
+using Going.UI.Containers;
 using Going.UI.Controls;
 using Going.UI.Enums;
 using Going.UI.Themes;
@@ -88,13 +88,20 @@ namespace Going.UI.Design
         #endregion
 
         #region Constructor
+        /// <summary>
+        /// <see cref="GoTitleBar"/> 클래스의 새 인스턴스를 초기화합니다.
+        /// </summary>
         [JsonConstructor]
         public GoTitleBar(List<IGoControl> childrens) : this() => Childrens = childrens ?? [];
+        /// <summary>
+        /// <see cref="GoTitleBar"/> 클래스의 새 인스턴스를 초기화합니다.
+        /// </summary>
         public GoTitleBar() { }
         #endregion
 
         #region Override
         #region Draw
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             #region var
@@ -130,6 +137,7 @@ namespace Going.UI.Design
         #endregion
 
         #region Mouse
+        /// <inheritdoc/>
         protected override void OnMouseDown(float x, float y, GoMouseButton button)
         {
             var rts = Areas();
@@ -147,10 +155,12 @@ namespace Going.UI.Design
             base.OnMouseDown(x, y, button);
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseMove(float x, float y) { mx = x; my = y; base.OnMouseMove(x, y); }
         #endregion
 
         #region OnLayout
+        /// <inheritdoc/>
         protected override void OnLayout()
         {
             var rts = Areas();
@@ -173,6 +183,7 @@ namespace Going.UI.Design
         #endregion
 
         #region Areas
+        /// <inheritdoc/>
         public override Dictionary<string, SKRect> Areas()
         {
             var dic = base.Areas();
@@ -274,8 +285,14 @@ namespace Going.UI.Design
         #endregion
 
         #region Constructor
+        /// <summary>
+        /// <see cref="GoSideBar"/> 클래스의 새 인스턴스를 초기화합니다.
+        /// </summary>
         [JsonConstructor]
         public GoSideBar(List<IGoControl> childrens) : this() => Childrens = childrens ?? [];
+        /// <summary>
+        /// <see cref="GoSideBar"/> 클래스의 새 인스턴스를 초기화합니다.
+        /// </summary>
         public GoSideBar()
         {
             ani.Refresh = () => Invalidate();
@@ -301,8 +318,14 @@ namespace Going.UI.Design
         #endregion
 
         #region Constructor
+        /// <summary>
+        /// <see cref="GoFooter"/> 클래스의 새 인스턴스를 초기화합니다.
+        /// </summary>
         [JsonConstructor]
         public GoFooter(List<IGoControl> childrens) : this() => Childrens = childrens ?? [];
+        /// <summary>
+        /// <see cref="GoFooter"/> 클래스의 새 인스턴스를 초기화합니다.
+        /// </summary>
         public GoFooter() { }
         #endregion
     }

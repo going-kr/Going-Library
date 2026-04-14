@@ -471,6 +471,14 @@ namespace Going.UI.Utils
             }
         }
 
+        /// <summary>지정된 영역에 아이콘을 그립니다.</summary>
+        /// <param name="canvas">대상 캔버스.</param>
+        /// <param name="iconString">아이콘 식별 문자열.</param>
+        /// <param name="iconSize">아이콘 크기.</param>
+        /// <param name="bounds">그릴 영역.</param>
+        /// <param name="color">아이콘 채움 색상.</param>
+        /// <param name="colorborder">아이콘 테두리 색상.</param>
+        /// <param name="align">정렬 방식.</param>
         public static void DrawIcon(SKCanvas canvas, string? iconString, float iconSize, SKRect bounds, SKColor color, SKColor colorborder, GoContentAlignment align = GoContentAlignment.MiddleCenter)
         {
             var fi = iconString != null ? GoIconManager.GetIcon(iconString) : null;
@@ -516,6 +524,14 @@ namespace Going.UI.Utils
             }
         }
 
+        /// <summary>지정된 영역에 회전된 아이콘을 그립니다.</summary>
+        /// <param name="canvas">대상 캔버스.</param>
+        /// <param name="iconString">아이콘 식별 문자열.</param>
+        /// <param name="iconSize">아이콘 크기.</param>
+        /// <param name="rotate">회전 각도(도).</param>
+        /// <param name="bounds">그릴 영역.</param>
+        /// <param name="fill">아이콘 채움 색상.</param>
+        /// <param name="border">아이콘 테두리 색상.</param>
         public static void DrawIcon(SKCanvas canvas, string? iconString, float iconSize, float rotate, SKRect bounds, SKColor fill, SKColor border)
         {
             var fi = iconString != null ? GoIconManager.GetIcon(iconString) : null;
@@ -551,6 +567,15 @@ namespace Going.UI.Utils
             }
         }
 
+        /// <summary>지정된 영역에 아이콘을 테두리 크기와 함께 그립니다.</summary>
+        /// <param name="canvas">대상 캔버스.</param>
+        /// <param name="iconString">아이콘 식별 문자열.</param>
+        /// <param name="iconSize">아이콘 크기.</param>
+        /// <param name="bounds">그릴 영역.</param>
+        /// <param name="color">아이콘 채움 색상.</param>
+        /// <param name="colorborder">아이콘 테두리 색상.</param>
+        /// <param name="borderSize">테두리 크기.</param>
+        /// <param name="align">정렬 방식.</param>
         public static void DrawIcon(SKCanvas canvas, string? iconString, float iconSize, SKRect bounds, SKColor color, SKColor colorborder, int borderSize, GoContentAlignment align = GoContentAlignment.MiddleCenter)
         {
             var fi = iconString != null ? GoIconManager.GetIcon(iconString) : null;
@@ -595,6 +620,12 @@ namespace Going.UI.Utils
             }
         }
 
+        /// <summary>아이콘의 <see cref="SKPath"/>를 생성합니다.</summary>
+        /// <param name="iconString">아이콘 식별 문자열.</param>
+        /// <param name="iconSize">아이콘 크기.</param>
+        /// <param name="rotate">회전 각도(도).</param>
+        /// <param name="bounds">대상 영역.</param>
+        /// <returns>아이콘을 나타내는 <see cref="SKPath"/>. 아이콘이 없을 경우 null.</returns>
         public static SKPath? GetIconPath(string? iconString, float iconSize, float rotate, SKRect bounds)
         {
             SKPath? ret = null;
@@ -649,6 +680,21 @@ namespace Going.UI.Utils
             else DrawText(canvas, text, fontName, fontStyle, fontSize, bounds, color, align, wordWrap);
         }
 
+        /// <summary>텍스트와 아이콘을 함께 그립니다.</summary>
+        /// <param name="canvas">대상 캔버스.</param>
+        /// <param name="text">텍스트.</param>
+        /// <param name="fontName">폰트 이름.</param>
+        /// <param name="fontStyle">폰트 스타일.</param>
+        /// <param name="fontSize">폰트 크기.</param>
+        /// <param name="iconString">아이콘 식별 문자열.</param>
+        /// <param name="iconSize">아이콘 크기.</param>
+        /// <param name="direction">아이콘과 텍스트의 배치 방향.</param>
+        /// <param name="gap">아이콘과 텍스트 사이 간격.</param>
+        /// <param name="bounds">그릴 영역.</param>
+        /// <param name="textcolor">텍스트 색상.</param>
+        /// <param name="iconcolor">아이콘 색상.</param>
+        /// <param name="align">정렬 방식.</param>
+        /// <param name="wordWrap">단어 단위 줄 바꿈 여부.</param>
         public static void DrawTextIcon(SKCanvas canvas, string? text, string fontName, GoFontStyle fontStyle, float fontSize, string? iconString, float iconSize, GoDirectionHV direction, float gap, SKRect bounds, SKColor textcolor, SKColor iconcolor, GoContentAlignment align = GoContentAlignment.MiddleCenter, bool wordWrap = true)
         {
             var fi = iconString != null ? GoIconManager.GetIcon(iconString) : null;
@@ -750,6 +796,17 @@ namespace Going.UI.Utils
         #endregion
 
         #region TextIconBounds
+        /// <summary>텍스트와 아이콘의 영역을 계산합니다.</summary>
+        /// <param name="text">텍스트.</param>
+        /// <param name="fontName">폰트 이름.</param>
+        /// <param name="fontStyle">폰트 스타일.</param>
+        /// <param name="fontSize">폰트 크기.</param>
+        /// <param name="iconSize">아이콘 크기.</param>
+        /// <param name="direction">아이콘과 텍스트의 배치 방향.</param>
+        /// <param name="gap">아이콘과 텍스트 사이 간격.</param>
+        /// <param name="bounds">전체 영역.</param>
+        /// <param name="align">정렬 방식.</param>
+        /// <returns>아이콘 영역과 텍스트 영역의 튜플.</returns>
         public static (SKRect rtIcon, SKRect rtText) TextIconBounds(string? text, string fontName, GoFontStyle fontStyle, float fontSize, SKSize iconSize, GoDirectionHV direction, float gap, SKRect bounds, GoContentAlignment align)
         {
             if (string.IsNullOrEmpty(text))
@@ -1063,6 +1120,11 @@ namespace Going.UI.Utils
             }
         }
 
+        /// <summary>둥근 사각형 박스를 그립니다.</summary>
+        /// <param name="canvas">대상 캔버스.</param>
+        /// <param name="bounds">박스 영역.</param>
+        /// <param name="fillcolor">채움 색상.</param>
+        /// <param name="borderColor">테두리 색상.</param>
         public static void DrawBox(SKCanvas canvas, SKRoundRect bounds, SKColor fillcolor, SKColor borderColor)
         {
             using var p = new SKPaint { IsAntialias = true };
@@ -1086,6 +1148,12 @@ namespace Going.UI.Utils
             }
         }
 
+        /// <summary>둥근 사각형 박스를 지정된 테두리 두께로 그립니다.</summary>
+        /// <param name="canvas">대상 캔버스.</param>
+        /// <param name="bounds">박스 영역.</param>
+        /// <param name="fillcolor">채움 색상.</param>
+        /// <param name="borderColor">테두리 색상.</param>
+        /// <param name="borderSize">테두리 두께.</param>
         public static void DrawBox(SKCanvas canvas, SKRoundRect bounds, SKColor fillcolor, SKColor borderColor, float borderSize)
         {
             using var p = new SKPaint { IsAntialias = true };
@@ -1272,6 +1340,9 @@ namespace Going.UI.Utils
         }
         #endregion
         #region ValidSizes
+        /// <summary>크기 문자열 배열이 유효한지 확인합니다.</summary>
+        /// <param name="sizes">검사할 크기 문자열 배열(예: "100px", "50%").</param>
+        /// <returns>모든 크기가 유효하면 true, 그렇지 않으면 false.</returns>
         public static bool ValidSizes(string[] sizes)
         {
             List<bool> ret = [];
@@ -1293,6 +1364,13 @@ namespace Going.UI.Utils
 
         #region MinimumSize
         #region Grid
+        /// <summary>열과 행 크기 정보를 기반으로 2차원 그리드 영역을 계산합니다.</summary>
+        /// <param name="bounds">전체 영역.</param>
+        /// <param name="cols">열 크기 문자열 배열.</param>
+        /// <param name="rows">행 크기 문자열 배열.</param>
+        /// <param name="minCols">열 최소 크기 배열.</param>
+        /// <param name="minRows">행 최소 크기 배열.</param>
+        /// <returns>행 x 열 크기의 <see cref="SKRect"/> 2차원 배열.</returns>
         public static SKRect[,] Grid(SKRect bounds, string[] cols, string[] rows, float[] minCols, float[] minRows)
         {
             if (cols.Length != minCols.Length) throw new ArgumentException("cols와 minCols 길이는 같아야 합니다.");
@@ -1321,6 +1399,11 @@ namespace Going.UI.Utils
         }
         #endregion
         #region Columns
+        /// <summary>열 크기 정보를 기반으로 열 영역을 계산합니다.</summary>
+        /// <param name="bounds">전체 영역.</param>
+        /// <param name="cols">열 크기 문자열 배열.</param>
+        /// <param name="minCols">열 최소 크기 배열.</param>
+        /// <returns>열 개수 크기의 <see cref="SKRect"/> 배열.</returns>
         public static SKRect[] Columns(SKRect bounds, string[] cols, float[] minCols)
         {
             if (cols.Length != minCols.Length) throw new ArgumentException("cols와 minCols 길이는 같아야 합니다.");
@@ -1341,6 +1424,11 @@ namespace Going.UI.Utils
         }
         #endregion
         #region Rows
+        /// <summary>행 크기 정보를 기반으로 행 영역을 계산합니다.</summary>
+        /// <param name="bounds">전체 영역.</param>
+        /// <param name="rows">행 크기 문자열 배열.</param>
+        /// <param name="minRows">행 최소 크기 배열.</param>
+        /// <returns>행 개수 크기의 <see cref="SKRect"/> 배열.</returns>
         public static SKRect[] Rows(SKRect bounds, string[] rows, float[] minRows)
         {
             if (rows.Length != minRows.Length) throw new ArgumentException("rows와 minRows 길이는 같아야 합니다.");
@@ -1361,6 +1449,11 @@ namespace Going.UI.Utils
         }
         #endregion
         #region ParseSizes
+        /// <summary>크기 문자열 배열을 실제 크기 값으로 변환합니다.</summary>
+        /// <param name="sizes">크기 문자열 배열(예: "100px", "50%").</param>
+        /// <param name="totalSize">전체 크기.</param>
+        /// <param name="minimumSizes">최소 크기 배열.</param>
+        /// <returns>계산된 크기 값 배열.</returns>
         public static float[] ParseSizes(string[] sizes, float totalSize, float[] minimumSizes)
         {
             List<float> result = new List<float>();
@@ -1407,6 +1500,13 @@ namespace Going.UI.Utils
         #endregion
 
         #region Merge
+        /// <summary>2차원 그리드에서 지정된 범위의 셀들을 병합한 영역을 반환합니다.</summary>
+        /// <param name="rts">그리드 영역 배열.</param>
+        /// <param name="col">시작 열 인덱스.</param>
+        /// <param name="row">시작 행 인덱스.</param>
+        /// <param name="colspan">병합할 열 개수.</param>
+        /// <param name="rowspan">병합할 행 개수.</param>
+        /// <returns>병합된 <see cref="SKRect"/>.</returns>
         public static SKRect Merge(SKRect[,] rts, int col, int row, int colspan, int rowspan)
         {
             var rtLT = Util.FromRect(rts[row, col]);
@@ -1417,6 +1517,11 @@ namespace Going.UI.Utils
             return rtLT;
         }
 
+        /// <summary>열 배열에서 지정된 범위의 영역들을 가로 방향으로 병합합니다.</summary>
+        /// <param name="rts">열 영역 배열.</param>
+        /// <param name="col">시작 열 인덱스.</param>
+        /// <param name="colspan">병합할 열 개수.</param>
+        /// <returns>병합된 <see cref="SKRect"/>.</returns>
         public static SKRect MergeH(SKRect[] rts, int col, int colspan)
         {
             var rtL = Util.FromRect(rts[col]);
@@ -1426,6 +1531,11 @@ namespace Going.UI.Utils
             return rtL;
         }
 
+        /// <summary>행 배열에서 지정된 범위의 영역들을 세로 방향으로 병합합니다.</summary>
+        /// <param name="rts">행 영역 배열.</param>
+        /// <param name="row">시작 행 인덱스.</param>
+        /// <param name="rowspan">병합할 행 개수.</param>
+        /// <returns>병합된 <see cref="SKRect"/>.</returns>
         public static SKRect MergeV(SKRect[] rts, int row, int rowspan)
         {
             var rtT = Util.FromRect(rts[row]);

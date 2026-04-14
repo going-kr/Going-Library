@@ -1,4 +1,4 @@
-﻿using Going.UI.Enums;
+using Going.UI.Enums;
 using Going.UI.Themes;
 using Going.UI.Tools;
 using Going.UI.Utils;
@@ -38,6 +38,7 @@ namespace Going.UI.Controls
 
         #region Override
         #region OnDraw
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             var rts = Areas();
@@ -90,6 +91,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Dispose
+        /// <inheritdoc/>
         protected override void OnDispose()
         {
             path.Dispose();

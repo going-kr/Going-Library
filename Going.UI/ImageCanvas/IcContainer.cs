@@ -1,4 +1,4 @@
-﻿using Going.UI.Containers;
+using Going.UI.Containers;
 using Going.UI.Controls;
 using Going.UI.Themes;
 using Going.UI.Utils;
@@ -35,6 +35,7 @@ namespace Going.UI.ImageCanvas
         /// </summary>
         [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
 
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             using var p = new SKPaint { };

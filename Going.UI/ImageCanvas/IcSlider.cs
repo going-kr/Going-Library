@@ -106,6 +106,7 @@ namespace Going.UI.ImageCanvas
         #endregion
 
         #region Override
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             var rts = Areas();
@@ -177,6 +178,7 @@ namespace Going.UI.ImageCanvas
             base.OnDraw(canvas, thm);
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseDown(float x, float y, GoMouseButton button)
         {
             if (Design != null && Parent != null)
@@ -209,6 +211,7 @@ namespace Going.UI.ImageCanvas
             base.OnMouseDown(x, y, button);
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseUp(float x, float y, GoMouseButton button)
         {
             if (bCurDown)
@@ -247,6 +250,7 @@ namespace Going.UI.ImageCanvas
             base.OnMouseUp(x, y, button);
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseMove(float x, float y)
         {
             if (bCurDown)

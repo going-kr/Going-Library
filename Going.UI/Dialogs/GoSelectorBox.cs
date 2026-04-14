@@ -1,4 +1,4 @@
-﻿using Going.UI.Containers;
+using Going.UI.Containers;
 using Going.UI.Controls;
 using Going.UI.Datas;
 using Going.UI.Design;
@@ -40,6 +40,9 @@ namespace Going.UI.Dialogs
         #endregion
 
         #region Constructor
+        /// <summary>
+        /// <see cref="GoSelectorBox"/> 클래스의 새 인스턴스를 초기화합니다.
+        /// </summary>
         public GoSelectorBox()
         {
             IconString = "fa-check";

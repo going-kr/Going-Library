@@ -59,7 +59,9 @@ namespace Going.UI.Controls
         /// </summary>
         [GoProperty(PCategory.Control, 6)] public GoContentAlignment ContentAlignment { get; set; } = GoContentAlignment.MiddleCenter;
 
+        /// <summary>내부용: 입력 모드에서 텍스트 숨김 여부</summary>
         [JsonIgnore, Browsable(false), EditorBrowsable(EditorBrowsableState.Never)] public bool _InputModeInvisibleText_ { get; set; } = false;
+        /// <summary>내부용: 현재 입력 중인 색상 값 문자열</summary>
         [JsonIgnore, Browsable(false), EditorBrowsable(EditorBrowsableState.Never)] public string? _InputColor_ => sInput;
 
         /// <summary>
@@ -97,6 +99,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Constructor
+        /// <summary>GoColorSelector 클래스의 새 인스턴스를 초기화합니다.</summary>
         public GoColorSelector()
         {
             Selectable = true;
@@ -105,6 +108,7 @@ namespace Going.UI.Controls
 
         #region Override
         #region Draw
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             #region var
@@ -264,6 +268,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Mouse
+        /// <inheritdoc/>
         protected override void OnMouseDown(float x, float y, GoMouseButton button)
         {
             var rts = Areas();
@@ -302,6 +307,7 @@ namespace Going.UI.Controls
             base.OnMouseDown(x, y, button);
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseMove(float x, float y)
         {
             var rts = Areas();
@@ -329,6 +335,7 @@ namespace Going.UI.Controls
             base.OnMouseMove(x, y);
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseUp(float x, float y, GoMouseButton button)
         {
             var rts = Areas();

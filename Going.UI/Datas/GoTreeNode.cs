@@ -1,4 +1,4 @@
-﻿using Going.UI.Collections;
+using Going.UI.Collections;
 using Going.UI.Controls;
 using Going.UI.Enums;
 using Going.UI.Extensions;
@@ -246,6 +246,7 @@ namespace Going.UI.Datas
         #endregion
 
         #region ToString
+        /// <inheritdoc/>
         public override string ToString() => Text ?? string.Empty;
         #endregion
         #endregion

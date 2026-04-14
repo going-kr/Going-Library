@@ -50,6 +50,7 @@ namespace Going.UI.Containers
         #endregion
 
         #region Override
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             if (Design != null && Design.DesignMode)
@@ -90,6 +91,7 @@ namespace Going.UI.Containers
             base.OnDraw(canvas, thm);
         }
 
+        /// <inheritdoc/>
         protected override void OnLayout()
         {
             var rt = Areas()["Content"];

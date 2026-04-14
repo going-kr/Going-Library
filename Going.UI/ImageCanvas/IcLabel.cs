@@ -1,4 +1,4 @@
-﻿using Going.UI.Controls;
+using Going.UI.Controls;
 using Going.UI.Enums;
 using Going.UI.Themes;
 using Going.UI.Utils;
@@ -60,6 +60,7 @@ namespace Going.UI.ImageCanvas
         #endregion
 
         #region OnDraw
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             var rtBox = Util.FromRect(0, 0, Width, Height);

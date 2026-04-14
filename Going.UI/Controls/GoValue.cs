@@ -72,6 +72,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Constructor
+        /// <summary>GoValue 클래스의 새 인스턴스를 초기화합니다.</summary>
         public GoValue()
         {
             Selectable = true;
@@ -87,6 +88,7 @@ namespace Going.UI.Controls
 
         #region Override
         #region OnDraw
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             #region var
@@ -183,6 +185,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region OnMouseDown
+        /// <inheritdoc/>
         protected override void OnMouseDown(float x, float y, GoMouseButton button)
         {
             #region Button
@@ -204,6 +207,7 @@ namespace Going.UI.Controls
         }
         #endregion
         #region OnMouseUp
+        /// <inheritdoc/>
         protected override void OnMouseUp(float x, float y, GoMouseButton button)
         {
             #region Button
@@ -233,6 +237,7 @@ namespace Going.UI.Controls
         }
         #endregion
         #region OnMouseMove
+        /// <inheritdoc/>
         protected override void OnMouseMove(float x, float y)
         {
             #region Button
@@ -250,6 +255,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Areas
+        /// <inheritdoc/>
         public override Dictionary<string, SKRect> Areas()
         {
             var dic = base.Areas();
@@ -266,6 +272,10 @@ namespace Going.UI.Controls
         #endregion
 
         #region Abstract
+        /// <summary>값 영역을 그립니다. 파생 클래스에서 값의 표현 방식을 구현합니다.</summary>
+        /// <param name="canvas">그리기 캔버스</param>
+        /// <param name="thm">현재 테마</param>
+        /// <param name="valueBounds">값 영역의 경계</param>
         protected abstract void OnDrawValue(SKCanvas canvas, GoTheme thm, SKRect valueBounds);
         #endregion
 
@@ -298,6 +308,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region OnDrawValue
+        /// <inheritdoc/>
         protected override void OnDrawValue(SKCanvas canvas, GoTheme thm, SKRect rtValue)
         {
             var cText = thm.ToColor(TextColor);
@@ -334,6 +345,8 @@ namespace Going.UI.Controls
         #endregion
 
         #region Constructor
+        /// <summary>GoValueNumber 클래스의 새 인스턴스를 초기화합니다.</summary>
+        /// <exception cref="Exception">지원하지 않는 숫자 자료형일 경우 발생합니다.</exception>
         public GoValueNumber()
         {
             if (typeof(T) == typeof(sbyte)) { }
@@ -352,6 +365,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region OnDrawValue
+        /// <inheritdoc/>
         protected override void OnDrawValue(SKCanvas canvas, GoTheme thm, SKRect rtValue)
         {
             using var p = new SKPaint { IsAntialias = false };
@@ -410,6 +424,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region OnDrawValue
+        /// <inheritdoc/>
         protected override void OnDrawValue(SKCanvas canvas, GoTheme thm, SKRect rtValue)
         {
             using var p = new SKPaint { IsAntialias = false };

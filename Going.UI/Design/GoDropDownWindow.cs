@@ -1,4 +1,4 @@
-﻿using Going.UI.Containers;
+using Going.UI.Containers;
 using Going.UI.Controls;
 using Going.UI.Datas;
 using Going.UI.Enums;
@@ -41,10 +41,17 @@ namespace Going.UI.Design
         /// </summary>
         [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
 
+        /// <summary>
+        /// <see cref="GoDropDownWindow"/> 클래스의 새 인스턴스를 초기화합니다.
+        /// </summary>
         [JsonConstructor]
         public GoDropDownWindow(List<IGoControl> childrens) : this() => Childrens = childrens ?? [];
+        /// <summary>
+        /// <see cref="GoDropDownWindow"/> 클래스의 새 인스턴스를 초기화합니다.
+        /// </summary>
         public GoDropDownWindow() { Visible = false; }
 
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             var rts = Areas();
@@ -102,6 +109,9 @@ namespace Going.UI.Design
         private GoListBox lb;
         private Action<GoListItem?>? feedback;
 
+        /// <summary>
+        /// <see cref="GoComboBoxDropDownWindow"/> 클래스의 새 인스턴스를 초기화합니다.
+        /// </summary>
         public GoComboBoxDropDownWindow()
         {
             lb = new GoListBox { Margin = new GoPadding(0), Dock = GoDockStyle.Fill, BackgroundDraw = false };
@@ -174,6 +184,9 @@ namespace Going.UI.Design
         private GoButton btnOK, btnCancel;
         private Action<SKColor?>? feedback;
 
+        /// <summary>
+        /// <see cref="GoColorDropDownWindow"/> 클래스의 새 인스턴스를 초기화합니다.
+        /// </summary>
         public GoColorDropDownWindow()
         {
             tbl = new GoTableLayoutPanel { Margin = new GoPadding(5), Dock = GoDockStyle.Fill, };
@@ -247,6 +260,9 @@ namespace Going.UI.Design
         private Action<DateTime?>? feedback;
         private GoDateTimeKind style = GoDateTimeKind.DateTime;
 
+        /// <summary>
+        /// <see cref="GoDateTimeDropDownWindow"/> 클래스의 새 인스턴스를 초기화합니다.
+        /// </summary>
         public GoDateTimeDropDownWindow()
         {
             tbl = new GoTableLayoutPanel { Margin = new GoPadding(5), Dock = GoDockStyle.Fill, };

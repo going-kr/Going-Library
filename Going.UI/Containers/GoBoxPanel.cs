@@ -59,6 +59,7 @@ namespace Going.UI.Containers
         #endregion
 
         #region Override
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             var cBox = thm.ToColor(BoxColor);

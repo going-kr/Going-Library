@@ -1,4 +1,4 @@
-﻿using Going.UI.Enums;
+using Going.UI.Enums;
 using Going.UI.Extensions;
 using Going.UI.Icons;
 using Going.UI.Managers;
@@ -104,6 +104,9 @@ namespace Going.UI.Controls
         #endregion
 
         #region Constructor
+        /// <summary>
+        /// <see cref="GoSwitch"/> 클래스의 새 인스턴스를 초기화합니다.
+        /// </summary>
         public GoSwitch()
         {
             Selectable = true;
@@ -112,6 +115,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Override
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             var cOnText = thm.ToColor(OnTextColor);
@@ -260,6 +264,7 @@ namespace Going.UI.Controls
         }
 
 
+        /// <inheritdoc/>
         protected override void OnMouseDown(float x, float y, GoMouseButton button)
         {
             var rts = Areas();
@@ -274,6 +279,7 @@ namespace Going.UI.Controls
             base.OnMouseDown(x, y, button);
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseMove(float x, float y)
         {
             var rts = Areas();
@@ -288,6 +294,7 @@ namespace Going.UI.Controls
         }
 
         #region Areas
+        /// <inheritdoc/>
         public override Dictionary<string, SKRect> Areas()
         {
             var thm = Design?.Theme ?? GoTheme.DarkTheme;

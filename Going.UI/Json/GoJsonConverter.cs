@@ -146,7 +146,9 @@ namespace Going.UI.Json
     /// </summary>
     public class SKColorConverter : JsonConverter<SKColor>
     {
+        /// <inheritdoc/>
         public override SKColor Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) => new SKColor(reader.GetUInt32());
+        /// <inheritdoc/>
         public override void Write(Utf8JsonWriter writer, SKColor value, JsonSerializerOptions options) => writer.WriteNumberValue((uint)value);
     }
     #endregion
@@ -156,6 +158,7 @@ namespace Going.UI.Json
     /// </summary>
     public class SKRectConverter : JsonConverter<SKRect>
     {
+        /// <inheritdoc/>
         public override SKRect Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             var s = reader.GetString();
@@ -164,6 +167,7 @@ namespace Going.UI.Json
             if (vs != null && vs.Length == 4) { l = vs[0]; t = vs[1]; r = vs[2]; b = vs[3]; }
             return new SKRect(l, t, r, b);
         }
+        /// <inheritdoc/>
         public override void Write(Utf8JsonWriter writer, SKRect value, JsonSerializerOptions options)
         {
             writer.WriteStringValue($"{value.Left},{value.Top},{value.Right},{value.Bottom}");
@@ -176,6 +180,7 @@ namespace Going.UI.Json
     /// </summary>
     public class SKBitmapConverter : JsonConverter<SKBitmap>
     {
+        /// <inheritdoc/>
         public override SKBitmap? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             if (reader.TokenType == JsonTokenType.String)
@@ -190,6 +195,7 @@ namespace Going.UI.Json
             throw new JsonException("Invalid format for SKBitmap");
         }
 
+        /// <inheritdoc/>
         public override void Write(Utf8JsonWriter writer, SKBitmap value, JsonSerializerOptions options)
         {
             using var stream = new SKDynamicMemoryWStream();
@@ -206,6 +212,7 @@ namespace Going.UI.Json
     /// </summary>
     public class SKImageConverter : JsonConverter<SKImage>
     {
+        /// <inheritdoc/>
         public override SKImage? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             if (reader.TokenType == JsonTokenType.String)
@@ -219,6 +226,7 @@ namespace Going.UI.Json
             throw new JsonException("Invalid format for SKBitmap");
         }
 
+        /// <inheritdoc/>
         public override void Write(Utf8JsonWriter writer, SKImage value, JsonSerializerOptions options)
         {
             using var data = value.Encode(SKEncodedImageFormat.Png, 100);
@@ -234,6 +242,7 @@ namespace Going.UI.Json
     /// </summary>
     public class GoControlConverter : JsonConverter<IGoControl>
     {
+        /// <inheritdoc/>
         public override IGoControl Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             if (reader.TokenType != JsonTokenType.StartObject)
@@ -271,6 +280,7 @@ namespace Going.UI.Json
             return value ?? throw new JsonException("Invalid JSON for ScControl.");
         }
 
+        /// <inheritdoc/>
         public override void Write(Utf8JsonWriter writer, IGoControl value, JsonSerializerOptions options)
         {
             var tp = value.GetType();
@@ -293,6 +303,7 @@ namespace Going.UI.Json
     /// </summary>
     public class GoPagesConverter : JsonConverter<Dictionary<string, GoPage>>
     {
+        /// <inheritdoc/>
         public override Dictionary<string, GoPage> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             var result = new Dictionary<string, GoPage>();
@@ -351,6 +362,7 @@ namespace Going.UI.Json
             throw new JsonException("Unexpected end of GoPages JSON");
         }
 
+        /// <inheritdoc/>
         public override void Write(Utf8JsonWriter writer, Dictionary<string, GoPage> value, JsonSerializerOptions options)
         {
             writer.WriteStartObject();
@@ -381,6 +393,7 @@ namespace Going.UI.Json
     /// </summary>
     public class GoWindowsConverter : JsonConverter<Dictionary<string, GoWindow>>
     {
+        /// <inheritdoc/>
         public override Dictionary<string, GoWindow> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             var result = new Dictionary<string, GoWindow>();
@@ -439,6 +452,7 @@ namespace Going.UI.Json
             throw new JsonException("Unexpected end of GoWindow JSON");
         }
 
+        /// <inheritdoc/>
         public override void Write(Utf8JsonWriter writer, Dictionary<string, GoWindow> value, JsonSerializerOptions options)
         {
             writer.WriteStartObject();
@@ -469,6 +483,7 @@ namespace Going.UI.Json
     /// </summary>
     public class GoTableLayoutControlCollectionConverter : JsonConverter<GoTableLayoutControlCollection>
     {
+        /// <inheritdoc/>
         public override GoTableLayoutControlCollection Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             var list = JsonSerializer.Deserialize<Data>(ref reader, options);
@@ -482,6 +497,7 @@ namespace Going.UI.Json
             return v;
         }
 
+        /// <inheritdoc/>
         public override void Write(Utf8JsonWriter writer, GoTableLayoutControlCollection value, JsonSerializerOptions options)
         {
             JsonSerializer.Serialize(writer, new Data { ls = value.Controls, indexes = value.Indexes }, options);
@@ -500,6 +516,7 @@ namespace Going.UI.Json
     /// </summary>
     public class GoGridLayoutControlCollectionConverter : JsonConverter<GoGridLayoutControlCollection>
     {
+        /// <inheritdoc/>
         public override GoGridLayoutControlCollection Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             var list = JsonSerializer.Deserialize<Data>(ref reader, options);
@@ -513,6 +530,7 @@ namespace Going.UI.Json
             return v;
         }
 
+        /// <inheritdoc/>
         public override void Write(Utf8JsonWriter writer, GoGridLayoutControlCollection value, JsonSerializerOptions options)
         {
             JsonSerializer.Serialize(writer, new Data { ls = value.Controls, indexes = value.Indexes }, options);

@@ -1,4 +1,4 @@
-﻿using Going.UI.Datas;
+using Going.UI.Datas;
 using Going.UI.Enums;
 using Going.UI.Themes;
 using Going.UI.Utils;
@@ -61,6 +61,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Override
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             var cText = thm.ToColor(TextColor);
@@ -86,6 +87,7 @@ namespace Going.UI.Controls
             base.OnDraw(canvas, thm);
         }
 
+        /// <inheritdoc/>
         public override Dictionary<string, SKRect> Areas()
         {
             var dic = base.Areas();

@@ -1,4 +1,4 @@
-﻿using Going.UI.Containers;
+using Going.UI.Containers;
 using Going.UI.Controls;
 using Going.UI.Themes;
 using Going.UI.Utils;
@@ -29,13 +29,20 @@ namespace Going.UI.Design
         #endregion
 
         #region Constructor
+        /// <summary>
+        /// <see cref="GoPage"/> 클래스의 새 인스턴스를 초기화합니다.
+        /// </summary>
         [JsonConstructor]
         public GoPage(List<IGoControl> childrens) : this() => Childrens = childrens ?? [];
+        /// <summary>
+        /// <see cref="GoPage"/> 클래스의 새 인스턴스를 초기화합니다.
+        /// </summary>
         public GoPage() { }
         #endregion
 
         #region Override
         #region Draw
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             OnBackgroundDraw(canvas, thm);
@@ -43,6 +50,7 @@ namespace Going.UI.Design
             base.OnDraw(canvas, thm);
         }
 
+        /// <inheritdoc/>
         protected virtual void OnBackgroundDraw(SKCanvas canvas, GoTheme thm)
         {
             var rts = Areas();

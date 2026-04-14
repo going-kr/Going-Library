@@ -69,6 +69,7 @@ namespace Going.UI.Controls
         /// </summary>
         #region  public GoDirectionHV Direction { get; set; } = GoDirectionHV.Vertical;
         private GoDirectionHV dir = GoDirectionHV.Vertical;
+        /// <summary>그래프 방향(수직/수평)을 가져오거나 설정합니다.</summary>
         [GoProperty(PCategory.Control, 10)]
         public GoDirectionHV Direction
         {
@@ -114,6 +115,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Constructor
+        /// <summary>GoBarGraph 클래스의 새 인스턴스를 초기화합니다.</summary>
         public GoBarGraph()
         {
             Selectable = true;
@@ -131,6 +133,7 @@ namespace Going.UI.Controls
 
         #region Override
         #region Draw
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             #region var
@@ -635,6 +638,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Mouse
+        /// <inheritdoc/>
         protected override void OnMouseDown(float x, float y, GoMouseButton button)
         {
             #region var
@@ -655,6 +659,7 @@ namespace Going.UI.Controls
             base.OnMouseDown(x, y, button);
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseMove(float x, float y)
         {
             mx = x;
@@ -673,6 +678,7 @@ namespace Going.UI.Controls
             base.OnMouseMove(x, y);
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseUp(float x, float y, GoMouseButton button)
         {
             #region var
@@ -690,6 +696,7 @@ namespace Going.UI.Controls
             base.OnMouseUp(x, y, button);
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseDoubleClick(float x, float y, GoMouseButton button)
         {
             #region var

@@ -1,4 +1,4 @@
-﻿using Going.UI.Enums;
+using Going.UI.Enums;
 using Going.UI.Extensions;
 using Going.UI.Themes;
 using Going.UI.Tools;
@@ -89,6 +89,9 @@ namespace Going.UI.Controls
         #endregion
 
         #region Constructor
+        /// <summary>
+        /// <see cref="GoCalendar"/> 클래스의 새 인스턴스를 초기화합니다.
+        /// </summary>
         public GoCalendar()
         {
             Selectable = true;
@@ -97,6 +100,7 @@ namespace Going.UI.Controls
 
         #region Override
         #region Draw
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             var rts = Areas();
@@ -146,6 +150,7 @@ namespace Going.UI.Controls
         }
         #endregion
         #region Mouse
+        /// <inheritdoc/>
         protected override void OnMouseDown(float x, float y, GoMouseButton button)
         {
             var rts = Areas();
@@ -183,6 +188,7 @@ namespace Going.UI.Controls
             base.OnMouseDown(x, y, button);
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseUp(float x, float y, GoMouseButton button)
         {
             var rts = Areas();
@@ -246,6 +252,7 @@ namespace Going.UI.Controls
         }
         #endregion
         #region Dispose
+        /// <inheritdoc/>
         protected override void OnDispose()
         {
             path.Dispose();

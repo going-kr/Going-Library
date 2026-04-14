@@ -1,4 +1,4 @@
-﻿using Going.UI.Containers;
+using Going.UI.Containers;
 using Going.UI.Controls;
 using Going.UI.Datas;
 using Going.UI.Enums;
@@ -91,13 +91,20 @@ namespace Going.UI.Design
         #endregion
 
         #region Constructor
+        /// <summary>
+        /// <see cref="GoWindow"/> 클래스의 새 인스턴스를 초기화합니다.
+        /// </summary>
         [JsonConstructor]
         public GoWindow(List<IGoControl> childrens) : this() => Childrens = childrens ?? [];
+        /// <summary>
+        /// <see cref="GoWindow"/> 클래스의 새 인스턴스를 초기화합니다.
+        /// </summary>
         public GoWindow() { }
         #endregion
 
         #region Override
         #region Draw
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             #region var
@@ -159,6 +166,7 @@ namespace Going.UI.Design
         #endregion
 
         #region Mouse
+        /// <inheritdoc/>
         protected override void OnMouseClick(float x, float y, GoMouseButton button)
         {
             var rts = Areas();
@@ -174,6 +182,7 @@ namespace Going.UI.Design
         #endregion
 
         #region Layout
+        /// <inheritdoc/>
         protected override void OnLayout()
         {
             var rts = Areas();
@@ -196,6 +205,7 @@ namespace Going.UI.Design
         #endregion
 
         #region Areas
+        /// <inheritdoc/>
         public override Dictionary<string, SKRect> Areas()
         {
             var dic = base.Areas();
@@ -209,7 +219,9 @@ namespace Going.UI.Design
         #endregion
 
         #region Method
+        /// <inheritdoc/>
         protected virtual void OnCloseButtonClick() => Close();
+        /// <inheritdoc/>
         protected virtual void OnClosing(GoCancelableEventArgs e) { }
 
         /// <summary>

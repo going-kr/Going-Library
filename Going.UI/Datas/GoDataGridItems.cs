@@ -33,7 +33,9 @@ namespace Going.UI.Datas
     public abstract class GoDataGridCell
     {
         #region Const
+        /// <summary>입력 영역의 가로 Inflate 값.</summary>
         protected const float InputInflateW = -1;
+        /// <summary>입력 영역의 세로 Inflate 값.</summary>
         protected const float InputInflateH = -1;
         #endregion
 
@@ -73,6 +75,7 @@ namespace Going.UI.Datas
         /// <summary>셀이 속한 열</summary>
         [JsonIgnore] public GoDataGridColumn Column { get; private set; }
 
+        /// <summary>셀 값 바인딩에 사용되는 프로퍼티 정보.</summary>
         [JsonIgnore] protected PropertyInfo? ValueInfo { get; }
         /// <summary>셀에 바인딩된 데이터 값</summary>
         [JsonIgnore]
@@ -199,10 +202,28 @@ namespace Going.UI.Datas
         #endregion
 
         #region Virtual
+        /// <summary>셀을 그릴 때 호출되는 가상 메서드입니다.</summary>
+        /// <param name="canvas">그리기에 사용되는 캔버스</param>
+        /// <param name="thm">현재 테마</param>
         protected virtual void OnDraw(SKCanvas canvas, GoTheme thm) { }
+        /// <summary>마우스 버튼 누름 시 호출되는 가상 메서드입니다.</summary>
+        /// <param name="x">마우스 X 좌표</param>
+        /// <param name="y">마우스 Y 좌표</param>
+        /// <param name="button">눌러진 마우스 버튼</param>
         protected virtual void OnMouseDown(float x, float y, GoMouseButton button) { }
+        /// <summary>마우스 버튼 놓음 시 호출되는 가상 메서드입니다.</summary>
+        /// <param name="x">마우스 X 좌표</param>
+        /// <param name="y">마우스 Y 좌표</param>
+        /// <param name="button">놓아진 마우스 버튼</param>
         protected virtual void OnMouseUp(float x, float y, GoMouseButton button) { }
+        /// <summary>마우스 이동 시 호출되는 가상 메서드입니다.</summary>
+        /// <param name="x">마우스 X 좌표</param>
+        /// <param name="y">마우스 Y 좌표</param>
         protected virtual void OnMouseMove(float x, float y) { }
+        /// <summary>마우스 클릭 시 호출되는 가상 메서드입니다.</summary>
+        /// <param name="x">마우스 X 좌표</param>
+        /// <param name="y">마우스 Y 좌표</param>
+        /// <param name="button">클릭된 마우스 버튼</param>
         protected virtual void OnMouseClick(float x, float y, GoMouseButton button) { }
         #endregion
         #endregion
@@ -215,7 +236,9 @@ namespace Going.UI.Datas
     public abstract class GoDataGridColumn
     {
         #region Const
+        /// <summary>입력 영역의 가로 Inflate 값.</summary>
         protected const float InputInflateW = -1;
+        /// <summary>입력 영역의 세로 Inflate 값.</summary>
         protected const float InputInflateH = -1;
         #endregion
 
@@ -354,9 +377,22 @@ namespace Going.UI.Datas
         #endregion
 
         #region Virtual
+        /// <summary>열 헤더를 그릴 때 호출되는 가상 메서드입니다.</summary>
+        /// <param name="canvas">그리기에 사용되는 캔버스</param>
         protected virtual void OnDraw(SKCanvas canvas) { }
+        /// <summary>마우스 버튼 누름 시 호출되는 가상 메서드입니다.</summary>
+        /// <param name="x">마우스 X 좌표</param>
+        /// <param name="y">마우스 Y 좌표</param>
+        /// <param name="button">눌러진 마우스 버튼</param>
         protected virtual void OnMouseDown(float x, float y, GoMouseButton button) { }
+        /// <summary>마우스 버튼 놓음 시 호출되는 가상 메서드입니다.</summary>
+        /// <param name="x">마우스 X 좌표</param>
+        /// <param name="y">마우스 Y 좌표</param>
+        /// <param name="button">놓아진 마우스 버튼</param>
         protected virtual void OnMouseUp(float x, float y, GoMouseButton button) { }
+        /// <summary>마우스 이동 시 호출되는 가상 메서드입니다.</summary>
+        /// <param name="x">마우스 X 좌표</param>
+        /// <param name="y">마우스 Y 좌표</param>
         protected virtual void OnMouseMove(float x, float y) { }
         #endregion
 
@@ -530,9 +566,23 @@ namespace Going.UI.Datas
         #endregion
 
         #region Virtual
+        /// <summary>요약 셀을 그릴 때 호출되는 가상 메서드입니다.</summary>
+        /// <param name="canvas">그리기에 사용되는 캔버스</param>
+        /// <param name="thm">현재 테마</param>
         protected virtual void OnDraw(SKCanvas canvas, GoTheme thm) { }
+        /// <summary>마우스 버튼 누름 시 호출되는 가상 메서드입니다.</summary>
+        /// <param name="x">마우스 X 좌표</param>
+        /// <param name="y">마우스 Y 좌표</param>
+        /// <param name="button">눌러진 마우스 버튼</param>
         protected virtual void OnMouseDown(float x, float y, GoMouseButton button) { }
+        /// <summary>마우스 버튼 놓음 시 호출되는 가상 메서드입니다.</summary>
+        /// <param name="x">마우스 X 좌표</param>
+        /// <param name="y">마우스 Y 좌표</param>
+        /// <param name="button">놓아진 마우스 버튼</param>
         protected virtual void OnMouseUp(float x, float y, GoMouseButton button) { }
+        /// <summary>마우스 이동 시 호출되는 가상 메서드입니다.</summary>
+        /// <param name="x">마우스 X 좌표</param>
+        /// <param name="y">마우스 Y 좌표</param>
         protected virtual void OnMouseMove(float x, float y) { }
 
         /// <summary>요약 값을 계산합니다.</summary>
@@ -597,6 +647,7 @@ namespace Going.UI.Datas
         #endregion
 
         #region Draw
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             base.OnDraw(canvas, thm);
@@ -628,10 +679,11 @@ namespace Going.UI.Datas
         #endregion
 
         #region Draw
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             base.OnDraw(canvas, thm);
-            
+
             var cText = thm.ToColor(CellTextColor ?? Grid.TextColor);
             var text = ValueTool.ToString(Value, FormatString);
             Util.DrawText(canvas, text, Grid.FontName, Grid.FontStyle, Grid.FontSize, Bounds, cText);
@@ -639,6 +691,7 @@ namespace Going.UI.Datas
         #endregion
 
         #region Calculate
+        /// <inheritdoc/>
         public override void Calculate()
         {
             var ci = ColumnIndex;
@@ -668,10 +721,11 @@ namespace Going.UI.Datas
         #endregion
          
         #region Draw
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             base.OnDraw(canvas, thm);
-         
+
             var cText = thm.ToColor(CellTextColor ?? Grid.TextColor);
             var text = ValueTool.ToString(Value, FormatString);
             Util.DrawText(canvas, text, Grid.FontName, Grid.FontStyle, Grid.FontSize, Bounds, cText);
@@ -679,6 +733,7 @@ namespace Going.UI.Datas
         #endregion
 
         #region Calculate
+        /// <inheritdoc/>
         public override void Calculate()
         {
             var ci = ColumnIndex;
@@ -697,12 +752,17 @@ namespace Going.UI.Datas
     public class GoDataGridLabelCell : GoDataGridCell
     {
         #region Constructor
+        /// <summary>레이블 셀을 초기화합니다.</summary>
+        /// <param name="Grid">소속 데이터 그리드</param>
+        /// <param name="Row">소속 행</param>
+        /// <param name="Column">소속 열</param>
         public GoDataGridLabelCell(GoDataGrid Grid, GoDataGridRow Row, GoDataGridColumn Column) : base(Grid, Row, Column)
         {
         }
         #endregion
 
         #region Draw
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             base.OnDraw(canvas, thm);
@@ -734,6 +794,7 @@ namespace Going.UI.Datas
         #endregion
 
         #region Constructor
+        /// <summary>레이블 열을 초기화합니다.</summary>
         public GoDataGridLabelColumn()
         {
             CellType = typeof(GoDataGridLabelCell);
@@ -749,12 +810,17 @@ namespace Going.UI.Datas
     public class GoDataGridNumberCell<T> : GoDataGridCell where T : struct
     {
         #region Constructor
+        /// <summary>숫자 셀을 초기화합니다.</summary>
+        /// <param name="Grid">소속 데이터 그리드</param>
+        /// <param name="Row">소속 행</param>
+        /// <param name="Column">소속 열</param>
         public GoDataGridNumberCell(GoDataGrid Grid, GoDataGridRow Row, GoDataGridColumn Column) : base(Grid, Row, Column)
         {
         }
         #endregion
 
         #region Draw
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             base.OnDraw(canvas, thm);
@@ -775,6 +841,7 @@ namespace Going.UI.Datas
         /// <summary>값 표시 형식 문자열</summary>
         public string? FormatString { get; set; }
         #region Constructor
+        /// <summary>숫자 표시 열을 초기화합니다.</summary>
         public GoDataGridNumberColumn()
         {
             CellType = typeof(GoDataGridNumberCell<T>);
@@ -808,6 +875,10 @@ namespace Going.UI.Datas
         #endregion
 
         #region Constructor
+        /// <summary>버튼 셀을 초기화합니다.</summary>
+        /// <param name="Grid">소속 데이터 그리드</param>
+        /// <param name="Row">소속 행</param>
+        /// <param name="Column">소속 열</param>
         public GoDataGridButtonCell(GoDataGrid Grid, GoDataGridRow Row, GoDataGridColumn Column) : base(Grid, Row, Column)
         {
             if(Column is GoDataGridButtonColumn col)
@@ -823,6 +894,7 @@ namespace Going.UI.Datas
         #endregion
 
         #region Override
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             base.OnDraw(canvas, thm);
@@ -836,6 +908,7 @@ namespace Going.UI.Datas
             Util.DrawTextIcon(canvas, Text, Grid.FontName, Grid.FontStyle, Grid.FontSize, IconString, Grid.FontSize, GoDirectionHV.Horizon, 5, rt, cText, GoContentAlignment.MiddleCenter);
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseDown(float x, float y, GoMouseButton button)
         {
             var rt = Bounds; rt.Inflate(-1, -1);
@@ -844,6 +917,7 @@ namespace Going.UI.Datas
             base.OnMouseDown(x, y, button);
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseUp(float x, float y, GoMouseButton button)
         {
             var rt = Bounds; rt.Inflate(-1, -1);
@@ -856,6 +930,7 @@ namespace Going.UI.Datas
             base.OnMouseUp(x, y, button);
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseMove(float x, float y)
         {
             var rt = Bounds; rt.Inflate(-1, -1);
@@ -886,6 +961,7 @@ namespace Going.UI.Datas
         #endregion
 
         #region Constructor
+        /// <summary>버튼 열을 초기화합니다.</summary>
         public GoDataGridButtonColumn()
         {
             CellType = typeof(GoDataGridButtonCell);
@@ -905,6 +981,10 @@ namespace Going.UI.Datas
         #endregion 
 
         #region Constructor
+        /// <summary>램프 셀을 초기화합니다.</summary>
+        /// <param name="Grid">소속 데이터 그리드</param>
+        /// <param name="Row">소속 행</param>
+        /// <param name="Column">소속 열</param>
         public GoDataGridLampCell(GoDataGrid Grid, GoDataGridRow Row, GoDataGridColumn Column) : base(Grid, Row, Column)
         {
             if (Column is GoDataGridLampColumn col)
@@ -915,6 +995,7 @@ namespace Going.UI.Datas
         #endregion
 
         #region Draw
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             base.OnDraw(canvas, thm);
@@ -950,6 +1031,7 @@ namespace Going.UI.Datas
         #endregion 
 
         #region Constructor
+        /// <summary>램프 열을 초기화합니다.</summary>
         public GoDataGridLampColumn()
         {
             CellType = typeof(GoDataGridLampCell);
@@ -967,6 +1049,10 @@ namespace Going.UI.Datas
         #endregion 
 
         #region Constructor
+        /// <summary>체크박스 셀을 초기화합니다.</summary>
+        /// <param name="Grid">소속 데이터 그리드</param>
+        /// <param name="Row">소속 행</param>
+        /// <param name="Column">소속 열</param>
         public GoDataGridCheckBoxCell(GoDataGrid Grid, GoDataGridRow Row, GoDataGridColumn Column) : base(Grid, Row, Column)
         {
             if (Column is GoDataGridCheckBoxColumn col)
@@ -976,6 +1062,7 @@ namespace Going.UI.Datas
         #endregion
 
         #region Draw
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             base.OnDraw(canvas, thm);
@@ -996,6 +1083,7 @@ namespace Going.UI.Datas
         #endregion
 
         #region Mouse
+        /// <inheritdoc/>
         protected override void OnMouseClick(float x, float y, GoMouseButton button)
         {
             var rtChk = MathTool.MakeRectangle(Bounds, new SKSize(20, 20));
@@ -1019,6 +1107,7 @@ namespace Going.UI.Datas
         #endregion 
 
         #region Constructor
+        /// <summary>체크박스 열을 초기화합니다.</summary>
         public GoDataGridCheckBoxColumn()
         {
             CellType = typeof(GoDataGridCheckBoxCell);
@@ -1033,6 +1122,7 @@ namespace Going.UI.Datas
     public class GoDataGridInputTextCell : GoDataGridCell
     {
         #region Properties
+        /// <inheritdoc/>
         public override bool IsKeyboardInput => true;
         #endregion
 
@@ -1041,6 +1131,10 @@ namespace Going.UI.Datas
         #endregion
 
         #region Constructor
+        /// <summary>텍스트 입력 셀을 초기화합니다.</summary>
+        /// <param name="Grid">소속 데이터 그리드</param>
+        /// <param name="Row">소속 행</param>
+        /// <param name="Column">소속 열</param>
         public GoDataGridInputTextCell(GoDataGrid Grid, GoDataGridRow Row, GoDataGridColumn Column) : base(Grid, Row, Column)
         {
             if (Column is GoDataGridCheckBoxColumn col)
@@ -1050,6 +1144,7 @@ namespace Going.UI.Datas
         #endregion
 
         #region Draw
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             base.OnDraw(canvas, thm);
@@ -1061,7 +1156,7 @@ namespace Going.UI.Datas
             var cF = Row.Selected ? cSel : cRow;
             var cV = cF.BrightnessTransmit(Row.RowIndex % 2 == 0 ? 0.05F : -0.05F);
             var cB = GoInputEventer.Current.InputControl == Grid && Grid.InputObject == this ? thm.Highlight : cV.BrightnessTransmit(GoDataGrid.BorderBright * br);
-            
+
             var rt = Bounds; rt.Inflate(InputInflateW, InputInflateH);
             Util.DrawBox(canvas, rt, cV.BrightnessTransmit(GoDataGrid.InputBright * br), cB, GoRoundType.Rect, thm.Corner);
 
@@ -1074,6 +1169,7 @@ namespace Going.UI.Datas
         #endregion
 
         #region Mouse
+        /// <inheritdoc/>
         protected override void OnMouseClick(float x, float y, GoMouseButton button)
         {
             var rt = Bounds; rt.Inflate(InputInflateW, InputInflateH);
@@ -1090,6 +1186,7 @@ namespace Going.UI.Datas
     public class GoDataGridInputTextColumn : GoDataGridColumn
     {
         #region Constructor
+        /// <summary>텍스트 입력 열을 초기화합니다.</summary>
         public GoDataGridInputTextColumn()
         {
             CellType = typeof(GoDataGridInputTextCell);
@@ -1111,6 +1208,7 @@ namespace Going.UI.Datas
         public T? Maximum { get; set; }
         /// <summary>값 표시 형식 문자열</summary>
         public string? FormatString { get; set; }
+        /// <inheritdoc/>
         public override bool IsKeyboardInput => true;
         #endregion
 
@@ -1119,6 +1217,10 @@ namespace Going.UI.Datas
         #endregion
 
         #region Constructor
+        /// <summary>숫자 입력 셀을 초기화합니다.</summary>
+        /// <param name="Grid">소속 데이터 그리드</param>
+        /// <param name="Row">소속 행</param>
+        /// <param name="Column">소속 열</param>
         public GoDataGridInputNumberCell(GoDataGrid Grid, GoDataGridRow Row, GoDataGridColumn Column) : base(Grid, Row, Column)
         {
             if (Column is GoDataGridInputNumberColumn<T> col)
@@ -1131,6 +1233,7 @@ namespace Going.UI.Datas
         #endregion
 
         #region Draw
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             base.OnDraw(canvas, thm);
@@ -1145,7 +1248,7 @@ namespace Going.UI.Datas
 
             var rt = Bounds; rt.Inflate(InputInflateW, InputInflateH);
             if (Convert.ToInt32(rt.Right) + 0.5F == Bounds.Right) rt.Right -= 1;
-            
+
             Util.DrawBox(canvas, rt, cV.BrightnessTransmit(GoDataGrid.InputBright * br), cB, GoRoundType.Rect, thm.Corner);
 
             if (!(Grid._InputModeInvisibleText_ && Grid.InputObject == this))
@@ -1157,6 +1260,7 @@ namespace Going.UI.Datas
         #endregion
 
         #region Mouse
+        /// <inheritdoc/>
         protected override void OnMouseClick(float x, float y, GoMouseButton button)
         {
             var rt = Bounds; rt.Inflate(InputInflateW, InputInflateH);
@@ -1182,6 +1286,7 @@ namespace Going.UI.Datas
         #endregion 
 
         #region Constructor
+        /// <summary>숫자 입력 열을 초기화합니다.</summary>
         public GoDataGridInputNumberColumn()
         {
             CellType = typeof(GoDataGridInputNumberCell<T>);
@@ -1203,6 +1308,10 @@ namespace Going.UI.Datas
         #endregion 
 
         #region Constructor
+        /// <summary>불리언 입력 셀을 초기화합니다.</summary>
+        /// <param name="Grid">소속 데이터 그리드</param>
+        /// <param name="Row">소속 행</param>
+        /// <param name="Column">소속 열</param>
         public GoDataGridInputBoolCell(GoDataGrid Grid, GoDataGridRow Row, GoDataGridColumn Column) : base(Grid, Row, Column)
         {
             if (Column is GoDataGridInputBoolColumn col)
@@ -1214,6 +1323,7 @@ namespace Going.UI.Datas
         #endregion
 
         #region Draw
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             base.OnDraw(canvas, thm);
@@ -1252,6 +1362,7 @@ namespace Going.UI.Datas
         #endregion
 
         #region Mouse
+        /// <inheritdoc/>
         protected override void OnMouseClick(float x, float y, GoMouseButton button)
         {
             var rt = Bounds; rt.Inflate(InputInflateW, InputInflateH);
@@ -1280,9 +1391,10 @@ namespace Going.UI.Datas
         public string? OnText { get; set; } = "On";
         /// <summary>false일 때 표시할 텍스트</summary>
         public string? OffText { get; set; } = "Off";
-        #endregion 
+        #endregion
 
         #region Constructor
+        /// <summary>불리언 입력 열을 초기화합니다.</summary>
         public GoDataGridInputBoolColumn()
         {
             CellType = typeof(GoDataGridInputBoolCell);
@@ -1306,6 +1418,10 @@ namespace Going.UI.Datas
         #endregion
 
         #region Constructor
+        /// <summary>날짜/시간 입력 셀을 초기화합니다.</summary>
+        /// <param name="Grid">소속 데이터 그리드</param>
+        /// <param name="Row">소속 행</param>
+        /// <param name="Column">소속 열</param>
         public GoDataGridInputTimeCell(GoDataGrid Grid, GoDataGridRow Row, GoDataGridColumn Column) : base(Grid, Row, Column)
         {
             if (Column is GoDataGridInputTimeColumn col)
@@ -1318,6 +1434,7 @@ namespace Going.UI.Datas
         #endregion
 
         #region Draw
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             base.OnDraw(canvas, thm);
@@ -1373,6 +1490,7 @@ namespace Going.UI.Datas
         #endregion
 
         #region Mouse
+        /// <inheritdoc/>
         protected override void OnMouseClick(float x, float y, GoMouseButton button)
         {
             var rt = Bounds; rt.Inflate(InputInflateW, InputInflateH);
@@ -1420,6 +1538,7 @@ namespace Going.UI.Datas
         #endregion 
 
         #region Constructor
+        /// <summary>날짜/시간 입력 열을 초기화합니다.</summary>
         public GoDataGridInputTimeColumn()
         {
             CellType = typeof(GoDataGridInputTimeCell);
@@ -1437,6 +1556,10 @@ namespace Going.UI.Datas
         #endregion
 
         #region Constructor
+        /// <summary>색상 입력 셀을 초기화합니다.</summary>
+        /// <param name="Grid">소속 데이터 그리드</param>
+        /// <param name="Row">소속 행</param>
+        /// <param name="Column">소속 열</param>
         public GoDataGridInputColorCell(GoDataGrid Grid, GoDataGridRow Row, GoDataGridColumn Column) : base(Grid, Row, Column)
         {
             if (Column is GoDataGridInputTimeColumn col)
@@ -1446,6 +1569,7 @@ namespace Going.UI.Datas
         #endregion
 
         #region Draw
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             base.OnDraw(canvas, thm);
@@ -1493,6 +1617,7 @@ namespace Going.UI.Datas
         #endregion
 
         #region Mouse
+        /// <inheritdoc/>
         protected override void OnMouseClick(float x, float y, GoMouseButton button)
         {
             var rt = Bounds; rt.Inflate(InputInflateW, InputInflateH);
@@ -1534,6 +1659,7 @@ namespace Going.UI.Datas
         #endregion 
 
         #region Constructor
+        /// <summary>색상 입력 열을 초기화합니다.</summary>
         public GoDataGridInputColorColumn()
         {
             CellType = typeof(GoDataGridInputColorCell);
@@ -1551,6 +1677,10 @@ namespace Going.UI.Datas
         #endregion
 
         #region Constructor
+        /// <summary>콤보박스 입력 셀을 초기화합니다.</summary>
+        /// <param name="Grid">소속 데이터 그리드</param>
+        /// <param name="Row">소속 행</param>
+        /// <param name="Column">소속 열</param>
         public GoDataGridInputComboCell(GoDataGrid Grid, GoDataGridRow Row, GoDataGridColumn Column) : base(Grid, Row, Column)
         {
             if (Column is GoDataGridInputComboColumn col)
@@ -1560,6 +1690,7 @@ namespace Going.UI.Datas
         #endregion
 
         #region Draw
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             base.OnDraw(canvas, thm);
@@ -1600,6 +1731,7 @@ namespace Going.UI.Datas
         #endregion
 
         #region Mouse
+        /// <inheritdoc/>
         protected override void OnMouseClick(float x, float y, GoMouseButton button)
         {
             var rt = Bounds; rt.Inflate(InputInflateW, InputInflateH);
@@ -1653,6 +1785,7 @@ namespace Going.UI.Datas
         #endregion 
 
         #region Constructor
+        /// <summary>콤보박스 입력 열을 초기화합니다.</summary>
         public GoDataGridInputComboColumn()
         {
             CellType = typeof(GoDataGridInputComboCell);

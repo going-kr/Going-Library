@@ -1,4 +1,4 @@
-﻿using Going.UI.Tools;
+using Going.UI.Tools;
 using Going.UI.Utils;
 using SkiaSharp;
 using System;
@@ -322,6 +322,9 @@ namespace Going.UI.Themes
     /// </summary>
     public class DarkTheme : GoTheme
     {
+        /// <summary>
+        /// <see cref="DarkTheme"/> 클래스의 새 인스턴스를 초기화합니다.
+        /// </summary>
         public DarkTheme()
         {
             Dark = true;

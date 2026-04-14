@@ -55,6 +55,7 @@ namespace Going.UI.Containers
         #endregion
 
         #region Override
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             var rts = Areas();
@@ -105,6 +106,7 @@ namespace Going.UI.Containers
             base.OnDraw(canvas, thm);
         }
 
+        /// <inheritdoc/>
         protected override void OnDispose()
         {
             base.OnDispose();

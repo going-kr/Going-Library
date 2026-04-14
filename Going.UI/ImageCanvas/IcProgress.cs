@@ -1,4 +1,4 @@
-﻿using Going.UI.Controls;
+using Going.UI.Controls;
 using Going.UI.Enums;
 using Going.UI.Themes;
 using Going.UI.Tools;
@@ -92,6 +92,7 @@ namespace Going.UI.ImageCanvas
         #endregion
 
         #region Override
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             var rts = Areas();

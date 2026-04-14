@@ -45,6 +45,7 @@ namespace Going.UI.Containers
 
         #region Override
         #region OnDraw
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             if (Design != null && Design.DesignMode)
@@ -87,6 +88,7 @@ namespace Going.UI.Containers
         }
         #endregion
         #region OnLayout
+        /// <inheritdoc/>
         protected override void OnLayout()
         {
             var b = Bounds;

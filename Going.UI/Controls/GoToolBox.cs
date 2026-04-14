@@ -124,6 +124,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Constructor
+        /// <summary>GoToolBox 클래스의 새 인스턴스를 초기화합니다.</summary>
         public GoToolBox()
         {
             Selectable = true;
@@ -137,6 +138,7 @@ namespace Going.UI.Controls
 
         #region Override
         #region Draw
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             #region var
@@ -189,6 +191,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Dispose
+        /// <inheritdoc/>
         protected override void OnDispose()
         {
             path.Dispose();
@@ -197,6 +200,7 @@ namespace Going.UI.Controls
         #endregion
 
         #region Mouse
+        /// <inheritdoc/>
         protected override void OnMouseDown(float x, float y, GoMouseButton button)
         {
             var rts = Areas();
@@ -225,6 +229,7 @@ namespace Going.UI.Controls
             base.OnMouseDown(x, y, button);
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseMove(float x, float y)
         {
             var rts = Areas();
@@ -242,6 +247,7 @@ namespace Going.UI.Controls
             base.OnMouseMove(x, y);
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseUp(float x, float y, GoMouseButton button)
         {
             var rts = Areas();
@@ -256,6 +262,7 @@ namespace Going.UI.Controls
             base.OnMouseUp(x, y, button);
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseWheel(float x, float y, float delta)
         {
             var rts = Areas();
@@ -263,6 +270,7 @@ namespace Going.UI.Controls
             base.OnMouseWheel(x, y, delta);
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseClick(float x, float y, GoMouseButton button)
         {
             var rts = Areas();
@@ -273,6 +281,7 @@ namespace Going.UI.Controls
             base.OnMouseClick(x, y, button);
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseDoubleClick(float x, float y, GoMouseButton button)
         {
             var rts = Areas();
@@ -282,6 +291,7 @@ namespace Going.UI.Controls
             base.OnMouseDoubleClick(x, y, button);
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseLongClick(float x, float y, GoMouseButton button)
         {
             var rts = Areas();

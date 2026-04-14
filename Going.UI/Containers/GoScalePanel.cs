@@ -56,6 +56,7 @@ namespace Going.UI.Containers
         #endregion
 
         #region Override
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             var rts = Areas();
@@ -94,6 +95,7 @@ namespace Going.UI.Containers
             }
         }
 
+        /// <inheritdoc/>
         public override Dictionary<string, SKRect> Areas()
         {
             var rts = base.Areas();
@@ -116,6 +118,7 @@ namespace Going.UI.Containers
 
         #region 
         #region Mouse
+        /// <inheritdoc/>
         protected override void OnMouseDown(float x, float y, GoMouseButton button)
         {
             var rts = Areas();
@@ -140,6 +143,7 @@ namespace Going.UI.Containers
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseMove(float x, float y)
         {
             var rts = Areas();
@@ -164,6 +168,7 @@ namespace Going.UI.Containers
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseUp(float x, float y, GoMouseButton button)
         {
             var rts = Areas();
@@ -188,6 +193,7 @@ namespace Going.UI.Containers
         }
          
 
+        /// <inheritdoc/>
         protected override void OnMouseClick(float x, float y, GoMouseButton button)
         {
             var rts = Areas();
@@ -212,6 +218,7 @@ namespace Going.UI.Containers
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseDoubleClick(float x, float y, GoMouseButton button)
         {
             var rts = Areas();
@@ -237,6 +244,7 @@ namespace Going.UI.Containers
 
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseLongClick(float x, float y, GoMouseButton button)
         {
             var rts = Areas();

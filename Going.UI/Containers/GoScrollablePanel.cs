@@ -86,6 +86,7 @@ namespace Going.UI.Containers
 
         #region Override
         #region Draw
+        /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
             var rts = Areas();
@@ -136,6 +137,7 @@ namespace Going.UI.Containers
         #endregion
 
         #region Mouse
+        /// <inheritdoc/>
         protected override void OnMouseDown(float x, float y, GoMouseButton button)
         {
             var rts = Areas();
@@ -174,6 +176,7 @@ namespace Going.UI.Containers
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseMove(float x, float y)
         {
             var rts = Areas();
@@ -184,7 +187,7 @@ namespace Going.UI.Containers
             var rtScrollH = rts["ScrollH"];
 
             var ratio = rtContent.Width / rtPanel.Width;
-            
+
             if (ratio < 1)
             {
                 x /= ratio;
@@ -210,6 +213,7 @@ namespace Going.UI.Containers
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseUp(float x, float y, GoMouseButton button)
         {
             var rts = Areas();
@@ -245,6 +249,7 @@ namespace Going.UI.Containers
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseWheel(float x, float y, float delta)
         {
             var rts = Areas();
@@ -269,6 +274,7 @@ namespace Going.UI.Containers
 
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseClick(float x, float y, GoMouseButton button)
         {
             var rts = Areas();
@@ -288,6 +294,7 @@ namespace Going.UI.Containers
  
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseDoubleClick(float x, float y, GoMouseButton button)
         {
             var rts = Areas();
@@ -306,6 +313,7 @@ namespace Going.UI.Containers
             base.OnMouseDoubleClick(x + ViewPosition.X, y + ViewPosition.Y, button);
         }
 
+        /// <inheritdoc/>
         protected override void OnMouseLongClick(float x, float y, GoMouseButton button)
         {
             var rts = Areas();
@@ -326,6 +334,7 @@ namespace Going.UI.Containers
         #endregion
 
         #region Areas
+        /// <inheritdoc/>
         public override Dictionary<string, SKRect> Areas()
         {
             var scv = vscroll.ScrollVisible ? Scroll.SC_WH : 0;

@@ -206,23 +206,75 @@ namespace Going.UI.Controls
 
         #region Method
         #region virtual
+        /// <summary>컨트롤이 초기화될 때 호출됩니다. 파생 클래스에서 재정의하여 초기화 로직을 구현합니다.</summary>
+        /// <param name="design">디자인 편집기 객체</param>
         protected virtual void OnInit(GoDesign? design) { }
+        /// <summary>컨트롤을 그립니다. 파생 클래스에서 재정의하여 그리기 로직을 구현합니다.</summary>
+        /// <param name="canvas">SkiaSharp 캔버스</param>
+        /// <param name="thm">테마</param>
         protected virtual void OnDraw(SKCanvas canvas, GoTheme thm) { Drawn?.Invoke(this, new GoDrawnEventArgs(canvas, thm)); }
+        /// <summary>컨트롤이 표시될 때 호출됩니다.</summary>
         protected virtual void OnShow() { View = true; }
+        /// <summary>컨트롤이 숨겨질 때 호출됩니다.</summary>
         protected virtual void OnHide() { View = false; }
+        /// <summary>컨트롤 상태를 주기적으로 업데이트할 때 호출됩니다.</summary>
         protected virtual void OnUpdate() { }
+        /// <summary>마우스 버튼이 눌렸을 때 호출됩니다.</summary>
+        /// <param name="x">마우스 X 좌표</param>
+        /// <param name="y">마우스 Y 좌표</param>
+        /// <param name="button">눌린 마우스 버튼</param>
         protected virtual void OnMouseDown(float x, float y, GoMouseButton button) { MouseDown?.Invoke(this, new GoMouseClickEventArgs(x, y, button)); }
+        /// <summary>마우스 버튼이 놓였을 때 호출됩니다.</summary>
+        /// <param name="x">마우스 X 좌표</param>
+        /// <param name="y">마우스 Y 좌표</param>
+        /// <param name="button">놓은 마우스 버튼</param>
         protected virtual void OnMouseUp(float x, float y, GoMouseButton button) { MouseUp?.Invoke(this, new GoMouseClickEventArgs(x, y, button)); }
+        /// <summary>마우스 클릭이 발생했을 때 호출됩니다.</summary>
+        /// <param name="x">마우스 X 좌표</param>
+        /// <param name="y">마우스 Y 좌표</param>
+        /// <param name="button">클릭한 마우스 버튼</param>
         protected virtual void OnMouseClick(float x, float y, GoMouseButton button) { MouseClicked?.Invoke(this, new GoMouseClickEventArgs(x, y, button)); }
+        /// <summary>롱클릭이 발생했을 때 호출됩니다.</summary>
+        /// <param name="x">마우스 X 좌표</param>
+        /// <param name="y">마우스 Y 좌표</param>
+        /// <param name="button">클릭한 마우스 버튼</param>
         protected virtual void OnMouseLongClick(float x, float y, GoMouseButton button) { MouseLongClicked?.Invoke(this, new GoMouseClickEventArgs(x, y, button)); }
+        /// <summary>롱클릭이 취소되었을 때 호출됩니다.</summary>
+        /// <param name="x">마우스 X 좌표</param>
+        /// <param name="y">마우스 Y 좌표</param>
+        /// <param name="button">클릭한 마우스 버튼</param>
         protected virtual void OnMouseLongClickCancel(float x, float y, GoMouseButton button) { MouseLongClickCanceled?.Invoke(this, new GoMouseClickEventArgs(x, y, button)); }
+        /// <summary>마우스 더블클릭이 발생했을 때 호출됩니다.</summary>
+        /// <param name="x">마우스 X 좌표</param>
+        /// <param name="y">마우스 Y 좌표</param>
+        /// <param name="button">클릭한 마우스 버튼</param>
         protected virtual void OnMouseDoubleClick(float x, float y, GoMouseButton button) { MouseDoubleClicked?.Invoke(this, new GoMouseClickEventArgs(x, y, button)); }
+        /// <summary>마우스가 이동할 때 호출됩니다.</summary>
+        /// <param name="x">마우스 X 좌표</param>
+        /// <param name="y">마우스 Y 좌표</param>
         protected virtual void OnMouseMove(float x, float y) { MouseMove?.Invoke(this, new GoMouseEventArgs(x, y)); }
+        /// <summary>마우스 휠이 회전할 때 호출됩니다.</summary>
+        /// <param name="x">마우스 X 좌표</param>
+        /// <param name="y">마우스 Y 좌표</param>
+        /// <param name="delta">휠 스크롤 량</param>
         protected virtual void OnMouseWheel(float x, float y, float delta) { MouseWheel?.Invoke(this, new GoMouseWheelEventArgs(x, y, delta)); }
+        /// <summary>마우스가 컨트롤 영역에 진입했을 때 호출됩니다.</summary>
         protected virtual void OnMouseEnter() { }
+        /// <summary>마우스가 컨트롤 영역을 벗어났을 때 호출됩니다.</summary>
         protected virtual void OnMouseLeave() { }
+        /// <summary>키가 눌렸을 때 호출됩니다.</summary>
+        /// <param name="Shift">Shift 키 눌림 여부</param>
+        /// <param name="Control">Control 키 눌림 여부</param>
+        /// <param name="Alt">Alt 키 눌림 여부</param>
+        /// <param name="key">눌린 키</param>
         protected virtual void OnKeyDown(bool Shift, bool Control, bool Alt, GoKeys key) { }
+        /// <summary>키가 놓였을 때 호출됩니다.</summary>
+        /// <param name="Shift">Shift 키 눌림 여부</param>
+        /// <param name="Control">Control 키 눌림 여부</param>
+        /// <param name="Alt">Alt 키 눌림 여부</param>
+        /// <param name="key">놓은 키</param>
         protected virtual void OnKeyUp(bool Shift, bool Control, bool Alt, GoKeys key) { }
+        /// <summary>리소스가 해제될 때 호출됩니다.</summary>
         protected virtual void OnDispose() { }
         #endregion
 
@@ -430,6 +482,7 @@ namespace Going.UI.Controls
         /// <param name="method">갱신 시 호출할 메서드</param>
         public void SetInvalidate(Action? method) => actInv = method;
 
+        /// <summary>컨트롤의 화면 갱신을 요청합니다.</summary>
         protected void Invalidate()
         {
             if (actInv != null) actInv?.Invoke();
