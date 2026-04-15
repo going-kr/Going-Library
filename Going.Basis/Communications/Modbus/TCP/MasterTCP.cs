@@ -29,6 +29,8 @@ namespace Going.Basis.Communications.Modbus.TCP
         public bool IsStart => modbus.IsStart;
         /// <summary>TCP 소켓이 연결되어 있는지 여부</summary>
         public bool IsOpen => modbus.IsOpen;
+        /// <summary>연결 끊김 시 자동 재연결 여부 (기본값: true)</summary>
+        public bool AutoReconnect { get => modbus.AutoReconnect; set => modbus.AutoReconnect = value; }
 
         /// <summary>비트 영역 매핑 (키: Modbus 시작 주소, 값: 영역 코드 접두사)</summary>
         public Dictionary<int, string> BitAreas { get; } = [];
