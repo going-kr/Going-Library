@@ -1929,13 +1929,18 @@ namespace Going.UIEditor.Windows
             if (s != null)
             {
                 var pcids = new List<(string, string)>();
-                var r = Regex.Replace(s, @"""Id""\s*:\s*""[^""]+""", match =>
+                var r = Regex.Replace(s, @"""Id""\s*:\s*""([^""]+)""", match =>
                 {
-                    var sold = match.Value.Substring(6, 36);
+                    // 캡처 그룹에서 순수 Guid만 추출.
+                    // 기존 Substring(6, 36)은 여는 " 를 포함하고 Guid 마지막 1자를 누락하는 off-by-one 버그였음
+                    // ("Id":"..." 공백 변형에도 취약). 그 결과 GoTableLayoutPanel.indexes 키가
+                    // "{NEW_GUID}{last1(OLD_GUID)}" 형태로 깨져 역직렬화 시 lookup 실패.
+                    var sold = match.Groups[1].Value;
                     var snew = Guid.NewGuid().ToString();
                     pcids.Add((sold, snew));
                     return $@"""Id"": ""{snew}""";
                 });
+                // indexes 딕셔너리 키 등 "Id" 필드 밖의 Guid 참조도 함께 교체
                 foreach (var v in pcids) r = r.Replace(v.Item1, v.Item2);
                 var ls = JsonSerializer.Deserialize<List<IGoControl>>(r, GoJsonConverter.Options);
                 if (ls != null && Program.CurrentDesign != null) foreach (var c in ls) c.FireInit(Program.CurrentDesign);
