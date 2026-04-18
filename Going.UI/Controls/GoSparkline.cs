@@ -446,5 +446,8 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 1)] public double Value { get; set; } = 0;
         /// <summary>선 및 텍스트 색상의 테마 색상 이름.</summary>
         [GoProperty(PCategory.Control, 2)] public string Color { get; set; } = "Base3";
+
+        /// <inheritdoc/>
+        public override string ToString() => $"{Name}: {Value}";
     }
 }
