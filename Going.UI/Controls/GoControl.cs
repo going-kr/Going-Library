@@ -157,7 +157,7 @@ namespace Going.UI.Controls
         /// <summary>컨트롤의 도킹 스타일</summary>
         [GoProperty(PCategory.Bounds, 9)] public GoDockStyle Dock { get; set; } = GoDockStyle.None;
         /// <summary>컨트롤의 외부 여백</summary>
-        [GoProperty(PCategory.Bounds, 10)] public GoPadding Margin { get; set; } = new(3, 3, 3, 3);
+        [GoProperty(PCategory.Bounds, 10)] public GoPadding Margin { get; set; } = new(4, 4, 4, 4);
 
         /// <summary>첫 번째 렌더링 여부</summary>
         [JsonIgnore] public bool FirstRender { get; internal set; } = true;
