@@ -577,10 +577,12 @@ namespace Going.UI.Controls
                 dic["ValueTitle"] = rtValueTitle;
                 dic["ValueGrid"] = rtValueGrid;
                 dic["NameGrid"] = rtNameGrid;
-                dic["Remark"] = MathTool.MakeRectangle(rtRemark, new SKSize(rw, (box * rc) + (gap * (rc + 1))));
                 dic["ViewBox"] = MathTool.MakeRectangle(rtRemark, new SKSize(rw, 40), GoContentAlignment.TopCenter);
                 var rtPause = dic["ViewBox"]; rtPause.Offset(0, 50);
                 dic["PauseBox"] = rtPause;
+                var rtR = MathTool.MakeRectangle(rtRemark, new SKSize(rw, (box * rc) + (gap * (rc + 1))), GoContentAlignment.TopCenter);
+                rtR.Offset(0, rtPause.Bottom - rtRemark.Top + 10);
+                dic["Remark"] = rtR;
                 dic["Graph"] = rtGraph;
                 dic["Scroll"] = rtScroll;
             }

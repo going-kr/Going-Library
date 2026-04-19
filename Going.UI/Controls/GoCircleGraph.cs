@@ -311,7 +311,7 @@ namespace Going.UI.Controls
                 var rtCR = rtsCat[2];
 
                 dic["Graph"] = rtGraph;
-                dic["Remark"] = MathTool.MakeRectangle(rtRemark, new SKSize(rw, (box * rc) + (gap * (rc + 1))));
+                dic["Remark"] = MathTool.MakeRectangle(rtRemark, new SKSize(rw, (box * rc) + (gap * (rc + 1))), GoContentAlignment.TopCenter);
                 dic["Category"] = rtsCat[1];
                 dic["CategoryLeft"] = rtsCat[0];
                 dic["CategoryRight"] = rtsCat[2];
