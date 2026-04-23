@@ -27,8 +27,8 @@ namespace Going.UI.Forms.Controls
         public double Minimum { get => Control.Minimum; set { if (Control.Minimum != value) { Control.Minimum = value; Invalidate(); } } }
         public double Maximum { get => Control.Maximum; set { if (Control.Maximum != value) { Control.Maximum = value; Invalidate(); } } }
         public string Format { get => Control.Format; set { if (Control.Format != value) { Control.Format = value; Invalidate(); } } }
-        public int GraduationLarge { get => Control.GraduationLarge; set { if (Control.GraduationLarge != value) { Control.GraduationLarge = value; Invalidate(); } } }
-        public int GraduationSmall { get => Control.GraduationSmall; set { if (Control.GraduationSmall != value) { Control.GraduationSmall = value; Invalidate(); } } }
+        public double GraduationLarge { get => Control.GraduationLarge; set { if (Control.GraduationLarge != value) { Control.GraduationLarge = value; Invalidate(); } } }
+        public double GraduationSmall { get => Control.GraduationSmall; set { if (Control.GraduationSmall != value) { Control.GraduationSmall = value; Invalidate(); } } }
         public int Gap { get => Control.Gap; set { if (Control.Gap != value) { Control.Gap = value; Invalidate(); } } }
         #endregion
 

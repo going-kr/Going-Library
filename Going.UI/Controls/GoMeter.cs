@@ -99,12 +99,11 @@ namespace Going.UI.Controls
         /// <summary>
         /// 큰 눈금 간격을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 13)] public int GraduationLarge { get; set; } = 10;
+        [GoProperty(PCategory.Control, 13)] public double GraduationLarge { get; set; } = 10;
         /// <summary>
         /// 작은 눈금 간격을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 14)] public int GraduationSmall { get; set; } = 2;
-
+        [GoProperty(PCategory.Control, 14)] public double GraduationSmall { get; set; } = 2;
         /// <summary>
         /// 값 표시 형식 문자열을 가져오거나 설정합니다.
         /// </summary>
@@ -164,8 +163,10 @@ namespace Going.UI.Controls
                 var rtCircleIn = rtBox; rtCircleIn.Inflate(-(RemarkFontSize + GIN), -(RemarkFontSize + GIN));
                 canvas.DrawArc(rtCircleIn, StartAngle, SweepAngle, false, p);
 
-                for (double i = Minimum; i <= Maximum; i += GraduationLarge)
+                int largeSteps = (int)Math.Round((Maximum - Minimum) / GraduationLarge);
+                for (int k = 0; k <= largeSteps; k++)
                 {
+                    double i = Minimum + k * GraduationLarge;
                     var gsang = Convert.ToSingle(MathTool.Map(MathTool.Constrain(i, Minimum, Maximum), Minimum, Maximum, 0D, SweepAngle)) + StartAngle;
                     var pT = MathTool.GetPointWithAngle(cp, gsang, rwh);
                     var pB = MathTool.GetPointWithAngle(cp, gsang, rwh - RemarkFontSize - GIN);
@@ -178,13 +179,16 @@ namespace Going.UI.Controls
                         canvas.RotateDegrees(gsang + 90);
                         var rt = MathTool.MakeRectangle(new SKPoint(0, RemarkFontSize / 2F), 60);
 
-                        Util.DrawText(canvas, i.ToString(), FontName, FontStyle, RemarkFontSize, rt, cRmk);
+                        var label = string.IsNullOrWhiteSpace(Format) ? i.ToString() : i.ToString(Format);
+                        Util.DrawText(canvas, label, FontName, FontStyle, RemarkFontSize, rt, cRmk);
                     }
                 }
 
                 p.StrokeWidth = 1;
-                for (double i = Minimum; i <= Maximum; i += GraduationSmall)
+                int smallSteps = (int)Math.Round((Maximum - Minimum) / GraduationSmall);
+                for (int k = 0; k <= smallSteps; k++)
                 {
+                    double i = Minimum + k * GraduationSmall;
                     var gsang = Convert.ToSingle(MathTool.Map(MathTool.Constrain(i, Minimum, Maximum), Minimum, Maximum, 0D, SweepAngle)) + StartAngle;
                     var pB = MathTool.GetPointWithAngle(cp, gsang, rwh - RemarkFontSize - GIN);
                     var pS = MathTool.GetPointWithAngle(cp, gsang, rwh - RemarkFontSize - (GIN - 5));
