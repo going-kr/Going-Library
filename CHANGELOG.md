@@ -1,0 +1,122 @@
+# Changelog
+
+모든 주요 변경 사항을 이 파일에 기록합니다.
+
+형식은 [Keep a Changelog](https://keepachangelog.com/ko/1.1.0/)를 따르고, 버전은 [Semantic Versioning](https://semver.org/lang/ko/)을 준수합니다.
+
+---
+
+## [1.1.11] - 2026-04-23
+
+### Changed
+- **`GoMeter.GraduationLarge`, `GraduationSmall`** 자료형 `int` → `double` — 소수점 눈금 간격 지원 (예: 0.5, 2.5).
+- **`GoMeter`** 눈금 라벨에 `Format` 속성 적용 — 값 표시와 일관된 포맷.
+
+### Fixed
+- **`GoMeter`** 눈금 계산 부동소수점 누적 오차 수정 — `i += Graduation` 방식에서 인덱스 기반 재계산으로 변경하여 마지막 눈금 누락 방지.
+
+---
+
+## [1.1.10] - 2026-04-14
+
+### Fixed
+- **그래프 범례 위치** — `GoTrendGraph`, `GoTimeGraph`, `GoLineGraph`, `GoBarGraph`, `GoCircleGraph`에서 범례(Remark)가 우측 열의 세로 중앙에 배치되어 ViewBox와 겹치던 문제 수정. 이제 ViewBox/PauseBox 아래로 10px 간격 두고 배치됨.
+
+---
+
+## [1.1.9] - 2026-04-14
+
+### Changed
+- **`GoControl.Margin` 기본값**: `3,3,3,3` → `4,4,4,4` — [8pt Grid System](https://spec.fm/specifics/8-pt-grid) 원칙에 맞춰 컨트롤 간격이 8px로 정렬됨.
+
+---
+
+## [1.1.8] - 2026-04-14
+
+### Added
+- **`GoBaseline.ToString()`** override — 컬렉션 에디터/디버거에서 기준선이 `"Name: Value"` 형식으로 표시되어 편집 용이.
+
+---
+
+## [1.1.7] - 2026-04-14
+
+### Added
+- **`GoSparkline` 컨트롤** — 축/범례/스크롤 없이 라인(+옵션 영역 채움)과 기준선, 최소/최대/XScale 텍스트만 표시하는 미니 트렌드 그래프.
+  - 여러 시리즈를 공통 Min/Max 스케일로 표시
+  - `MaximumXScale`, `XScale`, `Interval`, `ValueFormatString` 등 지원
+  - 내부 `GoBaseline` 클래스로 기준선 정의
+- **SampleOpenTK** PageSwitchPanel에 GoSparkline 데모 배치.
+
+---
+
+## [1.1.6] - 2026-04-14
+
+### Added
+- **`MasterRTU.AutoReconnect`, `MasterTCP.AutoReconnect`** 프로퍼티 노출 — 래퍼 클래스에서 내부 Modbus 객체의 자동 재연결 옵션에 직접 접근 가능.
+
+---
+
+## [1.1.5] - 2026-04-14
+
+### Fixed
+- **Going.UI XML 문서 주석 누락** — 1072개의 CS1591 경고 전체 해결.
+  - `override` 메서드는 `<inheritdoc/>` 적용
+  - 모든 public 멤버에 한국어 XML 주석 추가
+  - 주요 수정 파일: `GoDataGridItems.cs`(136), `GoInput.cs`(88), `Scroll.cs`(58), `GoDataGrid.cs`(56), `GoControl.cs`(38) 외 다수
+  - NuGet 패키지 XML 문서 크기: 476KB → 691KB
+
+---
+
+## [1.1.4] - 2026-04-14
+
+### Added
+- **FlowSystem 컴포넌트 (Going.UI)** — 산업용 배관 흐름 시뮬레이터.
+  - `FsFlowObject` (추상 기반), `FsFlowSystemPanel` (배관 네트워크 관리자)
+  - `FsPump`, `FsValve`, `FsCrossPipe`, `FsTeePipe`, `FsCylinderTank`, `FsSiloTank`
+  - 흐름 전파 알고리즘, 버블 애니메이션, 회전 지원(`IRotatable`)
+  - `PipeTool` 유틸리티 (경로 스무딩, 정규화, 거리 계산)
+  - `PathTool` 확장 (탱크/밸브/펌프/임펠러 형상 경로)
+  - `TopPortPosition`, `BottomPortPosition` 열거형
+- **FlowSystem 에디터 (Going.UIEditor)** — 배관 연결 시각적 편집.
+  - ToolBox에 "FlowSystem" 카테고리 추가
+  - ConnectionMode 토글 버튼 — 포트 선택/배관 연결/앵커 드래그
+  - `ConnectionAddAction`/`ConnectionDeleteAction` (Undo/Redo)
+  - `EditAction` 확장 — 컨트롤 이동 시 배관 자동 재정규화
+  - 키보드 단축키: `R` (회전), `V` (Pump/Valve OnOff 토글), `Escape` (연결 취소), `Delete` (배관 삭제)
+- **`GoPanel.BorderColor`** 프로퍼티 — 테두리 색상을 `PanelColor`와 독립 지정.
+- **`GoPanel.TitleDivider`** 프로퍼티 — 제목 영역 구분선 표시/숨김.
+- **SampleOpenTK `PageFlow`** — 사일로2 → 펌프2 → 밸브3 → 실린더탱크 데모.
+
+### Changed
+- **`GoStep.StepChagend` → `StepChanged`** — 이벤트명 오타 수정 (Going.UI + Going.UI.Forms).
+- **Going.UI.Forms `GoPanel`** 래퍼에 `BorderColor`, `TitleDivider` 추가.
+
+---
+
+## [1.1.3] - 2026-04-14
+
+### Added
+- **Going.Basis 전체 XML 문서 주석** — 39개 파일 모든 public API에 한국어 XML 주석 추가.
+- **Going.UI 전체 XML 문서 주석** — 107개 파일 모든 public API에 한국어 XML 주석 추가.
+- `GenerateDocumentationFile=true` 활성화로 빌드 시 XML 문서 자동 생성.
+
+### Fixed
+- **`LauncherTool`** 파라미터 오타 `faild` → `failed`.
+- **`MathTool`** `CenterPoint(List<PointF>)`, `GetPointWithAngle(RectangleF, double)`에 누락된 `static` 키워드 추가.
+- **`NetworkTool.IsSocketConnected`** 파라미터명 `PollTime` → `PollTimeMicros` (단위 명확화).
+- **`Serialize`** nullable 반환 타입 수정 (`object` → `object?`).
+- **`ExternalProgram.Start`** 대소문자 무관 프로세스 비교 (`StringComparison.OrdinalIgnoreCase`).
+- **`Chattering.ChatteringMode`** 주석 명확화 ("On 상태에 채터링 필터 적용").
+
+### Changed
+- **`MathTool.Constrain`**: `min > max`일 때 자동 스왑하여 정상 범위 제한.
+- **`HiResTimer`**: Stopwatch 리셋 시 overshoot 반영으로 타이밍 보정.
+- **`Serialize.XmlDeserializeFromFile`**: 불필요한 바이트 배열 복사 제거, FileStream 직접 사용.
+- 전체 `new byte[0]` → `[]` 모던 컬렉션 표현식 사용 (6곳).
+- 미사용 `catch (Exception ex)` 변수 정리 (9곳).
+
+---
+
+## 이전 버전
+
+이전 버전은 [Git 커밋 히스토리](https://github.com/going-kr/Going-Library/commits/master)를 참조하세요.
