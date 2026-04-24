@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -58,6 +59,9 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 14)] public GoDirectionHV Direction { get; set; } = GoDirectionHV.Horizon;
         /// <summary>버튼 동작 모드 (일반 버튼, 토글, 라디오)</summary>
         [GoProperty(PCategory.Control, 15)] public GoButtonsMode Mode { get; set; } = GoButtonsMode.Button;
+
+        /// <summary>선택된 버튼 항목 목록 (Toggle/Radio 모드에서 유효)</summary>
+        [JsonIgnore] public IReadOnlyList<GoButtonsItem> SelectedItems => Buttons.Where(x => x.Selected).ToList();
         #endregion
 
         #region Event
