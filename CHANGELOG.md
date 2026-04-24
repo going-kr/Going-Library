@@ -6,6 +6,17 @@
 
 ---
 
+## [1.1.12] - 2026-04-24
+
+### Added
+- **`GoButtons.SelectedItems`** — 선택된 버튼 항목 목록을 조회하는 읽기 전용 속성 (Toggle/Radio 모드에서 유효).
+- **`GoButtons.SelectItem(index|item, raiseEvent)`** — 지정한 단일 버튼만 선택 상태로 설정하고 나머지는 해제 (Radio/편의용).
+- **`GoButtons.SelectItems(indices|items, raiseEvent)`** — 지정한 버튼들만 선택 상태로 설정 (Toggle용).
+- **`GoButtons.DeselectAll(raiseEvent)`** — 모든 버튼의 선택을 해제.
+- 모든 선택 메서드에 `raiseEvent` 옵션 제공 — `SelectedChanged` 이벤트 발생 여부 제어.
+
+---
+
 ## [1.1.11] - 2026-04-23
 
 ### Changed
