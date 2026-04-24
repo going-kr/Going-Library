@@ -243,5 +243,71 @@ namespace Going.UI.Controls
             }
         }
         #endregion
+
+        #region Select
+        /// <summary>지정 인덱스의 버튼만 선택합니다. 나머지는 모두 해제됩니다.</summary>
+        /// <param name="index">선택할 버튼의 인덱스</param>
+        /// <param name="raiseEvent"><see cref="SelectedChanged"/> 이벤트 발생 여부</param>
+        public void SelectItem(int index, bool raiseEvent = true)
+        {
+            if (index < 0 || index >= Buttons.Count) return;
+            SelectItem(Buttons[index], raiseEvent);
+        }
+
+        /// <summary>지정 버튼만 선택합니다. 나머지는 모두 해제됩니다.</summary>
+        /// <param name="item">선택할 버튼 항목</param>
+        /// <param name="raiseEvent"><see cref="SelectedChanged"/> 이벤트 발생 여부</param>
+        public void SelectItem(GoButtonsItem item, bool raiseEvent = true)
+        {
+            if (item == null || !Buttons.Contains(item)) return;
+            var old = Buttons.FirstOrDefault(x => x.Selected && x != item);
+            var changed = !item.Selected || Buttons.Any(x => x != item && x.Selected);
+            foreach (var b in Buttons) b.Selected = (b == item);
+            if (changed && raiseEvent) SelectedChanged?.Invoke(this, new ButtonsSelectedEventArgs(item, old));
+        }
+
+        /// <summary>지정 버튼들만 선택 상태로 설정합니다. 그 외 버튼은 해제됩니다.</summary>
+        /// <param name="items">선택할 버튼 항목 목록</param>
+        /// <param name="raiseEvent"><see cref="SelectedChanged"/> 이벤트 발생 여부</param>
+        public void SelectItems(IEnumerable<GoButtonsItem> items, bool raiseEvent = true)
+        {
+            var target = items == null ? new HashSet<GoButtonsItem>() : new HashSet<GoButtonsItem>(items.Where(x => Buttons.Contains(x)));
+            GoButtonsItem? firstNewSel = null;
+            var changed = false;
+            foreach (var b in Buttons)
+            {
+                var ns = target.Contains(b);
+                if (b.Selected != ns)
+                {
+                    b.Selected = ns;
+                    changed = true;
+                    if (ns && firstNewSel == null) firstNewSel = b;
+                }
+            }
+            if (changed && raiseEvent && firstNewSel != null)
+                SelectedChanged?.Invoke(this, new ButtonsSelectedEventArgs(firstNewSel, null));
+        }
+
+        /// <summary>지정 인덱스들의 버튼만 선택 상태로 설정합니다. 그 외 버튼은 해제됩니다.</summary>
+        /// <param name="indices">선택할 버튼 인덱스 목록</param>
+        /// <param name="raiseEvent"><see cref="SelectedChanged"/> 이벤트 발생 여부</param>
+        public void SelectItems(IEnumerable<int> indices, bool raiseEvent = true)
+        {
+            var target = indices == null
+                ? new List<GoButtonsItem>()
+                : indices.Where(i => i >= 0 && i < Buttons.Count).Select(i => Buttons[i]).ToList();
+            SelectItems(target, raiseEvent);
+        }
+
+        /// <summary>모든 버튼의 선택을 해제합니다. 이전에 선택된 항목이 있을 때만 이벤트가 발생합니다.</summary>
+        /// <param name="raiseEvent"><see cref="SelectedChanged"/> 이벤트 발생 여부</param>
+        public void DeselectAll(bool raiseEvent = true)
+        {
+            var old = Buttons.FirstOrDefault(x => x.Selected);
+            if (old == null) return;
+            foreach (var b in Buttons) b.Selected = false;
+            if (raiseEvent) SelectedChanged?.Invoke(this, new ButtonsSelectedEventArgs(old, null));
+        }
+        #endregion
     }
 }
