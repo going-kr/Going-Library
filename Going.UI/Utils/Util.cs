@@ -1068,6 +1068,59 @@ namespace Going.UI.Utils
         }
 
         /// <summary>
+        /// Elevation 단계(0~5)에 따른 드롭 그림자를 박스 영역 외곽에 그립니다.
+        /// 부모 컨테이너에서 자식 그리기 전에 호출되어, 자식 ClipRect 밖에 그림자가 spread됩니다.
+        /// </summary>
+        /// <param name="canvas">SkiaSharp 캔버스</param>
+        /// <param name="bounds">컨트롤 영역 (그림자 외곽 기준)</param>
+        /// <param name="elevation">Elevation 레벨 (0=없음, 1~5=점진적 강도)</param>
+        /// <param name="round">모서리 라운드 타입</param>
+        /// <param name="corner">모서리 라운드 반경</param>
+        /// <param name="shadowColor">그림자 색상</param>
+        /// <param name="shadowAlpha">그림자 베이스 알파 (0~255)</param>
+        public static void DrawElevationShadow(SKCanvas canvas, SKRect bounds, int elevation, GoRoundType round, float corner, SKColor shadowColor, byte shadowAlpha)
+        {
+            if (elevation <= 0) return;
+            elevation = Math.Min(5, elevation);
+
+            // Level 1~5에 대한 (offsetX, offsetY, blur, alpha 가중치)
+            // 좌상단에서 빛이 떨어진다고 가정 → 우하단으로 그림자
+            (float ox, float oy, float blur, float w)[] table =
+            [
+                (0, 0, 0, 0),        // 0 (사용 안함)
+                (1, 1, 3, 0.40f),    // 1
+                (1, 2, 6, 0.55f),    // 2
+                (2, 4, 10, 0.70f),   // 3
+                (3, 6, 14, 0.85f),   // 4
+                (4, 8, 20, 1.00f),   // 5
+            ];
+            var (ox, oy, blur, w) = table[elevation];
+
+            byte alpha = (byte)Math.Clamp(shadowAlpha * w, 0, 255);
+            var sc = new SKColor(shadowColor.Red, shadowColor.Green, shadowColor.Blue, alpha);
+
+            using var p = new SKPaint { IsAntialias = true, Color = sc };
+            p.MaskFilter = SKMaskFilter.CreateBlur(SKBlurStyle.Normal, blur / 2f);
+
+            var rt = new SKRect(bounds.Left + ox, bounds.Top + oy, bounds.Right + ox, bounds.Bottom + oy);
+
+            if (round == GoRoundType.Rect || corner <= 0)
+            {
+                canvas.DrawRect(rt, p);
+            }
+            else if (round == GoRoundType.Ellipse)
+            {
+                canvas.DrawOval(rt, p);
+            }
+            else
+            {
+                var rrect = new SKRoundRect(rt, corner);
+                SetRound(rrect, round, corner);
+                canvas.DrawRoundRect(rrect, p);
+            }
+        }
+
+        /// <summary>
         /// 캔버스에 단색 박스를 그립니다.
         /// </summary>
         public static void DrawBox(SKCanvas canvas, SKRect bounds, SKColor color, GoRoundType round, float corner, bool clean = true, float borderSize = 1F) => DrawBox(canvas, bounds, color, color, round, corner, clean, borderSize);

@@ -777,7 +777,7 @@
               "UseLongClick": false,
               "LongClickTime": null,
               "Selectable": false,
-              "Bounds": "88,119,268,299",
+              "Bounds": "96,29,276,209",
               "Dock": 0,
               "Margin": {
                 "Left": 3,
@@ -810,7 +810,7 @@
               "UseLongClick": false,
               "LongClickTime": null,
               "Selectable": true,
-              "Bounds": "508,119,688,299",
+              "Bounds": "516,29,696,209",
               "Dock": 0,
               "Margin": {
                 "Left": 3,
@@ -847,13 +847,79 @@
               "UseLongClick": false,
               "LongClickTime": null,
               "Selectable": false,
-              "Bounds": "298,119,478,299",
+              "Bounds": "306,29,486,209",
               "Dock": 0,
               "Margin": {
                 "Left": 3,
                 "Top": 3,
                 "Right": 3,
                 "Bottom": 3
+              }
+            }
+          },
+          {
+            "Type": "GoBoxPanel",
+            "Value": {
+              "Childrens": [],
+              "BorderColor": "Base3",
+              "BoxColor": "Base2",
+              "Round": 1,
+              "BackgroundDraw": true,
+              "BorderSize": 1,
+              "Elevation": 2,
+              "Id": "7fa0c9f6-4e13-4bfc-a7fd-d8a2754a212b",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": false,
+              "Bounds": "96,244,276,366",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          },
+          {
+            "Type": "GoPanel",
+            "Value": {
+              "IconString": null,
+              "IconSize": 12,
+              "IconGap": 5,
+              "Text": "Panel",
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 12,
+              "TextColor": "Fore",
+              "PanelColor": "Base2",
+              "BorderColor": "Base3",
+              "Round": 1,
+              "BackgroundDraw": true,
+              "BorderOnly": false,
+              "TitleHeight": 40,
+              "TitleDivider": true,
+              "Buttons": [],
+              "ButtonWidth": null,
+              "Elevation": 2,
+              "Childrens": [],
+              "Id": "851de7f6-ef76-47e7-9c54-e556fce96896",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": false,
+              "Bounds": "400,242,559,366",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
               }
             }
           }
@@ -1340,7 +1406,7 @@
                     "FillColor": "DeepSkyBlue",
                     "EmptyColor": "Base1",
                     "FrameColor": "Base4",
-                    "Value": 0,
+                    "Value": 50,
                     "Minimum": 0,
                     "Maximum": 100,
                     "Format": "0",
@@ -1355,7 +1421,7 @@
                     "UseLongClick": false,
                     "LongClickTime": null,
                     "Selectable": false,
-                    "Bounds": "16,10,166,160",
+                    "Bounds": "10,10,130,160",
                     "Dock": 0,
                     "Margin": {
                       "Left": 3,
@@ -1372,10 +1438,10 @@
                     "FontStyle": 0,
                     "FontSize": 18,
                     "TextColor": "Fore",
-                    "FillColor": "DeepSkyBlue",
+                    "FillColor": "red",
                     "EmptyColor": "Base1",
                     "FrameColor": "Base4",
-                    "Value": 0,
+                    "Value": 50,
                     "Minimum": 0,
                     "Maximum": 100,
                     "Format": "0",
@@ -1390,7 +1456,7 @@
                     "UseLongClick": false,
                     "LongClickTime": null,
                     "Selectable": false,
-                    "Bounds": "16,212,166,362",
+                    "Bounds": "663,10,783,160",
                     "Dock": 0,
                     "Margin": {
                       "Left": 3,
@@ -1406,8 +1472,8 @@
                     "OnColor": "Lime",
                     "OffColor": "Red",
                     "FrameColor": "Base4",
-                    "OnOff": false,
-                    "Rotate": 0,
+                    "OnOff": true,
+                    "Rotate": 1,
                     "Id": "9dee4649-bb20-448e-b7cd-0493204deb2b",
                     "Name": null,
                     "Visible": true,
@@ -1415,7 +1481,7 @@
                     "UseLongClick": false,
                     "LongClickTime": null,
                     "Selectable": false,
-                    "Bounds": "230,149,309,223",
+                    "Bounds": "30,212,110,292",
                     "Dock": 0,
                     "Margin": {
                       "Left": 3,
@@ -1431,8 +1497,8 @@
                     "OnColor": "Lime",
                     "OffColor": "Red",
                     "FrameColor": "Base4",
-                    "OnOff": false,
-                    "Rotate": 0,
+                    "OnOff": true,
+                    "Rotate": 3,
                     "Id": "d44bc38f-e7b0-4ab5-b442-fdf97de78750",
                     "Name": null,
                     "Visible": true,
@@ -1440,7 +1506,7 @@
                     "UseLongClick": false,
                     "LongClickTime": null,
                     "Selectable": false,
-                    "Bounds": "230,339,309,413",
+                    "Bounds": "684,212,764,292",
                     "Dock": 0,
                     "Margin": {
                       "Left": 3,
@@ -1449,17 +1515,235 @@
                       "Bottom": 3
                     }
                   }
+                },
+                {
+                  "Type": "FsPump",
+                  "Value": {
+                    "OnColor": "Lime",
+                    "OffColor": "Red",
+                    "EmptyColor": "Base1",
+                    "FrameColor": "Base4",
+                    "UseInlet": true,
+                    "OnOff": true,
+                    "Rotate": 1,
+                    "Reverse": true,
+                    "Id": "96b51862-7b4c-4e95-a6f0-8c25f0e64c29",
+                    "Name": null,
+                    "Visible": true,
+                    "Enabled": true,
+                    "UseLongClick": false,
+                    "LongClickTime": null,
+                    "Selectable": false,
+                    "Bounds": "170,212,250,292",
+                    "Dock": 0,
+                    "Margin": {
+                      "Left": 4,
+                      "Top": 4,
+                      "Right": 4,
+                      "Bottom": 4
+                    }
+                  }
+                },
+                {
+                  "Type": "FsPump",
+                  "Value": {
+                    "OnColor": "Lime",
+                    "OffColor": "Red",
+                    "EmptyColor": "Base1",
+                    "FrameColor": "Base4",
+                    "UseInlet": true,
+                    "OnOff": true,
+                    "Rotate": 3,
+                    "Reverse": false,
+                    "Id": "a220d860-5e9e-41f1-8569-f5521195724b",
+                    "Name": null,
+                    "Visible": true,
+                    "Enabled": true,
+                    "UseLongClick": false,
+                    "LongClickTime": null,
+                    "Selectable": false,
+                    "Bounds": "543,212,623,292",
+                    "Dock": 0,
+                    "Margin": {
+                      "Left": 4,
+                      "Top": 4,
+                      "Right": 4,
+                      "Bottom": 4
+                    }
+                  }
+                },
+                {
+                  "Type": "FsTeePipe",
+                  "Value": {
+                    "Rotate": 0,
+                    "Id": "ae023524-31bd-40de-bea2-c95132944e46",
+                    "Name": null,
+                    "Visible": true,
+                    "Enabled": true,
+                    "UseLongClick": false,
+                    "LongClickTime": null,
+                    "Selectable": false,
+                    "Bounds": "357,65,437,105",
+                    "Dock": 0,
+                    "Margin": {
+                      "Left": 4,
+                      "Top": 4,
+                      "Right": 4,
+                      "Bottom": 4
+                    }
+                  }
+                },
+                {
+                  "Type": "FsCylinderTank",
+                  "Value": {
+                    "FontName": "\uB098\uB214\uACE0\uB515",
+                    "FontStyle": 0,
+                    "FontSize": 18,
+                    "TextColor": "Fore",
+                    "FillColor": "DeepSkyBlue",
+                    "EmptyColor": "Base1",
+                    "FrameColor": "Base4",
+                    "Value": 30,
+                    "Minimum": 0,
+                    "Maximum": 100,
+                    "Format": "0",
+                    "UseInlet": true,
+                    "InletPosition": 0,
+                    "UseOutlet": false,
+                    "OutletPosition": 1,
+                    "UseMixer": true,
+                    "MixerOnOff": true,
+                    "Id": "4bd666b5-9b3a-46b0-aeca-379acb964a5b",
+                    "Name": null,
+                    "Visible": true,
+                    "Enabled": true,
+                    "UseLongClick": false,
+                    "LongClickTime": null,
+                    "Selectable": false,
+                    "Bounds": "322,195,473,394",
+                    "Dock": 0,
+                    "Margin": {
+                      "Left": 4,
+                      "Top": 4,
+                      "Right": 4,
+                      "Bottom": 4
+                    }
+                  }
                 }
               ],
               "BaseWidth": null,
               "BaseHeight": null,
               "PanelAlignment": 4,
-              "PipeSize": 20,
+              "PipeSize": 25,
               "FrameSize": 5,
               "EmptyColor": "Base1",
               "MixedColor": "Magenta",
               "FrameColor": "Base4",
-              "Connections": [],
+              "Connections": [
+                {
+                  "Id": "fb72f891-586b-4006-9f1b-89f2e6e40843",
+                  "StartControlId": "3de96546-6182-4aa5-893a-eb4e62069958",
+                  "EndControlId": "9dee4649-bb20-448e-b7cd-0493204deb2b",
+                  "StartPortName": "Outlet",
+                  "EndPortName": "Port1",
+                  "Nodes": [
+                    {
+                      "Direction": 3,
+                      "Position": 220.75
+                    }
+                  ]
+                },
+                {
+                  "Id": "2b267025-428e-42ed-ae1c-971f45d80223",
+                  "StartControlId": "9dee4649-bb20-448e-b7cd-0493204deb2b",
+                  "EndControlId": "96b51862-7b4c-4e95-a6f0-8c25f0e64c29",
+                  "StartPortName": "Port2",
+                  "EndPortName": "Inlet",
+                  "Nodes": [
+                    {
+                      "Direction": 3,
+                      "Position": 385.5
+                    },
+                    {
+                      "Direction": 1,
+                      "Position": 185
+                    }
+                  ]
+                },
+                {
+                  "Id": "024adcd6-0b81-4fec-a74c-fcc187f3dba7",
+                  "StartControlId": "96b51862-7b4c-4e95-a6f0-8c25f0e64c29",
+                  "EndControlId": "ae023524-31bd-40de-bea2-c95132944e46",
+                  "StartPortName": "Outlet",
+                  "EndPortName": "Port1",
+                  "Nodes": [
+                    {
+                      "Direction": 2,
+                      "Position": 85
+                    }
+                  ]
+                },
+                {
+                  "Id": "090ba501-8d29-4cb0-9446-195e7f7919ec",
+                  "StartControlId": "1eca4ebd-8b1e-4138-9d41-8ac71824eeca",
+                  "EndControlId": "d44bc38f-e7b0-4ab5-b442-fdf97de78750",
+                  "StartPortName": "Outlet",
+                  "EndPortName": "Port2",
+                  "Nodes": [
+                    {
+                      "Direction": 3,
+                      "Position": 220.75
+                    }
+                  ]
+                },
+                {
+                  "Id": "53bf5f3b-1b19-41b3-8141-913f0186c19f",
+                  "StartControlId": "d44bc38f-e7b0-4ab5-b442-fdf97de78750",
+                  "EndControlId": "a220d860-5e9e-41f1-8569-f5521195724b",
+                  "StartPortName": "Port1",
+                  "EndPortName": "Inlet",
+                  "Nodes": [
+                    {
+                      "Direction": 3,
+                      "Position": 385.5
+                    },
+                    {
+                      "Direction": 0,
+                      "Position": 608
+                    }
+                  ]
+                },
+                {
+                  "Id": "12f4fa4d-d190-4572-8140-179b32faca4b",
+                  "StartControlId": "a220d860-5e9e-41f1-8569-f5521195724b",
+                  "EndControlId": "ae023524-31bd-40de-bea2-c95132944e46",
+                  "StartPortName": "Outlet",
+                  "EndPortName": "Port3",
+                  "Nodes": [
+                    {
+                      "Direction": 2,
+                      "Position": 85
+                    }
+                  ]
+                },
+                {
+                  "Id": "953cba63-58ce-4a98-aea5-67e39046ef03",
+                  "StartControlId": "ae023524-31bd-40de-bea2-c95132944e46",
+                  "EndControlId": "4bd666b5-9b3a-46b0-aeca-379acb964a5b",
+                  "StartPortName": "Port2",
+                  "EndPortName": "Inlet",
+                  "Nodes": [
+                    {
+                      "Direction": 3,
+                      "Position": 151.5
+                    },
+                    {
+                      "Direction": 0,
+                      "Position": 344.5
+                    }
+                  ]
+                }
+              ],
               "Id": "377106fa-2716-47d9-ac56-8cd733bfbe76",
               "Name": null,
               "Visible": true,
@@ -1493,6 +1777,631 @@
           "Top": 3,
           "Right": 3,
           "Bottom": 3
+        }
+      }
+    },
+    "PageControl": {
+      "Type": "GoPage",
+      "Value": {
+        "Childrens": [
+          {
+            "Type": "GoButton",
+            "Value": {
+              "IconString": null,
+              "IconSize": 12,
+              "IconDirection": 0,
+              "IconGap": 5,
+              "Text": "button",
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 12,
+              "TextColor": "Fore",
+              "ButtonColor": "Base3",
+              "BorderColor": "Base3",
+              "Round": 1,
+              "BorderWidth": 1,
+              "BackgroundDraw": true,
+              "BorderOnly": false,
+              "FillStyle": 0,
+              "ContentAlignment": 4,
+              "AutoFontSize": 0,
+              "AutoIconSize": 0,
+              "Id": "0752dfc0-6706-41ff-9395-a93296f8030d",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": true,
+              "Bounds": "10,10,115,50",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          },
+          {
+            "Type": "GoButton",
+            "Value": {
+              "IconString": null,
+              "IconSize": 12,
+              "IconDirection": 0,
+              "IconGap": 5,
+              "Text": "button",
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 12,
+              "TextColor": "Fore",
+              "ButtonColor": "Base3",
+              "BorderColor": "Base4",
+              "Round": 1,
+              "BorderWidth": 1.5,
+              "BackgroundDraw": true,
+              "BorderOnly": false,
+              "FillStyle": 0,
+              "ContentAlignment": 4,
+              "AutoFontSize": 0,
+              "AutoIconSize": 0,
+              "Id": "c0dde021-1259-474b-8793-564ee7610b01",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": true,
+              "Bounds": "10,60,115,100",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          },
+          {
+            "Type": "GoCalendar",
+            "Value": {
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 12,
+              "TextColor": "Fore",
+              "BoxColor": "Base3",
+              "SelectColor": "Select",
+              "Round": 1,
+              "BackgroundDraw": true,
+              "MultiSelect": false,
+              "NoneSelect": false,
+              "Id": "9639c068-dd1b-4130-91d1-fafcf651c300",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": true,
+              "Bounds": "125,10,403,288",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          },
+          {
+            "Type": "GoCheckBox",
+            "Value": {
+              "Text": "checkbox",
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 12,
+              "TextColor": "Fore",
+              "BoxColor": "Base1",
+              "CheckColor": "Fore",
+              "Checked": true,
+              "BoxSize": 24,
+              "Gap": 10,
+              "ContentAlignment": 4,
+              "AutoFontSize": 0,
+              "Id": "12da4ba9-85f7-4a36-b891-8e3dacfd4c8f",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": true,
+              "Bounds": "10,248,115,288",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          },
+          {
+            "Type": "GoInputString",
+            "Value": {
+              "Value": "\uAC12",
+              "IconString": null,
+              "IconSize": 12,
+              "IconGap": 5,
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 12,
+              "Direction": 0,
+              "TextColor": "Fore",
+              "BorderColor": "Base3",
+              "FillColor": "Base3",
+              "ValueColor": "Base1",
+              "Round": 1,
+              "TitleSize": 70,
+              "Title": "\uD0C0\uC774\uD2C0",
+              "ButtonSize": null,
+              "Buttons": [],
+              "AutoFontSize": 0,
+              "AutoIconSize": 0,
+              "Id": "9f033827-1813-447e-af52-acbdafe83587",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": true,
+              "Bounds": "413,60,644,100",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          },
+          {
+            "Type": "GoLamp",
+            "Value": {
+              "Text": "lamp",
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 12,
+              "TextColor": "Fore",
+              "OnColor": "Good",
+              "OffColor": "Base2",
+              "OnOff": false,
+              "LampSize": 24,
+              "Gap": 10,
+              "ContentAlignment": 4,
+              "AutoFontSize": 0,
+              "Id": "c2004377-3d6f-4119-8767-082d6816ad76",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": false,
+              "Bounds": "10,160,115,200",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          },
+          {
+            "Type": "GoLampButton",
+            "Value": {
+              "Text": "button",
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 12,
+              "TextColor": "Fore",
+              "ButtonColor": "Base3",
+              "BorderColor": "Base3",
+              "OnColor": "Good",
+              "OffColor": "Base2",
+              "Round": 1,
+              "BorderWidth": 1,
+              "FillStyle": 0,
+              "OnOff": false,
+              "LampSize": 24,
+              "Gap": 10,
+              "AutoFontSize": 0,
+              "Id": "3662e2a8-771a-4a19-9998-d1d53752a833",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": true,
+              "Bounds": "10,110,115,150",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          },
+          {
+            "Type": "GoNumberBox",
+            "Value": {
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 12,
+              "Direction": 0,
+              "TextColor": "Fore",
+              "BorderColor": "Base3",
+              "ButtonColor": "Base3",
+              "ValueColor": "Base1",
+              "Round": 1,
+              "Value": 0,
+              "Minimum": 0,
+              "Maximum": 100,
+              "Tick": 1,
+              "Format": null,
+              "ButtonSize": 40,
+              "AutoFontSize": 0,
+              "Id": "1afb6bc6-8e94-4875-b5aa-ba2010a67fdb",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": false,
+              "Bounds": "413,110,644,150",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          },
+          {
+            "Type": "GoOnOff",
+            "Value": {
+              "DrawText": true,
+              "OnText": "On",
+              "OffText": "Off",
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 12,
+              "TextColor": "Fore",
+              "BoxColor": "Base1",
+              "BorderColor": "Base3",
+              "CursorColor": "Base3",
+              "OnColor": "lime",
+              "OffColor": "gray",
+              "CursorIconDraw": true,
+              "CursorIconString": "fa-power-off",
+              "CursorIconSize": null,
+              "Corner": null,
+              "OnOff": false,
+              "AutoFontSize": 0,
+              "AutoCursorIconSize": 0,
+              "Id": "04bccc0a-f52b-4da9-9669-733196211cfa",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": true,
+              "Bounds": "125,298,234,348",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          },
+          {
+            "Type": "GoSlider",
+            "Value": {
+              "IconString": null,
+              "IconSize": 12,
+              "IconGap": 5,
+              "IconDirection": 0,
+              "Text": "slider",
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontSize": 12,
+              "BackgroundDraw": false,
+              "BorderOnly": false,
+              "TextColor": "Fore",
+              "BoxColor": "Back",
+              "SliderColor": "Base5",
+              "ProgressColor": "Base1",
+              "BorderColor": "danger",
+              "Round": 1,
+              "Direction": 0,
+              "ShowValueLabel": true,
+              "ValueFormat": "0",
+              "BarSize": 7,
+              "HandleRadius": 15,
+              "EnableShadow": true,
+              "HandleHoverScale": 1.05,
+              "Tick": null,
+              "ShowTicks": false,
+              "TickCount": 5,
+              "TickSize": 10,
+              "Value": 0,
+              "ValueString": "0",
+              "Minimum": 0,
+              "Maximum": 100,
+              "Id": "63f5b2c9-6fe0-4be8-90ce-c5d5226e8a03",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": true,
+              "Bounds": "413,308,644,348",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          },
+          {
+            "Type": "GoRadioBox",
+            "Value": {
+              "Text": "radiobox",
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 12,
+              "TextColor": "Fore",
+              "BoxColor": "Base1",
+              "CheckColor": "Fore",
+              "Checked": true,
+              "BoxSize": 24,
+              "Gap": 10,
+              "ContentAlignment": 4,
+              "AutoFontSize": 0,
+              "Id": "93973a8a-5f0c-4cd2-ad90-cd61bcea535e",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": true,
+              "Bounds": "10,200,115,240",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          },
+          {
+            "Type": "GoSwitch",
+            "Value": {
+              "OnText": "On",
+              "OffText": "Off",
+              "OnIconString": null,
+              "OffIconString": null,
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 12,
+              "IconSize": 12,
+              "IconDirection": 0,
+              "IconGap": 5,
+              "OnTextColor": "Fore",
+              "OffTextColor": "Base5",
+              "BoxColor": "Base1",
+              "BorderColor": "Base3",
+              "SwitchColor": "Base3",
+              "OnIconColor": "lime",
+              "OffIconColor": "red",
+              "OnOff": false,
+              "AutoFontSize": 0,
+              "AutoIconSize": 0,
+              "Id": "50d02890-f638-468b-b43b-185eb3b1d5c1",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": true,
+              "Bounds": "286,298,403,348",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          },
+          {
+            "Type": "GoRangeSlider",
+            "Value": {
+              "IconString": null,
+              "IconSize": 12,
+              "IconGap": 5,
+              "IconDirection": 0,
+              "Text": "slider",
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontSize": 12,
+              "BackgroundDraw": false,
+              "BorderOnly": false,
+              "TextColor": "Fore",
+              "BoxColor": "Back",
+              "SliderColor": "Base5",
+              "ProgressColor": "Base1",
+              "BorderColor": "danger",
+              "Round": 1,
+              "Direction": 0,
+              "ShowValueLabel": true,
+              "ValueFormat": "0",
+              "BarSize": 7,
+              "HandleRadius": 15,
+              "EnableShadow": true,
+              "HandleHoverScale": 1.05,
+              "Tick": null,
+              "ShowTicks": false,
+              "TickCount": 5,
+              "TickSize": 10,
+              "LowerValue": 25,
+              "UpperValue": 75,
+              "LowerValueString": "25",
+              "UpperValueString": "75",
+              "Minimum": 0,
+              "Maximum": 100,
+              "MinHandleSeparation": 0.05,
+              "Id": "92bf4ce3-c1da-4725-9acd-6c64e7c3ffff",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": true,
+              "Bounds": "413,258,644,298",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          },
+          {
+            "Type": "GoProgress",
+            "Value": {
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 18,
+              "ValueFontSize": 14,
+              "TextColor": "Fore",
+              "FillColor": "Good",
+              "EmptyColor": "Base1",
+              "BorderColor": "Transparent",
+              "Direction": 0,
+              "Value": 50,
+              "Minimum": 0,
+              "Maximum": 100,
+              "Format": "0",
+              "Gap": 5,
+              "CornerRadius": 5,
+              "BarSize": null,
+              "ShowValueLabel": false,
+              "Id": "1c4e5a03-c248-47e0-a7dd-2a669818fba3",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": false,
+              "Bounds": "413,218,644,248",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          },
+          {
+            "Type": "GoValueString",
+            "Value": {
+              "Value": "\uAC12",
+              "IconString": null,
+              "IconSize": 12,
+              "IconGap": 5,
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 12,
+              "Direction": 0,
+              "TextColor": "Fore",
+              "BorderColor": "Base3",
+              "FillColor": "Base3",
+              "ValueColor": "Base2",
+              "Round": 1,
+              "TitleSize": 70,
+              "Title": "\uD0C0\uC774\uD2C0",
+              "ButtonSize": null,
+              "Buttons": [],
+              "AutoFontSize": 0,
+              "AutoIconSize": 0,
+              "Id": "1e7f9d2e-aae7-4bc1-9f09-78cfd4c1483e",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": true,
+              "Bounds": "413,10,644,50",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          },
+          {
+            "Type": "GoStep",
+            "Value": {
+              "PrevIconString": "fa-chevron-left",
+              "NextIconString": "fa-chevron-right",
+              "ButtonColor": "Base3",
+              "StepColor": "Base2",
+              "SelectColor": "Select",
+              "IsCircle": false,
+              "UseButton": true,
+              "StepCount": 7,
+              "Step": 0,
+              "Id": "cb950f92-dfdd-4af2-b5b3-da2652866ef1",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": true,
+              "Bounds": "413,168,644,208",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          }
+        ],
+        "BackgroundImage": null,
+        "Id": "828fab66-893d-4fb4-beb4-13ad309cff8e",
+        "Name": "PageControl",
+        "Visible": true,
+        "Enabled": true,
+        "UseLongClick": false,
+        "LongClickTime": null,
+        "Selectable": false,
+        "Bounds": "0,50,800,480",
+        "Dock": 0,
+        "Margin": {
+          "Left": 4,
+          "Top": 4,
+          "Right": 4,
+          "Bottom": 4
         }
       }
     }
@@ -1574,6 +2483,12 @@
               "Text": "Flow",
               "Tag": null,
               "PageName": "PageFlow"
+            },
+            {
+              "IconString": null,
+              "Text": "Control",
+              "Tag": null,
+              "PageName": "PageControl"
             }
           ],
           "Direction": 0,

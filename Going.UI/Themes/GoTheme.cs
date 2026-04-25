@@ -170,6 +170,10 @@ namespace Going.UI.Themes
         /// </summary>
         public byte ShadowAlpha { get; set; }
         /// <summary>
+        /// 그림자 기본 색상을 가져오거나 설정합니다. Elevation 효과의 그림자 색으로 사용됩니다.
+        /// </summary>
+        public SKColor ShadowColor { get; set; } = SKColors.Black;
+        /// <summary>
         /// 클릭 시 밝기 변화량을 가져오거나 설정합니다.
         /// </summary>
         public float DownBrightness { get; set; }
@@ -361,6 +365,7 @@ namespace Going.UI.Themes
             HoverBorderBrightness = 0.5F;
             HoverFillBrightness = 0.15F;
             ShadowAlpha = 180;
+            ShadowColor = SKColors.Black;
 
             GradientDarkBrightness = 0.2F;
             GradientDarkBrightness = -0.2F;

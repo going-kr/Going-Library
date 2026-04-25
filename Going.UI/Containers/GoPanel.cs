@@ -98,6 +98,12 @@ namespace Going.UI.Containers
         [GoProperty(PCategory.Control, 16)] public float? ButtonWidth { get; set; }
 
         /// <summary>
+        /// Elevation 단계 (0~5). 0이면 그림자 없음, 1~5는 점진적으로 강한 드롭 그림자가 외곽에 그려져 카드가 떠있는 효과를 만듭니다.
+        /// 그림자는 부모 컨테이너에서 그려지므로 카드 외부 여백이 충분해야 잘리지 않습니다.
+        /// </summary>
+        [GoProperty(PCategory.Control, 17)] public int Elevation { get; set; } = 0;
+
+        /// <summary>
         /// 자식 컨트롤 목록을 가져옵니다.
         /// </summary>
         [JsonInclude] public override List<IGoControl> Childrens { get; } = [];

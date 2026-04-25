@@ -43,6 +43,12 @@ namespace Going.UI.Containers
         /// 테두리 두께를 가져오거나 설정합니다.
         /// </summary>
         [GoProperty(PCategory.Control, 4)] public float BorderSize { get; set; } = 1F;
+
+        /// <summary>
+        /// Elevation 단계 (0~5). 0이면 그림자 없음, 1~5는 점진적으로 강한 드롭 그림자가 외곽에 그려져 카드가 떠있는 효과를 만듭니다.
+        /// 그림자는 부모 컨테이너에서 그려지므로 카드 외부 여백이 충분해야 잘리지 않습니다.
+        /// </summary>
+        [GoProperty(PCategory.Control, 5)] public int Elevation { get; set; } = 0;
         #endregion
 
         #region Constructor
