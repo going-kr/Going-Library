@@ -63,10 +63,10 @@ public static class GoGudxConverter
     /// PROVISIONAL: This API is exposed for tests and Task 12's GoDesign.SerializeGudx wiring.
     /// External callers should prefer the higher-level GoDesign.SerializeGudx(masterPath) once Task 12 lands.
     /// </remarks>
-    public static XElement WriteAny(object obj)
+    public static XElement WriteAny(object obj, string? explicitTagName = null)
     {
         var type = obj.GetType();
-        var tagName = TypeTagName(type);
+        var tagName = explicitTagName ?? TypeTagName(type);
         var elem = new XElement(tagName);
 
         // GoGridLayoutPanel special case: P4b dual interlock (Rows + Childrens).
@@ -198,6 +198,15 @@ public static class GoGudxConverter
                 childElem.SetAttributeValue("Name", kvp.Key.ToString());
                 elem.Add(childElem);
             }
+            return;
+        }
+
+        // B1: single-child object (Task 9) — LAST branch (most permissive predicate).
+        // Tag = [GudxTagName] override if present, else property name (not class name).
+        if (IsSingleChildObject(pType))
+        {
+            var tagName = childProp.GetCustomAttribute<GudxTagNameAttribute>()?.Name ?? childProp.Name;
+            elem.Add(WriteAny(value, tagName));
             return;
         }
     }
@@ -367,6 +376,39 @@ public static class GoGudxConverter
             if (childProp.CanWrite) childProp.SetValue(instance, dict);
             return;
         }
+
+        // B1: single-child object (Task 9) — LAST branch (most permissive predicate).
+        // Tag-filtered by property name (or [GudxTagName] override) to avoid consuming
+        // elements destined for other [GoChilds] properties.
+        if (IsSingleChildObject(pType))
+        {
+            var tagName = childProp.GetCustomAttribute<GudxTagNameAttribute>()?.Name ?? childProp.Name;
+            var childElem = elem.Element(tagName);
+            if (childElem == null) return;  // missing optional child OK
+
+            // Resolve actual type (unwrap nullable T? → T for Activator.CreateInstance).
+            var actualType = Nullable.GetUnderlyingType(pType) ?? pType;
+
+            // Try get-only / private-set first: mutate the existing instance in place.
+            var existing = childProp.GetValue(instance);
+            if (existing != null)
+            {
+                PopulateAny(childElem, existing);
+                // If also writable (private set), we can leave it as-is (already mutated).
+                return;
+            }
+
+            // existing is null (nullable property not yet initialized): create new instance.
+            var instance2 = Activator.CreateInstance(actualType);
+            if (instance2 != null)
+            {
+                PopulateAny(childElem, instance2);
+                // Use reflection to set even private setters.
+                var setter = childProp.GetSetMethod(nonPublic: true);
+                setter?.Invoke(instance, new[] { instance2 });
+            }
+            return;
+        }
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -488,6 +530,24 @@ public static class GoGudxConverter
         if (args[0] != typeof(string)) return false;
         valueType = args[1];
         return true;
+    }
+
+    /// <summary>
+    /// Returns true when the type represents a single non-collection object (B1 pattern).
+    /// Excludes: primitives, strings, enums, decimal, IEnumerable types (collections),
+    /// and known SkiaSharp value types (SKColor, SKRect) that are handled as P1 scalars.
+    /// This is the most permissive predicate and MUST be the last branch in dispatch.
+    /// </summary>
+    private static bool IsSingleChildObject(Type t)
+    {
+        if (t.IsPrimitive || t == typeof(string) || t == typeof(decimal) || t.IsEnum) return false;
+        if (typeof(System.Collections.IEnumerable).IsAssignableFrom(t)) return false;
+        if (t == typeof(SkiaSharp.SKColor) || t == typeof(SkiaSharp.SKRect)) return false;
+        // Reference type (or nullable reference) — assume single-child object.
+        // Handles nullable T? by checking the underlying type.
+        var underlying = Nullable.GetUnderlyingType(t);
+        if (underlying != null) return IsSingleChildObject(underlying);
+        return t.IsClass;
     }
 
     private static IEnumerable<PropertyInfo> ScalarProperties(Type t)

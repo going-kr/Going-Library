@@ -72,18 +72,22 @@ namespace Going.UI.Design
         /// <summary>
         /// 타이틀바 컨트롤을 가져옵니다.
         /// </summary>
+        [GoChilds]
         [JsonInclude] public GoTitleBar TitleBar { get; private set; } = new() { Visible = false };
         /// <summary>
         /// 왼쪽 사이드바 컨트롤을 가져옵니다.
         /// </summary>
+        [GoChilds]
         [JsonInclude] public GoSideBar LeftSideBar { get; private set; } = new() { Visible = false };
         /// <summary>
         /// 오른쪽 사이드바 컨트롤을 가져옵니다.
         /// </summary>
+        [GoChilds]
         [JsonInclude] public GoSideBar RightSideBar { get; private set; } = new() { Visible = false };
         /// <summary>
         /// 푸터 컨트롤을 가져옵니다.
         /// </summary>
+        [GoChilds]
         [JsonInclude] public GoFooter Footer { get; private set; } = new() { Visible = false };
 
         [JsonIgnore] internal string Id { get; } = Guid.NewGuid().ToString();
@@ -150,6 +154,8 @@ namespace Going.UI.Design
         /// <summary>
         /// 사용자 정의 테마를 가져오거나 설정합니다. null이면 기본 다크 테마를 사용합니다.
         /// </summary>
+        [GoChilds]
+        [GudxTagName("Theme")]
         public GoTheme? CustomTheme { get; set; }
         /// <summary>
         /// 현재 적용 중인 테마를 가져옵니다. CustomTheme이 없으면 기본 다크 테마를 반환합니다.
