@@ -277,10 +277,23 @@ public static class GoGudxConverter
     // ─────────────────────────────────────────────────────────────────────────
 
     /// <summary>
-    /// Thin facade over WriteAny for IGoControl. Preserves the existing call surface
-    /// used by serialization tests and wrapper recursion.
+    /// Thin facade over WriteAny for IGoControl. Emits the Id as a system attribute
+    /// for round-trip preservation (F2: IGoControl Id round-trip).
     /// </summary>
-    internal static XElement WriteElement(IGoControl control) => WriteAny(control);
+    internal static XElement WriteElement(IGoControl control)
+    {
+        var elem = WriteAny(control);
+        // F2: emit Id as system attribute so ReadElement can restore the exact same Guid.
+        // Id is not in ScalarProperties (no [GoProperty]) so we handle it specially here.
+        var idProp = control.GetType().GetProperty("Id");
+        if (idProp != null && idProp.PropertyType == typeof(Guid))
+        {
+            var id = (Guid)(idProp.GetValue(control) ?? Guid.Empty);
+            if (id != Guid.Empty)
+                elem.SetAttributeValue("Id", id.ToString());
+        }
+        return elem;
+    }
 
     private static void DispatchChildWrite(XElement elem, PropertyInfo childProp, object value, object parentInstance)
     {
@@ -471,6 +484,17 @@ public static class GoGudxConverter
 
         var instance = (IGoControl)Activator.CreateInstance(type)!;
         PopulateAny(elem, instance);
+
+        // F2: prefer XML-provided Id over the Activator's auto-generated Guid.
+        // This restores the exact Id that was serialized (needed for P3 cell-index keys).
+        var idAttr = elem.Attribute("Id");
+        if (idAttr != null && Guid.TryParse(idAttr.Value, out var xmlId))
+        {
+            var idProp = type.GetProperty("Id");
+            var setter = idProp?.GetSetMethod(nonPublic: true);
+            try { setter?.Invoke(instance, new object[] { xmlId }); }
+            catch { /* best-effort: auto-init Id is acceptable fallback */ }
+        }
 
         // Defensive: ensure non-empty Id (P3 cell-index dict uses Id as key)
         EnsureNonEmptyId(instance);
@@ -835,8 +859,13 @@ public static class GoGudxConverter
 
     private static bool IsScalar(Type t)
     {
+        // F3: Nullable<T> — recurse on underlying type (e.g. float? → float, int? → int)
+        var underlying = Nullable.GetUnderlyingType(t);
+        if (underlying != null) return IsScalar(underlying);
+
         if (t.IsPrimitive || t == typeof(string) || t == typeof(decimal)) return true;
         if (t.IsEnum) return true;
+        if (t == typeof(Guid)) return true;  // F3 bonus: Guid is scalar (also helps F2 indirectly)
         if (t == typeof(List<string>)) return true;
         if (t == typeof(SKColor) || t == typeof(SKRect) || t == typeof(GoPadding)) return true;
         return false;
@@ -852,6 +881,7 @@ public static class GoGudxConverter
             float f => f.ToString(CultureInfo.InvariantCulture),
             double d => d.ToString(CultureInfo.InvariantCulture),
             decimal m => m.ToString(CultureInfo.InvariantCulture),
+            Guid g => g.ToString(),  // F3: Guid scalar formatting
             Enum e => e.ToString(),
             SKColor sc => GudxSpecialConverters.FormatSKColor(sc),
             SKRect sr => GudxSpecialConverters.FormatSKRect(sr),
@@ -862,6 +892,10 @@ public static class GoGudxConverter
 
     private static object? ParseScalar(Type targetType, string value)
     {
+        // F3: Nullable<T> — parse as T then box (CLR auto-boxes T to T? on assignment)
+        var underlying = Nullable.GetUnderlyingType(targetType);
+        if (underlying != null) return ParseScalar(underlying, value);
+
         if (targetType == typeof(string)) return value;
         if (targetType == typeof(bool)) return value.Equals("true", StringComparison.OrdinalIgnoreCase);
         if (targetType.IsEnum) return Enum.Parse(targetType, value, ignoreCase: false);
@@ -869,6 +903,7 @@ public static class GoGudxConverter
         if (targetType == typeof(float)) return float.Parse(value, CultureInfo.InvariantCulture);
         if (targetType == typeof(double)) return double.Parse(value, CultureInfo.InvariantCulture);
         if (targetType == typeof(decimal)) return decimal.Parse(value, CultureInfo.InvariantCulture);
+        if (targetType == typeof(Guid)) return Guid.Parse(value);  // F3: Guid scalar parsing
         if (targetType == typeof(List<string>))
             return value == "" ? new List<string>() : value.Split(',').ToList();
         if (targetType == typeof(SKColor)) return GudxSpecialConverters.ParseSKColor(value);
