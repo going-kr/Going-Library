@@ -6,6 +6,38 @@
 
 ---
 
+## [1.2.1] - 2026-04-30
+
+### Migration notes (.gudx file format)
+- Gudx 직렬화 형식 갱신: 모든 collection (P2/P3/P4/P5/B2) 이 property 이름 그룹 element 안에 들어감 (XAML / .NET XmlSerializer 스타일).
+- **C# API 불변** — `GoGudxConverter.SerializeControl/DeserializeControl/SerializeGoDesignToFiles/...` 시그니처 그대로. 코드 사용처 변경 0.
+- v1.2.0 에서 생성된 `.gudx` 파일은 v1.2.1 로 못 읽음. 마이그레이션은 `.gud` 원본에서 재변환.
+- semver 측: 외부 사용 인스턴스 사실상 0 + PoC 단계 정황상 patch (1.2.1) 로 박제. semver 엄격 규칙 적용 시 minor (1.3.0) 가 정석이지만 부채 fix 성격 우세.
+
+### Added
+- `IGoCellIndexedControlCollection` interface (`Going.UI.Collections`) — P3 cell-indexed dispatch 일반화. `GoTableLayoutControlCollection` / `GoGridLayoutControlCollection` 둘 다 implement (helper 형태: `EnumerateCells`, `AddCell`, `Controls`).
+- `GudxP2P4MixTests` — P2+P4 동시 보유 컨테이너 (GoGroupBox/GoPanel) round-trip 회귀 테스트.
+
+### Changed
+- 모든 collection 패턴 (P2/P3/P4/P5/B2) emit 시 property 이름 그룹 element 안에 entries — `<Childrens>`/`<Pages>`/`<Buttons>`/`<Series>`/`<Images>` 등.
+- `[GoChildResource]` 의 `TagName`/`Folder`/`Ext` 어트리뷰트가 emit 에 사용됨 (이전: 사용처 0). `WriteB2_Resource` 가 어트리뷰트 데이터로 entry tag/File 경로 조립.
+- ReadP2 / ReadP3 에 tag-filter (`_gudxControlTypes` 검사) 추가 — IGoControl 이 아닌 element silent skip.
+- ReadP5: TAG-FILTERED 워크어라운드 제거 — 그룹 element 가 자연 격리.
+- `ChildProperties`: `BindingFlags.NonPublic` 도 walk — `GoDesign.Images`/`Fonts` 같은 private 마킹 발견.
+- `SerializeGoDesignToFiles` / `DeserializeGoDesignFromFiles`: hardcoded `<Image>`/`<Font>`/`resources/` 분기 제거 → reflection 기반 helper (`ExtractGoChildResourceFiles` / `LoadGoChildResourceFiles`) 가 어트리뷰트 정보로 외부 파일 I/O.
+- 빈 collection (P2/P3/P4/P5/B2) 은 그룹 element 자체 omit — 작은 emit 사이즈.
+
+### Removed
+- `[GoChildCells].NestInto` property — XAML 스타일로 평탄화. `GoGridLayoutPanel` 의 Rows (P4 메타) 와 Childrens (P3 cells + attached `Cell`) 가 독립.
+- `WriteP3_CellIndexed_NestedIn` / `ReadP3_CellIndexed_NestedIn` 함수.
+- ReadP5 의 TAG-FILTERED 로직 (그룹핑이 자연 안전).
+- `WriteAny` / `PopulateAny` 의 nestedTargets 검사.
+
+### Fixed
+- P2+P4 mix 컨테이너 (GoGroupBox/GoPanel) 에서 Buttons 데이터 있을 때 ReadP2 unfiltered walk 가 wrapper element (GoButtonItem) 까지 흡수해 `Unknown Gudx tag` throw 하던 latent bug. v1.2.0 의 Test129 round-trip 0 diffs 가 통과한 이유는 모든 fixture 에서 Buttons 가 비어 있어 mix 조건이 발생 안 해서.
+
+---
+
 ## [1.1.12] - 2026-04-24
 
 ### Added

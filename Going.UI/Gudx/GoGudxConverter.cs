@@ -138,30 +138,14 @@ public static class GoGudxConverter
             if (s != null) elem.SetAttributeValue(prop.Name, s);
         }
 
-        // Identify wrappers that are nest-targets — they're emitted via the nested cells dispatch, not standalone.
-        var childPropsList = ChildProperties(type).ToList();
-        var nestedTargets = new HashSet<string>(StringComparer.Ordinal);
-        foreach (var p in childPropsList)
+        // P2/P3/P4/P5/B1/B2: walk [GoChild*] properties.
+        foreach (var childProp in ChildProperties(type))
         {
-            var cellsAttr = p.GetCustomAttribute<GoChildCellsAttribute>();
-            if (cellsAttr?.NestInto != null) nestedTargets.Add(cellsAttr.NestInto);
-        }
-
-        // P2/P3/P4/P5: walk [GoChilds] properties.
-        foreach (var childProp in childPropsList)
-        {
-            // Skip explicitly excluded children (Task 12 Master split)
+            // Skip explicitly excluded children (Master split: skips Pages/Windows/Images/Fonts on master serialize)
             if (skipChildren != null && skipChildren.Contains(childProp.Name)) continue;
 
             var value = childProp.GetValue(obj);
             if (value == null) continue;
-
-            // Skip wrappers that are nest-targets — handled via the cells dispatch
-            if (childProp.GetCustomAttribute<GoChildWrappersAttribute>() != null
-                && nestedTargets.Contains(childProp.Name))
-            {
-                continue;
-            }
 
             DispatchChildWrite(elem, childProp, value, obj);
         }
@@ -203,73 +187,96 @@ public static class GoGudxConverter
         if (d.Pages.Count > 0) Directory.CreateDirectory(pagesDir);
         if (d.Windows.Count > 0) Directory.CreateDirectory(windowsDir);
 
-        // Master: suppress Pages/Windows (replaced by refs) AND Images/Fonts (extracted to resources/).
-        var skip = new HashSet<string>(StringComparer.Ordinal) { "Pages", "Windows", "Images", "Fonts" };
+        // Master: suppress Pages/Windows (replaced by *Ref groups). B2 (Images/Fonts) is now
+        // handled by dispatch (emits the group element + entry tags) — only the byte payloads
+        // need separate external file I/O.
+        var skip = new HashSet<string>(StringComparer.Ordinal) { "Pages", "Windows" };
         var masterElem = WriteAny(d, skipChildren: skip);
 
-        foreach (var kvp in d.Pages)
+        // Pages: emit <Pages><GoPageRef File=".../>"</Pages> group + separate page files.
+        if (d.Pages.Count > 0)
         {
-            var rel = $"Pages/{kvp.Key}.gudx";
-            masterElem.Add(new XElement("GoPageRef", new XAttribute("File", rel)));
-
-            // F2: use WriteElement so the page's Id is emitted as an attribute.
-            var pageElem = WriteElement(kvp.Value);
-            pageElem.SetAttributeValue("Name", kvp.Key);  // dict key as Name attribute
-            File.WriteAllText(Path.Combine(pagesDir, kvp.Key + ".gudx"), pageElem.ToString());
-        }
-
-        foreach (var kvp in d.Windows)
-        {
-            var rel = $"Windows/{kvp.Key}.gudx";
-            masterElem.Add(new XElement("GoWindowRef", new XAttribute("File", rel)));
-
-            // F2: use WriteElement so the window's Id is emitted as an attribute.
-            var windowElem = WriteElement(kvp.Value);
-            windowElem.SetAttributeValue("Name", kvp.Key);
-            File.WriteAllText(Path.Combine(windowsDir, kvp.Key + ".gudx"), windowElem.ToString());
-        }
-
-        // B2: Images — extract first SKImage per key as PNG under resources/
-        var images = d.GetImages();
-        if (images.Count > 0)
-        {
-            var resourcesDir = Path.Combine(dir, "resources");
-            Directory.CreateDirectory(resourcesDir);
-            foreach (var (name, list) in images)
+            var pagesGroup = new XElement("Pages");
+            foreach (var kvp in d.Pages)
             {
-                if (list.Count == 0) continue;
-                var rel = $"resources/{name}.png";
-                var abs = Path.Combine(resourcesDir, name + ".png");
-                using (var data = list[0].Encode(SKEncodedImageFormat.Png, 100))
-                {
-                    if (data == null) continue;  // unencodable — skip (extreme edge case)
-                    File.WriteAllBytes(abs, data.ToArray());
-                }
-                masterElem.Add(new XElement("Image",
-                    new XAttribute("Name", name),
-                    new XAttribute("File", rel)));
+                var rel = $"Pages/{kvp.Key}.gudx";
+                pagesGroup.Add(new XElement("GoPageRef", new XAttribute("File", rel)));
+
+                // F2: use WriteElement so the page's Id is emitted as an attribute.
+                var pageElem = WriteElement(kvp.Value);
+                pageElem.SetAttributeValue("Name", kvp.Key);
+                File.WriteAllText(Path.Combine(pagesDir, kvp.Key + ".gudx"), pageElem.ToString());
             }
+            masterElem.Add(pagesGroup);
         }
 
-        // B2: Fonts — extract first byte[] per key as TTF under resources/fonts/
-        var fonts = d.GetFonts();
-        if (fonts.Count > 0)
+        // Windows: emit <Windows><GoWindowRef .../></Windows> group + separate window files.
+        if (d.Windows.Count > 0)
         {
-            var fontsDir = Path.Combine(dir, "resources", "fonts");
-            Directory.CreateDirectory(fontsDir);
-            foreach (var (name, list) in fonts)
+            var windowsGroup = new XElement("Windows");
+            foreach (var kvp in d.Windows)
             {
-                if (list.Count == 0) continue;
-                var rel = $"resources/fonts/{name}.ttf";
-                var abs = Path.Combine(fontsDir, name + ".ttf");
-                File.WriteAllBytes(abs, list[0]);
-                masterElem.Add(new XElement("Font",
-                    new XAttribute("Name", name),
-                    new XAttribute("File", rel)));
+                var rel = $"Windows/{kvp.Key}.gudx";
+                windowsGroup.Add(new XElement("GoWindowRef", new XAttribute("File", rel)));
+
+                var windowElem = WriteElement(kvp.Value);
+                windowElem.SetAttributeValue("Name", kvp.Key);
+                File.WriteAllText(Path.Combine(windowsDir, kvp.Key + ".gudx"), windowElem.ToString());
             }
+            masterElem.Add(windowsGroup);
         }
+
+        // B2: extract byte payloads of [GoChildResource]-marked properties to external files.
+        // The XML side (group element + entry tags with File attribute) is already emitted by
+        // the B2 dispatch. Here we just write the bytes to the locations referenced by File.
+        ExtractGoChildResourceFiles(d, dir);
 
         File.WriteAllText(masterPath, masterElem.ToString());
+    }
+
+    /// <summary>
+    /// Walks all [GoChildResource]-marked properties on the design via reflection and writes
+    /// their byte payloads to disk under the directory referenced by File attributes (Folder/key.Ext).
+    /// Handles GoDesign's Images (List&lt;SKImage&gt; encoded as PNG) and Fonts (List&lt;byte[]&gt;) today;
+    /// future resource types can be added by registering new value-type handlers below.
+    /// </summary>
+    private static void ExtractGoChildResourceFiles(GoDesign d, string baseDir)
+    {
+        var type = d.GetType();
+        var props = type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+            .Where(p => p.GetCustomAttribute<GoChildResourceAttribute>() != null);
+
+        foreach (var prop in props)
+        {
+            var attr = prop.GetCustomAttribute<GoChildResourceAttribute>()!;
+            var dict = prop.GetValue(d) as System.Collections.IDictionary;
+            if (dict == null) continue;
+
+            var folder = string.IsNullOrEmpty(attr.Folder) ? baseDir : Path.Combine(baseDir, attr.Folder);
+            var ext = attr.Ext ?? "";
+            bool dirCreated = false;
+
+            foreach (System.Collections.DictionaryEntry kvp in dict)
+            {
+                if (kvp.Value is not System.Collections.IList list || list.Count == 0) continue;
+                if (!dirCreated)
+                {
+                    Directory.CreateDirectory(folder);
+                    dirCreated = true;
+                }
+                var path = Path.Combine(folder, kvp.Key + ext);
+                var first = list[0];
+                if (first is SKImage img)
+                {
+                    using var data = img.Encode(SKEncodedImageFormat.Png, 100);
+                    if (data != null) File.WriteAllBytes(path, data.ToArray());
+                }
+                else if (first is byte[] bytes)
+                {
+                    File.WriteAllBytes(path, bytes);
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -284,62 +291,85 @@ public static class GoGudxConverter
         var masterElem = XElement.Parse(File.ReadAllText(masterPath));
 
         var d = new GoDesign();
-        // Suppress Images/Fonts dict population (handled below via <Image>/<Font> elements)
-        var skip = new HashSet<string>(StringComparer.Ordinal) { "Pages", "Windows", "Images", "Fonts" };
+        // Suppress Pages/Windows dict population (handled below via *Ref groups + separate files).
+        // B2 (Images/Fonts) is handled by dispatch (fills dict keys with empty payloads), and the
+        // external file payloads are loaded after via LoadGoChildResourceFiles.
+        var skip = new HashSet<string>(StringComparer.Ordinal) { "Pages", "Windows" };
         PopulateAny(masterElem, d, skipChildren: skip);
 
-        foreach (var refElem in masterElem.Elements("GoPageRef"))
+        // Pages: <Pages><GoPageRef File=".../>"</Pages> group
+        var pagesGroup = masterElem.Element("Pages");
+        if (pagesGroup != null)
         {
-            var file = refElem.Attribute("File")?.Value
-                ?? throw new FormatException("GoPageRef missing File attribute");
-            var pagePath = Path.Combine(dir, file.Replace('/', Path.DirectorySeparatorChar));
-            var pageElem = XElement.Parse(File.ReadAllText(pagePath));
-            var page = ReadElement(pageElem) as GoPage
-                ?? throw new FormatException($"Page file {file} root is not <GoPage>");
-            // Use the Name attribute as the dict key (set during serialize)
-            var name = pageElem.Attribute("Name")?.Value;
-            if (!string.IsNullOrEmpty(name) && page.Name == null) page.Name = name;
-            if (page.Name != null) d.AddPage(page);
+            foreach (var refElem in pagesGroup.Elements("GoPageRef"))
+            {
+                var file = refElem.Attribute("File")?.Value
+                    ?? throw new FormatException("GoPageRef missing File attribute");
+                var pagePath = Path.Combine(dir, file.Replace('/', Path.DirectorySeparatorChar));
+                var pageElem = XElement.Parse(File.ReadAllText(pagePath));
+                var page = ReadElement(pageElem) as GoPage
+                    ?? throw new FormatException($"Page file {file} root is not <GoPage>");
+                var name = pageElem.Attribute("Name")?.Value;
+                if (!string.IsNullOrEmpty(name) && page.Name == null) page.Name = name;
+                if (page.Name != null) d.AddPage(page);
+            }
         }
 
-        foreach (var refElem in masterElem.Elements("GoWindowRef"))
+        // Windows: <Windows><GoWindowRef .../></Windows> group
+        var windowsGroup = masterElem.Element("Windows");
+        if (windowsGroup != null)
         {
-            var file = refElem.Attribute("File")?.Value
-                ?? throw new FormatException("GoWindowRef missing File attribute");
-            var windowPath = Path.Combine(dir, file.Replace('/', Path.DirectorySeparatorChar));
-            var windowElem = XElement.Parse(File.ReadAllText(windowPath));
-            var window = ReadElement(windowElem) as GoWindow
-                ?? throw new FormatException($"Window file {file} root is not <GoWindow>");
-            var name = windowElem.Attribute("Name")?.Value;
-            if (!string.IsNullOrEmpty(name) && window.Name == null) window.Name = name;
-            if (window.Name != null) d.Windows[window.Name] = window;
+            foreach (var refElem in windowsGroup.Elements("GoWindowRef"))
+            {
+                var file = refElem.Attribute("File")?.Value
+                    ?? throw new FormatException("GoWindowRef missing File attribute");
+                var windowPath = Path.Combine(dir, file.Replace('/', Path.DirectorySeparatorChar));
+                var windowElem = XElement.Parse(File.ReadAllText(windowPath));
+                var window = ReadElement(windowElem) as GoWindow
+                    ?? throw new FormatException($"Window file {file} root is not <GoWindow>");
+                var name = windowElem.Attribute("Name")?.Value;
+                if (!string.IsNullOrEmpty(name) && window.Name == null) window.Name = name;
+                if (window.Name != null) d.Windows[window.Name] = window;
+            }
         }
 
-        // B2: Images — load PNG files back via AddImage(name, byte[])
-        foreach (var imgElem in masterElem.Elements("Image"))
-        {
-            var name = imgElem.Attribute("Name")?.Value;
-            var file = imgElem.Attribute("File")?.Value;
-            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(file)) continue;
-            var abs = Path.Combine(dir, file.Replace('/', Path.DirectorySeparatorChar));
-            if (!File.Exists(abs)) continue;  // missing file — skip silently (round-trip resilience)
-            var data = File.ReadAllBytes(abs);
-            d.AddImage(name, data);
-        }
-
-        // B2: Fonts — load TTF files back via AddFont(name, byte[])
-        foreach (var fontElem in masterElem.Elements("Font"))
-        {
-            var name = fontElem.Attribute("Name")?.Value;
-            var file = fontElem.Attribute("File")?.Value;
-            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(file)) continue;
-            var abs = Path.Combine(dir, file.Replace('/', Path.DirectorySeparatorChar));
-            if (!File.Exists(abs)) continue;  // missing file — skip silently
-            var data = File.ReadAllBytes(abs);
-            d.AddFont(name, data);
-        }
+        // B2: load byte payloads referenced by File attributes inside [GoChildResource] groups.
+        LoadGoChildResourceFiles(d, dir, masterElem);
 
         return d;
+    }
+
+    /// <summary>
+    /// Walks all [GoChildResource]-marked properties on the design via reflection and loads
+    /// their byte payloads from disk based on File attributes. Mirror of ExtractGoChildResourceFiles.
+    /// </summary>
+    private static void LoadGoChildResourceFiles(GoDesign d, string baseDir, XElement masterElem)
+    {
+        var type = d.GetType();
+        var props = type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+            .Where(p => p.GetCustomAttribute<GoChildResourceAttribute>() != null);
+
+        foreach (var prop in props)
+        {
+            var attr = prop.GetCustomAttribute<GoChildResourceAttribute>()!;
+            var groupElem = masterElem.Element(prop.Name);
+            if (groupElem == null) continue;
+
+            foreach (var entryElem in groupElem.Elements(attr.TagName))
+            {
+                var name = entryElem.Attribute("Name")?.Value;
+                var file = entryElem.Attribute("File")?.Value;
+                if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(file)) continue;
+                var abs = Path.Combine(baseDir, file.Replace('/', Path.DirectorySeparatorChar));
+                if (!File.Exists(abs)) continue;  // missing file — skip silently (round-trip resilience)
+                var bytes = File.ReadAllBytes(abs);
+
+                // Dispatch by tag name to GoDesign helper methods. Future resource types add a branch here.
+                if (attr.TagName == "Image") d.AddImage(name, bytes);
+                else if (attr.TagName == "Font") d.AddFont(name, bytes);
+                // unknown tag — skip silently (caller can extend GoDesign.Add* later)
+            }
+        }
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -372,26 +402,22 @@ public static class GoGudxConverter
         // ─── NEW dispatch by attribute type ───
         if (childProp.GetCustomAttribute<GoChildListAttribute>() != null)
         {
-            WriteP2_HomogeneousList(elem, value);
+            WriteP2_HomogeneousList(elem, childProp, value);
             return;
         }
         if (childProp.GetCustomAttribute<GoChildCellsAttribute>() != null)
         {
-            var cellsAttr = childProp.GetCustomAttribute<GoChildCellsAttribute>()!;
-            if (cellsAttr.NestInto != null)
-                WriteP3_CellIndexed_NestedIn(elem, childProp, value, parentInstance, cellsAttr.NestInto);
-            else
-                WriteP3_CellIndexed(elem, value);
+            WriteP3_CellIndexed(elem, childProp, value);
             return;
         }
         if (childProp.GetCustomAttribute<GoChildWrappersAttribute>() != null)
         {
-            WriteP4_WrapperList(elem, value);
+            WriteP4_WrapperList(elem, childProp, value);
             return;
         }
         if (childProp.GetCustomAttribute<GoChildMapAttribute>() != null)
         {
-            WriteP5_KeyedDict(elem, value);
+            WriteP5_KeyedDict(elem, childProp, value);
             return;
         }
         if (childProp.GetCustomAttribute<GoChildSingleAttribute>() != null)
@@ -401,139 +427,135 @@ public static class GoGudxConverter
         }
         if (childProp.GetCustomAttribute<GoChildResourceAttribute>() != null)
         {
-            // B2: [GoChildResource]-marked dicts (Images/Fonts) are suppressed here via the skipChildren
-            // set in SerializeGoDesignToFiles. File extraction happens at the top level, not in dispatch.
+            WriteB2_Resource(elem, childProp, value);
             return;
         }
     }
 
     // ─── Write pattern helpers ───
 
-    private static void WriteP2_HomogeneousList(XElement elem, object value)
+    private static void WriteP2_HomogeneousList(XElement elem, PropertyInfo childProp, object value)
     {
-        // P2: list of IGoControl — use WriteElement to include F2 Id attribute
-        foreach (var child in (System.Collections.IList)value)
-            if (child is IGoControl c) elem.Add(WriteElement(c));
+        // P2 (v1.2.1+): IGoControl children inside a property-name group element.
+        // The group element separates P2 children from sibling P4 wrappers — fixes the
+        // v1.2.0 latent bug where ReadP2 unfiltered walk consumed P4 wrapper elements.
+        // Empty collections skip the group element entirely (smaller emit, simpler tests).
+        var list = (System.Collections.IList)value;
+        if (list.Count == 0) return;
+        var groupElem = new XElement(childProp.Name);
+        foreach (var child in list)
+            if (child is IGoControl c) groupElem.Add(WriteElement(c));
+        elem.Add(groupElem);
     }
 
-    private static void WriteP3_CellIndexed(XElement elem, object value)
+    private static void WriteP3_CellIndexed(XElement elem, PropertyInfo childProp, object value)
     {
-        // P3: cell-indexed collection (GoTableLayoutPanel) — use WriteElement to include F2 Id attribute
-        var tlc = (GoTableLayoutControlCollection)value;
-        foreach (var child in tlc.Controls)
+        // P3 (v1.2.1+): cell-indexed collection in <PropertyName> (= <Childrens>) group element.
+        // Dispatched via IGoCellIndexedControlCollection interface — handles both
+        // GoTableLayoutControlCollection (with span) and GoGridLayoutControlCollection (no span).
+        // Empty collections skip the group element entirely.
+        var coll = (Going.UI.Collections.IGoCellIndexedControlCollection)value;
+        if (coll.Controls.Count == 0) return;
+        var groupElem = new XElement(childProp.Name);
+        foreach (var (child, col, row, colSpan, rowSpan) in coll.EnumerateCells())
         {
             var childElem = WriteElement(child);
-            if (tlc.Indexes.TryGetValue(child.Id, out var idx))
-            {
-                var cell = (idx.ColSpan == 1 && idx.RowSpan == 1)
-                    ? $"{idx.Column},{idx.Row}"
-                    : $"{idx.Column},{idx.Row},{idx.ColSpan},{idx.RowSpan}";
-                childElem.SetAttributeValue("Cell", cell);
-            }
-            elem.Add(childElem);
+            var cell = (colSpan == 1 && rowSpan == 1)
+                ? $"{col},{row}"
+                : $"{col},{row},{colSpan},{rowSpan}";
+            childElem.SetAttributeValue("Cell", cell);
+            groupElem.Add(childElem);
         }
+        elem.Add(groupElem);
     }
 
-    internal static void WriteP3_CellIndexed_NestedIn(
-        XElement elem,
-        PropertyInfo cellsProp,
-        object cellsValue,
-        object parentInstance,
-        string wrapperPropName)
+    private static void WriteP4_WrapperList(XElement elem, PropertyInfo childProp, object value)
     {
-        var wrapperProp = parentInstance.GetType().GetProperty(wrapperPropName)
-            ?? throw new InvalidOperationException(
-                $"[GoChildCells(NestInto = \"{wrapperPropName}\")] target property not found on {parentInstance.GetType().Name}");
-        var wrappers = (System.Collections.IList)(wrapperProp.GetValue(parentInstance)
-            ?? throw new InvalidOperationException(
-                $"[GoChildCells(NestInto = \"{wrapperPropName}\")] target list is null"));
-
-        // Emit each wrapper as <WrapperType ...>; nest cells with matching Row index inside.
-        var collection = cellsValue as GoGridLayoutControlCollection
-            ?? throw new InvalidOperationException(
-                $"[GoChildCells(NestInto)] currently supports GoGridLayoutControlCollection only; got {cellsValue.GetType().Name}");
-
-        for (int rowIdx = 0; rowIdx < wrappers.Count; rowIdx++)
-        {
-            var rowElem = WriteWrapper(wrappers[rowIdx]!);
-            foreach (var child in collection.Controls)
-            {
-                if (collection.Indexes.TryGetValue(child.Id, out var idx) && idx.Row == rowIdx)
-                {
-                    var childElem = WriteElement(child);
-                    childElem.SetAttributeValue("Cell", $"{idx.Column},{idx.Row}");
-                    rowElem.Add(childElem);
-                }
-            }
-            elem.Add(rowElem);
-        }
+        // P4 (v1.2.1+): wrapper list emitted inside a property-name group element.
+        // e.g. GoSwitchPanel.Pages : List<GoSubPage> → <Pages><GoSubPage .../></Pages>.
+        // The group element ensures wrappers don't collide with sibling [GoChildList] (P2)
+        // children — fixes the v1.2.0 P2+P4 mix latent bug (GudxP2P4MixTests).
+        // Empty collections skip the group element entirely.
+        var enumerable = (System.Collections.IEnumerable)value;
+        var enumerator = enumerable.GetEnumerator();
+        if (!enumerator.MoveNext()) return;
+        var groupElem = new XElement(childProp.Name);
+        do { groupElem.Add(WriteWrapper(enumerator.Current!)); } while (enumerator.MoveNext());
+        elem.Add(groupElem);
     }
 
-    internal static void ReadP3_CellIndexed_NestedIn(
-        XElement elem,
-        PropertyInfo cellsProp,
-        object instance,
-        string wrapperPropName)
+    private static void WriteP5_KeyedDict(XElement elem, PropertyInfo childProp, object value)
     {
-        var wrapperProp = instance.GetType().GetProperty(wrapperPropName)
-            ?? throw new InvalidOperationException(
-                $"[GoChildCells(NestInto = \"{wrapperPropName}\")] target property not found on {instance.GetType().Name}");
-        var wrappers = (System.Collections.IList)(wrapperProp.GetValue(instance)
-            ?? Activator.CreateInstance(wrapperProp.PropertyType)!);
-
-        var wrapperType = wrapperProp.PropertyType.GetGenericArguments()[0];
-        var wrapperTagName = wrapperType.Name;
-
-        var collection = (GoGridLayoutControlCollection)(cellsProp.GetValue(instance)
-            ?? new GoGridLayoutControlCollection());
-
-        int rowIdx = 0;
-        foreach (var rowElem in elem.Elements(wrapperTagName))
-        {
-            var wrapper = ReadWrapper(rowElem, wrapperType);
-            wrappers.Add(wrapper);
-
-            foreach (var childElem in rowElem.Elements())
-            {
-                // Skip nested wrapper-type tags (defensive — not expected here)
-                if (childElem.Name.LocalName == wrapperTagName) continue;
-
-                var c = ReadElement(childElem);
-                var cell = childElem.Attribute("Cell")?.Value;
-                if (cell != null)
-                {
-                    var parts = cell.Split(',');
-                    var col = int.Parse(parts[0], System.Globalization.CultureInfo.InvariantCulture);
-                    // ignore parts[1] — Row is implicit from rowIdx
-                    collection.Add(c, col, rowIdx);
-                }
-            }
-            rowIdx++;
-        }
-
-        if (wrapperProp.CanWrite) wrapperProp.SetValue(instance, wrappers);
-        if (cellsProp.CanWrite) cellsProp.SetValue(instance, collection);
-    }
-
-    private static void WriteP4_WrapperList(XElement elem, object value)
-    {
-        // P4a: wrapper-typed collection (e.g. GoSwitchPanel.Pages : List<GoSubPage>)
-        foreach (var item in (System.Collections.IEnumerable)value)
-            elem.Add(WriteWrapper(item));
-    }
-
-    private static void WriteP5_KeyedDict(XElement elem, object value)
-    {
-        // P5: keyed dictionary (e.g. GoDesign.Pages : Dictionary<string, GoPage>)
-        foreach (System.Collections.DictionaryEntry kvp in (System.Collections.IDictionary)value)
+        // P5 (v1.2.1+): keyed dictionary inside a property-name group element.
+        // e.g. GoDesign.Pages : Dictionary<string, GoPage> → <Pages><GoPage Name="..."/></Pages>.
+        // Empty dictionaries skip the group element entirely.
+        var dict = (System.Collections.IDictionary)value;
+        if (dict.Count == 0) return;
+        var groupElem = new XElement(childProp.Name);
+        foreach (System.Collections.DictionaryEntry kvp in dict)
         {
             if (kvp.Value == null) continue;
             // Use WriteElement for IGoControl values to include F2 Id attribute; otherwise WriteAny.
             var childElem = kvp.Value is IGoControl ctrl ? WriteElement(ctrl) : WriteAny(kvp.Value);
             // Overwrite Name attribute with the dictionary key to ensure round-trip fidelity.
             childElem.SetAttributeValue("Name", kvp.Key.ToString());
-            elem.Add(childElem);
+            groupElem.Add(childElem);
         }
+        elem.Add(groupElem);
+    }
+
+    private static void ReadB2_Resource(XElement elem, PropertyInfo childProp, object instance)
+    {
+        // B2 (v1.2.1+): the XML side (group element + entry tags) round-trips here for
+        // standalone XElement reads. The actual external file load (filling the byte payloads
+        // in the dictionary) is performed by DeserializeGoDesignFromFiles via reflection
+        // when a baseDir is available. This dispatch path keeps the dictionary keys discoverable
+        // even without external files.
+        var groupElem = elem.Element(childProp.Name);
+        if (groupElem == null) return;
+
+        var attr = childProp.GetCustomAttribute<GoChildResourceAttribute>()!;
+        var dict = childProp.GetValue(instance) as System.Collections.IDictionary;
+        if (dict == null) return;  // null property — give up silently
+
+        // Determine the value type (e.g. List<SKImage> for Images, List<byte[]> for Fonts)
+        var valueType = childProp.PropertyType.GetGenericArguments()[1];
+        foreach (var entryElem in groupElem.Elements(attr.TagName))
+        {
+            var name = entryElem.Attribute("Name")?.Value;
+            if (string.IsNullOrEmpty(name)) continue;
+            if (dict.Contains(name)) continue;  // preserve any existing payload
+            // Insert empty payload (caller fills via external file I/O).
+            dict[name] = Activator.CreateInstance(valueType);
+        }
+    }
+
+    private static void WriteB2_Resource(XElement elem, PropertyInfo childProp, object value)
+    {
+        // B2 (v1.2.1+): [GoChildResource("TagName", Folder, Ext)] dictionary emits as
+        //   <PropertyName>
+        //     <TagName Name="key" File="Folder/key.Ext"/>
+        //     ...
+        //   </PropertyName>
+        // The actual external file I/O (reading/writing the byte payloads referenced by File)
+        // is performed by SerializeGoDesignToFiles / DeserializeGoDesignFromFiles via reflection.
+        // This dispatch handles the XML side only — non-Master XElement round-trips therefore
+        // round-trip the dictionary keys but not the byte payloads.
+        var attr = childProp.GetCustomAttribute<GoChildResourceAttribute>()!;
+        var dict = (System.Collections.IDictionary)value;
+        if (dict.Count == 0) return;
+        var groupElem = new XElement(childProp.Name);
+        foreach (System.Collections.DictionaryEntry kvp in dict)
+        {
+            var entryElem = new XElement(attr.TagName);
+            entryElem.SetAttributeValue("Name", kvp.Key);
+            var folder = attr.Folder;
+            var ext = attr.Ext ?? "";
+            var rel = string.IsNullOrEmpty(folder) ? $"{kvp.Key}{ext}" : $"{folder}/{kvp.Key}{ext}";
+            entryElem.SetAttributeValue("File", rel);
+            groupElem.Add(entryElem);
+        }
+        elem.Add(groupElem);
     }
 
     private static void WriteB1_SingleChild(XElement elem, PropertyInfo childProp, object value)
@@ -631,27 +653,11 @@ public static class GoGudxConverter
             if (parsed != null) prop.SetValue(instance, parsed);
         }
 
-        // Identify wrappers that are nest-targets — they're read via the nested cells dispatch, not standalone.
-        var childPropsList = ChildProperties(type).ToList();
-        var nestedTargets = new HashSet<string>(StringComparer.Ordinal);
-        foreach (var p in childPropsList)
+        // P2/P3/P4/P5/B1/B2: populate [GoChild*] properties from child elements.
+        foreach (var childProp in ChildProperties(type))
         {
-            var cellsAttr = p.GetCustomAttribute<GoChildCellsAttribute>();
-            if (cellsAttr?.NestInto != null) nestedTargets.Add(cellsAttr.NestInto);
-        }
-
-        // P2/P3/P4/P5: populate [GoChilds] properties from child elements.
-        foreach (var childProp in childPropsList)
-        {
-            // Skip explicitly excluded children (Task 12 Master split)
+            // Skip explicitly excluded children (Master split: skips Pages/Windows/Images/Fonts on master deserialize)
             if (skipChildren != null && skipChildren.Contains(childProp.Name)) continue;
-
-            // Skip wrappers that are nest-targets — handled via the cells dispatch
-            if (childProp.GetCustomAttribute<GoChildWrappersAttribute>() != null
-                && nestedTargets.Contains(childProp.Name))
-            {
-                continue;
-            }
             DispatchChildRead(elem, childProp, instance);
         }
     }
@@ -668,11 +674,7 @@ public static class GoGudxConverter
         }
         if (childProp.GetCustomAttribute<GoChildCellsAttribute>() != null)
         {
-            var cellsAttr = childProp.GetCustomAttribute<GoChildCellsAttribute>()!;
-            if (cellsAttr.NestInto != null)
-                ReadP3_CellIndexed_NestedIn(elem, childProp, instance, cellsAttr.NestInto);
-            else
-                ReadP3_CellIndexed(elem, childProp, instance);
+            ReadP3_CellIndexed(elem, childProp, instance);
             return;
         }
         if (childProp.GetCustomAttribute<GoChildWrappersAttribute>() != null)
@@ -692,8 +694,7 @@ public static class GoGudxConverter
         }
         if (childProp.GetCustomAttribute<GoChildResourceAttribute>() != null)
         {
-            // B2: [GoChildResource]-marked dicts (Images/Fonts) are suppressed here via the skipChildren
-            // set in DeserializeGoDesignFromFiles. File loading happens at the top level, not in dispatch.
+            ReadB2_Resource(elem, childProp, instance);
             return;
         }
     }
@@ -702,26 +703,40 @@ public static class GoGudxConverter
 
     private static void ReadP2_HomogeneousList(XElement elem, PropertyInfo childProp, object instance)
     {
-        // P2: list of IGoControl.
-        // Design decision: P2 read is UNFILTERED (consumes all child elements).
-        // This is safe because no type currently has BOTH a P2 and a P5 [GoChilds] property.
-        // GoDesign's [GoChilds] properties are P5 only. If a future type mixes P2 + P5,
-        // P2 will need the same tag-filter as P5 (check GoJsonConverter.ControlTypes lookup).
+        // P2 (v1.2.1+): IGoControl children read from inside a property-name group element.
+        // Tag-filter via _gudxControlTypes registry — non-IGoControl tags are skipped (defensive;
+        // the group element should only contain IGoControl entries by design, but skipping unknowns
+        // protects against malformed input).
+        // Missing group element = empty list (OK).
+        var groupElem = elem.Element(childProp.Name);
+        if (groupElem == null) return;
+
         var pType = childProp.PropertyType;
         var list = (System.Collections.IList)(childProp.GetValue(instance)
                     ?? Activator.CreateInstance(pType)!);
-        foreach (var childElem in elem.Elements())
+        foreach (var childElem in groupElem.Elements())
+        {
+            if (!_gudxControlTypes.ContainsKey(childElem.Name.LocalName)) continue;
             list.Add(ReadElement(childElem));
+        }
         if (childProp.CanWrite) childProp.SetValue(instance, list);
     }
 
     private static void ReadP3_CellIndexed(XElement elem, PropertyInfo childProp, object instance)
     {
-        // P3: cell-indexed collection (GoTableLayoutPanel)
-        var coll = (GoTableLayoutControlCollection)(childProp.GetValue(instance)
-                    ?? new GoTableLayoutControlCollection());
-        foreach (var childElem in elem.Elements())
+        // P3 (v1.2.1+): cell-indexed children read from inside <PropertyName> (= <Childrens>) group.
+        // Dispatched via IGoCellIndexedControlCollection — handles both Table/Grid collections.
+        // Tag-filter via _gudxControlTypes (defensive against malformed input).
+        var groupElem = elem.Element(childProp.Name);
+        if (groupElem == null) return;
+
+        var existing = childProp.GetValue(instance);
+        var coll = (Going.UI.Collections.IGoCellIndexedControlCollection)(existing
+                    ?? Activator.CreateInstance(childProp.PropertyType)!);
+
+        foreach (var childElem in groupElem.Elements())
         {
+            if (!_gudxControlTypes.ContainsKey(childElem.Name.LocalName)) continue;
             var c = ReadElement(childElem);
             var cellAttr = childElem.Attribute("Cell");
             if (cellAttr != null)
@@ -731,7 +746,7 @@ public static class GoGudxConverter
                 var row = int.Parse(parts[1], CultureInfo.InvariantCulture);
                 var colSpan = parts.Length >= 4 ? int.Parse(parts[2], CultureInfo.InvariantCulture) : 1;
                 var rowSpan = parts.Length >= 4 ? int.Parse(parts[3], CultureInfo.InvariantCulture) : 1;
-                coll.Add(c, col, row, colSpan, rowSpan);
+                coll.AddCell(c, col, row, colSpan, rowSpan);
             }
             else
             {
@@ -742,6 +757,11 @@ public static class GoGudxConverter
 
     private static void ReadP4_WrapperList(XElement elem, PropertyInfo childProp, object instance)
     {
+        // P4 (v1.2.1+): wrapper list read from inside a property-name group element.
+        // Missing group element = empty list (OK).
+        var groupElem = elem.Element(childProp.Name);
+        if (groupElem == null) return;
+
         var pType = childProp.PropertyType;
         var listObj = childProp.GetValue(instance) ?? Activator.CreateInstance(pType)!;
         var baseType = pType.GetGenericArguments()[0];
@@ -763,7 +783,7 @@ public static class GoGudxConverter
                 $"P4 wrapper list type {pType.Name} not supported (expected List<T> or ObservableList<T>)");
         }
 
-        foreach (var childElem in elem.Elements())
+        foreach (var childElem in groupElem.Elements())
         {
             var tagName = childElem.Name.LocalName;
             if (!derivedMap.TryGetValue(tagName, out var actualType)) continue;
@@ -781,20 +801,23 @@ public static class GoGudxConverter
 
     private static void ReadP5_KeyedDict(XElement elem, PropertyInfo childProp, object instance)
     {
-        // P5: keyed dictionary — TAG-FILTERED by value type's tag name (Task 7 review I-3).
-        // Each [GoChilds] dict property on a multi-property type (e.g. GoDesign.Pages +
-        // GoDesign.Windows) reads ONLY elements whose LocalName matches its value type.
-        // This prevents one property from consuming elements destined for another.
+        // P5 (v1.2.1+): keyed dictionary read from inside a property-name group element.
+        // The group ensures multiple [GoChildMap] properties on the same parent (e.g.
+        // GoDesign.Pages + GoDesign.Windows) don't collide — each lives in its own group.
+        // The v1.2.0 TAG-FILTERED workaround (elem.Elements(valueTagName)) is therefore
+        // dropped — we now walk all entries inside the group element.
+        var groupElem = elem.Element(childProp.Name);
+        if (groupElem == null) return;
+
         var pType = childProp.PropertyType;
         IsKeyedDict(pType, out var valueType);
         var dict = (System.Collections.IDictionary)(childProp.GetValue(instance)
                     ?? Activator.CreateInstance(pType)!);
-        var valueTagName = TypeTagName(valueType);
-        foreach (var childElem in elem.Elements(valueTagName))
+        foreach (var childElem in groupElem.Elements())
         {
             var key = childElem.Attribute("Name")?.Value
                 ?? throw new InvalidOperationException(
-                    $"P5 dict child <{valueTagName}> missing required Name attribute");
+                    $"P5 dict child <{childElem.Name.LocalName}> missing required Name attribute");
             object childInstance;
             if (typeof(IGoControl).IsAssignableFrom(valueType))
             {
@@ -926,7 +949,8 @@ public static class GoGudxConverter
     }
 
     private static IEnumerable<PropertyInfo> ChildProperties(Type t) =>
-        t.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+        // NonPublic also walked — GoDesign.Images / Fonts are private but [GoChildResource]-marked.
+        t.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
          .Where(p => p.IsDefined(typeof(GoChildAttribute), inherit: true));
 
     private static bool IsHomogeneousControlList(Type t)

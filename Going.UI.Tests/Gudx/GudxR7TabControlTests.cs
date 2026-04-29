@@ -25,12 +25,16 @@ public class GudxR7TabControlTests
         var root = XElement.Parse(xml);
 
         Assert.Equal("GoTabControl", root.Name.LocalName);
-        var tabs = root.Elements("GoTabPage").ToList();
+        // v1.2.1: P4 wrappers grouped inside <TabPages> property-name group element.
+        var tabPagesGroup = root.Element("TabPages");
+        Assert.NotNull(tabPagesGroup);
+        var tabs = tabPagesGroup.Elements("GoTabPage").ToList();
         Assert.Equal(2, tabs.Count);
         Assert.Equal("TabA", tabs[0].Attribute("Name")?.Value);
         Assert.Equal("TabB", tabs[1].Attribute("Name")?.Value);
-        Assert.Single(tabs[0].Elements("GoLabel"));
-        Assert.Single(tabs[1].Elements("GoButton"));
+        // v1.2.1: GoTabPage's P2 Childrens also grouped inside <Childrens>.
+        Assert.Single(tabs[0].Element("Childrens")!.Elements("GoLabel"));
+        Assert.Single(tabs[1].Element("Childrens")!.Elements("GoButton"));
     }
 
     [Fact]

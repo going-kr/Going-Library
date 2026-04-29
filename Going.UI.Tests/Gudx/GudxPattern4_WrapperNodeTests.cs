@@ -45,34 +45,38 @@ public class GudxPattern4_WrapperNodeTests
     }
 
     [Fact]
-    public void GoGridLayoutPanel_emitsRowsWithChildrenNested()
+    public void GoGridLayoutPanel_emitsRowsAndChildrenAsSeparateGroups()
     {
+        // v1.2.1: NestInto removed (XAML-style). Rows is independent metadata <Rows> group;
+        // children sit flat in <Childrens> with attached Cell="col,row" attributes.
         var grid = new GoGridLayoutPanel { Name = "grid" };
-        // AddRow helper: height + columns array
         grid.Rows.Add(new GoGridLayoutPanelRow { Height = "50%", Columns = { "33%", "33%", "34%" } });
         grid.Rows.Add(new GoGridLayoutPanelRow { Height = "50%", Columns = { "25%", "25%", "25%", "25%" } });
-        // GoGridLayoutControlCollection.Add(control, col, row) — no ColSpan/RowSpan in GoGridIndex
-        grid.Childrens.Add(new GoButton { Name = "btnA" }, 0, 0);  // row=0 child
-        grid.Childrens.Add(new GoButton { Name = "btnD" }, 0, 1);  // row=1 child
+        grid.Childrens.Add(new GoButton { Name = "btnA" }, 0, 0);
+        grid.Childrens.Add(new GoButton { Name = "btnD" }, 0, 1);
 
         var xml = GoGudxConverter.SerializeControl(grid);
         var root = System.Xml.Linq.XElement.Parse(xml);
 
-        // Root is GoGridLayoutPanel
         Assert.Equal("GoGridLayoutPanel", root.Name.LocalName);
 
-        // Two row wrappers as direct children
-        var rows = root.Elements("GoGridLayoutPanelRow").ToList();
+        // <Rows> group with row metadata only (no nested controls)
+        var rowsGroup = root.Element("Rows");
+        Assert.NotNull(rowsGroup);
+        var rows = rowsGroup.Elements("GoGridLayoutPanelRow").ToList();
         Assert.Equal(2, rows.Count);
+        Assert.Empty(rows[0].Elements("GoButton"));  // row metadata has no nested controls
+        Assert.Empty(rows[1].Elements("GoButton"));
 
-        // btnA is direct child of first row, NOT of root
-        Assert.Empty(root.Elements("GoButton"));  // no buttons at root level
-        var btnAInRow0 = rows[0].Elements("GoButton").FirstOrDefault(e => e.Attribute("Name")?.Value == "btnA");
-        Assert.NotNull(btnAInRow0);
-
-        // btnD is direct child of second row
-        var btnDInRow1 = rows[1].Elements("GoButton").FirstOrDefault(e => e.Attribute("Name")?.Value == "btnD");
-        Assert.NotNull(btnDInRow1);
+        // <Childrens> group with controls flat + attached Cell attributes
+        var childrensGroup = root.Element("Childrens");
+        Assert.NotNull(childrensGroup);
+        var btnA = childrensGroup.Elements("GoButton").FirstOrDefault(e => e.Attribute("Name")?.Value == "btnA");
+        Assert.NotNull(btnA);
+        Assert.Equal("0,0", btnA.Attribute("Cell")?.Value);
+        var btnD = childrensGroup.Elements("GoButton").FirstOrDefault(e => e.Attribute("Name")?.Value == "btnD");
+        Assert.NotNull(btnD);
+        Assert.Equal("0,1", btnD.Attribute("Cell")?.Value);
     }
 
     [Fact]
@@ -109,9 +113,9 @@ public class GudxPattern4_WrapperNodeTests
     }
 
     [Fact]
-    public void GoGridLayoutPanel_emitsViaNestIntoAttributeOnly()
+    public void GoGridLayoutPanel_RowsAndChildrensFlat_NoNesting()
     {
-        // Verifies the special case is gone and nested emission is attribute-driven.
+        // v1.2.1: ensures NestInto special case is gone — Rows and Childrens are independent groups.
         var grid = new GoGridLayoutPanel { Name = "grid" };
         grid.Rows.Add(new GoGridLayoutPanelRow { Height = "50%", Columns = { "50%", "50%" } });
         grid.Childrens.Add(new GoButton { Name = "btn" }, 0, 0);
@@ -119,24 +123,28 @@ public class GudxPattern4_WrapperNodeTests
         var xml = GoGudxConverter.SerializeControl(grid);
         var root = XElement.Parse(xml);
 
-        var rows = root.Elements("GoGridLayoutPanelRow").ToList();
+        var rowsGroup = root.Element("Rows");
+        Assert.NotNull(rowsGroup);
+        var rows = rowsGroup.Elements("GoGridLayoutPanelRow").ToList();
         Assert.Single(rows);
-        Assert.Single(rows[0].Elements("GoButton"));
-        Assert.Empty(root.Elements("GoButton"));  // not at root
+        Assert.Empty(rows[0].Elements("GoButton"));  // no nested controls in row metadata
+
+        var childrensGroup = root.Element("Childrens");
+        Assert.NotNull(childrensGroup);
+        Assert.Single(childrensGroup.Elements("GoButton"));
+        Assert.Equal("0,0", childrensGroup.Element("GoButton")?.Attribute("Cell")?.Value);
     }
 
     [Fact]
-    public void GoGridLayoutPanel_NestInto_multiRowMultiCell_roundTrip()
+    public void GoGridLayoutPanel_multiRowMultiCell_roundTrip()
     {
-        // 2 rows × 3+4 cells, ensures bucketing by Row index works for non-trivial layouts.
+        // v1.2.1: cell positions encoded purely in attached Cell attributes; Rows is independent metadata.
         var grid = new GoGridLayoutPanel { Name = "grid" };
         grid.Rows.Add(new GoGridLayoutPanelRow { Height = "50%", Columns = { "33%", "33%", "34%" } });
         grid.Rows.Add(new GoGridLayoutPanelRow { Height = "50%", Columns = { "25%", "25%", "25%", "25%" } });
-        // Row 0 — 3 buttons
         grid.Childrens.Add(new GoButton { Name = "r0c0" }, 0, 0);
         grid.Childrens.Add(new GoButton { Name = "r0c1" }, 1, 0);
         grid.Childrens.Add(new GoButton { Name = "r0c2" }, 2, 0);
-        // Row 1 — 4 buttons
         grid.Childrens.Add(new GoButton { Name = "r1c0" }, 0, 1);
         grid.Childrens.Add(new GoButton { Name = "r1c1" }, 1, 1);
         grid.Childrens.Add(new GoButton { Name = "r1c2" }, 2, 1);
@@ -145,12 +153,14 @@ public class GudxPattern4_WrapperNodeTests
         var xml = GoGudxConverter.SerializeControl(grid);
         var root = XElement.Parse(xml);
 
-        // Structural: 2 rows, each containing the right number of children
-        var rows = root.Elements("GoGridLayoutPanelRow").ToList();
-        Assert.Equal(2, rows.Count);
-        Assert.Equal(3, rows[0].Elements("GoButton").Count());
-        Assert.Equal(4, rows[1].Elements("GoButton").Count());
-        Assert.Empty(root.Elements("GoButton")); // no buttons at root
+        // Structural: Rows group has 2 row metadata, Childrens group has 7 buttons flat
+        var rowsGroup = root.Element("Rows");
+        Assert.NotNull(rowsGroup);
+        Assert.Equal(2, rowsGroup.Elements("GoGridLayoutPanelRow").Count());
+
+        var childrensGroup = root.Element("Childrens");
+        Assert.NotNull(childrensGroup);
+        Assert.Equal(7, childrensGroup.Elements("GoButton").Count());
 
         // Round-trip: deserialize and verify Indexes are populated
         var restored = (GoGridLayoutPanel)GoGudxConverter.DeserializeControl(xml);

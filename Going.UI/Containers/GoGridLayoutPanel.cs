@@ -23,7 +23,8 @@ namespace Going.UI.Containers
         /// <summary>
         /// 그리드 행 정의 목록을 가져오거나 설정합니다. 각 행은 높이와 열 정의를 포함합니다.
         /// </summary>
-        // Rows is the wrapper container; Childrens (cell-indexed children) nests into rows by Row index.
+        // v1.2.1: Rows is independent metadata collection (P4 group <Rows>).
+        // Cell positions on children are pure attached Cell="col,row" attributes inside <Childrens> (P3 group).
         [GoProperty(PCategory.Control, 0)]
         [GoChildWrappers]
         public List<GoGridLayoutPanelRow> Rows { get; set; } = [];
@@ -31,7 +32,7 @@ namespace Going.UI.Containers
         /// <summary>
         /// 그리드 레이아웃에 배치된 자식 컨트롤 컬렉션을 가져옵니다.
         /// </summary>
-        [GoChildCells(NestInto = nameof(Rows))]
+        [GoChildCells]
         [JsonInclude] public override GoGridLayoutControlCollection Childrens { get; } = [];
         #endregion
 
@@ -208,7 +209,7 @@ namespace Going.UI.Containers
     /// <summary>
     /// 그리드 레이아웃 패널의 자식 컨트롤과 인덱스 정보를 관리하는 컬렉션 클래스입니다.
     /// </summary>
-    public class GoGridLayoutControlCollection : IEnumerable<IGoControl>
+    public class GoGridLayoutControlCollection : IEnumerable<IGoControl>, Going.UI.Collections.IGoCellIndexedControlCollection
     {
         #region Properties
         /// <summary>
@@ -293,6 +294,21 @@ namespace Going.UI.Containers
         /// <returns>컨트롤 열거자</returns>
         public IEnumerator<IGoControl> GetEnumerator() => Controls.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => Controls.GetEnumerator();
+
+        // Gudx v1.2.1: IGoCellIndexedControlCollection helpers (P3 dispatch 일반화).
+        // GoGridLayoutControlCollection 은 cell span 미지원 — colSpan/rowSpan 인자 무시.
+        IList<IGoControl> Going.UI.Collections.IGoCellIndexedControlCollection.Controls => Controls;
+
+        IEnumerable<(IGoControl Control, int Column, int Row, int ColSpan, int RowSpan)>
+            Going.UI.Collections.IGoCellIndexedControlCollection.EnumerateCells()
+        {
+            foreach (var c in Controls)
+                if (Indexes.TryGetValue(c.Id, out var idx))
+                    yield return (c, idx.Column, idx.Row, 1, 1);  // span 미지원
+        }
+
+        void Going.UI.Collections.IGoCellIndexedControlCollection.AddCell(IGoControl c, int col, int row, int colSpan, int rowSpan)
+            => Add(c, col, row);  // colSpan/rowSpan 인자 무시
         #endregion
     }
 }

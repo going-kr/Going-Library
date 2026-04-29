@@ -36,9 +36,12 @@ public class GudxR9PolymorphicWrapperTests
         var xml = GoGudxConverter.SerializeControl(grid);
         var root = XElement.Parse(xml);
 
+        // v1.2.1: P4 wrappers grouped inside <Columns> property-name group element.
+        var columnsGroup = root.Element("Columns");
+        Assert.NotNull(columnsGroup);
         // Each child element should use the derived class name as tag
-        Assert.NotNull(root.Element("GoDataGridLabelColumn"));
-        Assert.NotNull(root.Element("GoDataGridButtonColumn"));
+        Assert.NotNull(columnsGroup.Element("GoDataGridLabelColumn"));
+        Assert.NotNull(columnsGroup.Element("GoDataGridButtonColumn"));
 
         // Round-trip
         var restored = (GoDataGrid)GoGudxConverter.DeserializeControl(xml);

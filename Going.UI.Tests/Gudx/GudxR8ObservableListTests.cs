@@ -21,7 +21,10 @@ public class GudxR8ObservableListTests
         var xml = GoGudxConverter.SerializeControl(lb);
         var root = XElement.Parse(xml);
 
-        var items = root.Elements("GoListItem").ToList();
+        // v1.2.1: P4 wrappers grouped inside <Items> property-name group element.
+        var itemsGroup = root.Element("Items");
+        Assert.NotNull(itemsGroup);
+        var items = itemsGroup.Elements("GoListItem").ToList();
         Assert.Equal(2, items.Count);
         Assert.Equal("Apple", items[0].Attribute("Text")?.Value);
         Assert.Equal("Banana", items[1].Attribute("Text")?.Value);
