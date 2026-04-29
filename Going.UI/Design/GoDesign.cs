@@ -4,6 +4,7 @@ using Going.UI.Datas;
 using Going.UI.Dialogs;
 using Going.UI.Enums;
 using Going.UI.Extensions;
+using Going.UI.Gudx;
 using Going.UI.ImageCanvas;
 using Going.UI.Json;
 using Going.UI.Managers;
@@ -42,14 +43,17 @@ namespace Going.UI.Design
         /// <summary>
         /// 디자인의 이름을 가져오거나 설정합니다.
         /// </summary>
+        [GoProperty(PCategory.Basic, 0)]
         public string? Name { get; set; }
         /// <summary>
         /// 디자인의 기본 너비를 가져오거나 설정합니다.
         /// </summary>
+        [GoProperty(PCategory.Basic, 1)]
         public int DesignWidth { get; set; }
         /// <summary>
         /// 디자인의 기본 높이를 가져오거나 설정합니다.
         /// </summary>
+        [GoProperty(PCategory.Basic, 2)]
         public int DesignHeight { get; set; }
         /// <summary>
         /// 프로젝트 폴더 경로를 가져오거나 설정합니다.
@@ -59,28 +63,37 @@ namespace Going.UI.Design
         /// <summary>
         /// 디자인에 포함된 페이지 딕셔너리를 가져옵니다. 키는 페이지 이름입니다.
         /// </summary>
+        [GoChildMap]
         [JsonInclude] public Dictionary<string, GoPage> Pages { get; private set; } = [];
         /// <summary>
         /// 디자인에 포함된 윈도우 딕셔너리를 가져옵니다. 키는 윈도우 이름입니다.
         /// </summary>
+        [GoChildMap]
         [JsonInclude] public Dictionary<string, GoWindow> Windows { get; private set; } = [];
+        [GoChildResource("Image", Folder = "resources", Ext = ".png")]
         [JsonInclude] private Dictionary<string, List<SKImage>> Images { get; } = new(StringComparer.OrdinalIgnoreCase);
+
+        [GoChildResource("Font", Folder = "resources/fonts", Ext = ".ttf")]
         [JsonInclude] private Dictionary<string, List<byte[]>> Fonts { get; } = new(StringComparer.OrdinalIgnoreCase);
         /// <summary>
         /// 타이틀바 컨트롤을 가져옵니다.
         /// </summary>
+        [GoChildSingle]
         [JsonInclude] public GoTitleBar TitleBar { get; private set; } = new() { Visible = false };
         /// <summary>
         /// 왼쪽 사이드바 컨트롤을 가져옵니다.
         /// </summary>
+        [GoChildSingle]
         [JsonInclude] public GoSideBar LeftSideBar { get; private set; } = new() { Visible = false };
         /// <summary>
         /// 오른쪽 사이드바 컨트롤을 가져옵니다.
         /// </summary>
+        [GoChildSingle]
         [JsonInclude] public GoSideBar RightSideBar { get; private set; } = new() { Visible = false };
         /// <summary>
         /// 푸터 컨트롤을 가져옵니다.
         /// </summary>
+        [GoChildSingle]
         [JsonInclude] public GoFooter Footer { get; private set; } = new() { Visible = false };
 
         [JsonIgnore] internal string Id { get; } = Guid.NewGuid().ToString();
@@ -147,6 +160,8 @@ namespace Going.UI.Design
         /// <summary>
         /// 사용자 정의 테마를 가져오거나 설정합니다. null이면 기본 다크 테마를 사용합니다.
         /// </summary>
+        [GoChildSingle]
+        [GudxTagName("Theme")]
         public GoTheme? CustomTheme { get; set; }
         /// <summary>
         /// 현재 적용 중인 테마를 가져옵니다. CustomTheme이 없으면 기본 다크 테마를 반환합니다.
@@ -346,6 +361,21 @@ namespace Going.UI.Design
             }
             else return null;
         }
+        #endregion
+
+        #region Gudx
+        /// <summary>
+        /// Serializes this GoDesign to a Master.gudx file plus Pages/&lt;name&gt;.gudx and Windows/&lt;name&gt;.gudx files.
+        /// Master file contains design properties + theme + resource refs + GoPageRef/GoWindowRef pointers.
+        /// </summary>
+        public void SerializeGudx(string masterPath)
+            => Going.UI.Gudx.GoGudxConverter.SerializeGoDesignToFiles(this, masterPath);
+
+        /// <summary>
+        /// Loads a GoDesign from a Master.gudx file, resolving GoPageRef/GoWindowRef references.
+        /// </summary>
+        public static GoDesign? DeserializeGudx(string masterPath)
+            => Going.UI.Gudx.GoGudxConverter.DeserializeGoDesignFromFiles(masterPath);
         #endregion
 
         #region Fire

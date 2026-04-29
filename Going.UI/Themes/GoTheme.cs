@@ -1,3 +1,4 @@
+using Going.UI.Controls;
 using Going.UI.Tools;
 using Going.UI.Utils;
 using SkiaSharp;
@@ -33,174 +34,174 @@ namespace Going.UI.Themes
         /// <summary>
         /// 다크 테마 여부를 가져오거나 설정합니다.
         /// </summary>
-        public bool Dark { get; set; }
+        [GoProperty(PCategory.Control, 0)] public bool Dark { get; set; }
 
         /// <summary>
         /// 전경색을 가져오거나 설정합니다.
         /// </summary>
-        public SKColor Fore { get; set; }
+        [GoProperty(PCategory.Control, 1)] public SKColor Fore { get; set; }
         /// <summary>
         /// 배경색을 가져오거나 설정합니다.
         /// </summary>
-        public SKColor Back { get; set; }
+        [GoProperty(PCategory.Control, 2)] public SKColor Back { get; set; }
         /// <summary>
         /// 창 배경색을 가져오거나 설정합니다.
         /// </summary>
-        public SKColor Window { get; set; }
+        [GoProperty(PCategory.Control, 3)] public SKColor Window { get; set; }
         /// <summary>
         /// 창 테두리색을 가져오거나 설정합니다.
         /// </summary>
-        public SKColor WindowBorder { get; set; }
+        [GoProperty(PCategory.Control, 4)] public SKColor WindowBorder { get; set; }
         /// <summary>
         /// 포인트 색상을 가져오거나 설정합니다.
         /// </summary>
-        public SKColor Point { get; set; }
+        [GoProperty(PCategory.Control, 5)] public SKColor Point { get; set; }
         /// <summary>
         /// 타이틀 색상을 가져오거나 설정합니다.
         /// </summary>
-        public SKColor Title { get; set; }
+        [GoProperty(PCategory.Control, 6)] public SKColor Title { get; set; }
 
         /// <summary>
         /// 기본 색상 0단계를 가져오거나 설정합니다.
         /// </summary>
-        public SKColor Base0 { get; set; }
+        [GoProperty(PCategory.Control, 7)] public SKColor Base0 { get; set; }
         /// <summary>
         /// 기본 색상 1단계를 가져오거나 설정합니다.
         /// </summary>
-        public SKColor Base1 { get; set; }
+        [GoProperty(PCategory.Control, 8)] public SKColor Base1 { get; set; }
         /// <summary>
         /// 기본 색상 2단계를 가져오거나 설정합니다.
         /// </summary>
-        public SKColor Base2 { get; set; }
+        [GoProperty(PCategory.Control, 9)] public SKColor Base2 { get; set; }
         /// <summary>
         /// 기본 색상 3단계를 가져오거나 설정합니다.
         /// </summary>
-        public SKColor Base3 { get; set; }
+        [GoProperty(PCategory.Control, 10)] public SKColor Base3 { get; set; }
         /// <summary>
         /// 기본 색상 4단계를 가져오거나 설정합니다.
         /// </summary>
-        public SKColor Base4 { get; set; }
+        [GoProperty(PCategory.Control, 11)] public SKColor Base4 { get; set; }
         /// <summary>
         /// 기본 색상 5단계를 가져오거나 설정합니다.
         /// </summary>
-        public SKColor Base5 { get; set; }
+        [GoProperty(PCategory.Control, 12)] public SKColor Base5 { get; set; }
 
         /// <summary>
         /// 사용자 정의 색상 1을 가져오거나 설정합니다.
         /// </summary>
-        public SKColor User1 { get; set; } = SKColors.Red;
+        [GoProperty(PCategory.Control, 13)] public SKColor User1 { get; set; } = SKColors.Red;
         /// <summary>
         /// 사용자 정의 색상 2를 가져오거나 설정합니다.
         /// </summary>
-        public SKColor User2 { get; set; } = SKColors.Green;
+        [GoProperty(PCategory.Control, 14)] public SKColor User2 { get; set; } = SKColors.Green;
         /// <summary>
         /// 사용자 정의 색상 3을 가져오거나 설정합니다.
         /// </summary>
-        public SKColor User3 { get; set; } = SKColors.Blue;
+        [GoProperty(PCategory.Control, 15)] public SKColor User3 { get; set; } = SKColors.Blue;
         /// <summary>
         /// 사용자 정의 색상 4를 가져오거나 설정합니다.
         /// </summary>
-        public SKColor User4 { get; set; } = SKColors.Magenta;
+        [GoProperty(PCategory.Control, 16)] public SKColor User4 { get; set; } = SKColors.Magenta;
         /// <summary>
         /// 사용자 정의 색상 5를 가져오거나 설정합니다.
         /// </summary>
-        public SKColor User5 { get; set; } = SKColors.Yellow;
+        [GoProperty(PCategory.Control, 17)] public SKColor User5 { get; set; } = SKColors.Yellow;
         /// <summary>
         /// 사용자 정의 색상 6을 가져오거나 설정합니다.
         /// </summary>
-        public SKColor User6 { get; set; } = SKColors.Cyan;
+        [GoProperty(PCategory.Control, 18)] public SKColor User6 { get; set; } = SKColors.Cyan;
         /// <summary>
         /// 사용자 정의 색상 7을 가져오거나 설정합니다.
         /// </summary>
-        public SKColor User7 { get; set; } = SKColors.Teal;
+        [GoProperty(PCategory.Control, 19)] public SKColor User7 { get; set; } = SKColors.Teal;
         /// <summary>
         /// 사용자 정의 색상 8을 가져오거나 설정합니다.
         /// </summary>
-        public SKColor User8 { get; set; } = SKColors.DeepSkyBlue;
+        [GoProperty(PCategory.Control, 20)] public SKColor User8 { get; set; } = SKColors.DeepSkyBlue;
         /// <summary>
         /// 사용자 정의 색상 9를 가져오거나 설정합니다.
         /// </summary>
-        public SKColor User9 { get; set; } = SKColors.DarkRed;
+        [GoProperty(PCategory.Control, 21)] public SKColor User9 { get; set; } = SKColors.DarkRed;
 
         /// <summary>
         /// 스크롤바 배경색을 가져오거나 설정합니다.
         /// </summary>
-        public SKColor ScrollBar { get; set; }
+        [GoProperty(PCategory.Control, 22)] public SKColor ScrollBar { get; set; }
         /// <summary>
         /// 스크롤바 커서 색상을 가져오거나 설정합니다.
         /// </summary>
-        public SKColor ScrollCursor { get; set; }
+        [GoProperty(PCategory.Control, 23)] public SKColor ScrollCursor { get; set; }
 
         /// <summary>
         /// 위험 상태 색상을 가져오거나 설정합니다.
         /// </summary>
-        public SKColor Danger { get; set; }
+        [GoProperty(PCategory.Control, 24)] public SKColor Danger { get; set; }
         /// <summary>
         /// 경고 상태 색상을 가져오거나 설정합니다.
         /// </summary>
-        public SKColor Warning { get; set; }
+        [GoProperty(PCategory.Control, 25)] public SKColor Warning { get; set; }
         /// <summary>
         /// 정상 상태 색상을 가져오거나 설정합니다.
         /// </summary>
-        public SKColor Good { get; set; }
+        [GoProperty(PCategory.Control, 26)] public SKColor Good { get; set; }
         /// <summary>
         /// 오류 상태 색상을 가져오거나 설정합니다.
         /// </summary>
-        public SKColor Error { get; set; }
+        [GoProperty(PCategory.Control, 27)] public SKColor Error { get; set; }
 
         /// <summary>
         /// 하이라이트 색상을 가져오거나 설정합니다.
         /// </summary>
-        public SKColor Highlight { get; set; }
+        [GoProperty(PCategory.Control, 28)] public SKColor Highlight { get; set; }
         /// <summary>
         /// 선택 색상을 가져오거나 설정합니다.
         /// </summary>
-        public SKColor Select { get; set; }
+        [GoProperty(PCategory.Control, 29)] public SKColor Select { get; set; }
 
         /// <summary>
         /// 모서리 둥글기 값을 가져오거나 설정합니다.
         /// </summary>
-        public int Corner { get; set; } = 5;
+        [GoProperty(PCategory.Control, 30)] public int Corner { get; set; } = 5;
         /// <summary>
         /// 알파 값을 가져오거나 설정합니다.
         /// </summary>
-        public int Alpha { get; set; }
+        [GoProperty(PCategory.Control, 31)] public int Alpha { get; set; }
         /// <summary>
         /// 그림자 알파 값을 가져오거나 설정합니다.
         /// </summary>
-        public byte ShadowAlpha { get; set; }
+        [GoProperty(PCategory.Control, 32)] public byte ShadowAlpha { get; set; }
         /// <summary>
         /// 그림자 기본 색상을 가져오거나 설정합니다. Elevation 효과의 그림자 색으로 사용됩니다.
         /// </summary>
-        public SKColor ShadowColor { get; set; } = SKColors.Black;
+        [GoProperty(PCategory.Control, 33)] public SKColor ShadowColor { get; set; } = SKColors.Black;
         /// <summary>
         /// 클릭 시 밝기 변화량을 가져오거나 설정합니다.
         /// </summary>
-        public float DownBrightness { get; set; }
+        [GoProperty(PCategory.Control, 34)] public float DownBrightness { get; set; }
         /// <summary>
         /// 테두리 밝기 변화량을 가져오거나 설정합니다.
         /// </summary>
-        public float BorderBrightness { get; set; }
+        [GoProperty(PCategory.Control, 35)] public float BorderBrightness { get; set; }
         /// <summary>
         /// 호버 시 테두리 밝기 변화량을 가져오거나 설정합니다.
         /// </summary>
-        public float HoverBorderBrightness { get; set; }
+        [GoProperty(PCategory.Control, 36)] public float HoverBorderBrightness { get; set; }
         /// <summary>
         /// 호버 시 채우기 밝기 변화량을 가져오거나 설정합니다.
         /// </summary>
-        public float HoverFillBrightness { get; set; }
+        [GoProperty(PCategory.Control, 37)] public float HoverFillBrightness { get; set; }
         /// <summary>
         /// 단계 선 밝기 변화량을 가져오거나 설정합니다.
         /// </summary>
-        public float StageLineBrightness { get; set; }
+        [GoProperty(PCategory.Control, 38)] public float StageLineBrightness { get; set; }
         /// <summary>
         /// 그라데이션 밝은 부분의 밝기 비율을 가져오거나 설정합니다.
         /// </summary>
-        public float GradientLightBrightness { get; set; } = 0.2F;
+        [GoProperty(PCategory.Control, 39)] public float GradientLightBrightness { get; set; } = 0.2F;
         /// <summary>
         /// 그라데이션 어두운 부분의 밝기 비율을 가져오거나 설정합니다.
         /// </summary>
-        public float GradientDarkBrightness { get; set; } = -0.2F;
+        [GoProperty(PCategory.Control, 40)] public float GradientDarkBrightness { get; set; } = -0.2F;
         #endregion
 
         #region Static

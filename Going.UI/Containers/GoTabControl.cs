@@ -2,6 +2,7 @@
 using Going.UI.Datas;
 using Going.UI.Design;
 using Going.UI.Enums;
+using Going.UI.Gudx;
 using Going.UI.Themes;
 using Going.UI.Tools;
 using Going.UI.Utils;
@@ -111,6 +112,7 @@ namespace Going.UI.Containers
         /// <summary>
         /// 탭 페이지 목록을 가져오거나 설정합니다.
         /// </summary>
+        [GoChildWrappers]
         [GoProperty(PCategory.Control, 11)] public List<GoTabPage> TabPages { get; set; } = [];
         #endregion
 
@@ -456,6 +458,7 @@ namespace Going.UI.Containers
         /// <summary>
         /// 자식 컨트롤 목록을 가져옵니다.
         /// </summary>
+        [GoChildList]
         [JsonInclude] public List<IGoControl> Childrens { get; } = [];
 
         /// <summary>

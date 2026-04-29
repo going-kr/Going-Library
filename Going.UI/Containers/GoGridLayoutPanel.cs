@@ -1,4 +1,5 @@
 ﻿using Going.UI.Controls;
+using Going.UI.Gudx;
 using Going.UI.Themes;
 using Going.UI.Utils;
 using SkiaSharp;
@@ -22,11 +23,15 @@ namespace Going.UI.Containers
         /// <summary>
         /// 그리드 행 정의 목록을 가져오거나 설정합니다. 각 행은 높이와 열 정의를 포함합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 0)] public List<GoGridLayoutPanelRow> Rows { get; set; } = [];
+        // Rows is the wrapper container; Childrens (cell-indexed children) nests into rows by Row index.
+        [GoProperty(PCategory.Control, 0)]
+        [GoChildWrappers]
+        public List<GoGridLayoutPanelRow> Rows { get; set; } = [];
 
         /// <summary>
         /// 그리드 레이아웃에 배치된 자식 컨트롤 컬렉션을 가져옵니다.
         /// </summary>
+        [GoChildCells(NestInto = nameof(Rows))]
         [JsonInclude] public override GoGridLayoutControlCollection Childrens { get; } = [];
         #endregion
 

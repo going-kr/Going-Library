@@ -1,6 +1,7 @@
 using Going.UI.Collections;
 using Going.UI.Controls;
 using Going.UI.Enums;
+using Going.UI.Gudx;
 using Going.UI.Extensions;
 using Going.UI.Themes;
 using Going.UI.Tools;
@@ -29,6 +30,7 @@ namespace Going.UI.Datas
         /// <summary>사용자 정의 데이터를 저장하기 위한 태그 객체</summary>
         public object? Tag { get; set; }
         /// <summary>자식 노드 컬렉션</summary>
+        [GoChildWrappers]
         [GoProperty(PCategory.Basic, 2)] public ObservableList<GoTreeNode> Nodes { get; set; } = [];
         /// <summary>노드의 확장(펼침) 상태</summary>
         [GoProperty(PCategory.Basic, 3)] public bool Expand { get; set; } = true;

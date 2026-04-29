@@ -1,6 +1,7 @@
 using Going.UI.Containers;
 using Going.UI.Controls;
 using Going.UI.Enums;
+using Going.UI.Gudx;
 using Going.UI.Themes;
 using Going.UI.Tools;
 using Going.UI.Utils;
@@ -80,6 +81,7 @@ namespace Going.UI.Design
         /// <summary>
         /// 자식 컨트롤 목록을 가져옵니다.
         /// </summary>
+        [GoChildList]
         [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
         #endregion
 
@@ -243,6 +245,7 @@ namespace Going.UI.Design
         /// <summary>
         /// 자식 컨트롤 목록을 가져옵니다.
         /// </summary>
+        [GoChildList]
         [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
 
         /// <summary>
@@ -314,6 +317,7 @@ namespace Going.UI.Design
         /// <summary>
         /// 자식 컨트롤 목록을 가져옵니다.
         /// </summary>
+        [GoChildList]
         [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
         #endregion
 

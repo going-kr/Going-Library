@@ -1,5 +1,6 @@
 using Going.UI.Containers;
 using Going.UI.Controls;
+using Going.UI.Gudx;
 using Going.UI.Themes;
 using Going.UI.Utils;
 using SkiaSharp;
@@ -21,11 +22,12 @@ namespace Going.UI.Design
         /// <summary>
         /// 자식 컨트롤 목록을 가져옵니다.
         /// </summary>
+        [GoChildList]
         [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
         /// <summary>
         /// 배경 이미지 이름을 가져오거나 설정합니다.
         /// </summary>
-        public string? BackgroundImage { get; set; }
+        [GoProperty(PCategory.Basic, 5)] public string? BackgroundImage { get; set; }
         #endregion
 
         #region Constructor

@@ -1,6 +1,7 @@
 ﻿using Going.UI.Collections;
 using Going.UI.Datas;
 using Going.UI.Design;
+using Going.UI.Gudx;
 using Going.UI.Enums;
 using Going.UI.Themes;
 using Going.UI.Tools;
@@ -81,6 +82,7 @@ namespace Going.UI.Controls
         /// <summary>
         /// 도구 카테고리 컬렉션을 가져오거나 설정합니다.
         /// </summary>
+        [GoChildWrappers]
         [GoProperty(PCategory.Control, 13)] public ObservableList<GoToolCategory> Categories { get; set; } = [];
 
         /// <summary>

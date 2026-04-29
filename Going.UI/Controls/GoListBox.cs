@@ -1,6 +1,7 @@
 ﻿using Going.UI.Collections;
 using Going.UI.Datas;
 using Going.UI.Enums;
+using Going.UI.Gudx;
 using Going.UI.Themes;
 using Going.UI.Tools;
 using Going.UI.Utils;
@@ -84,6 +85,7 @@ namespace Going.UI.Controls
         /// <summary>
         /// 리스트에 표시할 항목 컬렉션을 가져오거나 설정합니다.
         /// </summary>
+        [GoChildWrappers]
         [GoProperty(PCategory.Control, 14)] public ObservableList<GoListItem> Items { get; set; } = [];
         /// <summary>
         /// 현재 선택된 항목 목록을 가져옵니다.

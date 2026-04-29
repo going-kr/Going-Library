@@ -244,21 +244,21 @@ namespace Going.UI.Datas
 
         #region Properties
         /// <summary>열의 이름 (데이터 바인딩 프로퍼티명)</summary>
-        public string? Name { get; set; }
+        [GoProperty(PCategory.Basic, 0)] public string? Name { get; set; }
         /// <summary>열 그룹 이름 (헤더 그룹화에 사용)</summary>
         public string? GroupName { get; set; }
         /// <summary>열 헤더에 표시할 텍스트</summary>
-        public string? HeaderText { get; set; }
+        [GoProperty(PCategory.Basic, 1)] public string? HeaderText { get; set; }
         /// <summary>열 너비 (퍼센트 또는 픽셀)</summary>
-        public string? Size { get; set; } = "100%";
+        [GoSizeProperty(PCategory.Basic, 2)] public string? Size { get; set; } = "100%";
 
         /// <summary>필터 사용 여부</summary>
-        public bool UseFilter { get; set; }
+        [GoProperty(PCategory.Control, 0)] public bool UseFilter { get; set; }
         /// <summary>필터 텍스트</summary>
         public string? FilterText { get; set; }
 
         /// <summary>정렬 사용 여부</summary>
-        public bool UseSort { get; set; }
+        [GoProperty(PCategory.Control, 1)] public bool UseSort { get; set; }
         /// <summary>현재 정렬 상태</summary>
         public GoDataGridColumnSortState SortState { get; set; } = GoDataGridColumnSortState.None;
         /// <summary>정렬 우선순위</summary>
@@ -267,7 +267,7 @@ namespace Going.UI.Datas
         /// <summary>열 텍스트 색상</summary>
         public string? TextColor { get; set; }
         /// <summary>열 고정 여부</summary>
-        public bool Fixed { get; set; }
+        [GoProperty(PCategory.Control, 2)] public bool Fixed { get; set; }
 
         /// <summary>이 열에 사용되는 셀 타입</summary>
         [JsonIgnore] public Type? CellType { get; set; }

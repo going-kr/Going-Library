@@ -1,6 +1,7 @@
 using Going.UI.Datas;
 using Going.UI.Enums;
 using Going.UI.Extensions;
+using Going.UI.Gudx;
 using Going.UI.Managers;
 using Going.UI.Themes;
 using Going.UI.Tools;
@@ -53,6 +54,7 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 12)] public GoButtonFillStyle FillStyle { get; set; } = GoButtonFillStyle.Flat;
 
         /// <summary>버튼 항목 목록</summary>
+        [GoChildWrappers]
         [GoProperty(PCategory.Control, 13)] public List<GoButtonsItem> Buttons { get; set; } = [];
 
         /// <summary>버튼 배치 방향 (가로/세로)</summary>

@@ -3,6 +3,7 @@ using Going.UI.Datas;
 using Going.UI.Design;
 using Going.UI.Enums;
 using Going.UI.Extensions;
+using Going.UI.Gudx;
 using Going.UI.Managers;
 using Going.UI.Themes;
 using Going.UI.Tools;
@@ -102,6 +103,8 @@ namespace Going.UI.Controls
         /// <summary>
         /// 컬럼 컬렉션을 가져옵니다.
         /// </summary>
+        [GoProperty(PCategory.Control, 15)]
+        [GoChildWrappers]
         public ObservableList<GoDataGridColumn> Columns { get; private set; } = [];
         /// <summary>
         /// 요약 행 컬렉션을 가져옵니다.

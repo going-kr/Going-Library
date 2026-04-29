@@ -1,5 +1,6 @@
 ﻿using Going.UI.Datas;
 using Going.UI.Enums;
+using Going.UI.Gudx;
 using Going.UI.Themes;
 using Going.UI.Tools;
 using Going.UI.Utils;
@@ -55,8 +56,10 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 12)] public float LineWidth { get; set; } = 1.5f;
 
         /// <summary>기준선 목록.</summary>
+        [GoChildWrappers]
         [GoProperty(PCategory.Control, 13)] public List<GoBaseline> Baselines { get; set; } = [];
         /// <summary>그래프 시리즈 목록.</summary>
+        [GoChildWrappers]
         [GoProperty(PCategory.Control, 14)] public List<GoLineGraphSeries> Series { get; set; } = [];
 
         /// <summary>트렌드 수집 실행 여부.</summary>

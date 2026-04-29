@@ -2,6 +2,7 @@
 using Going.UI.Datas;
 using Going.UI.Enums;
 using Going.UI.Extensions;
+using Going.UI.Gudx;
 using Going.UI.Themes;
 using Going.UI.Tools;
 using Going.UI.Utils;
@@ -69,6 +70,7 @@ namespace Going.UI.Containers
         /// <summary>
         /// 제목 영역에 표시할 버튼 항목 목록을 가져오거나 설정합니다.
         /// </summary>
+        [GoChildWrappers]
         [GoProperty(PCategory.Control, 10)] public List<GoButtonItem> Buttons { get; set; } = [];
         /// <summary>
         /// 버튼 영역의 전체 너비를 가져오거나 설정합니다. null이면 버튼이 표시되지 않습니다.
@@ -82,6 +84,7 @@ namespace Going.UI.Containers
         /// <summary>
         /// 자식 컨트롤 목록을 가져옵니다.
         /// </summary>
+        [GoChildList]
         [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
 
         /// <summary>

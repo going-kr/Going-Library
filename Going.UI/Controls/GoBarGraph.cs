@@ -1,6 +1,7 @@
 ﻿using Going.UI.Datas;using Going.UI.Dialogs;
 using Going.UI.Enums;
 using Going.UI.Extensions;
+using Going.UI.Gudx;
 using Going.UI.Themes;
 using Going.UI.Tools;
 using Going.UI.Utils;
@@ -86,6 +87,7 @@ namespace Going.UI.Controls
         /// <summary>
         /// 그래프 시리즈 목록을 가져오거나 설정합니다.
         /// </summary>
+        [GoChildWrappers]
         [GoProperty(PCategory.Control, 11)] public List<GoGraphSeries> Series { get; set; } = [];
         /// <summary>
         /// 개별 바의 두께(픽셀)를 가져오거나 설정합니다.
