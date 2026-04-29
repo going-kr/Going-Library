@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using System.Xml.Linq;
+using Going.UI.Containers;
 using Going.UI.Controls;
 using Going.UI.Json;
 
@@ -65,7 +66,18 @@ public static class GoGudxConverter
                 foreach (var child in list)
                     if (child is IGoControl c) elem.Add(WriteElement(c));
             }
-            // P3/P4/P5/B1 dispatch added in later tasks
+            else if (value is GoTableLayoutControlCollection tlc)
+            {
+                // P3: cell-indexed collection
+                foreach (var child in tlc.Controls)
+                {
+                    var childElem = WriteElement(child);
+                    if (tlc.Indexes.TryGetValue(child.Id, out var idx))
+                        childElem.SetAttributeValue("Cell", $"{idx.Column},{idx.Row}");
+                    elem.Add(childElem);
+                }
+            }
+            // P4/P5/B1 dispatch added in later tasks
         }
 
         return elem;
@@ -99,6 +111,28 @@ public static class GoGudxConverter
                     list.Add(ReadElement(childElem));
                 // setter only if it has one
                 if (childProp.CanWrite) childProp.SetValue(instance, list);
+            }
+            else if (childProp.PropertyType == typeof(GoTableLayoutControlCollection))
+            {
+                // P3: cell-indexed collection
+                var coll = (GoTableLayoutControlCollection)(childProp.GetValue(instance)
+                            ?? new GoTableLayoutControlCollection());
+                foreach (var childElem in elem.Elements())
+                {
+                    var c = ReadElement(childElem);
+                    var cellAttr = childElem.Attribute("Cell");
+                    if (cellAttr != null)
+                    {
+                        var parts = cellAttr.Value.Split(',');
+                        int col = int.Parse(parts[0], CultureInfo.InvariantCulture);
+                        int row = int.Parse(parts[1], CultureInfo.InvariantCulture);
+                        coll.Add(c, col, row);
+                    }
+                    else
+                    {
+                        coll.Controls.Add(c);
+                    }
+                }
             }
             // dispatch for other patterns added later
         }
@@ -139,6 +173,7 @@ public static class GoGudxConverter
     {
         if (t.IsPrimitive || t == typeof(string) || t == typeof(decimal)) return true;
         if (t.IsEnum) return true;
+        if (t == typeof(List<string>)) return true;
         // SKColor/SKRect handled by GudxSpecialConverters (Task 11).
         return false;
     }
@@ -147,6 +182,7 @@ public static class GoGudxConverter
     {
         return value switch
         {
+            List<string> ls => string.Join(",", ls),
             string s => s,
             bool b => b ? "true" : "false",
             float f => f.ToString(CultureInfo.InvariantCulture),
@@ -166,6 +202,8 @@ public static class GoGudxConverter
         if (targetType == typeof(float)) return float.Parse(value, CultureInfo.InvariantCulture);
         if (targetType == typeof(double)) return double.Parse(value, CultureInfo.InvariantCulture);
         if (targetType == typeof(decimal)) return decimal.Parse(value, CultureInfo.InvariantCulture);
+        if (targetType == typeof(List<string>))
+            return value == "" ? new List<string>() : value.Split(',').ToList();
         return null;
     }
 }

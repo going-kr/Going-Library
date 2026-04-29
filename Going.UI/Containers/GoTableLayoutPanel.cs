@@ -1,5 +1,6 @@
 ﻿using Going.UI.Controls;
 using Going.UI.Datas;
+using Going.UI.Gudx;
 using Going.UI.Themes;
 using Going.UI.Utils;
 using SkiaSharp;
@@ -33,6 +34,7 @@ namespace Going.UI.Containers
         /// <summary>
         /// 테이블 레이아웃에 배치된 자식 컨트롤 컬렉션을 가져옵니다.
         /// </summary>
+        [GoChilds]
         [JsonInclude] public override GoTableLayoutControlCollection Childrens { get; } = [];
         #endregion
 
