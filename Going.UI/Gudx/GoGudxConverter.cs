@@ -340,18 +340,18 @@ public static class GoGudxConverter
 
     private static void WriteP2_HomogeneousList(XElement elem, object value)
     {
-        // P2: list of IGoControl
+        // P2: list of IGoControl — use WriteElement to include F2 Id attribute
         foreach (var child in (System.Collections.IList)value)
-            if (child is IGoControl c) elem.Add(WriteAny(c));
+            if (child is IGoControl c) elem.Add(WriteElement(c));
     }
 
     private static void WriteP3_CellIndexed(XElement elem, object value)
     {
-        // P3: cell-indexed collection (GoTableLayoutPanel)
+        // P3: cell-indexed collection (GoTableLayoutPanel) — use WriteElement to include F2 Id attribute
         var tlc = (GoTableLayoutControlCollection)value;
         foreach (var child in tlc.Controls)
         {
-            var childElem = WriteAny(child);
+            var childElem = WriteElement(child);
             if (tlc.Indexes.TryGetValue(child.Id, out var idx))
             {
                 var cell = (idx.ColSpan == 1 && idx.RowSpan == 1)
@@ -457,7 +457,8 @@ public static class GoGudxConverter
         foreach (System.Collections.DictionaryEntry kvp in (System.Collections.IDictionary)value)
         {
             if (kvp.Value == null) continue;
-            var childElem = WriteAny(kvp.Value);
+            // Use WriteElement for IGoControl values to include F2 Id attribute; otherwise WriteAny.
+            var childElem = kvp.Value is IGoControl ctrl ? WriteElement(ctrl) : WriteAny(kvp.Value);
             // Overwrite Name attribute with the dictionary key to ensure round-trip fidelity.
             childElem.SetAttributeValue("Name", kvp.Key.ToString());
             elem.Add(childElem);
