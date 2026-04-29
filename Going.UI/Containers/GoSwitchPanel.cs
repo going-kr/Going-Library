@@ -54,7 +54,7 @@ namespace Going.UI.Containers
         /// <summary>
         /// 서브 페이지 목록을 가져오거나 설정합니다.
         /// </summary>
-        [GoChilds]
+        [GoChildWrappers]
         [GoProperty(PCategory.Control, 0)] public List<GoSubPage> Pages { get; set; } = [];
         //[GoProperty(PCategory.Misc, 0), JsonInclude] public List<GoSubPage> Pages { get; } = [];
         #endregion
@@ -153,7 +153,7 @@ namespace Going.UI.Containers
         /// <summary>
         /// 자식 컨트롤 목록을 가져옵니다.
         /// </summary>
-        [GoChilds]
+        [GoChildList]
         [JsonInclude] public List<IGoControl> Childrens { get; } = [];
 
         /// <summary>

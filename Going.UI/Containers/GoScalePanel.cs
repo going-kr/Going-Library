@@ -23,7 +23,7 @@ namespace Going.UI.Containers
         /// <summary>
         /// 자식 컨트롤 목록을 가져옵니다.
         /// </summary>
-        [GoChilds]
+        [GoChildList]
         [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
         /// <summary>
         /// 기준 너비를 가져오거나 설정합니다. null이면 컨트롤 너비를 사용합니다.

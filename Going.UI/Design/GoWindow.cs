@@ -79,7 +79,7 @@ namespace Going.UI.Design
         /// <summary>
         /// 자식 컨트롤 목록을 가져옵니다.
         /// </summary>
-        [GoChilds]
+        [GoChildList]
         [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
 
         /// <summary>

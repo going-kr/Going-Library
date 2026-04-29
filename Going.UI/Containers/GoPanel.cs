@@ -107,7 +107,7 @@ namespace Going.UI.Containers
         /// <summary>
         /// 자식 컨트롤 목록을 가져옵니다.
         /// </summary>
-        [GoChilds]
+        [GoChildList]
         [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
         /// <summary>
         /// 자식 컨트롤이 배치되는 패널 영역을 가져옵니다.

@@ -60,34 +60,34 @@ namespace Going.UI.Design
         /// <summary>
         /// 디자인에 포함된 페이지 딕셔너리를 가져옵니다. 키는 페이지 이름입니다.
         /// </summary>
-        [GoChilds]
+        [GoChildMap]
         [JsonInclude] public Dictionary<string, GoPage> Pages { get; private set; } = [];
         /// <summary>
         /// 디자인에 포함된 윈도우 딕셔너리를 가져옵니다. 키는 윈도우 이름입니다.
         /// </summary>
-        [GoChilds]
+        [GoChildMap]
         [JsonInclude] public Dictionary<string, GoWindow> Windows { get; private set; } = [];
         [JsonInclude] private Dictionary<string, List<SKImage>> Images { get; } = new(StringComparer.OrdinalIgnoreCase);
         [JsonInclude] private Dictionary<string, List<byte[]>> Fonts { get; } = new(StringComparer.OrdinalIgnoreCase);
         /// <summary>
         /// 타이틀바 컨트롤을 가져옵니다.
         /// </summary>
-        [GoChilds]
+        [GoChildSingle]
         [JsonInclude] public GoTitleBar TitleBar { get; private set; } = new() { Visible = false };
         /// <summary>
         /// 왼쪽 사이드바 컨트롤을 가져옵니다.
         /// </summary>
-        [GoChilds]
+        [GoChildSingle]
         [JsonInclude] public GoSideBar LeftSideBar { get; private set; } = new() { Visible = false };
         /// <summary>
         /// 오른쪽 사이드바 컨트롤을 가져옵니다.
         /// </summary>
-        [GoChilds]
+        [GoChildSingle]
         [JsonInclude] public GoSideBar RightSideBar { get; private set; } = new() { Visible = false };
         /// <summary>
         /// 푸터 컨트롤을 가져옵니다.
         /// </summary>
-        [GoChilds]
+        [GoChildSingle]
         [JsonInclude] public GoFooter Footer { get; private set; } = new() { Visible = false };
 
         [JsonIgnore] internal string Id { get; } = Guid.NewGuid().ToString();
@@ -154,7 +154,7 @@ namespace Going.UI.Design
         /// <summary>
         /// 사용자 정의 테마를 가져오거나 설정합니다. null이면 기본 다크 테마를 사용합니다.
         /// </summary>
-        [GoChilds]
+        [GoChildSingle]
         [GudxTagName("Theme")]
         public GoTheme? CustomTheme { get; set; }
         /// <summary>

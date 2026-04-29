@@ -23,7 +23,7 @@ namespace Going.UI.Containers
         /// <summary>
         /// 자식 컨트롤 목록을 가져옵니다.
         /// </summary>
-        [GoChilds]
+        [GoChildList]
         [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
         /// <summary>
         /// 배경 이미지 리소스 이름을 가져오거나 설정합니다.
