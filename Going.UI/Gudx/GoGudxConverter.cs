@@ -562,6 +562,7 @@ public static class GoGudxConverter
         // Properties that are NOT marked [GoChilds] AND have a settable scalar/special type.
         return t.GetProperties(BindingFlags.Public | BindingFlags.Instance)
                 .Where(p => p.GetCustomAttribute<JsonIgnoreAttribute>() == null)
+                .Where(p => p.GetCustomAttribute<GudxIgnoreAttribute>() == null)
                 .Where(p => p.GetCustomAttribute<GoChildsAttribute>() == null)
                 .Where(p => p.CanRead && p.CanWrite)
                 .Where(p => IsScalar(p.PropertyType));

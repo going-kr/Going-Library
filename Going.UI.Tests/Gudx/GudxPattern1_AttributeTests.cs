@@ -28,6 +28,7 @@ public class GudxPattern1_AttributeTests
         // Negative assertions: [JsonIgnore] properties should NOT be emitted as standalone attributes
         Assert.DoesNotContain(" Width=\"", xml);
         Assert.DoesNotContain(" Tag=\"", xml);
+        Assert.DoesNotContain("Bounds=", xml);  // GudxIgnore suppression on GoControl.Bounds
     }
 
     [Fact]

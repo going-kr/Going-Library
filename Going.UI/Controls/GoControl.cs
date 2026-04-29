@@ -3,6 +3,7 @@ using Going.UI.Controls;
 using Going.UI.Datas;
 using Going.UI.Design;
 using Going.UI.Enums;
+using Going.UI.Gudx;
 using Going.UI.Managers;
 using Going.UI.Themes;
 using Going.UI.Tools;
@@ -113,7 +114,7 @@ namespace Going.UI.Controls
         [JsonIgnore] public float ScreenY => Parent != null && Parent is GoControl pc ? pc.ScreenY + Parent.PanelBounds.Top + Y : Y;
 
         /// <summary>컨트롤의 경계 영역</summary>
-        [GoProperty(PCategory.Bounds, 0)] public SKRect Bounds { get => bounds; set => bounds = value; }
+        [GoProperty(PCategory.Bounds, 0), GudxIgnore] public SKRect Bounds { get => bounds; set => bounds = value; }
         /// <summary>컨트롤의 X 좌표 (왼쪽 위치)</summary>
         [GoProperty(PCategory.Bounds, 1), JsonIgnore]
         public float X
