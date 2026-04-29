@@ -4,6 +4,7 @@ using Going.UI.Datas;
 using Going.UI.Dialogs;
 using Going.UI.Enums;
 using Going.UI.Extensions;
+using Going.UI.Gudx;
 using Going.UI.ImageCanvas;
 using Going.UI.Json;
 using Going.UI.Managers;
@@ -59,10 +60,12 @@ namespace Going.UI.Design
         /// <summary>
         /// 디자인에 포함된 페이지 딕셔너리를 가져옵니다. 키는 페이지 이름입니다.
         /// </summary>
+        [GoChilds]
         [JsonInclude] public Dictionary<string, GoPage> Pages { get; private set; } = [];
         /// <summary>
         /// 디자인에 포함된 윈도우 딕셔너리를 가져옵니다. 키는 윈도우 이름입니다.
         /// </summary>
+        [GoChilds]
         [JsonInclude] public Dictionary<string, GoWindow> Windows { get; private set; } = [];
         [JsonInclude] private Dictionary<string, List<SKImage>> Images { get; } = new(StringComparer.OrdinalIgnoreCase);
         [JsonInclude] private Dictionary<string, List<byte[]>> Fonts { get; } = new(StringComparer.OrdinalIgnoreCase);
