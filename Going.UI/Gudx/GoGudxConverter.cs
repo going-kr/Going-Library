@@ -1009,6 +1009,14 @@ public static class GoGudxConverter
         if (targetType == typeof(float)) return float.Parse(value, CultureInfo.InvariantCulture);
         if (targetType == typeof(double)) return double.Parse(value, CultureInfo.InvariantCulture);
         if (targetType == typeof(decimal)) return decimal.Parse(value, CultureInfo.InvariantCulture);
+        // F6: additional primitive integer types
+        if (targetType == typeof(byte)) return byte.Parse(value, CultureInfo.InvariantCulture);
+        if (targetType == typeof(sbyte)) return sbyte.Parse(value, CultureInfo.InvariantCulture);
+        if (targetType == typeof(short)) return short.Parse(value, CultureInfo.InvariantCulture);
+        if (targetType == typeof(ushort)) return ushort.Parse(value, CultureInfo.InvariantCulture);
+        if (targetType == typeof(uint)) return uint.Parse(value, CultureInfo.InvariantCulture);
+        if (targetType == typeof(long)) return long.Parse(value, CultureInfo.InvariantCulture);
+        if (targetType == typeof(ulong)) return ulong.Parse(value, CultureInfo.InvariantCulture);
         if (targetType == typeof(Guid)) return Guid.Parse(value);  // F3: Guid scalar parsing
         if (targetType == typeof(TimeSpan))  // F4: TimeSpan scalar parsing
             return TimeSpan.Parse(value, CultureInfo.InvariantCulture);
