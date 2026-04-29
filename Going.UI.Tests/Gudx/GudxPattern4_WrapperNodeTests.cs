@@ -1,6 +1,8 @@
 using Going.UI.Containers;
 using Going.UI.Controls;
 using Going.UI.Gudx;
+using System.Linq;
+using System.Xml.Linq;
 using Xunit;
 
 namespace Going.UI.Tests.Gudx;
@@ -53,11 +55,23 @@ public class GudxPattern4_WrapperNodeTests
         grid.Childrens.Add(new GoButton { Name = "btnD" }, 0, 1);  // row=1 child
 
         var xml = GoGudxConverter.SerializeControl(grid);
+        var root = System.Xml.Linq.XElement.Parse(xml);
 
-        Assert.Contains("<GoGridLayoutPanelRow", xml);
-        Assert.Contains("Height=\"50%\"", xml);
-        Assert.Contains("Name=\"btnA\"", xml);
-        Assert.Contains("Name=\"btnD\"", xml);
+        // Root is GoGridLayoutPanel
+        Assert.Equal("GoGridLayoutPanel", root.Name.LocalName);
+
+        // Two row wrappers as direct children
+        var rows = root.Elements("GoGridLayoutPanelRow").ToList();
+        Assert.Equal(2, rows.Count);
+
+        // btnA is direct child of first row, NOT of root
+        Assert.Empty(root.Elements("GoButton"));  // no buttons at root level
+        var btnAInRow0 = rows[0].Elements("GoButton").FirstOrDefault(e => e.Attribute("Name")?.Value == "btnA");
+        Assert.NotNull(btnAInRow0);
+
+        // btnD is direct child of second row
+        var btnDInRow1 = rows[1].Elements("GoButton").FirstOrDefault(e => e.Attribute("Name")?.Value == "btnD");
+        Assert.NotNull(btnDInRow1);
     }
 
     [Fact]
