@@ -59,6 +59,8 @@ public static class GoGudxConverter
     /// Tag name is derived from the runtime type. This is the generalized write entry point.
     /// Made public so tests (and future Task 12 high-level API) can call it directly.
     /// </summary>
+    /// <param name="obj">The object to serialize.</param>
+    /// <param name="explicitTagName">Optional XML tag name override. When omitted, the runtime type's class name is used. Used by B1 dispatch to map property names (e.g., LeftSideBar) or [GudxTagName] overrides (e.g., Theme) to XML tags.</param>
     /// <remarks>
     /// PROVISIONAL: This API is exposed for tests and Task 12's GoDesign.SerializeGudx wiring.
     /// External callers should prefer the higher-level GoDesign.SerializeGudx(masterPath) once Task 12 lands.
@@ -405,7 +407,11 @@ public static class GoGudxConverter
                 PopulateAny(childElem, instance2);
                 // Use reflection to set even private setters.
                 var setter = childProp.GetSetMethod(nonPublic: true);
-                setter?.Invoke(instance, new[] { instance2 });
+                if (setter == null)
+                    throw new InvalidOperationException(
+                        $"[GoChilds] B1 property {instance.GetType().Name}.{childProp.Name} has no setter and was null at read time. " +
+                        $"Either initialize a default value or add a (private) setter.");
+                setter.Invoke(instance, new[] { instance2 });
             }
             return;
         }
