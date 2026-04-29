@@ -73,7 +73,12 @@ public static class GoGudxConverter
                 {
                     var childElem = WriteElement(child);
                     if (tlc.Indexes.TryGetValue(child.Id, out var idx))
-                        childElem.SetAttributeValue("Cell", $"{idx.Column},{idx.Row}");
+                    {
+                        var cell = (idx.ColSpan == 1 && idx.RowSpan == 1)
+                            ? $"{idx.Column},{idx.Row}"
+                            : $"{idx.Column},{idx.Row},{idx.ColSpan},{idx.RowSpan}";
+                        childElem.SetAttributeValue("Cell", cell);
+                    }
                     elem.Add(childElem);
                 }
             }
@@ -124,9 +129,11 @@ public static class GoGudxConverter
                     if (cellAttr != null)
                     {
                         var parts = cellAttr.Value.Split(',');
-                        int col = int.Parse(parts[0], CultureInfo.InvariantCulture);
-                        int row = int.Parse(parts[1], CultureInfo.InvariantCulture);
-                        coll.Add(c, col, row);
+                        var col = int.Parse(parts[0], CultureInfo.InvariantCulture);
+                        var row = int.Parse(parts[1], CultureInfo.InvariantCulture);
+                        var colSpan = parts.Length >= 4 ? int.Parse(parts[2], CultureInfo.InvariantCulture) : 1;
+                        var rowSpan = parts.Length >= 4 ? int.Parse(parts[3], CultureInfo.InvariantCulture) : 1;
+                        coll.Add(c, col, row, colSpan, rowSpan);
                     }
                     else
                     {
