@@ -210,7 +210,8 @@ public static class GoGudxConverter
             var rel = $"Pages/{kvp.Key}.gudx";
             masterElem.Add(new XElement("GoPageRef", new XAttribute("File", rel)));
 
-            var pageElem = WriteAny(kvp.Value);
+            // F2: use WriteElement so the page's Id is emitted as an attribute.
+            var pageElem = WriteElement(kvp.Value);
             pageElem.SetAttributeValue("Name", kvp.Key);  // dict key as Name attribute
             File.WriteAllText(Path.Combine(pagesDir, kvp.Key + ".gudx"), pageElem.ToString());
         }
@@ -220,7 +221,8 @@ public static class GoGudxConverter
             var rel = $"Windows/{kvp.Key}.gudx";
             masterElem.Add(new XElement("GoWindowRef", new XAttribute("File", rel)));
 
-            var windowElem = WriteAny(kvp.Value);
+            // F2: use WriteElement so the window's Id is emitted as an attribute.
+            var windowElem = WriteElement(kvp.Value);
             windowElem.SetAttributeValue("Name", kvp.Key);
             File.WriteAllText(Path.Combine(windowsDir, kvp.Key + ".gudx"), windowElem.ToString());
         }
@@ -470,7 +472,18 @@ public static class GoGudxConverter
         // B1: single-child object (Task 9) — LAST branch (most permissive predicate).
         // Tag = [GudxTagName] override if present, else property name (not class name).
         var tagName = childProp.GetCustomAttribute<GudxTagNameAttribute>()?.Name ?? childProp.Name;
-        elem.Add(WriteAny(value, tagName));
+        var childElem = WriteAny(value, tagName);
+        // F2: if value is IGoControl, emit Id as system attribute for round-trip preservation.
+        if (value is IGoControl ctrl)
+        {
+            var idProp = ctrl.GetType().GetProperty("Id");
+            if (idProp != null && idProp.PropertyType == typeof(Guid))
+            {
+                var id = (Guid)(idProp.GetValue(ctrl) ?? Guid.Empty);
+                if (id != Guid.Empty) childElem.SetAttributeValue("Id", id.ToString());
+            }
+        }
+        elem.Add(childElem);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -745,6 +758,9 @@ public static class GoGudxConverter
         if (existing != null)
         {
             PopulateAny(childElem, existing);
+            // F2: if existing is IGoControl, restore Id from XML attribute.
+            if (existing is IGoControl existingCtrl)
+                RestoreIdFromAttr(childElem, existingCtrl);
             // If also writable (private set), we can leave it as-is (already mutated).
             return;
         }
@@ -754,6 +770,9 @@ public static class GoGudxConverter
         if (instance2 != null)
         {
             PopulateAny(childElem, instance2);
+            // F2: if instance2 is IGoControl, restore Id from XML attribute.
+            if (instance2 is IGoControl ctrl2)
+                RestoreIdFromAttr(childElem, ctrl2);
             // Use reflection to set even private setters.
             var setter = childProp.GetSetMethod(nonPublic: true);
             if (setter == null)
@@ -762,6 +781,20 @@ public static class GoGudxConverter
                     $"Either initialize a default value or add a (private) setter.");
             setter.Invoke(instance, new[] { instance2 });
         }
+    }
+
+    /// <summary>
+    /// F2 helper: restores the exact Guid from an "Id" XML attribute onto an IGoControl instance.
+    /// Used after PopulateAny to override the Activator's auto-generated Id.
+    /// </summary>
+    private static void RestoreIdFromAttr(XElement elem, IGoControl ctrl)
+    {
+        var idAttr = elem.Attribute("Id");
+        if (idAttr == null || !Guid.TryParse(idAttr.Value, out var xmlId)) return;
+        var idProp = ctrl.GetType().GetProperty("Id");
+        var setter = idProp?.GetSetMethod(nonPublic: true);
+        try { setter?.Invoke(ctrl, new object[] { xmlId }); }
+        catch { /* best-effort */ }
     }
 
     // ─────────────────────────────────────────────────────────────────────────
