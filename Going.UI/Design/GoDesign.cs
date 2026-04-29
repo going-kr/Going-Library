@@ -363,6 +363,21 @@ namespace Going.UI.Design
         }
         #endregion
 
+        #region Gudx
+        /// <summary>
+        /// Serializes this GoDesign to a Master.gudx file plus Pages/&lt;name&gt;.gudx and Windows/&lt;name&gt;.gudx files.
+        /// Master file contains design properties + theme + resource refs + GoPageRef/GoWindowRef pointers.
+        /// </summary>
+        public void SerializeGudx(string masterPath)
+            => Going.UI.Gudx.GoGudxConverter.SerializeGoDesignToFiles(this, masterPath);
+
+        /// <summary>
+        /// Loads a GoDesign from a Master.gudx file, resolving GoPageRef/GoWindowRef references.
+        /// </summary>
+        public static GoDesign? DeserializeGudx(string masterPath)
+            => Going.UI.Gudx.GoGudxConverter.DeserializeGoDesignFromFiles(masterPath);
+        #endregion
+
         #region Fire
         #region Init
         /// <summary>

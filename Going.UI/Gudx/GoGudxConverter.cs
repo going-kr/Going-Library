@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json.Serialization;
@@ -88,7 +89,7 @@ public static class GoGudxConverter
     /// PROVISIONAL: This API is exposed for tests and Task 12's GoDesign.SerializeGudx wiring.
     /// External callers should prefer the higher-level GoDesign.SerializeGudx(masterPath) once Task 12 lands.
     /// </remarks>
-    public static XElement WriteAny(object obj, string? explicitTagName = null)
+    public static XElement WriteAny(object obj, string? explicitTagName = null, ISet<string>? skipChildren = null)
     {
         var type = obj.GetType();
         var tagName = explicitTagName ?? TypeTagName(type);
@@ -115,6 +116,9 @@ public static class GoGudxConverter
         // P2/P3/P4/P5: walk [GoChilds] properties.
         foreach (var childProp in childPropsList)
         {
+            // Skip explicitly excluded children (Task 12 Master split)
+            if (skipChildren != null && skipChildren.Contains(childProp.Name)) continue;
+
             var value = childProp.GetValue(obj);
             if (value == null) continue;
 
@@ -144,6 +148,93 @@ public static class GoGudxConverter
         if (elem.Name.LocalName != "GoDesign") return null;
         var d = new GoDesign();
         PopulateAny(elem, d);
+        return d;
+    }
+
+    /// <summary>
+    /// Serializes a GoDesign across multiple .gudx files:
+    ///   - {masterPath} contains GoDesign root + theme + bars + &lt;GoPageRef/&gt;/&lt;GoWindowRef/&gt; references
+    ///   - Pages/&lt;name&gt;.gudx (relative to masterPath's directory) — one per GoPage
+    ///   - Windows/&lt;name&gt;.gudx — one per GoWindow
+    /// </summary>
+    public static void SerializeGoDesignToFiles(GoDesign d, string masterPath)
+    {
+        var dir = Path.GetDirectoryName(masterPath)!;
+        if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+
+        var pagesDir = Path.Combine(dir, "Pages");
+        var windowsDir = Path.Combine(dir, "Windows");
+        if (d.Pages.Count > 0) Directory.CreateDirectory(pagesDir);
+        if (d.Windows.Count > 0) Directory.CreateDirectory(windowsDir);
+
+        // Master: emit GoDesign root with Pages/Windows dicts SUPPRESSED (replaced by refs below)
+        var skip = new HashSet<string>(StringComparer.Ordinal) { "Pages", "Windows" };
+        var masterElem = WriteAny(d, skipChildren: skip);
+
+        foreach (var kvp in d.Pages)
+        {
+            var rel = $"Pages/{kvp.Key}.gudx";
+            masterElem.Add(new XElement("GoPageRef", new XAttribute("File", rel)));
+
+            var pageElem = WriteAny(kvp.Value);
+            pageElem.SetAttributeValue("Name", kvp.Key);  // dict key as Name attribute
+            File.WriteAllText(Path.Combine(pagesDir, kvp.Key + ".gudx"), pageElem.ToString());
+        }
+
+        foreach (var kvp in d.Windows)
+        {
+            var rel = $"Windows/{kvp.Key}.gudx";
+            masterElem.Add(new XElement("GoWindowRef", new XAttribute("File", rel)));
+
+            var windowElem = WriteAny(kvp.Value);
+            windowElem.SetAttributeValue("Name", kvp.Key);
+            File.WriteAllText(Path.Combine(windowsDir, kvp.Key + ".gudx"), windowElem.ToString());
+        }
+
+        File.WriteAllText(masterPath, masterElem.ToString());
+    }
+
+    /// <summary>
+    /// Loads a GoDesign from a Master.gudx file, resolving GoPageRef/GoWindowRef references.
+    /// </summary>
+    public static GoDesign? DeserializeGoDesignFromFiles(string masterPath)
+    {
+        if (!File.Exists(masterPath)) return null;
+
+        var dir = Path.GetDirectoryName(masterPath)!;
+        var masterElem = XElement.Parse(File.ReadAllText(masterPath));
+
+        var d = new GoDesign();
+        var skip = new HashSet<string>(StringComparer.Ordinal) { "Pages", "Windows" };
+        PopulateAny(masterElem, d, skipChildren: skip);
+
+        foreach (var refElem in masterElem.Elements("GoPageRef"))
+        {
+            var file = refElem.Attribute("File")?.Value
+                ?? throw new FormatException("GoPageRef missing File attribute");
+            var pagePath = Path.Combine(dir, file.Replace('/', Path.DirectorySeparatorChar));
+            var pageElem = XElement.Parse(File.ReadAllText(pagePath));
+            var page = ReadElement(pageElem) as GoPage
+                ?? throw new FormatException($"Page file {file} root is not <GoPage>");
+            // Use the Name attribute as the dict key (set during serialize)
+            var name = pageElem.Attribute("Name")?.Value;
+            if (!string.IsNullOrEmpty(name) && page.Name == null) page.Name = name;
+            if (page.Name != null) d.AddPage(page);
+        }
+
+        foreach (var refElem in masterElem.Elements("GoWindowRef"))
+        {
+            var file = refElem.Attribute("File")?.Value
+                ?? throw new FormatException("GoWindowRef missing File attribute");
+            var windowPath = Path.Combine(dir, file.Replace('/', Path.DirectorySeparatorChar));
+            var windowElem = XElement.Parse(File.ReadAllText(windowPath));
+            var window = ReadElement(windowElem) as GoWindow
+                ?? throw new FormatException($"Window file {file} root is not <GoWindow>");
+            var name = windowElem.Attribute("Name")?.Value;
+            if (!string.IsNullOrEmpty(name) && window.Name == null) window.Name = name;
+            if (window.Name != null) d.Windows[window.Name] = window;
+        }
+
         return d;
     }
 
@@ -354,7 +445,7 @@ public static class GoGudxConverter
     /// Handles P1 scalar attributes and [GoChilds] child dispatching.
     /// Works for IGoControl and non-IGoControl types (GoDesign, GoPage, GoWindow, wrappers).
     /// </summary>
-    internal static void PopulateAny(XElement elem, object instance)
+    internal static void PopulateAny(XElement elem, object instance, ISet<string>? skipChildren = null)
     {
         var type = instance.GetType();
 
@@ -379,6 +470,9 @@ public static class GoGudxConverter
         // P2/P3/P4/P5: populate [GoChilds] properties from child elements.
         foreach (var childProp in childPropsList)
         {
+            // Skip explicitly excluded children (Task 12 Master split)
+            if (skipChildren != null && skipChildren.Contains(childProp.Name)) continue;
+
             // Skip wrappers that are nest-targets — handled via the cells dispatch
             if (childProp.GetCustomAttribute<GoChildWrappersAttribute>() != null
                 && nestedTargets.Contains(childProp.Name))
