@@ -2,6 +2,7 @@ using Going.UI.Collections;
 using Going.UI.Datas;
 using Going.UI.Enums;
 using Going.UI.Extensions;
+using Going.UI.Gudx;
 using Going.UI.Themes;
 using Going.UI.Tools;
 using Going.UI.Utils;
@@ -60,6 +61,7 @@ namespace Going.UI.Controls
         /// <summary>
         /// 메뉴 항목 컬렉션을 가져오거나 설정합니다.
         /// </summary>
+        [GoChildWrappers]
         [GoProperty(PCategory.Control, 9)] public ObservableList<GoMenuItem> Menus { get; set; } = [];
 
         /// <summary>

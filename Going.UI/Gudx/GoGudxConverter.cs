@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using System.Xml.Linq;
+using Going.UI.Collections;
 using Going.UI.Containers;
 using Going.UI.Controls;
 using Going.UI.Datas;
@@ -443,15 +444,36 @@ public static class GoGudxConverter
 
     private static void ReadP4_WrapperList(XElement elem, PropertyInfo childProp, object instance)
     {
-        // P4a: wrapper-typed collection (e.g. GoSwitchPanel.Pages : List<GoSubPage>)
         var pType = childProp.PropertyType;
-        var list = (System.Collections.IList)(childProp.GetValue(instance)
-                    ?? Activator.CreateInstance(pType)!);
+        var listObj = childProp.GetValue(instance) ?? Activator.CreateInstance(pType)!;
         var wrapperType = pType.GetGenericArguments()[0];
         var wrapperTagName = wrapperType.Name;
-        foreach (var childElem in elem.Elements(wrapperTagName))
-            list.Add(ReadWrapper(childElem, wrapperType));
-        if (childProp.CanWrite) childProp.SetValue(instance, list);
+
+        var genericDef = pType.GetGenericTypeDefinition();
+
+        if (genericDef == typeof(List<>))
+        {
+            // Standard List<T> — implements non-generic IList, fast path
+            var list = (System.Collections.IList)listObj;
+            foreach (var childElem in elem.Elements(wrapperTagName))
+                list.Add(ReadWrapper(childElem, wrapperType));
+        }
+        else if (genericDef == typeof(ObservableList<>))
+        {
+            // ObservableList<T> — implements IList<T> only, call Add(T) explicitly
+            var addMethod = pType.GetMethod("Add", new[] { wrapperType })
+                ?? throw new InvalidOperationException(
+                    $"ObservableList<{wrapperType.Name}> missing Add({wrapperType.Name}) method");
+            foreach (var childElem in elem.Elements(wrapperTagName))
+                addMethod.Invoke(listObj, new[] { ReadWrapper(childElem, wrapperType) });
+        }
+        else
+        {
+            throw new InvalidOperationException(
+                $"P4 wrapper list type {pType.Name} not supported (expected List<T> or ObservableList<T>)");
+        }
+
+        if (childProp.CanWrite) childProp.SetValue(instance, listObj);
     }
 
     private static void ReadP5_KeyedDict(XElement elem, PropertyInfo childProp, object instance)
