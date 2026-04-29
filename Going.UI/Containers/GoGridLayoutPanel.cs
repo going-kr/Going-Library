@@ -23,7 +23,8 @@ namespace Going.UI.Containers
         /// <summary>
         /// 그리드 행 정의 목록을 가져오거나 설정합니다. 각 행은 높이와 열 정의를 포함합니다.
         /// </summary>
-        // Rows is the wrapper container; Childrens (cell-indexed children) nests into rows by Row index.
+        // v1.2.1: Rows is independent metadata collection (P4 group <Rows>).
+        // Cell positions on children are pure attached Cell="col,row" attributes inside <Childrens> (P3 group).
         [GoProperty(PCategory.Control, 0)]
         [GoChildWrappers]
         public List<GoGridLayoutPanelRow> Rows { get; set; } = [];
@@ -31,7 +32,7 @@ namespace Going.UI.Containers
         /// <summary>
         /// 그리드 레이아웃에 배치된 자식 컨트롤 컬렉션을 가져옵니다.
         /// </summary>
-        [GoChildCells(NestInto = nameof(Rows))]
+        [GoChildCells]
         [JsonInclude] public override GoGridLayoutControlCollection Childrens { get; } = [];
         #endregion
 

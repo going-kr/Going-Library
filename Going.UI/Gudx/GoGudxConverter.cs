@@ -138,30 +138,14 @@ public static class GoGudxConverter
             if (s != null) elem.SetAttributeValue(prop.Name, s);
         }
 
-        // Identify wrappers that are nest-targets — they're emitted via the nested cells dispatch, not standalone.
-        var childPropsList = ChildProperties(type).ToList();
-        var nestedTargets = new HashSet<string>(StringComparer.Ordinal);
-        foreach (var p in childPropsList)
+        // P2/P3/P4/P5/B1/B2: walk [GoChild*] properties.
+        foreach (var childProp in ChildProperties(type))
         {
-            var cellsAttr = p.GetCustomAttribute<GoChildCellsAttribute>();
-            if (cellsAttr?.NestInto != null) nestedTargets.Add(cellsAttr.NestInto);
-        }
-
-        // P2/P3/P4/P5: walk [GoChilds] properties.
-        foreach (var childProp in childPropsList)
-        {
-            // Skip explicitly excluded children (Task 12 Master split)
+            // Skip explicitly excluded children (Master split: skips Pages/Windows/Images/Fonts on master serialize)
             if (skipChildren != null && skipChildren.Contains(childProp.Name)) continue;
 
             var value = childProp.GetValue(obj);
             if (value == null) continue;
-
-            // Skip wrappers that are nest-targets — handled via the cells dispatch
-            if (childProp.GetCustomAttribute<GoChildWrappersAttribute>() != null
-                && nestedTargets.Contains(childProp.Name))
-            {
-                continue;
-            }
 
             DispatchChildWrite(elem, childProp, value, obj);
         }
@@ -377,11 +361,7 @@ public static class GoGudxConverter
         }
         if (childProp.GetCustomAttribute<GoChildCellsAttribute>() != null)
         {
-            var cellsAttr = childProp.GetCustomAttribute<GoChildCellsAttribute>()!;
-            if (cellsAttr.NestInto != null)
-                WriteP3_CellIndexed_NestedIn(elem, childProp, value, parentInstance, cellsAttr.NestInto);
-            else
-                WriteP3_CellIndexed(elem, childProp, value);
+            WriteP3_CellIndexed(elem, childProp, value);
             return;
         }
         if (childProp.GetCustomAttribute<GoChildWrappersAttribute>() != null)
@@ -437,87 +417,6 @@ public static class GoGudxConverter
             groupElem.Add(childElem);
         }
         elem.Add(groupElem);
-    }
-
-    internal static void WriteP3_CellIndexed_NestedIn(
-        XElement elem,
-        PropertyInfo cellsProp,
-        object cellsValue,
-        object parentInstance,
-        string wrapperPropName)
-    {
-        var wrapperProp = parentInstance.GetType().GetProperty(wrapperPropName)
-            ?? throw new InvalidOperationException(
-                $"[GoChildCells(NestInto = \"{wrapperPropName}\")] target property not found on {parentInstance.GetType().Name}");
-        var wrappers = (System.Collections.IList)(wrapperProp.GetValue(parentInstance)
-            ?? throw new InvalidOperationException(
-                $"[GoChildCells(NestInto = \"{wrapperPropName}\")] target list is null"));
-
-        // Emit each wrapper as <WrapperType ...>; nest cells with matching Row index inside.
-        var collection = cellsValue as GoGridLayoutControlCollection
-            ?? throw new InvalidOperationException(
-                $"[GoChildCells(NestInto)] currently supports GoGridLayoutControlCollection only; got {cellsValue.GetType().Name}");
-
-        for (int rowIdx = 0; rowIdx < wrappers.Count; rowIdx++)
-        {
-            var rowElem = WriteWrapper(wrappers[rowIdx]!);
-            foreach (var child in collection.Controls)
-            {
-                if (collection.Indexes.TryGetValue(child.Id, out var idx) && idx.Row == rowIdx)
-                {
-                    var childElem = WriteElement(child);
-                    childElem.SetAttributeValue("Cell", $"{idx.Column},{idx.Row}");
-                    rowElem.Add(childElem);
-                }
-            }
-            elem.Add(rowElem);
-        }
-    }
-
-    internal static void ReadP3_CellIndexed_NestedIn(
-        XElement elem,
-        PropertyInfo cellsProp,
-        object instance,
-        string wrapperPropName)
-    {
-        var wrapperProp = instance.GetType().GetProperty(wrapperPropName)
-            ?? throw new InvalidOperationException(
-                $"[GoChildCells(NestInto = \"{wrapperPropName}\")] target property not found on {instance.GetType().Name}");
-        var wrappers = (System.Collections.IList)(wrapperProp.GetValue(instance)
-            ?? Activator.CreateInstance(wrapperProp.PropertyType)!);
-
-        var wrapperType = wrapperProp.PropertyType.GetGenericArguments()[0];
-        var wrapperTagName = wrapperType.Name;
-
-        var collection = (GoGridLayoutControlCollection)(cellsProp.GetValue(instance)
-            ?? new GoGridLayoutControlCollection());
-
-        int rowIdx = 0;
-        foreach (var rowElem in elem.Elements(wrapperTagName))
-        {
-            var wrapper = ReadWrapper(rowElem, wrapperType);
-            wrappers.Add(wrapper);
-
-            foreach (var childElem in rowElem.Elements())
-            {
-                // Skip nested wrapper-type tags (defensive — not expected here)
-                if (childElem.Name.LocalName == wrapperTagName) continue;
-
-                var c = ReadElement(childElem);
-                var cell = childElem.Attribute("Cell")?.Value;
-                if (cell != null)
-                {
-                    var parts = cell.Split(',');
-                    var col = int.Parse(parts[0], System.Globalization.CultureInfo.InvariantCulture);
-                    // ignore parts[1] — Row is implicit from rowIdx
-                    collection.Add(c, col, rowIdx);
-                }
-            }
-            rowIdx++;
-        }
-
-        if (wrapperProp.CanWrite) wrapperProp.SetValue(instance, wrappers);
-        if (cellsProp.CanWrite) cellsProp.SetValue(instance, collection);
     }
 
     private static void WriteP4_WrapperList(XElement elem, PropertyInfo childProp, object value)
@@ -641,27 +540,11 @@ public static class GoGudxConverter
             if (parsed != null) prop.SetValue(instance, parsed);
         }
 
-        // Identify wrappers that are nest-targets — they're read via the nested cells dispatch, not standalone.
-        var childPropsList = ChildProperties(type).ToList();
-        var nestedTargets = new HashSet<string>(StringComparer.Ordinal);
-        foreach (var p in childPropsList)
+        // P2/P3/P4/P5/B1/B2: populate [GoChild*] properties from child elements.
+        foreach (var childProp in ChildProperties(type))
         {
-            var cellsAttr = p.GetCustomAttribute<GoChildCellsAttribute>();
-            if (cellsAttr?.NestInto != null) nestedTargets.Add(cellsAttr.NestInto);
-        }
-
-        // P2/P3/P4/P5: populate [GoChilds] properties from child elements.
-        foreach (var childProp in childPropsList)
-        {
-            // Skip explicitly excluded children (Task 12 Master split)
+            // Skip explicitly excluded children (Master split: skips Pages/Windows/Images/Fonts on master deserialize)
             if (skipChildren != null && skipChildren.Contains(childProp.Name)) continue;
-
-            // Skip wrappers that are nest-targets — handled via the cells dispatch
-            if (childProp.GetCustomAttribute<GoChildWrappersAttribute>() != null
-                && nestedTargets.Contains(childProp.Name))
-            {
-                continue;
-            }
             DispatchChildRead(elem, childProp, instance);
         }
     }
@@ -678,11 +561,7 @@ public static class GoGudxConverter
         }
         if (childProp.GetCustomAttribute<GoChildCellsAttribute>() != null)
         {
-            var cellsAttr = childProp.GetCustomAttribute<GoChildCellsAttribute>()!;
-            if (cellsAttr.NestInto != null)
-                ReadP3_CellIndexed_NestedIn(elem, childProp, instance, cellsAttr.NestInto);
-            else
-                ReadP3_CellIndexed(elem, childProp, instance);
+            ReadP3_CellIndexed(elem, childProp, instance);
             return;
         }
         if (childProp.GetCustomAttribute<GoChildWrappersAttribute>() != null)
