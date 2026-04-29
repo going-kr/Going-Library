@@ -27,7 +27,7 @@ namespace Going.UI.Design
         /// <summary>
         /// 배경 이미지 이름을 가져오거나 설정합니다.
         /// </summary>
-        public string? BackgroundImage { get; set; }
+        [GoProperty(PCategory.Basic, 5)] public string? BackgroundImage { get; set; }
         #endregion
 
         #region Constructor

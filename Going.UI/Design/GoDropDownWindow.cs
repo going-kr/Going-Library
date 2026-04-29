@@ -26,11 +26,11 @@ namespace Going.UI.Design
         /// <summary>
         /// 윈도우 배경색을 가져오거나 설정합니다.
         /// </summary>
-        public string WindowColor { get; set; } = "Window";
+        [GoProperty(PCategory.Control, 0)] public string WindowColor { get; set; } = "Window";
         /// <summary>
         /// 윈도우 테두리 색상을 가져오거나 설정합니다.
         /// </summary>
-        public string BorderColor { get; set; } = "WindowBorder";
+        [GoProperty(PCategory.Control, 1)] public string BorderColor { get; set; } = "WindowBorder";
         /// <summary>
         /// 윈도우 모서리 둥글기 타입을 가져오거나 설정합니다.
         /// </summary>
