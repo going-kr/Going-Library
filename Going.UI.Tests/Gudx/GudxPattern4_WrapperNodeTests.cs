@@ -124,4 +124,47 @@ public class GudxPattern4_WrapperNodeTests
         Assert.Single(rows[0].Elements("GoButton"));
         Assert.Empty(root.Elements("GoButton"));  // not at root
     }
+
+    [Fact]
+    public void GoGridLayoutPanel_NestInto_multiRowMultiCell_roundTrip()
+    {
+        // 2 rows × 3+4 cells, ensures bucketing by Row index works for non-trivial layouts.
+        var grid = new GoGridLayoutPanel { Name = "grid" };
+        grid.Rows.Add(new GoGridLayoutPanelRow { Height = "50%", Columns = { "33%", "33%", "34%" } });
+        grid.Rows.Add(new GoGridLayoutPanelRow { Height = "50%", Columns = { "25%", "25%", "25%", "25%" } });
+        // Row 0 — 3 buttons
+        grid.Childrens.Add(new GoButton { Name = "r0c0" }, 0, 0);
+        grid.Childrens.Add(new GoButton { Name = "r0c1" }, 1, 0);
+        grid.Childrens.Add(new GoButton { Name = "r0c2" }, 2, 0);
+        // Row 1 — 4 buttons
+        grid.Childrens.Add(new GoButton { Name = "r1c0" }, 0, 1);
+        grid.Childrens.Add(new GoButton { Name = "r1c1" }, 1, 1);
+        grid.Childrens.Add(new GoButton { Name = "r1c2" }, 2, 1);
+        grid.Childrens.Add(new GoButton { Name = "r1c3" }, 3, 1);
+
+        var xml = GoGudxConverter.SerializeControl(grid);
+        var root = XElement.Parse(xml);
+
+        // Structural: 2 rows, each containing the right number of children
+        var rows = root.Elements("GoGridLayoutPanelRow").ToList();
+        Assert.Equal(2, rows.Count);
+        Assert.Equal(3, rows[0].Elements("GoButton").Count());
+        Assert.Equal(4, rows[1].Elements("GoButton").Count());
+        Assert.Empty(root.Elements("GoButton")); // no buttons at root
+
+        // Round-trip: deserialize and verify Indexes are populated
+        var restored = (GoGridLayoutPanel)GoGudxConverter.DeserializeControl(xml);
+        Assert.Equal(2, restored.Rows.Count);
+        Assert.Equal(7, restored.Childrens.Controls.Count);
+        foreach (var c in restored.Childrens.Controls)
+        {
+            Assert.True(restored.Childrens.Indexes.TryGetValue(c.Id, out var idx));
+            var name = ((GoButton)c).Name;
+            // names are "r{row}c{col}"
+            var expectedRow = int.Parse(name!.Substring(1, 1));
+            var expectedCol = int.Parse(name.Substring(3, 1));
+            Assert.Equal(expectedRow, idx.Row);
+            Assert.Equal(expectedCol, idx.Column);
+        }
+    }
 }
