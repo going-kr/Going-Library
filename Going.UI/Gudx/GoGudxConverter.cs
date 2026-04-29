@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Text.Json.Serialization;
 using System.Xml.Linq;
 using Going.UI.Controls;
 using Going.UI.Json;
@@ -18,6 +19,13 @@ namespace Going.UI.Gudx;
 /// </summary>
 public static class GoGudxConverter
 {
+    static GoGudxConverter()
+    {
+        // Force GoJsonConverter's static ctor to run so ControlTypes is populated.
+        System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(
+            typeof(GoJsonConverter).TypeHandle);
+    }
+
     public static string SerializeControl(IGoControl control)
     {
         var elem = WriteElement(control);
@@ -79,6 +87,7 @@ public static class GoGudxConverter
     {
         // Properties that are NOT marked [GoChilds] AND have a settable scalar/special type.
         return t.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Where(p => p.GetCustomAttribute<JsonIgnoreAttribute>() == null)
                 .Where(p => p.GetCustomAttribute<GoChildsAttribute>() == null)
                 .Where(p => p.CanRead && p.CanWrite)
                 .Where(p => IsScalar(p.PropertyType));

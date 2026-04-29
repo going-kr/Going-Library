@@ -24,6 +24,10 @@ public class GudxPattern1_AttributeTests
         Assert.Contains("FontSize=\"14\"", xml);
         Assert.Contains("ButtonColor=\"Good\"", xml);
         Assert.StartsWith("<GoButton", xml);
+
+        // Negative assertions: [JsonIgnore] properties should NOT be emitted as standalone attributes
+        Assert.DoesNotContain(" Width=\"", xml);
+        Assert.DoesNotContain(" Tag=\"", xml);
     }
 
     [Fact]
