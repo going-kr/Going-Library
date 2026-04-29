@@ -714,28 +714,11 @@ public static class GoGudxConverter
 
     private static IEnumerable<PropertyInfo> ScalarProperties(Type t)
     {
-        var props = t.GetProperties(BindingFlags.Public | BindingFlags.Instance);
-
-        // GoControl subclasses: inclusion-only via [GoProperty] family.
-        // GoSizePropertyAttribute, GoSizesPropertyAttribute, etc. all inherit GoPropertyAttribute,
-        // so inherit:true catches every derivative in one filter.
-        // [JsonIgnore] retained to exclude runtime-derived aliases (X/Y/Width/Height/Left/Top etc.)
-        // that carry [GoProperty] but are reconstructed from Bounds at runtime.
-        if (typeof(GoControl).IsAssignableFrom(t))
-        {
-            return props
+        return t.GetProperties(BindingFlags.Public | BindingFlags.Instance)
                 .Where(p => p.GetCustomAttribute<GoPropertyAttribute>(inherit: true) != null)
                 .Where(p => p.GetCustomAttribute<JsonIgnoreAttribute>() == null)
                 .Where(p => p.CanRead && p.CanWrite)
                 .Where(p => IsScalar(p.PropertyType));
-        }
-
-        // Non-GoControl types (GoTheme, wrapper POCOs, etc.): emit all readable/writable scalars
-        // that are not [JsonIgnore]. No [GoProperty] annotation is required for plain POCOs.
-        return props
-            .Where(p => p.GetCustomAttribute<JsonIgnoreAttribute>() == null)
-            .Where(p => p.CanRead && p.CanWrite)
-            .Where(p => IsScalar(p.PropertyType));
     }
 
     private static bool IsScalar(Type t)

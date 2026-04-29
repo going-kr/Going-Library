@@ -28,7 +28,7 @@ public class GudxPattern1_AttributeTests
         // Negative assertions: [JsonIgnore] properties should NOT be emitted as standalone attributes
         Assert.DoesNotContain(" Width=\"", xml);
         Assert.DoesNotContain(" Tag=\"", xml);
-        Assert.DoesNotContain("Bounds=", xml);  // inclusion-only: Bounds has no [GoProperty] (R3)
+        Assert.Contains("Bounds=\"", xml);  // Bounds emits (free-positioning support)
     }
 
     [Fact]

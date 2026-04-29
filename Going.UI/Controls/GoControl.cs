@@ -113,9 +113,7 @@ namespace Going.UI.Controls
         [JsonIgnore] public float ScreenY => Parent != null && Parent is GoControl pc ? pc.ScreenY + Parent.PanelBounds.Top + Y : Y;
 
         /// <summary>컨트롤의 경계 영역</summary>
-        // v5 Gudx: Bounds is computed from layout cells (TableLayout/GridLayout) and is NOT a design-time scalar.
-        // Editor manipulates Bounds via drag-resize UI, not via the property panel.
-        public SKRect Bounds { get => bounds; set => bounds = value; }
+        [GoProperty(PCategory.Bounds, 0)] public SKRect Bounds { get => bounds; set => bounds = value; }
         /// <summary>컨트롤의 X 좌표 (왼쪽 위치)</summary>
         [GoProperty(PCategory.Bounds, 1), JsonIgnore]
         public float X
