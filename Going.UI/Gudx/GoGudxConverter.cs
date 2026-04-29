@@ -628,17 +628,6 @@ public static class GoGudxConverter
     }
 
     /// <summary>
-    /// Returns true when the type is a List&lt;TWrapper&gt; where TWrapper is a known non-IGoControl wrapper.
-    /// </summary>
-    private static bool IsWrapperList(Type t)
-    {
-        if (!t.IsGenericType) return false;
-        if (t.GetGenericTypeDefinition() != typeof(List<>)) return false;
-        var arg = t.GetGenericArguments()[0];
-        return WrapperTypes.ContainsValue(arg);
-    }
-
-    /// <summary>
     /// Returns true when the type is a Dictionary&lt;string, TValue&gt;.
     /// Sets valueType to the TValue type argument.
     /// </summary>
@@ -651,24 +640,6 @@ public static class GoGudxConverter
         if (args[0] != typeof(string)) return false;
         valueType = args[1];
         return true;
-    }
-
-    /// <summary>
-    /// Returns true when the type represents a single non-collection object (B1 pattern).
-    /// Excludes: primitives, strings, enums, decimal, IEnumerable types (collections),
-    /// and known SkiaSharp value types (SKColor, SKRect) that are handled as P1 scalars.
-    /// This is the most permissive predicate and MUST be the last branch in dispatch.
-    /// </summary>
-    private static bool IsSingleChildObject(Type t)
-    {
-        if (t.IsPrimitive || t == typeof(string) || t == typeof(decimal) || t.IsEnum) return false;
-        if (typeof(System.Collections.IEnumerable).IsAssignableFrom(t)) return false;
-        if (t == typeof(SkiaSharp.SKColor) || t == typeof(SkiaSharp.SKRect)) return false;
-        // Reference type (or nullable reference) — assume single-child object.
-        // Handles nullable T? by checking the underlying type.
-        var underlying = Nullable.GetUnderlyingType(t);
-        if (underlying != null) return IsSingleChildObject(underlying);
-        return t.IsClass;
     }
 
     private static IEnumerable<PropertyInfo> ScalarProperties(Type t)
