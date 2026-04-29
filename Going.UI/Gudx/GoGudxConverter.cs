@@ -371,7 +371,7 @@ public static class GoGudxConverter
         }
         if (childProp.GetCustomAttribute<GoChildMapAttribute>() != null)
         {
-            WriteP5_KeyedDict(elem, value);
+            WriteP5_KeyedDict(elem, childProp, value);
             return;
         }
         if (childProp.GetCustomAttribute<GoChildSingleAttribute>() != null)
@@ -431,9 +431,11 @@ public static class GoGudxConverter
         elem.Add(groupElem);
     }
 
-    private static void WriteP5_KeyedDict(XElement elem, object value)
+    private static void WriteP5_KeyedDict(XElement elem, PropertyInfo childProp, object value)
     {
-        // P5: keyed dictionary (e.g. GoDesign.Pages : Dictionary<string, GoPage>)
+        // P5 (v1.2.1+): keyed dictionary inside a property-name group element.
+        // e.g. GoDesign.Pages : Dictionary<string, GoPage> → <Pages><GoPage Name="..."/></Pages>.
+        var groupElem = new XElement(childProp.Name);
         foreach (System.Collections.DictionaryEntry kvp in (System.Collections.IDictionary)value)
         {
             if (kvp.Value == null) continue;
@@ -441,8 +443,9 @@ public static class GoGudxConverter
             var childElem = kvp.Value is IGoControl ctrl ? WriteElement(ctrl) : WriteAny(kvp.Value);
             // Overwrite Name attribute with the dictionary key to ensure round-trip fidelity.
             childElem.SetAttributeValue("Name", kvp.Key.ToString());
-            elem.Add(childElem);
+            groupElem.Add(childElem);
         }
+        elem.Add(groupElem);
     }
 
     private static void WriteB1_SingleChild(XElement elem, PropertyInfo childProp, object value)
@@ -689,20 +692,23 @@ public static class GoGudxConverter
 
     private static void ReadP5_KeyedDict(XElement elem, PropertyInfo childProp, object instance)
     {
-        // P5: keyed dictionary — TAG-FILTERED by value type's tag name (Task 7 review I-3).
-        // Each [GoChilds] dict property on a multi-property type (e.g. GoDesign.Pages +
-        // GoDesign.Windows) reads ONLY elements whose LocalName matches its value type.
-        // This prevents one property from consuming elements destined for another.
+        // P5 (v1.2.1+): keyed dictionary read from inside a property-name group element.
+        // The group ensures multiple [GoChildMap] properties on the same parent (e.g.
+        // GoDesign.Pages + GoDesign.Windows) don't collide — each lives in its own group.
+        // The v1.2.0 TAG-FILTERED workaround (elem.Elements(valueTagName)) is therefore
+        // dropped — we now walk all entries inside the group element.
+        var groupElem = elem.Element(childProp.Name);
+        if (groupElem == null) return;
+
         var pType = childProp.PropertyType;
         IsKeyedDict(pType, out var valueType);
         var dict = (System.Collections.IDictionary)(childProp.GetValue(instance)
                     ?? Activator.CreateInstance(pType)!);
-        var valueTagName = TypeTagName(valueType);
-        foreach (var childElem in elem.Elements(valueTagName))
+        foreach (var childElem in groupElem.Elements())
         {
             var key = childElem.Attribute("Name")?.Value
                 ?? throw new InvalidOperationException(
-                    $"P5 dict child <{valueTagName}> missing required Name attribute");
+                    $"P5 dict child <{childElem.Name.LocalName}> missing required Name attribute");
             object childInstance;
             if (typeof(IGoControl).IsAssignableFrom(valueType))
             {
