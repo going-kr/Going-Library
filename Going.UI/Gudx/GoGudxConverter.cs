@@ -190,6 +190,8 @@ public static class GoGudxConverter
     ///   - {masterPath} contains GoDesign root + theme + bars + &lt;GoPageRef/&gt;/&lt;GoWindowRef/&gt; references
     ///   - Pages/&lt;name&gt;.gudx (relative to masterPath's directory) — one per GoPage
     ///   - Windows/&lt;name&gt;.gudx — one per GoWindow
+    ///   - resources/{name}.png — one per GoDesign.Images entry (first SKImage encoded as PNG)
+    ///   - resources/fonts/{name}.ttf — one per GoDesign.Fonts entry (first byte[] written as TTF)
     /// </summary>
     public static void SerializeGoDesignToFiles(GoDesign d, string masterPath)
     {
@@ -201,8 +203,8 @@ public static class GoGudxConverter
         if (d.Pages.Count > 0) Directory.CreateDirectory(pagesDir);
         if (d.Windows.Count > 0) Directory.CreateDirectory(windowsDir);
 
-        // Master: emit GoDesign root with Pages/Windows dicts SUPPRESSED (replaced by refs below)
-        var skip = new HashSet<string>(StringComparer.Ordinal) { "Pages", "Windows" };
+        // Master: suppress Pages/Windows (replaced by refs) AND Images/Fonts (extracted to resources/).
+        var skip = new HashSet<string>(StringComparer.Ordinal) { "Pages", "Windows", "Images", "Fonts" };
         var masterElem = WriteAny(d, skipChildren: skip);
 
         foreach (var kvp in d.Pages)
@@ -227,11 +229,52 @@ public static class GoGudxConverter
             File.WriteAllText(Path.Combine(windowsDir, kvp.Key + ".gudx"), windowElem.ToString());
         }
 
+        // B2: Images — extract first SKImage per key as PNG under resources/
+        var images = d.GetImages();
+        if (images.Count > 0)
+        {
+            var resourcesDir = Path.Combine(dir, "resources");
+            Directory.CreateDirectory(resourcesDir);
+            foreach (var (name, list) in images)
+            {
+                if (list.Count == 0) continue;
+                var rel = $"resources/{name}.png";
+                var abs = Path.Combine(resourcesDir, name + ".png");
+                using (var data = list[0].Encode(SKEncodedImageFormat.Png, 100))
+                {
+                    if (data == null) continue;  // unencodable — skip (extreme edge case)
+                    File.WriteAllBytes(abs, data.ToArray());
+                }
+                masterElem.Add(new XElement("Image",
+                    new XAttribute("Name", name),
+                    new XAttribute("File", rel)));
+            }
+        }
+
+        // B2: Fonts — extract first byte[] per key as TTF under resources/fonts/
+        var fonts = d.GetFonts();
+        if (fonts.Count > 0)
+        {
+            var fontsDir = Path.Combine(dir, "resources", "fonts");
+            Directory.CreateDirectory(fontsDir);
+            foreach (var (name, list) in fonts)
+            {
+                if (list.Count == 0) continue;
+                var rel = $"resources/fonts/{name}.ttf";
+                var abs = Path.Combine(fontsDir, name + ".ttf");
+                File.WriteAllBytes(abs, list[0]);
+                masterElem.Add(new XElement("Font",
+                    new XAttribute("Name", name),
+                    new XAttribute("File", rel)));
+            }
+        }
+
         File.WriteAllText(masterPath, masterElem.ToString());
     }
 
     /// <summary>
-    /// Loads a GoDesign from a Master.gudx file, resolving GoPageRef/GoWindowRef references.
+    /// Loads a GoDesign from a Master.gudx file, resolving GoPageRef/GoWindowRef references
+    /// and loading Images/Fonts from the resources/ folder.
     /// </summary>
     public static GoDesign? DeserializeGoDesignFromFiles(string masterPath)
     {
@@ -241,7 +284,8 @@ public static class GoGudxConverter
         var masterElem = XElement.Parse(File.ReadAllText(masterPath));
 
         var d = new GoDesign();
-        var skip = new HashSet<string>(StringComparer.Ordinal) { "Pages", "Windows" };
+        // Suppress Images/Fonts dict population (handled below via <Image>/<Font> elements)
+        var skip = new HashSet<string>(StringComparer.Ordinal) { "Pages", "Windows", "Images", "Fonts" };
         PopulateAny(masterElem, d, skipChildren: skip);
 
         foreach (var refElem in masterElem.Elements("GoPageRef"))
@@ -269,6 +313,30 @@ public static class GoGudxConverter
             var name = windowElem.Attribute("Name")?.Value;
             if (!string.IsNullOrEmpty(name) && window.Name == null) window.Name = name;
             if (window.Name != null) d.Windows[window.Name] = window;
+        }
+
+        // B2: Images — load PNG files back via AddImage(name, byte[])
+        foreach (var imgElem in masterElem.Elements("Image"))
+        {
+            var name = imgElem.Attribute("Name")?.Value;
+            var file = imgElem.Attribute("File")?.Value;
+            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(file)) continue;
+            var abs = Path.Combine(dir, file.Replace('/', Path.DirectorySeparatorChar));
+            if (!File.Exists(abs)) continue;  // missing file — skip silently (round-trip resilience)
+            var data = File.ReadAllBytes(abs);
+            d.AddImage(name, data);
+        }
+
+        // B2: Fonts — load TTF files back via AddFont(name, byte[])
+        foreach (var fontElem in masterElem.Elements("Font"))
+        {
+            var name = fontElem.Attribute("Name")?.Value;
+            var file = fontElem.Attribute("File")?.Value;
+            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(file)) continue;
+            var abs = Path.Combine(dir, file.Replace('/', Path.DirectorySeparatorChar));
+            if (!File.Exists(abs)) continue;  // missing file — skip silently
+            var data = File.ReadAllBytes(abs);
+            d.AddFont(name, data);
         }
 
         return d;
@@ -333,7 +401,8 @@ public static class GoGudxConverter
         }
         if (childProp.GetCustomAttribute<GoChildResourceAttribute>() != null)
         {
-            // B2: deferred to Task 11. Suppress emission for now.
+            // B2: [GoChildResource]-marked dicts (Images/Fonts) are suppressed here via the skipChildren
+            // set in SerializeGoDesignToFiles. File extraction happens at the top level, not in dispatch.
             return;
         }
     }
@@ -623,7 +692,8 @@ public static class GoGudxConverter
         }
         if (childProp.GetCustomAttribute<GoChildResourceAttribute>() != null)
         {
-            // B2: deferred to Task 11. No-op read.
+            // B2: [GoChildResource]-marked dicts (Images/Fonts) are suppressed here via the skipChildren
+            // set in DeserializeGoDesignFromFiles. File loading happens at the top level, not in dispatch.
             return;
         }
     }
