@@ -7,6 +7,7 @@ using System.Text.Json.Serialization;
 using System.Xml.Linq;
 using Going.UI.Containers;
 using Going.UI.Controls;
+using Going.UI.Datas;
 using Going.UI.Design;
 using Going.UI.Json;
 using SkiaSharp;
@@ -726,7 +727,7 @@ public static class GoGudxConverter
         if (t.IsPrimitive || t == typeof(string) || t == typeof(decimal)) return true;
         if (t.IsEnum) return true;
         if (t == typeof(List<string>)) return true;
-        if (t == typeof(SKColor) || t == typeof(SKRect)) return true;
+        if (t == typeof(SKColor) || t == typeof(SKRect) || t == typeof(GoPadding)) return true;
         return false;
     }
 
@@ -743,6 +744,7 @@ public static class GoGudxConverter
             Enum e => e.ToString(),
             SKColor sc => GudxSpecialConverters.FormatSKColor(sc),
             SKRect sr => GudxSpecialConverters.FormatSKRect(sr),
+            GoPadding gp => GudxSpecialConverters.FormatGoPadding(gp),
             _ => Convert.ToString(value, CultureInfo.InvariantCulture)
         };
     }
@@ -760,6 +762,7 @@ public static class GoGudxConverter
             return value == "" ? new List<string>() : value.Split(',').ToList();
         if (targetType == typeof(SKColor)) return GudxSpecialConverters.ParseSKColor(value);
         if (targetType == typeof(SKRect)) return GudxSpecialConverters.ParseSKRect(value);
+        if (targetType == typeof(GoPadding)) return GudxSpecialConverters.ParseGoPadding(value);
         return null;
     }
 }

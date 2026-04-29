@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using Going.UI.Datas;
 using SkiaSharp;
 
 namespace Going.UI.Gudx;
@@ -58,6 +59,29 @@ public static class GudxSpecialConverters
         var parts = s.Split(',');
         if (parts.Length != 4) throw new FormatException($"Invalid SKRect: '{s}'");
         return new SKRect(
+            float.Parse(parts[0], CultureInfo.InvariantCulture),
+            float.Parse(parts[1], CultureInfo.InvariantCulture),
+            float.Parse(parts[2], CultureInfo.InvariantCulture),
+            float.Parse(parts[3], CultureInfo.InvariantCulture));
+    }
+
+    /// <summary>
+    /// Formats a GoPadding as comma-separated "Left,Top,Right,Bottom" string.
+    /// Uses InvariantCulture for float formatting.
+    /// Example: GoPadding(1, 2, 3, 4) → "1,2,3,4"
+    /// </summary>
+    public static string FormatGoPadding(GoPadding p) =>
+        string.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3}", p.Left, p.Top, p.Right, p.Bottom);
+
+    /// <summary>
+    /// Parses a GoPadding from comma-separated string "Left,Top,Right,Bottom".
+    /// Uses InvariantCulture for float parsing.
+    /// </summary>
+    public static GoPadding ParseGoPadding(string s)
+    {
+        var parts = s.Split(',');
+        if (parts.Length != 4) throw new FormatException($"Invalid GoPadding: '{s}'");
+        return new GoPadding(
             float.Parse(parts[0], CultureInfo.InvariantCulture),
             float.Parse(parts[1], CultureInfo.InvariantCulture),
             float.Parse(parts[2], CultureInfo.InvariantCulture),
