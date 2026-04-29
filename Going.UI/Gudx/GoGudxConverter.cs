@@ -73,38 +73,6 @@ public static class GoGudxConverter
         var tagName = explicitTagName ?? TypeTagName(type);
         var elem = new XElement(tagName);
 
-        // GoGridLayoutPanel special case: P4b dual interlock (Rows + Childrens).
-        // Emits <GoGridLayoutPanelRow> wrappers with children nested inside by row index.
-        // Returns early to skip generic [GoChilds] dispatch (prevents double-emission).
-        if (obj is GoGridLayoutPanel grid)
-        {
-            // P1: scalar attributes first
-            foreach (var prop in ScalarProperties(type))
-            {
-                var value = prop.GetValue(grid);
-                if (value == null) continue;
-                var s = FormatScalar(value);
-                if (s != null) elem.SetAttributeValue(prop.Name, s);
-            }
-            // GoGridLayoutPanel special case interlock
-            for (int rowIdx = 0; rowIdx < grid.Rows.Count; rowIdx++)
-            {
-                var rowElem = WriteWrapper(grid.Rows[rowIdx]);
-                foreach (var child in grid.Childrens.Controls)
-                {
-                    if (grid.Childrens.Indexes.TryGetValue(child.Id, out var idx) && idx.Row == rowIdx)
-                    {
-                        var childElem = WriteAny(child);
-                        // GoGridIndex has no ColSpan/RowSpan — always 2-part Cell
-                        childElem.SetAttributeValue("Cell", $"{idx.Column},{idx.Row}");
-                        rowElem.Add(childElem);
-                    }
-                }
-                elem.Add(rowElem);
-            }
-            return elem;  // skip generic dispatch
-        }
-
         // P1: scalar properties become attributes.
         foreach (var prop in ScalarProperties(type))
         {
@@ -114,12 +82,29 @@ public static class GoGudxConverter
             if (s != null) elem.SetAttributeValue(prop.Name, s);
         }
 
+        // Identify wrappers that are nest-targets — they're emitted via the nested cells dispatch, not standalone.
+        var childPropsList = ChildProperties(type).ToList();
+        var nestedTargets = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var p in childPropsList)
+        {
+            var cellsAttr = p.GetCustomAttribute<GoChildCellsAttribute>();
+            if (cellsAttr?.NestInto != null) nestedTargets.Add(cellsAttr.NestInto);
+        }
+
         // P2/P3/P4/P5: walk [GoChilds] properties.
-        foreach (var childProp in ChildProperties(type))
+        foreach (var childProp in childPropsList)
         {
             var value = childProp.GetValue(obj);
             if (value == null) continue;
-            DispatchChildWrite(elem, childProp, value);
+
+            // Skip wrappers that are nest-targets — handled via the cells dispatch
+            if (childProp.GetCustomAttribute<GoChildWrappersAttribute>() != null
+                && nestedTargets.Contains(childProp.Name))
+            {
+                continue;
+            }
+
+            DispatchChildWrite(elem, childProp, value, obj);
         }
 
         return elem;
@@ -151,7 +136,7 @@ public static class GoGudxConverter
     /// </summary>
     internal static XElement WriteElement(IGoControl control) => WriteAny(control);
 
-    private static void DispatchChildWrite(XElement elem, PropertyInfo childProp, object value)
+    private static void DispatchChildWrite(XElement elem, PropertyInfo childProp, object value, object parentInstance)
     {
         // Order: P2 → P3 → P4 → P5 → B1 → B2. New attribute family takes precedence.
 
@@ -163,7 +148,11 @@ public static class GoGudxConverter
         }
         if (childProp.GetCustomAttribute<GoChildCellsAttribute>() != null)
         {
-            WriteP3_CellIndexed(elem, value);
+            var cellsAttr = childProp.GetCustomAttribute<GoChildCellsAttribute>()!;
+            if (cellsAttr.NestInto != null)
+                WriteP3_CellIndexed_NestedIn(elem, childProp, value, parentInstance, cellsAttr.NestInto);
+            else
+                WriteP3_CellIndexed(elem, value);
             return;
         }
         if (childProp.GetCustomAttribute<GoChildWrappersAttribute>() != null)
@@ -185,53 +174,6 @@ public static class GoGudxConverter
         {
             // B2: deferred to Task 11. Suppress emission for now.
             return;
-        }
-
-        // ─── LEGACY [GoChilds] fallback (R5 will delete after R4 migration) ───
-        if (childProp.GetCustomAttribute<GoChildsAttribute>() != null)
-        {
-            DispatchChildWrite_Legacy(elem, childProp, value);
-        }
-    }
-
-    /// <summary>
-    /// Legacy dispatch: introspects property type to determine write pattern.
-    /// Preserved verbatim from original DispatchChildWrite. R5 will delete this after R4 migration.
-    /// </summary>
-    private static void DispatchChildWrite_Legacy(XElement elem, PropertyInfo childProp, object value)
-    {
-        // Order: P2 (List<IGoControl>) → P3 (TLC) → P4 (wrapper list) → P5 (dict) → B1 (single non-collection, Task 9).
-        // Most-specific predicates first.
-        var pType = childProp.PropertyType;
-
-        if (value is System.Collections.IList && IsHomogeneousControlList(pType))
-        {
-            WriteP2_HomogeneousList(elem, value);
-            return;
-        }
-
-        if (value is GoTableLayoutControlCollection)
-        {
-            WriteP3_CellIndexed(elem, value);
-            return;
-        }
-
-        if (IsWrapperList(pType))
-        {
-            WriteP4_WrapperList(elem, value);
-            return;
-        }
-
-        if (IsKeyedDict(pType, out _))
-        {
-            WriteP5_KeyedDict(elem, value);
-            return;
-        }
-
-        // B1: single-child object (Task 9) — LAST branch (most permissive predicate).
-        if (IsSingleChildObject(pType))
-        {
-            WriteB1_SingleChild(elem, childProp, value);
         }
     }
 
@@ -260,6 +202,87 @@ public static class GoGudxConverter
             }
             elem.Add(childElem);
         }
+    }
+
+    internal static void WriteP3_CellIndexed_NestedIn(
+        XElement elem,
+        PropertyInfo cellsProp,
+        object cellsValue,
+        object parentInstance,
+        string wrapperPropName)
+    {
+        var wrapperProp = parentInstance.GetType().GetProperty(wrapperPropName)
+            ?? throw new InvalidOperationException(
+                $"[GoChildCells(NestInto = \"{wrapperPropName}\")] target property not found on {parentInstance.GetType().Name}");
+        var wrappers = (System.Collections.IList)(wrapperProp.GetValue(parentInstance)
+            ?? throw new InvalidOperationException(
+                $"[GoChildCells(NestInto = \"{wrapperPropName}\")] target list is null"));
+
+        // Emit each wrapper as <WrapperType ...>; nest cells with matching Row index inside.
+        var collection = cellsValue as GoGridLayoutControlCollection
+            ?? throw new InvalidOperationException(
+                $"[GoChildCells(NestInto)] currently supports GoGridLayoutControlCollection only; got {cellsValue.GetType().Name}");
+
+        for (int rowIdx = 0; rowIdx < wrappers.Count; rowIdx++)
+        {
+            var rowElem = WriteWrapper(wrappers[rowIdx]!);
+            foreach (var child in collection.Controls)
+            {
+                if (collection.Indexes.TryGetValue(child.Id, out var idx) && idx.Row == rowIdx)
+                {
+                    var childElem = WriteElement(child);
+                    childElem.SetAttributeValue("Cell", $"{idx.Column},{idx.Row}");
+                    rowElem.Add(childElem);
+                }
+            }
+            elem.Add(rowElem);
+        }
+    }
+
+    internal static void ReadP3_CellIndexed_NestedIn(
+        XElement elem,
+        PropertyInfo cellsProp,
+        object instance,
+        string wrapperPropName)
+    {
+        var wrapperProp = instance.GetType().GetProperty(wrapperPropName)
+            ?? throw new InvalidOperationException(
+                $"[GoChildCells(NestInto = \"{wrapperPropName}\")] target property not found on {instance.GetType().Name}");
+        var wrappers = (System.Collections.IList)(wrapperProp.GetValue(instance)
+            ?? Activator.CreateInstance(wrapperProp.PropertyType)!);
+
+        var wrapperType = wrapperProp.PropertyType.GetGenericArguments()[0];
+        var wrapperTagName = wrapperType.Name;
+
+        var collection = (GoGridLayoutControlCollection)(cellsProp.GetValue(instance)
+            ?? new GoGridLayoutControlCollection());
+
+        int rowIdx = 0;
+        foreach (var rowElem in elem.Elements(wrapperTagName))
+        {
+            var wrapper = ReadWrapper(rowElem, wrapperType);
+            wrappers.Add(wrapper);
+
+            foreach (var childElem in rowElem.Elements())
+            {
+                // Skip nested wrapper-type tags (defensive — not expected here)
+                if (childElem.Name.LocalName == wrapperTagName) continue;
+
+                var c = ReadElement(childElem);
+                var cell = childElem.Attribute("Cell")?.Value;
+                if (cell != null)
+                {
+                    var parts = cell.Split(',');
+                    var col = int.Parse(parts[0], System.Globalization.CultureInfo.InvariantCulture);
+                    // ignore parts[1] — Row is implicit from rowIdx
+                    collection.Add(c, col, rowIdx);
+                }
+            }
+            rowIdx++;
+        }
+
+        if (wrapperProp.CanWrite) wrapperProp.SetValue(instance, wrappers);
+        if (cellsProp.CanWrite) cellsProp.SetValue(instance, collection);
     }
 
     private static void WriteP4_WrapperList(XElement elem, object value)
@@ -314,42 +337,6 @@ public static class GoGudxConverter
     {
         var type = instance.GetType();
 
-        // GoGridLayoutPanel special case: P4b dual interlock.
-        // Must be checked before generic dispatch to avoid double-emission.
-        if (instance is GoGridLayoutPanel gridIn)
-        {
-            // P1: read scalar attributes
-            foreach (var attr in elem.Attributes())
-            {
-                var prop = type.GetProperty(attr.Name.LocalName);
-                if (prop == null || !prop.CanWrite) continue;
-                var parsed = ParseScalar(prop.PropertyType, attr.Value);
-                if (parsed != null) prop.SetValue(instance, parsed);
-            }
-            foreach (var rowElem in elem.Elements("GoGridLayoutPanelRow"))
-            {
-                var row = (GoGridLayoutPanelRow)ReadWrapper(rowElem, typeof(GoGridLayoutPanelRow));
-                gridIn.Rows.Add(row);
-                foreach (var childElem in rowElem.Elements())
-                {
-                    var c = ReadElement(childElem);
-                    var cellAttr = childElem.Attribute("Cell");
-                    if (cellAttr != null)
-                    {
-                        var parts = cellAttr.Value.Split(',');
-                        var col = int.Parse(parts[0], CultureInfo.InvariantCulture);
-                        var rowIdx = int.Parse(parts[1], CultureInfo.InvariantCulture);
-                        gridIn.Childrens.Add(c, col, rowIdx);
-                    }
-                    else
-                    {
-                        gridIn.Childrens.Controls.Add(c);
-                    }
-                }
-            }
-            return;  // skip generic dispatch
-        }
-
         // P1: read attributes onto scalar properties.
         foreach (var attr in elem.Attributes())
         {
@@ -359,9 +346,24 @@ public static class GoGudxConverter
             if (parsed != null) prop.SetValue(instance, parsed);
         }
 
-        // P2/P3/P4/P5: populate [GoChilds] properties from child elements.
-        foreach (var childProp in ChildProperties(type))
+        // Identify wrappers that are nest-targets — they're read via the nested cells dispatch, not standalone.
+        var childPropsList = ChildProperties(type).ToList();
+        var nestedTargets = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var p in childPropsList)
         {
+            var cellsAttr = p.GetCustomAttribute<GoChildCellsAttribute>();
+            if (cellsAttr?.NestInto != null) nestedTargets.Add(cellsAttr.NestInto);
+        }
+
+        // P2/P3/P4/P5: populate [GoChilds] properties from child elements.
+        foreach (var childProp in childPropsList)
+        {
+            // Skip wrappers that are nest-targets — handled via the cells dispatch
+            if (childProp.GetCustomAttribute<GoChildWrappersAttribute>() != null
+                && nestedTargets.Contains(childProp.Name))
+            {
+                continue;
+            }
             DispatchChildRead(elem, childProp, instance);
         }
     }
@@ -378,7 +380,11 @@ public static class GoGudxConverter
         }
         if (childProp.GetCustomAttribute<GoChildCellsAttribute>() != null)
         {
-            ReadP3_CellIndexed(elem, childProp, instance);
+            var cellsAttr = childProp.GetCustomAttribute<GoChildCellsAttribute>()!;
+            if (cellsAttr.NestInto != null)
+                ReadP3_CellIndexed_NestedIn(elem, childProp, instance, cellsAttr.NestInto);
+            else
+                ReadP3_CellIndexed(elem, childProp, instance);
             return;
         }
         if (childProp.GetCustomAttribute<GoChildWrappersAttribute>() != null)
@@ -400,53 +406,6 @@ public static class GoGudxConverter
         {
             // B2: deferred to Task 11. No-op read.
             return;
-        }
-
-        // ─── LEGACY [GoChilds] fallback (R5 will delete after R4 migration) ───
-        if (childProp.GetCustomAttribute<GoChildsAttribute>() != null)
-        {
-            DispatchChildRead_Legacy(elem, childProp, instance);
-        }
-    }
-
-    /// <summary>
-    /// Legacy dispatch: introspects property type to determine read pattern.
-    /// Preserved verbatim from original DispatchChildRead. R5 will delete this after R4 migration.
-    /// </summary>
-    private static void DispatchChildRead_Legacy(XElement elem, PropertyInfo childProp, object instance)
-    {
-        // Order: P2 (List<IGoControl>) → P3 (TLC) → P4 (wrapper list) → P5 (dict) → B1 (single non-collection, Task 9).
-        // Most-specific predicates first.
-        var pType = childProp.PropertyType;
-
-        if (IsHomogeneousControlList(pType))
-        {
-            ReadP2_HomogeneousList(elem, childProp, instance);
-            return;
-        }
-
-        if (pType == typeof(GoTableLayoutControlCollection))
-        {
-            ReadP3_CellIndexed(elem, childProp, instance);
-            return;
-        }
-
-        if (IsWrapperList(pType))
-        {
-            ReadP4_WrapperList(elem, childProp, instance);
-            return;
-        }
-
-        if (IsKeyedDict(pType, out _))
-        {
-            ReadP5_KeyedDict(elem, childProp, instance);
-            return;
-        }
-
-        // B1: single-child object (Task 9) — LAST branch (most permissive predicate).
-        if (IsSingleChildObject(pType))
-        {
-            ReadB1_SingleChild(elem, childProp, instance);
         }
     }
 
@@ -658,8 +617,7 @@ public static class GoGudxConverter
 
     private static IEnumerable<PropertyInfo> ChildProperties(Type t) =>
         t.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-         .Where(p => p.IsDefined(typeof(GoChildAttribute), inherit: true)   // NEW family
-                  || p.GetCustomAttribute<GoChildsAttribute>() != null);    // LEGACY (R5 will delete)
+         .Where(p => p.IsDefined(typeof(GoChildAttribute), inherit: true));
 
     private static bool IsHomogeneousControlList(Type t)
     {

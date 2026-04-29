@@ -7,6 +7,7 @@ using Xunit;
 
 namespace Going.UI.Tests.Gudx;
 
+
 public class GudxPattern4_WrapperNodeTests
 {
     [Fact]
@@ -105,5 +106,22 @@ public class GudxPattern4_WrapperNodeTests
         Assert.True(restored.Childrens.Indexes.TryGetValue(restoredC.Id, out var idxC));
         Assert.Equal(0, idxC!.Column);
         Assert.Equal(1, idxC.Row);
+    }
+
+    [Fact]
+    public void GoGridLayoutPanel_emitsViaNestIntoAttributeOnly()
+    {
+        // Verifies the special case is gone and nested emission is attribute-driven.
+        var grid = new GoGridLayoutPanel { Name = "grid" };
+        grid.Rows.Add(new GoGridLayoutPanelRow { Height = "50%", Columns = { "50%", "50%" } });
+        grid.Childrens.Add(new GoButton { Name = "btn" }, 0, 0);
+
+        var xml = GoGudxConverter.SerializeControl(grid);
+        var root = XElement.Parse(xml);
+
+        var rows = root.Elements("GoGridLayoutPanelRow").ToList();
+        Assert.Single(rows);
+        Assert.Single(rows[0].Elements("GoButton"));
+        Assert.Empty(root.Elements("GoButton"));  // not at root
     }
 }
