@@ -381,7 +381,7 @@ public static class GoGudxConverter
             if (cellsAttr.NestInto != null)
                 WriteP3_CellIndexed_NestedIn(elem, childProp, value, parentInstance, cellsAttr.NestInto);
             else
-                WriteP3_CellIndexed(elem, value);
+                WriteP3_CellIndexed(elem, childProp, value);
             return;
         }
         if (childProp.GetCustomAttribute<GoChildWrappersAttribute>() != null)
@@ -420,22 +420,23 @@ public static class GoGudxConverter
         elem.Add(groupElem);
     }
 
-    private static void WriteP3_CellIndexed(XElement elem, object value)
+    private static void WriteP3_CellIndexed(XElement elem, PropertyInfo childProp, object value)
     {
-        // P3: cell-indexed collection (GoTableLayoutPanel) — use WriteElement to include F2 Id attribute
-        var tlc = (GoTableLayoutControlCollection)value;
-        foreach (var child in tlc.Controls)
+        // P3 (v1.2.1+): cell-indexed collection in <PropertyName> (= <Childrens>) group element.
+        // Dispatched via IGoCellIndexedControlCollection interface — handles both
+        // GoTableLayoutControlCollection (with span) and GoGridLayoutControlCollection (no span).
+        var coll = (Going.UI.Collections.IGoCellIndexedControlCollection)value;
+        var groupElem = new XElement(childProp.Name);
+        foreach (var (child, col, row, colSpan, rowSpan) in coll.EnumerateCells())
         {
             var childElem = WriteElement(child);
-            if (tlc.Indexes.TryGetValue(child.Id, out var idx))
-            {
-                var cell = (idx.ColSpan == 1 && idx.RowSpan == 1)
-                    ? $"{idx.Column},{idx.Row}"
-                    : $"{idx.Column},{idx.Row},{idx.ColSpan},{idx.RowSpan}";
-                childElem.SetAttributeValue("Cell", cell);
-            }
-            elem.Add(childElem);
+            var cell = (colSpan == 1 && rowSpan == 1)
+                ? $"{col},{row}"
+                : $"{col},{row},{colSpan},{rowSpan}";
+            childElem.SetAttributeValue("Cell", cell);
+            groupElem.Add(childElem);
         }
+        elem.Add(groupElem);
     }
 
     internal static void WriteP3_CellIndexed_NestedIn(
@@ -732,11 +733,19 @@ public static class GoGudxConverter
 
     private static void ReadP3_CellIndexed(XElement elem, PropertyInfo childProp, object instance)
     {
-        // P3: cell-indexed collection (GoTableLayoutPanel)
-        var coll = (GoTableLayoutControlCollection)(childProp.GetValue(instance)
-                    ?? new GoTableLayoutControlCollection());
-        foreach (var childElem in elem.Elements())
+        // P3 (v1.2.1+): cell-indexed children read from inside <PropertyName> (= <Childrens>) group.
+        // Dispatched via IGoCellIndexedControlCollection — handles both Table/Grid collections.
+        // Tag-filter via _gudxControlTypes (defensive against malformed input).
+        var groupElem = elem.Element(childProp.Name);
+        if (groupElem == null) return;
+
+        var existing = childProp.GetValue(instance);
+        var coll = (Going.UI.Collections.IGoCellIndexedControlCollection)(existing
+                    ?? Activator.CreateInstance(childProp.PropertyType)!);
+
+        foreach (var childElem in groupElem.Elements())
         {
+            if (!_gudxControlTypes.ContainsKey(childElem.Name.LocalName)) continue;
             var c = ReadElement(childElem);
             var cellAttr = childElem.Attribute("Cell");
             if (cellAttr != null)
@@ -746,7 +755,7 @@ public static class GoGudxConverter
                 var row = int.Parse(parts[1], CultureInfo.InvariantCulture);
                 var colSpan = parts.Length >= 4 ? int.Parse(parts[2], CultureInfo.InvariantCulture) : 1;
                 var rowSpan = parts.Length >= 4 ? int.Parse(parts[3], CultureInfo.InvariantCulture) : 1;
-                coll.Add(c, col, row, colSpan, rowSpan);
+                coll.AddCell(c, col, row, colSpan, rowSpan);
             }
             else
             {
