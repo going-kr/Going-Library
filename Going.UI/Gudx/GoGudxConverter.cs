@@ -719,6 +719,7 @@ public static class GoGudxConverter
                 .Where(p => p.GetCustomAttribute<JsonIgnoreAttribute>() == null)
                 .Where(p => p.GetCustomAttribute<GudxIgnoreAttribute>() == null)
                 .Where(p => p.GetCustomAttribute<GoChildsAttribute>() == null)
+                .Where(p => !p.IsDefined(typeof(GoChildAttribute), inherit: true))
                 .Where(p => p.CanRead && p.CanWrite)
                 .Where(p => IsScalar(p.PropertyType));
     }
