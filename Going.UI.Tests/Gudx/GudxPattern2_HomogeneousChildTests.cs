@@ -34,5 +34,6 @@ public class GudxPattern2_HomogeneousChildTests
         Assert.Equal(2, restored.Childrens.Count);
         Assert.Equal("btnA", ((GoButton)restored.Childrens[0]).Name);
         Assert.Equal("btnB", ((GoButton)restored.Childrens[1]).Name);
+        Assert.Equal("pnl", restored.Name);
     }
 }
