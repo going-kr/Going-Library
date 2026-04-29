@@ -70,7 +70,10 @@ namespace Going.UI.Design
         /// </summary>
         [GoChildMap]
         [JsonInclude] public Dictionary<string, GoWindow> Windows { get; private set; } = [];
+        [GoChildResource("Image", Folder = "resources", Ext = ".png")]
         [JsonInclude] private Dictionary<string, List<SKImage>> Images { get; } = new(StringComparer.OrdinalIgnoreCase);
+
+        [GoChildResource("Font", Folder = "resources/fonts", Ext = ".ttf")]
         [JsonInclude] private Dictionary<string, List<byte[]>> Fonts { get; } = new(StringComparer.OrdinalIgnoreCase);
         /// <summary>
         /// 타이틀바 컨트롤을 가져옵니다.
