@@ -900,6 +900,7 @@ public static class GoGudxConverter
         if (t.IsPrimitive || t == typeof(string) || t == typeof(decimal)) return true;
         if (t.IsEnum) return true;
         if (t == typeof(Guid)) return true;  // F3 bonus: Guid is scalar (also helps F2 indirectly)
+        if (t == typeof(TimeSpan)) return true;  // F4: TimeSpan scalar support
         if (t == typeof(List<string>)) return true;
         if (t == typeof(SKColor) || t == typeof(SKRect) || t == typeof(GoPadding)) return true;
         return false;
@@ -916,6 +917,7 @@ public static class GoGudxConverter
             double d => d.ToString(CultureInfo.InvariantCulture),
             decimal m => m.ToString(CultureInfo.InvariantCulture),
             Guid g => g.ToString(),  // F3: Guid scalar formatting
+            TimeSpan ts => ts.ToString(),  // F4: TimeSpan scalar formatting (invariant "hh:mm:ss" or "d.hh:mm:ss")
             Enum e => e.ToString(),
             SKColor sc => GudxSpecialConverters.FormatSKColor(sc),
             SKRect sr => GudxSpecialConverters.FormatSKRect(sr),
@@ -938,6 +940,8 @@ public static class GoGudxConverter
         if (targetType == typeof(double)) return double.Parse(value, CultureInfo.InvariantCulture);
         if (targetType == typeof(decimal)) return decimal.Parse(value, CultureInfo.InvariantCulture);
         if (targetType == typeof(Guid)) return Guid.Parse(value);  // F3: Guid scalar parsing
+        if (targetType == typeof(TimeSpan))  // F4: TimeSpan scalar parsing
+            return TimeSpan.Parse(value, CultureInfo.InvariantCulture);
         if (targetType == typeof(List<string>))
             return value == "" ? new List<string>() : value.Split(',').ToList();
         if (targetType == typeof(SKColor)) return GudxSpecialConverters.ParseSKColor(value);
