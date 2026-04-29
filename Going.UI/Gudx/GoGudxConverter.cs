@@ -20,6 +20,16 @@ namespace Going.UI.Gudx;
 /// </summary>
 public static class GoGudxConverter
 {
+    /// <summary>
+    /// Registry of non-IGoControl wrapper types used in P4 wrapper collections.
+    /// Maps XML tag name → CLR type.
+    /// </summary>
+    internal static readonly Dictionary<string, Type> WrapperTypes = new()
+    {
+        ["GoSubPage"] = typeof(Going.UI.Containers.GoSubPage),
+        ["GoGridLayoutPanelRow"] = typeof(Going.UI.Containers.GoGridLayoutPanelRow),
+    };
+
     static GoGudxConverter()
     {
         // Force GoJsonConverter's static ctor to run so ControlTypes is populated.
@@ -54,6 +64,29 @@ public static class GoGudxConverter
             if (s != null) elem.SetAttributeValue(prop.Name, s);
         }
 
+        // GoGridLayoutPanel special case: P4b dual interlock (Rows + Childrens).
+        // Emits <GoGridLayoutPanelRow> wrappers with children nested inside by row index.
+        // Returns early to skip generic [GoChilds] dispatch (prevents double-emission).
+        if (control is GoGridLayoutPanel grid)
+        {
+            for (int rowIdx = 0; rowIdx < grid.Rows.Count; rowIdx++)
+            {
+                var rowElem = WriteWrapper(grid.Rows[rowIdx]);
+                foreach (var child in grid.Childrens.Controls)
+                {
+                    if (grid.Childrens.Indexes.TryGetValue(child.Id, out var idx) && idx.Row == rowIdx)
+                    {
+                        var childElem = WriteElement(child);
+                        // GoGridIndex has no ColSpan/RowSpan — always 2-part Cell
+                        childElem.SetAttributeValue("Cell", $"{idx.Column},{idx.Row}");
+                        rowElem.Add(childElem);
+                    }
+                }
+                elem.Add(rowElem);
+            }
+            return elem;  // skip generic dispatch
+        }
+
         // P2/P3/P4/P5/B1: walk [GoChilds] properties.
         foreach (var childProp in ChildProperties(type))
         {
@@ -68,7 +101,7 @@ public static class GoGudxConverter
             }
             else if (value is GoTableLayoutControlCollection tlc)
             {
-                // P3: cell-indexed collection
+                // P3: cell-indexed collection (GoTableLayoutPanel)
                 foreach (var child in tlc.Controls)
                 {
                     var childElem = WriteElement(child);
@@ -82,7 +115,13 @@ public static class GoGudxConverter
                     elem.Add(childElem);
                 }
             }
-            // P4/P5/B1 dispatch added in later tasks
+            else if (IsWrapperList(childProp.PropertyType))
+            {
+                // P4a: wrapper-typed collection (e.g. GoSwitchPanel.Pages : List<GoSubPage>)
+                foreach (var item in (System.Collections.IEnumerable)value)
+                    elem.Add(WriteWrapper(item));
+            }
+            // P5/B1 dispatch added in later tasks
         }
 
         return elem;
@@ -105,21 +144,50 @@ public static class GoGudxConverter
             if (parsed != null) prop.SetValue(instance, parsed);
         }
 
-        // P2: populate [GoChilds] homogeneous-list properties from child elements.
+        // GoGridLayoutPanel special case: P4b dual interlock (Rows + Childrens).
+        // Each <GoGridLayoutPanelRow> wrapper contains its child controls.
+        // Returns early to skip generic [GoChilds] dispatch.
+        if (instance is GoGridLayoutPanel gridIn)
+        {
+            foreach (var rowElem in elem.Elements("GoGridLayoutPanelRow"))
+            {
+                var row = (GoGridLayoutPanelRow)ReadWrapper(rowElem, typeof(GoGridLayoutPanelRow));
+                gridIn.Rows.Add(row);
+                foreach (var childElem in rowElem.Elements())
+                {
+                    var c = ReadElement(childElem);
+                    var cellAttr = childElem.Attribute("Cell");
+                    if (cellAttr != null)
+                    {
+                        var parts = cellAttr.Value.Split(',');
+                        var col = int.Parse(parts[0], CultureInfo.InvariantCulture);
+                        var rowIdx = int.Parse(parts[1], CultureInfo.InvariantCulture);
+                        gridIn.Childrens.Add(c, col, rowIdx);
+                    }
+                    else
+                    {
+                        gridIn.Childrens.Controls.Add(c);
+                    }
+                }
+            }
+            return gridIn;  // skip generic dispatch
+        }
+
+        // P2/P3/P4: populate [GoChilds] properties from child elements.
         foreach (var childProp in ChildProperties(type))
         {
             if (IsHomogeneousControlList(childProp.PropertyType))
             {
+                // P2: list of IGoControl
                 var list = (System.Collections.IList)(childProp.GetValue(instance)
                             ?? Activator.CreateInstance(childProp.PropertyType)!);
                 foreach (var childElem in elem.Elements())
                     list.Add(ReadElement(childElem));
-                // setter only if it has one
                 if (childProp.CanWrite) childProp.SetValue(instance, list);
             }
             else if (childProp.PropertyType == typeof(GoTableLayoutControlCollection))
             {
-                // P3: cell-indexed collection
+                // P3: cell-indexed collection (GoTableLayoutPanel)
                 var coll = (GoTableLayoutControlCollection)(childProp.GetValue(instance)
                             ?? new GoTableLayoutControlCollection());
                 foreach (var childElem in elem.Elements())
@@ -141,7 +209,18 @@ public static class GoGudxConverter
                     }
                 }
             }
-            // dispatch for other patterns added later
+            else if (IsWrapperList(childProp.PropertyType))
+            {
+                // P4a: wrapper-typed collection (e.g. GoSwitchPanel.Pages : List<GoSubPage>)
+                var list = (System.Collections.IList)(childProp.GetValue(instance)
+                            ?? Activator.CreateInstance(childProp.PropertyType)!);
+                var wrapperType = childProp.PropertyType.GetGenericArguments()[0];
+                var wrapperTagName = wrapperType.Name;
+                foreach (var childElem in elem.Elements(wrapperTagName))
+                    list.Add(ReadWrapper(childElem, wrapperType));
+                if (childProp.CanWrite) childProp.SetValue(instance, list);
+            }
+            // P5/B1 dispatch added in later tasks
         }
 
         return instance;
@@ -164,6 +243,85 @@ public static class GoGudxConverter
         if (t.GetGenericTypeDefinition() != typeof(List<>)) return false;
         var arg = t.GetGenericArguments()[0];
         return typeof(IGoControl).IsAssignableFrom(arg);
+    }
+
+    /// <summary>
+    /// Returns true when the type is a List&lt;TWrapper&gt; where TWrapper is a known non-IGoControl wrapper.
+    /// </summary>
+    private static bool IsWrapperList(Type t)
+    {
+        if (!t.IsGenericType) return false;
+        if (t.GetGenericTypeDefinition() != typeof(List<>)) return false;
+        var arg = t.GetGenericArguments()[0];
+        return WrapperTypes.ContainsValue(arg);
+    }
+
+    /// <summary>
+    /// Serializes a non-IGoControl wrapper object (e.g. GoSubPage, GoGridLayoutPanelRow)
+    /// to an XElement using the type name as tag and reflection for P1 scalars.
+    /// P2 child lists (IGoControl) nested inside the wrapper are also emitted.
+    /// </summary>
+    internal static XElement WriteWrapper(object item)
+    {
+        var type = item.GetType();
+        var elem = new XElement(type.Name);
+
+        // P1: scalar attributes
+        foreach (var prop in ScalarProperties(type))
+        {
+            var value = prop.GetValue(item);
+            if (value == null) continue;
+            var s = FormatScalar(value);
+            if (s != null) elem.SetAttributeValue(prop.Name, s);
+        }
+
+        // Recursive P2: emit IGoControl children if the wrapper has [GoChilds] List<IGoControl>
+        foreach (var childProp in ChildProperties(type))
+        {
+            var v = childProp.GetValue(item);
+            if (v == null) continue;
+            if (v is System.Collections.IList list && IsHomogeneousControlList(childProp.PropertyType))
+            {
+                foreach (var c in list)
+                    if (c is IGoControl gc) elem.Add(WriteElement(gc));
+            }
+        }
+
+        return elem;
+    }
+
+    /// <summary>
+    /// Deserializes a non-IGoControl wrapper object from an XElement.
+    /// Reads P1 scalar attributes and recursively populates P2 child lists.
+    /// </summary>
+    internal static object ReadWrapper(XElement elem, Type type)
+    {
+        var instance = Activator.CreateInstance(type)!;
+
+        // P1: read attributes onto scalar properties
+        foreach (var attr in elem.Attributes())
+        {
+            var prop = type.GetProperty(attr.Name.LocalName);
+            if (prop == null || !prop.CanWrite) continue;
+            var parsed = ParseScalar(prop.PropertyType, attr.Value);
+            if (parsed != null) prop.SetValue(instance, parsed);
+        }
+
+        // Recursive P2: populate IGoControl children if wrapper has [GoChilds] List<IGoControl>
+        foreach (var childProp in ChildProperties(type))
+        {
+            if (IsHomogeneousControlList(childProp.PropertyType))
+            {
+                var list = (System.Collections.IList)(childProp.GetValue(instance)
+                            ?? Activator.CreateInstance(childProp.PropertyType)!);
+                foreach (var childElem in elem.Elements())
+                    list.Add(ReadElement(childElem));
+                // Only assign via setter if the property has one (GoSubPage.Childrens is get-only)
+                if (childProp.CanWrite) childProp.SetValue(instance, list);
+            }
+        }
+
+        return instance;
     }
 
     private static IEnumerable<PropertyInfo> ScalarProperties(Type t)
