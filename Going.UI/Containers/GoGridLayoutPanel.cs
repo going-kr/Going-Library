@@ -208,7 +208,7 @@ namespace Going.UI.Containers
     /// <summary>
     /// 그리드 레이아웃 패널의 자식 컨트롤과 인덱스 정보를 관리하는 컬렉션 클래스입니다.
     /// </summary>
-    public class GoGridLayoutControlCollection : IEnumerable<IGoControl>
+    public class GoGridLayoutControlCollection : IEnumerable<IGoControl>, Going.UI.Collections.IGoCellIndexedControlCollection
     {
         #region Properties
         /// <summary>
@@ -293,6 +293,21 @@ namespace Going.UI.Containers
         /// <returns>컨트롤 열거자</returns>
         public IEnumerator<IGoControl> GetEnumerator() => Controls.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => Controls.GetEnumerator();
+
+        // Gudx v1.2.1: IGoCellIndexedControlCollection helpers (P3 dispatch 일반화).
+        // GoGridLayoutControlCollection 은 cell span 미지원 — colSpan/rowSpan 인자 무시.
+        IList<IGoControl> Going.UI.Collections.IGoCellIndexedControlCollection.Controls => Controls;
+
+        IEnumerable<(IGoControl Control, int Column, int Row, int ColSpan, int RowSpan)>
+            Going.UI.Collections.IGoCellIndexedControlCollection.EnumerateCells()
+        {
+            foreach (var c in Controls)
+                if (Indexes.TryGetValue(c.Id, out var idx))
+                    yield return (c, idx.Column, idx.Row, 1, 1);  // span 미지원
+        }
+
+        void Going.UI.Collections.IGoCellIndexedControlCollection.AddCell(IGoControl c, int col, int row, int colSpan, int rowSpan)
+            => Add(c, col, row);  // colSpan/rowSpan 인자 무시
         #endregion
     }
 }

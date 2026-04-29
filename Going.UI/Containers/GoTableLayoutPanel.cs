@@ -146,7 +146,7 @@ namespace Going.UI.Containers
     /// <summary>
     /// 테이블 레이아웃 패널의 자식 컨트롤과 인덱스 정보를 관리하는 컬렉션 클래스입니다.
     /// </summary>
-    public class GoTableLayoutControlCollection : IEnumerable<IGoControl>
+    public class GoTableLayoutControlCollection : IEnumerable<IGoControl>, Going.UI.Collections.IGoCellIndexedControlCollection
     {
         #region Properties
         /// <summary>
@@ -233,6 +233,20 @@ namespace Going.UI.Containers
         /// <returns>컨트롤 열거자</returns>
         public IEnumerator<IGoControl> GetEnumerator() => Controls.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => Controls.GetEnumerator();
+
+        // Gudx v1.2.1: IGoCellIndexedControlCollection helpers (P3 dispatch 일반화).
+        IList<IGoControl> Going.UI.Collections.IGoCellIndexedControlCollection.Controls => Controls;
+
+        IEnumerable<(IGoControl Control, int Column, int Row, int ColSpan, int RowSpan)>
+            Going.UI.Collections.IGoCellIndexedControlCollection.EnumerateCells()
+        {
+            foreach (var c in Controls)
+                if (Indexes.TryGetValue(c.Id, out var idx))
+                    yield return (c, idx.Column, idx.Row, idx.ColSpan, idx.RowSpan);
+        }
+
+        void Going.UI.Collections.IGoCellIndexedControlCollection.AddCell(IGoControl c, int col, int row, int colSpan, int rowSpan)
+            => Add(c, col, row, colSpan, rowSpan);
         #endregion
     }
 }
