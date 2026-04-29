@@ -29,6 +29,14 @@ public static class GoGudxConverter
     private static readonly Dictionary<Type, Dictionary<string, Type>> _wrapperDerivedTypesCache = new();
     private static readonly object _wrapperDerivedTypesLock = new();
 
+    // Gudx-specific type registry: XML-safe tag name → Type.
+    // Derived once from GoJsonConverter.ControlTypes by encoding '<' as '_' and dropping '>'.
+    // Example: "GoInputNumber<double>" in ControlTypes → "GoInputNumber_double" here.
+    private static readonly Dictionary<string, Type> _gudxControlTypes;
+
+    // Reverse map: Type → XML-safe gudx tag name (avoids O(n) scan in TypeTagName hot path).
+    private static readonly Dictionary<Type, string> _gudxTypeToTag;
+
     private static Dictionary<string, Type> GetWrapperDerivedTypes(Type baseType)
     {
         if (_wrapperDerivedTypesCache.TryGetValue(baseType, out var cached)) return cached;
@@ -60,7 +68,33 @@ public static class GoGudxConverter
         // Force GoJsonConverter's static ctor to run so ControlTypes is populated.
         System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(
             typeof(GoJsonConverter).TypeHandle);
+
+        // Build _gudxControlTypes: XML-safe name → Type.
+        // Encoding rule: replace '<' with '_', drop '>'.
+        // "GoInputNumber<double>" → "GoInputNumber_double"
+        // "GoButton" → "GoButton" (unchanged)
+        _gudxControlTypes = new Dictionary<string, Type>(StringComparer.Ordinal);
+        _gudxTypeToTag    = new Dictionary<Type, string>();
+        foreach (var kvp in GoJsonConverter.ControlTypes)
+        {
+            var xmlTag = JsonTagToXmlTag(kvp.Key);
+            // ControlTypes may have multiple aliases per type (e.g. "GoInputNumber<int>" + "GoInputNumber<Int32>")
+            // Keep first registered entry per XML tag; add all type→tag mappings (last writer wins for type→tag).
+            if (!_gudxControlTypes.ContainsKey(xmlTag))
+                _gudxControlTypes[xmlTag] = kvp.Value;
+            // For type→tag prefer the lower-case alias (shorter, stable) — first registered wins.
+            if (!_gudxTypeToTag.ContainsKey(kvp.Value))
+                _gudxTypeToTag[kvp.Value] = xmlTag;
+        }
     }
+
+    /// <summary>
+    /// Encodes a JSON/C# type name to an XML-safe Gudx tag name.
+    /// Replaces '&lt;' with '_' and drops '&gt;'.
+    /// e.g. "GoInputNumber&lt;double&gt;" → "GoInputNumber_double"
+    /// </summary>
+    private static string JsonTagToXmlTag(string jsonTag)
+        => jsonTag.Replace('<', '_').Replace(">", "");
 
     // ─────────────────────────────────────────────────────────────────────────
     // Public entry points
@@ -432,7 +466,7 @@ public static class GoGudxConverter
     internal static IGoControl ReadElement(XElement elem)
     {
         var tagName = elem.Name.LocalName;
-        if (!GoJsonConverter.ControlTypes.TryGetValue(tagName, out var type))
+        if (!_gudxControlTypes.TryGetValue(tagName, out var type))
             throw new InvalidOperationException($"Unknown Gudx tag: {tagName}");
 
         var instance = (IGoControl)Activator.CreateInstance(type)!;
@@ -756,8 +790,10 @@ public static class GoGudxConverter
 
     internal static string TypeTagName(Type t)
     {
-        if (t.IsGenericType)
-            return t.Name.Split('`')[0] + "<T>";
+        // For registered control types (including closed generics), use the pre-computed XML-safe tag.
+        if (_gudxTypeToTag.TryGetValue(t, out var tag)) return tag;
+
+        // Non-generic, non-registered types: use class name directly (already XML-safe).
         return t.Name;
     }
 
