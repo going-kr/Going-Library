@@ -152,66 +152,141 @@ public static class GoGudxConverter
 
     private static void DispatchChildWrite(XElement elem, PropertyInfo childProp, object value)
     {
+        // Order: P2 → P3 → P4 → P5 → B1 → B2. New attribute family takes precedence.
+
+        // ─── NEW dispatch by attribute type ───
+        if (childProp.GetCustomAttribute<GoChildListAttribute>() != null)
+        {
+            WriteP2_HomogeneousList(elem, value);
+            return;
+        }
+        if (childProp.GetCustomAttribute<GoChildCellsAttribute>() != null)
+        {
+            WriteP3_CellIndexed(elem, value);
+            return;
+        }
+        if (childProp.GetCustomAttribute<GoChildWrappersAttribute>() != null)
+        {
+            WriteP4_WrapperList(elem, value);
+            return;
+        }
+        if (childProp.GetCustomAttribute<GoChildMapAttribute>() != null)
+        {
+            WriteP5_KeyedDict(elem, value);
+            return;
+        }
+        if (childProp.GetCustomAttribute<GoChildSingleAttribute>() != null)
+        {
+            WriteB1_SingleChild(elem, childProp, value);
+            return;
+        }
+        if (childProp.GetCustomAttribute<GoChildResourceAttribute>() != null)
+        {
+            // B2: deferred to Task 11. Suppress emission for now.
+            return;
+        }
+
+        // ─── LEGACY [GoChilds] fallback (R5 will delete after R4 migration) ───
+        if (childProp.GetCustomAttribute<GoChildsAttribute>() != null)
+        {
+            DispatchChildWrite_Legacy(elem, childProp, value);
+        }
+    }
+
+    /// <summary>
+    /// Legacy dispatch: introspects property type to determine write pattern.
+    /// Preserved verbatim from original DispatchChildWrite. R5 will delete this after R4 migration.
+    /// </summary>
+    private static void DispatchChildWrite_Legacy(XElement elem, PropertyInfo childProp, object value)
+    {
         // Order: P2 (List<IGoControl>) → P3 (TLC) → P4 (wrapper list) → P5 (dict) → B1 (single non-collection, Task 9).
         // Most-specific predicates first.
         var pType = childProp.PropertyType;
 
-        if (value is System.Collections.IList list && IsHomogeneousControlList(pType))
+        if (value is System.Collections.IList && IsHomogeneousControlList(pType))
         {
-            // P2: list of IGoControl
-            foreach (var child in list)
-                if (child is IGoControl c) elem.Add(WriteAny(c));
+            WriteP2_HomogeneousList(elem, value);
             return;
         }
 
-        if (value is GoTableLayoutControlCollection tlc)
+        if (value is GoTableLayoutControlCollection)
         {
-            // P3: cell-indexed collection (GoTableLayoutPanel)
-            foreach (var child in tlc.Controls)
-            {
-                var childElem = WriteAny(child);
-                if (tlc.Indexes.TryGetValue(child.Id, out var idx))
-                {
-                    var cell = (idx.ColSpan == 1 && idx.RowSpan == 1)
-                        ? $"{idx.Column},{idx.Row}"
-                        : $"{idx.Column},{idx.Row},{idx.ColSpan},{idx.RowSpan}";
-                    childElem.SetAttributeValue("Cell", cell);
-                }
-                elem.Add(childElem);
-            }
+            WriteP3_CellIndexed(elem, value);
             return;
         }
 
         if (IsWrapperList(pType))
         {
-            // P4a: wrapper-typed collection (e.g. GoSwitchPanel.Pages : List<GoSubPage>)
-            foreach (var item in (System.Collections.IEnumerable)value)
-                elem.Add(WriteWrapper(item));
+            WriteP4_WrapperList(elem, value);
             return;
         }
 
         if (IsKeyedDict(pType, out _))
         {
-            // P5: keyed dictionary (e.g. GoDesign.Pages : Dictionary<string, GoPage>)
-            foreach (System.Collections.DictionaryEntry kvp in (System.Collections.IDictionary)value)
-            {
-                if (kvp.Value == null) continue;
-                var childElem = WriteAny(kvp.Value);
-                // Overwrite Name attribute with the dictionary key to ensure round-trip fidelity.
-                childElem.SetAttributeValue("Name", kvp.Key.ToString());
-                elem.Add(childElem);
-            }
+            WriteP5_KeyedDict(elem, value);
             return;
         }
 
         // B1: single-child object (Task 9) — LAST branch (most permissive predicate).
-        // Tag = [GudxTagName] override if present, else property name (not class name).
         if (IsSingleChildObject(pType))
         {
-            var tagName = childProp.GetCustomAttribute<GudxTagNameAttribute>()?.Name ?? childProp.Name;
-            elem.Add(WriteAny(value, tagName));
-            return;
+            WriteB1_SingleChild(elem, childProp, value);
         }
+    }
+
+    // ─── Write pattern helpers ───
+
+    private static void WriteP2_HomogeneousList(XElement elem, object value)
+    {
+        // P2: list of IGoControl
+        foreach (var child in (System.Collections.IList)value)
+            if (child is IGoControl c) elem.Add(WriteAny(c));
+    }
+
+    private static void WriteP3_CellIndexed(XElement elem, object value)
+    {
+        // P3: cell-indexed collection (GoTableLayoutPanel)
+        var tlc = (GoTableLayoutControlCollection)value;
+        foreach (var child in tlc.Controls)
+        {
+            var childElem = WriteAny(child);
+            if (tlc.Indexes.TryGetValue(child.Id, out var idx))
+            {
+                var cell = (idx.ColSpan == 1 && idx.RowSpan == 1)
+                    ? $"{idx.Column},{idx.Row}"
+                    : $"{idx.Column},{idx.Row},{idx.ColSpan},{idx.RowSpan}";
+                childElem.SetAttributeValue("Cell", cell);
+            }
+            elem.Add(childElem);
+        }
+    }
+
+    private static void WriteP4_WrapperList(XElement elem, object value)
+    {
+        // P4a: wrapper-typed collection (e.g. GoSwitchPanel.Pages : List<GoSubPage>)
+        foreach (var item in (System.Collections.IEnumerable)value)
+            elem.Add(WriteWrapper(item));
+    }
+
+    private static void WriteP5_KeyedDict(XElement elem, object value)
+    {
+        // P5: keyed dictionary (e.g. GoDesign.Pages : Dictionary<string, GoPage>)
+        foreach (System.Collections.DictionaryEntry kvp in (System.Collections.IDictionary)value)
+        {
+            if (kvp.Value == null) continue;
+            var childElem = WriteAny(kvp.Value);
+            // Overwrite Name attribute with the dictionary key to ensure round-trip fidelity.
+            childElem.SetAttributeValue("Name", kvp.Key.ToString());
+            elem.Add(childElem);
+        }
+    }
+
+    private static void WriteB1_SingleChild(XElement elem, PropertyInfo childProp, object value)
+    {
+        // B1: single-child object (Task 9) — LAST branch (most permissive predicate).
+        // Tag = [GudxTagName] override if present, else property name (not class name).
+        var tagName = childProp.GetCustomAttribute<GudxTagNameAttribute>()?.Name ?? childProp.Name;
+        elem.Add(WriteAny(value, tagName));
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -292,129 +367,208 @@ public static class GoGudxConverter
 
     private static void DispatchChildRead(XElement elem, PropertyInfo childProp, object instance)
     {
+        // Order: P2 → P3 → P4 → P5 → B1 → B2. New attribute family takes precedence.
+
+        // ─── NEW dispatch by attribute type ───
+        if (childProp.GetCustomAttribute<GoChildListAttribute>() != null)
+        {
+            ReadP2_HomogeneousList(elem, childProp, instance);
+            return;
+        }
+        if (childProp.GetCustomAttribute<GoChildCellsAttribute>() != null)
+        {
+            ReadP3_CellIndexed(elem, childProp, instance);
+            return;
+        }
+        if (childProp.GetCustomAttribute<GoChildWrappersAttribute>() != null)
+        {
+            ReadP4_WrapperList(elem, childProp, instance);
+            return;
+        }
+        if (childProp.GetCustomAttribute<GoChildMapAttribute>() != null)
+        {
+            ReadP5_KeyedDict(elem, childProp, instance);
+            return;
+        }
+        if (childProp.GetCustomAttribute<GoChildSingleAttribute>() != null)
+        {
+            ReadB1_SingleChild(elem, childProp, instance);
+            return;
+        }
+        if (childProp.GetCustomAttribute<GoChildResourceAttribute>() != null)
+        {
+            // B2: deferred to Task 11. No-op read.
+            return;
+        }
+
+        // ─── LEGACY [GoChilds] fallback (R5 will delete after R4 migration) ───
+        if (childProp.GetCustomAttribute<GoChildsAttribute>() != null)
+        {
+            DispatchChildRead_Legacy(elem, childProp, instance);
+        }
+    }
+
+    /// <summary>
+    /// Legacy dispatch: introspects property type to determine read pattern.
+    /// Preserved verbatim from original DispatchChildRead. R5 will delete this after R4 migration.
+    /// </summary>
+    private static void DispatchChildRead_Legacy(XElement elem, PropertyInfo childProp, object instance)
+    {
         // Order: P2 (List<IGoControl>) → P3 (TLC) → P4 (wrapper list) → P5 (dict) → B1 (single non-collection, Task 9).
         // Most-specific predicates first.
         var pType = childProp.PropertyType;
 
         if (IsHomogeneousControlList(pType))
         {
-            // P2: list of IGoControl.
-            // Design decision: P2 read is UNFILTERED (consumes all child elements).
-            // This is safe because no type currently has BOTH a P2 and a P5 [GoChilds] property.
-            // GoDesign's [GoChilds] properties are P5 only. If a future type mixes P2 + P5,
-            // P2 will need the same tag-filter as P5 (check GoJsonConverter.ControlTypes lookup).
-            var list = (System.Collections.IList)(childProp.GetValue(instance)
-                        ?? Activator.CreateInstance(pType)!);
-            foreach (var childElem in elem.Elements())
-                list.Add(ReadElement(childElem));
-            if (childProp.CanWrite) childProp.SetValue(instance, list);
+            ReadP2_HomogeneousList(elem, childProp, instance);
             return;
         }
 
         if (pType == typeof(GoTableLayoutControlCollection))
         {
-            // P3: cell-indexed collection (GoTableLayoutPanel)
-            var coll = (GoTableLayoutControlCollection)(childProp.GetValue(instance)
-                        ?? new GoTableLayoutControlCollection());
-            foreach (var childElem in elem.Elements())
-            {
-                var c = ReadElement(childElem);
-                var cellAttr = childElem.Attribute("Cell");
-                if (cellAttr != null)
-                {
-                    var parts = cellAttr.Value.Split(',');
-                    var col = int.Parse(parts[0], CultureInfo.InvariantCulture);
-                    var row = int.Parse(parts[1], CultureInfo.InvariantCulture);
-                    var colSpan = parts.Length >= 4 ? int.Parse(parts[2], CultureInfo.InvariantCulture) : 1;
-                    var rowSpan = parts.Length >= 4 ? int.Parse(parts[3], CultureInfo.InvariantCulture) : 1;
-                    coll.Add(c, col, row, colSpan, rowSpan);
-                }
-                else
-                {
-                    coll.Controls.Add(c);
-                }
-            }
+            ReadP3_CellIndexed(elem, childProp, instance);
             return;
         }
 
         if (IsWrapperList(pType))
         {
-            // P4a: wrapper-typed collection (e.g. GoSwitchPanel.Pages : List<GoSubPage>)
-            var list = (System.Collections.IList)(childProp.GetValue(instance)
-                        ?? Activator.CreateInstance(pType)!);
-            var wrapperType = pType.GetGenericArguments()[0];
-            var wrapperTagName = wrapperType.Name;
-            foreach (var childElem in elem.Elements(wrapperTagName))
-                list.Add(ReadWrapper(childElem, wrapperType));
-            if (childProp.CanWrite) childProp.SetValue(instance, list);
+            ReadP4_WrapperList(elem, childProp, instance);
             return;
         }
 
-        if (IsKeyedDict(pType, out var valueType))
+        if (IsKeyedDict(pType, out _))
         {
-            // P5: keyed dictionary — TAG-FILTERED by value type's tag name (Task 7 review I-3).
-            // Each [GoChilds] dict property on a multi-property type (e.g. GoDesign.Pages +
-            // GoDesign.Windows) reads ONLY elements whose LocalName matches its value type.
-            // This prevents one property from consuming elements destined for another.
-            var dict = (System.Collections.IDictionary)(childProp.GetValue(instance)
-                        ?? Activator.CreateInstance(pType)!);
-            var valueTagName = TypeTagName(valueType);
-            foreach (var childElem in elem.Elements(valueTagName))
-            {
-                var key = childElem.Attribute("Name")?.Value
-                    ?? throw new InvalidOperationException(
-                        $"P5 dict child <{valueTagName}> missing required Name attribute");
-                object childInstance;
-                if (typeof(IGoControl).IsAssignableFrom(valueType))
-                {
-                    childInstance = ReadElement(childElem);
-                }
-                else
-                {
-                    childInstance = Activator.CreateInstance(valueType)!;
-                    PopulateAny(childElem, childInstance);
-                }
-                dict[key] = childInstance;
-            }
-            if (childProp.CanWrite) childProp.SetValue(instance, dict);
+            ReadP5_KeyedDict(elem, childProp, instance);
             return;
         }
 
         // B1: single-child object (Task 9) — LAST branch (most permissive predicate).
-        // Tag-filtered by property name (or [GudxTagName] override) to avoid consuming
-        // elements destined for other [GoChilds] properties.
         if (IsSingleChildObject(pType))
         {
-            var tagName = childProp.GetCustomAttribute<GudxTagNameAttribute>()?.Name ?? childProp.Name;
-            var childElem = elem.Element(tagName);
-            if (childElem == null) return;  // missing optional child OK
+            ReadB1_SingleChild(elem, childProp, instance);
+        }
+    }
 
-            // Resolve actual type (unwrap nullable T? → T for Activator.CreateInstance).
-            var actualType = Nullable.GetUnderlyingType(pType) ?? pType;
+    // ─── Read pattern helpers ───
 
-            // Try get-only / private-set first: mutate the existing instance in place.
-            var existing = childProp.GetValue(instance);
-            if (existing != null)
+    private static void ReadP2_HomogeneousList(XElement elem, PropertyInfo childProp, object instance)
+    {
+        // P2: list of IGoControl.
+        // Design decision: P2 read is UNFILTERED (consumes all child elements).
+        // This is safe because no type currently has BOTH a P2 and a P5 [GoChilds] property.
+        // GoDesign's [GoChilds] properties are P5 only. If a future type mixes P2 + P5,
+        // P2 will need the same tag-filter as P5 (check GoJsonConverter.ControlTypes lookup).
+        var pType = childProp.PropertyType;
+        var list = (System.Collections.IList)(childProp.GetValue(instance)
+                    ?? Activator.CreateInstance(pType)!);
+        foreach (var childElem in elem.Elements())
+            list.Add(ReadElement(childElem));
+        if (childProp.CanWrite) childProp.SetValue(instance, list);
+    }
+
+    private static void ReadP3_CellIndexed(XElement elem, PropertyInfo childProp, object instance)
+    {
+        // P3: cell-indexed collection (GoTableLayoutPanel)
+        var coll = (GoTableLayoutControlCollection)(childProp.GetValue(instance)
+                    ?? new GoTableLayoutControlCollection());
+        foreach (var childElem in elem.Elements())
+        {
+            var c = ReadElement(childElem);
+            var cellAttr = childElem.Attribute("Cell");
+            if (cellAttr != null)
             {
-                PopulateAny(childElem, existing);
-                // If also writable (private set), we can leave it as-is (already mutated).
-                return;
+                var parts = cellAttr.Value.Split(',');
+                var col = int.Parse(parts[0], CultureInfo.InvariantCulture);
+                var row = int.Parse(parts[1], CultureInfo.InvariantCulture);
+                var colSpan = parts.Length >= 4 ? int.Parse(parts[2], CultureInfo.InvariantCulture) : 1;
+                var rowSpan = parts.Length >= 4 ? int.Parse(parts[3], CultureInfo.InvariantCulture) : 1;
+                coll.Add(c, col, row, colSpan, rowSpan);
             }
-
-            // existing is null (nullable property not yet initialized): create new instance.
-            var instance2 = Activator.CreateInstance(actualType);
-            if (instance2 != null)
+            else
             {
-                PopulateAny(childElem, instance2);
-                // Use reflection to set even private setters.
-                var setter = childProp.GetSetMethod(nonPublic: true);
-                if (setter == null)
-                    throw new InvalidOperationException(
-                        $"[GoChilds] B1 property {instance.GetType().Name}.{childProp.Name} has no setter and was null at read time. " +
-                        $"Either initialize a default value or add a (private) setter.");
-                setter.Invoke(instance, new[] { instance2 });
+                coll.Controls.Add(c);
             }
+        }
+    }
+
+    private static void ReadP4_WrapperList(XElement elem, PropertyInfo childProp, object instance)
+    {
+        // P4a: wrapper-typed collection (e.g. GoSwitchPanel.Pages : List<GoSubPage>)
+        var pType = childProp.PropertyType;
+        var list = (System.Collections.IList)(childProp.GetValue(instance)
+                    ?? Activator.CreateInstance(pType)!);
+        var wrapperType = pType.GetGenericArguments()[0];
+        var wrapperTagName = wrapperType.Name;
+        foreach (var childElem in elem.Elements(wrapperTagName))
+            list.Add(ReadWrapper(childElem, wrapperType));
+        if (childProp.CanWrite) childProp.SetValue(instance, list);
+    }
+
+    private static void ReadP5_KeyedDict(XElement elem, PropertyInfo childProp, object instance)
+    {
+        // P5: keyed dictionary — TAG-FILTERED by value type's tag name (Task 7 review I-3).
+        // Each [GoChilds] dict property on a multi-property type (e.g. GoDesign.Pages +
+        // GoDesign.Windows) reads ONLY elements whose LocalName matches its value type.
+        // This prevents one property from consuming elements destined for another.
+        var pType = childProp.PropertyType;
+        IsKeyedDict(pType, out var valueType);
+        var dict = (System.Collections.IDictionary)(childProp.GetValue(instance)
+                    ?? Activator.CreateInstance(pType)!);
+        var valueTagName = TypeTagName(valueType);
+        foreach (var childElem in elem.Elements(valueTagName))
+        {
+            var key = childElem.Attribute("Name")?.Value
+                ?? throw new InvalidOperationException(
+                    $"P5 dict child <{valueTagName}> missing required Name attribute");
+            object childInstance;
+            if (typeof(IGoControl).IsAssignableFrom(valueType))
+            {
+                childInstance = ReadElement(childElem);
+            }
+            else
+            {
+                childInstance = Activator.CreateInstance(valueType)!;
+                PopulateAny(childElem, childInstance);
+            }
+            dict[key] = childInstance;
+        }
+        if (childProp.CanWrite) childProp.SetValue(instance, dict);
+    }
+
+    private static void ReadB1_SingleChild(XElement elem, PropertyInfo childProp, object instance)
+    {
+        // B1: single-child object (Task 9) — LAST branch (most permissive predicate).
+        // Tag-filtered by property name (or [GudxTagName] override) to avoid consuming
+        // elements destined for other [GoChilds] properties.
+        var pType = childProp.PropertyType;
+        var tagName = childProp.GetCustomAttribute<GudxTagNameAttribute>()?.Name ?? childProp.Name;
+        var childElem = elem.Element(tagName);
+        if (childElem == null) return;  // missing optional child OK
+
+        // Resolve actual type (unwrap nullable T? → T for Activator.CreateInstance).
+        var actualType = Nullable.GetUnderlyingType(pType) ?? pType;
+
+        // Try get-only / private-set first: mutate the existing instance in place.
+        var existing = childProp.GetValue(instance);
+        if (existing != null)
+        {
+            PopulateAny(childElem, existing);
+            // If also writable (private set), we can leave it as-is (already mutated).
             return;
+        }
+
+        // existing is null (nullable property not yet initialized): create new instance.
+        var instance2 = Activator.CreateInstance(actualType);
+        if (instance2 != null)
+        {
+            PopulateAny(childElem, instance2);
+            // Use reflection to set even private setters.
+            var setter = childProp.GetSetMethod(nonPublic: true);
+            if (setter == null)
+                throw new InvalidOperationException(
+                    $"[GoChilds] B1 property {instance.GetType().Name}.{childProp.Name} has no setter and was null at read time. " +
+                    $"Either initialize a default value or add a (private) setter.");
+            setter.Invoke(instance, new[] { instance2 });
         }
     }
 
@@ -503,7 +657,8 @@ public static class GoGudxConverter
 
     private static IEnumerable<PropertyInfo> ChildProperties(Type t) =>
         t.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-         .Where(p => p.GetCustomAttribute<GoChildsAttribute>() != null);
+         .Where(p => p.IsDefined(typeof(GoChildAttribute), inherit: true)   // NEW family
+                  || p.GetCustomAttribute<GoChildsAttribute>() != null);    // LEGACY (R5 will delete)
 
     private static bool IsHomogeneousControlList(Type t)
     {
