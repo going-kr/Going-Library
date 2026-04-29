@@ -53,6 +53,21 @@ public static class GoGudxConverter
             if (s != null) elem.SetAttributeValue(prop.Name, s);
         }
 
+        // P2/P3/P4/P5/B1: walk [GoChilds] properties.
+        foreach (var childProp in ChildProperties(type))
+        {
+            var value = childProp.GetValue(control);
+            if (value == null) continue;
+
+            if (value is System.Collections.IList list && IsHomogeneousControlList(childProp.PropertyType))
+            {
+                // P2: list of IGoControl
+                foreach (var child in list)
+                    if (child is IGoControl c) elem.Add(WriteElement(c));
+            }
+            // P3/P4/P5/B1 dispatch added in later tasks
+        }
+
         return elem;
     }
 
@@ -73,6 +88,21 @@ public static class GoGudxConverter
             if (parsed != null) prop.SetValue(instance, parsed);
         }
 
+        // P2: populate [GoChilds] homogeneous-list properties from child elements.
+        foreach (var childProp in ChildProperties(type))
+        {
+            if (IsHomogeneousControlList(childProp.PropertyType))
+            {
+                var list = (System.Collections.IList)(childProp.GetValue(instance)
+                            ?? Activator.CreateInstance(childProp.PropertyType)!);
+                foreach (var childElem in elem.Elements())
+                    list.Add(ReadElement(childElem));
+                // setter only if it has one
+                if (childProp.CanWrite) childProp.SetValue(instance, list);
+            }
+            // dispatch for other patterns added later
+        }
+
         return instance;
     }
 
@@ -81,6 +111,18 @@ public static class GoGudxConverter
         if (t.IsGenericType)
             return t.Name.Split('`')[0] + "<T>";
         return t.Name;
+    }
+
+    private static IEnumerable<PropertyInfo> ChildProperties(Type t) =>
+        t.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+         .Where(p => p.GetCustomAttribute<GoChildsAttribute>() != null);
+
+    private static bool IsHomogeneousControlList(Type t)
+    {
+        if (!t.IsGenericType) return false;
+        if (t.GetGenericTypeDefinition() != typeof(List<>)) return false;
+        var arg = t.GetGenericArguments()[0];
+        return typeof(IGoControl).IsAssignableFrom(arg);
     }
 
     private static IEnumerable<PropertyInfo> ScalarProperties(Type t)

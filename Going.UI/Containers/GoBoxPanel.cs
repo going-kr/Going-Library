@@ -1,5 +1,6 @@
 ﻿using Going.UI.Controls;
 using Going.UI.Enums;
+using Going.UI.Gudx;
 using Going.UI.Themes;
 using Going.UI.Utils;
 using SkiaSharp;
@@ -21,6 +22,7 @@ namespace Going.UI.Containers
         /// <summary>
         /// 자식 컨트롤 목록을 가져옵니다.
         /// </summary>
+        [GoChilds]
         [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
         /// <summary>
         /// 테두리 색상을 가져오거나 설정합니다. 테마 색상 이름을 사용합니다.
