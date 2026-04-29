@@ -37,18 +37,24 @@ public class GudxPattern5_KeyedDictTests
     public void GoDesign_roundTripsBothPagesAndWindows()
     {
         // Verifies multi-[GoChilds] tag-filter routing — Task 7 review I-3.
-        // Note: GoWindow.Width/Height are [JsonIgnore] so not serialized via Gudx.
-        // Use Text (string) as the distinguishing property instead.
+        // Stronger coverage: 3 pages + 2 windows ensures tag filter doesn't drop
+        // second-or-later occurrences of either type after one match.
         var original = new GoDesign { Name = "T", DesignWidth = 800, DesignHeight = 480 };
-        original.AddPage(new GoPage { Name = "Dash" });
-        original.Windows.Add("Settings", new GoWindow { Name = "Settings", Text = "Settings Window" });
+        foreach (var name in new[] { "Dash", "Alarm", "Trend" })
+            original.AddPage(new GoPage { Name = name });
+        foreach (var name in new[] { "Settings", "About" })
+            original.Windows.Add(name, new GoWindow { Name = name, Text = "win-" + name });
 
         var xml = GoGudxConverter.WriteAny(original).ToString();
         var elem = System.Xml.Linq.XElement.Parse(xml);
         var restored = GoGudxConverter.ReadGoDesign(elem);
 
         Assert.NotNull(restored);
-        Assert.True(restored!.Pages.ContainsKey("Dash"), "Dash page lost");
-        Assert.True(restored.Windows.ContainsKey("Settings"), "Settings window lost — tag filter likely missing");
+        Assert.Equal(3, restored!.Pages.Count);
+        Assert.Equal(2, restored.Windows.Count);
+        foreach (var k in new[] { "Dash", "Alarm", "Trend" })
+            Assert.True(restored.Pages.ContainsKey(k), $"Missing page: {k}");
+        foreach (var k in new[] { "Settings", "About" })
+            Assert.True(restored.Windows.ContainsKey(k), $"Missing window: {k}");
     }
 }

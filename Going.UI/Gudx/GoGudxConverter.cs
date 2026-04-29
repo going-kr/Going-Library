@@ -59,6 +59,10 @@ public static class GoGudxConverter
     /// Tag name is derived from the runtime type. This is the generalized write entry point.
     /// Made public so tests (and future Task 12 high-level API) can call it directly.
     /// </summary>
+    /// <remarks>
+    /// PROVISIONAL: This API is exposed for tests and Task 12's GoDesign.SerializeGudx wiring.
+    /// External callers should prefer the higher-level GoDesign.SerializeGudx(masterPath) once Task 12 lands.
+    /// </remarks>
     public static XElement WriteAny(object obj)
     {
         var type = obj.GetType();
@@ -145,6 +149,8 @@ public static class GoGudxConverter
 
     private static void DispatchChildWrite(XElement elem, PropertyInfo childProp, object value)
     {
+        // Order: P2 (List<IGoControl>) → P3 (TLC) → P4 (wrapper list) → P5 (dict) → B1 (single non-collection, Task 9).
+        // Most-specific predicates first.
         var pType = childProp.PropertyType;
 
         if (value is System.Collections.IList list && IsHomogeneousControlList(pType))
@@ -274,6 +280,8 @@ public static class GoGudxConverter
 
     private static void DispatchChildRead(XElement elem, PropertyInfo childProp, object instance)
     {
+        // Order: P2 (List<IGoControl>) → P3 (TLC) → P4 (wrapper list) → P5 (dict) → B1 (single non-collection, Task 9).
+        // Most-specific predicates first.
         var pType = childProp.PropertyType;
 
         if (IsHomogeneousControlList(pType))
