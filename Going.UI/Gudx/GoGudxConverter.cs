@@ -386,7 +386,7 @@ public static class GoGudxConverter
         }
         if (childProp.GetCustomAttribute<GoChildWrappersAttribute>() != null)
         {
-            WriteP4_WrapperList(elem, value);
+            WriteP4_WrapperList(elem, childProp, value);
             return;
         }
         if (childProp.GetCustomAttribute<GoChildMapAttribute>() != null)
@@ -515,11 +515,16 @@ public static class GoGudxConverter
         if (cellsProp.CanWrite) cellsProp.SetValue(instance, collection);
     }
 
-    private static void WriteP4_WrapperList(XElement elem, object value)
+    private static void WriteP4_WrapperList(XElement elem, PropertyInfo childProp, object value)
     {
-        // P4a: wrapper-typed collection (e.g. GoSwitchPanel.Pages : List<GoSubPage>)
+        // P4 (v1.2.1+): wrapper list emitted inside a property-name group element.
+        // e.g. GoSwitchPanel.Pages : List<GoSubPage> → <Pages><GoSubPage .../></Pages>.
+        // The group element ensures wrappers don't collide with sibling [GoChildList] (P2)
+        // children — fixes the v1.2.0 P2+P4 mix latent bug (GudxP2P4MixTests).
+        var groupElem = new XElement(childProp.Name);
         foreach (var item in (System.Collections.IEnumerable)value)
-            elem.Add(WriteWrapper(item));
+            groupElem.Add(WriteWrapper(item));
+        elem.Add(groupElem);
     }
 
     private static void WriteP5_KeyedDict(XElement elem, object value)
@@ -742,6 +747,11 @@ public static class GoGudxConverter
 
     private static void ReadP4_WrapperList(XElement elem, PropertyInfo childProp, object instance)
     {
+        // P4 (v1.2.1+): wrapper list read from inside a property-name group element.
+        // Missing group element = empty list (OK).
+        var groupElem = elem.Element(childProp.Name);
+        if (groupElem == null) return;
+
         var pType = childProp.PropertyType;
         var listObj = childProp.GetValue(instance) ?? Activator.CreateInstance(pType)!;
         var baseType = pType.GetGenericArguments()[0];
@@ -763,7 +773,7 @@ public static class GoGudxConverter
                 $"P4 wrapper list type {pType.Name} not supported (expected List<T> or ObservableList<T>)");
         }
 
-        foreach (var childElem in elem.Elements())
+        foreach (var childElem in groupElem.Elements())
         {
             var tagName = childElem.Name.LocalName;
             if (!derivedMap.TryGetValue(tagName, out var actualType)) continue;
