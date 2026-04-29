@@ -43,14 +43,17 @@ namespace Going.UI.Design
         /// <summary>
         /// 디자인의 이름을 가져오거나 설정합니다.
         /// </summary>
+        [GoProperty(PCategory.Basic, 0)]
         public string? Name { get; set; }
         /// <summary>
         /// 디자인의 기본 너비를 가져오거나 설정합니다.
         /// </summary>
+        [GoProperty(PCategory.Basic, 1)]
         public int DesignWidth { get; set; }
         /// <summary>
         /// 디자인의 기본 높이를 가져오거나 설정합니다.
         /// </summary>
+        [GoProperty(PCategory.Basic, 2)]
         public int DesignHeight { get; set; }
         /// <summary>
         /// 프로젝트 폴더 경로를 가져오거나 설정합니다.
