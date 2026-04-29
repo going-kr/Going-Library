@@ -372,7 +372,7 @@ public static class GoGudxConverter
         // ─── NEW dispatch by attribute type ───
         if (childProp.GetCustomAttribute<GoChildListAttribute>() != null)
         {
-            WriteP2_HomogeneousList(elem, value);
+            WriteP2_HomogeneousList(elem, childProp, value);
             return;
         }
         if (childProp.GetCustomAttribute<GoChildCellsAttribute>() != null)
@@ -409,11 +409,15 @@ public static class GoGudxConverter
 
     // ─── Write pattern helpers ───
 
-    private static void WriteP2_HomogeneousList(XElement elem, object value)
+    private static void WriteP2_HomogeneousList(XElement elem, PropertyInfo childProp, object value)
     {
-        // P2: list of IGoControl — use WriteElement to include F2 Id attribute
+        // P2 (v1.2.1+): IGoControl children inside a property-name group element.
+        // The group element separates P2 children from sibling P4 wrappers — fixes the
+        // v1.2.0 latent bug where ReadP2 unfiltered walk consumed P4 wrapper elements.
+        var groupElem = new XElement(childProp.Name);
         foreach (var child in (System.Collections.IList)value)
-            if (child is IGoControl c) elem.Add(WriteElement(c));
+            if (child is IGoControl c) groupElem.Add(WriteElement(c));
+        elem.Add(groupElem);
     }
 
     private static void WriteP3_CellIndexed(XElement elem, object value)
@@ -707,16 +711,22 @@ public static class GoGudxConverter
 
     private static void ReadP2_HomogeneousList(XElement elem, PropertyInfo childProp, object instance)
     {
-        // P2: list of IGoControl.
-        // Design decision: P2 read is UNFILTERED (consumes all child elements).
-        // This is safe because no type currently has BOTH a P2 and a P5 [GoChilds] property.
-        // GoDesign's [GoChilds] properties are P5 only. If a future type mixes P2 + P5,
-        // P2 will need the same tag-filter as P5 (check GoJsonConverter.ControlTypes lookup).
+        // P2 (v1.2.1+): IGoControl children read from inside a property-name group element.
+        // Tag-filter via _gudxControlTypes registry — non-IGoControl tags are skipped (defensive;
+        // the group element should only contain IGoControl entries by design, but skipping unknowns
+        // protects against malformed input).
+        // Missing group element = empty list (OK).
+        var groupElem = elem.Element(childProp.Name);
+        if (groupElem == null) return;
+
         var pType = childProp.PropertyType;
         var list = (System.Collections.IList)(childProp.GetValue(instance)
                     ?? Activator.CreateInstance(pType)!);
-        foreach (var childElem in elem.Elements())
+        foreach (var childElem in groupElem.Elements())
+        {
+            if (!_gudxControlTypes.ContainsKey(childElem.Name.LocalName)) continue;
             list.Add(ReadElement(childElem));
+        }
         if (childProp.CanWrite) childProp.SetValue(instance, list);
     }
 

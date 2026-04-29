@@ -32,9 +32,9 @@ public class GudxR7TabControlTests
         Assert.Equal(2, tabs.Count);
         Assert.Equal("TabA", tabs[0].Attribute("Name")?.Value);
         Assert.Equal("TabB", tabs[1].Attribute("Name")?.Value);
-        // GoTabPage's P2 Childrens — at T-G3 step still flat sibling (T-G4 will group these too).
-        Assert.Single(tabs[0].Elements("GoLabel"));
-        Assert.Single(tabs[1].Elements("GoButton"));
+        // v1.2.1: GoTabPage's P2 Childrens also grouped inside <Childrens>.
+        Assert.Single(tabs[0].Element("Childrens")!.Elements("GoLabel"));
+        Assert.Single(tabs[1].Element("Childrens")!.Elements("GoButton"));
     }
 
     [Fact]
