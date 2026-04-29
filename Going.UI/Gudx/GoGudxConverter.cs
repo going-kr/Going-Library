@@ -437,7 +437,39 @@ public static class GoGudxConverter
 
         var instance = (IGoControl)Activator.CreateInstance(type)!;
         PopulateAny(elem, instance);
+
+        // Defensive: ensure non-empty Id (P3 cell-index dict uses Id as key)
+        EnsureNonEmptyId(instance);
+
         return instance;
+    }
+
+    /// <summary>
+    /// Defensive lazy Id assignment: if an IGoControl has Id == Guid.Empty after deserialization,
+    /// assigns a fresh Guid via reflection. This ensures P3 cell-index dict lookups (which use Id as key) work correctly.
+    /// </summary>
+    private static void EnsureNonEmptyId(object obj)
+    {
+        var idProp = obj.GetType().GetProperty("Id");
+        if (idProp == null) return;
+        if (idProp.PropertyType != typeof(Guid)) return;
+
+        var current = (Guid)(idProp.GetValue(obj) ?? Guid.Empty);
+        if (current != Guid.Empty) return;
+
+        // Try to invoke the setter (public OR non-public, including init-only via reflection)
+        var setter = idProp.GetSetMethod(nonPublic: true);
+        if (setter == null) return;
+
+        try
+        {
+            setter.Invoke(obj, new object[] { Guid.NewGuid() });
+        }
+        catch
+        {
+            // Best-effort: if reflection can't reach the setter (e.g., sealed init), silently continue.
+            // Most cases have auto-init Id = Guid.NewGuid() and will never reach here.
+        }
     }
 
     /// <summary>
