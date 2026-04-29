@@ -24,6 +24,36 @@ namespace Going.UI.Gudx;
 /// </summary>
 public static class GoGudxConverter
 {
+    // Cache: base wrapper type → { class-name → derived concrete type }
+    private static readonly Dictionary<Type, Dictionary<string, Type>> _wrapperDerivedTypesCache = new();
+    private static readonly object _wrapperDerivedTypesLock = new();
+
+    private static Dictionary<string, Type> GetWrapperDerivedTypes(Type baseType)
+    {
+        if (_wrapperDerivedTypesCache.TryGetValue(baseType, out var cached)) return cached;
+
+        lock (_wrapperDerivedTypesLock)
+        {
+            if (_wrapperDerivedTypesCache.TryGetValue(baseType, out cached)) return cached;
+
+            var dict = new Dictionary<string, Type>(StringComparer.Ordinal);
+            // Include the base type itself if concrete (instantiable) and non-generic
+            if (!baseType.IsAbstract && !baseType.IsGenericTypeDefinition)
+                dict[baseType.Name] = baseType;
+            // Scan the base type's assembly for concrete derived types
+            foreach (var t in baseType.Assembly.GetTypes())
+            {
+                if (t == baseType) continue;
+                if (t.IsAbstract) continue;
+                if (t.IsGenericTypeDefinition) continue;  // skip open generics (e.g. GoDataGridNumberColumn<T>)
+                if (!baseType.IsAssignableFrom(t)) continue;
+                dict[t.Name] = t;
+            }
+            _wrapperDerivedTypesCache[baseType] = dict;
+            return dict;
+        }
+    }
+
     static GoGudxConverter()
     {
         // Force GoJsonConverter's static ctor to run so ControlTypes is populated.
@@ -446,31 +476,36 @@ public static class GoGudxConverter
     {
         var pType = childProp.PropertyType;
         var listObj = childProp.GetValue(instance) ?? Activator.CreateInstance(pType)!;
-        var wrapperType = pType.GetGenericArguments()[0];
-        var wrapperTagName = wrapperType.Name;
+        var baseType = pType.GetGenericArguments()[0];
+
+        // Tag name = class name. Build a map of acceptable tags (base + derived concrete types in baseType's assembly).
+        var derivedMap = GetWrapperDerivedTypes(baseType);
+
+        var addMethod = pType.GetMethod("Add", new[] { baseType })
+            ?? throw new InvalidOperationException(
+                $"P4 wrapper list type {pType.Name} has no Add({baseType.Name}) method");
 
         var genericDef = pType.GetGenericTypeDefinition();
+        var isStandardList = genericDef == typeof(List<>);
+        var isObservableList = genericDef == typeof(ObservableList<>);
 
-        if (genericDef == typeof(List<>))
-        {
-            // Standard List<T> — implements non-generic IList, fast path
-            var list = (System.Collections.IList)listObj;
-            foreach (var childElem in elem.Elements(wrapperTagName))
-                list.Add(ReadWrapper(childElem, wrapperType));
-        }
-        else if (genericDef == typeof(ObservableList<>))
-        {
-            // ObservableList<T> — implements IList<T> only, call Add(T) explicitly
-            var addMethod = pType.GetMethod("Add", new[] { wrapperType })
-                ?? throw new InvalidOperationException(
-                    $"ObservableList<{wrapperType.Name}> missing Add({wrapperType.Name}) method");
-            foreach (var childElem in elem.Elements(wrapperTagName))
-                addMethod.Invoke(listObj, new[] { ReadWrapper(childElem, wrapperType) });
-        }
-        else
+        if (!isStandardList && !isObservableList)
         {
             throw new InvalidOperationException(
                 $"P4 wrapper list type {pType.Name} not supported (expected List<T> or ObservableList<T>)");
+        }
+
+        foreach (var childElem in elem.Elements())
+        {
+            var tagName = childElem.Name.LocalName;
+            if (!derivedMap.TryGetValue(tagName, out var actualType)) continue;
+
+            var item = ReadWrapper(childElem, actualType);
+
+            if (isStandardList)
+                ((System.Collections.IList)listObj).Add(item);
+            else
+                addMethod.Invoke(listObj, new[] { item });
         }
 
         if (childProp.CanWrite) childProp.SetValue(instance, listObj);
@@ -549,9 +584,9 @@ public static class GoGudxConverter
     // ─────────────────────────────────────────────────────────────────────────
 
     /// <summary>
-    /// Serializes a non-IGoControl wrapper object (e.g. GoSubPage, GoGridLayoutPanelRow)
+    /// Serializes a non-IGoControl wrapper object (e.g. GoSubPage, GoGridLayoutPanelRow, GoTreeNode)
     /// to an XElement using the type name as tag and reflection for P1 scalars.
-    /// P2 child lists (IGoControl) nested inside the wrapper are also emitted.
+    /// All [GoChilds] child properties are dispatched via DispatchChildWrite (P2, P4, etc.).
     /// </summary>
     internal static XElement WriteWrapper(object item)
     {
@@ -567,16 +602,12 @@ public static class GoGudxConverter
             if (s != null) elem.SetAttributeValue(prop.Name, s);
         }
 
-        // Recursive P2: emit IGoControl children if the wrapper has [GoChilds] List<IGoControl>
+        // Full dispatch: emit all [GoChilds] properties (P2 IGoControl lists, P4 wrapper lists, etc.)
         foreach (var childProp in ChildProperties(type))
         {
             var v = childProp.GetValue(item);
             if (v == null) continue;
-            if (v is System.Collections.IList list && IsHomogeneousControlList(childProp.PropertyType))
-            {
-                foreach (var c in list)
-                    if (c is IGoControl gc) elem.Add(WriteAny(gc));
-            }
+            DispatchChildWrite(elem, childProp, v, item);
         }
 
         return elem;
@@ -584,35 +615,12 @@ public static class GoGudxConverter
 
     /// <summary>
     /// Deserializes a non-IGoControl wrapper object from an XElement.
-    /// Reads P1 scalar attributes and recursively populates P2 child lists.
+    /// Uses PopulateAny for full dispatch (P1 scalars, P2 IGoControl lists, P4 nested wrappers, etc.).
     /// </summary>
     internal static object ReadWrapper(XElement elem, Type type)
     {
         var instance = Activator.CreateInstance(type)!;
-
-        // P1: read attributes onto scalar properties
-        foreach (var attr in elem.Attributes())
-        {
-            var prop = type.GetProperty(attr.Name.LocalName);
-            if (prop == null || !prop.CanWrite) continue;
-            var parsed = ParseScalar(prop.PropertyType, attr.Value);
-            if (parsed != null) prop.SetValue(instance, parsed);
-        }
-
-        // Recursive P2: populate IGoControl children if wrapper has [GoChilds] List<IGoControl>
-        foreach (var childProp in ChildProperties(type))
-        {
-            if (IsHomogeneousControlList(childProp.PropertyType))
-            {
-                var list = (System.Collections.IList)(childProp.GetValue(instance)
-                            ?? Activator.CreateInstance(childProp.PropertyType)!);
-                foreach (var childElem in elem.Elements())
-                    list.Add(ReadElement(childElem));
-                // Only assign via setter if the property has one (GoSubPage.Childrens is get-only)
-                if (childProp.CanWrite) childProp.SetValue(instance, list);
-            }
-        }
-
+        PopulateAny(elem, instance);
         return instance;
     }
 
