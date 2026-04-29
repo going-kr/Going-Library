@@ -4,6 +4,8 @@ This document is the design reference for the `GoGudxConverter` reflection algor
 (Tasks 4-12). When the converter walks a `[GoChilds]` property it picks one of P2/P3/P4/P5/B1
 based on the property's runtime type. P1 covers all scalar attributes on the owning element.
 
+**Multi-property classes:** When a class declares multiple `[GoChilds]` properties (e.g., `GoGridLayoutPanel` has both `Rows` and `Childrens`), all are emitted; see Unmapped #1 for the cross-reference rule.
+
 ---
 
 ## P1. Attribute property
@@ -76,7 +78,7 @@ based on the property's runtime type. P1 covers all scalar attributes on the own
 - Cases:
   - `GoDesign.Images` (`private Dictionary<string, List<SKImage>>`) — image assets loaded from external files
   - `GoDesign.Fonts` (`private Dictionary<string, List<byte[]>>`) — font assets loaded from external files
-  - Master file `<GoPageRef>`/`<GoWindowRef>` entries (introduced in Task 12)
+  - Master file `<GoPageRef>`/`<GoWindowRef>` entries (introduced in Task 12): These are *not* produced by `[GudxExternalRef]`; instead Task 12's `SerializeGoDesignToFiles` split logic emits them as substitutes for the original `Pages`/`Windows` dictionary entries (the dict children get written to separate files instead).
 - Note: `Images` and `Fonts` are declared `private` on `GoDesign`; the Gudx converter will need reflection or a dedicated accessor to reach them.
 
 ---
