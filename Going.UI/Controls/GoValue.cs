@@ -1,6 +1,7 @@
 ﻿using Going.UI.Datas;
 using Going.UI.Enums;
 using Going.UI.Extensions;
+using Going.UI.Gudx;
 using Going.UI.Managers;
 using Going.UI.Themes;
 using Going.UI.Tools;
@@ -56,6 +57,7 @@ namespace Going.UI.Controls
         /// <summary>버튼 영역 크기 (픽셀). null이면 버튼 영역을 표시하지 않습니다.</summary>
         [GoProperty(PCategory.Control, 14)] public float? ButtonSize { get; set; }
         /// <summary>버튼 항목 목록</summary>
+        [GoChildWrappers]
         [GoProperty(PCategory.Control, 15)] public List<GoButtonItem> Buttons { get; set; } = [];
 
         /// <summary>자동 글꼴 크기 설정</summary>

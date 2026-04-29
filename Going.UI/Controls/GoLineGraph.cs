@@ -1,6 +1,7 @@
 ﻿using Going.UI.Datas;
 using Going.UI.Dialogs;
 using Going.UI.Enums;
+using Going.UI.Gudx;
 using Going.UI.Themes;
 using Going.UI.Tools;
 using Going.UI.Utils;
@@ -66,6 +67,7 @@ namespace Going.UI.Controls
         /// <summary>
         /// 그래프 시리즈 목록을 가져오거나 설정합니다.
         /// </summary>
+        [GoChildWrappers]
         [GoProperty(PCategory.Control, 9)] public List<GoLineGraphSeries> Series { get; set; } = [];
 
         /// <summary>
