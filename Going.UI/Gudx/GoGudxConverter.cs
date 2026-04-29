@@ -9,6 +9,7 @@ using Going.UI.Containers;
 using Going.UI.Controls;
 using Going.UI.Design;
 using Going.UI.Json;
+using SkiaSharp;
 
 namespace Going.UI.Gudx;
 
@@ -571,7 +572,7 @@ public static class GoGudxConverter
         if (t.IsPrimitive || t == typeof(string) || t == typeof(decimal)) return true;
         if (t.IsEnum) return true;
         if (t == typeof(List<string>)) return true;
-        // SKColor/SKRect handled by GudxSpecialConverters (Task 11).
+        if (t == typeof(SKColor) || t == typeof(SKRect)) return true;
         return false;
     }
 
@@ -586,6 +587,8 @@ public static class GoGudxConverter
             double d => d.ToString(CultureInfo.InvariantCulture),
             decimal m => m.ToString(CultureInfo.InvariantCulture),
             Enum e => e.ToString(),
+            SKColor sc => GudxSpecialConverters.FormatSKColor(sc),
+            SKRect sr => GudxSpecialConverters.FormatSKRect(sr),
             _ => Convert.ToString(value, CultureInfo.InvariantCulture)
         };
     }
@@ -601,6 +604,8 @@ public static class GoGudxConverter
         if (targetType == typeof(decimal)) return decimal.Parse(value, CultureInfo.InvariantCulture);
         if (targetType == typeof(List<string>))
             return value == "" ? new List<string>() : value.Split(',').ToList();
+        if (targetType == typeof(SKColor)) return GudxSpecialConverters.ParseSKColor(value);
+        if (targetType == typeof(SKRect)) return GudxSpecialConverters.ParseSKRect(value);
         return null;
     }
 }
