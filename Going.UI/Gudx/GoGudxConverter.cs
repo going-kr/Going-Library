@@ -23,16 +23,6 @@ namespace Going.UI.Gudx;
 /// </summary>
 public static class GoGudxConverter
 {
-    /// <summary>
-    /// Registry of non-IGoControl wrapper types used in P4 wrapper collections.
-    /// Maps XML tag name → CLR type.
-    /// </summary>
-    internal static readonly Dictionary<string, Type> WrapperTypes = new()
-    {
-        ["GoSubPage"] = typeof(Going.UI.Containers.GoSubPage),
-        ["GoGridLayoutPanelRow"] = typeof(Going.UI.Containers.GoGridLayoutPanelRow),
-    };
-
     static GoGudxConverter()
     {
         // Force GoJsonConverter's static ctor to run so ControlTypes is populated.
