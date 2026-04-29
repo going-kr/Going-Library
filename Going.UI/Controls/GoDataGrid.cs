@@ -99,8 +99,6 @@ namespace Going.UI.Controls
         /// <summary>
         /// 컬럼 그룹 컬렉션을 가져옵니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 14)]
-        [GoChildWrappers]
         public ObservableList<GoDataGridColumn> ColumnGroups { get; private set; } = [];
         /// <summary>
         /// 컬럼 컬렉션을 가져옵니다.
