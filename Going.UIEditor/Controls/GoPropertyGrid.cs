@@ -7,6 +7,7 @@ using Going.UI.Enums;
 using Going.UI.Extensions;
 using Going.UI.Forms;
 using Going.UI.Forms.Controls;
+using Going.UI.ImageCanvas;
 using Going.UI.Themes;
 using Going.UI.Tools;
 using Going.UI.Utils;
@@ -1259,6 +1260,8 @@ namespace Going.UIEditor.Controls
                     else if (type == typeof(GoLineGraphSeries)) SetValue(Info, val as IEnumerable<GoLineGraphSeries>);
                     else if (type == typeof(GoTabPage)) SetValue(Info, val as IEnumerable<GoTabPage>);
                     else if (type == typeof(GoSubPage)) SetValue(Info, val as IEnumerable<GoSubPage>);
+                    else if (type == typeof(StateLamp)) SetValue(Info, val as IEnumerable<StateLamp>);
+                    else if (type == typeof(StateImage)) SetValue(Info, val as IEnumerable<StateImage>);
                     else
                     {
                         Program.MessageBox.ShowMessageBoxOk($"{Info.Name}", "유효하지 않는 타입입니다");

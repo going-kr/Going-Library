@@ -44,7 +44,7 @@ namespace Going.UI.Containers
         /// <summary>
         /// 테두리 두께를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 4)] public float BorderSize { get; set; } = 1F;
+        [GoProperty(PCategory.Control, 4)] public float BorderWidth { get; set; } = 1F;
 
         /// <summary>
         /// Elevation 단계 (0~5). 0이면 그림자 없음, 1~5는 점진적으로 강한 드롭 그림자가 외곽에 그려져 카드가 떠있는 효과를 만듭니다.
@@ -75,7 +75,7 @@ namespace Going.UI.Containers
             var rts = Areas();
             var rtBox = rts["Content"];
 
-            if (BackgroundDraw) Util.DrawBox(canvas, rtBox, cBox, cBorder, Round, thm.Corner, true, BorderSize);
+            if (BackgroundDraw) Util.DrawBox(canvas, rtBox, cBox, cBorder, Round, thm.Corner, true, BorderWidth);
 
             base.OnDraw(canvas, thm);
         }

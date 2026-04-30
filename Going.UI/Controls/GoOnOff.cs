@@ -38,6 +38,8 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 7)] public string BoxColor { get; set; } = "Base1";
         /// <summary>테두리 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 8)] public string BorderColor { get; set; } = "Base3";
+        /// <summary>테두리 두께</summary>
+        [GoProperty(PCategory.Control, 18)] public float BorderWidth { get; set; } = 1F;
         /// <summary>슬라이딩 커서 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 9)] public string CursorColor { get; set; } = "Base3";
         /// <summary>On 상태 색상 (테마 색상 키 또는 색상명)</summary>
@@ -144,7 +146,7 @@ namespace Going.UI.Controls
                     Util.DrawIcon(canvas, CursorIconString, isz ?? rtCursor.Height / 2, rtCursor, OnOff ? cOn : cOff);
             }
 
-            Util.DrawBox(canvas, rtContent, SKColors.Transparent, cBorder, GoRoundType.All, corner);
+            Util.DrawBox(canvas, rtContent, SKColors.Transparent, cBorder, GoRoundType.All, corner, true, BorderWidth);
             base.OnDraw(canvas, thm);
         }
 

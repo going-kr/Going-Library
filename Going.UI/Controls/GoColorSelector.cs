@@ -53,6 +53,8 @@ namespace Going.UI.Controls
         /// 테두리 색상의 테마 색상 이름을 가져오거나 설정합니다.
         /// </summary>
         [GoProperty(PCategory.Control, 5)] public string BorderColor { get; set; } = "Base3";
+        /// <summary>테두리 두께</summary>
+        [GoProperty(PCategory.Control, 8)] public float BorderWidth { get; set; } = 1F;
 
         /// <summary>
         /// 콘텐츠 정렬 방식을 가져오거나 설정합니다.
@@ -178,9 +180,9 @@ namespace Going.UI.Controls
 
                 #region Box & Text
                 Util.DrawBox(canvas, rtSelect, Value, GoRoundType.All, thm.Corner);
-                Util.DrawBox(canvas, rtValueR, cInput, cBorder, GoRoundType.All, thm.Corner);
-                Util.DrawBox(canvas, rtValueG, cInput, cBorder, GoRoundType.All, thm.Corner);
-                Util.DrawBox(canvas, rtValueB, cInput, cBorder, GoRoundType.All, thm.Corner);
+                Util.DrawBox(canvas, rtValueR, cInput, cBorder, GoRoundType.All, thm.Corner, true, BorderWidth);
+                Util.DrawBox(canvas, rtValueG, cInput, cBorder, GoRoundType.All, thm.Corner, true, BorderWidth);
+                Util.DrawBox(canvas, rtValueB, cInput, cBorder, GoRoundType.All, thm.Corner, true, BorderWidth);
                 Util.DrawText(canvas, "R", FontName, FontStyle, FontSize, rtTitleR, cText);
                 Util.DrawText(canvas, "G", FontName, FontStyle, FontSize, rtTitleG, cText);
                 Util.DrawText(canvas, "B", FontName, FontStyle, FontSize, rtTitleB, cText);

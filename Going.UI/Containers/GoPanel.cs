@@ -66,6 +66,8 @@ namespace Going.UI.Containers
         /// 테두리 색상을 가져오거나 설정합니다. 테마 색상 이름을 사용합니다.
         /// </summary>
         [GoProperty(PCategory.Control, 9)] public string BorderColor { get; set; } = "Base3";
+        /// <summary>테두리 두께</summary>
+        [GoProperty(PCategory.Control, 18)] public float BorderWidth { get; set; } = 1F;
         /// <summary>
         /// 모서리 라운드 타입을 가져오거나 설정합니다.
         /// </summary>
@@ -153,7 +155,7 @@ namespace Going.UI.Containers
 
             if (BackgroundDraw)
             {
-                Util.DrawBox(canvas, rtBox, BorderOnly ? SKColors.Transparent : cPanel, cBorder, Round, thm.Corner);
+                Util.DrawBox(canvas, rtBox, BorderOnly ? SKColors.Transparent : cPanel, cBorder, Round, thm.Corner, true, BorderWidth);
 
                 if (TitleDivider)
                 {

@@ -55,6 +55,8 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control,13)] public string BoxColor { get; set; } = "Base1";
         /// <summary>테두리 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control,14)] public string BorderColor { get; set; } = "Base3";
+        /// <summary>테두리 두께</summary>
+        [GoProperty(PCategory.Control, 21)] public float BorderWidth { get; set; } = 1F;
         /// <summary>스위치 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control,15)] public string SwitchColor { get; set; } = "Base3";
 
@@ -134,7 +136,7 @@ namespace Going.UI.Controls
 
             using var p = new SKPaint { IsAntialias = true };
 
-            Util.DrawBox(canvas, rtContent, cBox, cBorder, GoRoundType.All, thm.Corner);
+            Util.DrawBox(canvas, rtContent, cBox, cBorder, GoRoundType.All, thm.Corner, true, BorderWidth);
 
             #region Switch
             #region Color

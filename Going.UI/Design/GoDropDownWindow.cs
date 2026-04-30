@@ -31,6 +31,8 @@ namespace Going.UI.Design
         /// 윈도우 테두리 색상을 가져오거나 설정합니다.
         /// </summary>
         [GoProperty(PCategory.Control, 1)] public string BorderColor { get; set; } = "WindowBorder";
+        /// <summary>테두리 두께</summary>
+        [GoProperty(PCategory.Control, 2)] public float BorderWidth { get; set; } = 1F;
         /// <summary>
         /// 윈도우 모서리 둥글기 타입을 가져오거나 설정합니다.
         /// </summary>
@@ -79,7 +81,7 @@ namespace Going.UI.Design
             if (cBorder != SKColors.Transparent)
             {
                 p.IsStroke = true;
-                p.StrokeWidth = 1F;
+                p.StrokeWidth = BorderWidth;
                 p.Color = cBorder;
                 canvas.DrawRoundRect(rtrWnd, p);
             }

@@ -38,6 +38,8 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 4)] public string TextColor { get; set; } = "Fore";
         /// <summary>테두리 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 5)] public string BorderColor { get; set; } = "Base3";
+        /// <summary>테두리 두께</summary>
+        [GoProperty(PCategory.Control, 17)] public float BorderWidth { get; set; } = 1F;
         /// <summary>버튼 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 6)] public string ButtonColor { get; set; } = "Base3";
         /// <summary>값 표시 영역 배경 색상 (테마 색상 키)</summary>
@@ -166,7 +168,7 @@ namespace Going.UI.Controls
             Util.DrawText(canvas, txt, FontName, FontStyle, fsz, rtValue, cText);
             #endregion
             #region Border
-            Util.DrawBox(canvas, rtContent, SKColors.Transparent, cBorder, Round, thm.Corner);
+            Util.DrawBox(canvas, rtContent, SKColors.Transparent, cBorder, Round, thm.Corner, true, BorderWidth);
             #endregion
             #region Border2
             #region Minus

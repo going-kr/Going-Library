@@ -73,6 +73,8 @@ namespace Going.UI.Controls
         /// 테두리 색상의 테마 색상 이름을 가져오거나 설정합니다.
         /// </summary>
         [GoProperty(PCategory.Control, 7)] public string BorderColor { get; set; } = "Transparent";
+        /// <summary>테두리 두께</summary>
+        [GoProperty(PCategory.Control, 17)] public float BorderWidth { get; set; } = 1F;
 
         /// <summary>
         /// 프로그레스바의 진행 방향을 가져오거나 설정합니다.
@@ -152,6 +154,7 @@ namespace Going.UI.Controls
             var cText = thm.ToColor(TextColor);
             var cEmpty = thm.ToColor(EmptyColor);
             var cFill = thm.ToColor(FillColor);
+            var cBorder = thm.ToColor(BorderColor);
             var rts = Areas();
             var rtBar = rts["Gauge"];
             var rtFill = rts["Fill"];
@@ -167,6 +170,16 @@ namespace Going.UI.Controls
             {
                 p.Color = cFill;
                 canvas.DrawRoundRect(rtFill, CornerRadius, CornerRadius, p);
+            }
+
+            // 테두리
+            if (cBorder != SKColors.Transparent && BorderWidth > 0)
+            {
+                p.Color = cBorder;
+                p.IsStroke = true;
+                p.StrokeWidth = BorderWidth;
+                canvas.DrawRoundRect(rtBar, CornerRadius, CornerRadius, p);
+                p.IsStroke = false;
             }
 
             if (ShowValueLabel)

@@ -58,6 +58,8 @@ namespace Going.UI.Controls
         /// 테두리 색상의 테마 색상 이름을 가져오거나 설정합니다.
         /// </summary>
         [GoProperty(PCategory.Control, 8)] public string BorderColor { get; set; } = "Base1";
+        /// <summary>테두리 두께</summary>
+        [GoProperty(PCategory.Control, 17)] public float BorderWidth { get; set; } = 1F;
 
         private double nValue = 0;
         /// <summary>
@@ -156,7 +158,7 @@ namespace Going.UI.Controls
 
                 p.Color = cBorder;
                 p.IsStroke = true;
-                p.StrokeWidth = 1;
+                p.StrokeWidth = BorderWidth;
                 canvas.DrawPath(pth, p);
             }
             #endregion

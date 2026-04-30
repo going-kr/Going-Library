@@ -50,6 +50,8 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 7)] public string TextColor { get; set; } = "Fore";
         /// <summary>테두리 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 8)] public string BorderColor { get; set; } = "Base3";
+        /// <summary>테두리 두께</summary>
+        [GoProperty(PCategory.Control, 19)] public float BorderWidth { get; set; } = 1F;
         /// <summary>제목/버튼 영역 채우기 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 9)] public string FillColor { get; set; } = "Base3";
         /// <summary>값 영역 배경 색상 (테마 색상 키)</summary>
@@ -73,14 +75,17 @@ namespace Going.UI.Controls
         /// <summary>자동 아이콘 크기 설정</summary>
         [GoProperty(PCategory.Control, 17)] public GoAutoFontSize AutoIconSize { get; set; } = GoAutoFontSize.NotUsed;
 
+        /// <summary>Title 영역의 배경 박스(FillColor) 그리기 여부. false면 텍스트만 표시되고 외곽 round 가 Value 영역으로 흡수됨.</summary>
+        [GoProperty(PCategory.Control, 18)] public bool TitleBoxDraw { get; set; } = true;
+
         /// <summary>입력 값의 유효성 여부</summary>
         [JsonIgnore] public virtual bool Valid => true;
         /// <summary>키보드 입력을 사용하는지 여부</summary>
         [JsonIgnore] public virtual bool IsKeyboardInput => false;
         /// <summary>입력 모드에서 텍스트를 숨길지 여부 (내부 사용)</summary>
         [JsonIgnore, Browsable(false), EditorBrowsable(EditorBrowsableState.Never)] public bool _InputModeInvisibleText_ { get; set; } = false;
-        [JsonIgnore] private bool UseTitle => TitleSize.HasValue && TitleSize.Value > 0;
-        [JsonIgnore] private bool UseButton => ButtonSize.HasValue && ButtonSize.Value > 0 && Buttons.Count > 0;
+        [JsonIgnore] private bool UseTitle => (int)(TitleSize ?? 0) > 0;
+        [JsonIgnore] private bool UseButton => (int)(ButtonSize ?? 0) > 0 && Buttons.Count > 0;
         #endregion
 
         #region Member Variable
@@ -123,11 +128,14 @@ namespace Going.UI.Controls
             #region round
             var useT = UseTitle;
             var useB = UseButton;
-            var rnds = Util.Rounds(Direction, Round, (TitleSize.HasValue ? 1 : 0) + 1 + (ButtonSize.HasValue ? 1 : 0));
-            var rndTitle = TitleSize.HasValue ? rnds[0] : GoRoundType.Rect;
-            var rndValue = TitleSize.HasValue ? rnds[1] : rnds[0];
-            var rndButton = ButtonSize.HasValue ? rnds[rnds.Length - 1] : GoRoundType.Rect;
-            var rndButtons = Util.Rounds(GoDirectionHV.Horizon, rndButton, (ButtonSize.HasValue ? Buttons.Count : 0));
+            // titleVisible: Title 박스가 외곽 round + Border 의 일부로 포함되는 케이스.
+            // TitleBoxDraw=false 면 Title 영역은 박스/Border 모두 제외 — Value(+Button) 만 외곽.
+            var titleVisible = useT && TitleBoxDraw;
+            var rnds = Util.Rounds(Direction, Round, (titleVisible ? 1 : 0) + 1 + (useB ? 1 : 0));
+            var rndTitle = titleVisible ? rnds[0] : GoRoundType.Rect;
+            var rndValue = titleVisible ? rnds[1] : rnds[0];
+            var rndButton = useB ? rnds[rnds.Length - 1] : GoRoundType.Rect;
+            var rndButtons = Util.Rounds(GoDirectionHV.Horizon, rndButton, (useB ? Buttons.Count : 0));
 
             #endregion
 
@@ -139,7 +147,8 @@ namespace Going.UI.Controls
             #region Title
             if (useT)
             {
-                Util.DrawBox(canvas, rtTitle, cFill, rndTitle, thm.Corner);
+                if (TitleBoxDraw)
+                    Util.DrawBox(canvas, rtTitle, cFill, rndTitle, thm.Corner);
                 Util.DrawTextIcon(canvas, Title, FontName, FontStyle, fsz, IconString, isz, GoDirectionHV.Horizon, IconGap, rtTitle, cText);
             }
             #endregion
@@ -175,7 +184,16 @@ namespace Going.UI.Controls
             #endregion
 
             #region Border
-            Util.DrawBox(canvas, rtBox, SKColors.Transparent, cBorder, Round, thm.Corner);
+            // titleVisible=false 시 Title 영역 제외하고 Border. Value(+Button) 영역만 외곽 round.
+            if (useT && !TitleBoxDraw)
+            {
+                var rtBorder = useB ? SKRect.Union(rtValue, rtButton) : rtValue;
+                Util.DrawBox(canvas, rtBorder, SKColors.Transparent, cBorder, Round, thm.Corner, true, BorderWidth);
+            }
+            else
+            {
+                Util.DrawBox(canvas, rtBox, SKColors.Transparent, cBorder, Round, thm.Corner, true, BorderWidth);
+            }
             #endregion
 
             #region Border2
