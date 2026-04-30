@@ -237,6 +237,7 @@ defensively but it's not the normal path.
 | GoButtons / GoInput / GoValue | Buttons | List&lt;GoButtonItem&gt; | P4 |
 | GoToolBox | Categories | ObservableList&lt;GoToolCategory&gt; | P4 |
 | GoTreeView / GoTreeNode | Nodes | ObservableList&lt;GoTreeNode&gt; (recursive) | P4 |
+| GoStateLamp | States | List&lt;StateLamp&gt; | P4 |
 | GoDesign | Pages | Dictionary&lt;string, GoPage&gt; | P5 |
 | GoDesign | Windows | Dictionary&lt;string, GoWindow&gt; | P5 |
 | GoDesign | TitleBar | GoTitleBar | B1 |

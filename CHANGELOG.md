@@ -6,6 +6,24 @@
 
 ---
 
+## [1.2.2] - 2026-04-30
+
+### Added
+- **`GoStateLamp`** — N-state 램프 컨트롤 (IcState 패턴 미러링: 색상+텍스트+OnOff 톤). `[GoChildWrappers] List<StateLamp>` 로 상태 항목 정의 (각 항목은 `State`/`Color`/`Text`/`OnOff`). 매칭 실패 시 "Not Matched" + Base3 OFF 톤 fallback. 항목별 `OnOff` 플래그가 같은 색상의 활성/비활성 밝기 톤을 결정.
+- **17 개 컨트롤에 `BorderWidth` 속성** — `BorderColor` 가 있는 모든 컨트롤(GoPanel, GoWindow, GoDropDownWindow, GoColorSelector, GoGauge, GoInput, GoListBox, GoNumberBox, GoOnOff, GoProgress, GoSlider, GoRangeSlider, GoSwitch, GoToolBox, GoTreeView, GoValue)에 `float BorderWidth` (기본 1F) 추가 + OnDraw wiring. `GoProgress` 는 OnDraw 에 border render 신규.
+- **`GoInput.TitleBoxDraw` / `GoValue.TitleBoxDraw`** — Title 영역의 배경 박스(`FillColor`) 그리기 여부. `false` 면 텍스트만 표시되고 외곽 round 가 Value 영역으로 흡수.
+- `UseTitle` / `UseButton` 0 처리 — `TitleSize`/`ButtonSize` 가 0 이면 영역 자체 제외.
+
+### Changed
+- **`GoBoxPanel.BorderSize` → `BorderWidth`** rename — 17 개 컨트롤 BorderWidth 명명 일관성.
+- Border 그리기 시 Title 영역 제외 처리.
+
+### Migration notes
+- `GoBoxPanel.BorderSize` 코드 사용처가 있다면 `BorderWidth` 로 변경. 직렬화 형식은 PascalCase 키(.gudx) 라 자동 동기화.
+- v5(.gudx) 직렬화 — `GoStateLamp.States` (P4 패턴) 가 PATTERNS.md Coverage matrix 에 등록됨.
+
+---
+
 ## [1.2.1] - 2026-04-30
 
 ### Migration notes (.gudx file format)
