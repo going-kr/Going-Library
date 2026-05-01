@@ -9,6 +9,7 @@ using Going.UI.Utils;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data.Common;
 using System.Drawing;
 using System.Globalization;
@@ -285,6 +286,22 @@ namespace Going.UI.Datas
         #endregion
 
         #region Method
+        #region ToString
+        /// <summary>
+        /// CollectionEditor / TypeSelector 등 UI 박스에 표시될 친화 이름.
+        /// 우선순위: HeaderText → Name → [DisplayName] → 클래스 이름 (close generic이면 alias).
+        /// </summary>
+        public override string ToString()
+        {
+            if (!string.IsNullOrEmpty(HeaderText)) return HeaderText;
+            if (!string.IsNullOrEmpty(Name)) return Name;
+            var t = GetType();
+            var displayName = t.GetCustomAttribute<DisplayNameAttribute>(inherit: false)?.DisplayName;
+            if (!string.IsNullOrEmpty(displayName)) return displayName;
+            return t.Name;
+        }
+        #endregion
+
         #region Fire
         #region Draw
         internal void Draw(SKCanvas canvas, GoTheme thm)
@@ -784,6 +801,7 @@ namespace Going.UI.Datas
     /// <summary>
     /// 읽기 전용 텍스트 레이블 열 클래스입니다.
     /// </summary>
+    [DisplayName("라벨")]
     public class GoDataGridLabelColumn : GoDataGridColumn
     {
         #region Properties
@@ -836,6 +854,7 @@ namespace Going.UI.Datas
     /// 읽기 전용 숫자 표시 열 클래스입니다.
     /// </summary>
     /// <typeparam name="T">숫자 값 타입</typeparam>
+    [DisplayName("숫자")]
     public class GoDataGridNumberColumn<T> : GoDataGridColumn where T : struct
     {
         /// <summary>값 표시 형식 문자열</summary>
@@ -943,6 +962,7 @@ namespace Going.UI.Datas
     /// <summary>
     /// 버튼을 포함하는 열 클래스입니다.
     /// </summary>
+    [DisplayName("버튼")]
     public class GoDataGridButtonColumn : GoDataGridColumn
     {
         #region Properties
@@ -1023,6 +1043,7 @@ namespace Going.UI.Datas
     /// <summary>
     /// 불리언 값을 램프(표시등)로 표시하는 열 클래스입니다.
     /// </summary>
+    [DisplayName("램프")]
     public class GoDataGridLampColumn : GoDataGridColumn
     {
         #region Properties
@@ -1101,6 +1122,7 @@ namespace Going.UI.Datas
     /// <summary>
     /// 체크박스를 포함하는 열 클래스입니다.
     /// </summary>
+    [DisplayName("체크박스")]
     public class GoDataGridCheckBoxColumn : GoDataGridColumn
     {
         #region Properties
@@ -1183,6 +1205,7 @@ namespace Going.UI.Datas
     /// <summary>
     /// 텍스트 입력 열 클래스입니다.
     /// </summary>
+    [DisplayName("텍스트 입력")]
     public class GoDataGridInputTextColumn : GoDataGridColumn
     {
         #region Constructor
@@ -1274,6 +1297,7 @@ namespace Going.UI.Datas
     /// 숫자 입력 열 클래스입니다.
     /// </summary>
     /// <typeparam name="T">숫자 값 타입</typeparam>
+    [DisplayName("숫자 입력")]
     public class GoDataGridInputNumberColumn<T>: GoDataGridColumn where T : struct
     {
         #region Properties
@@ -1384,6 +1408,7 @@ namespace Going.UI.Datas
     /// <summary>
     /// 불리언 값 입력 열 클래스입니다.
     /// </summary>
+    [DisplayName("On/Off 입력")]
     public class GoDataGridInputBoolColumn : GoDataGridColumn
     {
         #region Properties
@@ -1526,6 +1551,7 @@ namespace Going.UI.Datas
     /// <summary>
     /// 날짜/시간 입력 열 클래스입니다.
     /// </summary>
+    [DisplayName("시간 입력")]
     public class GoDataGridInputTimeColumn : GoDataGridColumn
     {
         #region Properties
@@ -1653,6 +1679,7 @@ namespace Going.UI.Datas
     /// <summary>
     /// 색상 입력 열 클래스입니다.
     /// </summary>
+    [DisplayName("색상 입력")]
     public class GoDataGridInputColorColumn : GoDataGridColumn
     {
         #region Properties
@@ -1771,6 +1798,7 @@ namespace Going.UI.Datas
     /// <summary>
     /// 콤보박스(드롭다운) 입력 열 클래스입니다.
     /// </summary>
+    [DisplayName("콤보 입력")]
     public class GoDataGridInputComboColumn : GoDataGridColumn
     {
         #region Properties
