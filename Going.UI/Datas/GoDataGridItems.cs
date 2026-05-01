@@ -288,17 +288,17 @@ namespace Going.UI.Datas
         #region Method
         #region ToString
         /// <summary>
-        /// CollectionEditor / TypeSelector 등 UI 박스에 표시될 친화 이름.
-        /// 우선순위: HeaderText → Name → [DisplayName] → 클래스 이름 (close generic이면 alias).
+        /// CollectionEditor 등 UI 항목 박스에 표시될 식별 라인.
+        /// 형식: <c>[DisplayName] Name : HeaderText</c> (예: <c>[라벨] colAlarm : 알람명</c>).
+        /// Name 또는 HeaderText 미지정 시 <c>{none}</c> 표시.
         /// </summary>
         public override string ToString()
         {
-            if (!string.IsNullOrEmpty(HeaderText)) return HeaderText;
-            if (!string.IsNullOrEmpty(Name)) return Name;
             var t = GetType();
-            var displayName = t.GetCustomAttribute<DisplayNameAttribute>(inherit: false)?.DisplayName;
-            if (!string.IsNullOrEmpty(displayName)) return displayName;
-            return t.Name;
+            var displayName = t.GetCustomAttribute<DisplayNameAttribute>(inherit: false)?.DisplayName ?? t.Name;
+            var name = string.IsNullOrEmpty(Name) ? "{none}" : Name;
+            var headerText = string.IsNullOrEmpty(HeaderText) ? "{none}" : HeaderText;
+            return $"[{displayName}] {name} : {headerText}";
         }
         #endregion
 
