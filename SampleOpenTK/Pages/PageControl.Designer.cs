@@ -114,7 +114,7 @@ namespace Sample.Pages
                 LampSize = 22, FontSize = 14,
                 ContentAlignment = GoContentAlignment.MiddleLeft,
                 FontStyle = GoFontStyle.Bold,
-                TextColor = "Fore", OffColor = "Base3",
+                TextColor = "Fore", //OffColor = "Base3",
                 Bounds = new SKRect(420, 244, 780, 290),
                 State = 2,
             };
