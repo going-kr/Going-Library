@@ -6,6 +6,39 @@
 
 ---
 
+## [1.2.3] - 2026-05-01
+
+### Fixed (Gudx)
+
+- **`GoGudxConverter.GetWrapperDerivedTypes`**: 1-arity generic wrapper에 대해 numeric type alias 11종 자동 close instance 등록.
+  - 예: `GoDataGridNumberColumn<T>` → `GoDataGridNumberColumn_byte`, `_sbyte`, `_short`, `_ushort`, `_int`, `_uint`, `_long`, `_ulong`, `_float`, `_double`, `_decimal` 자동 enum.
+  - `baseType.IsAssignableFrom(closeType)` 체크로 generic constraint 위반 자동 skip.
+  - GoJsonConverter.ControlTypes의 numeric encoding과 일관 (lowercase alias).
+- **`GoGudxConverter.TypeTagName`**: close generic wrapper (non-IGoControl) tag 인코딩 fallback.
+  - `_gudxTypeToTag` 미등록 + `IsGenericType` close → `{NameBase}_{NumericAlias}` 형식 자동 생성.
+
+### Why
+
+기존: 1-arity generic wrapper (`GoDataGridNumberColumn<T>` 등)는 `Assembly.GetTypes()`가 open def만 반환해 close instance 자동 enum 안 됨 → `<GoDataGridNumberColumn_double>` 같은 .gudx 박제 시 S002 (미등록 wrapper) 에러.
+
+이번: read (`GetWrapperDerivedTypes`) + write (`TypeTagName`) 둘 다 close generic alias 자동 처리. `<GoDataGrid><Columns><GoDataGridNumberColumn_double /></Columns></GoDataGrid>` 같은 .gudx 박제 round-trip 정상.
+
+### 영향
+
+- GoDataGrid `<Columns>`에 generic 컬럼 (`GoDataGridNumberColumn<T>`, `GoDataGridInputNumberColumn<T>`) 박제 가능.
+- 다른 1-arity generic wrapper도 자동 적용 (constraint 위반은 자동 skip).
+- 기존 non-generic wrapper 동작 변경 없음.
+
+### Tests
+
+- 66/66 unit tests pass.
+
+### Drift sync
+
+- `SenvasHMI/GudxCli/Validation/Tier1Structural.cs` `ResolveWrapperType`도 동일 패턴 적용 필요 (별도 repo).
+
+---
+
 ## [1.2.2] - 2026-04-30
 
 ### Added

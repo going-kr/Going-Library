@@ -37,6 +37,25 @@ public static class GoGudxConverter
     // Reverse map: Type → XML-safe gudx tag name (avoids O(n) scan in TypeTagName hot path).
     private static readonly Dictionary<Type, string> _gudxTypeToTag;
 
+    /// <summary>
+    /// 1-arity generic wrapper에 자동 등록할 numeric type alias 11종.
+    /// GoJsonConverter.ControlTypes의 numeric encoding과 일관.
+    /// </summary>
+    private static readonly (string Alias, Type ArgType)[] _numericAliases = new[]
+    {
+        ("byte",    typeof(byte)),
+        ("sbyte",   typeof(sbyte)),
+        ("short",   typeof(short)),
+        ("ushort",  typeof(ushort)),
+        ("int",     typeof(int)),
+        ("uint",    typeof(uint)),
+        ("long",    typeof(long)),
+        ("ulong",   typeof(ulong)),
+        ("float",   typeof(float)),
+        ("double",  typeof(double)),
+        ("decimal", typeof(decimal)),
+    };
+
     private static Dictionary<string, Type> GetWrapperDerivedTypes(Type baseType)
     {
         if (_wrapperDerivedTypesCache.TryGetValue(baseType, out var cached)) return cached;
@@ -54,13 +73,47 @@ public static class GoGudxConverter
             {
                 if (t == baseType) continue;
                 if (t.IsAbstract) continue;
-                if (t.IsGenericTypeDefinition) continue;  // skip open generics (e.g. GoDataGridNumberColumn<T>)
+                if (t.IsGenericTypeDefinition)
+                {
+                    // 1-arity generic wrapper: numeric alias 11종 자동 close instance 등록
+                    // (e.g. GoDataGridNumberColumn<T> → GoDataGridNumberColumn_double, _int, ...)
+                    if (t.GetGenericArguments().Length != 1) continue;
+                    var backtick = t.Name.IndexOf('`');
+                    if (backtick < 0) continue;
+                    var nameBase = t.Name[..backtick];
+                    foreach (var (alias, argType) in _numericAliases)
+                    {
+                        Type closeType;
+                        try { closeType = t.MakeGenericType(argType); }
+                        catch { continue; }  // constraint 위반 skip
+                        if (!baseType.IsAssignableFrom(closeType)) continue;
+                        dict[$"{nameBase}_{alias}"] = closeType;
+                    }
+                    continue;
+                }
                 if (!baseType.IsAssignableFrom(t)) continue;
                 dict[t.Name] = t;
             }
             _wrapperDerivedTypesCache[baseType] = dict;
             return dict;
         }
+    }
+
+    /// <summary>numeric close generic 인자에 대응하는 lowercase alias (없으면 null).</summary>
+    private static string? NumericAlias(Type t)
+    {
+        if (t == typeof(byte))    return "byte";
+        if (t == typeof(sbyte))   return "sbyte";
+        if (t == typeof(short))   return "short";
+        if (t == typeof(ushort))  return "ushort";
+        if (t == typeof(int))     return "int";
+        if (t == typeof(uint))    return "uint";
+        if (t == typeof(long))    return "long";
+        if (t == typeof(ulong))   return "ulong";
+        if (t == typeof(float))   return "float";
+        if (t == typeof(double))  return "double";
+        if (t == typeof(decimal)) return "decimal";
+        return null;
     }
 
     static GoGudxConverter()
@@ -943,6 +996,20 @@ public static class GoGudxConverter
     {
         // For registered control types (including closed generics), use the pre-computed XML-safe tag.
         if (_gudxTypeToTag.TryGetValue(t, out var tag)) return tag;
+
+        // Close generic wrapper (non-IGoControl): encode as alias.
+        // (e.g. GoDataGridNumberColumn<double> → GoDataGridNumberColumn_double)
+        if (t.IsGenericType && !t.IsGenericTypeDefinition)
+        {
+            var def = t.GetGenericTypeDefinition();
+            var backtick = def.Name.IndexOf('`');
+            if (backtick > 0)
+            {
+                var nameBase = def.Name[..backtick];
+                var args = t.GetGenericArguments().Select(a => NumericAlias(a) ?? a.Name);
+                return $"{nameBase}_{string.Join("_", args)}";
+            }
+        }
 
         // Non-generic, non-registered types: use class name directly (already XML-safe).
         return t.Name;
