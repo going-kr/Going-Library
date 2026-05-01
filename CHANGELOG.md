@@ -6,6 +6,18 @@
 
 ---
 
+## [1.2.4] - 2026-05-01
+
+### Fixed
+
+- **`DarkTheme`** (`Going.UI/Themes/GoTheme.cs:371`): `GradientDarkBrightness = 0.2F` 오타 → `GradientLightBrightness = 0.2F`. 두 줄에 동일 속성 할당되어 `GradientLightBrightness`가 GoTheme base default로 fallback되던 문제 정정.
+
+### Tests
+
+- 66/66 unit tests pass.
+
+---
+
 ## [1.2.3] - 2026-05-01
 
 ### Fixed (Gudx)

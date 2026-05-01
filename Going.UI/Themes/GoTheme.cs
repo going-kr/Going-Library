@@ -368,7 +368,7 @@ namespace Going.UI.Themes
             ShadowAlpha = 180;
             ShadowColor = SKColors.Black;
 
-            GradientDarkBrightness = 0.2F;
+            GradientLightBrightness = 0.2F;
             GradientDarkBrightness = -0.2F;
         }
     }
