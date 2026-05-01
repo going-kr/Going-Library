@@ -6,6 +6,48 @@
 
 ---
 
+## [1.2.6] - 2026-05-02
+
+### Added (Util.ParseSizes)
+
+- **`Util.ParseSizes` / `Util.ValidSizes`** (`Going.UI/Utils/Util.cs`): `*` 토큰 지원 추가. `Columns` / `Rows` 정의에서 남은 백분율을 `*` 갯수로 균등 분배.
+  - 예: `"50%, 50px, *, *"` → `[50%, 50px, 25%, 25%]` 환산. 명시 % 합 = 50% → 남은 % = 50% → `*` 당 25%.
+  - `"*, *, *"` → 균등 분할 (각 33.33%).
+  - 명시 % ≥ 100% 면 `*` = 0% (`Math.Max(0, ...)` 클램프).
+  - `ValidSizes`도 `*` 토큰 valid 처리.
+
+### Why
+
+기존 `ParseSizes`는 `*` 토큰을 silent skip (else 분기 throw 주석 처리) → result 배열이 sizes보다 짧음 → 호출 측 `Util.Rows` / `Util.Columns` / `Util.Grid` 의 `result[i]` 인덱스 접근에서 **IndexOutOfRangeException** 발생. 호출자는 throw 후 sibling 그리기 중단 → 화면 일부만 렌더되는 silent 시각 버그.
+
+`*`는 WPF / CSS Grid 표준 표기로 LLM이 ref 안 보고 자연스럽게 박제 가능 → 라이브러리 측에서 받아주는 게 자연스러움.
+
+### Tests
+
+- 66/66 unit tests pass (회귀 없음).
+
+---
+
+## [1.2.5] - 2026-05-01
+
+### Changed (Wrapper enumeration)
+
+- **`GoGudxConverter.GetWrapperDerivedTypes`**: lazy enumeration → eager `InitializeWrapperTypeIndex` (static ctor에서 1회 박제). 매 호출마다 11종 numeric alias `MakeGenericType` 시도하던 무차별 ArgumentException 다발 해소.
+- **`GoNumericAliasAttribute`** (신설, `Going.UI/Gudx/GoNumericAliasAttribute.cs`): 1-arity numeric generic wrapper marker. `[GoNumericAlias]` 박제된 generic class만 11종 close type 박제 시도.
+  - 적용: `GoDataGridNumberColumn<T>`, `GoDataGridInputNumberColumn<T>` (`Datas/GoDataGridItems.cs`), `GoInputNumber<T>` (`Controls/GoInput.cs:402`), `GoValueNumber<T>` (`Controls/GoValue.cs:350`).
+
+### Fixed
+
+- **`GoGudxConverter.WriteWrapper`**: `new XElement(type.Name)` → `TypeTagName(type)` 사용. close generic은 raw .NET `type.Name`에 backtick (`\`1`) 포함 → XmlException. `TypeTagName`이 alias-encoded tag 반환.
+- **`GoGudxConverter.SerializeGoDesignToFiles`**: sub-dir (Pages, Windows, GoChildResource attr.Folder root) 통째 wipe 후 재기록. dict ↔ 디스크 동기 불일치 (리소스 삭제 시 잔재 파일) 해소.
+- **`GoJsonConverter`**: numeric variant 11종 검사 manual 44줄 → attribute 검사 일반화 (~15줄).
+
+### Tests
+
+- 66/66 unit tests pass.
+
+---
+
 ## [1.2.4] - 2026-05-01
 
 ### Fixed

@@ -1358,8 +1358,23 @@ namespace Going.UI.Utils
         #region ParseSizes
         private static float[] ParseSizes(string[] sizes, float totalSize)
         {
+            // 1st pass: tally specified % and count '*' tokens.
+            // '*' tokens auto-distribute the remaining percentage equally:
+            //   "50%, 50px, *, *" -> ["50%", "50px", "25%", "25%"] (auto = (100-50)/2 = 25%)
+            float specifiedPercent = 0;
+            int starCount = 0;
+            foreach (var size in sizes)
+            {
+                if (size.EndsWith("px") && float.TryParse(size.Replace("px", ""), out _))
+                    continue;
+                if (size.EndsWith("%") && float.TryParse(size.Replace("%", ""), out var p))
+                    specifiedPercent += p;
+                else if (size.Trim() == "*")
+                    starCount++;
+            }
+            float autoPercent = starCount > 0 ? Math.Max(0, 100f - specifiedPercent) / starCount : 0;
+
             List<float> result = new List<float>();
-            float totalPercentage = 0;
             float fixedTotal = 0;
 
             foreach (var size in sizes)
@@ -1370,15 +1385,19 @@ namespace Going.UI.Utils
                     result.Add(px);
                     fixedTotal += px;
                 }
-                else if (size.EndsWith("%")&& float.TryParse(size.Replace("%", ""), out var val2))
+                else if (size.EndsWith("%") && float.TryParse(size.Replace("%", ""), out var val2))
                 {
                     float percent = val2 / 100f;
-                    result.Add(-percent); 
-                    totalPercentage += percent;
+                    result.Add(-percent);
+                }
+                else if (size.Trim() == "*")
+                {
+                    result.Add(-(autoPercent / 100f));
                 }
                 else
                 {
                     //throw new ArgumentException("Invalid size format. Use 'px' or '%'.");
+                    result.Add(0);
                 }
             }
 
@@ -1393,8 +1412,8 @@ namespace Going.UI.Utils
         }
         #endregion
         #region ValidSizes
-        /// <summary>크기 문자열 배열이 유효한지 확인합니다.</summary>
-        /// <param name="sizes">검사할 크기 문자열 배열(예: "100px", "50%").</param>
+        /// <summary>크기 문자열 배열이 유효한지 확인합니다. (px / % / *)</summary>
+        /// <param name="sizes">검사할 크기 문자열 배열(예: "100px", "50%", "*").</param>
         /// <returns>모든 크기가 유효하면 true, 그렇지 않으면 false.</returns>
         public static bool ValidSizes(string[] sizes)
         {
@@ -1406,6 +1425,10 @@ namespace Going.UI.Utils
                     ret.Add(true);
                 }
                 else if (size.EndsWith("%") && float.TryParse(size.Replace("%", ""), out _))
+                {
+                    ret.Add(true);
+                }
+                else if (size.Trim() == "*")
                 {
                     ret.Add(true);
                 }
@@ -1509,8 +1532,21 @@ namespace Going.UI.Utils
         /// <returns>계산된 크기 값 배열.</returns>
         public static float[] ParseSizes(string[] sizes, float totalSize, float[] minimumSizes)
         {
+            // 1st pass: tally specified % and count '*' tokens for auto-distribution.
+            float specifiedPercent = 0;
+            int starCount = 0;
+            foreach (var size in sizes)
+            {
+                if (size.EndsWith("px") && float.TryParse(size.Replace("px", ""), out _))
+                    continue;
+                if (size.EndsWith("%") && float.TryParse(size.Replace("%", ""), out var p))
+                    specifiedPercent += p;
+                else if (size.Trim() == "*")
+                    starCount++;
+            }
+            float autoPercent = starCount > 0 ? Math.Max(0, 100f - specifiedPercent) / starCount : 0;
+
             List<float> result = new List<float>();
-            float totalPercentage = 0;
             float fixedTotal = 0;
 
             for (int i = 0; i < sizes.Length; i++)
@@ -1526,7 +1562,10 @@ namespace Going.UI.Utils
                 {
                     float percent = val2 / 100f;
                     result.Add(-percent);
-                    totalPercentage += percent;
+                }
+                else if (size.Trim() == "*")
+                {
+                    result.Add(-(autoPercent / 100f));
                 }
                 else
                 {
