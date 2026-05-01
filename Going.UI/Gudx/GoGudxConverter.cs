@@ -25,9 +25,9 @@ namespace Going.UI.Gudx;
 /// </summary>
 public static class GoGudxConverter
 {
-    // Cache: base wrapper type → { class-name → derived concrete type }
+    // Index: base wrapper type → { class-name → derived concrete type }
+    // Populated eagerly in the static constructor — O(1) lookup thereafter.
     private static readonly Dictionary<Type, Dictionary<string, Type>> _wrapperDerivedTypesCache = new();
-    private static readonly object _wrapperDerivedTypesLock = new();
 
     // Gudx-specific type registry: XML-safe tag name → Type.
     // Derived once from GoJsonConverter.ControlTypes by encoding '<' as '_' and dropping '>'.
@@ -56,47 +56,82 @@ public static class GoGudxConverter
         ("decimal", typeof(decimal)),
     };
 
+    /// <summary>
+    /// O(1) lookup — cache is fully populated by InitializeWrapperTypeIndex() at static-ctor time.
+    /// Returns an empty dict for any base type not seen during eager scan (should not occur in practice).
+    /// </summary>
     private static Dictionary<string, Type> GetWrapperDerivedTypes(Type baseType)
+        => _wrapperDerivedTypesCache.TryGetValue(baseType, out var dict)
+            ? dict
+            : new Dictionary<string, Type>(StringComparer.Ordinal);
+
+    /// <summary>
+    /// Eager wrapper-type index.  Called once from the static constructor.
+    /// Scans the Going.UI assembly a single time, collecting every [GoChildWrappers]-marked
+    /// property's element type (= wrapper base), then builds a { tag-name → Type } map for each.
+    /// After this call all GetWrapperDerivedTypes() calls are pure O(1) dictionary lookups and
+    /// MakeGenericType/ArgumentException noise is confined to startup.
+    /// </summary>
+    private static void InitializeWrapperTypeIndex()
     {
-        if (_wrapperDerivedTypesCache.TryGetValue(baseType, out var cached)) return cached;
+        var allTypes = typeof(GoControl).Assembly.GetTypes();
 
-        lock (_wrapperDerivedTypesLock)
+        // 1) Collect every wrapper-base type from [GoChildWrappers]-marked properties.
+        var wrapperBases = new HashSet<Type>();
+        foreach (var t in allTypes)
         {
-            if (_wrapperDerivedTypesCache.TryGetValue(baseType, out cached)) return cached;
-
-            var dict = new Dictionary<string, Type>(StringComparer.Ordinal);
-            // Include the base type itself if concrete (instantiable) and non-generic
-            if (!baseType.IsAbstract && !baseType.IsGenericTypeDefinition)
-                dict[baseType.Name] = baseType;
-            // Scan the base type's assembly for concrete derived types
-            foreach (var t in baseType.Assembly.GetTypes())
+            foreach (var prop in t.GetProperties(
+                         BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
             {
-                if (t == baseType) continue;
-                if (t.IsAbstract) continue;
-                if (t.IsGenericTypeDefinition)
-                {
-                    // 1-arity generic wrapper: numeric alias 11종 자동 close instance 등록
-                    // (e.g. GoDataGridNumberColumn<T> → GoDataGridNumberColumn_double, _int, ...)
-                    if (t.GetGenericArguments().Length != 1) continue;
-                    var backtick = t.Name.IndexOf('`');
-                    if (backtick < 0) continue;
-                    var nameBase = t.Name[..backtick];
-                    foreach (var (alias, argType) in _numericAliases)
-                    {
-                        Type closeType;
-                        try { closeType = t.MakeGenericType(argType); }
-                        catch { continue; }  // constraint 위반 skip
-                        if (!baseType.IsAssignableFrom(closeType)) continue;
-                        dict[$"{nameBase}_{alias}"] = closeType;
-                    }
-                    continue;
-                }
-                if (!baseType.IsAssignableFrom(t)) continue;
-                dict[t.Name] = t;
+                if (!prop.IsDefined(typeof(GoChildWrappersAttribute), inherit: true)) continue;
+                // Property type is List<TBase> or ObservableList<TBase> — extract TBase.
+                var pt = prop.PropertyType;
+                if (pt.IsGenericType && pt.GetGenericArguments().Length == 1)
+                    wrapperBases.Add(pt.GetGenericArguments()[0]);
             }
-            _wrapperDerivedTypesCache[baseType] = dict;
-            return dict;
         }
+
+        // 2) For each wrapper base build the { tag-name → concrete Type } map.
+        foreach (var baseType in wrapperBases)
+            _wrapperDerivedTypesCache[baseType] = ComputeDerivedTypesForBase(baseType, allTypes);
+    }
+
+    private static Dictionary<string, Type> ComputeDerivedTypesForBase(Type baseType, Type[] allTypes)
+    {
+        var dict = new Dictionary<string, Type>(StringComparer.Ordinal);
+
+        // Include the base type itself when it is concrete and non-generic.
+        if (!baseType.IsAbstract && !baseType.IsGenericTypeDefinition)
+            dict[baseType.Name] = baseType;
+
+        foreach (var t in allTypes)
+        {
+            if (t == baseType) continue;
+            if (t.IsAbstract) continue;
+            if (t.IsGenericTypeDefinition)
+            {
+                // 1-arity generic wrapper: [GoNumericAlias] marker 박제된 class 만 numeric alias 11종 자동 등록
+                // (e.g. GoDataGridNumberColumn<T> → GoDataGridNumberColumn_double, _int, ...)
+                // marker 안 된 generic 는 skip (constraint 위반 시 ArgumentException 다발 회피)
+                if (!t.IsDefined(typeof(GoNumericAliasAttribute), inherit: false)) continue;
+                if (t.GetGenericArguments().Length != 1) continue;
+                var backtick = t.Name.IndexOf('`');
+                if (backtick < 0) continue;
+                var nameBase = t.Name[..backtick];
+                foreach (var (alias, argType) in _numericAliases)
+                {
+                    Type closeType;
+                    try { closeType = t.MakeGenericType(argType); }
+                    catch (ArgumentException) { continue; }   // constraint 위반 skip (방어)
+                    if (!baseType.IsAssignableFrom(closeType)) continue;
+                    dict[$"{nameBase}_{alias}"] = closeType;
+                }
+                continue;
+            }
+            if (!baseType.IsAssignableFrom(t)) continue;
+            dict[t.Name] = t;
+        }
+        return dict;
     }
 
     /// <summary>numeric close generic 인자에 대응하는 lowercase alias (없으면 null).</summary>
@@ -139,6 +174,9 @@ public static class GoGudxConverter
             if (!_gudxTypeToTag.ContainsKey(kvp.Value))
                 _gudxTypeToTag[kvp.Value] = xmlTag;
         }
+
+        // Eager wrapper-type index: assembly scan once at startup → GetWrapperDerivedTypes = O(1).
+        InitializeWrapperTypeIndex();
     }
 
     /// <summary>
@@ -235,6 +273,26 @@ public static class GoGudxConverter
         var dir = Path.GetDirectoryName(masterPath)!;
         if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
 
+        // Wipe — 모든 시스템 sub-dir (Pages, Windows, attr.Folder root 들) 통째 정리.
+        // dict ↔ 디스크 100% 동기 보장 (삭제된 페이지/윈도우/리소스의 stale 파일 제거).
+        var subDirsToWipe = new HashSet<string>(StringComparer.Ordinal) { "Pages", "Windows" };
+        foreach (var resProp in d.GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
+        {
+            var resAttr = resProp.GetCustomAttribute<GoChildResourceAttribute>();
+            if (resAttr == null || string.IsNullOrEmpty(resAttr.Folder)) continue;
+            subDirsToWipe.Add(resAttr.Folder!.Split('/', '\\')[0]);
+        }
+        foreach (var subDir in subDirsToWipe)
+        {
+            var path = Path.Combine(dir, subDir);
+            if (Directory.Exists(path))
+            {
+                try { Directory.Delete(path, recursive: true); }
+                catch (IOException) { /* 잠금 등 무시 */ }
+                catch (UnauthorizedAccessException) { /* 권한 등 무시 */ }
+            }
+        }
+
         var pagesDir = Path.Combine(dir, "Pages");
         var windowsDir = Path.Combine(dir, "Windows");
         if (d.Pages.Count > 0) Directory.CreateDirectory(pagesDir);
@@ -299,6 +357,8 @@ public static class GoGudxConverter
         var props = type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
             .Where(p => p.GetCustomAttribute<GoChildResourceAttribute>() != null);
 
+        // Wipe 는 SerializeGoDesignToFiles 시작에서 일괄 처리 (Pages/Windows/resources 등).
+        // 여기서는 dict 항목만 디스크 emit (folder 자동 재생성).
         foreach (var prop in props)
         {
             var attr = prop.GetCustomAttribute<GoChildResourceAttribute>()!;
@@ -656,7 +716,6 @@ public static class GoGudxConverter
 
         // Defensive: ensure non-empty Id (P3 cell-index dict uses Id as key)
         EnsureNonEmptyId(instance);
-
         return instance;
     }
 
@@ -719,37 +778,37 @@ public static class GoGudxConverter
     {
         // Order: P2 → P3 → P4 → P5 → B1 → B2. New attribute family takes precedence.
 
-        // ─── NEW dispatch by attribute type ───
-        if (childProp.GetCustomAttribute<GoChildListAttribute>() != null)
-        {
-            ReadP2_HomogeneousList(elem, childProp, instance);
-            return;
-        }
-        if (childProp.GetCustomAttribute<GoChildCellsAttribute>() != null)
-        {
-            ReadP3_CellIndexed(elem, childProp, instance);
-            return;
-        }
-        if (childProp.GetCustomAttribute<GoChildWrappersAttribute>() != null)
-        {
-            ReadP4_WrapperList(elem, childProp, instance);
-            return;
-        }
-        if (childProp.GetCustomAttribute<GoChildMapAttribute>() != null)
-        {
-            ReadP5_KeyedDict(elem, childProp, instance);
-            return;
-        }
-        if (childProp.GetCustomAttribute<GoChildSingleAttribute>() != null)
-        {
-            ReadB1_SingleChild(elem, childProp, instance);
-            return;
-        }
-        if (childProp.GetCustomAttribute<GoChildResourceAttribute>() != null)
-        {
-            ReadB2_Resource(elem, childProp, instance);
-            return;
-        }
+            // ─── NEW dispatch by attribute type ───
+            if (childProp.GetCustomAttribute<GoChildListAttribute>() != null)
+            {
+                ReadP2_HomogeneousList(elem, childProp, instance);
+                return;
+            }
+            if (childProp.GetCustomAttribute<GoChildCellsAttribute>() != null)
+            {
+                ReadP3_CellIndexed(elem, childProp, instance);
+                return;
+            }
+            if (childProp.GetCustomAttribute<GoChildWrappersAttribute>() != null)
+            {
+                ReadP4_WrapperList(elem, childProp, instance);
+                return;
+            }
+            if (childProp.GetCustomAttribute<GoChildMapAttribute>() != null)
+            {
+                ReadP5_KeyedDict(elem, childProp, instance);
+                return;
+            }
+            if (childProp.GetCustomAttribute<GoChildSingleAttribute>() != null)
+            {
+                ReadB1_SingleChild(elem, childProp, instance);
+                return;
+            }
+            if (childProp.GetCustomAttribute<GoChildResourceAttribute>() != null)
+            {
+                ReadB2_Resource(elem, childProp, instance);
+                return;
+            }
     }
 
     // ─── Read pattern helpers ───
@@ -955,7 +1014,7 @@ public static class GoGudxConverter
     internal static XElement WriteWrapper(object item)
     {
         var type = item.GetType();
-        var elem = new XElement(type.Name);
+        var elem = new XElement(TypeTagName(type));
 
         // P1: scalar attributes
         foreach (var prop in ScalarProperties(type))

@@ -347,6 +347,7 @@ namespace Going.UI.Controls
     /// 숫자 값을 표시하는 컨트롤. 단위 표시를 지원합니다.
     /// </summary>
     /// <typeparam name="T">숫자 자료형 (sbyte, short, int, long, byte, ushort, uint, ulong, float, double, decimal)</typeparam>
+    [GoNumericAlias]
     public class GoValueNumber<T> : GoValue where T : struct
     {
         #region Properties

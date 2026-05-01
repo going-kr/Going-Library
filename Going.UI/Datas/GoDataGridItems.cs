@@ -1,5 +1,6 @@
 ﻿using Going.UI.Controls;
 using Going.UI.Design;
+using Going.UI.Gudx;
 using Going.UI.Enums;
 using Going.UI.Extensions;
 using Going.UI.Managers;
@@ -854,6 +855,7 @@ namespace Going.UI.Datas
     /// 읽기 전용 숫자 표시 열 클래스입니다.
     /// </summary>
     /// <typeparam name="T">숫자 값 타입</typeparam>
+    [GoNumericAlias]
     [DisplayName("숫자")]
     public class GoDataGridNumberColumn<T> : GoDataGridColumn where T : struct
     {
@@ -1297,6 +1299,7 @@ namespace Going.UI.Datas
     /// 숫자 입력 열 클래스입니다.
     /// </summary>
     /// <typeparam name="T">숫자 값 타입</typeparam>
+    [GoNumericAlias]
     [DisplayName("숫자 입력")]
     public class GoDataGridInputNumberColumn<T>: GoDataGridColumn where T : struct
     {

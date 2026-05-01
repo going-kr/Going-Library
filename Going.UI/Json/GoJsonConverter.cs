@@ -1,5 +1,6 @@
 ﻿using Going.UI.Containers;
 using Going.UI.Controls;
+using Going.UI.Gudx;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,23 @@ namespace Going.UI.Json
         /// 등록된 컨트롤 타입 이름과 타입 매핑 사전을 가져옵니다.
         /// </summary>
         public static Dictionary<string, Type> ControlTypes { get; } = [];
+
+        // [GoNumericAlias] 마킹된 1-arity generic IGoControl 자동 등록용 numeric 변형 목록 (소문자 alias + PascalCase alias)
+        private static readonly (string lower, string pascal, Type argType)[] _numericVariants =
+        [
+            ("byte",    "Byte",    typeof(byte)),
+            ("sbyte",   "SByte",   typeof(sbyte)),
+            ("short",   "Int16",   typeof(short)),
+            ("ushort",  "UInt16",  typeof(ushort)),
+            ("int",     "Int32",   typeof(int)),
+            ("uint",    "UInt32",  typeof(uint)),
+            ("long",    "Int64",   typeof(long)),
+            ("ulong",   "UInt64",  typeof(ulong)),
+            ("float",   "Single",  typeof(float)),
+            ("double",  "Double",  typeof(double)),
+            ("decimal", "Decimal", typeof(decimal)),
+        ];
+
         static GoJsonConverter()
         {
             Options.PropertyNameCaseInsensitive = true;
@@ -48,62 +66,23 @@ namespace Going.UI.Json
 
                 foreach(var v in tps.Where(x => x.GetInterface("IGoControl") != null))
                 {
-                    if(v.IsGenericType)
+                    if(v.IsGenericTypeDefinition && v.GetGenericArguments().Length == 1
+                        && v.IsDefined(typeof(GoNumericAliasAttribute), inherit: false))
                     {
-                        if (v == typeof(GoInputNumber<>))
+                        // [GoNumericAlias] 마킹된 1-arity generic IGoControl: numeric × 11종 자동 등록
+                        var nameBase = v.Name.Substring(0, v.Name.IndexOf('`'));
+                        foreach (var (lower, pascal, argType) in _numericVariants)
                         {
-                            ControlTypes.Add("GoInputNumber<byte>", typeof(GoInputNumber<byte>));
-                            ControlTypes.Add("GoInputNumber<ushort>", typeof(GoInputNumber<ushort>));
-                            ControlTypes.Add("GoInputNumber<uint>", typeof(GoInputNumber<uint>));
-                            ControlTypes.Add("GoInputNumber<ulong>", typeof(GoInputNumber<ulong>));
-                            ControlTypes.Add("GoInputNumber<sbyte>", typeof(GoInputNumber<sbyte>));
-                            ControlTypes.Add("GoInputNumber<short>", typeof(GoInputNumber<short>));
-                            ControlTypes.Add("GoInputNumber<int>", typeof(GoInputNumber<int>));
-                            ControlTypes.Add("GoInputNumber<long>", typeof(GoInputNumber<long>));
-                            ControlTypes.Add("GoInputNumber<float>", typeof(GoInputNumber<float>));
-                            ControlTypes.Add("GoInputNumber<double>", typeof(GoInputNumber<double>));
-                            ControlTypes.Add("GoInputNumber<decimal>", typeof(GoInputNumber<decimal>));
-
-                            ControlTypes.Add("GoInputNumber<Byte>", typeof(GoInputNumber<byte>));
-                            ControlTypes.Add("GoInputNumber<UInt16>", typeof(GoInputNumber<ushort>));
-                            ControlTypes.Add("GoInputNumber<UInt32>", typeof(GoInputNumber<uint>));
-                            ControlTypes.Add("GoInputNumber<UInt64>", typeof(GoInputNumber<ulong>));
-                            ControlTypes.Add("GoInputNumber<SByte>", typeof(GoInputNumber<sbyte>));
-                            ControlTypes.Add("GoInputNumber<Int16>", typeof(GoInputNumber<short>));
-                            ControlTypes.Add("GoInputNumber<Int32>", typeof(GoInputNumber<int>));
-                            ControlTypes.Add("GoInputNumber<Int64>", typeof(GoInputNumber<long>));
-                            ControlTypes.Add("GoInputNumber<Single>", typeof(GoInputNumber<float>));
-                            ControlTypes.Add("GoInputNumber<Double>", typeof(GoInputNumber<double>));
-                            ControlTypes.Add("GoInputNumber<Decimal>", typeof(GoInputNumber<decimal>));
-                        }
-                        else if (v == typeof(GoValueNumber<>))
-                        {
-                            ControlTypes.Add("GoValueNumber<byte>", typeof(GoValueNumber<byte>));
-                            ControlTypes.Add("GoValueNumber<ushort>", typeof(GoValueNumber<ushort>));
-                            ControlTypes.Add("GoValueNumber<uint>", typeof(GoValueNumber<uint>));
-                            ControlTypes.Add("GoValueNumber<ulong>", typeof(GoValueNumber<ulong>));
-                            ControlTypes.Add("GoValueNumber<sbyte>", typeof(GoValueNumber<sbyte>));
-                            ControlTypes.Add("GoValueNumber<short>", typeof(GoValueNumber<short>));
-                            ControlTypes.Add("GoValueNumber<int>", typeof(GoValueNumber<int>));
-                            ControlTypes.Add("GoValueNumber<long>", typeof(GoValueNumber<long>));
-                            ControlTypes.Add("GoValueNumber<float>", typeof(GoValueNumber<float>));
-                            ControlTypes.Add("GoValueNumber<double>", typeof(GoValueNumber<double>));
-                            ControlTypes.Add("GoValueNumber<decimal>", typeof(GoValueNumber<decimal>));
-
-                            ControlTypes.Add("GoValueNumber<Byte>", typeof(GoValueNumber<byte>));
-                            ControlTypes.Add("GoValueNumber<UInt16>", typeof(GoValueNumber<ushort>));
-                            ControlTypes.Add("GoValueNumber<UInt32>", typeof(GoValueNumber<uint>));
-                            ControlTypes.Add("GoValueNumber<UInt64>", typeof(GoValueNumber<ulong>));
-                            ControlTypes.Add("GoValueNumber<SByte>", typeof(GoValueNumber<sbyte>));
-                            ControlTypes.Add("GoValueNumber<Int16>", typeof(GoValueNumber<short>));
-                            ControlTypes.Add("GoValueNumber<Int32>", typeof(GoValueNumber<int>));
-                            ControlTypes.Add("GoValueNumber<Int64>", typeof(GoValueNumber<long>));
-                            ControlTypes.Add("GoValueNumber<Single>", typeof(GoValueNumber<float>));
-                            ControlTypes.Add("GoValueNumber<Double>", typeof(GoValueNumber<double>));
-                            ControlTypes.Add("GoValueNumber<Decimal>", typeof(GoValueNumber<decimal>));
+                            try
+                            {
+                                var closeType = v.MakeGenericType(argType);
+                                ControlTypes.Add($"{nameBase}<{lower}>", closeType);
+                                ControlTypes.Add($"{nameBase}<{pascal}>", closeType);
+                            }
+                            catch (ArgumentException) { /* constraint 위반 skip */ }
                         }
                     }
-                    else ControlTypes.Add(ControlName(v), v);
+                    else if (!v.IsGenericType) ControlTypes.Add(ControlName(v), v);
                 }
             }
             catch { }
