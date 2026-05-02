@@ -99,12 +99,14 @@ namespace Going.UI.Controls
         /// <summary>
         /// 컬럼 그룹 컬렉션을 가져옵니다.
         /// </summary>
+        [JsonObjectCreationHandling(JsonObjectCreationHandling.Populate)]
         public ObservableList<GoDataGridColumn> ColumnGroups { get; private set; } = [];
         /// <summary>
         /// 컬럼 컬렉션을 가져옵니다.
         /// </summary>
         [GoProperty(PCategory.Control, 15)]
         [GoChildWrappers]
+        [JsonObjectCreationHandling(JsonObjectCreationHandling.Populate)]
         public ObservableList<GoDataGridColumn> Columns { get; private set; } = [];
         /// <summary>
         /// 요약 행 컬렉션을 가져옵니다.

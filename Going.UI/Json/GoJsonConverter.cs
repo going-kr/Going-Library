@@ -1,5 +1,6 @@
 ﻿using Going.UI.Containers;
 using Going.UI.Controls;
+using Going.UI.Datas;
 using Going.UI.Gudx;
 using SkiaSharp;
 using System;
@@ -29,6 +30,10 @@ namespace Going.UI.Json
         /// 등록된 컨트롤 타입 이름과 타입 매핑 사전을 가져옵니다.
         /// </summary>
         public static Dictionary<string, Type> ControlTypes { get; } = [];
+        /// <summary>
+        /// 등록된 GoDataGridColumn 파생 타입 이름과 타입 매핑 사전을 가져옵니다.
+        /// </summary>
+        public static Dictionary<string, Type> ColumnTypes { get; } = [];
 
         // [GoNumericAlias] 마킹된 1-arity generic IGoControl 자동 등록용 numeric 변형 목록 (소문자 alias + PascalCase alias)
         private static readonly (string lower, string pascal, Type argType)[] _numericVariants =
@@ -55,6 +60,7 @@ namespace Going.UI.Json
             Options.Converters.Add(new SKBitmapConverter());
             Options.Converters.Add(new SKImageConverter());
             Options.Converters.Add(new GoControlConverter());
+            Options.Converters.Add(new GoDataGridColumnConverter());
             Options.Converters.Add(new GoPagesConverter());
             Options.Converters.Add(new GoWindowsConverter());
             Options.Converters.Add(new GoTableLayoutControlCollectionConverter());
@@ -84,9 +90,44 @@ namespace Going.UI.Json
                     }
                     else if (!v.IsGenericType) ControlTypes.Add(ControlName(v), v);
                 }
+
+                foreach (var v in tps.Where(x => !x.IsAbstract && DerivesFrom(x, typeof(GoDataGridColumn))))
+                {
+                    if (v.IsGenericTypeDefinition && v.GetGenericArguments().Length == 1
+                        && v.IsDefined(typeof(GoNumericAliasAttribute), inherit: false))
+                    {
+                        var nameBase = v.Name.Substring(0, v.Name.IndexOf('`'));
+                        foreach (var (lower, pascal, argType) in _numericVariants)
+                        {
+                            try
+                            {
+                                var closeType = v.MakeGenericType(argType);
+                                ColumnTypes.Add($"{nameBase}<{lower}>", closeType);
+                                ColumnTypes.Add($"{nameBase}<{pascal}>", closeType);
+                            }
+                            catch (ArgumentException) { /* constraint 위반 skip */ }
+                        }
+                    }
+                    else if (!v.IsGenericType) ColumnTypes.Add(ControlName(v), v);
+                }
             }
             catch { }
         }
+
+        #region DerivesFrom
+        // open generic type definition도 다룰 수 있도록 BaseType 체인 직접 탐색.
+        // (IsAssignableFrom은 open generic에 대해 항상 false를 반환하기 때문)
+        static bool DerivesFrom(Type v, Type baseTp)
+        {
+            var t = v.BaseType;
+            while (t != null)
+            {
+                if (t == baseTp) return true;
+                t = t.BaseType;
+            }
+            return false;
+        }
+        #endregion
 
         #region NumberTypeName
         static string NumberTypeName(Type t)
@@ -264,6 +305,67 @@ namespace Going.UI.Json
         {
             var tp = value.GetType();
             var mp = GoJsonConverter.ControlTypes.FirstOrDefault(x => x.Value == tp);
+            if (!string.IsNullOrWhiteSpace(mp.Key))
+            {
+                writer.WriteStartObject();
+                writer.WritePropertyName("Type");
+                writer.WriteStringValue(mp.Key);
+                writer.WritePropertyName("Value");
+                JsonSerializer.Serialize(writer, value, tp, options);
+                writer.WriteEndObject();
+            }
+        }
+    }
+    #endregion
+    #region GoDataGridColumnConverter
+    /// <summary>
+    /// GoDataGridColumn 파생 타입과 JSON 간의 다형성 변환을 처리하는 변환기입니다.
+    /// </summary>
+    public class GoDataGridColumnConverter : JsonConverter<GoDataGridColumn>
+    {
+        /// <inheritdoc/>
+        public override GoDataGridColumn Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            if (reader.TokenType != JsonTokenType.StartObject)
+                throw new JsonException();
+
+            string typeName = null;
+            GoDataGridColumn value = null;
+
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonTokenType.EndObject) break;
+                if (reader.TokenType == JsonTokenType.PropertyName)
+                {
+                    string propertyName = reader.GetString();
+                    reader.Read();
+
+                    if (propertyName == "Type")
+                    {
+                        typeName = reader.GetString();
+                    }
+                    else if (propertyName == "Value")
+                    {
+                        if (typeName == null)
+                            throw new JsonException("Type information is missing.");
+
+                        var type = GoJsonConverter.ColumnTypes.TryGetValue(typeName, out var tp) ? tp : null;
+                        if (type == null)
+                            throw new JsonException($"Unknown type: {typeName}");
+
+                        value = (GoDataGridColumn)JsonSerializer.Deserialize(ref reader, type, options);
+                    }
+                }
+            }
+
+            return value ?? throw new JsonException("Invalid JSON for GoDataGridColumn.");
+        }
+
+        /// <inheritdoc/>
+        public override void Write(Utf8JsonWriter writer, GoDataGridColumn value, JsonSerializerOptions options)
+        {
+            var tp = value.GetType();
+            var mp = GoJsonConverter.ColumnTypes.FirstOrDefault(x => x.Value == tp);
             if (!string.IsNullOrWhiteSpace(mp.Key))
             {
                 writer.WriteStartObject();
