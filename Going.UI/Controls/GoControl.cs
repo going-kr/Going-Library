@@ -189,7 +189,7 @@ namespace Going.UI.Controls
         /// <summary>마우스가 이동할 때 발생하는 이벤트</summary>
         public event EventHandler<GoMouseEventArgs>? MouseMove;
         /// <summary>마우스 휠 스크롤 시 발생하는 이벤트</summary>
-        public event EventHandler<GoMouseEventArgs>? MouseWheel;
+        public event EventHandler<GoMouseWheelEventArgs>? MouseWheel;
         /// <summary>컨트롤이 그려진 후 발생하는 이벤트</summary>
         public event EventHandler<GoDrawnEventArgs>? Drawn;
 

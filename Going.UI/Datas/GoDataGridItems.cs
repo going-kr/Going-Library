@@ -1883,16 +1883,6 @@ namespace Going.UI.Datas
     }
 
     /// <summary>
-    /// 행 더블클릭 이벤트 인자 클래스입니다.
-    /// </summary>
-    /// <param name="row">더블클릭된 행</param>
-    public class GoDataGridRowDoubleClickEventArgs(GoDataGridRow row) : EventArgs
-    {
-        /// <summary>더블클릭된 행</summary>
-        public GoDataGridRow Row { get; private set; } = row;
-    }
-
-    /// <summary>
     /// 날짜/시간 드롭다운 열림 이벤트 인자 클래스입니다. 취소 가능합니다.
     /// </summary>
     /// <param name="cell">대상 셀</param>

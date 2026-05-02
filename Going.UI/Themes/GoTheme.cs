@@ -260,7 +260,8 @@ namespace Going.UI.Themes
                         case "warning": ret = Warning; break;
                         case "good": ret = Good; break;
 
-                        case "hignlight": ret = Highlight; break;
+                        case "highlight": ret = Highlight; break;
+                        case "transparent": ret = SKColors.Transparent; break;
                         case "error": ret = Error; break;
                         case "select": ret = Select; break;
 
