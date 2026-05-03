@@ -101,7 +101,8 @@ namespace Going.UI.Controls
         }
         #endregion
 
-        #region Override (renderer는 Task 6에서 구현)
+        #region Override
+        #region Draw
         /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
@@ -188,6 +189,48 @@ namespace Going.UI.Controls
 
             base.OnDraw(canvas, thm);
         }
+        #endregion
+
+        #region Mouse
+        // 셀 단위 hit-test: x, y 가 어느 1-based 인덱스 셀에 있는지 (없으면 -1)
+        int HitIndex(float x, float y)
+        {
+            if (Steps.Count == 0) return -1;
+            var rt = Areas()["Content"];
+            if (!Tools.CollisionTool.Check(rt, x, y)) return -1;
+            var cellW = rt.Width / Steps.Count;
+            if (cellW <= 0) return -1;
+            var idx0 = (int)((x - rt.Left) / cellW);
+            if (idx0 < 0) idx0 = 0;
+            if (idx0 >= Steps.Count) idx0 = Steps.Count - 1;
+            return idx0 + 1;
+        }
+
+        /// <inheritdoc/>
+        protected override void OnMouseDown(float x, float y, GoMouseButton button)
+        {
+            if (UseClick)
+            {
+                hitDownIndex = HitIndex(x, y);
+            }
+            base.OnMouseDown(x, y, button);
+        }
+
+        /// <inheritdoc/>
+        protected override void OnMouseUp(float x, float y, GoMouseButton button)
+        {
+            if (UseClick && hitDownIndex >= 1)
+            {
+                var up = HitIndex(x, y);
+                if (up == hitDownIndex)
+                {
+                    Step = hitDownIndex;
+                }
+            }
+            hitDownIndex = -1;
+            base.OnMouseUp(x, y, button);
+        }
+        #endregion
         #endregion
     }
 }
