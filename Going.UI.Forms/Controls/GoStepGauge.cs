@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Going.UI.Forms.Controls
 {
-    public class GoStep : GoWrapperControl<Going.UI.Controls.GoStep>
+    public class GoStepGauge : GoWrapperControl<Going.UI.Controls.GoStepGauge>
     {
         #region Properties
         public string? PrevIconString { get => Control.PrevIconString; set { if (Control.PrevIconString != value) { Control.PrevIconString = value; Invalidate(); } } }
@@ -28,7 +28,7 @@ namespace Going.UI.Forms.Controls
         #endregion
 
         #region Constructor
-        public GoStep()
+        public GoStepGauge()
         {
             SetStyle(ControlStyles.Selectable, true);
         }
