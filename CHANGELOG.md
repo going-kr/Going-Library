@@ -6,6 +6,18 @@
 
 ---
 
+## [1.2.13] - 2026-05-03
+
+### Fixed
+
+- **`GoStepBar.Steps`**: Gudx 직렬화 누락 fix.
+  - `[GoChildWrappers]` 어트리뷰트 부착 → `.gudx` 에서 `<Steps><GoStepItem .../></Steps>` 형태로 P4 wrapper-list 직렬화.
+  - 타입을 `List<GoStepItem>` → `ObservableList<GoStepItem>` 으로 변경 (다른 컨트롤의 Items/Categories 패턴과 일관).
+  - 기존엔 마커 부재로 Gudx가 Steps를 무시 → `.gudx` 파일에 빈 GoStepBar만 저장되던 버그.
+  - JSON 직렬화는 변동 없음 (STJ는 `IList<T>` 인식해서 정상 동작).
+
+---
+
 ## [1.2.12] - 2026-05-03
 
 ### Changed

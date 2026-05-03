@@ -1,5 +1,7 @@
+using Going.UI.Collections;
 using Going.UI.Datas;
 using Going.UI.Enums;
+using Going.UI.Gudx;
 using Going.UI.Themes;
 using Going.UI.Tools;
 using Going.UI.Utils;
@@ -26,7 +28,8 @@ namespace Going.UI.Controls
     {
         #region Properties
         /// <summary>스텝 항목 목록</summary>
-        [GoProperty(PCategory.Control, 0)] public List<GoStepItem> Steps { get; set; } = [];
+        [GoChildWrappers]
+        [GoProperty(PCategory.Control, 0)] public ObservableList<GoStepItem> Steps { get; set; } = [];
 
         private int nStep = 0;
         /// <summary>현재 단계 (0=비활성, 1..Steps.Count=Steps[N-1] 활성)</summary>
