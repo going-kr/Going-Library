@@ -84,6 +84,8 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 21)] public GoContentAlignment TitleContentAlignment { get; set; } = GoContentAlignment.MiddleCenter;
         /// <summary>Title 영역 자동 글꼴 크기 설정</summary>
         [GoProperty(PCategory.Control, 22)] public GoAutoFontSize AutoTitleFontSize { get; set; } = GoAutoFontSize.NotUsed;
+        /// <summary>Title 영역 텍스트(+아이콘) 패딩</summary>
+        [GoProperty(PCategory.Control, 23)] public GoPadding TitleTextPadding { get; set; } = new GoPadding(0, 0, 0, 0);
 
         /// <summary>입력 값의 유효성 여부</summary>
         [JsonIgnore] public virtual bool Valid => true;
@@ -156,8 +158,9 @@ namespace Going.UI.Controls
             {
                 if (TitleBoxDraw)
                     Util.DrawBox(canvas, rtTitle, cFill, rndTitle, thm.Corner);
-                var tfsz = Util.FontSize(AutoTitleFontSize, rtTitle.Height) ?? TitleFontSize;
-                Util.DrawTextIcon(canvas, Title, FontName, FontStyle, tfsz, IconString, isz, GoDirectionHV.Horizon, IconGap, rtTitle, cText, TitleContentAlignment);
+                var rtTitleText = Util.FromRect(rtTitle, TitleTextPadding);
+                var tfsz = Util.FontSize(AutoTitleFontSize, rtTitleText.Height) ?? TitleFontSize;
+                Util.DrawTextIcon(canvas, Title, FontName, FontStyle, tfsz, IconString, isz, GoDirectionHV.Horizon, IconGap, rtTitleText, cText, TitleContentAlignment);
             }
             #endregion
 

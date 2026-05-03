@@ -6,6 +6,31 @@
 
 ---
 
+## [1.2.11] - 2026-05-03
+
+### Added
+
+- **`GoInput` / `GoValue`**: `TitleTextPadding` (`GoPadding`, 기본 `(0,0,0,0)`) 신설. Title 영역 안의 텍스트(+아이콘) 박스에 좌/상/우/하 패딩 적용. `GoLabel.TextPadding`과 동일 패턴.
+
+### Tests
+
+- 79/79 unit tests pass (회귀 없음).
+
+---
+
+## [1.2.10] - 2026-05-03
+
+### Added
+
+- **`GoStepItem.Text` / `IconString`**: `[GoProperty]` 어트리뷰트 부착 → UIEditor PropertyGrid에서 편집 가능.
+- **`GoPropertyGrid`**: `IEnumerable<GoStepItem>` 디스패치 추가 — wrapper-list 편집기에서 `GoStepBar.Steps` 직접 편집 지원.
+
+### Changed
+
+- `SampleOpenTK/sample.gud`: GoStepBar 인스턴스 추가 + 위치 조정.
+
+---
+
 ## [1.2.9] - 2026-05-03
 
 ### Added (GoInput / GoValue Title 영역 분리)
