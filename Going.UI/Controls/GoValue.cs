@@ -70,6 +70,13 @@ namespace Going.UI.Controls
         /// <summary>Title 영역의 배경 박스(FillColor) 그리기 여부. false면 텍스트만 표시되고 외곽 round 가 Value 영역으로 흡수됨.</summary>
         [GoProperty(PCategory.Control, 18)] public bool TitleBoxDraw { get; set; } = true;
 
+        /// <summary>Title 영역 글꼴 크기. AutoTitleFontSize=NotUsed일 때 사용됩니다.</summary>
+        [GoProperty(PCategory.Control, 20)] public float TitleFontSize { get; set; } = 12F;
+        /// <summary>Title 텍스트/아이콘 정렬</summary>
+        [GoProperty(PCategory.Control, 21)] public GoContentAlignment TitleContentAlignment { get; set; } = GoContentAlignment.MiddleCenter;
+        /// <summary>Title 영역 자동 글꼴 크기 설정</summary>
+        [GoProperty(PCategory.Control, 22)] public GoAutoFontSize AutoTitleFontSize { get; set; } = GoAutoFontSize.NotUsed;
+
         [JsonIgnore] private bool UseTitle => (int)(TitleSize ?? 0) > 0;
         [JsonIgnore] private bool UseButton => (int)(ButtonSize ?? 0) > 0 && Buttons.Count > 0;
         #endregion
@@ -137,7 +144,8 @@ namespace Going.UI.Controls
                 // TitleBoxDraw=false 시 Title 영역은 fill/Border 모두 제외, 텍스트만 표시.
                 if (TitleBoxDraw)
                     Util.DrawBox(canvas, rtTitle, cFill, rndTitle, thm.Corner);
-                Util.DrawTextIcon(canvas, Title, FontName, FontStyle, fsz, IconString, isz, GoDirectionHV.Horizon, IconGap, rtTitle, cText);
+                var tfsz = Util.FontSize(AutoTitleFontSize, rtTitle.Height) ?? TitleFontSize;
+                Util.DrawTextIcon(canvas, Title, FontName, FontStyle, tfsz, IconString, isz, GoDirectionHV.Horizon, IconGap, rtTitle, cText, TitleContentAlignment);
             }
             #endregion
 
