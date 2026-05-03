@@ -6,6 +6,17 @@
 
 ---
 
+## [1.2.12] - 2026-05-03
+
+### Changed
+
+- **`GoStepItem`** 위치 이동: `Going.UI.Controls` → `Going.UI.Datas` 네임스페이스 (`Going.UI/Datas/GoStepItem.cs` 신규 파일).
+  - 다른 Item 데이터 클래스(`GoListItem`, `GoButtonItem`, `GoMenuItem`, `GoToolItem`, `GoTreeNode`)와 일관.
+  - **Breaking**: `GoStepItem`을 직접 참조한 외부 코드는 `using Going.UI.Datas;` 추가 필요.
+  - JSON/Gudx 직렬화 형태는 변동 없음 (type name 기반, namespace 무관).
+
+---
+
 ## [1.2.11] - 2026-05-03
 
 ### Added

@@ -1,3 +1,4 @@
+using Going.UI.Datas;
 using Going.UI.Enums;
 using Going.UI.Themes;
 using Going.UI.Tools;
@@ -8,16 +9,6 @@ using System.Collections.Generic;
 
 namespace Going.UI.Controls
 {
-    /// <summary>스텝 항목 (Text + Icon)</summary>
-    public class GoStepItem
-    {
-        /// <summary>아이콘 문자열 (FontAwesome 등). 없으면 null.</summary>
-        [GoProperty(PCategory.Control, 0)] public string? IconString { get; set; }
-
-        /// <summary>표시 텍스트</summary>
-        [GoProperty(PCategory.Control, 1)] public string? Text { get; set; }
-    }
-
     /// <summary>GoStepBar 표시 모드</summary>
     public enum GoStepBarMode
     {
