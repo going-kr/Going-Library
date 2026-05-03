@@ -1,6 +1,7 @@
 using Going.UI.Enums;
 using Going.UI.Themes;
 using Going.UI.Tools;
+using Going.UI.Utils;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -104,8 +105,88 @@ namespace Going.UI.Controls
         /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
+            var rts = Areas();
+            var rtContent = rts["Content"];
+            var n = Steps.Count;
+            if (n == 0) { base.OnDraw(canvas, thm); return; }
+
+            var cDot = thm.ToColor(DotColor);
+            var cActive = thm.ToColor(ActiveColor);
+            var cLine = thm.ToColor(LineColor);
+            var cActiveTxt = thm.ToColor(ActiveTextColor);
+            var cInactiveTxt = thm.ToColor(InactiveTextColor);
+            var cBack = thm.Back;
+
+            var cellW = rtContent.Width / n;
+            var dotR = DotSize / 2F;
+            var dotCY = rtContent.Top + dotR + 2F; // 약간 띄움
+            // 셀 중앙 X 계산 함수
+            float CenterX(int i1) => rtContent.Left + cellW * (i1 - 0.5F); // i1=1-based
+
+            // 1) connector 먼저 그림 (dot 아래로 깔리도록)
+            if (n >= 2)
+            {
+                using var p = new SKPaint { IsAntialias = true, IsStroke = true, StrokeWidth = 2F, Color = cLine };
+                for (int i = 1; i < n; i++)
+                {
+                    var x1 = CenterX(i);
+                    var x2 = CenterX(i + 1);
+                    canvas.DrawLine(x1, dotCY, x2, dotCY, p);
+                }
+            }
+
+            // 2) dot + icon + label
+            using var pFill = new SKPaint { IsAntialias = true, Style = SKPaintStyle.Fill };
+            using var pStroke = new SKPaint { IsAntialias = true, Style = SKPaintStyle.Stroke, StrokeWidth = 2F };
+            for (int i = 1; i <= n; i++)
+            {
+                var item = Steps[i - 1];
+                bool filled = Mode switch
+                {
+                    GoStepBarMode.Story => i <= Step,
+                    GoStepBarMode.Point => i == Step,
+                    _ => false,
+                };
+
+                var cx = CenterX(i);
+
+                // dot
+                if (filled)
+                {
+                    pFill.Color = cActive;
+                    canvas.DrawCircle(cx, dotCY, dotR, pFill);
+                }
+                else
+                {
+                    pFill.Color = cBack;
+                    canvas.DrawCircle(cx, dotCY, dotR, pFill);
+                    pStroke.Color = cDot;
+                    canvas.DrawCircle(cx, dotCY, dotR - 1F, pStroke);
+                }
+
+                // icon
+                if (!string.IsNullOrEmpty(item.IconString))
+                {
+                    var cIcon = filled ? cBack : cDot;
+                    var rtIcon = Util.FromRect(cx - IconSize / 2F, dotCY - IconSize / 2F, IconSize, IconSize);
+                    Util.DrawIcon(canvas, item.IconString, IconSize, rtIcon, cIcon);
+                }
+
+                // label
+                if (!string.IsNullOrEmpty(item.Text))
+                {
+                    var labelTop = dotCY + dotR + LabelGap;
+                    var labelHeight = rtContent.Bottom - labelTop;
+                    if (labelHeight > 1F)
+                    {
+                        var rtLabel = Util.FromRect(rtContent.Left + cellW * (i - 1), labelTop, cellW, labelHeight);
+                        var cTxt = filled ? cActiveTxt : cInactiveTxt;
+                        Util.DrawText(canvas, item.Text, FontName, FontStyle, FontSize, rtLabel, cTxt, GoContentAlignment.TopCenter);
+                    }
+                }
+            }
+
             base.OnDraw(canvas, thm);
-            // 렌더링 구현은 Task 6
         }
         #endregion
     }
