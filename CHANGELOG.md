@@ -6,6 +6,48 @@
 
 ---
 
+## [1.2.9] - 2026-05-03
+
+### Added (GoInput / GoValue Title 영역 분리)
+
+- **`GoInput` / `GoValue`**: Title 영역 별도 폰트/정렬 속성 신설.
+  - `TitleFontSize` (float, 기본 12) — Title 영역 명시 폰트 크기
+  - `TitleContentAlignment` (`GoContentAlignment`, 기본 `MiddleCenter`) — Title 텍스트/아이콘 정렬
+  - `AutoTitleFontSize` (`GoAutoFontSize`, 기본 `NotUsed`) — Title 영역 자동 폰트 프리셋
+  - 기존엔 본문 `FontSize` / `AutoFontSize` 를 Title도 공유 → 별도 지정 불가능. 이번 분리로 Title을 독립 제어 가능.
+  - `GoInput` abstract base에 박혀 `GoInputString` / `GoInputNumber<T>` / `GoInputBoolean` 등 8개 파생 자동 상속.
+
+### Added (GoStepBar)
+
+- **`GoStepBar`** (`Going.UI/Controls/GoStepBar.cs` 신규): 절차 진행 상태 인디케이터.
+  - `Steps: List<GoStepItem>` (각 항목 `Text` + `IconString`)
+  - `Step` (1-based, 0=비활성, N=`Steps[N-1]` 활성)
+  - `Mode = Story | Point`
+    - **Story**: index `1..Step` 누적 채움 (지나온 단계 강조)
+    - **Point**: index `Step` 한 개만 채움 (현재 위치만 강조)
+  - `UseClick=true` 시 dot 클릭으로 Step 변경 (down/up 동일 셀일 때)
+  - 색상: `DotColor` / `ActiveColor` / `LineColor` / `ActiveTextColor` / `InactiveTextColor`
+  - 크기: `DotSize` / `IconSize` / `LabelGap` + `FontName` / `FontStyle` / `FontSize`
+
+### Changed
+
+- **`GoStep` → `GoStepGauge`** rename. 기존 막대형 스텝 인디케이터 (prev/next 버튼 포함). 동작은 동일.
+  - `Going.UI.Forms.Controls.GoStep` 래퍼도 함께 `GoStepGauge`로 rename.
+  - **Breaking**: 외부 design.json에 `"Type": "GoStep"`이 있으면 deserialize 시 unknown type 에러. `"GoStep"` → `"GoStepGauge"` 일괄 치환 필요.
+  - **Breaking**: `Going.UI.Forms.Controls.GoStep` 직접 참조 코드도 `GoStepGauge`로 변경 필요.
+
+### Why
+
+- **Title 영역 분리**: 데이터 그리드 / 정보 패널에서 Title은 라벨 역할이라 본문(값)과 다른 폰트 크기·정렬을 쓰는 경우가 많음. 기존엔 양쪽이 묶여 있어 워크어라운드 필요했음.
+- **GoStepBar 신설**: 기존 `GoStep`(=`GoStepGauge`)은 게이지 형태라 절차 안내(인터뷰→계획→구현→배포 같은 워크플로 표시)에 부적합. Story/Point 두 모드로 "지나온 단계 강조" / "현재 위치 강조" 두 시나리오 모두 커버.
+
+### Tests
+
+- 79/79 unit tests pass (회귀 없음).
+- 신규: `InputTitleTests` 3건 (Title 속성 round-trip), `GoStepBarTests` 5건 (defaults, Step constrain, StepChanged delta, JSON round-trip, ControlTypes 등록 검증).
+
+---
+
 ## [1.2.6] - 2026-05-02
 
 ### Added (Util.ParseSizes)
