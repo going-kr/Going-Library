@@ -77,6 +77,8 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 13)] public float IconSize { get; set; } = 12F;
         /// <summary>dot 아래 라벨 간격</summary>
         [GoProperty(PCategory.Control, 14)] public float LabelGap { get; set; } = 6F;
+        /// <summary>connector 선 / dot 외곽선 두께</summary>
+        [GoProperty(PCategory.Control, 15)] public float LineWidth { get; set; } = 2F;
         #endregion
 
         #region Member Variable
@@ -115,14 +117,23 @@ namespace Going.UI.Controls
 
             var cellW = rtContent.Width / n;
             var dotR = DotSize / 2F;
-            var dotCY = rtContent.Top + dotR + 2F; // 약간 띄움
+            var lw = MathF.Max(0F, LineWidth);
+
+            // 라벨 보유 여부 → 블록 높이 계산 후 수직 중앙 정렬
+            bool hasLabel = false;
+            for (int k = 0; k < n; k++) { if (!string.IsNullOrEmpty(Steps[k].Text)) { hasLabel = true; break; } }
+            float labelH = hasLabel ? FontSize + 4F : 0F;
+            float gapH = hasLabel ? LabelGap : 0F;
+            float blockH = DotSize + gapH + labelH;
+            float topPad = MathF.Max(0F, (rtContent.Height - blockH) / 2F);
+            var dotCY = rtContent.Top + topPad + dotR;
             // 셀 중앙 X 계산 함수
             float CenterX(int i1) => rtContent.Left + cellW * (i1 - 0.5F); // i1=1-based
 
             // 1) connector 먼저 그림 (dot 아래로 깔리도록)
             if (n >= 2)
             {
-                using var p = new SKPaint { IsAntialias = true, IsStroke = true, StrokeWidth = 2F, Color = cLine };
+                using var p = new SKPaint { IsAntialias = true, IsStroke = true, StrokeWidth = lw, Color = cLine };
                 for (int i = 1; i < n; i++)
                 {
                     var x1 = CenterX(i);
@@ -133,7 +144,7 @@ namespace Going.UI.Controls
 
             // 2) dot + icon + label
             using var pFill = new SKPaint { IsAntialias = true, Style = SKPaintStyle.Fill };
-            using var pStroke = new SKPaint { IsAntialias = true, Style = SKPaintStyle.Stroke, StrokeWidth = 2F };
+            using var pStroke = new SKPaint { IsAntialias = true, Style = SKPaintStyle.Stroke, StrokeWidth = lw };
             for (int i = 1; i <= n; i++)
             {
                 var item = Steps[i - 1];
@@ -157,7 +168,7 @@ namespace Going.UI.Controls
                     pFill.Color = cBack;
                     canvas.DrawCircle(cx, dotCY, dotR, pFill);
                     pStroke.Color = cDot;
-                    canvas.DrawCircle(cx, dotCY, dotR - 1F, pStroke);
+                    canvas.DrawCircle(cx, dotCY, MathF.Max(0F, dotR - lw / 2F), pStroke);
                 }
 
                 // icon

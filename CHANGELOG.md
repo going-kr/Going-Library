@@ -6,6 +6,18 @@
 
 ---
 
+## [1.2.14] - 2026-05-04
+
+### Added
+
+- **`GoStepBar.LineWidth`** (`float`, 기본 `2F`): connector 직선과 dot 외곽선(비활성)의 stroke 두께를 통합 제어. 외곽선 반지름은 `dotR - LineWidth/2` 로 보정해 stroke 외경이 정확히 `dotR`이 되도록 함.
+
+### Fixed
+
+- **`GoStepBar`** 수직 정렬: dot+label 블록을 `Content` 영역 내에서 수직 중앙 정렬. 라벨 보유 여부에 따라 블록 높이를 `DotSize` 또는 `DotSize + LabelGap + (FontSize+4)` 로 계산하고, 영역보다 크면 위쪽 정렬로 폴백. 기존엔 dot이 항상 상단에 붙어 있던 동작 변경.
+
+---
+
 ## [1.2.13] - 2026-05-03
 
 ### Fixed
