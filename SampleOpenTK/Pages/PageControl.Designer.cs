@@ -24,6 +24,10 @@ namespace Sample.Pages
         GoInputNumber<int> demoInpTitleBoxOff;
         GoStateLamp demoStateLamp;
         GoLabel demoSectionLabel;
+        // v1.2.9 신기능 데모
+        GoValueNumber<double> demoValTitleFont;
+        GoStepBar demoStepBarStory;
+        GoStepBar demoStepBarPoint;
         #endregion
 
         public void InitializeComponent()
@@ -123,6 +127,62 @@ namespace Sample.Pages
             demoStateLamp.States.Add(new StateLamp { State = 2, Color = "Good", Text = "RUNNING" });
             demoStateLamp.States.Add(new StateLamp { State = 3, Color = "Danger", Text = "FAULT" });
             this.Childrens.Add(demoStateLamp);
+            #endregion
+
+            #region 동적 데모 — v1.2.9 신기능
+            // Title 영역 별도 폰트/정렬 데모 (신규 v1.2.9)
+            demoValTitleFont = new GoValueNumber<double>
+            {
+                Name = "demoValTitleFont",
+                Title = "AutoTitle",
+                TitleSize = 130, TitleBoxDraw = true,
+                TitleFontSize = 18,                  // ← 신규 (NotUsed일 때만 사용됨)
+                AutoTitleFontSize = GoAutoFontSize.M, // ← 신규 — Title 영역 높이 비율로 자동 축소
+                TitleContentAlignment = GoContentAlignment.MiddleLeft, // ← 신규
+                Value = 75.5, FormatString = "0.0", Unit = "%", UnitSize = 36,
+                FontStyle = GoFontStyle.Bold, FontSize = 14,
+                TextColor = "Fore", FillColor = "Highlight", ValueColor = "Base1", BorderColor = "Base3",
+                Bounds = new SKRect(420, 300, 780, 346),
+            };
+            this.Childrens.Add(demoValTitleFont);
+
+            // GoStepBar — Story 모드 (1..Step 누적 채움)
+            demoStepBarStory = new GoStepBar
+            {
+                Name = "demoStepBarStory",
+                Mode = GoStepBarMode.Story,
+                Step = 4,
+                UseClick = true,
+                DotSize = 22, FontSize = 12, IconSize = 13, LabelGap = 8,
+                Bounds = new SKRect(420, 360, 780, 420),
+                ActiveColor = "Highlight",
+            };
+            demoStepBarStory.Steps.Add(new GoStepItem { Text = "인터뷰", IconString = "fa-comments" });
+            demoStepBarStory.Steps.Add(new GoStepItem { Text = "계획",   IconString = "fa-list-check" });
+            demoStepBarStory.Steps.Add(new GoStepItem { Text = "구현",   IconString = "fa-code" });
+            demoStepBarStory.Steps.Add(new GoStepItem { Text = "UI편집", IconString = "fa-paintbrush" });
+            demoStepBarStory.Steps.Add(new GoStepItem { Text = "코드편집", IconString = "fa-pencil" });
+            demoStepBarStory.Steps.Add(new GoStepItem { Text = "배포",    IconString = "fa-rocket" });
+            this.Childrens.Add(demoStepBarStory);
+
+            // GoStepBar — Point 모드 (Step 한 개만 채움)
+            demoStepBarPoint = new GoStepBar
+            {
+                Name = "demoStepBarPoint",
+                Mode = GoStepBarMode.Point,
+                Step = 4,
+                UseClick = true,
+                DotSize = 22, FontSize = 12, IconSize = 13, LabelGap = 8,
+                Bounds = new SKRect(420, 430, 780, 490),
+                ActiveColor = "Highlight",
+            };
+            demoStepBarPoint.Steps.Add(new GoStepItem { Text = "인터뷰", IconString = "fa-comments" });
+            demoStepBarPoint.Steps.Add(new GoStepItem { Text = "계획",   IconString = "fa-list-check" });
+            demoStepBarPoint.Steps.Add(new GoStepItem { Text = "구현",   IconString = "fa-code" });
+            demoStepBarPoint.Steps.Add(new GoStepItem { Text = "UI편집", IconString = "fa-paintbrush" });
+            demoStepBarPoint.Steps.Add(new GoStepItem { Text = "코드편집", IconString = "fa-pencil" });
+            demoStepBarPoint.Steps.Add(new GoStepItem { Text = "배포",    IconString = "fa-rocket" });
+            this.Childrens.Add(demoStepBarPoint);
             #endregion
         }
     }
