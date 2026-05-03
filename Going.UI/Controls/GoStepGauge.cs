@@ -15,9 +15,9 @@ using System.Threading.Tasks;
 namespace Going.UI.Controls
 {
     /// <summary>
-    /// 스텝 표시 컨트롤. 단계별 진행 상태를 시각적으로 표시합니다.
+    /// 스텝 게이지 표시 컨트롤. 단계별 진행 상태를 막대 형태로 시각화하며 prev/next 버튼을 포함합니다.
     /// </summary>
-    public class GoStep : GoControl
+    public class GoStepGauge : GoControl
     {
         #region Properties
         /// <summary>
@@ -88,9 +88,9 @@ namespace Going.UI.Controls
 
         #region Constructor
         /// <summary>
-        /// <see cref="GoStep"/> 클래스의 새 인스턴스를 초기화합니다.
+        /// <see cref="GoStepGauge"/> 클래스의 새 인스턴스를 초기화합니다.
         /// </summary>
-        public GoStep()
+        public GoStepGauge()
         {
             Selectable = true;
         }
