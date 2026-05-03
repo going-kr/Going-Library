@@ -1887,7 +1887,59 @@
               "UseLongClick": false,
               "LongClickTime": null,
               "Selectable": true,
-              "Bounds": "342,263,422,303",
+              "Bounds": "47,210,127,250",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          },
+          {
+            "Type": "GoStepBar",
+            "Value": {
+              "Steps": [
+                {
+                  "IconString": null,
+                  "Text": "\uC778\uD130\uBDF0"
+                },
+                {
+                  "IconString": null,
+                  "Text": "\uC124\uACC4"
+                },
+                {
+                  "IconString": null,
+                  "Text": "\uAD6C\uD604"
+                },
+                {
+                  "IconString": null,
+                  "Text": "\uBC30\uD3EC"
+                }
+              ],
+              "Step": 0,
+              "Mode": 0,
+              "UseClick": false,
+              "DotColor": "Base3",
+              "ActiveColor": "cyan",
+              "LineColor": "Base3",
+              "ActiveTextColor": "Fore",
+              "InactiveTextColor": "Base3",
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 12,
+              "DotSize": 18,
+              "IconSize": 12,
+              "LabelGap": 6,
+              "Id": "6355536f-da2c-41f6-a408-7074f0ce6a0d",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": true,
+              "Bounds": "220,307,581,347",
               "Dock": 0,
               "Margin": {
                 "Left": 4,
