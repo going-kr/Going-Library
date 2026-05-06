@@ -77,7 +77,6 @@
             tsmiTool = new ToolStripMenuItem();
             tsmiResourceManager = new ToolStripMenuItem();
             tsmiProgramSetting = new ToolStripMenuItem();
-            tsmiClaude = new ToolStripMenuItem();
             tsmiHelp = new ToolStripMenuItem();
             tsmiProgramInfo = new ToolStripMenuItem();
             pnlTool.SuspendLayout();
@@ -725,7 +724,7 @@
             // 
             // tsmiTool
             // 
-            tsmiTool.DropDownItems.AddRange(new ToolStripItem[] { tsmiResourceManager, tsmiProgramSetting, tsmiClaude });
+            tsmiTool.DropDownItems.AddRange(new ToolStripItem[] { tsmiResourceManager, tsmiProgramSetting });
             tsmiTool.Name = "tsmiTool";
             tsmiTool.Size = new Size(57, 20);
             tsmiTool.Text = "도구(&T)";
@@ -745,17 +744,9 @@
             tsmiProgramSetting.Name = "tsmiProgramSetting";
             tsmiProgramSetting.Size = new Size(180, 22);
             tsmiProgramSetting.Text = "프로그램 설정(&S)";
-            // 
-            // tsmiClaude
-            // 
-            tsmiClaude.Font = new Font("나눔고딕", 9F);
-            tsmiClaude.ForeColor = Color.FromArgb(150, 150, 150);
-            tsmiClaude.Name = "tsmiClaude";
-            tsmiClaude.Size = new Size(180, 22);
-            tsmiClaude.Text = "클로드(&C)";
-            // 
+            //
             // tsmiHelp
-            // 
+            //
             tsmiHelp.DropDownItems.AddRange(new ToolStripItem[] { tsmiProgramInfo });
             tsmiHelp.Name = "tsmiHelp";
             tsmiHelp.Size = new Size(72, 20);
@@ -845,6 +836,5 @@
         private UI.Forms.Controls.GoButton btnValidCheck;
         private UI.Forms.Controls.GoButton btnTheme;
         private UI.Forms.Controls.GoButton btnHotReload;
-        private ToolStripMenuItem tsmiClaude;
     }
 }

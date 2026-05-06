@@ -33,7 +33,6 @@ namespace Going.UIEditor
         ExplorerWindow? explorer;
         ToolBoxWindow? toolBox;
         PropertiesWindow? properties;
-        PromptWindow? prompt;
 
         List<EditorWindow> editors = [];
         bool bDownSaveAs = false;
@@ -128,18 +127,6 @@ namespace Going.UIEditor
             #region Tools
             tsmiResourceManager.Click += (o, s) => ResourceManager();
             tsmiProgramSetting.Click += (o, s) => ProgramSetting();
-            tsmiClaude.Click += (o, s) =>
-            {
-                if (prompt == null || prompt.IsDisposed)
-                {
-                    prompt = new PromptWindow();
-                    prompt.Show(dockPanel, WeifenLuo.WinFormsUI.Docking.DockState.DockBottom);
-                }
-                else
-                {
-                    prompt.Activate();
-                }
-            };
             #endregion
             #endregion
 
@@ -258,11 +245,6 @@ namespace Going.UIEditor
                                 properties = new PropertiesWindow { Title = LM.Properties };
                                 properties.FormClosed += (o, s) => { properties.Dispose(); properties = null; };
                                 return properties;
-                            case "Going.UIEditor.Windows.PromptWindow":
-                                if (!Program.ClaudeInstalled) return null;
-                                prompt = new PromptWindow();
-                                prompt.FormClosed += (o, s) => { prompt.Dispose(); prompt = null; };
-                                return prompt;
                             default:
                                 return null;
                         }
@@ -389,8 +371,6 @@ namespace Going.UIEditor
             tsmiTool.Text = $"{LM.Tool}(&T)";
             tsmiResourceManager.Text = $"{LM.Resources}(&R)";
             tsmiProgramSetting.Text = $"{LM.ProgramSetting}(&S)";
-            tsmiClaude.Text = $"{LM.Claude}(&C)";
-            tsmiClaude.Visible = Program.ClaudeInstalled;
             #endregion
             #region Help
             tsmiHelp.Text = $"{LM.Help}(&H)";
@@ -528,10 +508,6 @@ namespace Going.UIEditor
                     {
                         File.WriteAllText(Program.FilePath, v);
                         Program.Edit = false;
-
-                        // SaveAs로 경로 변경 시 PromptWindow 재시작
-                        if (prompt != null && !prompt.IsDisposed)
-                            _ = prompt.RestartTerminal();
                     }
                     catch (UnauthorizedAccessException) { Program.MessageBox.ShowMessageBoxOk(LM.Save, LM.SavePermissions); }
                 }
