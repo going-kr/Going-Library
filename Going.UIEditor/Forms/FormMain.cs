@@ -444,12 +444,11 @@ namespace Going.UIEditor
                         ofd.Title = LM.Open;
                         ofd.InitialDirectory = Program.DataMgr.LastOpenFolder ?? Program.DataMgr.ProjectFolder;
                         ofd.Multiselect = false;
-                        ofd.Filter = "Going UI Editor File|*.gud";
+                        ofd.Filter = "Going UI Editor File|*.gud;*.gudx|.gud|*.gud|.gudx|*.gudx";
 
                         if (ofd.ShowDialog() == DialogResult.OK)
                         {
-                            var s = File.ReadAllText(ofd.FileName);
-                            var v = LoadDesign(s);
+                            var v = LoadFromPath(ofd.FileName);
                             if (v != null)
                             {
                                 Program.CurrentDesign = v;
@@ -477,11 +476,10 @@ namespace Going.UIEditor
 
             if (Program.FilePath != null && Directory.Exists(Path.GetDirectoryName(Program.FilePath)))
             {
-                var v = design.JsonSerialize();
                 try
                 {
                     isSaving = true;
-                    File.WriteAllText(Program.FilePath, v);
+                    SaveToPath(design, Program.FilePath);
                     Program.Edit = false;
                 }
                 catch (UnauthorizedAccessException) { Program.MessageBox.ShowMessageBoxOk(LM.Save, LM.SavePermissions); }
@@ -499,14 +497,13 @@ namespace Going.UIEditor
             {
                 sfd.Title = LM.SaveAs;
                 sfd.InitialDirectory = Program.DataMgr.ProjectFolder;
-                sfd.Filter = "Going UI Editor File|*.gud";
+                sfd.Filter = "Going UI Editor File|*.gud;*.gudx|.gud|*.gud|.gudx|*.gudx";
                 if (sfd.ShowDialog() == DialogResult.OK)
                 {
                     Program.FilePath = sfd.FileName;
-                    var v = design.JsonSerialize();
                     try
                     {
-                        File.WriteAllText(Program.FilePath, v);
+                        SaveToPath(design, Program.FilePath);
                         Program.Edit = false;
                     }
                     catch (UnauthorizedAccessException) { Program.MessageBox.ShowMessageBoxOk(LM.Save, LM.SavePermissions); }
@@ -541,6 +538,28 @@ namespace Going.UIEditor
         }
         #endregion
         #region LoadDesign
+        static bool IsGudxPath(string path) => string.Equals(Path.GetExtension(path), ".gudx", StringComparison.OrdinalIgnoreCase);
+
+        GoDesign? LoadFromPath(string path)
+        {
+            try
+            {
+                if (IsGudxPath(path))
+                    return GoDesign.DeserializeGudx(path);
+                var s = File.ReadAllText(path);
+                return LoadDesign(s);
+            }
+            catch { return null; }
+        }
+
+        void SaveToPath(GoDesign design, string path)
+        {
+            if (IsGudxPath(path))
+                design.SerializeGudx(path);
+            else
+                File.WriteAllText(path, design.JsonSerialize());
+        }
+
         GoDesign? LoadDesign(string json)
         {
             try
@@ -622,8 +641,7 @@ namespace Going.UIEditor
         {
             if (Program.FilePath != null && File.Exists(Program.FilePath))
             {
-                var s = File.ReadAllText(Program.FilePath);
-                var v = LoadDesign(s);
+                var v = LoadFromPath(Program.FilePath);
                 if (v != null)
                 {
                     Program.CurrentDesign = v;

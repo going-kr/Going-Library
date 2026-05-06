@@ -1791,63 +1791,40 @@
       "Value": {
         "Childrens": [
           {
-            "Type": "GoBoxPanel",
-            "Value": {
-              "Childrens": [],
-              "BorderColor": "Base3",
-              "BoxColor": "Base2",
-              "Round": 1,
-              "BackgroundDraw": true,
-              "BorderWidth": 1.5,
-              "Elevation": 2,
-              "Id": "e66400cb-513b-4fdd-a6be-7043d57ccea6",
-              "Name": null,
-              "Visible": true,
-              "Enabled": true,
-              "UseLongClick": false,
-              "LongClickTime": null,
-              "Selectable": false,
-              "Bounds": "47,35,239,200",
-              "Dock": 0,
-              "Margin": {
-                "Left": 4,
-                "Top": 4,
-                "Right": 4,
-                "Bottom": 4
-              }
-            }
-          },
-          {
-            "Type": "GoPanel",
+            "Type": "GoLabel",
             "Value": {
               "IconString": null,
               "IconSize": 12,
+              "IconDirection": 0,
               "IconGap": 5,
-              "Text": "Panel",
+              "Text": "No Background",
               "FontName": "\uB098\uB214\uACE0\uB515",
               "FontStyle": 0,
               "FontSize": 12,
+              "TextPadding": {
+                "Left": 0,
+                "Top": 0,
+                "Right": 0,
+                "Bottom": 0
+              },
               "TextColor": "Fore",
-              "PanelColor": "Base2",
-              "BorderColor": "Base3",
-              "BorderWidth": 1.5,
+              "LabelColor": "Base2",
+              "BorderColor": "Base2",
               "Round": 1,
-              "BackgroundDraw": true,
+              "BorderWidth": 1,
+              "BackgroundDraw": false,
               "BorderOnly": false,
-              "TitleHeight": 40,
-              "TitleDivider": true,
-              "Buttons": [],
-              "ButtonWidth": null,
-              "Elevation": 2,
-              "Childrens": [],
-              "Id": "89f586c3-c6db-4cd1-b4c7-4abb801aba12",
+              "ContentAlignment": 4,
+              "AutoFontSize": 0,
+              "AutoIconSize": 0,
+              "Id": "57413953-f13a-48f0-b9f6-2d264df5e2f5",
               "Name": null,
               "Visible": true,
               "Enabled": true,
               "UseLongClick": false,
               "LongClickTime": null,
               "Selectable": false,
-              "Bounds": "249,35,449,200",
+              "Bounds": "122,27,222,67",
               "Dock": 0,
               "Margin": {
                 "Left": 4,
@@ -1858,36 +1835,456 @@
             }
           },
           {
-            "Type": "GoOnOff",
+            "Type": "GoLabel",
             "Value": {
-              "DrawText": true,
-              "OnText": "On",
-              "OffText": "Off",
+              "IconString": null,
+              "IconSize": 12,
+              "IconDirection": 0,
+              "IconGap": 5,
+              "Text": "Background",
               "FontName": "\uB098\uB214\uACE0\uB515",
               "FontStyle": 0,
               "FontSize": 12,
+              "TextPadding": {
+                "Left": 0,
+                "Top": 0,
+                "Right": 0,
+                "Bottom": 0
+              },
               "TextColor": "Fore",
-              "BoxColor": "Base1",
+              "LabelColor": "Base2",
               "BorderColor": "Base3",
-              "BorderWidth": 1.5,
-              "CursorColor": "Base3",
-              "OnColor": "lime",
-              "OffColor": "gray",
-              "CursorIconDraw": true,
-              "CursorIconString": "fa-power-off",
-              "CursorIconSize": null,
-              "Corner": null,
-              "OnOff": false,
+              "Round": 1,
+              "BorderWidth": 1,
+              "BackgroundDraw": true,
+              "BorderOnly": false,
+              "ContentAlignment": 4,
               "AutoFontSize": 0,
-              "AutoCursorIconSize": 0,
-              "Id": "b7a40d02-242d-41cb-9528-b329c0b354dc",
+              "AutoIconSize": 0,
+              "Id": "9847fe78-d95e-4c45-a14d-642b4d4939c1",
               "Name": null,
               "Visible": true,
               "Enabled": true,
               "UseLongClick": false,
               "LongClickTime": null,
-              "Selectable": true,
-              "Bounds": "47,210,127,250",
+              "Selectable": false,
+              "Bounds": "232,27,332,67",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          },
+          {
+            "Type": "GoLamp",
+            "Value": {
+              "Text": "Off",
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 12,
+              "TextColor": "Fore",
+              "OnColor": "Good",
+              "OffColor": "Base3",
+              "OnOff": false,
+              "LampSize": 24,
+              "Gap": 10,
+              "ContentAlignment": 3,
+              "AutoFontSize": 0,
+              "Id": "f9f339b4-dc2e-48bd-b8ba-7400a3bb1c6c",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": false,
+              "Bounds": "122,77,222,117",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          },
+          {
+            "Type": "GoLamp",
+            "Value": {
+              "Text": "On",
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 12,
+              "TextColor": "Fore",
+              "OnColor": "Good",
+              "OffColor": "Base2",
+              "OnOff": true,
+              "LampSize": 24,
+              "Gap": 10,
+              "ContentAlignment": 3,
+              "AutoFontSize": 0,
+              "Id": "808f88d1-b24b-4951-b291-fc463a4646df",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": false,
+              "Bounds": "232,77,332,117",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          },
+          {
+            "Type": "GoStateLamp",
+            "Value": {
+              "States": [
+                {
+                  "State": 0,
+                  "Color": "Base3",
+                  "Text": "Off",
+                  "OnOff": false
+                },
+                {
+                  "State": 1,
+                  "Color": "Good",
+                  "Text": "Good",
+                  "OnOff": true
+                },
+                {
+                  "State": 2,
+                  "Color": "Good",
+                  "Text": "Warning",
+                  "OnOff": true
+                },
+                {
+                  "State": 3,
+                  "Color": "Error",
+                  "Text": "Error",
+                  "OnOff": true
+                }
+              ],
+              "State": 0,
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 12,
+              "TextColor": "Fore",
+              "LampSize": 24,
+              "Gap": 10,
+              "ContentAlignment": 3,
+              "AutoFontSize": 0,
+              "Id": "bbfe1271-6812-4746-be4e-075307a5c00a",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": false,
+              "Bounds": "122,127,222,167",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          },
+          {
+            "Type": "GoStateLamp",
+            "Value": {
+              "States": [
+                {
+                  "State": 0,
+                  "Color": "Base3",
+                  "Text": "Off",
+                  "OnOff": false
+                },
+                {
+                  "State": 1,
+                  "Color": "Good",
+                  "Text": "Good",
+                  "OnOff": true
+                },
+                {
+                  "State": 2,
+                  "Color": "Good",
+                  "Text": "Warning",
+                  "OnOff": true
+                },
+                {
+                  "State": 3,
+                  "Color": "Error",
+                  "Text": "Error",
+                  "OnOff": true
+                }
+              ],
+              "State": 1,
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 12,
+              "TextColor": "Fore",
+              "LampSize": 24,
+              "Gap": 10,
+              "ContentAlignment": 3,
+              "AutoFontSize": 0,
+              "Id": "68730d7c-7e7f-4931-9e2f-b1ce30625cd8",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": false,
+              "Bounds": "232,127,332,167",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          },
+          {
+            "Type": "GoStateLamp",
+            "Value": {
+              "States": [
+                {
+                  "State": 0,
+                  "Color": "Base3",
+                  "Text": "Off",
+                  "OnOff": false
+                },
+                {
+                  "State": 1,
+                  "Color": "Good",
+                  "Text": "Good",
+                  "OnOff": true
+                },
+                {
+                  "State": 2,
+                  "Color": "Warning",
+                  "Text": "Warning",
+                  "OnOff": true
+                },
+                {
+                  "State": 3,
+                  "Color": "Error",
+                  "Text": "Error",
+                  "OnOff": true
+                }
+              ],
+              "State": 2,
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 12,
+              "TextColor": "Fore",
+              "LampSize": 24,
+              "Gap": 10,
+              "ContentAlignment": 3,
+              "AutoFontSize": 0,
+              "Id": "f455d162-21c9-499c-ba38-fdaa9a4da16d",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": false,
+              "Bounds": "342,127,442,167",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          },
+          {
+            "Type": "GoStateLamp",
+            "Value": {
+              "States": [
+                {
+                  "State": 0,
+                  "Color": "Base3",
+                  "Text": "Off",
+                  "OnOff": false
+                },
+                {
+                  "State": 1,
+                  "Color": "Good",
+                  "Text": "Good",
+                  "OnOff": true
+                },
+                {
+                  "State": 2,
+                  "Color": "Good",
+                  "Text": "Warning",
+                  "OnOff": true
+                },
+                {
+                  "State": 3,
+                  "Color": "Error",
+                  "Text": "Error",
+                  "OnOff": true
+                }
+              ],
+              "State": 3,
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 12,
+              "TextColor": "Fore",
+              "LampSize": 24,
+              "Gap": 10,
+              "ContentAlignment": 3,
+              "AutoFontSize": 0,
+              "Id": "55b1c9c4-3b25-4b95-a3a4-3bf09e2c458f",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": false,
+              "Bounds": "452,127,552,167",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          },
+          {
+            "Type": "GoLabel",
+            "Value": {
+              "IconString": null,
+              "IconSize": 12,
+              "IconDirection": 0,
+              "IconGap": 5,
+              "Text": "GoLabel",
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 12,
+              "TextPadding": {
+                "Left": 0,
+                "Top": 0,
+                "Right": 0,
+                "Bottom": 0
+              },
+              "TextColor": "Fore",
+              "LabelColor": "Base2",
+              "BorderColor": "Base2",
+              "Round": 1,
+              "BorderWidth": 1,
+              "BackgroundDraw": false,
+              "BorderOnly": false,
+              "ContentAlignment": 3,
+              "AutoFontSize": 0,
+              "AutoIconSize": 0,
+              "Id": "5b8dfda1-6116-479f-943e-f1213bbe1321",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": false,
+              "Bounds": "10,26,112,66",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          },
+          {
+            "Type": "GoLabel",
+            "Value": {
+              "IconString": null,
+              "IconSize": 12,
+              "IconDirection": 0,
+              "IconGap": 5,
+              "Text": "GoLamp",
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 12,
+              "TextPadding": {
+                "Left": 0,
+                "Top": 0,
+                "Right": 0,
+                "Bottom": 0
+              },
+              "TextColor": "Fore",
+              "LabelColor": "Base2",
+              "BorderColor": "Base2",
+              "Round": 1,
+              "BorderWidth": 1,
+              "BackgroundDraw": false,
+              "BorderOnly": false,
+              "ContentAlignment": 3,
+              "AutoFontSize": 0,
+              "AutoIconSize": 0,
+              "Id": "585f3ee5-e660-47a5-973b-a9a0ebe9863f",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": false,
+              "Bounds": "10,76,112,116",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          },
+          {
+            "Type": "GoLabel",
+            "Value": {
+              "IconString": null,
+              "IconSize": 12,
+              "IconDirection": 0,
+              "IconGap": 5,
+              "Text": "GoStateLamp",
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 12,
+              "TextPadding": {
+                "Left": 0,
+                "Top": 0,
+                "Right": 0,
+                "Bottom": 0
+              },
+              "TextColor": "Fore",
+              "LabelColor": "Base2",
+              "BorderColor": "Base2",
+              "Round": 1,
+              "BorderWidth": 1,
+              "BackgroundDraw": false,
+              "BorderOnly": false,
+              "ContentAlignment": 3,
+              "AutoFontSize": 0,
+              "AutoIconSize": 0,
+              "Id": "698c70d8-3156-4ccf-bd26-5414bafe6de2",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": false,
+              "Bounds": "10,126,112,166",
               "Dock": 0,
               "Margin": {
                 "Left": 4,
@@ -1903,43 +2300,240 @@
               "Steps": [
                 {
                   "IconString": null,
-                  "Text": "\uC778\uD130\uBDF0"
+                  "Text": "\uAE30"
                 },
                 {
                   "IconString": null,
-                  "Text": "\uC124\uACC4"
+                  "Text": "\uC2B9"
                 },
                 {
                   "IconString": null,
-                  "Text": "\uAD6C\uD604"
+                  "Text": "\uC804"
                 },
                 {
                   "IconString": null,
-                  "Text": "\uBC30\uD3EC"
+                  "Text": "\uACB0"
                 }
               ],
-              "Step": 0,
-              "Mode": 0,
+              "Step": 2,
+              "Mode": 1,
               "UseClick": false,
-              "DotColor": "Base3",
+              "DotColor": "Base4",
               "ActiveColor": "cyan",
-              "LineColor": "Base3",
+              "LineColor": "Base4",
               "ActiveTextColor": "Fore",
-              "InactiveTextColor": "Base3",
+              "InactiveTextColor": "Base5",
               "FontName": "\uB098\uB214\uACE0\uB515",
               "FontStyle": 0,
               "FontSize": 12,
-              "DotSize": 18,
+              "DotSize": 24,
               "IconSize": 12,
               "LabelGap": 6,
-              "Id": "6355536f-da2c-41f6-a408-7074f0ce6a0d",
+              "LineWidth": 2,
+              "Id": "218a68c4-97e8-4aea-8736-c0bb850fa86a",
               "Name": null,
               "Visible": true,
               "Enabled": true,
               "UseLongClick": false,
               "LongClickTime": null,
               "Selectable": true,
-              "Bounds": "220,307,581,347",
+              "Bounds": "122,177,332,226",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          },
+          {
+            "Type": "GoLabel",
+            "Value": {
+              "IconString": null,
+              "IconSize": 12,
+              "IconDirection": 0,
+              "IconGap": 5,
+              "Text": "GoStepBar",
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 12,
+              "TextPadding": {
+                "Left": 0,
+                "Top": 0,
+                "Right": 0,
+                "Bottom": 0
+              },
+              "TextColor": "Fore",
+              "LabelColor": "Base2",
+              "BorderColor": "Base2",
+              "Round": 1,
+              "BorderWidth": 1,
+              "BackgroundDraw": false,
+              "BorderOnly": false,
+              "ContentAlignment": 3,
+              "AutoFontSize": 0,
+              "AutoIconSize": 0,
+              "Id": "24a75a0e-847a-4fd1-982a-ac260183a1be",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": false,
+              "Bounds": "10,176,112,225",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          },
+          {
+            "Type": "GoValueBoolean",
+            "Value": {
+              "Value": false,
+              "OnText": "ON",
+              "OffText": "OFF",
+              "OnIconString": null,
+              "OffIconString": null,
+              "IconString": null,
+              "IconSize": 12,
+              "IconGap": 5,
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 12,
+              "Direction": 0,
+              "TextColor": "Fore",
+              "BorderColor": "Base3",
+              "BorderWidth": 1,
+              "FillColor": "Base3",
+              "ValueColor": "Base2",
+              "Round": 1,
+              "TitleSize": null,
+              "Title": null,
+              "ButtonSize": null,
+              "Buttons": [],
+              "AutoFontSize": 0,
+              "AutoIconSize": 0,
+              "TitleBoxDraw": true,
+              "TitleFontSize": 12,
+              "TitleContentAlignment": 4,
+              "AutoTitleFontSize": 0,
+              "TitleTextPadding": {
+                "Left": 0,
+                "Top": 0,
+                "Right": 0,
+                "Bottom": 0
+              },
+              "Id": "57fb4b02-541c-4ffb-9a79-b1fa499ef9a4",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": true,
+              "Bounds": "122,245,332,285",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          },
+          {
+            "Type": "GoLabel",
+            "Value": {
+              "IconString": null,
+              "IconSize": 12,
+              "IconDirection": 0,
+              "IconGap": 5,
+              "Text": "GoValueBoolean",
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 12,
+              "TextPadding": {
+                "Left": 0,
+                "Top": 0,
+                "Right": 0,
+                "Bottom": 0
+              },
+              "TextColor": "Fore",
+              "LabelColor": "Base2",
+              "BorderColor": "Base2",
+              "Round": 1,
+              "BorderWidth": 1,
+              "BackgroundDraw": false,
+              "BorderOnly": false,
+              "ContentAlignment": 3,
+              "AutoFontSize": 0,
+              "AutoIconSize": 0,
+              "Id": "7be5c43e-94c9-474e-a125-504d7569f079",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": false,
+              "Bounds": "10,245,112,285",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          },
+          {
+            "Type": "GoValueBoolean",
+            "Value": {
+              "Value": true,
+              "OnText": "ON",
+              "OffText": "OFF",
+              "OnIconString": null,
+              "OffIconString": null,
+              "IconString": null,
+              "IconSize": 12,
+              "IconGap": 5,
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 12,
+              "Direction": 0,
+              "TextColor": "Fore",
+              "BorderColor": "Base3",
+              "BorderWidth": 1,
+              "FillColor": "Base3",
+              "ValueColor": "Base2",
+              "Round": 1,
+              "TitleSize": 80,
+              "Title": "\uD0C0\uC774\uD2C0",
+              "ButtonSize": null,
+              "Buttons": [],
+              "AutoFontSize": 0,
+              "AutoIconSize": 0,
+              "TitleBoxDraw": true,
+              "TitleFontSize": 12,
+              "TitleContentAlignment": 4,
+              "AutoTitleFontSize": 0,
+              "TitleTextPadding": {
+                "Left": 0,
+                "Top": 0,
+                "Right": 0,
+                "Bottom": 0
+              },
+              "Id": "5a434ce3-5e2b-4aa2-90ed-b1de777d3fe8",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": true,
+              "Bounds": "342,245,552,285",
               "Dock": 0,
               "Margin": {
                 "Left": 4,
