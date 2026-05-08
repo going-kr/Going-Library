@@ -61,7 +61,7 @@ public class BindingTests
 
         lamp.Bind(c => c.OnOff, () => source);
 
-        // 초기 한 번 동기화: Bind 직후 또는 첫 FireUpdate
+        // 첫 FireUpdate에 초기 동기화
         lamp.FireUpdate();
         Assert.False(lamp.OnOff);
 

@@ -76,18 +76,8 @@ public static class GoControlBindingExtensions
             SourceSet = setter == null ? null : (Action<object?>)(v => setter((TV)v!)),
         };
 
-        ctrl.bindings ??= new List<GoBinding>();
-
         // 같은 속성에 기존 binding 있으면 교체 (마지막 승)
-        for (int i = 0; i < ctrl.bindings.Count; i++)
-        {
-            if (ctrl.bindings[i].CtrlProperty == pi)
-            {
-                ctrl.bindings[i] = binding;
-                return;
-            }
-        }
-        ctrl.bindings.Add(binding);
+        ctrl.AddOrReplaceBinding(binding);
     }
 
     /// <summary>
@@ -95,6 +85,6 @@ public static class GoControlBindingExtensions
     /// </summary>
     public static void UnbindAll(this GoControl ctrl)
     {
-        ctrl.bindings?.Clear();
+        ctrl.ClearBindings();
     }
 }

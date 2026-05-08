@@ -203,7 +203,7 @@ namespace Going.UI.Controls
         private float dx, dy, mx, my;
         private bool bDown = false;
         private DateTime downTime;
-        internal List<Going.UI.Bindings.GoBinding>? bindings;
+        private List<GoBinding>? bindings;
         #endregion
 
         #region Method
@@ -324,12 +324,15 @@ namespace Going.UI.Controls
 
         private void PumpBindings()
         {
-            // Going.UI.Bindings.GoBinding[] snapshot 형태로 안전 순회
             var list = bindings;
-            if (list == null) return;
-            for (int i = 0; i < list.Count; i++)
+            if (list == null || list.Count == 0) return;
+
+            // 재진입 안전: 펌프 도중 setter가 Bind/UnbindAll을 호출하더라도
+            // 이번 프레임은 일관된 스냅샷으로 진행
+            var snapshot = list.ToArray();
+            for (int i = 0; i < snapshot.Length; i++)
             {
-                var b = list[i];
+                var b = snapshot[i];
 
                 object? newSrc;
                 try { newSrc = b.SourceGet(); }
@@ -341,7 +344,7 @@ namespace Going.UI.Controls
                     {
                         b.CtrlSet(this, newSrc);
                         b.LastSrcValue = newSrc;
-                        b.LastCtrlValue = newSrc;  // 자기 트리거 방지
+                        b.LastCtrlValue = newSrc;  // 자기 트리거 방지 (Task 3 역방향 폴링 진입 시 비교 기준)
                         b.Initialized = true;
                     }
                     catch
@@ -350,6 +353,25 @@ namespace Going.UI.Controls
                     }
                 }
             }
+        }
+
+        internal void AddOrReplaceBinding(GoBinding b)
+        {
+            bindings ??= new List<GoBinding>();
+            for (int i = 0; i < bindings.Count; i++)
+            {
+                if (bindings[i].CtrlProperty == b.CtrlProperty)
+                {
+                    bindings[i] = b;
+                    return;
+                }
+            }
+            bindings.Add(b);
+        }
+
+        internal void ClearBindings()
+        {
+            bindings?.Clear();
         }
         
         /// <summary>
@@ -494,7 +516,7 @@ namespace Going.UI.Controls
         /// <summary>리소스를 해제합니다.</summary>
         public void Dispose()
         {
-            this.UnbindAll();
+            ClearBindings();
             OnDispose();
         }
         #endregion
