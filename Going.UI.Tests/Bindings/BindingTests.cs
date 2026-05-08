@@ -40,7 +40,7 @@ public class BindingTests
 
     private sealed class FieldHolder
     {
-        public int Value;
+        public int Value = 0;
     }
 
     [Fact]
