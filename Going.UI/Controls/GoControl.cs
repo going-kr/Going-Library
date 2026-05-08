@@ -208,6 +208,11 @@ namespace Going.UI.Controls
 
         #region Method
         #region virtual
+        /// <summary>
+        /// 사용자가 컨트롤을 조작 중일 때 true를 반환하여 binding 펌프를 정지시킵니다.
+        /// 슬라이더 드래그, 입력창 편집 등의 일시 정지 신호로 사용됩니다.
+        /// </summary>
+        protected internal virtual bool IsBindingSuppressed => false;
         /// <summary>컨트롤이 초기화될 때 호출됩니다. 파생 클래스에서 재정의하여 초기화 로직을 구현합니다.</summary>
         /// <param name="design">디자인 편집기 객체</param>
         protected virtual void OnInit(GoDesign? design) { }
@@ -330,11 +335,39 @@ namespace Going.UI.Controls
             // 재진입 안전: 펌프 도중 setter가 Bind/UnbindAll을 호출하더라도
             // 이번 프레임은 일관된 스냅샷으로 진행
             var snapshot = list.ToArray();
+            bool suppressed = IsBindingSuppressed;
+
             for (int i = 0; i < snapshot.Length; i++)
             {
                 var b = snapshot[i];
 
-                // 소스 → 컨트롤
+                if (suppressed)
+                {
+                    // 조작 중 — 양방향 모두 정지, 종료 시 flush 위해 표시
+                    if (b.SourceSet != null) b.PendingFlush = true;
+                    continue;
+                }
+
+                // 조작 종료 직후 한 번 flush (컨트롤 → 소스)
+                if (b.PendingFlush && b.SourceSet != null)
+                {
+                    object? cur;
+                    try { cur = b.CtrlGet(this); }
+                    catch { b.PendingFlush = false; continue; }
+
+                    try
+                    {
+                        b.SourceSet(cur);
+                        b.LastCtrlValue = cur;
+                        b.LastSrcValue = cur;
+                    }
+                    catch { }
+                    b.PendingFlush = false;
+                    // flush 후엔 이번 프레임은 더 이상 처리 안 함 (다음 프레임에 일반 흐름)
+                    continue;
+                }
+
+                // 일반 흐름 — 소스 → 컨트롤
                 object? newSrc;
                 try { newSrc = b.SourceGet(); }
                 catch { continue; }
@@ -345,7 +378,7 @@ namespace Going.UI.Controls
                     {
                         b.CtrlSet(this, newSrc);
                         b.LastSrcValue = newSrc;
-                        b.LastCtrlValue = newSrc;  // 자기 트리거 방지 (역방향 폴링 진입 시 비교 기준)
+                        b.LastCtrlValue = newSrc;  // 자기 트리거 방지 (역방향 분기의 비교 기준)
                         b.Initialized = true;
                     }
                     catch { }
@@ -364,7 +397,7 @@ namespace Going.UI.Controls
                         {
                             b.SourceSet(cur);
                             b.LastCtrlValue = cur;
-                            b.LastSrcValue = cur;  // setter가 소스 변경 → 다음 프레임 자기 트리거 방지
+                            b.LastSrcValue = cur;
                         }
                         catch { }
                     }

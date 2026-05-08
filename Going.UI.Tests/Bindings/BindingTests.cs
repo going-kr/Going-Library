@@ -145,4 +145,58 @@ public class BindingTests
         lamp.FireUpdate();   // 변화 없음
         Assert.Equal(0, setterCalls);
     }
+
+    private sealed class SuppressibleLamp : GoLamp
+    {
+        public bool Suppress;
+        protected internal override bool IsBindingSuppressed => Suppress;
+    }
+
+    [Fact]
+    public void Suppressed_BlocksSourceToControl()
+    {
+        var lamp = new SuppressibleLamp();
+        bool src = false;
+
+        lamp.Bind(c => c.OnOff, () => src);
+        lamp.FireUpdate();              // 초기 동기화 (false)
+        Assert.False(lamp.OnOff);
+
+        lamp.Suppress = true;
+        src = true;
+        lamp.FireUpdate();
+        Assert.False(lamp.OnOff);       // 정지 — 반영 안 됨
+
+        lamp.Suppress = false;
+        lamp.FireUpdate();
+        Assert.True(lamp.OnOff);        // 해제 후 반영
+    }
+
+    [Fact]
+    public void Suppressed_BlocksControlToSource_AndFlushesOnRelease()
+    {
+        var lamp = new SuppressibleLamp();
+        bool src = false;
+        int setterCalls = 0;
+
+        lamp.Bind(c => c.OnOff, () => src, v => { setterCalls++; src = v; });
+        lamp.FireUpdate();              // 초기
+
+        lamp.Suppress = true;
+        lamp.OnOff = true;              // 조작 중 컨트롤 변경
+        lamp.FireUpdate();
+        Assert.False(src);              // setter 호출 안 됨
+        Assert.Equal(0, setterCalls);
+
+        lamp.FireUpdate();              // 조작 중 한 번 더 — 여전히 호출 없음
+        Assert.Equal(0, setterCalls);
+
+        lamp.Suppress = false;
+        lamp.FireUpdate();              // 해제 — flush 1회
+        Assert.True(src);
+        Assert.Equal(1, setterCalls);
+
+        lamp.FireUpdate();              // 추가 호출 없음
+        Assert.Equal(1, setterCalls);
+    }
 }
