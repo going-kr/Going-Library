@@ -1374,6 +1374,12 @@ namespace Going.UI.Utils
             }
             float autoPercent = starCount > 0 ? Math.Max(0, 100f - specifiedPercent) / starCount : 0;
 
+            // Auto-normalize % tokens when sum > 100% and no '*' tokens.
+            // Example: "100%, 100%, 100%, 100%" (sum=400, no *) -> factor=0.25 -> "25%, 25%, 25%, 25%"
+            float percentNormalizeFactor = (specifiedPercent > 100f && starCount == 0)
+                ? 100f / specifiedPercent
+                : 1f;
+
             List<float> result = new List<float>();
             float fixedTotal = 0;
 
@@ -1387,7 +1393,7 @@ namespace Going.UI.Utils
                 }
                 else if (size.EndsWith("%") && float.TryParse(size.Replace("%", ""), out var val2))
                 {
-                    float percent = val2 / 100f;
+                    float percent = (val2 * percentNormalizeFactor) / 100f;
                     result.Add(-percent);
                 }
                 else if (size.Trim() == "*")
@@ -1546,6 +1552,12 @@ namespace Going.UI.Utils
             }
             float autoPercent = starCount > 0 ? Math.Max(0, 100f - specifiedPercent) / starCount : 0;
 
+            // Auto-normalize % tokens when sum > 100% and no '*' tokens.
+            // Example: "100%, 100%, 100%, 100%" (sum=400, no *) -> factor=0.25 -> "25%, 25%, 25%, 25%"
+            float percentNormalizeFactor = (specifiedPercent > 100f && starCount == 0)
+                ? 100f / specifiedPercent
+                : 1f;
+
             List<float> result = new List<float>();
             float fixedTotal = 0;
 
@@ -1560,7 +1572,7 @@ namespace Going.UI.Utils
                 }
                 else if (size.EndsWith("%") && float.TryParse(size.Replace("%", ""), out var val2))
                 {
-                    float percent = val2 / 100f;
+                    float percent = (val2 * percentNormalizeFactor) / 100f;
                     result.Add(-percent);
                 }
                 else if (size.Trim() == "*")
