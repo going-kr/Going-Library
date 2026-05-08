@@ -6,6 +6,17 @@
 
 ---
 
+## [Unreleased]
+
+### Added
+
+- **Going.UI 컨트롤 바인딩 시스템** — `GoControl.Bind(c => c.X, () => src, [v => src = v])` 확장 메서드로 컨트롤 속성을 임의의 식에 단/양방향 바인딩.
+  - 매 `FireUpdate`에 양쪽 폴링하여 동기화. 이벤트 의존성 없음.
+  - `IsBindingSuppressed` 가상 플래그 — 입력 컨트롤이 조작 중일 때 펌프 일시 정지(`GoSlider` / `GoRangeSlider` / `GoKnob`).
+  - 컨트롤 Dispose 시 자동 해제. `Unbind` / `UnbindAll` 명시 해제 가능.
+
+---
+
 ## [1.2.14] - 2026-05-04
 
 ### Added
