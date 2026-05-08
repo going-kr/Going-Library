@@ -52,4 +52,57 @@ public class BindingTests
         Assert.Throws<ArgumentException>(() =>
             GoControlBindingExtensions.ExtractProperty(lambda));
     }
+
+    [Fact]
+    public void OneWayBind_PropagatesSourceToControl_OnFireUpdate()
+    {
+        var lamp = new GoLamp();
+        bool source = false;
+
+        lamp.Bind(c => c.OnOff, () => source);
+
+        // 초기 한 번 동기화: Bind 직후 또는 첫 FireUpdate
+        lamp.FireUpdate();
+        Assert.False(lamp.OnOff);
+
+        source = true;
+        lamp.FireUpdate();
+        Assert.True(lamp.OnOff);
+
+        source = false;
+        lamp.FireUpdate();
+        Assert.False(lamp.OnOff);
+    }
+
+    [Fact]
+    public void OneWayBind_SkipsControlSet_WhenSourceUnchanged()
+    {
+        var lamp = new TrackingLamp();
+        int src = 24;
+
+        lamp.Bind(c => c.LampSize, () => src);
+
+        lamp.FireUpdate();
+        int afterFirst = lamp.LampSizeSetCount;
+        Assert.True(afterFirst >= 1);  // 첫 푸시 발생
+
+        lamp.FireUpdate();
+        lamp.FireUpdate();
+        Assert.Equal(afterFirst, lamp.LampSizeSetCount);  // 동일값 — 재대입 없음
+
+        src = 30;
+        lamp.FireUpdate();
+        Assert.Equal(afterFirst + 1, lamp.LampSizeSetCount);  // 변경 시 한 번
+    }
+
+    private sealed class TrackingLamp : GoLamp
+    {
+        public int LampSizeSetCount;
+        private int _lampSize = 24;
+        public new int LampSize
+        {
+            get => _lampSize;
+            set { _lampSize = value; LampSizeSetCount++; }
+        }
+    }
 }

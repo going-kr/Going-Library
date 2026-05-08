@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 using Going.UI.Controls;
@@ -27,5 +28,73 @@ public static class GoControlBindingExtensions
                 nameof(expr));
 
         return pi;
+    }
+
+    /// <summary>
+    /// 컨트롤 속성을 소스 식에 단방향 바인딩한다.
+    /// 매 FireUpdate에 소스 → 컨트롤로 값이 흐른다.
+    /// </summary>
+    public static void Bind<TC, TV>(
+        this TC ctrl,
+        Expression<Func<TC, TV>> ctrlProp,
+        Func<TV> getter)
+        where TC : GoControl
+    {
+        BindInternal(ctrl, ctrlProp, getter, setter: null);
+    }
+
+    private static void BindInternal<TC, TV>(
+        TC ctrl,
+        Expression<Func<TC, TV>> ctrlProp,
+        Func<TV> getter,
+        Action<TV>? setter)
+        where TC : GoControl
+    {
+        var pi = ExtractProperty(ctrlProp);
+
+        // 컴파일된 get/set 델리게이트 (object 박싱 경로)
+        var ctrlParam = Expression.Parameter(typeof(GoControl), "c");
+        var valueParam = Expression.Parameter(typeof(object), "v");
+        var castCtrl = Expression.Convert(ctrlParam, typeof(TC));
+        var propAccess = Expression.Property(castCtrl, pi);
+
+        var getterLambda = Expression.Lambda<Func<GoControl, object?>>(
+            Expression.Convert(propAccess, typeof(object)), ctrlParam);
+        var setterLambda = Expression.Lambda<Action<GoControl, object?>>(
+            Expression.Assign(propAccess, Expression.Convert(valueParam, typeof(TV))),
+            ctrlParam, valueParam);
+
+        var compiledGet = getterLambda.Compile();
+        var compiledSet = setterLambda.Compile();
+
+        var binding = new GoBinding
+        {
+            CtrlProperty = pi,
+            CtrlGet = compiledGet,
+            CtrlSet = compiledSet,
+            SourceGet = () => (object?)getter(),
+            SourceSet = setter == null ? null : (Action<object?>)(v => setter((TV)v!)),
+        };
+
+        ctrl.bindings ??= new List<GoBinding>();
+
+        // 같은 속성에 기존 binding 있으면 교체 (마지막 승)
+        for (int i = 0; i < ctrl.bindings.Count; i++)
+        {
+            if (ctrl.bindings[i].CtrlProperty == pi)
+            {
+                ctrl.bindings[i] = binding;
+                return;
+            }
+        }
+        ctrl.bindings.Add(binding);
+    }
+
+    /// <summary>
+    /// 컨트롤의 모든 binding을 해제한다.
+    /// </summary>
+    public static void UnbindAll(this GoControl ctrl)
+    {
+        ctrl.bindings?.Clear();
     }
 }

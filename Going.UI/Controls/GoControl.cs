@@ -1,4 +1,5 @@
-﻿using Going.UI.Containers;
+﻿using Going.UI.Bindings;
+using Going.UI.Containers;
 using Going.UI.Controls;
 using Going.UI.Datas;
 using Going.UI.Design;
@@ -202,6 +203,7 @@ namespace Going.UI.Controls
         private float dx, dy, mx, my;
         private bool bDown = false;
         private DateTime downTime;
+        internal List<Going.UI.Bindings.GoBinding>? bindings;
         #endregion
 
         #region Method
@@ -314,7 +316,41 @@ namespace Going.UI.Controls
         public void FireHide() { OnHide(); }
 
         /// <summary>컨트롤의 상태를 업데이트합니다.</summary>
-        public void FireUpdate() { OnUpdate(); }
+        public void FireUpdate()
+        {
+            if (bindings != null) PumpBindings();
+            OnUpdate();
+        }
+
+        private void PumpBindings()
+        {
+            // Going.UI.Bindings.GoBinding[] snapshot 형태로 안전 순회
+            var list = bindings;
+            if (list == null) return;
+            for (int i = 0; i < list.Count; i++)
+            {
+                var b = list[i];
+
+                object? newSrc;
+                try { newSrc = b.SourceGet(); }
+                catch { continue; }  // 한 binding의 getter 예외는 다음 task에서 다룸
+
+                if (!b.Initialized || !object.Equals(newSrc, b.LastSrcValue))
+                {
+                    try
+                    {
+                        b.CtrlSet(this, newSrc);
+                        b.LastSrcValue = newSrc;
+                        b.LastCtrlValue = newSrc;  // 자기 트리거 방지
+                        b.Initialized = true;
+                    }
+                    catch
+                    {
+                        // 컨트롤 set 실패는 다음 task에서 로깅
+                    }
+                }
+            }
+        }
         
         /// <summary>
         /// 마우스 버튼 누름 이벤트를 발생시킵니다.
@@ -458,6 +494,7 @@ namespace Going.UI.Controls
         /// <summary>리소스를 해제합니다.</summary>
         public void Dispose()
         {
+            this.UnbindAll();
             OnDispose();
         }
         #endregion
