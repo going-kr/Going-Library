@@ -610,8 +610,8 @@ namespace Going.UI.Controls
         public void Dispose()
         {
             if (disposed) return;
+            ClearBindings();    // disposed 플래그 set 전에 실행 (ClearBindings가 가드로 거르지 않도록)
             disposed = true;
-            ClearBindings();
             OnDispose();
         }
         #endregion
