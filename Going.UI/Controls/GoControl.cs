@@ -10,6 +10,7 @@ using Going.UI.Tools;
 using Going.UI.Utils;
 using SkiaSharp;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Text.Json.Serialization;
 
 namespace Going.UI.Controls
@@ -204,6 +205,7 @@ namespace Going.UI.Controls
         private bool bDown = false;
         private DateTime downTime;
         private List<GoBinding>? bindings;
+        private bool disposed;
         #endregion
 
         #region Method
@@ -331,6 +333,7 @@ namespace Going.UI.Controls
         {
             var list = bindings;
             if (list == null || list.Count == 0) return;
+            if (disposed) return;
 
             // 재진입 안전: 펌프 도중 setter가 Bind/UnbindAll을 호출하더라도
             // 이번 프레임은 일관된 스냅샷으로 진행
@@ -354,7 +357,12 @@ namespace Going.UI.Controls
                 {
                     object? cur;
                     try { cur = b.CtrlGet(this); }
-                    catch { b.PendingFlush = false; continue; }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"[GoBinding] control getter failed during flush for {b.CtrlProperty.Name}: {ex.Message}");
+                        b.PendingFlush = false;
+                        continue;
+                    }
 
                     try
                     {
@@ -362,7 +370,10 @@ namespace Going.UI.Controls
                         b.LastCtrlValue = cur;
                         b.LastSrcValue = cur;
                     }
-                    catch { }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"[GoBinding] source setter failed during flush for {b.CtrlProperty.Name}: {ex.Message}");
+                    }
                     b.PendingFlush = false;
                     // flush 후엔 이번 프레임은 더 이상 처리 안 함 (다음 프레임에 일반 흐름)
                     continue;
@@ -371,7 +382,11 @@ namespace Going.UI.Controls
                 // 일반 흐름 — 소스 → 컨트롤
                 object? newSrc;
                 try { newSrc = b.SourceGet(); }
-                catch { continue; }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[GoBinding] source getter failed for {b.CtrlProperty.Name}: {ex.Message}");
+                    continue;
+                }
 
                 if (!b.Initialized || !object.Equals(newSrc, b.LastSrcValue))
                 {
@@ -382,7 +397,10 @@ namespace Going.UI.Controls
                         b.LastCtrlValue = newSrc;  // 자기 트리거 방지 (역방향 분기의 비교 기준)
                         b.Initialized = true;
                     }
-                    catch { }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"[GoBinding] control setter failed for {b.CtrlProperty.Name}: {ex.Message}");
+                    }
                 }
 
                 // 컨트롤 → 소스
@@ -390,7 +408,11 @@ namespace Going.UI.Controls
                 {
                     object? cur;
                     try { cur = b.CtrlGet(this); }
-                    catch { continue; }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"[GoBinding] control getter failed for {b.CtrlProperty.Name}: {ex.Message}");
+                        continue;
+                    }
 
                     if (!object.Equals(cur, b.LastCtrlValue))
                     {
@@ -400,7 +422,10 @@ namespace Going.UI.Controls
                             b.LastCtrlValue = cur;
                             b.LastSrcValue = cur;
                         }
-                        catch { }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine($"[GoBinding] source setter failed for {b.CtrlProperty.Name}: {ex.Message}");
+                        }
                     }
                 }
             }
@@ -408,11 +433,13 @@ namespace Going.UI.Controls
 
         internal void AddOrReplaceBinding(GoBinding b)
         {
+            if (disposed) return;
             bindings ??= new List<GoBinding>();
             for (int i = 0; i < bindings.Count; i++)
             {
                 if (bindings[i].CtrlProperty == b.CtrlProperty)
                 {
+                    Debug.WriteLine($"[GoBinding] rebinding existing property {b.CtrlProperty.Name} on {GetType().Name} — previous binding replaced");
                     bindings[i] = b;
                     return;
                 }
@@ -422,11 +449,13 @@ namespace Going.UI.Controls
 
         internal void ClearBindings()
         {
+            if (disposed) return;
             bindings?.Clear();
         }
 
         internal void RemoveBindingByProperty(System.Reflection.PropertyInfo pi)
         {
+            if (disposed) return;
             if (bindings == null) return;
             for (int i = 0; i < bindings.Count; i++)
             {
@@ -580,6 +609,8 @@ namespace Going.UI.Controls
         /// <summary>리소스를 해제합니다.</summary>
         public void Dispose()
         {
+            if (disposed) return;
+            disposed = true;
             ClearBindings();
             OnDispose();
         }

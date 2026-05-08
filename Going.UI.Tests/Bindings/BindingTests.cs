@@ -358,4 +358,29 @@ public class BindingTests
         Assert.NotNull(p);
         Assert.NotEqual(typeof(GoControl), p!.DeclaringType);
     }
+
+    [Fact]
+    public void Bind_OnDisposedControl_DoesNotAffectControl()
+    {
+        var lamp = new GoLamp();
+        lamp.Dispose();
+
+        bool src = true;
+        lamp.Bind(c => c.OnOff, () => src);
+        lamp.FireUpdate();
+
+        Assert.False(lamp.OnOff);  // disposed → bind 무효, OnOff 변경 안 됨
+    }
+
+    [Fact]
+    public void Dispose_IsIdempotent()
+    {
+        var lamp = new GoLamp();
+        bool src = true;
+        lamp.Bind(c => c.OnOff, () => src);
+
+        lamp.Dispose();
+        var ex = Record.Exception(() => lamp.Dispose());
+        Assert.Null(ex);  // 두 번째 호출도 예외 없이
+    }
 }
