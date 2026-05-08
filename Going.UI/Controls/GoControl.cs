@@ -343,8 +343,9 @@ namespace Going.UI.Controls
 
                 if (suppressed)
                 {
-                    // 조작 중 — 양방향 모두 정지, 종료 시 flush 위해 표시
-                    if (b.SourceSet != null) b.PendingFlush = true;
+                    // 조작 중 — 양방향 모두 정지. 초기화된 binding만 flush 표시
+                    // (초기화 전 binding을 flush하면 컨트롤 default 값이 소스를 덮어씀)
+                    if (b.SourceSet != null && b.Initialized) b.PendingFlush = true;
                     continue;
                 }
 

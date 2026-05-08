@@ -199,4 +199,25 @@ public class BindingTests
         lamp.FireUpdate();              // 추가 호출 없음
         Assert.Equal(1, setterCalls);
     }
+
+    [Fact]
+    public void Suppressed_BeforeFirstInit_DoesNotClobberSourceOnRelease()
+    {
+        var lamp = new SuppressibleLamp();
+        bool src = true;                        // 소스는 true
+        int setterCalls = 0;
+
+        lamp.Suppress = true;                   // 첫 FireUpdate 전에 이미 suppressed
+        lamp.Bind(c => c.OnOff, () => src, v => { setterCalls++; src = v; });
+
+        lamp.FireUpdate();                      // suppressed → 아직 초기화 안 됐으니 PendingFlush 표시도 안 됨
+        Assert.True(src);                       // 소스 변하지 않음
+        Assert.Equal(0, setterCalls);
+
+        lamp.Suppress = false;
+        lamp.FireUpdate();                      // 정상 흐름 — 소스(true) → 컨트롤(true)
+        Assert.True(lamp.OnOff);
+        Assert.True(src);                       // 소스 그대로
+        Assert.Equal(0, setterCalls);           // setter 절대 호출되면 안 됨
+    }
 }
