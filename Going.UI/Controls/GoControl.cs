@@ -424,6 +424,19 @@ namespace Going.UI.Controls
         {
             bindings?.Clear();
         }
+
+        internal void RemoveBindingByProperty(System.Reflection.PropertyInfo pi)
+        {
+            if (bindings == null) return;
+            for (int i = 0; i < bindings.Count; i++)
+            {
+                if (bindings[i].CtrlProperty == pi)
+                {
+                    bindings.RemoveAt(i);
+                    return;
+                }
+            }
+        }
         
         /// <summary>
         /// 마우스 버튼 누름 이벤트를 발생시킵니다.

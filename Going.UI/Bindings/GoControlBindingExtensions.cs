@@ -95,6 +95,18 @@ public static class GoControlBindingExtensions
     }
 
     /// <summary>
+    /// 지정한 속성에 대한 binding을 해제한다.
+    /// </summary>
+    public static void Unbind<TC, TV>(
+        this TC ctrl,
+        Expression<Func<TC, TV>> ctrlProp)
+        where TC : GoControl
+    {
+        var pi = ExtractProperty(ctrlProp);
+        ctrl.RemoveBindingByProperty(pi);
+    }
+
+    /// <summary>
     /// 컨트롤의 모든 binding을 해제한다.
     /// </summary>
     public static void UnbindAll(this GoControl ctrl)

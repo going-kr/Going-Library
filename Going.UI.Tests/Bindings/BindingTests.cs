@@ -220,4 +220,102 @@ public class BindingTests
         Assert.True(src);                       // 소스 그대로
         Assert.Equal(0, setterCalls);           // setter 절대 호출되면 안 됨
     }
+
+    [Fact]
+    public void Unbind_RemovesBindingForGivenProperty()
+    {
+        var lamp = new GoLamp();
+        bool src = true;
+
+        lamp.Bind(c => c.OnOff, () => src);
+        lamp.FireUpdate();
+        Assert.True(lamp.OnOff);
+
+        lamp.Unbind(c => c.OnOff);
+        src = false;
+        lamp.FireUpdate();
+        Assert.True(lamp.OnOff);  // 해제됐으므로 변화 없음
+    }
+
+    [Fact]
+    public void UnbindAll_ClearsAllBindings()
+    {
+        var lamp = new GoLamp();
+        bool a = false; bool b = false;
+
+        lamp.Bind(c => c.OnOff,   () => a);
+        lamp.Bind(c => c.Visible, () => b);
+
+        lamp.UnbindAll();
+        a = true; b = false;
+        var beforeOnOff = lamp.OnOff;
+        var beforeVisible = lamp.Visible;
+        lamp.FireUpdate();
+        Assert.Equal(beforeOnOff, lamp.OnOff);
+        Assert.Equal(beforeVisible, lamp.Visible);
+    }
+
+    [Fact]
+    public void RebindSameProperty_ReplacesPreviousBinding()
+    {
+        var lamp = new GoLamp();
+        bool a = true;
+        bool b = false;
+
+        lamp.Bind(c => c.OnOff, () => a);
+        lamp.Bind(c => c.OnOff, () => b);   // 교체
+
+        lamp.FireUpdate();
+        Assert.False(lamp.OnOff);   // b가 이김
+
+        a = false; b = true;
+        lamp.FireUpdate();
+        Assert.True(lamp.OnOff);
+    }
+
+    [Fact]
+    public void Dispose_ClearsBindings()
+    {
+        var lamp = new GoLamp();
+        bool src = false;
+
+        lamp.Bind(c => c.OnOff, () => src);
+        lamp.Dispose();
+
+        // 직접 list 접근 대신 동작으로 검증
+        src = true;
+        lamp.FireUpdate();
+        Assert.False(lamp.OnOff);
+    }
+
+    [Fact]
+    public void GetterException_DoesNotCrashPump_AndDoesNotMutateControl()
+    {
+        var lamp = new GoLamp();
+        bool reachedSecond = false;
+
+        lamp.Bind(c => c.OnOff,   () => throw new InvalidOperationException("boom"));
+        lamp.Bind(c => c.Visible, () => { reachedSecond = true; return false; });
+
+        var before = lamp.OnOff;
+        lamp.FireUpdate();   // 첫 binding 예외 → 두 번째 binding은 정상 처리되어야 함
+
+        Assert.Equal(before, lamp.OnOff);
+        Assert.True(reachedSecond);
+    }
+
+    [Fact]
+    public void SetterException_DoesNotCrashPump()
+    {
+        var lamp = new GoLamp();
+        bool src = false;
+
+        lamp.Bind(c => c.OnOff, () => src,
+                                v => throw new InvalidOperationException("setter boom"));
+        lamp.FireUpdate();   // 초기 push만, setter는 호출 안 됨 (loop 방지)
+
+        lamp.OnOff = true;   // 코드 변경 → 다음 frame에 setter 호출 시도 → 예외 → 무시
+        var ex = Record.Exception(() => lamp.FireUpdate());
+        Assert.Null(ex);
+    }
 }
