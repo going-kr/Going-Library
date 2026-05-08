@@ -43,6 +43,20 @@ public static class GoControlBindingExtensions
         BindInternal(ctrl, ctrlProp, getter, setter: null);
     }
 
+    /// <summary>
+    /// 컨트롤 속성을 소스 식에 양방향 바인딩한다.
+    /// 소스 → 컨트롤은 매 FireUpdate, 컨트롤 → 소스는 컨트롤 값 변경 감지 시.
+    /// </summary>
+    public static void Bind<TC, TV>(
+        this TC ctrl,
+        Expression<Func<TC, TV>> ctrlProp,
+        Func<TV> getter,
+        Action<TV> setter)
+        where TC : GoControl
+    {
+        BindInternal(ctrl, ctrlProp, getter, setter);
+    }
+
     private static void BindInternal<TC, TV>(
         TC ctrl,
         Expression<Func<TC, TV>> ctrlProp,

@@ -105,4 +105,44 @@ public class BindingTests
             set { _lampSize = value; LampSizeSetCount++; }
         }
     }
+
+    [Fact]
+    public void TwoWayBind_PropagatesControlToSource_WhenControlChanges()
+    {
+        var lamp = new GoLamp();
+        bool src = false;
+
+        lamp.Bind(c => c.OnOff, () => src, v => src = v);
+
+        // 첫 FireUpdate: 소스(false)가 컨트롤에 반영
+        lamp.FireUpdate();
+        Assert.False(lamp.OnOff);
+
+        // 코드에서 컨트롤 속성 직접 변경
+        lamp.OnOff = true;
+        lamp.FireUpdate();
+        Assert.True(src);
+
+        lamp.OnOff = false;
+        lamp.FireUpdate();
+        Assert.False(src);
+    }
+
+    [Fact]
+    public void TwoWayBind_DoesNotLoopOnSourceUpdate()
+    {
+        var lamp = new GoLamp();
+        bool src = false;
+        int setterCalls = 0;
+
+        lamp.Bind(c => c.OnOff, () => src, v => { setterCalls++; src = v; });
+
+        src = true;
+        lamp.FireUpdate();   // 소스 → 컨트롤 (setter 호출되면 안 됨)
+        Assert.True(lamp.OnOff);
+        Assert.Equal(0, setterCalls);
+
+        lamp.FireUpdate();   // 변화 없음
+        Assert.Equal(0, setterCalls);
+    }
 }

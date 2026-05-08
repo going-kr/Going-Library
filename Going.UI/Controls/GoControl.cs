@@ -334,9 +334,10 @@ namespace Going.UI.Controls
             {
                 var b = snapshot[i];
 
+                // 소스 → 컨트롤
                 object? newSrc;
                 try { newSrc = b.SourceGet(); }
-                catch { continue; }  // 한 binding의 getter 예외는 다음 task에서 다룸
+                catch { continue; }
 
                 if (!b.Initialized || !object.Equals(newSrc, b.LastSrcValue))
                 {
@@ -344,12 +345,28 @@ namespace Going.UI.Controls
                     {
                         b.CtrlSet(this, newSrc);
                         b.LastSrcValue = newSrc;
-                        b.LastCtrlValue = newSrc;  // 자기 트리거 방지 (Task 3 역방향 폴링 진입 시 비교 기준)
+                        b.LastCtrlValue = newSrc;  // 자기 트리거 방지 (역방향 폴링 진입 시 비교 기준)
                         b.Initialized = true;
                     }
-                    catch
+                    catch { }
+                }
+
+                // 컨트롤 → 소스
+                if (b.SourceSet != null)
+                {
+                    object? cur;
+                    try { cur = b.CtrlGet(this); }
+                    catch { continue; }
+
+                    if (!object.Equals(cur, b.LastCtrlValue))
                     {
-                        // 컨트롤 set 실패는 다음 task에서 로깅
+                        try
+                        {
+                            b.SourceSet(cur);
+                            b.LastCtrlValue = cur;
+                            b.LastSrcValue = cur;  // setter가 소스 변경 → 다음 프레임 자기 트리거 방지
+                        }
+                        catch { }
                     }
                 }
             }
