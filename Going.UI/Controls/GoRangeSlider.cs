@@ -188,6 +188,9 @@ namespace Going.UI.Controls
         private int MinHeightForLabelBelow { get; set; } = 80;  // 라벨을 아래에 표시하기 위한 최소 높이
         /// <summary>핸들 간 최소 간격 (정규화된 값 0~1)</summary>
         [GoProperty(PCategory.Control, 32)] public float MinHandleSeparation { get; set; } = 0.05f;
+
+        /// <inheritdoc/>
+        protected internal override bool IsBindingSuppressed => isDraggingLower || isDraggingUpper;
         #endregion
 
         #region 슬라이더 상태값 설정

@@ -155,6 +155,9 @@ namespace Going.UI.Controls
         private SKRect handleRect;
         private const float TrackHeight = 4f;
         private int MinHeightForLabelBelow { get; set; } = 80;
+
+        /// <inheritdoc/>
+        protected internal override bool IsBindingSuppressed => isDragging;
         #endregion
 
         #region 슬라이더 상태값 설정

@@ -318,4 +318,44 @@ public class BindingTests
         var ex = Record.Exception(() => lamp.FireUpdate());
         Assert.Null(ex);
     }
+
+    [Fact]
+    public void GoSlider_IsBindingSuppressed_FalseWhenIdle()
+    {
+        var s = new Going.UI.Controls.GoSlider();
+        var p = typeof(GoControl).GetProperty("IsBindingSuppressed",
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        Assert.NotNull(p);
+        Assert.False((bool)p!.GetValue(s)!);
+    }
+
+    [Fact]
+    public void GoSlider_HasIsBindingSuppressedOverride()
+    {
+        var t = typeof(Going.UI.Controls.GoSlider);
+        var p = t.GetProperty("IsBindingSuppressed",
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        Assert.NotNull(p);
+        Assert.NotEqual(typeof(GoControl), p!.DeclaringType);
+    }
+
+    [Fact]
+    public void GoRangeSlider_HasIsBindingSuppressedOverride()
+    {
+        var t = typeof(Going.UI.Controls.GoRangeSlider);
+        var p = t.GetProperty("IsBindingSuppressed",
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        Assert.NotNull(p);
+        Assert.NotEqual(typeof(GoControl), p!.DeclaringType);
+    }
+
+    [Fact]
+    public void GoKnob_HasIsBindingSuppressedOverride()
+    {
+        var t = typeof(Going.UI.Controls.GoKnob);
+        var p = t.GetProperty("IsBindingSuppressed",
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        Assert.NotNull(p);
+        Assert.NotEqual(typeof(GoControl), p!.DeclaringType);
+    }
 }

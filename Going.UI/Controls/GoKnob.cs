@@ -123,6 +123,9 @@ namespace Going.UI.Controls
         SKPoint prev;
 
         SKPath path = new SKPath();
+
+        /// <inheritdoc/>
+        protected internal override bool IsBindingSuppressed => bDown;
         #endregion
 
         #region Override
