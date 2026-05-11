@@ -69,13 +69,18 @@ namespace Going.UI.Utils
                 if (CollisionTool.Check(Util.FromRect(container.ViewPosition.X, container.ViewPosition.Y, container.PanelBounds.Width, container.PanelBounds.Height), c.Bounds))
                 {
                     // Elevation 그림자: 자식 ClipRect 전에 부모 영역에 먼저 그림
-                    int elev = 0;
-                    GoRoundType round = GoRoundType.Rect;
-                    if (c is Going.UI.Containers.GoBoxPanel bp) { elev = bp.Elevation; round = bp.Round; }
-                    else if (c is Going.UI.Containers.GoPanel pp) { elev = pp.Elevation; round = pp.Round; }
-                    if (elev > 0)
+                    // Visible=false: 컨트롤 자체가 안 보이므로 그림자도 그리지 않음
+                    // Enabled=false: 컨트롤이 반투명 처리되는데 그림자가 비치면 어색하므로 그리지 않음
+                    if (c.Visible && c.Enabled)
                     {
-                        Util.DrawElevationShadow(canvas, c.Bounds, elev, round, thm.Corner, thm.ShadowColor, thm.ShadowAlpha);
+                        int elev = 0;
+                        GoRoundType round = GoRoundType.Rect;
+                        if (c is Going.UI.Containers.GoBoxPanel bp) { elev = bp.Elevation; round = bp.Round; }
+                        else if (c is Going.UI.Containers.GoPanel pp) { elev = pp.Elevation; round = pp.Round; }
+                        if (elev > 0)
+                        {
+                            Util.DrawElevationShadow(canvas, c.Bounds, elev, round, thm.Corner, thm.ShadowColor, thm.ShadowAlpha);
+                        }
                     }
 
                     using (new SKAutoCanvasRestore(canvas))
