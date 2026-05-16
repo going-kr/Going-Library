@@ -1,5 +1,6 @@
 using Going.UI.Containers;
 using Going.UI.Controls;
+using Going.UI.Datas;
 using Going.UI.Enums;
 using Going.UI.Gudx;
 using Going.UI.Themes;
@@ -280,6 +281,18 @@ namespace Going.UI.Design
                 }
             }
         }
+
+        /// <summary>
+        /// 자식 컨트롤 영역의 내부 여백을 가져오거나 설정합니다.
+        /// 자식들은 이 값만큼 안쪽으로 인셋된 영역에 배치됩니다.
+        /// </summary>
+        [GoProperty(PCategory.Control, 3)] public GoPadding Padding { get; set; } = new();
+
+        /// <summary>
+        /// 자식 컨트롤이 배치되는 패널 영역을 가져옵니다. Padding만큼 인셋됩니다.
+        /// </summary>
+        [JsonIgnore] public override SKRect PanelBounds
+            => Util.FromRect(Util.FromRect(0, 0, Width, Height), Padding);
         #endregion
 
         #region Member Variable
@@ -299,6 +312,26 @@ namespace Going.UI.Design
         public GoSideBar()
         {
             ani.Refresh = () => Invalidate();
+        }
+        #endregion
+
+        #region Override
+        /// <inheritdoc/>
+        protected override void OnLayout()
+        {
+            var rtPanel = PanelBounds;
+
+            var nofills = Childrens.Where(c => c.Dock != GoDockStyle.Fill).ToList();
+            var fills = Childrens.Where(c => c.Dock == GoDockStyle.Fill).ToList();
+            var bnds = Util.FromRect(0, 0, rtPanel.Width, rtPanel.Height);
+            foreach (var control in nofills) bnds = ApplyDocking(control, bnds);
+            foreach (var c in fills)
+            {
+                c.Left = bnds.Left + c.Margin.Left;
+                c.Top = bnds.Top + c.Margin.Top;
+                c.Right = bnds.Right - c.Margin.Right;
+                c.Bottom = bnds.Bottom - c.Margin.Bottom;
+            }
         }
         #endregion
     }

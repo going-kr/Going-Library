@@ -92,4 +92,33 @@ public class PaddingTests
         Assert.Equal(11f, restored.Padding.Right);
         Assert.Equal(13f, restored.Padding.Bottom);
     }
+
+    [Fact]
+    public void GoSideBar_PanelBounds_insetByPadding()
+    {
+        var p = new Going.UI.Design.GoSideBar { Left = 0, Top = 0, Width = 150, Height = 600 };
+        p.Padding = new GoPadding(10, 5, 20, 15);
+
+        var pb = p.PanelBounds;
+
+        Assert.Equal(10f, pb.Left);
+        Assert.Equal(5f, pb.Top);
+        Assert.Equal(150f - 20f, pb.Right);
+        Assert.Equal(600f - 15f, pb.Bottom);
+    }
+
+    [Fact]
+    public void GoSideBar_Padding_gudxRoundTrips()
+    {
+        var p = new Going.UI.Design.GoSideBar { Name = "sb" };
+        p.Padding = new GoPadding(3, 7, 11, 13);
+
+        var xml = GoGudxConverter.SerializeControl(p);
+        var restored = (Going.UI.Design.GoSideBar)GoGudxConverter.DeserializeControl(xml);
+
+        Assert.Equal(3f, restored.Padding.Left);
+        Assert.Equal(7f, restored.Padding.Top);
+        Assert.Equal(11f, restored.Padding.Right);
+        Assert.Equal(13f, restored.Padding.Bottom);
+    }
 }
