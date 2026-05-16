@@ -211,4 +211,26 @@ public class PaddingTests
         Assert.Equal(11f, restored.Padding.Right);
         Assert.Equal(13f, restored.Padding.Bottom);
     }
+
+    [Fact]
+    public void GoPage_withScrollablePanelChild_paddingShrinksChildBounds()
+    {
+        // GoPage가 자식으로 GoScrollablePanel (Dock=Fill)을 가진 컴포지션에서
+        // GoPage의 Padding이 자식의 Bounds까지 정상 인셋되는지 검증.
+        var page = new Going.UI.Design.GoPage { Left = 0, Top = 0, Width = 800, Height = 600 };
+        page.Padding = new GoPadding(20, 20, 20, 20);
+
+        var sp = new GoScrollablePanel { Dock = GoDockStyle.Fill, Margin = new GoPadding(0, 0, 0, 0) };
+        page.Childrens.Add(sp);
+
+        using var bmp = new SKBitmap(1, 1);
+        using var canvas = new SKCanvas(bmp);
+        page.FireDraw(canvas, GoTheme.DarkTheme);
+
+        // ScrollablePanel은 GoPage의 PanelBounds(인셋 영역) 안에 fit
+        Assert.Equal(0f, sp.Left);
+        Assert.Equal(0f, sp.Top);
+        Assert.Equal(760f, sp.Right);   // 800 - 20(L) - 20(R)
+        Assert.Equal(560f, sp.Bottom);  // 600 - 20(T) - 20(B)
+    }
 }
