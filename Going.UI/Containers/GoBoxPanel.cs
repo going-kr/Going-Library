@@ -1,4 +1,5 @@
 ﻿using Going.UI.Controls;
+using Going.UI.Datas;
 using Going.UI.Enums;
 using Going.UI.Gudx;
 using Going.UI.Themes;
@@ -51,6 +52,18 @@ namespace Going.UI.Containers
         /// 그림자는 부모 컨테이너에서 그려지므로 카드 외부 여백이 충분해야 잘리지 않습니다.
         /// </summary>
         [GoProperty(PCategory.Control, 5)] public int Elevation { get; set; } = 0;
+
+        /// <summary>
+        /// 자식 컨트롤 영역의 내부 여백을 가져오거나 설정합니다.
+        /// 자식들은 이 값만큼 안쪽으로 인셋된 영역에 배치됩니다.
+        /// </summary>
+        [GoProperty(PCategory.Control, 6)] public GoPadding Padding { get; set; } = new();
+
+        /// <summary>
+        /// 자식 컨트롤이 배치되는 패널 영역을 가져옵니다. Padding만큼 인셋됩니다.
+        /// </summary>
+        [JsonIgnore] public override SKRect PanelBounds
+            => Util.FromRect(Util.FromRect(0, 0, Width, Height), Padding);
         #endregion
 
         #region Constructor
@@ -78,6 +91,24 @@ namespace Going.UI.Containers
             if (BackgroundDraw) Util.DrawBox(canvas, rtBox, cBox, cBorder, Round, thm.Corner, true, BorderWidth);
 
             base.OnDraw(canvas, thm);
+        }
+
+        /// <inheritdoc/>
+        protected override void OnLayout()
+        {
+            var rtPanel = PanelBounds;
+
+            var nofills = Childrens.Where(c => c.Dock != GoDockStyle.Fill).ToList();
+            var fills = Childrens.Where(c => c.Dock == GoDockStyle.Fill).ToList();
+            var bnds = Util.FromRect(0, 0, rtPanel.Width, rtPanel.Height);
+            foreach (var control in nofills) bnds = ApplyDocking(control, bnds);
+            foreach (var c in fills)
+            {
+                c.Left = bnds.Left + c.Margin.Left;
+                c.Top = bnds.Top + c.Margin.Top;
+                c.Right = bnds.Right - c.Margin.Right;
+                c.Bottom = bnds.Bottom - c.Margin.Bottom;
+            }
         }
         #endregion
     }
