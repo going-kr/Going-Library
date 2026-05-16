@@ -1,5 +1,6 @@
 using Going.UI.Controls;
 using Going.UI.Enums;
+using Going.UI.Gudx;
 using Going.UI.Themes;
 using Going.UI.Tools;
 using Going.UI.Utils;
@@ -22,6 +23,7 @@ namespace Going.UI.ImageCanvas
         /// <summary>
         /// 상태별 이미지 목록을 가져오거나 설정합니다.
         /// </summary>
+        [GoChildWrappers]
         [GoProperty(PCategory.Control, 0)] public List<StateImage> StateImages { get; set; } = [];
         /// <summary>
         /// 현재 상태 값을 가져오거나 설정합니다. 이 값에 해당하는 이미지가 표시됩니다.
