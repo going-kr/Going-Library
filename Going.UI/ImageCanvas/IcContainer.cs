@@ -1,5 +1,6 @@
 using Going.UI.Containers;
 using Going.UI.Controls;
+using Going.UI.Gudx;
 using Going.UI.Themes;
 using Going.UI.Utils;
 using SkiaSharp;
@@ -33,6 +34,7 @@ namespace Going.UI.ImageCanvas
         /// <summary>
         /// 자식 컨트롤 목록을 가져옵니다.
         /// </summary>
+        [GoChildList]
         [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
 
         /// <inheritdoc/>
