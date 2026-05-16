@@ -29,4 +29,42 @@ public class GudxFlowSystemTests
         Assert.Equal(75d, ((FsCylinderTank)restored.Childrens[2]).Value);
         Assert.True(((FsCylinderTank)restored.Childrens[2]).UseInlet);
     }
+
+    [Fact]
+    public void FsFlowSystemPanel_roundTripsConnectionsWithNodes()
+    {
+        var panel = new FsFlowSystemPanel { Name = "fs" };
+        var tank = new FsCylinderTank { Name = "tank", UseOutlet = true };
+        var pump = new FsPump { Name = "pump", UseInlet = true };
+        panel.Childrens.Add(tank);
+        panel.Childrens.Add(pump);
+
+        var conn = new FlowConnection
+        {
+            StartControlId = tank.Id,
+            StartPortName = "Outlet",
+            EndControlId = pump.Id,
+            EndPortName = "Inlet"
+        };
+        conn.Nodes.Add(new PipeNode { Direction = PortDirection.R, Position = 400 });
+        conn.Nodes.Add(new PipeNode { Direction = PortDirection.B, Position = 200 });
+        var originalConnId = conn.Id;
+        panel.Connections.Add(conn);
+
+        var xml = GoGudxConverter.SerializeControl(panel);
+        var restored = (FsFlowSystemPanel)GoGudxConverter.DeserializeControl(xml);
+
+        Assert.Single(restored.Connections);
+        var r = restored.Connections[0];
+        Assert.Equal(originalConnId, r.Id);
+        Assert.Equal(tank.Id, r.StartControlId);
+        Assert.Equal("Outlet", r.StartPortName);
+        Assert.Equal(pump.Id, r.EndControlId);
+        Assert.Equal("Inlet", r.EndPortName);
+        Assert.Equal(2, r.Nodes.Count);
+        Assert.Equal(PortDirection.R, r.Nodes[0].Direction);
+        Assert.Equal(400f, r.Nodes[0].Position);
+        Assert.Equal(PortDirection.B, r.Nodes[1].Direction);
+        Assert.Equal(200f, r.Nodes[1].Position);
+    }
 }

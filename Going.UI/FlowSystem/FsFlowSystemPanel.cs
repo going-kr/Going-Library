@@ -159,7 +159,8 @@ namespace Going.UI.FlowSystem
         /// <summary>
         /// 플로우 연결 목록을 가져오거나 설정합니다.
         /// </summary>
-        public List<FlowConnection> Connections { get; set; } = [];
+        [GoChildWrappers]
+        [GoProperty(PCategory.Control, 7)] public List<FlowConnection> Connections { get; set; } = [];
 
         /// <summary>
         /// 자식 컨트롤이 배치되는 패널 영역을 가져옵니다.
@@ -703,32 +704,33 @@ namespace Going.UI.FlowSystem
         /// <summary>
         /// 연결의 고유 식별자를 가져오거나 설정합니다.
         /// </summary>
-        public Guid Id { get; set; } = Guid.NewGuid();
+        [GoProperty(PCategory.Basic, 0)] public Guid Id { get; set; } = Guid.NewGuid();
 
         /// <summary>
         /// 시작 컨트롤의 ID를 가져오거나 설정합니다.
         /// </summary>
-        public Guid? StartControlId { get; set; }
+        [GoProperty(PCategory.Basic, 1)] public Guid? StartControlId { get; set; }
 
         /// <summary>
         /// 끝 컨트롤의 ID를 가져오거나 설정합니다.
         /// </summary>
-        public Guid? EndControlId { get; set; }
+        [GoProperty(PCategory.Basic, 2)] public Guid? EndControlId { get; set; }
 
         /// <summary>
         /// 시작 포트의 이름을 가져오거나 설정합니다.
         /// </summary>
-        public string? StartPortName { get; set; }
+        [GoProperty(PCategory.Basic, 3)] public string? StartPortName { get; set; }
 
         /// <summary>
         /// 끝 포트의 이름을 가져오거나 설정합니다.
         /// </summary>
-        public string? EndPortName { get; set; }
+        [GoProperty(PCategory.Basic, 4)] public string? EndPortName { get; set; }
 
         /// <summary>
         /// 중간 파이프 노드 목록을 가져오거나 설정합니다.
         /// </summary>
-        public List<PipeNode> Nodes { get; set; } = [];
+        [GoChildWrappers]
+        [GoProperty(PCategory.Basic, 5)] public List<PipeNode> Nodes { get; set; } = [];
 
         /// <summary>
         /// 시작 포트를 가져오거나 설정합니다.

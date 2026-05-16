@@ -148,12 +148,12 @@ namespace Going.UI.FlowSystem
         /// <summary>
         /// 파이프 노드의 방향을 가져오거나 설정합니다.
         /// </summary>
-        public PortDirection Direction { get; set; }
+        [GoProperty(PCategory.Basic, 0)] public PortDirection Direction { get; set; }
 
         /// <summary>
         /// 파이프 노드의 위치를 가져오거나 설정합니다.
         /// </summary>
-        public float Position { get; set; }
+        [GoProperty(PCategory.Basic, 1)] public float Position { get; set; }
     }
     #endregion
 
