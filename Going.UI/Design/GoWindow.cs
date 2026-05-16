@@ -82,7 +82,7 @@ namespace Going.UI.Design
         /// 자식 컨트롤 영역의 내부 여백을 가져오거나 설정합니다.
         /// 자식들은 이 값만큼 안쪽으로 인셋된 영역에 배치됩니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 13)] public GoPadding Padding { get; set; } = new();
+        [GoProperty(PCategory.Bounds, 11)] public GoPadding Padding { get; set; } = new();
 
         /// <summary>
         /// 자식 컨트롤 목록을 가져옵니다.
