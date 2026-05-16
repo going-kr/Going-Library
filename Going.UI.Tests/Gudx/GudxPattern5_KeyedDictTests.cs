@@ -1,3 +1,4 @@
+using System.Linq;
 using Going.UI.Design;
 using Going.UI.Gudx;
 using Xunit;
@@ -14,9 +15,14 @@ public class GudxPattern5_KeyedDictTests
         d.AddPage(new GoPage { Name = "Alarm" });
 
         var xml = GoGudxConverter.WriteAny(d).ToString();
+        var elem = System.Xml.Linq.XElement.Parse(xml);
 
-        Assert.Contains("<GoPage Name=\"Dashboard\"", xml);
-        Assert.Contains("<GoPage Name=\"Alarm\"", xml);
+        var pageNames = elem.Descendants("GoPage")
+            .Select(p => (string?)p.Attribute("Name"))
+            .ToList();
+
+        Assert.Contains("Dashboard", pageNames);
+        Assert.Contains("Alarm", pageNames);
     }
 
     [Fact]
