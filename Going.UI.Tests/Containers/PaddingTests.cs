@@ -63,4 +63,33 @@ public class PaddingTests
         Assert.Equal(180f, child.Right);   // PanelBounds.Width = 200 - 10 - 10 = 180
         Assert.Equal(130f, child.Bottom);  // PanelBounds.Height = 150 - 10 - 10 = 130
     }
+
+    [Fact]
+    public void GoPage_PanelBounds_insetByPadding()
+    {
+        var p = new Going.UI.Design.GoPage { Left = 0, Top = 0, Width = 800, Height = 600 };
+        p.Padding = new GoPadding(10, 5, 20, 15);
+
+        var pb = p.PanelBounds;
+
+        Assert.Equal(10f, pb.Left);
+        Assert.Equal(5f, pb.Top);
+        Assert.Equal(800f - 20f, pb.Right);
+        Assert.Equal(600f - 15f, pb.Bottom);
+    }
+
+    [Fact]
+    public void GoPage_Padding_gudxRoundTrips()
+    {
+        var p = new Going.UI.Design.GoPage { Name = "pg" };
+        p.Padding = new GoPadding(3, 7, 11, 13);
+
+        var xml = GoGudxConverter.SerializeControl(p);
+        var restored = (Going.UI.Design.GoPage)GoGudxConverter.DeserializeControl(xml);
+
+        Assert.Equal(3f, restored.Padding.Left);
+        Assert.Equal(7f, restored.Padding.Top);
+        Assert.Equal(11f, restored.Padding.Right);
+        Assert.Equal(13f, restored.Padding.Bottom);
+    }
 }
