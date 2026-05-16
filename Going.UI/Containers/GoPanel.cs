@@ -67,7 +67,7 @@ namespace Going.UI.Containers
         /// </summary>
         [GoProperty(PCategory.Control, 9)] public string BorderColor { get; set; } = "Base3";
         /// <summary>테두리 두께</summary>
-        [GoProperty(PCategory.Control, 18)] public float BorderWidth { get; set; } = 1F;
+        [GoProperty(PCategory.Control, 18)] public float BorderWidth { get; set; } = 1.5F;
         /// <summary>
         /// 모서리 라운드 타입을 가져오거나 설정합니다.
         /// </summary>

@@ -74,7 +74,7 @@ namespace Going.UI.Controls
         /// </summary>
         [GoProperty(PCategory.Control, 7)] public string BorderColor { get; set; } = "Transparent";
         /// <summary>테두리 두께</summary>
-        [GoProperty(PCategory.Control, 17)] public float BorderWidth { get; set; } = 1F;
+        [GoProperty(PCategory.Control, 17)] public float BorderWidth { get; set; } = 1.5F;
 
         /// <summary>
         /// 프로그레스바의 진행 방향을 가져오거나 설정합니다.

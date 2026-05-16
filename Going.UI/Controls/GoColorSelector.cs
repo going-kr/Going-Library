@@ -54,7 +54,7 @@ namespace Going.UI.Controls
         /// </summary>
         [GoProperty(PCategory.Control, 5)] public string BorderColor { get; set; } = "Base3";
         /// <summary>테두리 두께</summary>
-        [GoProperty(PCategory.Control, 8)] public float BorderWidth { get; set; } = 1F;
+        [GoProperty(PCategory.Control, 8)] public float BorderWidth { get; set; } = 1.5F;
 
         /// <summary>
         /// 콘텐츠 정렬 방식을 가져오거나 설정합니다.

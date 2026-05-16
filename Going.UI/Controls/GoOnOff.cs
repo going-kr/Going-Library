@@ -39,7 +39,7 @@ namespace Going.UI.Controls
         /// <summary>테두리 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 8)] public string BorderColor { get; set; } = "Base3";
         /// <summary>테두리 두께</summary>
-        [GoProperty(PCategory.Control, 18)] public float BorderWidth { get; set; } = 1F;
+        [GoProperty(PCategory.Control, 18)] public float BorderWidth { get; set; } = 1.5F;
         /// <summary>슬라이딩 커서 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 9)] public string CursorColor { get; set; } = "Base3";
         /// <summary>On 상태 색상 (테마 색상 키 또는 색상명)</summary>

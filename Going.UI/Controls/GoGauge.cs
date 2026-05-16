@@ -59,7 +59,7 @@ namespace Going.UI.Controls
         /// </summary>
         [GoProperty(PCategory.Control, 8)] public string BorderColor { get; set; } = "Base1";
         /// <summary>테두리 두께</summary>
-        [GoProperty(PCategory.Control, 17)] public float BorderWidth { get; set; } = 1F;
+        [GoProperty(PCategory.Control, 17)] public float BorderWidth { get; set; } = 1.5F;
 
         private double nValue = 0;
         /// <summary>

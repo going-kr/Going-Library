@@ -32,7 +32,7 @@ namespace Going.UI.Design
         /// </summary>
         [GoProperty(PCategory.Control, 1)] public string BorderColor { get; set; } = "WindowBorder";
         /// <summary>테두리 두께</summary>
-        [GoProperty(PCategory.Control, 2)] public float BorderWidth { get; set; } = 1F;
+        [GoProperty(PCategory.Control, 2)] public float BorderWidth { get; set; } = 1.5F;
         /// <summary>
         /// 윈도우 모서리 둥글기 타입을 가져오거나 설정합니다.
         /// </summary>

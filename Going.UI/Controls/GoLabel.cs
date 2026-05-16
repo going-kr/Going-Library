@@ -45,7 +45,7 @@ namespace Going.UI.Controls
         /// <summary>모서리 둥글기 유형</summary>
         [GoProperty(PCategory.Control, 12)] public GoRoundType Round { get; set; } = GoRoundType.All;
         /// <summary>테두리 두께</summary>
-        [GoProperty(PCategory.Control, 13)] public float BorderWidth { get; set; } = 1F;
+        [GoProperty(PCategory.Control, 13)] public float BorderWidth { get; set; } = 1.5F;
         /// <summary>배경 그리기 여부</summary>
         [GoProperty(PCategory.Control, 14)] public bool BackgroundDraw { get; set; } = false;
         /// <summary>테두리만 그리기 여부</summary>

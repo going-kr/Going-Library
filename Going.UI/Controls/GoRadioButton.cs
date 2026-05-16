@@ -49,7 +49,7 @@ namespace Going.UI.Controls
         /// <summary>모서리 둥글기 유형</summary>
         [GoProperty(PCategory.Control, 13)] public GoRoundType Round { get; set; } = GoRoundType.All;
         /// <summary>테두리 두께</summary>
-        [GoProperty(PCategory.Control, 14)] public float BorderWidth { get; set; } = 1F;
+        [GoProperty(PCategory.Control, 14)] public float BorderWidth { get; set; } = 1.5F;
         /// <summary>버튼 채우기 스타일</summary>
         [GoProperty(PCategory.Control, 15)] public GoButtonFillStyle FillStyle { get; set; } = GoButtonFillStyle.Flat;
 
