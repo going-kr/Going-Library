@@ -108,14 +108,20 @@ namespace Going.UI.Containers
         [GoProperty(PCategory.Control, 17)] public int Elevation { get; set; } = 0;
 
         /// <summary>
+        /// 자식 컨트롤 영역의 내부 여백을 가져오거나 설정합니다.
+        /// 자식들은 이 값만큼 안쪽으로 인셋된 영역에 배치됩니다.
+        /// </summary>
+        [GoProperty(PCategory.Control, 18)] public GoPadding Padding { get; set; } = new();
+
+        /// <summary>
         /// 자식 컨트롤 목록을 가져옵니다.
         /// </summary>
         [GoChildList]
         [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
         /// <summary>
-        /// 자식 컨트롤이 배치되는 패널 영역을 가져옵니다.
+        /// 자식 컨트롤이 배치되는 패널 영역을 가져옵니다. Padding만큼 인셋됩니다.
         /// </summary>
-        [JsonIgnore] public override SKRect PanelBounds => Areas()["Panel"];
+        [JsonIgnore] public override SKRect PanelBounds => Util.FromRect(Areas()["Panel"], Padding);
         #endregion
 
         #region Event
@@ -196,8 +202,7 @@ namespace Going.UI.Containers
         /// <inheritdoc/>
         protected override void OnLayout()
         {
-            var rts = Areas();
-            var rtPanel = rts["Panel"];
+            var rtPanel = PanelBounds;
 
             var nofills = Childrens.Where(c => c.Dock != GoDockStyle.Fill).ToList();
             var fills = Childrens.Where(c => c.Dock == GoDockStyle.Fill).ToList();
