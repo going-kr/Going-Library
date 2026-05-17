@@ -77,6 +77,46 @@ namespace Going.Basis.Utils
             throw new NotSupportedException($"{typeof(T).Name} is not supported. Supported types: short, ushort, int, uint, float.");
         }
 
+        /// <summary>워드 배열의 지정 인덱스부터 값을 복원합니다. 지원 타입: short, ushort, int, uint, float.</summary>
+        public static T FromWords<T>(IReadOnlyList<int> words, int index, EndianOrder order = EndianOrder.ABCD) where T : struct
+        {
+            ValidateIndex(words, index, GetWordCount<T>());
+            return FromWords<T>(new WordSlice(words, index), order);
+        }
+
+        /// <summary>워드 배열에서 값을 복원합니다. 실패하면 false를 반환하고 value는 default가 됩니다.</summary>
+        public static bool TryFromWords<T>(IReadOnlyList<int> words, EndianOrder order, out T value) where T : struct
+            => TryFromWords(words, 0, order, out value);
+
+        /// <summary>워드 배열의 지정 인덱스부터 값을 복원합니다. 실패하면 false를 반환하고 value는 default가 됩니다.</summary>
+        public static bool TryFromWords<T>(IReadOnlyList<int> words, int index, EndianOrder order, out T value) where T : struct
+        {
+            try
+            {
+                value = FromWords<T>(words, index, order);
+                return true;
+            }
+            catch (ArgumentException)
+            {
+                value = default;
+                return false;
+            }
+            catch (NotSupportedException)
+            {
+                value = default;
+                return false;
+            }
+        }
+
+        /// <summary>지정 타입을 표현하는 데 필요한 Modbus 워드 수를 반환합니다.</summary>
+        public static int GetWordCount<T>() where T : struct
+        {
+            var type = typeof(T);
+            if (type == typeof(short) || type == typeof(ushort)) return 1;
+            if (type == typeof(int) || type == typeof(uint) || type == typeof(float)) return 2;
+            throw new NotSupportedException($"{type.Name} is not supported. Supported types: short, ushort, int, uint, float.");
+        }
+
         private static ushort ReadUInt16(IReadOnlyList<int> words)
         {
             ValidateWordCount(words, 1);
@@ -123,6 +163,14 @@ namespace Going.Basis.Utils
                 throw new ArgumentException($"At least {required} word(s) are required.", nameof(words));
         }
 
+        private static void ValidateIndex(IReadOnlyList<int> words, int index, int required)
+        {
+            if (index < 0)
+                throw new ArgumentOutOfRangeException(nameof(index), index, "Index must be zero or greater.");
+            if (words.Count - index < required)
+                throw new ArgumentException($"At least {required} word(s) are required from index {index}.", nameof(words));
+        }
+
         private static void ApplyOrder(Span<byte> bytes, EndianOrder order)
         {
             Span<byte> source = stackalloc byte[4];
@@ -167,6 +215,30 @@ namespace Going.Basis.Utils
                 default:
                     throw new ArgumentOutOfRangeException(nameof(order), order, null);
             }
+        }
+
+        private readonly struct WordSlice : IReadOnlyList<int>
+        {
+            private readonly IReadOnlyList<int> words;
+            private readonly int start;
+
+            public WordSlice(IReadOnlyList<int> words, int start)
+            {
+                this.words = words;
+                this.start = start;
+            }
+
+            public int Count => words.Count - start;
+
+            public int this[int index] => words[start + index];
+
+            public IEnumerator<int> GetEnumerator()
+            {
+                for (var i = start; i < words.Count; i++)
+                    yield return words[i];
+            }
+
+            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
         }
     }
 }

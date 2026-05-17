@@ -38,4 +38,41 @@ public class EndianParserTests
 
         Assert.Equal((ushort)0x1234, value);
     }
+
+    [Fact]
+    public void FromWords_reads_value_from_index()
+    {
+        var datas = new List<int> { 0x0001 };
+        datas.AddRange(EndianParser.ToWords(0x12345678, EndianOrder.CDAB));
+        datas.Add(0x0002);
+
+        var value = EndianParser.FromWords<int>(datas, 1, EndianOrder.CDAB);
+
+        Assert.Equal(0x12345678, value);
+    }
+
+    [Fact]
+    public void TryFromWords_returns_false_when_index_is_out_of_range()
+    {
+        var ok = EndianParser.TryFromWords<float>(new[] { 0x1234 }, 0, EndianOrder.ABCD, out var value);
+
+        Assert.False(ok);
+        Assert.Equal(default, value);
+    }
+
+    [Theory]
+    [InlineData(typeof(ushort), 1)]
+    [InlineData(typeof(short), 1)]
+    [InlineData(typeof(uint), 2)]
+    [InlineData(typeof(int), 2)]
+    [InlineData(typeof(float), 2)]
+    public void GetWordCount_returns_supported_type_word_count(Type type, int expected)
+    {
+        var method = typeof(EndianParser).GetMethod(nameof(EndianParser.GetWordCount))!;
+        var generic = method.MakeGenericMethod(type);
+
+        var count = (int)generic.Invoke(null, null)!;
+
+        Assert.Equal(expected, count);
+    }
 }
