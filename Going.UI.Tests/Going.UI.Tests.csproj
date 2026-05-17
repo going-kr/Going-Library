@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Going.UI\Going.UI.csproj" />
+    <ProjectReference Include="..\Going.Basis\Going.Basis.csproj" />
   </ItemGroup>
 
 </Project>
