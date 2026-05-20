@@ -94,10 +94,20 @@ namespace Going.UI.Controls
             {
                 bDown = false;
 
-                var icosz = Math.Min(rtBox.Width, rtBox.Height) - 2;
-                var pth = Util.GetIconPath(IconString, icosz, Rotate, rtBox);
-                if (pth != null && pth.Contains(x, y)) ButtonClicked?.Invoke(this, EventArgs.Empty);
-                pth?.Dispose();
+
+                if (ClickBoundsExtends)
+                {
+                    if (CollisionTool.Check(rtBox, x, y)) ButtonClicked?.Invoke(this, EventArgs.Empty);
+                }
+                else
+                {
+                    var icosz = Math.Min(rtBox.Width, rtBox.Height) - 2;
+                    var pth = Util.GetIconPath(IconString, icosz, Rotate, rtBox);
+                    if (pth != null && pth.Contains(x, y)) ButtonClicked?.Invoke(this, EventArgs.Empty);
+                    pth?.Dispose();
+                }
+
+                
             }
 
             base.OnMouseUp(x, y, button);
