@@ -120,9 +120,17 @@ namespace Going.UI.Controls
                     {
                         using var p = new SKPaint { IsAntialias = true, IsStroke = true, StrokeWidth = 1, Color = cBtn.BrightnessTransmit(thm.BorderBrightness) };
                         using var pe = SKPathEffect.CreateDash([2, 2], 2);
-                        float x = Convert.ToInt32(rt.Left); x += 0.5F;
                         p.PathEffect = pe;
-                        canvas.DrawLine(x, rt.Top + 5, x, rt.Bottom - 5, p);
+                        if (Direction == GoDirectionHV.Vertical)
+                        {
+                            float y = Convert.ToInt32(rt.Top); y += 0.5F;
+                            canvas.DrawLine(rt.Left + 5, y, rt.Right - 5, y, p);
+                        }
+                        else
+                        {
+                            float x = Convert.ToInt32(rt.Left); x += 0.5F;
+                            canvas.DrawLine(x, rt.Top + 5, x, rt.Bottom - 5, p);
+                        }
                     }
 
                     if (btn.Down) rt.Offset(0, 1);
@@ -233,7 +241,8 @@ namespace Going.UI.Controls
             if (Buttons.Count > 0)
             {
                 var rtButton = Areas()["Content"];
-                var rtsBtn = Util.Columns(rtButton, Buttons.Select(x => x.Size).ToArray());
+                var sizes = Buttons.Select(x => x.Size).ToArray();
+                var rtsBtn = Direction == GoDirectionHV.Vertical ? Util.Rows(rtButton, sizes) : Util.Columns(rtButton, sizes);
 
                 for (int i = 0; i < Buttons.Count; i++)
                 {
