@@ -19,4 +19,10 @@ internal sealed class GoBinding
     public object? LastCtrlValue;
     public bool PendingFlush;
     public bool Initialized;
+
+    public bool IsCommand;
+    public int CommandTimeout;
+    public object? PendingCommandValue;
+    public long PendingCommandTick;
+    public bool HasPendingCommand;
 }

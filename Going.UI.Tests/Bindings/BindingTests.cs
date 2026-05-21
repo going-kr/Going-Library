@@ -153,6 +153,49 @@ public class BindingTests
     }
 
     [Fact]
+    public void Bind_WithTimeout_DoesNotRollBackControlWhileFeedbackIsPending()
+    {
+        var lamp = new GoLamp();
+        bool feedback = false;
+        bool commanded = false;
+
+        lamp.Bind(c => c.OnOff, () => feedback, v => commanded = v, timeout: 500);
+        lamp.FireUpdate();
+
+        lamp.OnOff = true;
+        lamp.FireUpdate();
+
+        Assert.True(commanded);
+        Assert.True(lamp.OnOff);
+
+        lamp.FireUpdate();
+        Assert.True(lamp.OnOff);
+
+        feedback = true;
+        lamp.FireUpdate();
+        Assert.True(lamp.OnOff);
+    }
+
+    [Fact]
+    public void Bind_WithTimeout_AllowsFeedbackToRollBackAfterTimeout()
+    {
+        var lamp = new GoLamp();
+        bool feedback = false;
+
+        lamp.Bind(c => c.OnOff, () => feedback, _ => { }, timeout: 1);
+        lamp.FireUpdate();
+
+        lamp.OnOff = true;
+        lamp.FireUpdate();
+        Assert.True(lamp.OnOff);
+
+        Thread.Sleep(20);
+        lamp.FireUpdate();
+
+        Assert.False(lamp.OnOff);
+    }
+
+    [Fact]
     public void Suppressed_BlocksSourceToControl()
     {
         var lamp = new SuppressibleLamp();

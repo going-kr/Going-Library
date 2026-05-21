@@ -57,11 +57,28 @@ public static class GoControlBindingExtensions
         BindInternal(ctrl, ctrlProp, getter, setter);
     }
 
+    /// <summary>
+    /// 통신 명령처럼 setter 이후 getter 값이 늦게 반영되는 속성을 바인딩합니다.
+    /// setter 호출 후 getter가 같은 값에 도달하거나 timeout이 지날 때까지 이전 getter 값으로 컨트롤을 되돌리지 않습니다.
+    /// </summary>
+    public static void Bind<TC, TV>(
+        this TC ctrl,
+        Expression<Func<TC, TV>> ctrlProp,
+        Func<TV> getter,
+        Action<TV> setter,
+        int timeout = 500)
+        where TC : GoControl
+    {
+        BindInternal(ctrl, ctrlProp, getter, setter, isCommand: true, commandTimeout: Math.Max(0, timeout));
+    }
+
     private static void BindInternal<TC, TV>(
         TC ctrl,
         Expression<Func<TC, TV>> ctrlProp,
         Func<TV> getter,
-        Action<TV>? setter)
+        Action<TV>? setter,
+        bool isCommand = false,
+        int commandTimeout = 0)
         where TC : GoControl
     {
         var pi = ExtractProperty(ctrlProp);
@@ -88,6 +105,8 @@ public static class GoControlBindingExtensions
             CtrlSet = compiledSet,
             SourceGet = () => (object?)getter(),
             SourceSet = setter == null ? null : (Action<object?>)(v => setter((TV)v!)),
+            IsCommand = isCommand,
+            CommandTimeout = commandTimeout,
         };
 
         // 같은 속성에 기존 binding 있으면 교체 (마지막 승)
