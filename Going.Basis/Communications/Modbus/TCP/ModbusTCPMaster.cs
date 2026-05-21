@@ -287,6 +287,8 @@ namespace Going.Basis.Communications.Modbus.TCP
 
         Task? task;
         CancellationTokenSource? cancel;
+        readonly object lifecycleLock = new();
+        readonly object workLock = new();
         #endregion
 
         #region Event
@@ -328,12 +330,18 @@ namespace Going.Basis.Communications.Modbus.TCP
         /// </summary>
         public void Start()
         {
-            if (!IsOpen && !IsStart)
+            lock (lifecycleLock)
             {
+                if (IsDisposed) throw new ObjectDisposedException(nameof(ModbusTCPMaster));
+                if (IsStart) return;
+
+                bIsOpen = false;
+                IsStart = true;
                 cancel = new CancellationTokenSource();
+                var cts = cancel;
                 task = Task.Run(async () =>
                 {
-                    var token = cancel.Token;
+                    var token = cts.Token;
 
                     if (!OperatingSystem.IsBrowser())
                     {
@@ -352,13 +360,20 @@ namespace Going.Basis.Communications.Modbus.TCP
                                 bIsOpen = client.Connected;
                                 SocketConnected?.Invoke(this, new SocketEventArgs(client));
                             }
-                            catch { }
+                            catch
+                            {
+                                CloseClient(false);
+                                if (AutoReconnect && IsStart && !token.IsCancellationRequested)
+                                {
+                                    try { await Task.Delay(Math.Max(Interval, 100), token); }
+                                    catch (OperationCanceledException) { }
+                                }
+                            }
                             #endregion
 
                             if (bIsOpen)
                             {
                                 baResponse = new byte[BufferSize];
-                                IsStart = true;
 
                                 while (!token.IsCancellationRequested && IsStart && bIsOpen)
                                 {
@@ -372,19 +387,14 @@ namespace Going.Basis.Communications.Modbus.TCP
                                 }
                             }
 
-                            if (bIsOpen && client != null)
-                            {
-                                client.Close();
-                                SocketDisconnected?.Invoke(this, new SocketEventArgs(client));
-
-                                client.Dispose();
-                                client = null;
-                            }
+                            CloseClient(true);
 
                         } while (!token.IsCancellationRequested && AutoReconnect && IsStart);
                     }
 
-                }, cancel.Token);
+                    IsStart = false;
+                    CloseClient(false);
+                }, cts.Token);
             }
         }
 
@@ -393,35 +403,62 @@ namespace Going.Basis.Communications.Modbus.TCP
         /// </summary>
         public void Stop()
         {
-            IsStart = false;
-            cancel?.Cancel(false);
+            Task? taskToWait;
+            CancellationTokenSource? cancelToDispose;
 
-            if (task != null)
+            lock (lifecycleLock)
             {
-                try { if (task.Wait(3000)) task.Dispose(); }
-                catch { }
-                finally { task = null; }
+                IsStart = false;
+                cancel?.Cancel(false);
+                CloseClient(true);
+                taskToWait = task;
+                cancelToDispose = cancel;
+                task = null;
+                cancel = null;
             }
 
-            cancel?.Dispose();
-            cancel = null;
+            if (taskToWait != null)
+            {
+                try { if (taskToWait.Wait(3000)) taskToWait.Dispose(); }
+                catch { }
+            }
+
+            cancelToDispose?.Dispose();
         }
         #endregion
+
+        void CloseClient(bool notify)
+        {
+            var closing = client;
+            client = null;
+            bIsOpen = false;
+
+            if (closing == null) return;
+
+            try { closing.Close(); } catch { }
+            if (notify) SocketDisconnected?.Invoke(this, new SocketEventArgs(closing));
+            try { closing.Dispose(); } catch { }
+        }
 
         #region Process
         void Process()
         {
-            if (WorkQueue.Count > 0 || ManualWorkList.Count > 0)
+            Work? w = null;
+            lock (workLock)
             {
-                Work? w = null;
-                #region Get Work
                 if (ManualWorkList.Count > 0)
                 {
                     w = ManualWorkList[0];
                     ManualWorkList.RemoveAt(0);
                 }
-                else w = WorkQueue.Dequeue();
-                #endregion
+                else if (WorkQueue.Count > 0) w = WorkQueue.Dequeue();
+                else
+                {
+                    foreach (var v in AutoWorkList) WorkQueue.Enqueue(v);
+                    return;
+                }
+            }
+            if (w == null) return;
 
                 var bRepeat = true;
                 var nTimeoutCount = 0;
@@ -571,13 +608,6 @@ namespace Going.Basis.Communications.Modbus.TCP
                     }
                     #endregion
                 }
-            }
-            else
-            {
-                #region Auto Fill
-                foreach (var v in AutoWorkList) WorkQueue.Enqueue(v);
-                #endregion
-            }
         }
         #endregion
 
@@ -589,15 +619,18 @@ namespace Going.Basis.Communications.Modbus.TCP
         /// <returns>해당 ID가 존재하면 true</returns>
         public bool ContainAutoID(int MessageID)
         {
-            bool ret = false;
-            for (int i = AutoWorkList.Count - 1; i >= 0; i--)
+            lock (workLock)
             {
-                if (AutoWorkList[i].MessageID == MessageID)
+                bool ret = false;
+                for (int i = AutoWorkList.Count - 1; i >= 0; i--)
                 {
-                    ret = true;
+                    if (AutoWorkList[i].MessageID == MessageID)
+                    {
+                        ret = true;
+                    }
                 }
+                return ret;
             }
-            return ret;
         }
         #endregion
         #region RemoveManual
@@ -608,16 +641,19 @@ namespace Going.Basis.Communications.Modbus.TCP
         /// <returns>제거된 항목이 있으면 true</returns>
         public bool RemoveManual(int MessageID)
         {
-            bool ret = false;
-            for (int i = ManualWorkList.Count - 1; i >= 0; i--)
+            lock (workLock)
             {
-                if (ManualWorkList[i].MessageID == MessageID)
+                bool ret = false;
+                for (int i = ManualWorkList.Count - 1; i >= 0; i--)
                 {
-                    ManualWorkList.RemoveAt(i);
-                    ret = true;
+                    if (ManualWorkList[i].MessageID == MessageID)
+                    {
+                        ManualWorkList.RemoveAt(i);
+                        ret = true;
+                    }
                 }
+                return ret;
             }
-            return ret;
         }
         #endregion
         #region RemoveAuto
@@ -628,25 +664,28 @@ namespace Going.Basis.Communications.Modbus.TCP
         /// <returns>제거된 항목이 있으면 true</returns>
         public bool RemoveAuto(int MessageID)
         {
-            bool ret = false;
-            for (int i = AutoWorkList.Count - 1; i >= 0; i--)
+            lock (workLock)
             {
-                if (AutoWorkList[i].MessageID == MessageID)
+                bool ret = false;
+                for (int i = AutoWorkList.Count - 1; i >= 0; i--)
                 {
-                    AutoWorkList.RemoveAt(i);
-                    ret = true;
+                    if (AutoWorkList[i].MessageID == MessageID)
+                    {
+                        AutoWorkList.RemoveAt(i);
+                        ret = true;
+                    }
                 }
+                return ret;
             }
-            return ret;
         }
         #endregion
         #region Clear
         /// <summary>수동 작업 목록을 모두 비웁니다.</summary>
-        public void ClearManual() { ManualWorkList.Clear(); }
+        public void ClearManual() { lock (workLock) ManualWorkList.Clear(); }
         /// <summary>자동 작업 목록을 모두 비웁니다.</summary>
-        public void ClearAuto() { AutoWorkList.Clear(); }
+        public void ClearAuto() { lock (workLock) AutoWorkList.Clear(); }
         /// <summary>현재 작업 큐를 모두 비웁니다.</summary>
-        public void ClearWorkSchedule() { WorkQueue.Clear(); }
+        public void ClearWorkSchedule() { lock (workLock) WorkQueue.Clear(); }
         #endregion
 
         #region AutoBitRead
@@ -680,7 +719,7 @@ namespace Going.Basis.Communications.Modbus.TCP
 
             int nResCount = length / 8;
             if (length % 8 != 0) nResCount++;
-            AutoWorkList.Add(new Work(id, data, nResCount + 9) { Timeout = timeout });
+            lock (workLock) AutoWorkList.Add(new Work(id, data, nResCount + 9) { Timeout = timeout });
         }
         #endregion
         #region AutoWordRead
@@ -712,7 +751,7 @@ namespace Going.Basis.Communications.Modbus.TCP
             data[10] = length.GetByte(1);
             data[11] = length.GetByte(0);
 
-            AutoWorkList.Add(new Work(id, data, length * 2 + 9) { Timeout = timeout });
+            lock (workLock) AutoWorkList.Add(new Work(id, data, length * 2 + 9) { Timeout = timeout });
         }
         #endregion
         #region ManualBitRead
@@ -747,7 +786,7 @@ namespace Going.Basis.Communications.Modbus.TCP
 
             int nResCount = length / 8;
             if (length % 8 != 0) nResCount++;
-            ManualWorkList.Add(new Work(id, data, nResCount + 9) { RepeatCount = repeatCount, Timeout = timeout });
+            lock (workLock) ManualWorkList.Add(new Work(id, data, nResCount + 9) { RepeatCount = repeatCount, Timeout = timeout });
         }
         #endregion
         #region ManualWordRead
@@ -780,7 +819,7 @@ namespace Going.Basis.Communications.Modbus.TCP
             data[10] = length.GetByte(1);
             data[11] = length.GetByte(0);
 
-            ManualWorkList.Add(new Work(id, data, length * 2 + 9) { RepeatCount = repeatCount, Timeout = timeout });
+            lock (workLock) ManualWorkList.Add(new Work(id, data, length * 2 + 9) { RepeatCount = repeatCount, Timeout = timeout });
         }
         #endregion
         #region ManualBitWrite
@@ -811,7 +850,7 @@ namespace Going.Basis.Communications.Modbus.TCP
             data[10] = val.GetByte(1);
             data[11] = val.GetByte(0);
 
-            ManualWorkList.Add(new Work(id, data, 12) { RepeatCount = repeatCount, Timeout = timeout });
+            lock (workLock) ManualWorkList.Add(new Work(id, data, 12) { RepeatCount = repeatCount, Timeout = timeout });
         }
         #endregion
         #region ManualWordWrite
@@ -841,7 +880,7 @@ namespace Going.Basis.Communications.Modbus.TCP
             data[10] = value.GetByte(1);
             data[11] = value.GetByte(0);
 
-            ManualWorkList.Add(new Work(id, data, 12) { RepeatCount = repeatCount, Timeout = timeout });
+            lock (workLock) ManualWorkList.Add(new Work(id, data, 12) { RepeatCount = repeatCount, Timeout = timeout });
         }
         #endregion
         #region ManualMultiBitWrite
@@ -890,7 +929,7 @@ namespace Going.Basis.Communications.Modbus.TCP
                 data[13 + i] = val;
             }
 
-            ManualWorkList.Add(new Work(id, data, 12) { RepeatCount = repeatCount, Timeout = timeout });
+            lock (workLock) ManualWorkList.Add(new Work(id, data, 12) { RepeatCount = repeatCount, Timeout = timeout });
         }
         #endregion
         #region ManualMultiWordWrite
@@ -929,7 +968,7 @@ namespace Going.Basis.Communications.Modbus.TCP
                 data[14 + (i * 2)] = values[i].GetByte(0);
             }
 
-            ManualWorkList.Add(new Work(id, data, 12) { RepeatCount = repeatCount, Timeout = timeout });
+            lock (workLock) ManualWorkList.Add(new Work(id, data, 12) { RepeatCount = repeatCount, Timeout = timeout });
         }
         #endregion
         #region ManualWordBitSet
@@ -963,7 +1002,7 @@ namespace Going.Basis.Communications.Modbus.TCP
             data[11] = val.GetByte(1);
             data[12] = val.GetByte(0);
 
-            ManualWorkList.Add(new Work(id, data, 12) { RepeatCount = repeatCount, Timeout = timeout });
+            lock (workLock) ManualWorkList.Add(new Work(id, data, 12) { RepeatCount = repeatCount, Timeout = timeout });
         }
         #endregion
 

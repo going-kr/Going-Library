@@ -119,6 +119,8 @@ namespace Going.Basis.Communications.TextComm.TCP
 
         Task? task;
         CancellationTokenSource? cancel;
+        readonly object lifecycleLock = new();
+        readonly object workLock = new();
         #endregion
 
         #region Event
@@ -151,12 +153,17 @@ namespace Going.Basis.Communications.TextComm.TCP
         /// </summary>
         public void Start()
         {
-            if (!IsOpen && !IsStart)
+            lock (lifecycleLock)
             {
+                if (IsStart) return;
+
+                bIsOpen = false;
+                IsStart = true;
                 cancel = new CancellationTokenSource();
+                var cts = cancel;
                 task = Task.Run(async () =>
                 {
-                    var token = cancel.Token;
+                    var token = cts.Token;
 
                     if (!OperatingSystem.IsBrowser())
                     {
@@ -175,15 +182,22 @@ namespace Going.Basis.Communications.TextComm.TCP
                                 bIsOpen = client.Connected;
                                 SocketConnected?.Invoke(this, new SocketEventArgs(client));
                             }
-                            catch { }
+                            catch
+                            {
+                                CloseClient(false);
+                                if (AutoReconnect && IsStart && !token.IsCancellationRequested)
+                                {
+                                    try { await Task.Delay(Math.Max(Interval, 100), token); }
+                                    catch (OperationCanceledException) { }
+                                }
+                            }
                             #endregion
 
                             if (bIsOpen)
                             {
                                 baResponse = new byte[BufferSize];
-                                IsStart = true;
 
-                                while (!token.IsCancellationRequested && IsStart)
+                                while (!token.IsCancellationRequested && IsStart && bIsOpen)
                                 {
                                     try
                                     {
@@ -195,19 +209,14 @@ namespace Going.Basis.Communications.TextComm.TCP
                                 }
                             }
 
-                            if (bIsOpen && client != null)
-                            {
-                                client.Close();
-                                SocketDisconnected?.Invoke(this, new SocketEventArgs(client));
-
-                                client.Dispose();
-                                client = null;
-                            }
+                            CloseClient(true);
 
                         } while (!token.IsCancellationRequested && AutoReconnect && IsStart);
                     }
 
-                }, cancel.Token);
+                    IsStart = false;
+                    CloseClient(false);
+                }, cts.Token);
             }
         }
 
@@ -216,20 +225,42 @@ namespace Going.Basis.Communications.TextComm.TCP
         /// </summary>
         public void Stop()
         {
-            IsStart = false;
-            cancel?.Cancel(false);
+            Task? taskToWait;
+            CancellationTokenSource? cancelToDispose;
 
-            if (task != null)
+            lock (lifecycleLock)
             {
-                try { if (task.Wait(3000)) task.Dispose(); }
-                catch { }
-                finally { task = null; }
+                IsStart = false;
+                cancel?.Cancel(false);
+                CloseClient(true);
+                taskToWait = task;
+                cancelToDispose = cancel;
+                task = null;
+                cancel = null;
             }
 
-            cancel?.Dispose();
-            cancel = null;
+            if (taskToWait != null)
+            {
+                try { if (taskToWait.Wait(3000)) taskToWait.Dispose(); }
+                catch { }
+            }
+
+            cancelToDispose?.Dispose();
         }
         #endregion
+
+        void CloseClient(bool notify)
+        {
+            var closing = client;
+            client = null;
+            bIsOpen = false;
+
+            if (closing == null) return;
+
+            try { closing.Close(); } catch { }
+            if (notify) SocketDisconnected?.Invoke(this, new SocketEventArgs(closing));
+            try { closing.Dispose(); } catch { }
+        }
 
         #region Process
         void Process()
@@ -238,25 +269,22 @@ namespace Going.Basis.Communications.TextComm.TCP
             {
                 if (client != null)
                 {
-                    #region Manual Fill
-                    if (ManualWorkList.Count > 0)
+                    Work? w = null;
+                    lock (workLock)
                     {
-                        for (int i = 0; i < ManualWorkList.Count; i++) WorkQueue.Enqueue(ManualWorkList[i]);
-                        ManualWorkList.Clear();
-                    }
-                    #endregion
-
-                    if (WorkQueue.Count > 0 || ManualWorkList.Count > 0)
-                    {
-                        Work? w = null;
-                        #region Get Work
                         if (ManualWorkList.Count > 0)
                         {
                             w = ManualWorkList[0];
                             ManualWorkList.RemoveAt(0);
                         }
-                        else w = WorkQueue.Dequeue();
-                        #endregion
+                        else if (WorkQueue.Count > 0) w = WorkQueue.Dequeue();
+                        else
+                        {
+                            foreach (var v in AutoWorkList) WorkQueue.Enqueue(v);
+                            return;
+                        }
+                    }
+                    if (w == null) return;
 
                         var bRepeat = true;
                         var nTimeoutCount = 0;
@@ -356,13 +384,6 @@ namespace Going.Basis.Communications.TextComm.TCP
                             }
                             #endregion
                         }
-                    }
-                    else
-                    {
-                        #region Auto Fill
-                        foreach (var v in AutoWorkList) WorkQueue.Enqueue(v);
-                        #endregion
-                    }
                 }
             }
             catch { }
@@ -377,15 +398,18 @@ namespace Going.Basis.Communications.TextComm.TCP
         /// <returns>자동 작업 목록에 존재하면 true, 그렇지 않으면 false</returns>
         public bool ContainAutoID(int MessageID)
         {
-            bool ret = false;
-            for (int i = AutoWorkList.Count - 1; i >= 0; i--)
+            lock (workLock)
             {
-                if (AutoWorkList[i].MessageID == MessageID)
+                bool ret = false;
+                for (int i = AutoWorkList.Count - 1; i >= 0; i--)
                 {
-                    ret = true;
+                    if (AutoWorkList[i].MessageID == MessageID)
+                    {
+                        ret = true;
+                    }
                 }
+                return ret;
             }
-            return ret;
         }
         #endregion
         #region RemoveManual
@@ -396,16 +420,19 @@ namespace Going.Basis.Communications.TextComm.TCP
         /// <returns>제거에 성공하면 true, 해당 ID가 없으면 false</returns>
         public bool RemoveManual(int MessageID)
         {
-            bool ret = false;
-            for (int i = ManualWorkList.Count - 1; i >= 0; i--)
+            lock (workLock)
             {
-                if (ManualWorkList[i].MessageID == MessageID)
+                bool ret = false;
+                for (int i = ManualWorkList.Count - 1; i >= 0; i--)
                 {
-                    ManualWorkList.RemoveAt(i);
-                    ret = true;
+                    if (ManualWorkList[i].MessageID == MessageID)
+                    {
+                        ManualWorkList.RemoveAt(i);
+                        ret = true;
+                    }
                 }
+                return ret;
             }
-            return ret;
         }
         #endregion
         #region RemoveAuto
@@ -416,25 +443,28 @@ namespace Going.Basis.Communications.TextComm.TCP
         /// <returns>제거에 성공하면 true, 해당 ID가 없으면 false</returns>
         public bool RemoveAuto(int MessageID)
         {
-            bool ret = false;
-            for (int i = AutoWorkList.Count - 1; i >= 0; i--)
+            lock (workLock)
             {
-                if (AutoWorkList[i].MessageID == MessageID)
+                bool ret = false;
+                for (int i = AutoWorkList.Count - 1; i >= 0; i--)
                 {
-                    AutoWorkList.RemoveAt(i);
-                    ret = true;
+                    if (AutoWorkList[i].MessageID == MessageID)
+                    {
+                        AutoWorkList.RemoveAt(i);
+                        ret = true;
+                    }
                 }
+                return ret;
             }
-            return ret;
         }
         #endregion
         #region Clear
         /// <summary>수동 작업 목록을 모두 비웁니다.</summary>
-        public void ClearManual() { ManualWorkList.Clear(); }
+        public void ClearManual() { lock (workLock) ManualWorkList.Clear(); }
         /// <summary>자동 작업 목록을 모두 비웁니다.</summary>
-        public void ClearAuto() { AutoWorkList.Clear(); }
+        public void ClearAuto() { lock (workLock) AutoWorkList.Clear(); }
         /// <summary>현재 대기 중인 작업 큐를 모두 비웁니다.</summary>
-        public void ClearWorkSchedule() { WorkQueue.Clear(); }
+        public void ClearWorkSchedule() { lock (workLock) WorkQueue.Clear(); }
         #endregion
 
         #region Auto
@@ -449,7 +479,7 @@ namespace Going.Basis.Communications.TextComm.TCP
         public void AutoSend(int MessageID, byte Slave, byte Command, string Message, int? timeout = null)
         {
             var ba = TextCommPacket.MakePacket(MessageEncoding, Slave, Command, Message);
-            AutoWorkList.Add(new Work(MessageID, ba, Slave, Command, Message) { Timeout = timeout });
+            lock (workLock) AutoWorkList.Add(new Work(MessageID, ba, Slave, Command, Message) { Timeout = timeout });
         }
         #endregion
         #region Manual
@@ -465,7 +495,7 @@ namespace Going.Basis.Communications.TextComm.TCP
         public void ManualSend(int MessageID, byte Slave, byte Command, string Message, int? repeatCount = null, int? timeout = null)
         {
             var ba = TextCommPacket.MakePacket(MessageEncoding, Slave, Command, Message);
-            ManualWorkList.Add(new Work(MessageID, ba, Slave, Command, Message) { RepeatCount = repeatCount, Timeout = timeout });
+            lock (workLock) ManualWorkList.Add(new Work(MessageID, ba, Slave, Command, Message) { RepeatCount = repeatCount, Timeout = timeout });
         }
         #endregion
         #endregion

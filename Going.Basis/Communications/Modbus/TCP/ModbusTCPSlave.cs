@@ -208,6 +208,7 @@ namespace Going.Basis.Communications.Modbus.TCP
 
         Task? task;
         CancellationTokenSource? cancel;
+        readonly object lifecycleLock = new();
         #endregion
 
         #region Event
@@ -246,12 +247,16 @@ namespace Going.Basis.Communications.Modbus.TCP
         /// </summary>
         public void Start()
         {
-            if (!IsStart)
+            lock (lifecycleLock)
             {
+                if (IsStart) return;
+
+                IsStart = true;
                 cancel = new CancellationTokenSource();
+                var cts = cancel;
                 task = Task.Run(async () =>
                 {
-                    var token = cancel.Token;
+                    var token = cts.Token;
 
                     try
                     {
@@ -262,7 +267,6 @@ namespace Going.Basis.Communications.Modbus.TCP
                         server.Listen(10);
                         #endregion
 
-                        IsStart = true;
                         while (!token.IsCancellationRequested && IsStart)
                         {
                             try
@@ -274,13 +278,14 @@ namespace Going.Basis.Communications.Modbus.TCP
                             catch { }
                         }
 
-                        server.Close();
+                        CloseServer();
                     }
                     catch { }
 
                     IsStart = false;
+                    CloseServer();
 
-                }, cancel.Token);
+                }, cts.Token);
             }
         }
         #endregion
@@ -290,20 +295,39 @@ namespace Going.Basis.Communications.Modbus.TCP
         /// </summary>
         public void Stop()
         {
-            IsStart = false;
-            cancel?.Cancel(false);
+            Task? taskToWait;
+            CancellationTokenSource? cancelToDispose;
 
-            if (task != null)
+            lock (lifecycleLock)
             {
-                try { if (task.Wait(3000)) task.Dispose(); }
-                catch { }
-                finally { task = null; }
+                IsStart = false;
+                cancel?.Cancel(false);
+                CloseServer();
+                taskToWait = task;
+                cancelToDispose = cancel;
+                task = null;
+                cancel = null;
             }
 
-            cancel?.Dispose();
-            cancel = null;
+            if (taskToWait != null)
+            {
+                try { if (taskToWait.Wait(3000)) taskToWait.Dispose(); }
+                catch { }
+            }
+
+            cancelToDispose?.Dispose();
         }
         #endregion
+
+        void CloseServer()
+        {
+            var closing = server;
+            server = null;
+            if (closing == null) return;
+
+            try { closing.Close(); } catch { }
+            try { closing.Dispose(); } catch { }
+        }
 
         #region Run
         async Task run(Socket sock, CancellationToken cancel)
