@@ -271,29 +271,27 @@ Main.Stop();
 
     <span style="color:var(--keyword);">public</span> DeviceManager()
     {
-        TCP.WordAreas.Add(0x0000, <span style="color:var(--string);">"D"</span>);
-        TCP.BitAreas.Add(0x0000, <span style="color:var(--string);">"P"</span>);
     }
 
     <span style="color:var(--comment);">// 읽기 — 의미있는 프로퍼티</span>
     <span style="color:var(--keyword);">public bool</span> IsConnected  =&gt; TCP.IsOpen;
-    <span style="color:var(--keyword);">public bool</span> IsRunning    =&gt; TCP.GetWord(1, <span style="color:var(--string);">"D0"</span>) == 1;
-    <span style="color:var(--keyword);">public int</span>  CurrentRPM   =&gt; TCP.GetWord(1, <span style="color:var(--string);">"D1"</span>) ?? 0;
-    <span style="color:var(--keyword);">public int</span>  TargetSpeed  =&gt; TCP.GetWord(1, <span style="color:var(--string);">"D16"</span>) ?? 0;
+    <span style="color:var(--keyword);">public bool</span> IsRunning    =&gt; TCP.GetHoldingRegister(1, 0) == 1;
+    <span style="color:var(--keyword);">public int</span>  CurrentRPM   =&gt; TCP.GetHoldingRegister(1, 1) ?? 0;
+    <span style="color:var(--keyword);">public int</span>  TargetSpeed  =&gt; TCP.GetHoldingRegister(1, 16) ?? 0;
 
     <span style="color:var(--comment);">// 쓰기</span>
-    <span style="color:var(--keyword);">public void</span> SetTargetSpeed(<span style="color:var(--keyword);">int</span> rpm) =&gt; TCP.SetWord(1, <span style="color:var(--string);">"D16"</span>, rpm);
-    <span style="color:var(--keyword);">public void</span> SetRunCmd(<span style="color:var(--keyword);">bool</span> on)      =&gt; TCP.SetBit(1, <span style="color:var(--string);">"P0"</span>, on);
-    <span style="color:var(--keyword);">public void</span> SetStopCmd(<span style="color:var(--keyword);">bool</span> on)     =&gt; TCP.SetBit(1, <span style="color:var(--string);">"P1"</span>, on);
+    <span style="color:var(--keyword);">public void</span> SetTargetSpeed(<span style="color:var(--keyword);">int</span> rpm) =&gt; TCP.WriteHoldingRegister(1, 16, rpm);
+    <span style="color:var(--keyword);">public void</span> SetRunCmd(<span style="color:var(--keyword);">bool</span> on)      =&gt; TCP.WriteCoil(1, 0, on);
+    <span style="color:var(--keyword);">public void</span> SetStopCmd(<span style="color:var(--keyword);">bool</span> on)     =&gt; TCP.WriteCoil(1, 1, on);
 
     <span style="color:var(--keyword);">public void</span> Start()
     {
         <span style="color:var(--keyword);">var</span> s = Main.DataMgr.Setting;
         TCP.IP = s.IP;  TCP.Port = s.Port;  TCP.Timeout = s.Timeout;
 
-        TCP.MonitorWord_F3(1, 0x0000, 3);   <span style="color:var(--comment);">// D0~D2</span>
-        TCP.MonitorWord_F3(1, 0x0010, 1);   <span style="color:var(--comment);">// D16 (TargetSpeed)</span>
-        TCP.MonitorBit_F1(1, 0x0000, 2);    <span style="color:var(--comment);">// P0~P1</span>
+        TCP.MonitorHoldingRegister_FC3(1, 0x0000, 3);   <span style="color:var(--comment);">// D0~D2</span>
+        TCP.MonitorHoldingRegister_FC3(1, 0x0010, 1);   <span style="color:var(--comment);">// D16 (TargetSpeed)</span>
+        TCP.MonitorCoils_FC1(1, 0x0000, 2);    <span style="color:var(--comment);">// P0~P1</span>
         TCP.Start();
     }
 

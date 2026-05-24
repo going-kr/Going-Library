@@ -10,7 +10,7 @@ namespace Going.Basis.Communications.Modbus.RTU
 {
     /// <summary>
     /// Modbus RTU 마스터 래퍼 클래스입니다.
-    /// BitAreas/WordAreas 기반 메모리 매핑과 슬레이브별 디바이스 모니터링을 제공합니다.
+    /// Function code별 0-base 메모리 매핑과 슬레이브별 디바이스 모니터링을 제공합니다.
     /// </summary>
     public class MasterRTU
     {
@@ -37,11 +37,6 @@ namespace Going.Basis.Communications.Modbus.RTU
         public bool IsOpen => modbus.IsOpen;
         /// <summary>연결 끊김 시 자동 재연결 여부 (기본값: false)</summary>
         public bool AutoReconnect { get => modbus.AutoReconnect; set => modbus.AutoReconnect = value; }
-
-        /// <summary>비트 영역 매핑 (키: Modbus 시작 주소, 값: 영역 코드 접두사)</summary>
-        public Dictionary<int, string> BitAreas { get; } = [];
-        /// <summary>워드 영역 매핑 (키: Modbus 시작 주소, 값: 영역 코드 접두사)</summary>
-        public Dictionary<int, string> WordAreas { get; } = [];
 
         /// <summary>슬레이브별 메모리 저장소 (키: 슬레이브 주소)</summary>
         public Dictionary<int, Mems> Devices { get; } = [];
@@ -82,15 +77,13 @@ namespace Going.Basis.Communications.Modbus.RTU
             if (!Devices.ContainsKey(e.Slave)) Devices.Add(e.Slave, new Mems());
             LastReceived[e.Slave] = DateTime.Now;
 
-            foreach (var baseAddr in BitAreas.Keys.OrderByDescending(x => x))
-            {
-                var code = BitAreas[baseAddr];
-                if (e.StartAddress >= baseAddr)
-                {
-                    for (int i = 0; i < e.ReceiveData.Length; i++)
-                        Devices[e.Slave].Bits[$"{code}{e.StartAddress + i - baseAddr}"] = e.ReceiveData[i];
-                }
-            }
+            var area = e.Function == ModbusFunction.BITREAD_F1 ? Devices[e.Slave].Coils :
+                       e.Function == ModbusFunction.BITREAD_F2 ? Devices[e.Slave].Contacts :
+                       null;
+
+            if (area != null)
+                for (int i = 0; i < e.ReceiveData.Length; i++)
+                    area[e.StartAddress + i] = e.ReceiveData[i];
         }
 
         private void Modbus_WordReadReceived(object? sender, ModbusRTUMaster.WordReadEventArgs e)
@@ -98,15 +91,13 @@ namespace Going.Basis.Communications.Modbus.RTU
             if (!Devices.ContainsKey(e.Slave)) Devices.Add(e.Slave, new Mems());
             LastReceived[e.Slave] = DateTime.Now;
 
-            foreach (var baseAddr in WordAreas.Keys.OrderByDescending(x => x))
-            {
-                var code = WordAreas[baseAddr];
-                if (e.StartAddress >= baseAddr)
-                {
-                    for (int i = 0; i < e.ReceiveData.Length; i++)
-                        Devices[e.Slave].Words[$"{code}{e.StartAddress + i - baseAddr}"] = e.ReceiveData[i];
-                }
-            }
+            var area = e.Function == ModbusFunction.WORDREAD_F3 ? Devices[e.Slave].HoldingRegister :
+                       e.Function == ModbusFunction.WORDREAD_F4 ? Devices[e.Slave].InputRegister :
+                       null;
+
+            if (area != null)
+                for (int i = 0; i < e.ReceiveData.Length; i++)
+                    area[e.StartAddress + i] = e.ReceiveData[i];
         }
         #endregion
 
@@ -116,76 +107,32 @@ namespace Going.Basis.Communications.Modbus.RTU
         /// <summary>통신을 중지합니다.</summary>
         public void Stop() => modbus.Stop();
 
-        /// <summary>
-        /// FC1을 사용하여 비트 영역 자동 모니터링을 등록합니다.
-        /// </summary>
-        /// <param name="slave">슬레이브 주소</param>
-        /// <param name="startAddr">시작 주소</param>
-        /// <param name="length">읽을 비트 수</param>
-        public void MonitorBit_F1(int slave, int startAddr, int length) => modbus.AutoBitRead_FC1(0, slave, startAddr, length);
-        /// <inheritdoc cref="MonitorBit_F1"/>
-        public void MonitorBit_F2(int slave, int startAddr, int length) => modbus.AutoBitRead_FC2(0, slave, startAddr, length);
-        /// <summary>
-        /// FC3을 사용하여 워드 영역 자동 모니터링을 등록합니다.
-        /// </summary>
-        /// <param name="slave">슬레이브 주소</param>
-        /// <param name="startAddr">시작 주소</param>
-        /// <param name="length">읽을 워드 수</param>
-        public void MonitorWord_F3(int slave, int startAddr, int length) => modbus.AutoWordRead_FC3(0, slave, startAddr, length);
-        /// <inheritdoc cref="MonitorWord_F3"/>
-        public void MonitorWord_F4(int slave, int startAddr, int length) => modbus.AutoWordRead_FC4(0, slave, startAddr, length);
+        /// <summary>FC1을 사용하여 코일 영역 자동 모니터링을 등록합니다.</summary>
+        public void MonitorCoils_FC1(int slave, int startAddr, int length) => modbus.AutoBitRead_FC1(0, slave, startAddr, length);
+        /// <summary>FC2를 사용하여 접점 영역 자동 모니터링을 등록합니다.</summary>
+        public void MonitorContacts_FC2(int slave, int startAddr, int length) => modbus.AutoBitRead_FC2(0, slave, startAddr, length);
+        /// <summary>FC3을 사용하여 보유 레지스터 영역 자동 모니터링을 등록합니다.</summary>
+        public void MonitorHoldingRegister_FC3(int slave, int startAddr, int length) => modbus.AutoWordRead_FC3(0, slave, startAddr, length);
+        /// <summary>FC4를 사용하여 입력 레지스터 영역 자동 모니터링을 등록합니다.</summary>
+        public void MonitorInputRegister_FC4(int slave, int startAddr, int length) => modbus.AutoWordRead_FC4(0, slave, startAddr, length);
 
-        /// <summary>
-        /// 영역 코드 기반 주소로 워드 값을 슬레이브에 씁니다.
-        /// </summary>
-        /// <param name="slave">슬레이브 주소</param>
-        /// <param name="addr">영역 코드 기반 주소 (예: "D100")</param>
-        /// <param name="value">쓸 값</param>
-        public void SetWord(int slave, string addr, int value)
-        {
-            var v = WordAreas.FirstOrDefault(x => addr.StartsWith(x.Value));
-            if (v.Value != null && int.TryParse(addr.AsSpan(v.Value.Length), out var idx))
-                modbus.ManualWordWrite_FC6(1, slave, v.Key + idx, value);
-        }
+        /// <summary>FC5를 사용하여 0-base 코일 주소에 값을 씁니다.</summary>
+        public void WriteCoil(int slave, int address, bool value) => modbus.ManualBitWrite_FC5(1, slave, address, value);
+        /// <summary>FC15를 사용하여 0-base 코일 주소부터 여러 값을 씁니다.</summary>
+        public void WriteCoils(int slave, int address, bool[] values) => modbus.ManualMultiBitWrite_FC15(1, slave, address, values);
+        /// <summary>FC6을 사용하여 0-base 보유 레지스터 주소에 값을 씁니다.</summary>
+        public void WriteHoldingRegister(int slave, int address, int value) => modbus.ManualWordWrite_FC6(1, slave, address, value);
+        /// <summary>FC16을 사용하여 0-base 보유 레지스터 주소부터 여러 값을 씁니다.</summary>
+        public void WriteHoldingRegisters(int slave, int address, int[] values) => modbus.ManualMultiWordWrite_FC16(1, slave, address, values);
 
-        /// <summary>
-        /// 영역 코드 기반 주소로 비트 값을 슬레이브에 씁니다.
-        /// </summary>
-        /// <param name="slave">슬레이브 주소</param>
-        /// <param name="addr">영역 코드 기반 주소 (예: "M0")</param>
-        /// <param name="value">쓸 값</param>
-        public void SetBit(int slave, string addr, bool value)
-        {
-            var v = BitAreas.FirstOrDefault(x => addr.StartsWith(x.Value));
-            if (v.Value != null && int.TryParse(addr.AsSpan(v.Value.Length), out var idx))
-                modbus.ManualBitWrite_FC5(1, slave, v.Key + idx, value);
-        }
-
-        /// <summary>
-        /// 슬레이브의 워드 값을 조회합니다.
-        /// </summary>
-        /// <param name="slave">슬레이브 주소</param>
-        /// <param name="addr">영역 코드 기반 주소</param>
-        /// <returns>워드 값, 없으면 null</returns>
-        public int? GetWord(int slave, string addr)
-        {
-            int? ret = null;
-            if (Devices.TryGetValue(slave, out var dev) && dev.Words.TryGetValue(addr, out var val)) ret = val;
-            return ret;
-        }
-
-        /// <summary>
-        /// 슬레이브의 비트 값을 조회합니다.
-        /// </summary>
-        /// <param name="slave">슬레이브 주소</param>
-        /// <param name="addr">영역 코드 기반 주소</param>
-        /// <returns>비트 값, 없으면 null</returns>
-        public bool? GetBit(int slave, string addr)
-        {
-            bool? ret = null;
-            if (Devices.TryGetValue(slave, out var dev) && dev.Bits.TryGetValue(addr, out var val)) ret = val;
-            return ret;
-        }
+        /// <summary>FC1 코일 읽기 결과를 0-base 주소로 조회합니다.</summary>
+        public bool? GetCoil(int slave, int address) => Devices.TryGetValue(slave, out var dev) && dev.Coils.TryGetValue(address, out var val) ? val : null;
+        /// <summary>FC2 접점 읽기 결과를 0-base 주소로 조회합니다.</summary>
+        public bool? GetContact(int slave, int address) => Devices.TryGetValue(slave, out var dev) && dev.Contacts.TryGetValue(address, out var val) ? val : null;
+        /// <summary>FC3 보유 레지스터 읽기 결과를 0-base 주소로 조회합니다.</summary>
+        public int? GetHoldingRegister(int slave, int address) => Devices.TryGetValue(slave, out var dev) && dev.HoldingRegister.TryGetValue(address, out var val) ? val : null;
+        /// <summary>FC4 입력 레지스터 읽기 결과를 0-base 주소로 조회합니다.</summary>
+        public int? GetInputRegister(int slave, int address) => Devices.TryGetValue(slave, out var dev) && dev.InputRegister.TryGetValue(address, out var val) ? val : null;
         #endregion
     }
 
@@ -194,9 +141,13 @@ namespace Going.Basis.Communications.Modbus.RTU
     /// </summary>
     public class Mems
     {
-        /// <summary>비트 메모리 저장소 (키: 영역 코드 기반 주소)</summary>
-        public Dictionary<string, bool> Bits { get; } = [];
-        /// <summary>워드 메모리 저장소 (키: 영역 코드 기반 주소)</summary>
-        public Dictionary<string, int> Words { get; } = [];
+        /// <summary>FC1 코일 영역 (키: 0-base 주소)</summary>
+        public Dictionary<int, bool> Coils { get; } = [];
+        /// <summary>FC2 이산 입력 영역 (키: 0-base 주소)</summary>
+        public Dictionary<int, bool> Contacts { get; } = [];
+        /// <summary>FC3 보유 레지스터 영역 (키: 0-base 주소)</summary>
+        public Dictionary<int, int> HoldingRegister { get; } = [];
+        /// <summary>FC4 입력 레지스터 영역 (키: 0-base 주소)</summary>
+        public Dictionary<int, int> InputRegister { get; } = [];
     }
 }

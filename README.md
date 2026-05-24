@@ -107,12 +107,11 @@ public class MainWindow : GoViewWindow
 ```csharp
 // Modbus RTU Master
 var rtu = new MasterRTU();
-rtu.WordAreas.Add(0x0000, "D");
-rtu.MonitorWord_F3(1, 0x0000, 50);
+rtu.MonitorHoldingRegister_FC3(1, 0x0000, 50);
 rtu.Start();
 
-var value = rtu.GetWord("D0");   // 캐시에서 읽기
-rtu.SetWord(1, "D0", 100);      // 장치에 쓰기
+var value = rtu.GetHoldingRegister(1, 0);   // 캐시에서 읽기
+rtu.WriteHoldingRegister(1, 0, 100);      // 장치에 쓰기
 ```
 
 | 프로토콜 | 클래스 |

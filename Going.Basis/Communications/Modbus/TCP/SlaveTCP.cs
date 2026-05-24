@@ -11,7 +11,7 @@ namespace Going.Basis.Communications.Modbus.TCP
 {
     /// <summary>
     /// Modbus TCP 슬레이브 래퍼 클래스입니다.
-    /// BitMemory/WordMemory 기반 메모리 영역을 사용하여 마스터 요청에 자동 응답합니다.
+    /// Function code별 0-base BitMemory/WordMemory 영역을 사용하여 마스터 요청에 자동 응답합니다.
     /// </summary>
     public class SlaveTCP
     {
@@ -24,10 +24,14 @@ namespace Going.Basis.Communications.Modbus.TCP
         /// <summary>통신 루프가 시작되었는지 여부</summary>
         public bool IsStart => modbus.IsStart;
 
-        /// <summary>비트 메모리 영역 (키: Modbus 시작 주소, 값: BitMemory 인스턴스)</summary>
-        public Dictionary<int, BitMemory> BitAreas { get; } = [];
-        /// <summary>워드 메모리 영역 (키: Modbus 시작 주소, 값: WordMemory 인스턴스)</summary>
-        public Dictionary<int, WordMemory> WordAreas { get; } = [];
+        /// <summary>FC1 코일 영역. Modbus 주소를 0-base 인덱스로 사용합니다.</summary>
+        public BitMemory Coils { get; set; } = new(65536);
+        /// <summary>FC2 이산 입력 영역. Modbus 주소를 0-base 인덱스로 사용합니다.</summary>
+        public BitMemory Contacts { get; set; } = new(65536);
+        /// <summary>FC3 보유 레지스터 영역. Modbus 주소를 0-base 인덱스로 사용합니다.</summary>
+        public WordMemory HoldingRegister { get; set; } = new(65536);
+        /// <summary>FC4 입력 레지스터 영역. Modbus 주소를 0-base 인덱스로 사용합니다.</summary>
+        public WordMemory InputRegister { get; set; } = new(65536);
 
         /// <summary>사용자 정의 태그 객체</summary>
         public object? Tag { get; set; } = null;
@@ -67,123 +71,110 @@ namespace Going.Basis.Communications.Modbus.TCP
         private void Modbus_BitReadRequest(object? sender, ModbusTCPSlave.BitReadRequestArgs args)
         {
             if (args.Slave == Slave)
-                foreach (var BaseAddress in BitAreas.Keys)
+            {
+                var mem = args.Function == ModbusFunction.BITREAD_F1 ? Coils :
+                          args.Function == ModbusFunction.BITREAD_F2 ? Contacts :
+                          null;
+
+                if (mem != null && args.StartAddress >= 0 && args.StartAddress + args.Length <= mem.Count)
                 {
-                    var mem = BitAreas[BaseAddress];
-
-                    if (args.StartAddress >= BaseAddress && args.StartAddress + args.Length < BaseAddress + mem.Count)
+                    var ret = new bool[args.Length];
+                    for (int i = 0; i < args.Length; i++)
                     {
-                        var ret = new bool[args.Length];
-                        for (int i = 0; i < args.Length; i++)
-                        {
-                            var sidx = args.StartAddress - BaseAddress + i;
-                            ret[i] = mem[sidx];
-                        }
-
-                        args.ResponseData = ret;
-                        args.Success = true;
+                        var sidx = args.StartAddress + i;
+                        ret[i] = mem[sidx];
                     }
+
+                    args.ResponseData = ret;
+                    args.Success = true;
                 }
+            }
         }
 
         private void Modbus_WordReadRequest(object? sender, ModbusTCPSlave.WordReadRequestArgs args)
         {
             if (args.Slave == Slave)
-                foreach (var BaseAddress in WordAreas.Keys)
-                {
-                    var mem = WordAreas[BaseAddress];
+            {
+                var mem = args.Function == ModbusFunction.WORDREAD_F3 ? HoldingRegister :
+                          args.Function == ModbusFunction.WORDREAD_F4 ? InputRegister :
+                          null;
 
-                    if (args.StartAddress >= BaseAddress && args.StartAddress + args.Length < BaseAddress + mem.Count)
+                if (mem != null && args.StartAddress >= 0 && args.StartAddress + args.Length <= mem.Count)
+                {
+                    var ret = new int[args.Length];
+                    for (int i = 0; i < args.Length; i++)
                     {
-                        var ret = new int[args.Length];
-                        for (int i = 0; i < args.Length; i++)
-                        {
-                            var sidx = args.StartAddress - BaseAddress + i;
-                            ret[i] = mem[sidx].W;
-                        }
-                        args.ResponseData = ret;
-                        args.Success = true;
+                        var sidx = args.StartAddress + i;
+                        ret[i] = mem[sidx].W;
                     }
+                    args.ResponseData = ret;
+                    args.Success = true;
                 }
+            }
 
         }
 
         private void Modbus_BitWriteRequest(object? sender, ModbusTCPSlave.BitWriteRequestArgs args)
         {
             if (args.Slave == Slave)
-                foreach (var BaseAddress in BitAreas.Keys)
+            {
+                if (args.StartAddress >= 0 && args.StartAddress < Coils.Count)
                 {
-                    var mem = BitAreas[BaseAddress];
-
-                    if (args.StartAddress >= BaseAddress && args.StartAddress < BaseAddress + mem.Count)
-                    {
-                        mem[args.StartAddress - BaseAddress] = args.WriteValue;
-                        args.Success = true;
-                    }
+                    Coils[args.StartAddress] = args.WriteValue;
+                    args.Success = true;
                 }
+            }
         }
 
         private void Modbus_WordWriteRequest(object? sender, ModbusTCPSlave.WordWriteRequestArgs args)
         {
             if (args.Slave == Slave)
-                foreach (var BaseAddress in WordAreas.Keys)
+            {
+                if (args.StartAddress >= 0 && args.StartAddress < HoldingRegister.Count)
                 {
-                    var mem = WordAreas[BaseAddress];
-
-                    if (args.StartAddress >= BaseAddress && args.StartAddress < BaseAddress + mem.Count)
-                    {
-                        mem[args.StartAddress - BaseAddress].W = args.WriteValue;
-                        args.Success = true;
-                    }
+                    HoldingRegister[args.StartAddress].W = args.WriteValue;
+                    args.Success = true;
                 }
+            }
         }
 
         private void Modbus_MultiBitWriteRequest(object? sender, ModbusTCPSlave.MultiBitWriteRequestArgs args)
         {
             if (args.Slave == Slave)
-                foreach (var BaseAddress in BitAreas.Keys)
+            {
+                if (args.StartAddress >= 0 && args.StartAddress + args.Length <= Coils.Count)
                 {
-                    var mem = BitAreas[BaseAddress];
-
-                    if (args.StartAddress >= BaseAddress && args.StartAddress + args.Length < BaseAddress + mem.Count)
-                    {
-                        for (int i = 0; i < args.WriteValues.Length; i++) mem[args.StartAddress - BaseAddress + i] = args.WriteValues[i];
-                        args.Success = true;
-                    }
+                    for (int i = 0; i < args.WriteValues.Length; i++) Coils[args.StartAddress + i] = args.WriteValues[i];
+                    args.Success = true;
                 }
+            }
         }
 
         private void Modbus_MultiWordWriteRequest(object? sender, ModbusTCPSlave.MultiWordWriteRequestArgs args)
         {
             if (args.Slave == Slave)
-                foreach (var BaseAddress in WordAreas.Keys)
+            {
+                if (args.StartAddress >= 0 && args.StartAddress + args.Length <= HoldingRegister.Count)
                 {
-                    var mem = WordAreas[BaseAddress];
-
-                    if (args.StartAddress >= BaseAddress && args.StartAddress + args.Length < BaseAddress + mem.Count)
-                    {
-                        for (int i = 0; i < args.WriteValues.Length; i++) mem[args.StartAddress - BaseAddress + i].W = args.WriteValues[i];
-                        args.Success = true;
-                    }
+                    for (int i = 0; i < args.WriteValues.Length; i++) HoldingRegister[args.StartAddress + i].W = args.WriteValues[i];
+                    args.Success = true;
                 }
+            }
         }
 
         private void Modbus_WordBitSetRequest(object? sender, ModbusTCPSlave.WordBitSetRequestArgs args)
         {
             if (args.Slave == Slave)
-                foreach (var BaseAddress in WordAreas.Keys)
+            {
+                if (args.StartAddress >= 0 && args.StartAddress < HoldingRegister.Count && args.BitIndex >= 0 && args.BitIndex < 16)
                 {
-                    var mem = WordAreas[BaseAddress];
+                    var p = Convert.ToUInt16(Math.Pow(2, args.BitIndex));
+                    if (args.WriteValue) HoldingRegister[args.StartAddress].W |= p;
+                    else HoldingRegister[args.StartAddress].W &= (ushort)~p;
 
-                    if (args.StartAddress >= BaseAddress && args.StartAddress < BaseAddress + mem.Count && args.BitIndex >= 0 && args.BitIndex < 16)
-                    {
-                        var p = Convert.ToUInt16(Math.Pow(2, args.BitIndex));
-                        if (args.WriteValue) mem[args.StartAddress - BaseAddress].W |= p;
-                        else mem[args.StartAddress - BaseAddress].W &= (ushort)~p;
-
-                        args.Success = true;
-                    }
+                    args.Success = true;
                 }
+            }
         }
         #endregion
 
