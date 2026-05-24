@@ -280,9 +280,9 @@ Main.Stop();
     <span style="color:var(--keyword);">public int</span>  TargetSpeed  =&gt; TCP.GetHoldingRegister(1, 16) ?? 0;
 
     <span style="color:var(--comment);">// 쓰기</span>
-    <span style="color:var(--keyword);">public void</span> SetTargetSpeed(<span style="color:var(--keyword);">int</span> rpm) =&gt; TCP.WriteHoldingRegister(1, 16, rpm);
-    <span style="color:var(--keyword);">public void</span> SetRunCmd(<span style="color:var(--keyword);">bool</span> on)      =&gt; TCP.WriteCoil(1, 0, on);
-    <span style="color:var(--keyword);">public void</span> SetStopCmd(<span style="color:var(--keyword);">bool</span> on)     =&gt; TCP.WriteCoil(1, 1, on);
+    <span style="color:var(--keyword);">public void</span> SetTargetSpeed(<span style="color:var(--keyword);">int</span> rpm) =&gt; TCP.WriteHoldingRegister_FC6(1, 16, rpm);
+    <span style="color:var(--keyword);">public void</span> SetRunCmd(<span style="color:var(--keyword);">bool</span> on)      =&gt; TCP.WriteCoil_FC5(1, 0, on);
+    <span style="color:var(--keyword);">public void</span> SetStopCmd(<span style="color:var(--keyword);">bool</span> on)     =&gt; TCP.WriteCoil_FC5(1, 1, on);
 
     <span style="color:var(--keyword);">public void</span> Start()
     {

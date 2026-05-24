@@ -145,7 +145,7 @@ namespace Going.Basis.Communications.Modbus.TCP
                 this.WorkItem = WorkItem;
                 #region WriteValues
                 List<bool> ret = new List<bool>();
-                for (int i = 13; i < WorkItem.Data.Length - 2; i++)
+                for (int i = 13; i < WorkItem.Data.Length; i++)
                 {
                     var v = WorkItem.Data[i];
                     for (int j = 0; j < 8; j++)
@@ -186,7 +186,7 @@ namespace Going.Basis.Communications.Modbus.TCP
                 this.WorkItem = WorkItem;
                 #region WriteValues
                 List<int> ret = new List<int>();
-                for (int i = 13; i < WorkItem.Data.Length - 2; i += 2)
+                for (int i = 13; i < WorkItem.Data.Length; i += 2)
                 {
                     ret.Add(WorkItem.Data[i] << 8 | WorkItem.Data[i + 1]);
                 }

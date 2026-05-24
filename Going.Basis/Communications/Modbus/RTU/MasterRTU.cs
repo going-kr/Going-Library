@@ -65,6 +65,10 @@ namespace Going.Basis.Communications.Modbus.RTU
 
             modbus.BitReadReceived += Modbus_BitReadReceived;
             modbus.WordReadReceived += Modbus_WordReadReceived;
+            modbus.BitWriteReceived += Modbus_BitWriteReceived;
+            modbus.WordWriteReceived += Modbus_WordWriteReceived;
+            modbus.MultiBitWriteReceived += Modbus_MultiBitWriteReceived;
+            modbus.MultiWordWriteReceived += Modbus_MultiWordWriteReceived;
 
             modbus.DeviceOpened += (o, s) => DeviceOpened?.Invoke(this, System.EventArgs.Empty);
             modbus.DeviceClosed += (o, s) => DeviceClosed?.Invoke(this, System.EventArgs.Empty);
@@ -99,6 +103,36 @@ namespace Going.Basis.Communications.Modbus.RTU
                 for (int i = 0; i < e.ReceiveData.Length; i++)
                     area[e.StartAddress + i] = e.ReceiveData[i];
         }
+
+        private void Modbus_BitWriteReceived(object? sender, ModbusRTUMaster.BitWriteEventArgs e)
+        {
+            if (e.Function == ModbusFunction.BITWRITE_F5)
+                GetOrCreateDevice(e.Slave).Coils[e.StartAddress] = e.WriteValue;
+        }
+
+        private void Modbus_WordWriteReceived(object? sender, ModbusRTUMaster.WordWriteEventArgs e)
+        {
+            if (e.Function == ModbusFunction.WORDWRITE_F6)
+                GetOrCreateDevice(e.Slave).HoldingRegister[e.StartAddress] = e.WriteValue;
+        }
+
+        private void Modbus_MultiBitWriteReceived(object? sender, ModbusRTUMaster.MultiBitWriteEventArgs e)
+        {
+            if (e.Function == ModbusFunction.MULTIBITWRITE_F15)
+            {
+                var dev = GetOrCreateDevice(e.Slave);
+                for (int i = 0; i < e.WriteValues.Length; i++) dev.Coils[e.StartAddress + i] = e.WriteValues[i];
+            }
+        }
+
+        private void Modbus_MultiWordWriteReceived(object? sender, ModbusRTUMaster.MultiWordWriteEventArgs e)
+        {
+            if (e.Function == ModbusFunction.MULTIWORDWRITE_F16)
+            {
+                var dev = GetOrCreateDevice(e.Slave);
+                for (int i = 0; i < e.WriteValues.Length; i++) dev.HoldingRegister[e.StartAddress + i] = e.WriteValues[i];
+            }
+        }
         #endregion
 
         #region Method
@@ -117,13 +151,25 @@ namespace Going.Basis.Communications.Modbus.RTU
         public void MonitorInputRegister_FC4(int slave, int startAddr, int length) => modbus.AutoWordRead_FC4(0, slave, startAddr, length);
 
         /// <summary>FC5를 사용하여 0-base 코일 주소에 값을 씁니다.</summary>
-        public void WriteCoil(int slave, int address, bool value) => modbus.ManualBitWrite_FC5(1, slave, address, value);
+        public void WriteCoil_FC5(int slave, int address, bool value)
+        {
+            modbus.ManualBitWrite_FC5(1, slave, address, value);
+        }
         /// <summary>FC15를 사용하여 0-base 코일 주소부터 여러 값을 씁니다.</summary>
-        public void WriteCoils(int slave, int address, bool[] values) => modbus.ManualMultiBitWrite_FC15(1, slave, address, values);
+        public void WriteCoils_FC15(int slave, int address, bool[] values)
+        {
+            modbus.ManualMultiBitWrite_FC15(1, slave, address, values);
+        }
         /// <summary>FC6을 사용하여 0-base 보유 레지스터 주소에 값을 씁니다.</summary>
-        public void WriteHoldingRegister(int slave, int address, int value) => modbus.ManualWordWrite_FC6(1, slave, address, value);
+        public void WriteHoldingRegister_FC6(int slave, int address, int value)
+        {
+            modbus.ManualWordWrite_FC6(1, slave, address, value);
+        }
         /// <summary>FC16을 사용하여 0-base 보유 레지스터 주소부터 여러 값을 씁니다.</summary>
-        public void WriteHoldingRegisters(int slave, int address, int[] values) => modbus.ManualMultiWordWrite_FC16(1, slave, address, values);
+        public void WriteHoldingRegisters_FC16(int slave, int address, int[] values)
+        {
+            modbus.ManualMultiWordWrite_FC16(1, slave, address, values);
+        }
 
         /// <summary>FC1 코일 읽기 결과를 0-base 주소로 조회합니다.</summary>
         public bool? GetCoil(int slave, int address) => Devices.TryGetValue(slave, out var dev) && dev.Coils.TryGetValue(address, out var val) ? val : null;
@@ -133,6 +179,19 @@ namespace Going.Basis.Communications.Modbus.RTU
         public int? GetHoldingRegister(int slave, int address) => Devices.TryGetValue(slave, out var dev) && dev.HoldingRegister.TryGetValue(address, out var val) ? val : null;
         /// <summary>FC4 입력 레지스터 읽기 결과를 0-base 주소로 조회합니다.</summary>
         public int? GetInputRegister(int slave, int address) => Devices.TryGetValue(slave, out var dev) && dev.InputRegister.TryGetValue(address, out var val) ? val : null;
+        #endregion
+
+        #region Util
+        private Mems GetOrCreateDevice(int slave)
+        {
+            if (!Devices.TryGetValue(slave, out var dev))
+            {
+                dev = new Mems();
+                Devices.Add(slave, dev);
+            }
+            LastReceived[slave] = DateTime.Now;
+            return dev;
+        }
         #endregion
     }
 
