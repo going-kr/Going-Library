@@ -108,6 +108,12 @@ namespace Going.UI.Controls
         /// 값 텍스트와 제목 사이의 간격을 가져오거나 설정합니다.
         /// </summary>
         [GoProperty(PCategory.Control, 16)] public int Gap { get; set; } = 0;
+
+        /// <summary>
+        /// 게이지 시각 스타일. 기본 <see cref="GoGaugeStyle.Flat"/>(기존 룩, 비회귀).
+        /// <see cref="GoGaugeStyle.Modern"/>이면 둥근 끝 호 + 단색 재질 그라데이션으로 그립니다.
+        /// </summary>
+        [GoProperty(PCategory.Control, 18)] public GoGaugeStyle Style { get; set; } = GoGaugeStyle.Flat;
         #endregion
 
         #region Member Variable
@@ -145,38 +151,69 @@ namespace Going.UI.Controls
             var rtTitle = rts["Title"];
             var rtText = rts["Text"];
 
-            // 둥근 끝(round cap) 스트로크 호 + 단색 재질 그라데이션 — modern 게이지 룩
-            using var p = new SKPaint { IsAntialias = true, IsStroke = true, StrokeCap = SKStrokeCap.Round, StrokeWidth = BarSize };
-            var oval = rtBox;
-            oval.Inflate(-BarSize / 2F, -BarSize / 2F);
-
-            #region Empty (track)
-            using (var pe = new SKPath())
+            if (Style == GoGaugeStyle.Modern)
             {
-                pe.AddArc(oval, StartAngle, SweepAngle);
+                // 둥근 끝(round cap) 스트로크 호 + 단색 재질 그라데이션 — modern 게이지 룩
+                using var p = new SKPaint { IsAntialias = true, IsStroke = true, StrokeCap = SKStrokeCap.Round, StrokeWidth = BarSize };
+                var oval = rtBox;
+                oval.Inflate(-BarSize / 2F, -BarSize / 2F);
+
+                #region Empty (track)
+                using (var pe = new SKPath())
+                {
+                    pe.AddArc(oval, StartAngle, SweepAngle);
+                    p.Color = cEmpty;
+                    canvas.DrawPath(pe, p);
+                }
+                #endregion
+
+                #region Fill (value)
+                var Ang = Convert.ToSingle(MathTool.Map(Value, Minimum, Maximum, 0, SweepAngle));
+                if (Ang > 0.1F)
+                {
+                    using var pf = new SKPath();
+                    pf.AddArc(oval, StartAngle, Ang);
+                    using var sh = SKShader.CreateSweepGradient(
+                        new SKPoint(oval.MidX, oval.MidY),
+                        new[] { cFill.BrightnessTransmit(thm.GradientLightBrightness), cFill.BrightnessTransmit(thm.GradientDarkBrightness) },
+                        new[] { 0F, 1F }, SKShaderTileMode.Clamp, StartAngle, StartAngle + Ang);
+                    p.Shader = sh;
+                    canvas.DrawPath(pf, p);
+                }
+                #endregion
+            }
+            else
+            {
+                // Flat (기본) — 기존 렌더 그대로 (비회귀)
+                using var p = new SKPaint { IsAntialias = true };
+
+                #region Empty
+                PathTool.Gauge(pathEmpty, rtBox, StartAngle, SweepAngle, BarSize);
                 p.Color = cEmpty;
-                p.Shader = null;
-                canvas.DrawPath(pe, p);
+                p.IsStroke = false;
+                canvas.DrawPath(pathEmpty, p);
+
+                p.Color = cBorder;
+                p.IsStroke = true;
+                p.StrokeWidth = BorderWidth;
+                canvas.DrawPath(pathEmpty, p);
+                #endregion
+
+                #region Fill
+                var Ang = Convert.ToSingle(MathTool.Map(Value, Minimum, Maximum, 0, SweepAngle));
+                if (Ang > 0)
+                {
+                    using var imgf = SKImageFilter.CreateDropShadow(2, 2, 2, 2, Util.FromArgb(thm.ShadowAlpha, SKColors.Black));
+                    PathTool.Gauge(pathFill, rtBox, StartAngle, Ang, BarSize);
+
+                    p.IsStroke = false;
+                    p.Color = cFill;
+                    p.ImageFilter = imgf;
+                    canvas.DrawPath(pathFill, p);
+                    p.ImageFilter = null;
+                }
+                #endregion
             }
-            #endregion
-
-            #region Fill (value)
-            var Ang = Convert.ToSingle(MathTool.Map(Value, Minimum, Maximum, 0, SweepAngle));
-            if (Ang > 0.1F)
-            {
-                using var pf = new SKPath();
-                pf.AddArc(oval, StartAngle, Ang);
-
-                using var sh = SKShader.CreateSweepGradient(
-                    new SKPoint(oval.MidX, oval.MidY),
-                    new[] { cFill.BrightnessTransmit(thm.GradientLightBrightness), cFill.BrightnessTransmit(thm.GradientDarkBrightness) },
-                    new[] { 0F, 1F }, SKShaderTileMode.Clamp, StartAngle, StartAngle + Ang);
-
-                p.Shader = sh;
-                canvas.DrawPath(pf, p);
-                p.Shader = null;
-            }
-            #endregion
 
             var txt = string.IsNullOrWhiteSpace(Format) ? Value.ToString() : Value.ToString(Format);
             Util.DrawText(canvas, txt, FontName, FontStyle, FontSize, rtText, cText);

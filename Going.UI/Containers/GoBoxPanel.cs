@@ -1,7 +1,6 @@
 ﻿using Going.UI.Controls;
 using Going.UI.Datas;
 using Going.UI.Enums;
-using Going.UI.Extensions;
 using Going.UI.Gudx;
 using Going.UI.Themes;
 using Going.UI.Utils;
@@ -89,27 +88,7 @@ namespace Going.UI.Containers
             var rts = Areas();
             var rtBox = rts["Content"];
 
-            if (BackgroundDraw)
-            {
-                if (Elevation > 0)
-                    Util.DrawElevationShadow(canvas, rtBox, Elevation, Round, thm.Corner, thm.ShadowColor, thm.ShadowAlpha);
-
-                // 표면 재질 그라데이션 (단색 명도 1단계: 위 밝음 → 아래 어두움). 다크 HMI에서 깊이감을 줌.
-                using (var p = new SKPaint { IsAntialias = true, IsStroke = false })
-                using (var sh = SKShader.CreateLinearGradient(
-                    new SKPoint(rtBox.MidX, rtBox.Top), new SKPoint(rtBox.MidX, rtBox.Bottom),
-                    new[] { cBox.BrightnessTransmit(thm.GradientLightBrightness), cBox.BrightnessTransmit(thm.GradientDarkBrightness) },
-                    new[] { 0F, 1F }, SKShaderTileMode.Clamp))
-                {
-                    p.Shader = sh;
-                    if (Round == GoRoundType.Ellipse) canvas.DrawOval(rtBox, p);
-                    else if (Round == GoRoundType.Rect) canvas.DrawRect(rtBox, p);
-                    else { using var rr = new SKRoundRect(rtBox, thm.Corner); canvas.DrawRoundRect(rr, p); }
-                }
-
-                // 테두리만 (채움은 위 재질 그라데이션이 담당)
-                Util.DrawBox(canvas, rtBox, SKColors.Transparent, cBorder, Round, thm.Corner, true, BorderWidth);
-            }
+            if (BackgroundDraw) Util.DrawBox(canvas, rtBox, cBox, cBorder, Round, thm.Corner, true, BorderWidth);
 
             base.OnDraw(canvas, thm);
         }
