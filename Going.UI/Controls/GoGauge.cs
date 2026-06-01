@@ -145,37 +145,36 @@ namespace Going.UI.Controls
             var rtTitle = rts["Title"];
             var rtText = rts["Text"];
 
-            using var p = new SKPaint { IsAntialias = true };
+            // 둥근 끝(round cap) 스트로크 호 + 단색 재질 그라데이션 — modern 게이지 룩
+            using var p = new SKPaint { IsAntialias = true, IsStroke = true, StrokeCap = SKStrokeCap.Round, StrokeWidth = BarSize };
+            var oval = rtBox;
+            oval.Inflate(-BarSize / 2F, -BarSize / 2F);
 
-            #region Empty
-            PathTool.Gauge(pathEmpty, rtBox, StartAngle, SweepAngle, BarSize);
+            #region Empty (track)
+            using (var pe = new SKPath())
             {
-                var pth = pathEmpty;
-
+                pe.AddArc(oval, StartAngle, SweepAngle);
                 p.Color = cEmpty;
-                p.IsStroke = false;
-                canvas.DrawPath(pth, p);
-
-                p.Color = cBorder;
-                p.IsStroke = true;
-                p.StrokeWidth = BorderWidth;
-                canvas.DrawPath(pth, p);
+                p.Shader = null;
+                canvas.DrawPath(pe, p);
             }
             #endregion
 
-            #region Fill
+            #region Fill (value)
             var Ang = Convert.ToSingle(MathTool.Map(Value, Minimum, Maximum, 0, SweepAngle));
-            if (Ang > 0)
+            if (Ang > 0.1F)
             {
-                var pth = pathFill;
-                using var imgf = SKImageFilter.CreateDropShadow(2, 2, 2, 2, Util.FromArgb(thm.ShadowAlpha, SKColors.Black));
-                PathTool.Gauge(pth, rtBox, StartAngle, Ang, BarSize);
+                using var pf = new SKPath();
+                pf.AddArc(oval, StartAngle, Ang);
 
-                p.IsStroke = false;
-                p.Color = cFill;
-                p.ImageFilter = imgf;
-                canvas.DrawPath(pth, p);
-                p.ImageFilter = null;
+                using var sh = SKShader.CreateSweepGradient(
+                    new SKPoint(oval.MidX, oval.MidY),
+                    new[] { cFill.BrightnessTransmit(thm.GradientLightBrightness), cFill.BrightnessTransmit(thm.GradientDarkBrightness) },
+                    new[] { 0F, 1F }, SKShaderTileMode.Clamp, StartAngle, StartAngle + Ang);
+
+                p.Shader = sh;
+                canvas.DrawPath(pf, p);
+                p.Shader = null;
             }
             #endregion
 

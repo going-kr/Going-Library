@@ -118,7 +118,7 @@ public class NativeDashboardExportTests
         t.Childrens.Add(new GoLabel { Text = label, FontName = "Segoe UI", FontSize = 13, TextColor = "Base5", ContentAlignment = GoContentAlignment.MiddleLeft, BackgroundDraw = false, Dock = GoDockStyle.Fill }, 0, 0);
         t.Childrens.Add(new GoGauge
         {
-            Value = value, Minimum = 0, Maximum = 100, Title = "%", FillColor = "Point", EmptyColor = "Base3",
+            Value = value, Minimum = 0, Maximum = 100, Title = "%", FillColor = "Highlight", EmptyColor = "Base3",
             StartAngle = 135, SweepAngle = 270, BarSize = 16, Format = "0", FontSize = 34,
             TextColor = "Fore", Dock = GoDockStyle.Fill,
         }, 0, 1);
