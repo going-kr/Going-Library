@@ -108,7 +108,7 @@
                       "UseLongClick": false,
                       "LongClickTime": null,
                       "Selectable": true,
-                      "Bounds": "641,3,675,345",
+                      "Bounds": "626,3,660,330",
                       "Dock": 0,
                       "Margin": {
                         "Left": 3,
@@ -159,7 +159,7 @@
                       "UseLongClick": false,
                       "LongClickTime": null,
                       "Selectable": true,
-                      "Bounds": "681,3,715,345",
+                      "Bounds": "666,3,700,330",
                       "Dock": 0,
                       "Margin": {
                         "Left": 3,
@@ -210,7 +210,7 @@
                       "UseLongClick": false,
                       "LongClickTime": null,
                       "Selectable": true,
-                      "Bounds": "721,3,755,345",
+                      "Bounds": "706,3,740,330",
                       "Dock": 0,
                       "Margin": {
                         "Left": 3,
@@ -254,7 +254,7 @@
                       "UseLongClick": false,
                       "LongClickTime": null,
                       "Selectable": false,
-                      "Bounds": "641,351,675,385",
+                      "Bounds": "626,336,660,370",
                       "Dock": 0,
                       "Margin": {
                         "Left": 3,
@@ -298,7 +298,7 @@
                       "UseLongClick": false,
                       "LongClickTime": null,
                       "Selectable": false,
-                      "Bounds": "681,351,715,385",
+                      "Bounds": "666,336,700,370",
                       "Dock": 0,
                       "Margin": {
                         "Left": 3,
@@ -342,7 +342,7 @@
                       "UseLongClick": false,
                       "LongClickTime": null,
                       "Selectable": false,
-                      "Bounds": "721,351,755,385",
+                      "Bounds": "706,336,740,370",
                       "Dock": 0,
                       "Margin": {
                         "Left": 3,
@@ -403,7 +403,7 @@
                       "UseLongClick": false,
                       "LongClickTime": null,
                       "Selectable": true,
-                      "Bounds": "3,3,635,385",
+                      "Bounds": "3,3,620,370",
                       "Dock": 0,
                       "Margin": {
                         "Left": 3,
@@ -422,7 +422,7 @@
               "UseLongClick": false,
               "LongClickTime": null,
               "Selectable": false,
-              "Bounds": "20,20,779,409",
+              "Bounds": "20,20,764,394",
               "Dock": 5,
               "Margin": {
                 "Left": 20,
@@ -434,6 +434,12 @@
           }
         ],
         "BackgroundImage": null,
+        "Padding": {
+          "Left": 8,
+          "Top": 8,
+          "Right": 8,
+          "Bottom": 8
+        },
         "Id": "3a635ac9-8742-42ef-bde1-fa26045222f5",
         "Name": "PageTrendGraph",
         "Visible": true,
@@ -482,7 +488,7 @@
               "UseLongClick": false,
               "LongClickTime": null,
               "Selectable": true,
-              "Bounds": "20,20,779,409",
+              "Bounds": "20,20,764,394",
               "Dock": 5,
               "Margin": {
                 "Left": 20,
@@ -494,6 +500,12 @@
           }
         ],
         "BackgroundImage": null,
+        "Padding": {
+          "Left": 8,
+          "Top": 8,
+          "Right": 8,
+          "Bottom": 8
+        },
         "Id": "9b83b685-8bf8-41c2-b45c-af103792b423",
         "Name": "PageDataGrid",
         "Visible": true,
@@ -560,7 +572,7 @@
               "UseLongClick": false,
               "LongClickTime": null,
               "Selectable": true,
-              "Bounds": "20,20,779,409",
+              "Bounds": "20,20,764,394",
               "Dock": 5,
               "Margin": {
                 "Left": 20,
@@ -572,6 +584,12 @@
           }
         ],
         "BackgroundImage": null,
+        "Padding": {
+          "Left": 8,
+          "Top": 8,
+          "Right": 8,
+          "Bottom": 8
+        },
         "Id": "38cf0191-efec-498e-9d73-812f51c2feba",
         "Name": "PageBarGraph",
         "Visible": true,
@@ -639,7 +657,7 @@
               "UseLongClick": false,
               "LongClickTime": null,
               "Selectable": true,
-              "Bounds": "20,20,779,409",
+              "Bounds": "20,20,764,394",
               "Dock": 5,
               "Margin": {
                 "Left": 20,
@@ -651,6 +669,12 @@
           }
         ],
         "BackgroundImage": null,
+        "Padding": {
+          "Left": 8,
+          "Top": 8,
+          "Right": 8,
+          "Bottom": 8
+        },
         "Id": "c12a751f-4b6e-4f37-9c4c-f446a280074f",
         "Name": "PageLineGraph",
         "Visible": true,
@@ -720,7 +744,7 @@
               "UseLongClick": false,
               "LongClickTime": null,
               "Selectable": true,
-              "Bounds": "20,20,779,409",
+              "Bounds": "20,20,764,394",
               "Dock": 5,
               "Margin": {
                 "Left": 20,
@@ -732,6 +756,12 @@
           }
         ],
         "BackgroundImage": null,
+        "Padding": {
+          "Left": 8,
+          "Top": 8,
+          "Right": 8,
+          "Bottom": 8
+        },
         "Id": "2d78652f-b617-4366-a00d-379d4fad6ce2",
         "Name": "PageTimeGraph",
         "Visible": true,
@@ -762,11 +792,12 @@
               "Title": "Gauge",
               "TitleFontSize": 11,
               "TextColor": "Fore",
-              "FillColor": "Good",
+              "FillColor": "green",
+              "FillColor2": "darkgreen",
               "EmptyColor": "Base1",
               "BorderColor": "Base1",
-              "BorderWidth": 1,
-              "Value": 0,
+              "BorderWidth": 1.5,
+              "Value": 50,
               "Minimum": 0,
               "Maximum": 100,
               "Format": "0",
@@ -781,7 +812,7 @@
               "UseLongClick": false,
               "LongClickTime": null,
               "Selectable": false,
-              "Bounds": "96,29,276,209",
+              "Bounds": "10,10,190,190",
               "Dock": 0,
               "Margin": {
                 "Left": 3,
@@ -814,7 +845,7 @@
               "UseLongClick": false,
               "LongClickTime": null,
               "Selectable": true,
-              "Bounds": "516,29,696,209",
+              "Bounds": "404,10,584,190",
               "Dock": 0,
               "Margin": {
                 "Left": 3,
@@ -844,6 +875,23 @@
               "GraduationSmall": 2,
               "Format": "0",
               "Gap": 5,
+              "Ranges": [
+                {
+                  "From": 0,
+                  "To": 60,
+                  "Color": "Good"
+                },
+                {
+                  "From": 60,
+                  "To": 80,
+                  "Color": "Warning"
+                },
+                {
+                  "From": 80,
+                  "To": 100,
+                  "Color": "Error"
+                }
+              ],
               "Id": "cdd929df-c526-4bbb-9fb1-763c029bd067",
               "Name": "meter",
               "Visible": true,
@@ -851,7 +899,7 @@
               "UseLongClick": false,
               "LongClickTime": null,
               "Selectable": false,
-              "Bounds": "306,29,486,209",
+              "Bounds": "202,10,382,190",
               "Dock": 0,
               "Margin": {
                 "Left": 3,
@@ -865,12 +913,19 @@
             "Type": "GoBoxPanel",
             "Value": {
               "Childrens": [],
-              "BorderColor": "Base3",
+              "BorderColor": "Base2-lightlight",
               "BoxColor": "Base2",
+              "BoxColor2": "Base2-dark",
               "Round": 1,
               "BackgroundDraw": true,
               "BorderWidth": 1,
               "Elevation": 2,
+              "Padding": {
+                "Left": 8,
+                "Top": 8,
+                "Right": 8,
+                "Bottom": 8
+              },
               "Id": "7fa0c9f6-4e13-4bfc-a7fd-d8a2754a212b",
               "Name": null,
               "Visible": true,
@@ -878,7 +933,7 @@
               "UseLongClick": false,
               "LongClickTime": null,
               "Selectable": false,
-              "Bounds": "96,244,276,366",
+              "Bounds": "615,144,774,266",
               "Dock": 0,
               "Margin": {
                 "Left": 4,
@@ -900,7 +955,8 @@
               "FontSize": 12,
               "TextColor": "Fore",
               "PanelColor": "Base2",
-              "BorderColor": "Base3",
+              "PanelColor2": "Base2-dark",
+              "BorderColor": "Base2-lightlight",
               "BorderWidth": 1,
               "Round": 1,
               "BackgroundDraw": true,
@@ -910,6 +966,12 @@
               "Buttons": [],
               "ButtonWidth": null,
               "Elevation": 2,
+              "Padding": {
+                "Left": 8,
+                "Top": 8,
+                "Right": 8,
+                "Bottom": 8
+              },
               "Childrens": [],
               "Id": "851de7f6-ef76-47e7-9c54-e556fce96896",
               "Name": null,
@@ -918,7 +980,258 @@
               "UseLongClick": false,
               "LongClickTime": null,
               "Selectable": false,
-              "Bounds": "400,242,559,366",
+              "Bounds": "615,10,774,134",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          },
+          {
+            "Type": "GoProgress",
+            "Value": {
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 18,
+              "ValueFontSize": 14,
+              "TextColor": "Fore",
+              "FillColor": "green",
+              "FillColor2": "darkgreen",
+              "EmptyColor": "Base1",
+              "BorderColor": "Base1",
+              "BorderWidth": 1.5,
+              "Direction": 3,
+              "Value": 50,
+              "Minimum": 0,
+              "Maximum": 100,
+              "Format": "0",
+              "BarSize": null,
+              "ShowValueLabel": false,
+              "Id": "d1275e6c-4188-4a83-9c3e-067575a038f2",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": false,
+              "Bounds": "572,244,597,404",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          },
+          {
+            "Type": "GoButton",
+            "Value": {
+              "IconString": null,
+              "IconSize": 12,
+              "IconDirection": 0,
+              "IconGap": 5,
+              "Text": "button",
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 12,
+              "TextColor": "Fore",
+              "ButtonColor": "Base3",
+              "ButtonColor2": "",
+              "BorderColor": "Base4",
+              "Round": 1,
+              "BorderWidth": 1.5,
+              "BackgroundDraw": true,
+              "BorderOnly": false,
+              "ContentAlignment": 4,
+              "AutoFontSize": 0,
+              "AutoIconSize": 0,
+              "Id": "07c2fe22-bd80-4cb1-8bc0-47d43e1a3e3a",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": true,
+              "Bounds": "10,205,90,245",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          },
+          {
+            "Type": "GoButtons",
+            "Value": {
+              "IconSize": 12,
+              "IconDirection": 0,
+              "IconGap": 5,
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 12,
+              "TextColor": "Fore",
+              "ButtonColor": "Base3",
+              "BorderColor": "Base4",
+              "SelectedButtonColor": "Select",
+              "SelectedBorderColor": "Select",
+              "Round": 1,
+              "BorderWidth": 1.5,
+              "ButtonColor2": "",
+              "Buttons": [
+                {
+                  "Selected": false,
+                  "Name": "t1",
+                  "Text": "Test1",
+                  "IconString": null,
+                  "Size": "33%"
+                },
+                {
+                  "Selected": false,
+                  "Name": "t2",
+                  "Text": "Test2",
+                  "IconString": null,
+                  "Size": "33%"
+                },
+                {
+                  "Selected": false,
+                  "Name": "t3",
+                  "Text": "Test3",
+                  "IconString": null,
+                  "Size": "34%"
+                }
+              ],
+              "Direction": 0,
+              "Mode": 0,
+              "Id": "79685947-2263-4996-b804-b7d5ac71432e",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": true,
+              "Bounds": "110,205,382,245",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          },
+          {
+            "Type": "GoRadioButton",
+            "Value": {
+              "IconString": null,
+              "IconSize": 12,
+              "IconDirection": 0,
+              "IconGap": 5,
+              "Text": "button",
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 12,
+              "TextColor": "Fore",
+              "ButtonColor": "Base3",
+              "CheckedButtonColor": "Select",
+              "BorderColor": "Base4",
+              "CheckedBorderColor": "Select",
+              "Round": 1,
+              "BorderWidth": 1.5,
+              "ButtonColor2": "",
+              "Checked": false,
+              "AutoFontSize": 0,
+              "AutoIconSize": 0,
+              "Id": "ccf9d7c9-ebec-40fd-b444-0f52369e80f4",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": true,
+              "Bounds": "82,316,162,356",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          },
+          {
+            "Type": "GoLampButton",
+            "Value": {
+              "Text": "button",
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 12,
+              "TextColor": "Fore",
+              "ButtonColor": "Base3",
+              "BorderColor": "Base4",
+              "OnColor": "Good",
+              "OffColor": "Base2",
+              "Round": 1,
+              "BorderWidth": 1.5,
+              "ButtonColor2": "",
+              "OnOff": false,
+              "LampSize": 24,
+              "Gap": 10,
+              "AutoFontSize": 0,
+              "Id": "565018f3-6d58-4b16-9643-b43f7afd2c8f",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": true,
+              "Bounds": "172,316,294,356",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          },
+          {
+            "Type": "GoToggleButton",
+            "Value": {
+              "IconString": null,
+              "IconSize": 12,
+              "IconDirection": 0,
+              "IconGap": 5,
+              "Text": "button",
+              "CheckedText": "button",
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 12,
+              "TextColor": "Fore",
+              "ButtonColor": "Base3",
+              "CheckedButtonColor": "Select",
+              "BorderColor": "Base4",
+              "CheckedBorderColor": "Select",
+              "Round": 1,
+              "BorderWidth": 1.5,
+              "ButtonColor2": "",
+              "Checked": false,
+              "AllowToggle": true,
+              "AutoFontSize": 0,
+              "AutoIconSize": 0,
+              "Id": "7041e461-b84e-4109-854a-61cc24691f37",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": true,
+              "Bounds": "304,316,384,356",
               "Dock": 0,
               "Margin": {
                 "Left": 4,
@@ -930,6 +1243,12 @@
           }
         ],
         "BackgroundImage": null,
+        "Padding": {
+          "Left": 8,
+          "Top": 8,
+          "Right": 8,
+          "Bottom": 8
+        },
         "Id": "da4d32d7-b025-438a-9e42-a5be833a6b78",
         "Name": "PageGauge",
         "Visible": true,
@@ -1218,7 +1537,7 @@
                       "CheckedBorderColor": "Select",
                       "Round": 1,
                       "BorderWidth": 1,
-                      "FillStyle": 0,
+                      "ButtonColor2": null,
                       "Checked": false,
                       "AutoFontSize": 0,
                       "AutoIconSize": 0,
@@ -1257,7 +1576,7 @@
                       "CheckedBorderColor": "Select",
                       "Round": 1,
                       "BorderWidth": 1,
-                      "FillStyle": 0,
+                      "ButtonColor2": null,
                       "Checked": false,
                       "AutoFontSize": 0,
                       "AutoIconSize": 0,
@@ -1296,7 +1615,7 @@
                       "CheckedBorderColor": "Select",
                       "Round": 1,
                       "BorderWidth": 1,
-                      "FillStyle": 0,
+                      "ButtonColor2": null,
                       "Checked": false,
                       "AutoFontSize": 0,
                       "AutoIconSize": 0,
@@ -1335,7 +1654,7 @@
                       "CheckedBorderColor": "Select",
                       "Round": 1,
                       "BorderWidth": 1,
-                      "FillStyle": 0,
+                      "ButtonColor2": null,
                       "Checked": false,
                       "AutoFontSize": 0,
                       "AutoIconSize": 0,
@@ -1377,6 +1696,12 @@
           }
         ],
         "BackgroundImage": null,
+        "Padding": {
+          "Left": 8,
+          "Top": 8,
+          "Right": 8,
+          "Bottom": 8
+        },
         "Id": "4bc78491-6a29-4913-b652-f5fca30294e6",
         "Name": "PageSwitchPanel",
         "Visible": true,
@@ -1769,6 +2094,12 @@
           }
         ],
         "BackgroundImage": null,
+        "Padding": {
+          "Left": 8,
+          "Top": 8,
+          "Right": 8,
+          "Bottom": 8
+        },
         "Id": "f6a8412d-be68-49c0-b41e-0cea2e9a3b1b",
         "Name": "PageFlow",
         "Visible": true,
@@ -1802,6 +2133,7 @@
               "FontSize": 12,
               "TextColor": "Fore",
               "PanelColor": "Base2",
+              "PanelColor2": null,
               "BorderColor": "Base3",
               "BorderWidth": 1,
               "Round": 1,
@@ -1812,6 +2144,12 @@
               "Buttons": [],
               "ButtonWidth": null,
               "Elevation": 2,
+              "Padding": {
+                "Left": 8,
+                "Top": 8,
+                "Right": 8,
+                "Bottom": 8
+              },
               "Childrens": [],
               "Id": "045e5e85-2d10-4184-95c8-c7c95cdac467",
               "Name": null,
@@ -1842,6 +2180,7 @@
               "FontSize": 12,
               "TextColor": "Fore",
               "PanelColor": "Base2",
+              "PanelColor2": null,
               "BorderColor": "Base3",
               "BorderWidth": 1,
               "Round": 1,
@@ -1852,6 +2191,12 @@
               "Buttons": [],
               "ButtonWidth": null,
               "Elevation": 2,
+              "Padding": {
+                "Left": 8,
+                "Top": 8,
+                "Right": 8,
+                "Bottom": 8
+              },
               "Childrens": [],
               "Id": "903adfcd-50ed-483e-97b1-5ba8af9d062e",
               "Name": null,
@@ -1882,6 +2227,7 @@
               "FontSize": 12,
               "TextColor": "Fore",
               "PanelColor": "Base2",
+              "PanelColor2": null,
               "BorderColor": "Base3",
               "BorderWidth": 1,
               "Round": 1,
@@ -1892,6 +2238,12 @@
               "Buttons": [],
               "ButtonWidth": null,
               "Elevation": 2,
+              "Padding": {
+                "Left": 8,
+                "Top": 8,
+                "Right": 8,
+                "Bottom": 8
+              },
               "Childrens": [],
               "Id": "ee82aaa4-48ce-46f5-8816-ebd2159cd227",
               "Name": null,
@@ -1912,6 +2264,12 @@
           }
         ],
         "BackgroundImage": null,
+        "Padding": {
+          "Left": 8,
+          "Top": 8,
+          "Right": 8,
+          "Bottom": 8
+        },
         "Id": "828fab66-893d-4fb4-beb4-13ad309cff8e",
         "Name": "PageControl",
         "Visible": true,
@@ -2056,6 +2414,12 @@
     "Opening": false,
     "Closing": false,
     "Childrens": [],
+    "Padding": {
+      "Left": 8,
+      "Top": 8,
+      "Right": 8,
+      "Bottom": 8
+    },
     "Id": "f14be30b-0970-4406-ba1e-29983c42b341",
     "Name": null,
     "Visible": false,
@@ -2078,6 +2442,12 @@
     "Opening": false,
     "Closing": false,
     "Childrens": [],
+    "Padding": {
+      "Left": 8,
+      "Top": 8,
+      "Right": 8,
+      "Bottom": 8
+    },
     "Id": "954d67b3-6255-4042-af1a-dd482b33715f",
     "Name": null,
     "Visible": false,
