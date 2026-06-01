@@ -1,0 +1,159 @@
+using System.IO;
+using Going.UI.Controls;
+using Going.UI.Enums;
+using Going.UI.Gudx;
+using Going.UI.Themes;
+using Going.UI.ViewObjects;
+using SkiaSharp;
+using Xunit;
+
+namespace Going.UI.Tests;
+
+/// <summary>
+/// VoObj 프로토타입: 조립→렌더, gudx 직렬화 왕복, 예쁜 샘플 산출물 확인.
+/// </summary>
+public class VoObjRenderTests
+{
+    private static readonly string ArtifactDir =
+        Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "voobj-artifacts");
+
+    private static SKBitmap Render(VoControl vc, int w, int h)
+    {
+        vc.Bounds = new SKRect(0, 0, w, h);
+        var bmp = new SKBitmap(w, h);
+        using var canvas = new SKCanvas(bmp);
+        canvas.Clear(new SKColor(0x14, 0x16, 0x1E));
+        vc.FireDraw(canvas, GoTheme.DarkTheme);
+        canvas.Flush();
+        return bmp;
+    }
+
+    private static void Save(SKBitmap bmp, string name)
+    {
+        Directory.CreateDirectory(ArtifactDir);
+        using var img = SKImage.FromBitmap(bmp);
+        using var data = img.Encode(SKEncodedImageFormat.Png, 100);
+        using var fs = File.Create(Path.Combine(ArtifactDir, name));
+        data.SaveTo(fs);
+    }
+
+    [Fact]
+    public void VoStack_Vertical_PlacesChildrenInThirds()
+    {
+        var vc = new VoControl
+        {
+            Children =
+            {
+                new VoStack
+                {
+                    Direction = GoDirectionHV.Vertical,
+                    Children =
+                    {
+                        new VoBox { Background = "#FF0000" },
+                        new VoBox { Background = "#00FF00" },
+                        new VoBox { Background = "#0000FF" },
+                    }
+                }
+            }
+        };
+
+        using var bmp = Render(vc, 120, 300);
+        var top = bmp.GetPixel(60, 50);
+        var mid = bmp.GetPixel(60, 150);
+        var bot = bmp.GetPixel(60, 250);
+
+        Assert.True(top.Red > 200 && top.Green < 60 && top.Blue < 60, $"top={top}");
+        Assert.True(mid.Green > 200 && mid.Red < 60 && mid.Blue < 60, $"mid={mid}");
+        Assert.True(bot.Blue > 200 && bot.Red < 60 && bot.Green < 60, $"bot={bot}");
+    }
+
+    [Fact]
+    public void EmptyControl_DoesNotThrow()
+    {
+        var vc = new VoControl();
+        using var bmp = Render(vc, 50, 50);
+        Assert.Equal(new SKColor(0x14, 0x16, 0x1E), bmp.GetPixel(25, 25));
+    }
+
+    [Fact]
+    public void Gudx_RoundTrip_PreservesTreeAndRendersIdentically()
+    {
+        var vc = SampleCard();
+
+        // 직렬화 → XML
+        var xml = GoGudxConverter.SerializeControl(vc);
+        Directory.CreateDirectory(ArtifactDir);
+        File.WriteAllText(Path.Combine(ArtifactDir, "voobj-card.gudx"), xml);
+
+        // 트리가 XML에 실렸는지
+        Assert.Contains("<VoControl", xml);
+        Assert.Contains("<VoBox", xml);
+        Assert.Contains("<VoText", xml);
+        Assert.Contains("<VoGrid", xml);
+
+        // 역직렬화 → 같은 타입 복원
+        var back = GoGudxConverter.DeserializeControl(xml);
+        var vc2 = Assert.IsType<VoControl>(back);
+
+        // 원본/복원본 렌더가 동일한지 (몇 개 픽셀 비교)
+        using var b1 = Render(vc, 360, 200);
+        using var b2 = Render(vc2, 360, 200);
+        foreach (var (x, y) in new[] { (30, 30), (180, 100), (320, 170), (40, 150) })
+            Assert.Equal(b1.GetPixel(x, y), b2.GetPixel(x, y));
+    }
+
+    [Fact]
+    public void PrettySample_ProducesArtifact()
+    {
+        var vc = SampleCard();
+        using var bmp = Render(vc, 360, 200);
+        Save(bmp, "voobj-card.png");
+
+        // 카드 영역이 배경과 다르게 그려졌는지 (실제로 뭔가 그려짐)
+        Assert.NotEqual(new SKColor(0x14, 0x16, 0x1E), bmp.GetPixel(180, 100));
+    }
+
+    /// <summary>대시보드 카드 한 장 — 라운드/그라데이션/그림자/그리드/텍스트/프로그레스.</summary>
+    private static VoControl SampleCard() => new()
+    {
+        Children =
+        {
+            // 카드
+            new VoBox
+            {
+                Background = "#2E3242", FillType = VoFillType.Linear, FillColor2 = "#21242F", GradientAngle = 90,
+                BorderRadius = 16, ShadowColor = "#000000", ShadowY = 6, ShadowBlur = 14,
+                Children =
+                {
+                    // 16px 거터로 padding 효과
+                    new VoGrid
+                    {
+                        Columns = ["20px", "*", "20px"],
+                        Rows = ["18px", "18px", "6px", "40px", "10px", "18px", "*"],
+                        Children =
+                        {
+                            new VoText { Text = "SYSTEM LOAD", TextColor = "#8E94AB", FontSize = 13, Alignment = GoContentAlignment.MiddleLeft, Col = 1, Row = 1 },
+                            new VoText { Text = "72%", TextColor = "#FFFFFF", FontSize = 34, FontStyle = GoFontStyle.Bold, Alignment = GoContentAlignment.MiddleLeft, Col = 1, Row = 3 },
+                            // 프로그레스 트랙
+                            new VoBox
+                            {
+                                Background = "#3A3F52", BorderRadius = 8, Col = 1, Row = 5,
+                                Children =
+                                {
+                                    new VoGrid
+                                    {
+                                        Columns = ["72%", "28%"], Rows = ["*"],
+                                        Children =
+                                        {
+                                            new VoBox { Background = "#5B8DEF", FillType = VoFillType.Linear, FillColor2 = "#9B6BEF", GradientAngle = 0, BorderRadius = 8, Col = 0, Row = 0 },
+                                        }
+                                    }
+                                }
+                            },
+                        }
+                    }
+                }
+            }
+        }
+    };
+}
