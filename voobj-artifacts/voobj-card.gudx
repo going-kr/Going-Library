@@ -1,0 +1,23 @@
+<VoControl Visible="true" Enabled="true" UseLongClick="false" Bounds="0,0,70,30" Dock="None" Margin="4,4,4,4" Id="0153ef8c-4bf7-405e-bbd8-8ed33521b412">
+  <Children>
+    <VoBox Background="#2E3242" FillType="Linear" FillColor2="#21242F" GradientAngle="90" BorderWidth="1" BorderRadius="16" ShadowColor="#000000" ShadowX="0" ShadowY="6" ShadowBlur="14" Opacity="1" Visible="true" Margin="10,10,10,10" Padding="20,20,20,20" Col="0" Row="0" ColSpan="1" RowSpan="1">
+      <Children>
+        <VoGrid Columns="*" Rows="18px,6px,40px,10px,18px,*" Visible="true" Margin="0,0,0,0" Padding="0,0,0,0" Col="0" Row="0" ColSpan="1" RowSpan="1">
+          <Children>
+            <VoText Text="SYSTEM LOAD" FontName="나눔고딕" FontSize="13" FontStyle="Normal" TextColor="#8E94AB" Alignment="MiddleLeft" Visible="true" Margin="0,0,0,0" Padding="0,0,0,0" Col="0" Row="0" ColSpan="1" RowSpan="1" />
+            <VoText Text="72%" FontName="나눔고딕" FontSize="34" FontStyle="Bold" TextColor="#FFFFFF" Alignment="MiddleLeft" Visible="true" Margin="0,0,0,0" Padding="0,0,0,0" Col="0" Row="2" ColSpan="1" RowSpan="1" />
+            <VoBox Background="#3A3F52" FillType="Solid" GradientAngle="90" BorderWidth="1" BorderRadius="8" ShadowX="0" ShadowY="2" ShadowBlur="4" Opacity="1" Visible="true" Margin="0,0,0,0" Padding="0,0,0,0" Col="0" Row="4" ColSpan="1" RowSpan="1">
+              <Children>
+                <VoGrid Columns="72%,28%" Rows="*" Visible="true" Margin="0,0,0,0" Padding="0,0,0,0" Col="0" Row="0" ColSpan="1" RowSpan="1">
+                  <Children>
+                    <VoBox Background="#5B8DEF" FillType="Linear" FillColor2="#9B6BEF" GradientAngle="0" BorderWidth="1" BorderRadius="8" ShadowX="0" ShadowY="2" ShadowBlur="4" Opacity="1" Visible="true" Margin="0,0,0,0" Padding="0,0,0,0" Col="0" Row="0" ColSpan="1" RowSpan="1" />
+                  </Children>
+                </VoGrid>
+              </Children>
+            </VoBox>
+          </Children>
+        </VoGrid>
+      </Children>
+    </VoBox>
+  </Children>
+</VoControl>

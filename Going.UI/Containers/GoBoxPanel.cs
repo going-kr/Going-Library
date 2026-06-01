@@ -34,6 +34,10 @@ namespace Going.UI.Containers
         /// </summary>
         [GoProperty(PCategory.Control, 1)] public string BoxColor { get; set; } = "Base2";
         /// <summary>
+        /// 박스 배경 그라데이션 끝 색상. null/빈 값이면 단색(<see cref="BoxColor"/>).
+        /// </summary>
+        [GoProperty(PCategory.Control, 1)] public string? BoxColor2 { get; set; } = null;
+        /// <summary>
         /// 모서리 라운드 타입을 가져오거나 설정합니다.
         /// </summary>
         [GoProperty(PCategory.Control, 2)] public GoRoundType Round { get; set; } = GoRoundType.All;
@@ -88,7 +92,32 @@ namespace Going.UI.Containers
             var rts = Areas();
             var rtBox = rts["Content"];
 
-            if (BackgroundDraw) Util.DrawBox(canvas, rtBox, cBox, cBorder, Round, thm.Corner, true, BorderWidth);
+            if (BackgroundDraw)
+            {
+                bool hasBorder = cBorder != SKColors.Transparent && BorderWidth > 0;
+
+                if (!string.IsNullOrEmpty(BoxColor2))
+                {
+                    // 표면 그라데이션 (BoxColor → BoxColor2, 세로)
+                    using (var p = new SKPaint { IsAntialias = true, IsStroke = false })
+                    using (var sh = SKShader.CreateLinearGradient(
+                        new SKPoint(rtBox.MidX, rtBox.Top), new SKPoint(rtBox.MidX, rtBox.Bottom),
+                        new[] { cBox, thm.ToColor(BoxColor2) }, new[] { 0F, 1F }, SKShaderTileMode.Clamp))
+                    {
+                        p.Shader = sh;
+                        if (Round == GoRoundType.Ellipse) canvas.DrawOval(rtBox, p);
+                        else if (Round == GoRoundType.Rect) canvas.DrawRect(rtBox, p);
+                        else { using var rr = new SKRoundRect(rtBox, thm.Corner); canvas.DrawRoundRect(rr, p); }
+                    }
+                    // 테두리: Transparent거나 두께 0이면 미표시
+                    if (hasBorder) Util.DrawBox(canvas, rtBox, SKColors.Transparent, cBorder, Round, thm.Corner, true, BorderWidth);
+                }
+                else
+                {
+                    // 단색 — 기존 렌더 그대로, 테두리만 가드
+                    Util.DrawBox(canvas, rtBox, cBox, hasBorder ? cBorder : SKColors.Transparent, Round, thm.Corner, true, BorderWidth);
+                }
+            }
 
             base.OnDraw(canvas, thm);
         }

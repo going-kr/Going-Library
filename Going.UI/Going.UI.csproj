@@ -50,4 +50,8 @@
     </ApplicationDefinition>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ViewObject\" />
+  </ItemGroup>
+
 </Project>

@@ -32,6 +32,7 @@ namespace Going.UI.Forms.Containers
 
         public string TextColor { get => control.TextColor; set { if (control.TextColor != value) { control.TextColor = value; Invalidate(); } } }
         public string PanelColor { get => control.PanelColor; set { if (control.PanelColor != value) { control.PanelColor = value; Invalidate(); } } }
+        public string? PanelColor2 { get => control.PanelColor2; set { if (control.PanelColor2 != value) { control.PanelColor2 = value; Invalidate(); } } }
         public string BorderColor { get => control.BorderColor; set { if (control.BorderColor != value) { control.BorderColor = value; Invalidate(); } } }
         public GoRoundType Round { get => control.Round; set { if (control.Round != value) { control.Round = value; Invalidate(); } } }
 

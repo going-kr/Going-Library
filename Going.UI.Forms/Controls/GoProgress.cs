@@ -19,6 +19,7 @@ namespace Going.UI.Forms.Controls
 
         public string TextColor { get => Control.TextColor; set { Control.TextColor = value; Invalidate(); } }
         public string FillColor { get => Control.FillColor; set { Control.FillColor = value; Invalidate(); } }
+        public string? FillColor2 { get => Control.FillColor2; set { Control.FillColor2 = value; Invalidate(); } }
         public string EmptyColor { get => Control.EmptyColor; set { Control.EmptyColor = value; Invalidate(); } }
         public string BorderColor { get => Control.BorderColor; set { Control.BorderColor = value; Invalidate(); } }
 
@@ -30,8 +31,6 @@ namespace Going.UI.Forms.Controls
         public double Maximum { get => Control.Maximum; set { Control.Maximum = value; Invalidate(); } }
 
         public string Format { get => Control.Format; set { Control.Format = value; Invalidate(); } }
-        public int Gap { get => Control.Gap; set { Control.Gap = value; Invalidate(); } }
-        public int CornerRadius { get => Control.CornerRadius; set { Control.CornerRadius = value; Invalidate(); } }
         public int? BarSize { get => Control.BarSize; set { Control.BarSize = value; Invalidate(); } }
         #endregion
 

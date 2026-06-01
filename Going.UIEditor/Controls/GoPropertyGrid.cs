@@ -1263,6 +1263,7 @@ namespace Going.UIEditor.Controls
                     else if (type == typeof(StateLamp)) SetValue(Info, val as IEnumerable<StateLamp>);
                     else if (type == typeof(StateImage)) SetValue(Info, val as IEnumerable<StateImage>);
                     else if (type == typeof(GoStepItem)) SetValue(Info, val as IEnumerable<GoStepItem>);
+                    else if (type == typeof(GoMeterRange)) SetValue(Info, val as IEnumerable<GoMeterRange>);
                     else
                     {
                         Program.MessageBox.ShowMessageBoxOk($"{Info.Name}", "유효하지 않는 타입입니다");

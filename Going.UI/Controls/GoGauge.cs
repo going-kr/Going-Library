@@ -51,11 +51,15 @@ namespace Going.UI.Controls
         /// </summary>
         [GoProperty(PCategory.Control, 6)] public string FillColor { get; set; } = "Good";
         /// <summary>
+        /// 채움 그라데이션의 끝 색상 테마 이름을 가져오거나 설정합니다. null이면 단색(<see cref="FillColor"/>).
+        /// </summary>
+        [GoProperty(PCategory.Control, 6)] public string? FillColor2 { get; set; } = null;
+        /// <summary>
         /// 빈 영역의 색상 테마 이름을 가져오거나 설정합니다.
         /// </summary>
         [GoProperty(PCategory.Control, 7)] public string EmptyColor { get; set; } = "Base1";
         /// <summary>
-        /// 테두리 색상의 테마 색상 이름을 가져오거나 설정합니다.
+        /// 빈(트랙) 영역 테두리 색상의 테마 색상 이름을 가져오거나 설정합니다.
         /// </summary>
         [GoProperty(PCategory.Control, 8)] public string BorderColor { get; set; } = "Base1";
         /// <summary>테두리 두께</summary>
@@ -156,10 +160,13 @@ namespace Going.UI.Controls
                 p.IsStroke = false;
                 canvas.DrawPath(pth, p);
 
-                p.Color = cBorder;
-                p.IsStroke = true;
-                p.StrokeWidth = BorderWidth;
-                canvas.DrawPath(pth, p);
+                if (cBorder != SKColors.Transparent && BorderWidth > 0)
+                {
+                    p.Color = cBorder;
+                    p.IsStroke = true;
+                    p.StrokeWidth = BorderWidth;
+                    canvas.DrawPath(pth, p);
+                }
             }
             #endregion
 
@@ -168,14 +175,31 @@ namespace Going.UI.Controls
             if (Ang > 0)
             {
                 var pth = pathFill;
-                using var imgf = SKImageFilter.CreateDropShadow(2, 2, 2, 2, Util.FromArgb(thm.ShadowAlpha, SKColors.Black));
                 PathTool.Gauge(pth, rtBox, StartAngle, Ang, BarSize);
 
                 p.IsStroke = false;
-                p.Color = cFill;
-                p.ImageFilter = imgf;
-                canvas.DrawPath(pth, p);
-                p.ImageFilter = null;
+                if (!string.IsNullOrEmpty(FillColor2))
+                {
+                    // FillColor → FillColor2 sweep 그라데이션.
+                    // sweep의 0/360 seam이 호의 '시작 모서리'에 걸리면 그 경계에서 색이 튄다.
+                    // → seam이 호가 그려지지 않는 gap(빈 구간) 한가운데에 오도록 회전/오프셋한다.
+                    var center = new SKPoint(rtBox.MidX, rtBox.MidY);
+                    float gapHalf = (360F - SweepAngle) / 2F;
+                    var rot = SKMatrix.CreateRotationDegrees(StartAngle - gapHalf, center.X, center.Y);
+                    using var sh = SKShader.CreateSweepGradient(
+                        center,
+                        new[] { cFill, thm.ToColor(FillColor2) },
+                        new[] { 0F, 1F }, SKShaderTileMode.Clamp, gapHalf, gapHalf + Ang, rot);
+                    p.Shader = sh;
+                    canvas.DrawPath(pth, p);
+                    p.Shader = null;
+                }
+                else
+                {
+                    // 없으면 플랫 단색
+                    p.Color = cFill;
+                    canvas.DrawPath(pth, p);
+                }
             }
             #endregion
 

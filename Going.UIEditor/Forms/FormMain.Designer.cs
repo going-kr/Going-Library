@@ -147,7 +147,6 @@
             btnHotReload.ButtonColor = "Base3";
             btnHotReload.ContentAlignment = UI.Enums.GoContentAlignment.MiddleCenter;
             btnHotReload.Dock = DockStyle.Fill;
-            btnHotReload.FillStyle = UI.Datas.GoButtonFillStyle.Flat;
             btnHotReload.FontName = "나눔고딕";
             btnHotReload.FontSize = 12F;
             btnHotReload.FontStyle = UI.Enums.GoFontStyle.Normal;
@@ -174,7 +173,6 @@
             btnTheme.ButtonColor = "Base3";
             btnTheme.ContentAlignment = UI.Enums.GoContentAlignment.MiddleCenter;
             btnTheme.Dock = DockStyle.Fill;
-            btnTheme.FillStyle = UI.Datas.GoButtonFillStyle.Flat;
             btnTheme.FontName = "나눔고딕";
             btnTheme.FontSize = 12F;
             btnTheme.FontStyle = UI.Enums.GoFontStyle.Normal;
@@ -201,7 +199,6 @@
             btnValidCheck.ButtonColor = "Base3";
             btnValidCheck.ContentAlignment = UI.Enums.GoContentAlignment.MiddleCenter;
             btnValidCheck.Dock = DockStyle.Fill;
-            btnValidCheck.FillStyle = UI.Datas.GoButtonFillStyle.Flat;
             btnValidCheck.FontName = "나눔고딕";
             btnValidCheck.FontSize = 12F;
             btnValidCheck.FontStyle = UI.Enums.GoFontStyle.Normal;
@@ -228,7 +225,6 @@
             btnResourceManager.ButtonColor = "Base3";
             btnResourceManager.ContentAlignment = UI.Enums.GoContentAlignment.MiddleCenter;
             btnResourceManager.Dock = DockStyle.Fill;
-            btnResourceManager.FillStyle = UI.Datas.GoButtonFillStyle.Flat;
             btnResourceManager.FontName = "나눔고딕";
             btnResourceManager.FontSize = 12F;
             btnResourceManager.FontStyle = UI.Enums.GoFontStyle.Normal;
@@ -255,7 +251,6 @@
             btnDeploy.ButtonColor = "Base3";
             btnDeploy.ContentAlignment = UI.Enums.GoContentAlignment.MiddleCenter;
             btnDeploy.Dock = DockStyle.Fill;
-            btnDeploy.FillStyle = UI.Datas.GoButtonFillStyle.Flat;
             btnDeploy.FontName = "나눔고딕";
             btnDeploy.FontSize = 12F;
             btnDeploy.FontStyle = UI.Enums.GoFontStyle.Normal;
@@ -282,7 +277,6 @@
             btnSaveAs.ButtonColor = "Base3";
             btnSaveAs.ContentAlignment = UI.Enums.GoContentAlignment.MiddleCenter;
             btnSaveAs.Dock = DockStyle.Fill;
-            btnSaveAs.FillStyle = UI.Datas.GoButtonFillStyle.Flat;
             btnSaveAs.FontName = "나눔고딕";
             btnSaveAs.FontSize = 12F;
             btnSaveAs.FontStyle = UI.Enums.GoFontStyle.Normal;
@@ -309,7 +303,6 @@
             btnSave.ButtonColor = "Base3";
             btnSave.ContentAlignment = UI.Enums.GoContentAlignment.MiddleCenter;
             btnSave.Dock = DockStyle.Fill;
-            btnSave.FillStyle = UI.Datas.GoButtonFillStyle.Flat;
             btnSave.FontName = "나눔고딕";
             btnSave.FontSize = 12F;
             btnSave.FontStyle = UI.Enums.GoFontStyle.Normal;
@@ -336,7 +329,6 @@
             btnOpen.ButtonColor = "Base3";
             btnOpen.ContentAlignment = UI.Enums.GoContentAlignment.MiddleCenter;
             btnOpen.Dock = DockStyle.Fill;
-            btnOpen.FillStyle = UI.Datas.GoButtonFillStyle.Flat;
             btnOpen.FontName = "나눔고딕";
             btnOpen.FontSize = 12F;
             btnOpen.FontStyle = UI.Enums.GoFontStyle.Normal;
@@ -363,7 +355,6 @@
             btnNew.ButtonColor = "Base3";
             btnNew.ContentAlignment = UI.Enums.GoContentAlignment.MiddleCenter;
             btnNew.Dock = DockStyle.Fill;
-            btnNew.FillStyle = UI.Datas.GoButtonFillStyle.Flat;
             btnNew.FontName = "나눔고딕";
             btnNew.FontSize = 12F;
             btnNew.FontStyle = UI.Enums.GoFontStyle.Normal;
@@ -479,7 +470,6 @@
             btnProgramSetting.ButtonColor = "Base3";
             btnProgramSetting.ContentAlignment = UI.Enums.GoContentAlignment.MiddleCenter;
             btnProgramSetting.Dock = DockStyle.Left;
-            btnProgramSetting.FillStyle = UI.Datas.GoButtonFillStyle.Flat;
             btnProgramSetting.FontName = "나눔고딕";
             btnProgramSetting.FontSize = 12F;
             btnProgramSetting.FontStyle = UI.Enums.GoFontStyle.Normal;
