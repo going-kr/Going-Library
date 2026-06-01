@@ -912,7 +912,7 @@ namespace Going.UI.Utils
         /// <summary>
         /// 캔버스에 버튼을 그립니다. 플랫, 그라데이션 등의 스타일을 지원합니다.
         /// </summary>
-        public static void DrawButton(SKCanvas canvas, GoTheme thm, SKRect bounds, SKColor fillcolor, SKColor borderColor, GoRoundType round, float corner, bool clean = true, float borderSize = 1F, GoButtonFillStyle style = GoButtonFillStyle.Flat, bool bDown = false)
+        public static void DrawButton(SKCanvas canvas, GoTheme thm, SKRect bounds, SKColor fillcolor, SKColor borderColor, GoRoundType round, float corner, bool clean = true, float borderSize = 1F, GoButtonFillStyle style = GoButtonFillStyle.Flat, bool bDown = false, SKColor? color2 = null)
         {
             using var p = new SKPaint();
             p.IsAntialias = true;
@@ -923,7 +923,45 @@ namespace Going.UI.Utils
                 bounds.Offset(0.5F, 0.5F);
             }
 
-            if (style == GoButtonFillStyle.Flat)
+            if (color2.HasValue && color2.Value != SKColors.Transparent)
+            {
+                #region Color2 (명시 2색 그라데이션)
+                if (fillcolor != SKColors.Transparent)
+                {
+                    using var sh = SKShader.CreateLinearGradient(new SKPoint(bounds.Left, bounds.Top), new SKPoint(bounds.Left, bounds.Bottom),
+                                                               !bDown ? [fillcolor, color2.Value] : [color2.Value, fillcolor],
+                                                                SKShaderTileMode.Clamp);
+                    p.IsStroke = false;
+                    p.Shader = sh;
+                    if (round == GoRoundType.Ellipse) canvas.DrawOval(bounds, p);
+                    else
+                    {
+                        SKRoundRect rtr = new SKRoundRect(bounds, corner);
+                        SetRound(rtr, round, corner);
+                        canvas.DrawRoundRect(rtr, p);
+                    }
+                    p.Shader = null;
+                }
+
+                if (borderColor != SKColors.Transparent)
+                {
+                    p.IsStroke = true;
+                    p.StrokeWidth = borderSize;
+                    p.Color = borderColor;
+
+                    float strokeHalf = p.StrokeWidth / 2f;
+                    bounds.Inflate(-strokeHalf, -strokeHalf);
+                    if (round == GoRoundType.Ellipse) canvas.DrawOval(bounds, p);
+                    else
+                    {
+                        SKRoundRect rtr = new SKRoundRect(bounds, corner);
+                        SetRound(rtr, round, corner);
+                        canvas.DrawRoundRect(rtr, p);
+                    }
+                }
+                #endregion
+            }
+            else if (style == GoButtonFillStyle.Flat)
             {
                 #region Flat
                 if (fillcolor != SKColors.Transparent)

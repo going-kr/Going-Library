@@ -63,6 +63,10 @@ namespace Going.UI.Containers
         /// </summary>
         [GoProperty(PCategory.Control, 8)] public string PanelColor { get; set; } = "Base2";
         /// <summary>
+        /// 패널 배경 그라데이션 끝 색상. null/빈 값이면 단색(<see cref="PanelColor"/>).
+        /// </summary>
+        [GoProperty(PCategory.Control, 8)] public string? PanelColor2 { get; set; } = null;
+        /// <summary>
         /// 테두리 색상을 가져오거나 설정합니다. 테마 색상 이름을 사용합니다.
         /// </summary>
         [GoProperty(PCategory.Control, 9)] public string BorderColor { get; set; } = "Base3";
@@ -161,9 +165,39 @@ namespace Going.UI.Containers
 
             if (BackgroundDraw)
             {
-                Util.DrawBox(canvas, rtBox, BorderOnly ? SKColors.Transparent : cPanel, cBorder, Round, thm.Corner, true, BorderWidth);
+                bool hasBorder = cBorder != SKColors.Transparent && BorderWidth > 0;
 
-                if (TitleDivider)
+                if (!BorderOnly)
+                {
+                    if (!string.IsNullOrEmpty(PanelColor2))
+                    {
+                        // 표면 그라데이션 (PanelColor → PanelColor2, 세로)
+                        using (var p = new SKPaint { IsAntialias = true, IsStroke = false })
+                        using (var sh = SKShader.CreateLinearGradient(
+                            new SKPoint(rtBox.MidX, rtBox.Top), new SKPoint(rtBox.MidX, rtBox.Bottom),
+                            new[] { cPanel, thm.ToColor(PanelColor2) }, new[] { 0F, 1F }, SKShaderTileMode.Clamp))
+                        {
+                            p.Shader = sh;
+                            if (Round == GoRoundType.Ellipse) canvas.DrawOval(rtBox, p);
+                            else if (Round == GoRoundType.Rect) canvas.DrawRect(rtBox, p);
+                            else { using var rr = new SKRoundRect(rtBox, thm.Corner); canvas.DrawRoundRect(rr, p); }
+                        }
+                        if (hasBorder) Util.DrawBox(canvas, rtBox, SKColors.Transparent, cBorder, Round, thm.Corner, true, BorderWidth);
+                    }
+                    else
+                    {
+                        // 단색 — 기존 렌더 그대로, 테두리만 가드
+                        Util.DrawBox(canvas, rtBox, cPanel, hasBorder ? cBorder : SKColors.Transparent, Round, thm.Corner, true, BorderWidth);
+                    }
+                }
+                else if (hasBorder)
+                {
+                    // BorderOnly: 표면 없이 테두리만
+                    Util.DrawBox(canvas, rtBox, SKColors.Transparent, cBorder, Round, thm.Corner, true, BorderWidth);
+                }
+
+                // Divider: 테두리가 그려질 때만 (Transparent거나 두께 0이면 미표시)
+                if (TitleDivider && hasBorder)
                 {
                     using var p = new SKPaint { IsAntialias = false };
                     using var pe = SKPathEffect.CreateDash([3, 3], 2);

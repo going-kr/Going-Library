@@ -1,4 +1,5 @@
 using Going.UI.Enums;
+using Going.UI.Gudx;
 using Going.UI.Themes;
 using Going.UI.Tools;
 using Going.UI.Utils;
@@ -14,6 +15,22 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Going.UI.Controls
 {
+    /// <summary>
+    /// 미터의 컬러 구간(안전/주의/위험 등)을 정의합니다. From~To 값 범위에 색을 칠합니다.
+    /// </summary>
+    public class GoMeterRange
+    {
+        /// <summary>구간 시작 값.</summary>
+        [GoProperty(PCategory.Control, 0)] public double From { get; set; }
+        /// <summary>구간 끝 값.</summary>
+        [GoProperty(PCategory.Control, 1)] public double To { get; set; }
+        /// <summary>구간 색 (테마 색 키).</summary>
+        [GoProperty(PCategory.Control, 2)] public string Color { get; set; } = "Good";
+
+        /// <inheritdoc/>
+        public override string ToString() => $"{From}~{To} : {Color}";
+    }
+
     /// <summary>
     /// 미터 컨트롤. 바늘이 있는 계기판 형태로 값을 표시합니다.
     /// </summary>
@@ -112,6 +129,12 @@ namespace Going.UI.Controls
         /// 값 텍스트와 제목 사이의 간격을 가져오거나 설정합니다.
         /// </summary>
         [GoProperty(PCategory.Control, 16)] public int Gap { get; set; } = 0;
+
+        /// <summary>
+        /// 컬러 구간 목록(안전/주의/위험 등). 눈금 안쪽에 색 호 띠로 표시됩니다.
+        /// </summary>
+        [GoChildWrappers]
+        [GoProperty(PCategory.Control, 17)] public List<GoMeterRange> Ranges { get; set; } = [];
         #endregion
 
         #region Member Variable
@@ -193,6 +216,30 @@ namespace Going.UI.Controls
                     var pB = MathTool.GetPointWithAngle(cp, gsang, rwh - RemarkFontSize - GIN);
                     var pS = MathTool.GetPointWithAngle(cp, gsang, rwh - RemarkFontSize - (GIN - 5));
                     canvas.DrawLine(pB, pS, p);
+                }
+            }
+            #endregion
+
+            #region Ranges (컬러 구간)
+            if (Ranges.Count > 0 && Maximum > Minimum)
+            {
+                const float bandW = 5F;
+                const float bandGap = 3F;
+                var bandOval = rtBox;
+                bandOval.Inflate(-(RemarkFontSize + GIN + bandGap + bandW / 2F), -(RemarkFontSize + GIN + bandGap + bandW / 2F));
+
+                p.IsStroke = true;
+                p.StrokeWidth = bandW;
+                p.StrokeCap = SKStrokeCap.Butt;
+                foreach (var rg in Ranges)
+                {
+                    var from = MathTool.Constrain(rg.From, Minimum, Maximum);
+                    var to = MathTool.Constrain(rg.To, Minimum, Maximum);
+                    if (to <= from) continue;
+                    var a0 = Convert.ToSingle(MathTool.Map(from, Minimum, Maximum, 0D, SweepAngle)) + StartAngle;
+                    var sweep = Convert.ToSingle(MathTool.Map(to, Minimum, Maximum, 0D, SweepAngle) - MathTool.Map(from, Minimum, Maximum, 0D, SweepAngle));
+                    p.Color = thm.ToColor(rg.Color);
+                    canvas.DrawArc(bandOval, a0, sweep, false, p);
                 }
             }
             #endregion

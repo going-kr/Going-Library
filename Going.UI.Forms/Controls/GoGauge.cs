@@ -19,6 +19,7 @@ namespace Going.UI.Forms.Controls
 
         public string TextColor { get => Control.TextColor; set { if (Control.TextColor != value) { Control.TextColor = value; Invalidate(); } } }
         public string FillColor { get => Control.FillColor; set { if (Control.FillColor != value) { Control.FillColor = value; Invalidate(); } } }
+        public string? FillColor2 { get => Control.FillColor2; set { if (Control.FillColor2 != value) { Control.FillColor2 = value; Invalidate(); } } }
         public string EmptyColor { get => Control.EmptyColor; set { if (Control.EmptyColor != value) { Control.EmptyColor = value; Invalidate(); } } }
         public string BorderColor { get => Control.BorderColor; set { if (Control.BorderColor != value) { Control.BorderColor = value; Invalidate(); } } }
 

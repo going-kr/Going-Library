@@ -53,8 +53,8 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 14)] public GoRoundType Round { get; set; } = GoRoundType.All;
         /// <summary>테두리 두께</summary>
         [GoProperty(PCategory.Control, 15)] public float BorderWidth { get; set; } = 1.5F;
-        /// <summary>버튼 채우기 스타일</summary>
-        [GoProperty(PCategory.Control, 16)] public GoButtonFillStyle FillStyle { get; set; } = GoButtonFillStyle.Flat;
+        /// <summary>버튼 배경 그라데이션 끝 색상. null/빈 값이면 단색(ButtonColor)</summary>
+        [GoProperty(PCategory.Control, 16)] public string? ButtonColor2 { get; set; } = null;
 
         private bool bCheck = false;
         /// <summary>체크 상태. 값이 변경되면 <see cref="CheckedChanged"/> 이벤트가 발생합니다.</summary>
@@ -114,7 +114,8 @@ namespace Going.UI.Controls
             var t = Checked ? CheckedText : Text;
             Util.DrawButton(canvas, thm, rtBox, cBtn.BrightnessTransmit(bHover ? thm.HoverFillBrightness : 0),
                                                 cBor.BrightnessTransmit(bHover ? thm.HoverBorderBrightness : 0),
-                                                Round, thm.Corner, true, BorderWidth, FillStyle, bDown);
+                                                Round, thm.Corner, true, BorderWidth, GoButtonFillStyle.Flat, bDown,
+                                                string.IsNullOrEmpty(ButtonColor2) ? (SKColor?)null : thm.ToColor(ButtonColor2).BrightnessTransmit(bDown ? thm.DownBrightness : 0).BrightnessTransmit(bHover ? thm.HoverFillBrightness : 0));
 
             if (bDown) rtBox.Offset(0, 1);
 

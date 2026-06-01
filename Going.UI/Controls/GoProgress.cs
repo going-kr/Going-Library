@@ -66,13 +66,17 @@ namespace Going.UI.Controls
         /// </summary>
         [GoProperty(PCategory.Control, 5)] public string FillColor { get; set; } = "Good";
         /// <summary>
+        /// 채움 그라데이션의 끝 색상 테마 이름을 가져오거나 설정합니다. null이면 단색(<see cref="FillColor"/>).
+        /// </summary>
+        [GoProperty(PCategory.Control, 5)] public string? FillColor2 { get; set; } = null;
+        /// <summary>
         /// 빈 영역의 색상 테마 이름을 가져오거나 설정합니다.
         /// </summary>
         [GoProperty(PCategory.Control, 6)] public string EmptyColor { get; set; } = "Base1";
         /// <summary>
         /// 테두리 색상의 테마 색상 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 7)] public string BorderColor { get; set; } = "Transparent";
+        [GoProperty(PCategory.Control, 7)] public string BorderColor { get; set; } = "Base1";
         /// <summary>테두리 두께</summary>
         [GoProperty(PCategory.Control, 17)] public float BorderWidth { get; set; } = 1.5F;
 
@@ -112,14 +116,6 @@ namespace Going.UI.Controls
         /// 값 표시 형식 문자열을 가져오거나 설정합니다.
         /// </summary>
         [GoProperty(PCategory.Control, 12)] public string Format { get; set; } = "0";
-        /// <summary>
-        /// 바 내부 여백을 가져오거나 설정합니다.
-        /// </summary>
-        [GoProperty(PCategory.Control, 13)] public int Gap { get; set; } = 5;
-        /// <summary>
-        /// 모서리 반경을 가져오거나 설정합니다.
-        /// </summary>
-        [GoProperty(PCategory.Control, 14)] public int CornerRadius { get; set; } = 5;
         /// <summary>
         /// 바의 크기(두께)를 가져오거나 설정합니다. null이면 컨트롤 크기에 맞춥니다.
         /// </summary>
@@ -162,14 +158,44 @@ namespace Going.UI.Controls
 
             using var p = new SKPaint { IsAntialias = true };
 
+            // 무조건 둥글게(pill): 반지름 = 두께/2
+            float rBar = Math.Min(rtBar.Width, rtBar.Height) / 2F;
+
             // 배경
             p.Color = cEmpty;
-            canvas.DrawRoundRect(rtBar, CornerRadius, CornerRadius, p);
+            canvas.DrawRoundRect(rtBar, rBar, rBar, p);
 
             if (rtFill.Width > 0 && rtFill.Height > 0)
             {
-                p.Color = cFill;
-                canvas.DrawRoundRect(rtFill, CornerRadius, CornerRadius, p);
+                // 트랙 pill 모양으로 클립 → 채움은 사각형으로. 좌측 끝은 트랙 둥근 모서리를 따르고, 값 끝만 직선.
+                using (new SKAutoCanvasRestore(canvas))
+                {
+                    using var clip = new SKRoundRect(rtBar, rBar);
+                    canvas.ClipRoundRect(clip, SKClipOperation.Intersect, true);
+
+                    if (!string.IsNullOrEmpty(FillColor2))
+                    {
+                        // FillColor → FillColor2 linear 그라데이션 (진행 방향 따라, Value 기준)
+                        float mx = rtFill.MidX, my = rtFill.MidY;
+                        SKPoint g0, g1;
+                        switch (Direction)
+                        {
+                            case ProgressDirection.RightToLeft: g0 = new SKPoint(rtFill.Right, my); g1 = new SKPoint(rtFill.Left, my); break;
+                            case ProgressDirection.BottomToTop: g0 = new SKPoint(mx, rtFill.Bottom); g1 = new SKPoint(mx, rtFill.Top); break;
+                            case ProgressDirection.TopToBottom: g0 = new SKPoint(mx, rtFill.Top); g1 = new SKPoint(mx, rtFill.Bottom); break;
+                            default: g0 = new SKPoint(rtFill.Left, my); g1 = new SKPoint(rtFill.Right, my); break; // LeftToRight
+                        }
+                        using var sh = SKShader.CreateLinearGradient(g0, g1, new[] { cFill, thm.ToColor(FillColor2) }, new[] { 0F, 1F }, SKShaderTileMode.Clamp);
+                        p.Shader = sh;
+                        canvas.DrawRoundRect(rtFill, rBar, rBar, p);
+                        p.Shader = null;
+                    }
+                    else
+                    {
+                        p.Color = cFill;
+                        canvas.DrawRoundRect(rtFill, rBar, rBar, p);
+                    }
+                }
             }
 
             // 테두리
@@ -178,7 +204,7 @@ namespace Going.UI.Controls
                 p.Color = cBorder;
                 p.IsStroke = true;
                 p.StrokeWidth = BorderWidth;
-                canvas.DrawRoundRect(rtBar, CornerRadius, CornerRadius, p);
+                canvas.DrawRoundRect(rtBar, rBar, rBar, p);
                 p.IsStroke = false;
             }
 
@@ -212,10 +238,20 @@ namespace Going.UI.Controls
             }
 
             SKRect rtBar = MathTool.MakeRectangle(rt, new SKSize(barWidth, barHeight));
+            // BarSize가 없고 '보더가 실제로 그려질 때만' 테두리가 경계 밖으로 잘리지 않게 BorderWidth만큼 안으로 줄인다.
+            // (BorderWidth 0 또는 Transparent면 보더를 안 그리므로 줄이지도 않음)
+            bool hasBorder = BorderWidth > 0 && !string.Equals(BorderColor, "Transparent", StringComparison.OrdinalIgnoreCase);
+            if (!BarSize.HasValue && hasBorder)
+            {
+                rtBar.Inflate(-BorderWidth, -BorderWidth);
+                barWidth = rtBar.Width;
+                barHeight = rtBar.Height;
+            }
             rts["Gauge"] = rtBar;
 
-            float usableWidth = barWidth - Gap * 2;
-            float usableHeight = barHeight - Gap * 2;
+            // Fill은 트랙에 꽉 차게(flush)
+            float usableWidth = barWidth;
+            float usableHeight = barHeight;
             float fillSize = 0;
 
             if (Maximum > Minimum)
@@ -237,7 +273,7 @@ namespace Going.UI.Controls
             switch (Direction)
             {
                 case ProgressDirection.LeftToRight:
-                    rtFill = new SKRect(x + Gap, y + Gap, x + Gap + fillSize, y + barHeight - Gap);
+                    rtFill = new SKRect(x, y, x + fillSize, y + barHeight);
                     // 텍스트 영역이 rtFill보다 크지 않도록 조정
                     rtValueText = new SKRect(
                         Math.Max(rtFill.Right - 40, rtFill.Left),
@@ -248,7 +284,7 @@ namespace Going.UI.Controls
                     break;
 
                 case ProgressDirection.RightToLeft:
-                    rtFill = new SKRect(x + barWidth - Gap - fillSize, y + Gap, x + barWidth - Gap, y + barHeight - Gap);
+                    rtFill = new SKRect(x + barWidth - fillSize, y, x + barWidth, y + barHeight);
                     rtValueText = new SKRect(
                         rtFill.Left,
                         y + (barHeight / 2) - (ValueFontSize / 2),
@@ -258,17 +294,17 @@ namespace Going.UI.Controls
                     break;
 
                 case ProgressDirection.BottomToTop:
-                    rtFill = new SKRect(x + Gap, y + barHeight - Gap - fillSize, x + barWidth - Gap, y + barHeight - Gap);
+                    rtFill = new SKRect(x, y + barHeight - fillSize, x + barWidth, y + barHeight);
                     rtValueText = new SKRect(
                         x + (barWidth / 2) - 20,
-                        Math.Max(rtFill.Top, y + Gap),
+                        Math.Max(rtFill.Top, y),
                         x + (barWidth / 2) + 20,
                         Math.Min(rtFill.Top + 30, rtFill.Bottom)
                     );
                     break;
 
                 case ProgressDirection.TopToBottom:
-                    rtFill = new SKRect(x + Gap, y + Gap, x + barWidth - Gap, y + Gap + fillSize);
+                    rtFill = new SKRect(x, y, x + barWidth, y + fillSize);
                     rtValueText = new SKRect(
                         x + (barWidth / 2) - 20,
                         Math.Max(rtFill.Bottom - 30, rtFill.Top),

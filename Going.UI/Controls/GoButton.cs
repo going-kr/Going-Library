@@ -41,6 +41,8 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 8)] public string TextColor { get; set; } = "Fore";
         /// <summary>버튼 배경 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 9)] public string ButtonColor { get; set; } = "Base3";
+        /// <summary>버튼 배경 그라데이션 끝 색상. null/빈 값이면 단색(<see cref="ButtonColor"/>)</summary>
+        [GoProperty(PCategory.Control, 9)] public string? ButtonColor2 { get; set; } = null;
         /// <summary>테두리 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 10)] public string BorderColor { get; set; } = "Base3";
         /// <summary>모서리 둥글기 유형</summary>
@@ -51,8 +53,6 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 13)] public bool BackgroundDraw { get; set; } = true;
         /// <summary>테두리만 그리기 여부</summary>
         [GoProperty(PCategory.Control, 14)] public bool BorderOnly { get; set; } = false;
-        /// <summary>버튼 채우기 스타일</summary>
-        [GoProperty(PCategory.Control, 15)] public GoButtonFillStyle FillStyle { get; set; } = GoButtonFillStyle.Flat;
         /// <summary>콘텐츠 정렬 방식</summary>
         [GoProperty(PCategory.Control, 16)] public GoContentAlignment ContentAlignment { get; set; } = GoContentAlignment.MiddleCenter;
 
@@ -94,10 +94,20 @@ namespace Going.UI.Controls
 
             if (BackgroundDraw)
             {
+                var fill = cBtn.BrightnessTransmit(bHover ? thm.HoverFillBrightness : 0);
+                var bor = cBor.BrightnessTransmit(bHover ? thm.HoverBorderBrightness : 0);
+
                 if (BorderOnly)
-                    Util.DrawBox(canvas, rtBox, SKColors.Transparent, cBor.BrightnessTransmit(bHover ? thm.HoverBorderBrightness : 0), Round, thm.Corner, true, BorderWidth);
+                {
+                    Util.DrawBox(canvas, rtBox, SKColors.Transparent, bor, Round, thm.Corner, true, BorderWidth);
+                }
                 else
-                    Util.DrawButton(canvas, thm, rtBox, cBtn.BrightnessTransmit(bHover ? thm.HoverFillBrightness : 0), cBor.BrightnessTransmit(bHover ? thm.HoverBorderBrightness : 0), Round, thm.Corner, true, BorderWidth, FillStyle, bDown);
+                {
+                    // ButtonColor2 있으면 ButtonColor→ButtonColor2 2색 그라데이션, 없으면 단색
+                    SKColor? c2 = string.IsNullOrEmpty(ButtonColor2) ? null
+                        : thm.ToColor(ButtonColor2).BrightnessTransmit(bDown ? thm.DownBrightness : 0).BrightnessTransmit(bHover ? thm.HoverFillBrightness : 0);
+                    Util.DrawButton(canvas, thm, rtBox, fill, bor, Round, thm.Corner, true, BorderWidth, GoButtonFillStyle.Flat, bDown, c2);
+                }
             }
 
             if (bDown) rtBox.Offset(0, 1);

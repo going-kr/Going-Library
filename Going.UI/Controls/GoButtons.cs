@@ -50,8 +50,8 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 10)] public GoRoundType Round { get; set; } = GoRoundType.All;
         /// <summary>테두리 두께</summary>
         [GoProperty(PCategory.Control, 11)] public float BorderWidth { get; set; } = 1.5F;
-        /// <summary>버튼 채우기 스타일</summary>
-        [GoProperty(PCategory.Control, 12)] public GoButtonFillStyle FillStyle { get; set; } = GoButtonFillStyle.Flat;
+        /// <summary>버튼 배경 그라데이션 끝 색상. null/빈 값이면 단색(ButtonColor)</summary>
+        [GoProperty(PCategory.Control, 12)] public string? ButtonColor2 { get; set; } = null;
 
         /// <summary>버튼 항목 목록</summary>
         [GoChildWrappers]
@@ -114,11 +114,13 @@ namespace Going.UI.Controls
                     var rnd = rnds[i];
                     var cBtn = (btn.Selected ? cSelButton : cButton).BrightnessTransmit(btn.Down ? thm.DownBrightness : 0);
                     var cTxt = cText.BrightnessTransmit(btn.Down ? thm.DownBrightness : 0);
-                    Util.DrawBox(canvas, rt, cBtn.BrightnessTransmit(btn.Hover ? thm.HoverFillBrightness : 0), rnd, thm.Corner);
+                    var cFill = cBtn.BrightnessTransmit(btn.Hover ? thm.HoverFillBrightness : 0);
+                    var c2 = string.IsNullOrEmpty(ButtonColor2) ? (SKColor?)null : thm.ToColor(ButtonColor2).BrightnessTransmit(btn.Down ? thm.DownBrightness : 0).BrightnessTransmit(btn.Hover ? thm.HoverFillBrightness : 0);
+                    Util.DrawButton(canvas, thm, rt, cFill, SKColors.Transparent, rnd, thm.Corner, true, BorderWidth, GoButtonFillStyle.Flat, btn.Down, c2);
 
                     if (i > 0 && !btn.Hover && i - 1 >= 0 && !Buttons[i - 1].Hover)
                     {
-                        using var p = new SKPaint { IsAntialias = true, IsStroke = true, StrokeWidth = 1, Color = cBtn.BrightnessTransmit(thm.BorderBrightness) };
+                        using var p = new SKPaint { IsAntialias = true, IsStroke = true, StrokeWidth = 1, Color = cBorder };
                         using var pe = SKPathEffect.CreateDash([2, 2], 2);
                         p.PathEffect = pe;
                         if (Direction == GoDirectionHV.Vertical)
@@ -148,7 +150,8 @@ namespace Going.UI.Controls
                         var cTxt = cText.BrightnessTransmit(btn.Down ? thm.DownBrightness : 0);
                         rt.Inflate(1, 1);
                         Util.DrawButton(canvas, thm, rt, cBtn.BrightnessTransmit(btn.Hover ? thm.HoverFillBrightness : 0),
-                                                         cBor.BrightnessTransmit(btn.Hover ? thm.HoverBorderBrightness : 0), rnd, thm.Corner, true, BorderWidth, FillStyle, btn.Down);
+                                                         cBor.BrightnessTransmit(btn.Hover ? thm.HoverBorderBrightness : 0), rnd, thm.Corner, true, BorderWidth, GoButtonFillStyle.Flat, btn.Down,
+                                                         string.IsNullOrEmpty(ButtonColor2) ? (SKColor?)null : thm.ToColor(ButtonColor2).BrightnessTransmit(btn.Down ? thm.DownBrightness : 0).BrightnessTransmit(btn.Hover ? thm.HoverFillBrightness : 0));
 
                         if (btn.Down) rt.Offset(0, 1);
                         Util.DrawTextIcon(canvas, btn.Text, FontName, FontStyle, FontSize, btn.IconString, IconSize, GoDirectionHV.Horizon, IconGap, rt, cTxt, GoContentAlignment.MiddleCenter);
@@ -161,6 +164,10 @@ namespace Going.UI.Controls
                 Util.DrawBox(canvas, rtContent, cButton, Round, thm.Corner);
             }
             #endregion
+
+            // 전체 외곽 테두리 (Transparent거나 두께 0이면 미표시)
+            if (cBorder != SKColors.Transparent && BorderWidth > 0)
+                Util.DrawBox(canvas, rtContent, SKColors.Transparent, cBorder, Round, thm.Corner, true, BorderWidth);
 
             base.OnDraw(canvas, thm);
         }

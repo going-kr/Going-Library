@@ -28,7 +28,7 @@ namespace Going.UI.Forms.Controls
 
         public string Bordercolor { get => Control.BorderColor; set { if (Control.BorderColor != value) { Control.BorderColor = value; Invalidate(); } } }
         public float BorderWidth { get => Control.BorderWidth; set { if (Control.BorderWidth != value) { Control.BorderWidth = value; Invalidate(); } } }
-        public GoButtonFillStyle FillStyle { get => Control.FillStyle; set { if (Control.FillStyle != value) { Control.FillStyle = value; Invalidate(); } } }
+        public string? ButtonColor2 { get => Control.ButtonColor2; set { if (Control.ButtonColor2 != value) { Control.ButtonColor2 = value; Invalidate(); } } }
         #endregion
 
         #region Event

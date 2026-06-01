@@ -72,7 +72,6 @@
             btnOK.ButtonColor = "Base3";
             btnOK.ContentAlignment = UI.Enums.GoContentAlignment.MiddleCenter;
             btnOK.Dock = DockStyle.Fill;
-            btnOK.FillStyle = UI.Datas.GoButtonFillStyle.Flat;
             btnOK.FontName = "나눔고딕";
             btnOK.FontSize = 12F;
             btnOK.FontStyle = UI.Enums.GoFontStyle.Normal;
@@ -101,7 +100,6 @@
             btnCancel.ButtonColor = "Base3";
             btnCancel.ContentAlignment = UI.Enums.GoContentAlignment.MiddleCenter;
             btnCancel.Dock = DockStyle.Fill;
-            btnCancel.FillStyle = UI.Datas.GoButtonFillStyle.Flat;
             btnCancel.FontName = "나눔고딕";
             btnCancel.FontSize = 12F;
             btnCancel.FontStyle = UI.Enums.GoFontStyle.Normal;
@@ -189,7 +187,6 @@
             btnAdd.ButtonColor = "Base3";
             btnAdd.ContentAlignment = UI.Enums.GoContentAlignment.MiddleCenter;
             btnAdd.Dock = DockStyle.Right;
-            btnAdd.FillStyle = UI.Datas.GoButtonFillStyle.Flat;
             btnAdd.FontName = "나눔고딕";
             btnAdd.FontSize = 12F;
             btnAdd.FontStyle = UI.Enums.GoFontStyle.Normal;
@@ -216,7 +213,6 @@
             btnInsert.ButtonColor = "Base3";
             btnInsert.ContentAlignment = UI.Enums.GoContentAlignment.MiddleCenter;
             btnInsert.Dock = DockStyle.Right;
-            btnInsert.FillStyle = UI.Datas.GoButtonFillStyle.Flat;
             btnInsert.FontName = "나눔고딕";
             btnInsert.FontSize = 12F;
             btnInsert.FontStyle = UI.Enums.GoFontStyle.Normal;
@@ -243,7 +239,6 @@
             btnDel.ButtonColor = "Base3";
             btnDel.ContentAlignment = UI.Enums.GoContentAlignment.MiddleCenter;
             btnDel.Dock = DockStyle.Right;
-            btnDel.FillStyle = UI.Datas.GoButtonFillStyle.Flat;
             btnDel.FontName = "나눔고딕";
             btnDel.FontSize = 12F;
             btnDel.FontStyle = UI.Enums.GoFontStyle.Normal;

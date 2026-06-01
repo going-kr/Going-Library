@@ -14,6 +14,7 @@ namespace Going.UI.Forms.Containers
     {
         #region Properties
         public string BoxColor { get => control.BoxColor; set { if (control.BoxColor != value) { control.BoxColor = value; Invalidate(); } } }
+        public string? BoxColor2 { get => control.BoxColor2; set { if (control.BoxColor2 != value) { control.BoxColor2 = value; Invalidate(); } } }
         public string BorderColor { get => control.BorderColor; set { if (control.BorderColor != value) { control.BorderColor = value; Invalidate(); } } }
         public GoRoundType Round { get => control.Round; set { if (control.Round != value) { control.Round = value; Invalidate(); } } }
 
