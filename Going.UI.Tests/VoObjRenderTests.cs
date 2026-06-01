@@ -113,39 +113,38 @@ public class VoObjRenderTests
         Assert.NotEqual(new SKColor(0x14, 0x16, 0x1E), bmp.GetPixel(180, 100));
     }
 
-    /// <summary>대시보드 카드 한 장 — 라운드/그라데이션/그림자/그리드/텍스트/프로그레스.</summary>
+    /// <summary>대시보드 카드 한 장 — 라운드/그라데이션/그림자/패딩/그리드/텍스트/프로그레스.</summary>
     private static VoControl SampleCard() => new()
     {
         Children =
         {
-            // 카드
+            // 카드 (margin으로 바깥 여백, padding으로 안쪽 여백)
             new VoBox
             {
                 Background = "#2E3242", FillType = VoFillType.Linear, FillColor2 = "#21242F", GradientAngle = 90,
                 BorderRadius = 16, ShadowColor = "#000000", ShadowY = 6, ShadowBlur = 14,
+                Margin = new(10), Padding = new(20),
                 Children =
                 {
-                    // 16px 거터로 padding 효과
                     new VoGrid
                     {
-                        Columns = ["20px", "*", "20px"],
-                        Rows = ["18px", "18px", "6px", "40px", "10px", "18px", "*"],
+                        Rows = ["18px", "6px", "40px", "10px", "18px", "*"],
                         Children =
                         {
-                            new VoText { Text = "SYSTEM LOAD", TextColor = "#8E94AB", FontSize = 13, Alignment = GoContentAlignment.MiddleLeft, Col = 1, Row = 1 },
-                            new VoText { Text = "72%", TextColor = "#FFFFFF", FontSize = 34, FontStyle = GoFontStyle.Bold, Alignment = GoContentAlignment.MiddleLeft, Col = 1, Row = 3 },
-                            // 프로그레스 트랙
+                            new VoText { Text = "SYSTEM LOAD", TextColor = "#8E94AB", FontSize = 13, Alignment = GoContentAlignment.MiddleLeft, Row = 0 },
+                            new VoText { Text = "72%", TextColor = "#FFFFFF", FontSize = 34, FontStyle = GoFontStyle.Bold, Alignment = GoContentAlignment.MiddleLeft, Row = 2 },
+                            // 프로그레스 트랙 + 채움
                             new VoBox
                             {
-                                Background = "#3A3F52", BorderRadius = 8, Col = 1, Row = 5,
+                                Background = "#3A3F52", BorderRadius = 8, Row = 4,
                                 Children =
                                 {
                                     new VoGrid
                                     {
-                                        Columns = ["72%", "28%"], Rows = ["*"],
+                                        Columns = ["72%", "28%"],
                                         Children =
                                         {
-                                            new VoBox { Background = "#5B8DEF", FillType = VoFillType.Linear, FillColor2 = "#9B6BEF", GradientAngle = 0, BorderRadius = 8, Col = 0, Row = 0 },
+                                            new VoBox { Background = "#5B8DEF", FillType = VoFillType.Linear, FillColor2 = "#9B6BEF", GradientAngle = 0, BorderRadius = 8, Col = 0 },
                                         }
                                     }
                                 }

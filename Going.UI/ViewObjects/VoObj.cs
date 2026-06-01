@@ -1,3 +1,4 @@
+using Going.UI.Datas;
 using Going.UI.Gudx;
 using Going.UI.Themes;
 using SkiaSharp;
@@ -19,6 +20,12 @@ namespace Going.UI.ViewObjects
 
         /// <summary>표시 여부.</summary>
         [VoProperty("Layout", 1)] public bool Visible { get; set; } = true;
+
+        /// <summary>바깥 여백. 할당된 경계에서 이만큼 안쪽으로 들어가 자신을 그립니다.</summary>
+        [VoProperty("Layout", 2)] public GoPadding Margin { get; set; } = new(0);
+
+        /// <summary>안쪽 여백. 자식 배치 영역을 이만큼 줄입니다.</summary>
+        [VoProperty("Layout", 3)] public GoPadding Padding { get; set; } = new(0);
 
         /// <summary>VoGrid 안에서의 열 위치.</summary>
         [VoProperty("Cell", 0)] public int Col { get; set; } = 0;
@@ -45,15 +52,21 @@ namespace Going.UI.ViewObjects
         {
             if (!Visible) return;
 
-            Bounds = bounds;
-            OnDraw(canvas, bounds, thm);
+            var box = Deflate(bounds, Margin);
+            Bounds = box;
+            OnDraw(canvas, box, thm);
 
-            var rects = ArrangeChildren(bounds);
+            var inner = Deflate(box, Padding);
+            var rects = ArrangeChildren(inner);
             for (int i = 0; i < Children.Count; i++)
             {
                 if (i < rects.Length) Children[i].Draw(canvas, rects[i], thm);
             }
         }
+
+        /// <summary>사각형을 패딩만큼 안쪽으로 줄입니다.</summary>
+        protected static SKRect Deflate(SKRect rt, GoPadding p)
+            => new(rt.Left + p.Left, rt.Top + p.Top, rt.Right - p.Right, rt.Bottom - p.Bottom);
 
         /// <summary>이 노드 자신의 그림을 그립니다. (자식 제외)</summary>
         protected abstract void OnDraw(SKCanvas canvas, SKRect bounds, GoTheme thm);
