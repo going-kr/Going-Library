@@ -113,6 +113,79 @@ public class VoObjRenderTests
         Assert.NotEqual(new SKColor(0x14, 0x16, 0x1E), bmp.GetPixel(180, 100));
     }
 
+    /// <summary>
+    /// "AI 저작" 시나리오: 손으로 작성한 raw .gudx XML이 역직렬화되어 화면이 나오는지.
+    /// = 제품 핵심 가설(AI가 vset을 데이터로 직접 작성) 검증.
+    /// </summary>
+    [Fact]
+    public void AiAuthored_RawXml_DeserializesAndRenders()
+    {
+        const string xml = """
+        <VoControl Bounds="0,0,640,360">
+          <Children>
+            <VoBox Background="#171A24" Padding="18,18,18,18">
+              <Children>
+                <VoGrid Rows="34px,14px,*">
+                  <Children>
+                    <VoText Text="System Dashboard" TextColor="#FFFFFF" FontSize="22" FontStyle="Bold" Alignment="MiddleLeft" Row="0" />
+                    <VoGrid Row="2" Columns="*,16px,*">
+                      <Children>
+                        <VoBox Col="0" Background="#2E3242" FillType="Linear" FillColor2="#21242F" GradientAngle="90" BorderRadius="14" ShadowColor="#000000" ShadowY="6" ShadowBlur="14" Padding="18,18,18,18">
+                          <Children>
+                            <VoGrid Rows="18px,6px,38px,12px,14px,*">
+                              <Children>
+                                <VoText Text="CPU" TextColor="#8E94AB" FontSize="13" Alignment="MiddleLeft" Row="0" />
+                                <VoText Text="48%" TextColor="#FFFFFF" FontSize="32" FontStyle="Bold" Alignment="MiddleLeft" Row="2" />
+                                <VoBox Row="4" Background="#3A3F52" BorderRadius="7">
+                                  <Children>
+                                    <VoGrid Columns="48%,52%">
+                                      <Children>
+                                        <VoBox Col="0" Background="#34C3FF" FillType="Linear" FillColor2="#39D98A" GradientAngle="0" BorderRadius="7" />
+                                      </Children>
+                                    </VoGrid>
+                                  </Children>
+                                </VoBox>
+                              </Children>
+                            </VoGrid>
+                          </Children>
+                        </VoBox>
+                        <VoBox Col="2" Background="#2E3242" FillType="Linear" FillColor2="#21242F" GradientAngle="90" BorderRadius="14" ShadowColor="#000000" ShadowY="6" ShadowBlur="14" Padding="18,18,18,18">
+                          <Children>
+                            <VoGrid Rows="18px,6px,38px,12px,14px,*">
+                              <Children>
+                                <VoText Text="MEMORY" TextColor="#8E94AB" FontSize="13" Alignment="MiddleLeft" Row="0" />
+                                <VoText Text="81%" TextColor="#FFFFFF" FontSize="32" FontStyle="Bold" Alignment="MiddleLeft" Row="2" />
+                                <VoBox Row="4" Background="#3A3F52" BorderRadius="7">
+                                  <Children>
+                                    <VoGrid Columns="81%,19%">
+                                      <Children>
+                                        <VoBox Col="0" Background="#5B8DEF" FillType="Linear" FillColor2="#9B6BEF" GradientAngle="0" BorderRadius="7" />
+                                      </Children>
+                                    </VoGrid>
+                                  </Children>
+                                </VoBox>
+                              </Children>
+                            </VoGrid>
+                          </Children>
+                        </VoBox>
+                      </Children>
+                    </VoGrid>
+                  </Children>
+                </VoGrid>
+              </Children>
+            </VoBox>
+          </Children>
+        </VoControl>
+        """;
+
+        var vc = Assert.IsType<VoControl>(GoGudxConverter.DeserializeControl(xml));
+        using var bmp = Render(vc, 640, 360);
+        Save(bmp, "voobj-dashboard.png");
+
+        Assert.NotEqual(new SKColor(0x14, 0x16, 0x1E), bmp.GetPixel(160, 200)); // 카드 A 영역
+        Assert.NotEqual(new SKColor(0x14, 0x16, 0x1E), bmp.GetPixel(480, 200)); // 카드 B 영역
+    }
+
     /// <summary>대시보드 카드 한 장 — 라운드/그라데이션/그림자/패딩/그리드/텍스트/프로그레스.</summary>
     private static VoControl SampleCard() => new()
     {
