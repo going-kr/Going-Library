@@ -186,6 +186,54 @@ public class VoObjRenderTests
         Assert.NotEqual(new SKColor(0x14, 0x16, 0x1E), bmp.GetPixel(480, 200)); // 카드 B 영역
     }
 
+    /// <summary>
+    /// 값 노드: Node&lt;T&gt;로 참조를 1회 얻어 값만 바꿔도 렌더가 달라지는지.
+    /// (setter는 필드 대입, 해석은 draw에서 — OnUpdate 반복 호출 무부담 설계 검증)
+    /// </summary>
+    [Fact]
+    public void ValueNodes_DriveRendering_Cheaply()
+    {
+        var vc = new VoControl
+        {
+            Children =
+            {
+                new VoBox
+                {
+                    Background = "#161B22", Padding = new(16),
+                    Children =
+                    {
+                        new VoGrid
+                        {
+                            Rows = ["*", "16px", "26px"],
+                            Children =
+                            {
+                                new VoArc { Name = "gauge", Row = 0, StartAngle = 135, SweepAngle = 270, Thickness = 18, Color = "#34C3FF", Color2 = "#9B6BEF", Max = 100 },
+                                new VoProgress { Name = "bar", Row = 2, FillColor = "#39D98A", FillColor2 = "#34C3FF", TrackColor = "#2A323F", Max = 100 },
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        // 참조는 1회만 해석해서 캐시 (이후엔 값 대입만)
+        var gauge = vc.Node<VoArc>("gauge");
+        var bar = vc.Node<VoProgress>("bar");
+        Assert.NotNull(gauge);
+        Assert.NotNull(bar);
+
+        gauge!.Value = 30; bar!.Value = 30;
+        using var lo = Render(vc, 240, 260);
+        Save(lo, "voobj-gauge-30.png");
+
+        gauge.Value = 78; bar.Value = 78;   // 필드 대입만
+        using var hi = Render(vc, 240, 260);
+        Save(hi, "voobj-gauge-78.png");
+
+        // 값이 커지면 게이지 호가 더 그려져서 우상단 영역 픽셀이 달라져야 함
+        Assert.NotEqual(lo.GetPixel(195, 70), hi.GetPixel(195, 70));
+    }
+
     /// <summary>대시보드 카드 한 장 — 라운드/그라데이션/그림자/패딩/그리드/텍스트/프로그레스.</summary>
     private static VoControl SampleCard() => new()
     {

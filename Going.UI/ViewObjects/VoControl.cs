@@ -17,6 +17,36 @@ namespace Going.UI.ViewObjects
         /// <summary>이 컨트롤을 구성하는 VoObj 트리들. 보통 루트 컨테이너 하나입니다.</summary>
         [GoChildWrappers] public List<VoObj> Children { get; set; } = [];
 
+        // Name → VoObj 인덱스. 최초 Node 호출 시 1회만 빌드하여 캐시한다.
+        private Dictionary<string, VoObj>? _index;
+
+        /// <summary>
+        /// 트리에서 <paramref name="name"/> 노드를 찾아 <typeparamref name="T"/>로 반환합니다.
+        /// 이름 인덱스는 1회만 빌드/캐시되므로, 결과 참조를 보관해두면 OnUpdate에서 반복 호출 없이
+        /// 값만 바꿔도 됩니다 (권장: <c>_gauge = vo.Node&lt;VoArc&gt;("Gauge")</c> 후 <c>_gauge.Value = x</c>).
+        /// </summary>
+        /// <returns>해당 노드. 없거나 타입이 다르면 null.</returns>
+        public T? Node<T>(string name) where T : VoObj
+        {
+            _index ??= BuildIndex();
+            return _index.TryGetValue(name, out var vo) ? vo as T : null;
+        }
+
+        /// <summary>트리 구조를 바꾼 뒤 이름 인덱스를 무효화합니다.</summary>
+        public void InvalidateIndex() => _index = null;
+
+        private Dictionary<string, VoObj> BuildIndex()
+        {
+            var map = new Dictionary<string, VoObj>();
+            void Walk(VoObj vo)
+            {
+                if (!string.IsNullOrEmpty(vo.Name)) map[vo.Name!] = vo;
+                foreach (var c in vo.Children) Walk(c);
+            }
+            foreach (var vo in Children) Walk(vo);
+            return map;
+        }
+
         /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
