@@ -32,6 +32,8 @@ namespace Going.UI.Forms.Controls
 
         public string Format { get => Control.Format; set { Control.Format = value; Invalidate(); } }
         public int? BarSize { get => Control.BarSize; set { Control.BarSize = value; Invalidate(); } }
+        public float? Corner { get => Control.Corner; set { Control.Corner = value; Invalidate(); } }
+        public bool DrawEmpty { get => Control.DrawEmpty; set { Control.DrawEmpty = value; Invalidate(); } }
         #endregion
 
         #region Event

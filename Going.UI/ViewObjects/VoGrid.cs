@@ -1,53 +1,57 @@
+using Going.UI.Containers;
+using Going.UI.Controls;
+using Going.UI.Datas;
+using Going.UI.Gudx;
 using Going.UI.Themes;
 using Going.UI.Utils;
 using SkiaSharp;
-using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Going.UI.ViewObjects
 {
     /// <summary>
-    /// 자식들을 CSS 그리드처럼 셀에 배치하는 레이아웃 컨테이너입니다.
-    /// <para><see cref="Util.Grid"/>를 재활용합니다. 열/행 크기는 <c>"100px"</c>, <c>"50%"</c>, <c>"*"</c> 토큰을 씁니다.
-    /// 각 자식은 <see cref="VoObj.Col"/>/<see cref="VoObj.Row"/>(+Span)로 셀을 지정합니다.</para>
+    /// 자식들을 CSS 그리드처럼 셀에 배치하는 레이아웃 컨테이너입니다 (Vo 패밀리).
+    /// <para>열/행 크기는 <c>"100px"</c>, <c>"50%"</c>, <c>"*"</c> 토큰을 씁니다. 각 자식의 셀 위치/병합은
+    /// <see cref="Childrens"/> 컬렉션의 Cell 인덱스(col,row,colSpan,rowSpan)로 지정합니다
+    /// (<see cref="GoTableLayoutPanel"/>과 동일한 셀 모델 — 에디터가 셀 배치를 지원).</para>
     /// </summary>
-    public class VoGrid : VoObj
+    public class VoGrid : GoContainer
     {
-        /// <summary>열 크기 정의 (예: ["50%", "50%"], ["100px", "*"]).</summary>
-        [VoProperty("Grid", 0)] public List<string> Columns { get; set; } = ["*"];
+        /// <summary>열 크기 정의 (예: ["50%","50%"], ["100px","*"]).</summary>
+        [GoSizesProperty(PCategory.Control, 0)] public List<string> Columns { get; set; } = ["*"];
         /// <summary>행 크기 정의.</summary>
-        [VoProperty("Grid", 1)] public List<string> Rows { get; set; } = ["*"];
+        [GoSizesProperty(PCategory.Control, 1)] public List<string> Rows { get; set; } = ["*"];
+
+        /// <summary>셀에 배치된 자식 컨트롤 컬렉션.</summary>
+        [GoChildCells]
+        [JsonInclude] public override GoTableLayoutControlCollection Childrens { get; } = [];
+
+        /// <summary>JSON 역직렬화용 생성자.</summary>
+        [JsonConstructor] public VoGrid(GoTableLayoutControlCollection childrens) => Childrens = childrens ?? [];
+        /// <summary><see cref="VoGrid"/>의 새 인스턴스를 초기화합니다.</summary>
+        public VoGrid() { }
 
         /// <inheritdoc/>
-        protected override void OnDraw(SKCanvas canvas, SKRect bounds, GoTheme thm) { /* 배치 전용 */ }
-
-        /// <inheritdoc/>
-        protected override SKRect[] ArrangeChildren(SKRect bounds)
+        protected override void OnLayout()
         {
-            int n = Children.Count;
-            var rects = new SKRect[n];
-            if (n == 0) return rects;
-
+            var rt = Areas()["Content"];
             var cols = Columns is { Count: > 0 } ? Columns.ToArray() : ["*"];
             var rows = Rows is { Count: > 0 } ? Rows.ToArray() : ["*"];
-            var grid = Util.Grid(bounds, cols, rows);
-
-            int rowCount = rows.Length, colCount = cols.Length;
-            for (int i = 0; i < n; i++)
+            var rts = Util.Grid(rt, cols, rows);
+            foreach (var c in Childrens)
             {
-                var ch = Children[i];
-                int c0 = Math.Clamp(ch.Col, 0, colCount - 1);
-                int r0 = Math.Clamp(ch.Row, 0, rowCount - 1);
-                int c1 = Math.Clamp(c0 + Math.Max(1, ch.ColSpan) - 1, 0, colCount - 1);
-                int r1 = Math.Clamp(r0 + Math.Max(1, ch.RowSpan) - 1, 0, rowCount - 1);
-
-                var a = grid[r0, c0];
-                var b = grid[r1, c1];
-                rects[i] = new SKRect(
-                    Math.Min(a.Left, b.Left), Math.Min(a.Top, b.Top),
-                    Math.Max(a.Right, b.Right), Math.Max(a.Bottom, b.Bottom));
+                try
+                {
+                    var idx = Childrens.Indexes[c.Id];
+                    if (idx != null)
+                    {
+                        var vrt = Util.Merge(rts, idx.Column, idx.Row, idx.ColSpan, idx.RowSpan);
+                        c.Bounds = Util.FromRect(vrt, c.Margin);
+                    }
+                }
+                catch { }
             }
-            return rects;
         }
     }
 }

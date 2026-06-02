@@ -58,16 +58,39 @@ namespace Going.UI.Containers
         [GoProperty(PCategory.Control, 5)] public int Elevation { get; set; } = 0;
 
         /// <summary>
+        /// 좌측 액센트 바를 그릴지 여부. <c>true</c>이면 박스의 둥근 모서리를 따라 좌측 가장자리에 세로 컬러 바를
+        /// 그리고(상태/카테고리 표시용), 자식 영역(<see cref="PanelBounds"/>)이 바 너비만큼 우측으로 인셋됩니다.
+        /// 기본값은 <c>false</c>.
+        /// </summary>
+        [GoProperty(PCategory.Control, 6)] public bool DrawAccentStrip { get; set; } = false;
+        /// <summary>
+        /// 좌측 액센트 바 색상 (테마 색상 이름). <see cref="DrawAccentStrip"/>이 true일 때 사용됩니다.
+        /// </summary>
+        [GoProperty(PCategory.Control, 7)] public string AccentColor { get; set; } = "Point";
+        /// <summary>
+        /// 좌측 액센트 바 너비.
+        /// </summary>
+        [GoProperty(PCategory.Control, 8)] public float AccentWidth { get; set; } = 4F;
+
+        /// <summary>
         /// 자식 컨트롤 영역의 내부 여백을 가져오거나 설정합니다.
         /// 자식들은 이 값만큼 안쪽으로 인셋된 영역에 배치됩니다.
         /// </summary>
         [GoProperty(PCategory.Bounds, 11)] public GoPadding Padding { get; set; } = new(8, 8, 8, 8);
 
         /// <summary>
-        /// 자식 컨트롤이 배치되는 패널 영역을 가져옵니다. Padding만큼 인셋됩니다.
+        /// 자식 컨트롤이 배치되는 패널 영역을 가져옵니다. Padding만큼 인셋되고, 액센트 바가 있으면 좌측이 바 너비만큼 추가 인셋됩니다.
         /// </summary>
         [JsonIgnore] public override SKRect PanelBounds
-            => Util.FromRect(Util.FromRect(0, 0, Width, Height), Padding);
+        {
+            get
+            {
+                var pb = Util.FromRect(Util.FromRect(0, 0, Width, Height), Padding);
+                if (DrawAccentStrip && AccentWidth > 0)
+                    pb = new SKRect(pb.Left + AccentWidth, pb.Top, pb.Right, pb.Bottom);
+                return pb;
+            }
+        }
         #endregion
 
         #region Constructor
@@ -116,6 +139,20 @@ namespace Going.UI.Containers
                 {
                     // 단색 — 기존 렌더 그대로, 테두리만 가드
                     Util.DrawBox(canvas, rtBox, cBox, hasBorder ? cBorder : SKColors.Transparent, Round, thm.Corner, true, BorderWidth);
+                }
+            }
+
+            // 좌측 액센트 바 — 박스 모양으로 클립해 둥근 모서리를 따라가게 함
+            if (DrawAccentStrip && !string.IsNullOrEmpty(AccentColor) && AccentWidth > 0)
+            {
+                using (new SKAutoCanvasRestore(canvas))
+                {
+                    if (Round == GoRoundType.Ellipse) { using var pth = new SKPath(); pth.AddOval(rtBox); canvas.ClipPath(pth, antialias: true); }
+                    else if (Round == GoRoundType.Rect) canvas.ClipRect(rtBox);
+                    else { using var rr = new SKRoundRect(rtBox, thm.Corner); canvas.ClipRoundRect(rr, SKClipOperation.Intersect, true); }
+
+                    using var pa = new SKPaint { IsAntialias = true, IsStroke = false, Color = thm.ToColor(AccentColor) };
+                    canvas.DrawRect(new SKRect(rtBox.Left, rtBox.Top, rtBox.Left + AccentWidth, rtBox.Bottom), pa);
                 }
             }
 

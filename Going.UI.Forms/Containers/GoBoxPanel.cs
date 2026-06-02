@@ -19,6 +19,9 @@ namespace Going.UI.Forms.Containers
         public GoRoundType Round { get => control.Round; set { if (control.Round != value) { control.Round = value; Invalidate(); } } }
 
         public bool BackgroundDraw { get => control.BackgroundDraw; set { if (control.BackgroundDraw != value) { control.BackgroundDraw = value; Invalidate(); } } }
+        public bool DrawAccentStrip { get => control.DrawAccentStrip; set { if (control.DrawAccentStrip != value) { control.DrawAccentStrip = value; Invalidate(); } } }
+        public string AccentColor { get => control.AccentColor; set { if (control.AccentColor != value) { control.AccentColor = value; Invalidate(); } } }
+        public float AccentWidth { get => control.AccentWidth; set { if (control.AccentWidth != value) { control.AccentWidth = value; Invalidate(); } } }
         #endregion
 
         #region Member Variable

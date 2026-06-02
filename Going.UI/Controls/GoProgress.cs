@@ -125,6 +125,18 @@ namespace Going.UI.Controls
         /// </summary>
         [GoProperty(PCategory.Control, 16)] public bool ShowValueLabel { get; set; } = false;
 
+        /// <summary>
+        /// 바 모서리 반경. <c>null</c>이면 완전 둥근(pill) 모양(두께/2), 값이 있으면 해당 반경을 사용합니다.
+        /// (반경은 두께/2를 넘지 않도록 제한됩니다.)
+        /// </summary>
+        [GoProperty(PCategory.Control, 19)] public float? Corner { get; set; } = null;
+
+        /// <summary>
+        /// 빈(트랙) 배경을 그릴지 여부. <c>false</c>면 <see cref="EmptyColor"/> 배경을 그리지 않고 채움만 표시합니다.
+        /// 기본값은 <c>true</c>.
+        /// </summary>
+        [GoProperty(PCategory.Control, 20)] public bool DrawEmpty { get; set; } = true;
+
         #endregion
 
         #region Event
@@ -158,12 +170,16 @@ namespace Going.UI.Controls
 
             using var p = new SKPaint { IsAntialias = true };
 
-            // 무조건 둥글게(pill): 반지름 = 두께/2
-            float rBar = Math.Min(rtBar.Width, rtBar.Height) / 2F;
+            // 반지름: Corner 가 null 이면 완전 둥근(pill, 두께/2), 값이 있으면 그 반경(두께/2 이내로 제한).
+            float rPill = Math.Min(rtBar.Width, rtBar.Height) / 2F;
+            float rBar = Corner.HasValue ? Math.Clamp(Corner.Value, 0F, rPill) : rPill;
 
-            // 배경
-            p.Color = cEmpty;
-            canvas.DrawRoundRect(rtBar, rBar, rBar, p);
+            // 배경(트랙) — DrawEmpty 가 false 면 생략
+            if (DrawEmpty)
+            {
+                p.Color = cEmpty;
+                canvas.DrawRoundRect(rtBar, rBar, rBar, p);
+            }
 
             if (rtFill.Width > 0 && rtFill.Height > 0)
             {

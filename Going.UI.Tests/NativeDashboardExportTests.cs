@@ -104,7 +104,7 @@ public class NativeDashboardExportTests
         t.Childrens.Add(new GoProgress
         {
             Value = value, Minimum = 0, Maximum = 100, FillColor = accent, EmptyColor = "Base3",
-            BorderWidth = 0, CornerRadius = 7, ShowValueLabel = false, Dock = GoDockStyle.Fill,
+            BorderWidth = 0, Corner = 7, ShowValueLabel = false, Dock = GoDockStyle.Fill,
         }, 0, 3);
         card.Childrens.Add(t);
         return card;
