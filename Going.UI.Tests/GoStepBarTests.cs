@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Going.UI.Controls;
 using Going.UI.Datas;
+using Going.UI.Gudx;
 using Going.UI.Json;
 using Xunit;
 
@@ -86,5 +87,33 @@ public class GoStepBarTests
         Assert.Contains("GoStepGauge", GoJsonConverter.ControlTypes.Keys);
         Assert.Contains("GoStepBar", GoJsonConverter.ControlTypes.Keys);
         Assert.DoesNotContain("GoStep", GoJsonConverter.ControlTypes.Keys);
+    }
+
+    // gudx 역직렬화 시 Step 속성이 Steps 자식보다 먼저 적용 → 비어있을 때 0으로 클램프되던 버그 회귀 방지
+    [Fact]
+    public void Step_SurvivesGudxRoundTrip()
+    {
+        var s = new GoStepBar();
+        foreach (var t in new[] { "Charge", "Mix", "React", "Cool", "Discharge" })
+            s.Steps.Add(new GoStepItem { Text = t });
+        s.Step = 3;
+
+        var xml = GoGudxConverter.SerializeControl(s);
+        Assert.Contains("Step=\"3\"", xml);
+
+        var back = Assert.IsType<GoStepBar>(GoGudxConverter.DeserializeControl(xml));
+        Assert.Equal(5, back.Steps.Count);
+        Assert.Equal(3, back.Step);   // 클램프 버그면 0
+    }
+
+    [Fact]
+    public void DotFillColor_GudxRoundTrips()
+    {
+        var s = new GoStepBar { DotFillColor = "#10151C" };
+        s.Steps.Add(new GoStepItem { Text = "A" });
+        var xml = GoGudxConverter.SerializeControl(s);
+        Assert.Contains("DotFillColor=\"#10151C\"", xml);
+        var back = Assert.IsType<GoStepBar>(GoGudxConverter.DeserializeControl(xml));
+        Assert.Equal("#10151C", back.DotFillColor);
     }
 }

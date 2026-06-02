@@ -39,7 +39,11 @@ namespace Going.UI.Controls
             get => nStep;
             set
             {
-                var v = Convert.ToInt32(MathTool.Constrain(value, 0, Steps.Count));
+                // Steps가 비어있을 때(예: gudx 로드 시 Step 속성이 Steps 자식보다 먼저 적용되는 시점)는
+                // 상한 클램프를 건너뛰어 값을 보존한다. (렌더는 OnDraw에서 i<=Step 로 이미 안전)
+                var v = Steps.Count > 0
+                    ? Convert.ToInt32(MathTool.Constrain(value, 0, Steps.Count))
+                    : Math.Max(0, value);
                 if (nStep != v)
                 {
                     nStep = v;
@@ -53,8 +57,10 @@ namespace Going.UI.Controls
         /// <summary>dot 클릭으로 Step 변경 가능 여부</summary>
         [GoProperty(PCategory.Control, 3)] public bool UseClick { get; set; } = false;
 
-        /// <summary>비활성 dot 색 (테마 키)</summary>
+        /// <summary>비활성 dot 테두리(링) 색 (테마 키)</summary>
         [GoProperty(PCategory.Control, 4)] public string DotColor { get; set; } = "Base2";
+        /// <summary>비활성 dot 내부 채움색 (테마 키). null/빈 값이면 테마 <c>Back</c>을 사용(기본).</summary>
+        [GoProperty(PCategory.Control, 16)] public string? DotFillColor { get; set; } = null;
         /// <summary>활성 dot 색 (테마 키)</summary>
         [GoProperty(PCategory.Control, 5)] public string ActiveColor { get; set; } = "Select";
         /// <summary>connector 직선 색 (테마 키, 단일)</summary>
@@ -109,6 +115,7 @@ namespace Going.UI.Controls
             if (n == 0) { base.OnDraw(canvas, thm); return; }
 
             var cDot = thm.ToColor(DotColor);
+            var cDotFill = string.IsNullOrEmpty(DotFillColor) ? thm.Back : thm.ToColor(DotFillColor);
             var cActive = thm.ToColor(ActiveColor);
             var cLine = thm.ToColor(LineColor);
             var cActiveTxt = thm.ToColor(ActiveTextColor);
@@ -165,7 +172,7 @@ namespace Going.UI.Controls
                 }
                 else
                 {
-                    pFill.Color = cBack;
+                    pFill.Color = cDotFill;
                     canvas.DrawCircle(cx, dotCY, dotR, pFill);
                     pStroke.Color = cDot;
                     canvas.DrawCircle(cx, dotCY, MathF.Max(0F, dotR - lw / 2F), pStroke);
