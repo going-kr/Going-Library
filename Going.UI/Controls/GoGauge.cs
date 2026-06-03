@@ -23,53 +23,53 @@ namespace Going.UI.Controls
         /// <summary>
         /// 글꼴 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoFontNameProperty(PCategory.Control, 0)] public string FontName { get; set; } = "나눔고딕";
+        [GoFontNameProperty(PCategory.Control, 2)] public string FontName { get; set; } = "나눔고딕";
         /// <summary>
         /// 글꼴 스타일을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 1)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Control, 3)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         /// <summary>
         /// 값 텍스트의 글꼴 크기를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 2)] public float FontSize { get; set; } = 18;
+        [GoProperty(PCategory.Control, 4)] public float FontSize { get; set; } = 18;
 
         /// <summary>
         /// 제목 텍스트를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 3)] public string Title { get; set; } = "Title";
+        [GoProperty(PCategory.Control, 0)] public string Title { get; set; } = "Title";
         /// <summary>
         /// 제목 글꼴 크기를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 4)] public float TitleFontSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 5)] public float TitleFontSize { get; set; } = 12;
 
         /// <summary>
         /// 텍스트 색상의 테마 색상 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 5)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Control, 6)] public string TextColor { get; set; } = "Fore";
         /// <summary>
         /// 채워진 영역의 색상 테마 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 6)] public string FillColor { get; set; } = "Good";
+        [GoProperty(PCategory.Control, 7)] public string FillColor { get; set; } = "Good";
         /// <summary>
         /// 채움 그라데이션의 끝 색상 테마 이름을 가져오거나 설정합니다. null이면 단색(<see cref="FillColor"/>).
         /// </summary>
-        [GoProperty(PCategory.Control, 6)] public string? FillColor2 { get; set; } = null;
+        [GoProperty(PCategory.Control, 8)] public string? FillColor2 { get; set; } = null;
         /// <summary>
         /// 빈 영역의 색상 테마 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 7)] public string EmptyColor { get; set; } = "Base1";
+        [GoProperty(PCategory.Control, 9)] public string EmptyColor { get; set; } = "Base1";
         /// <summary>
         /// 빈(트랙) 영역 테두리 색상의 테마 색상 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 8)] public string BorderColor { get; set; } = "Base1";
+        [GoProperty(PCategory.Control, 10)] public string BorderColor { get; set; } = "Base1";
         /// <summary>테두리 두께</summary>
-        [GoProperty(PCategory.Control, 17)] public float BorderWidth { get; set; } = 1.5F;
+        [GoProperty(PCategory.Control, 11)] public float BorderWidth { get; set; } = 1.5F;
 
         private double nValue = 0;
         /// <summary>
         /// 현재 값을 가져오거나 설정합니다. 값이 변경되면 <see cref="ValueChanged"/> 이벤트가 발생합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 9)]
+        [GoProperty(PCategory.Control, 1)]
         public double Value
         {
             get => nValue;
@@ -86,32 +86,32 @@ namespace Going.UI.Controls
         /// <summary>
         /// 최소값을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 10)] public double Minimum { get; set; } = 0;
+        [GoProperty(PCategory.Control, 16)] public double Minimum { get; set; } = 0;
         /// <summary>
         /// 최대값을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 11)] public double Maximum { get; set; } = 100;
+        [GoProperty(PCategory.Control, 17)] public double Maximum { get; set; } = 100;
 
         /// <summary>
         /// 값 표시 형식 문자열을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 12)] public string Format { get; set; } = "0";
+        [GoProperty(PCategory.Control, 18)] public string Format { get; set; } = "0";
         /// <summary>
         /// 게이지 시작 각도를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 13)] public int StartAngle { get; set; } = 135;
+        [GoProperty(PCategory.Control, 12)] public int StartAngle { get; set; } = 135;
         /// <summary>
         /// 게이지 스윕 각도(호의 전체 각도)를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 14)] public int SweepAngle { get; set; } = 270;
+        [GoProperty(PCategory.Control, 13)] public int SweepAngle { get; set; } = 270;
         /// <summary>
         /// 게이지 바의 두께(픽셀)를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 15)] public int BarSize { get; set; } = 24;
+        [GoProperty(PCategory.Control, 14)] public int BarSize { get; set; } = 24;
         /// <summary>
         /// 값 텍스트와 제목 사이의 간격을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 16)] public int Gap { get; set; } = 0;
+        [GoProperty(PCategory.Control, 15)] public int Gap { get; set; } = 0;
         #endregion
 
         #region Member Variable

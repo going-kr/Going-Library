@@ -127,23 +127,23 @@ namespace Going.UI.Design
         /// <summary>
         /// 타이틀바 사용 여부를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 0)] public bool UseTitleBar { get => TitleBar.Visible; set => TitleBar.Visible = value; }
+        [GoProperty(PCategory.Control, 1)] public bool UseTitleBar { get => TitleBar.Visible; set => TitleBar.Visible = value; }
         /// <summary>
         /// 왼쪽 사이드바 사용 여부를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 1)] public bool UseLeftSideBar { get => LeftSideBar.Visible; set => LeftSideBar.Visible = value; }
+        [GoProperty(PCategory.Control, 2)] public bool UseLeftSideBar { get => LeftSideBar.Visible; set => LeftSideBar.Visible = value; }
         /// <summary>
         /// 오른쪽 사이드바 사용 여부를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 2)] public bool UseRightSideBar { get => RightSideBar.Visible; set => RightSideBar.Visible = value; }
+        [GoProperty(PCategory.Control, 3)] public bool UseRightSideBar { get => RightSideBar.Visible; set => RightSideBar.Visible = value; }
         /// <summary>
         /// 푸터 사용 여부를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 3)] public bool UseFooter { get => Footer.Visible; set => Footer.Visible = value; }
+        [GoProperty(PCategory.Control, 4)] public bool UseFooter { get => Footer.Visible; set => Footer.Visible = value; }
         /// <summary>
         /// 타이틀바, 사이드바, 푸터 등 바 영역의 배경색을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 4)] public string BarColor { get; set; } = "Base2";
+        [GoProperty(PCategory.Control, 0)] public string BarColor { get; set; } = "Base2";
         /// <summary>
         /// 사이드바를 페이지 위에 오버레이하여 표시할지 여부를 가져오거나 설정합니다.
         /// </summary>

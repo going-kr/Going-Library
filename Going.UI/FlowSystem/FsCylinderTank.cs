@@ -93,77 +93,77 @@ namespace Going.UI.FlowSystem
         /// <summary>
         /// 텍스트에 사용할 폰트 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoFontNameProperty(PCategory.Control, 0)] public string FontName { get; set; } = "나눔고딕";
+        [GoFontNameProperty(PCategory.Control, 1)] public string FontName { get; set; } = "나눔고딕";
 
         /// <summary>
         /// 텍스트의 폰트 스타일을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 1)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Control, 2)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
 
         /// <summary>
         /// 텍스트의 폰트 크기를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 2)] public float FontSize { get; set; } = 18;
+        [GoProperty(PCategory.Control, 3)] public float FontSize { get; set; } = 18;
 
         /// <summary>
         /// 텍스트 색상을 가져오거나 설정합니다. 테마 색상 키를 사용합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 3)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Control, 4)] public string TextColor { get; set; } = "Fore";
 
         /// <summary>
         /// 액체 채움 색상을 가져오거나 설정합니다. 테마 색상 키를 사용합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 4)] public string FillColor { get; set; } = "DeepSkyBlue";
+        [GoProperty(PCategory.Control, 5)] public string FillColor { get; set; } = "DeepSkyBlue";
 
         /// <summary>
         /// 빈 영역 색상을 가져오거나 설정합니다. 테마 색상 키를 사용합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 5)] public string EmptyColor { get; set; } = "Base1";
+        [GoProperty(PCategory.Control, 6)] public string EmptyColor { get; set; } = "Base1";
 
         /// <summary>
         /// 프레임 색상을 가져오거나 설정합니다. 테마 색상 키를 사용합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 6)] public string FrameColor { get; set; } = "Base4";
+        [GoProperty(PCategory.Control, 7)] public string FrameColor { get; set; } = "Base4";
 
         /// <summary>
         /// 현재 수위 값을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 7)] public double Value { get; set; } = 0;
+        [GoProperty(PCategory.Control, 0)] public double Value { get; set; } = 0;
 
         /// <summary>
         /// 수위 최소값을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 8)] public double Minimum { get; set; } = 0;
+        [GoProperty(PCategory.Control, 10)] public double Minimum { get; set; } = 0;
 
         /// <summary>
         /// 수위 최대값을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 9)] public double Maximum { get; set; } = 100;
+        [GoProperty(PCategory.Control, 11)] public double Maximum { get; set; } = 100;
 
         /// <summary>
         /// 수위 값의 표시 형식을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 10)] public string Format { get; set; } = "0";
+        [GoProperty(PCategory.Control, 12)] public string Format { get; set; } = "0";
 
         /// <summary>
         /// 입구(Inlet) 포트 사용 여부를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 11)] public bool UseInlet { get; set; } = true;
+        [GoProperty(PCategory.Control, 13)] public bool UseInlet { get; set; } = true;
 
         /// <summary>
         /// 입구(Inlet) 포트의 위치를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 12)] public TopPortPosition InletPosition { get => inletpos; set { inletpos = value; SetPortPosition(); } }
+        [GoProperty(PCategory.Control, 8)] public TopPortPosition InletPosition { get => inletpos; set { inletpos = value; SetPortPosition(); } }
 
         /// <summary>
         /// 출구(Outlet) 포트 사용 여부를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 13)] public bool UseOutlet { get; set; } = true;
+        [GoProperty(PCategory.Control, 14)] public bool UseOutlet { get; set; } = true;
 
         /// <summary>
         /// 출구(Outlet) 포트의 위치를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 14)] public BottomPortPosition OutletPosition { get => outletpos; set { outletpos = value; SetPortPosition(); } }
+        [GoProperty(PCategory.Control, 9)] public BottomPortPosition OutletPosition { get => outletpos; set { outletpos = value; SetPortPosition(); } }
 
         /// <summary>
         /// 믹서 사용 여부를 가져오거나 설정합니다.

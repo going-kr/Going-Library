@@ -32,28 +32,28 @@ namespace Going.UI.Design
         /// <summary>
         /// 아이콘 크기를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 1)] public float IconSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 5)] public float IconSize { get; set; } = 12;
         /// <summary>
         /// 아이콘과 텍스트 사이의 간격을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 2)] public float IconGap { get; set; } = 5;
+        [GoProperty(PCategory.Control, 6)] public float IconGap { get; set; } = 5;
 
         /// <summary>
         /// 윈도우 타이틀 텍스트를 가져오거나 설정합니다.
         /// </summary>
-        [GoMultiLineProperty(PCategory.Control, 3)] public string Text { get; set; } = "Window";
+        [GoMultiLineProperty(PCategory.Control, 1)] public string Text { get; set; } = "Window";
         /// <summary>
         /// 폰트 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoFontNameProperty(PCategory.Control, 4)] public string FontName { get; set; } = "나눔고딕";
+        [GoFontNameProperty(PCategory.Control, 2)] public string FontName { get; set; } = "나눔고딕";
         /// <summary>
         /// 폰트 스타일을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 5)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Control, 3)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         /// <summary>
         /// 폰트 크기를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 6)] public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 4)] public float FontSize { get; set; } = 12;
 
         /// <summary>
         /// 텍스트 색상을 가져오거나 설정합니다.
@@ -68,15 +68,15 @@ namespace Going.UI.Design
         /// </summary>
         [GoProperty(PCategory.Control, 9)] public string BorderColor { get; set; } = "Base2";
         /// <summary>테두리 두께</summary>
-        [GoProperty(PCategory.Control, 12)] public float BorderWidth { get; set; } = 1.5F;
+        [GoProperty(PCategory.Control, 10)] public float BorderWidth { get; set; } = 1.5F;
         /// <summary>
         /// 윈도우 모서리 둥글기 타입을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 10)] public GoRoundType Round { get; set; } = GoRoundType.All;
+        [GoProperty(PCategory.Control, 11)] public GoRoundType Round { get; set; } = GoRoundType.All;
         /// <summary>
         /// 타이틀바 높이를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 11)] public float TitleHeight { get; set; } = 40;
+        [GoProperty(PCategory.Control, 12)] public float TitleHeight { get; set; } = 40;
 
         /// <summary>
         /// 자식 컨트롤 영역의 내부 여백을 가져오거나 설정합니다.

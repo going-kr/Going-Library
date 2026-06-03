@@ -24,46 +24,46 @@ namespace Going.UI.Controls
     {
         #region Properties
         /// <summary>그래프 배경 색상의 테마 색상 이름.</summary>
-        [GoProperty(PCategory.Control, 0)] public string GraphColor { get; set; } = "Back";
+        [GoProperty(PCategory.Control, 3)] public string GraphColor { get; set; } = "Back";
         /// <summary>텍스트 색상의 테마 색상 이름.</summary>
-        [GoProperty(PCategory.Control, 1)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Control, 4)] public string TextColor { get; set; } = "Fore";
 
         /// <summary>글꼴 이름.</summary>
-        [GoFontNameProperty(PCategory.Control, 2)] public string FontName { get; set; } = "나눔고딕";
+        [GoFontNameProperty(PCategory.Control, 0)] public string FontName { get; set; } = "나눔고딕";
         /// <summary>글꼴 스타일.</summary>
-        [GoProperty(PCategory.Control, 3)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Control, 1)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         /// <summary>글꼴 크기.</summary>
-        [GoProperty(PCategory.Control, 4)] public float FontSize { get; set; } = 10;
+        [GoProperty(PCategory.Control, 2)] public float FontSize { get; set; } = 10;
 
         /// <summary>Y축 최소값 (모든 시리즈 공통).</summary>
-        [GoProperty(PCategory.Control, 5)] public double Minimum { get; set; } = 0;
+        [GoProperty(PCategory.Control, 6)] public double Minimum { get; set; } = 0;
         /// <summary>Y축 최대값 (모든 시리즈 공통).</summary>
-        [GoProperty(PCategory.Control, 6)] public double Maximum { get; set; } = 100;
+        [GoProperty(PCategory.Control, 7)] public double Maximum { get; set; } = 100;
 
         /// <summary>데이터를 보관할 최대 시간 범위.</summary>
-        [GoProperty(PCategory.Control, 7)] public TimeSpan MaximumXScale { get; set; } = TimeSpan.FromMinutes(10);
+        [GoProperty(PCategory.Control, 8)] public TimeSpan MaximumXScale { get; set; } = TimeSpan.FromMinutes(10);
         /// <summary>X축에 표시할 시간 범위.</summary>
-        [GoProperty(PCategory.Control, 8)] public TimeSpan XScale { get; set; } = TimeSpan.FromMinutes(1);
+        [GoProperty(PCategory.Control, 9)] public TimeSpan XScale { get; set; } = TimeSpan.FromMinutes(1);
         /// <summary>데이터 수집 간격(밀리초).</summary>
-        [GoProperty(PCategory.Control, 9)] public int Interval { get; set; } = 1000;
+        [GoProperty(PCategory.Control, 10)] public int Interval { get; set; } = 1000;
 
         /// <summary>값 표시 형식 문자열.</summary>
-        [GoMultiLineProperty(PCategory.Control, 10)] public string? ValueFormatString { get; set; } = null;
+        [GoMultiLineProperty(PCategory.Control, 11)] public string? ValueFormatString { get; set; } = null;
 
         /// <summary>라인 아래 영역을 시리즈 색상으로 채울지 여부.</summary>
-        [GoProperty(PCategory.Control, 11)] public bool AreaDraw { get; set; } = false;
+        [GoProperty(PCategory.Control, 12)] public bool AreaDraw { get; set; } = false;
         /// <summary>라인 두께.</summary>
-        [GoProperty(PCategory.Control, 12)] public float LineWidth { get; set; } = 1.5f;
+        [GoProperty(PCategory.Control, 5)] public float LineWidth { get; set; } = 1.5f;
 
         /// <summary>기준선 목록.</summary>
         [GoChildWrappers]
-        [GoProperty(PCategory.Control, 13)] public List<GoBaseline> Baselines { get; set; } = [];
+        [GoProperty(PCategory.Control, 14)] public List<GoBaseline> Baselines { get; set; } = [];
         /// <summary>그래프 시리즈 목록.</summary>
         [GoChildWrappers]
-        [GoProperty(PCategory.Control, 14)] public List<GoLineGraphSeries> Series { get; set; } = [];
+        [GoProperty(PCategory.Control, 15)] public List<GoLineGraphSeries> Series { get; set; } = [];
 
         /// <summary>트렌드 수집 실행 여부.</summary>
-        [GoProperty(PCategory.Control, 15)] public bool IsStart { get; private set; } = false;
+        [GoProperty(PCategory.Control, 13)] public bool IsStart { get; private set; } = false;
 
         #region Pause
         private bool bPause = false;
@@ -122,6 +122,8 @@ namespace Going.UI.Controls
         /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
+            if (Design != null && Design.DesignMode) GenDesignSample();
+
             #region var
             var cGraph = thm.ToColor(GraphColor);
             var cText = thm.ToColor(TextColor);
@@ -185,8 +187,16 @@ namespace Going.UI.Controls
                                     path.Close();
 
                                     p.IsStroke = false;
-                                    p.Color = Util.FromArgb(70, c);
-                                    canvas.DrawPath(path, p);
+                                    // 위(라인색) → 아래(투명) 세로 그라데이션
+                                    using (var sh = SKShader.CreateLinearGradient(
+                                        new SKPoint(rtGraph.MidX, rtGraph.Top), new SKPoint(rtGraph.MidX, rtGraph.Bottom),
+                                        new[] { Util.FromArgb(140, c), Util.FromArgb(0, c) }, new[] { 0F, 1F }, SKShaderTileMode.Clamp))
+                                    {
+                                        p.Shader = sh;
+                                        p.Color = SKColors.White;
+                                        canvas.DrawPath(path, p);
+                                        p.Shader = null;
+                                    }
                                 }
                                 #endregion
 
@@ -382,6 +392,35 @@ namespace Going.UI.Controls
                 this.value = Data;
         }
         #endregion
+        /// <summary>디자인 타임 전용. 설정된 <see cref="Series"/>(시리즈별 Min/Max)에 맞춰 <see cref="XScale"/> 폭의 결정적 미리보기 스트림을 생성합니다. 시리즈가 없으면 표시하지 않습니다.</summary>
+        void GenDesignSample()
+        {
+            datas.Clear();
+            pdatas.Clear();
+            if (Series.Count == 0) return;
+
+            var span = XScale <= TimeSpan.Zero ? new TimeSpan(0, 1, 0) : XScale;
+            startTime = DateTime.Today;
+            nowTime = startTime + span;
+
+            const int n = 60;
+            for (int i = 0; i < n; i++)
+            {
+                var t = startTime + TimeSpan.FromMilliseconds(span.TotalMilliseconds * i / (n - 1));
+                var gv = new GoTimeGraphValue { Time = t };
+                for (int s = 0; s < Series.Count; s++)
+                {
+                    var ser = Series[s];
+                    if (string.IsNullOrEmpty(ser.Name) || gv.Values.ContainsKey(ser.Name)) continue;
+                    double lo = ser.Minimum, hi = ser.Maximum;
+                    if (hi <= lo) hi = lo + 100;
+                    var w = (Math.Sin((i * 0.3) + (s * 1.1)) + 1) / 2.0;   // 0..1 결정적
+                    gv.Values[ser.Name] = lo + (hi - lo) * (0.15 + 0.7 * w);
+                }
+                datas.Add(gv);
+            }
+        }
+
         #region AddData
         void AddData()
         {

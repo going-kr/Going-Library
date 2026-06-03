@@ -32,23 +32,23 @@ namespace Going.UI.Controls
         /// <summary>
         /// 버튼 색상의 테마 색상 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 2)] public string ButtonColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Control, 3)] public string ButtonColor { get; set; } = "Base3";
         /// <summary>
         /// 비선택 스텝의 색상 테마 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 3)] public string StepColor { get; set; } = "Base2";
+        [GoProperty(PCategory.Control, 4)] public string StepColor { get; set; } = "Base2";
         /// <summary>
         /// 선택된 스텝의 색상 테마 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 4)] public string SelectColor { get; set; } = "Select";
+        [GoProperty(PCategory.Control, 5)] public string SelectColor { get; set; } = "Select";
         /// <summary>
         /// 스텝 표시를 원형으로 할지 여부를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 5)] public bool IsCircle { get; set; } = false;
+        [GoProperty(PCategory.Control, 6)] public bool IsCircle { get; set; } = false;
         /// <summary>
         /// 이전/다음 버튼 사용 여부를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 6)] public bool UseButton { get; set; } = true;
+        [GoProperty(PCategory.Control, 7)] public bool UseButton { get; set; } = true;
 
         /// <summary>
         /// 전체 스텝 수를 가져오거나 설정합니다.
@@ -57,7 +57,7 @@ namespace Going.UI.Controls
         /// <summary>
         /// 현재 선택된 스텝 인덱스를 가져오거나 설정합니다. 값이 변경되면 <see cref="StepChanged"/> 이벤트가 발생합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 7)]
+        [GoProperty(PCategory.Control, 2)]
         public int Step
         {
             get => nStep;

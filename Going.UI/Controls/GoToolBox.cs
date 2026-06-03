@@ -27,23 +27,23 @@ namespace Going.UI.Controls
         /// <summary>
         /// 아이콘 크기를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 0)] public float IconSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 3)] public float IconSize { get; set; } = 12;
         /// <summary>
         /// 아이콘과 텍스트 사이의 간격을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 1)] public float IconGap { get; set; } = 5;
+        [GoProperty(PCategory.Control, 4)] public float IconGap { get; set; } = 5;
         /// <summary>
         /// 글꼴 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoFontNameProperty(PCategory.Control, 2)] public string FontName { get; set; } = "나눔고딕";
+        [GoFontNameProperty(PCategory.Control, 0)] public string FontName { get; set; } = "나눔고딕";
         /// <summary>
         /// 글꼴 스타일을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 3)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Control, 1)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         /// <summary>
         /// 글꼴 크기를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 4)] public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 2)] public float FontSize { get; set; } = 12;
 
         /// <summary>
         /// 텍스트 색상의 테마 색상 이름을 가져오거나 설정합니다.
@@ -58,7 +58,7 @@ namespace Going.UI.Controls
         /// </summary>
         [GoProperty(PCategory.Control, 7)] public string BorderColor { get; set; } = "Base3";
         /// <summary>테두리 두께</summary>
-        [GoProperty(PCategory.Control, 15)] public float BorderWidth { get; set; } = 1.5F;
+        [GoProperty(PCategory.Control, 10)] public float BorderWidth { get; set; } = 1.5F;
         /// <summary>
         /// 선택 항목 배경 색상의 테마 색상 이름을 가져오거나 설정합니다.
         /// </summary>
@@ -70,22 +70,22 @@ namespace Going.UI.Controls
         /// <summary>
         /// 모서리 둥글기 타입을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 10)] public GoRoundType Round { get; set; } = GoRoundType.All;
+        [GoProperty(PCategory.Control, 11)] public GoRoundType Round { get; set; } = GoRoundType.All;
 
         /// <summary>
         /// 배경을 그릴지 여부를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 11)] public bool BackgroundDraw { get; set; } = true;
+        [GoProperty(PCategory.Control, 12)] public bool BackgroundDraw { get; set; } = true;
 
         /// <summary>
         /// 각 항목의 높이(픽셀)를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 12)] public float ItemHeight { get; set; } = 30;
+        [GoProperty(PCategory.Control, 13)] public float ItemHeight { get; set; } = 30;
         /// <summary>
         /// 도구 카테고리 컬렉션을 가져오거나 설정합니다.
         /// </summary>
         [GoChildWrappers]
-        [GoProperty(PCategory.Control, 13)] public ObservableList<GoToolCategory> Categories { get; set; } = [];
+        [GoProperty(PCategory.Control, 15)] public ObservableList<GoToolCategory> Categories { get; set; } = [];
 
         /// <summary>
         /// 드래그 모드 사용 여부를 가져오거나 설정합니다.

@@ -39,6 +39,10 @@ namespace Going.UI.Forms.Containers
         public bool BackgroundDraw { get => control.BackgroundDraw; set { if (control.BackgroundDraw != value) { control.BackgroundDraw = value; Invalidate(); } } }
         public bool BorderOnly { get => control.BorderOnly; set { if (control.BorderOnly != value) { control.BorderOnly = value; Invalidate(); } } }
 
+        public bool DrawAccentStrip { get => control.DrawAccentStrip; set { if (control.DrawAccentStrip != value) { control.DrawAccentStrip = value; Invalidate(); } } }
+        public string AccentColor { get => control.AccentColor; set { if (control.AccentColor != value) { control.AccentColor = value; Invalidate(); } } }
+        public float AccentWidth { get => control.AccentWidth; set { if (control.AccentWidth != value) { control.AccentWidth = value; Invalidate(); } } }
+
         public float TitleHeight { get => control.TitleHeight; set { if (control.TitleHeight != value) { control.TitleHeight = value; Invalidate(); } } }
         public bool TitleDivider { get => control.TitleDivider; set { if (control.TitleDivider != value) { control.TitleDivider = value; Invalidate(); } } }
 

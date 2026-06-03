@@ -25,53 +25,53 @@ namespace Going.UI.Controls
         /// <summary>
         /// 그리드 색상의 테마 색상 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 0)] public string GridColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Control, 3)] public string GridColor { get; set; } = "Base3";
         /// <summary>
         /// 텍스트 색상의 테마 색상 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 1)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Control, 4)] public string TextColor { get; set; } = "Fore";
         /// <summary>
         /// 범례 배경 색상의 테마 색상 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 2)] public string RemarkColor { get; set; } = "Base2";
+        [GoProperty(PCategory.Control, 5)] public string RemarkColor { get; set; } = "Base2";
         /// <summary>
         /// 그래프 배경 색상의 테마 색상 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 3)] public string GraphColor { get; set; } = "Back";
+        [GoProperty(PCategory.Control, 6)] public string GraphColor { get; set; } = "Back";
 
         /// <summary>
         /// 글꼴 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoFontNameProperty(PCategory.Control, 4)] public string FontName { get; set; } = "나눔고딕";
+        [GoFontNameProperty(PCategory.Control, 0)] public string FontName { get; set; } = "나눔고딕";
         /// <summary>
         /// 글꼴 스타일을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 5)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Control, 1)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         /// <summary>
         /// 글꼴 크기를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 6)] public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 2)] public float FontSize { get; set; } = 12;
 
         /// <summary>
         /// 값 축 눈금 개수를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 7)] public int GraduationCount { get; set; } = 10;
+        [GoProperty(PCategory.Control, 11)] public int GraduationCount { get; set; } = 10;
         /// <summary>
         /// 값 표시 형식 문자열을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 8)] public string? FormatString { get; set; } = null;
+        [GoProperty(PCategory.Control, 12)] public string? FormatString { get; set; } = null;
 
         /// <summary>
         /// 바 그래프 모드(나열/누적)를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 9)] public GoBarGraphMode Mode { get; set; } = GoBarGraphMode.List;
+        [GoProperty(PCategory.Control, 13)] public GoBarGraphMode Mode { get; set; } = GoBarGraphMode.List;
         /// <summary>
         /// 그래프 방향(수직/수평)을 가져오거나 설정합니다.
         /// </summary>
         #region  public GoDirectionHV Direction { get; set; } = GoDirectionHV.Vertical;
         private GoDirectionHV dir = GoDirectionHV.Vertical;
         /// <summary>그래프 방향(수직/수평)을 가져오거나 설정합니다.</summary>
-        [GoProperty(PCategory.Control, 10)]
+        [GoProperty(PCategory.Control, 7)]
         public GoDirectionHV Direction
         {
             get => dir;
@@ -88,15 +88,19 @@ namespace Going.UI.Controls
         /// 그래프 시리즈 목록을 가져오거나 설정합니다.
         /// </summary>
         [GoChildWrappers]
-        [GoProperty(PCategory.Control, 11)] public List<GoGraphSeries> Series { get; set; } = [];
+        [GoProperty(PCategory.Control, 16)] public List<GoGraphSeries> Series { get; set; } = [];
         /// <summary>
         /// 개별 바의 두께(픽셀)를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 12)] public int BarSize { get; set; } = 20;
+        [GoProperty(PCategory.Control, 8)] public int BarSize { get; set; } = 20;
         /// <summary>
         /// 바 그룹 사이의 간격(픽셀)을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 13)] public int BarGap { get; set; } = 20;
+        [GoProperty(PCategory.Control, 9)] public int BarGap { get; set; } = 20;
+        /// <summary>
+        /// 막대의 값 끝 모서리 둥글기(픽셀). 0이면 직각. List 모드에서 세로막대는 위, 가로막대는 오른쪽 모서리가 둥글어집니다.
+        /// </summary>
+        [GoProperty(PCategory.Control, 10)] public float BarRound { get; set; } = 4F;
 
         /// <summary>
         /// 값 축의 최소값을 가져오거나 설정합니다. null이면 데이터에서 자동 계산됩니다.
@@ -138,12 +142,15 @@ namespace Going.UI.Controls
         /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
+            if (Design != null && Design.DesignMode) GenDesignSample();
+
             #region var
             var cGraph = thm.ToColor(GraphColor);
             var cGrid = thm.ToColor(GridColor);
             var cText = thm.ToColor(TextColor);
             var cRemark = thm.ToColor(RemarkColor);
             var cSeries = Series.ToDictionary(x => x, y => thm.ToColor(y.Color));
+            var cSeries2 = Series.ToDictionary(x => x, y => string.IsNullOrEmpty(y.Color2) ? (SKColor?)null : thm.ToColor(y.Color2));
             var rts = Areas();
             var rtValueGrid = rts["ValueGrid"];
             var rtNameGrid = rts["NameGrid"];
@@ -285,14 +292,17 @@ namespace Going.UI.Controls
 
                             #region Bar
                             var y = irt.Top;
+                            bool first = true;   // 스택: 맨 위(값 끝) 세그먼트만 둥글게
                             foreach (var vk in itm.Values.Keys)
                             {
                                 if (dic.TryGetValue(vk, out var ser) && ser.Visible)
                                 {
                                     var brt = Util.FromRect(irt.Left + BarGap, y, irt.Width - (BarGap * 2), Convert.ToSingle(irt.Height * (itm.Values[vk] / vsum)));
                                     var c = cSeries[ser];
+                                    var c2 = cSeries2[ser];
 
-                                    Util.DrawBox(canvas, brt, c, GoRoundType.Rect, thm.Corner);
+                                    DrawBar(canvas, thm, brt, c, c2, GoDirectionHV.Vertical, first);
+                                    first = false;
                                     y = brt.Bottom;
 
                                     vrts.Add(brt);
@@ -311,7 +321,8 @@ namespace Going.UI.Controls
                                 {
                                     var brt = new SKRect(x, Convert.ToSingle(MathTool.Map(itm.Values[vk], vmin, vmax, rt.Bottom, rt.Top)), x + BarSize, rt.Bottom);
                                     var c = cSeries[ser];
-                                    Util.DrawBox(canvas, brt, c, GoRoundType.Rect, thm.Corner);
+                                    var c2 = cSeries2[ser];
+                                    DrawBar(canvas, thm, brt, c, c2, GoDirectionHV.Vertical, true);
                                     x = brt.Right;
 
                                     vrts.Add(brt);
@@ -507,6 +518,7 @@ namespace Going.UI.Controls
 
                             #region Bar
                             var x = irt.Right;
+                            bool first = true;   // 스택: 맨 끝(값 끝) 세그먼트만 둥글게
                             foreach (var vk in itm.Values.Keys)
                             {
                                 if (dic.TryGetValue(vk, out var ser) && ser.Visible)
@@ -514,8 +526,10 @@ namespace Going.UI.Controls
                                     var w = Convert.ToSingle(irt.Width * (itm.Values[vk] / vsum));
                                     var brt = Util.FromRect(x - w, irt.Top + BarGap, w, irt.Height - (BarGap * 2));
                                     var c = cSeries[ser];
+                                    var c2 = cSeries2[ser];
 
-                                    Util.DrawBox(canvas, brt, c, GoRoundType.Rect, thm.Corner);
+                                    DrawBar(canvas, thm, brt, c, c2, GoDirectionHV.Horizon, first);
+                                    first = false;
                                     x = brt.Left;
                                     vrts.Add(brt);
                                 }
@@ -532,7 +546,8 @@ namespace Going.UI.Controls
                                 {
                                     var brt = new SKRect(rt.Left, y, Convert.ToSingle(MathTool.Map(itm.Values[vk], vmin, vmax, rt.Left, rt.Right)), y + BarSize);
                                     var c = cSeries[ser];
-                                    Util.DrawBox(canvas, brt, c, GoRoundType.Rect, thm.Corner);
+                                    var c2 = cSeries2[ser];
+                                    DrawBar(canvas, thm, brt, c, c2, GoDirectionHV.Horizon, true);
                                     y = brt.Bottom;
                                     vrts.Add(brt);
                                 }
@@ -636,6 +651,67 @@ namespace Going.UI.Controls
             scroll.Draw(canvas, thm, rtScroll);
 
             base.OnDraw(canvas, thm);
+        }
+
+        /// <summary>막대 하나를 그립니다. <paramref name="c2"/>가 있으면 값 축 방향(세로 막대=위→아래, 가로 막대=오른쪽→왼쪽) 그라데이션, 없으면 단색입니다.</summary>
+        void DrawBar(SKCanvas canvas, GoTheme thm, SKRect rt, SKColor c1, SKColor? c2, GoDirectionHV dir, bool roundTip)
+        {
+            var grad = c2.HasValue && c1 != c2.Value;
+            // 값 끝 모서리 둥글기. roundTip=false면 직각 (스택의 맨 위가 아닌 세그먼트)
+            var r = roundTip ? Math.Min(BarRound, Math.Min(rt.Width, rt.Height) / 2F) : 0F;
+
+            // 픽셀 스냅 → 하단/모서리가 축선과 crisp하게 정렬
+            rt = Util.Int(rt);
+
+            using var p = new SKPaint { IsAntialias = true, IsStroke = false };
+            // 그림자 (우하단으로). 다크 배경에선 대비가 약하므로 다소 진하게.
+            using var shadow = SKImageFilter.CreateDropShadow(3, 4, 4F, 4F, Util.FromArgb(120, SKColors.Black));
+            p.ImageFilter = shadow;
+            SKShader? sh = null;
+            if (grad)
+            {
+                SKPoint p0, p1;
+                if (dir == GoDirectionHV.Vertical) { p0 = new SKPoint(rt.MidX, rt.Top); p1 = new SKPoint(rt.MidX, rt.Bottom); }
+                else { p0 = new SKPoint(rt.Right, rt.MidY); p1 = new SKPoint(rt.Left, rt.MidY); }
+                sh = SKShader.CreateLinearGradient(p0, p1, new[] { c1, c2!.Value }, new[] { 0F, 1F }, SKShaderTileMode.Clamp);
+                p.Shader = sh;
+            }
+            else p.Color = c1;
+
+            if (r <= 0.5F) canvas.DrawRect(rt, p);
+            else
+            {
+                using var rr = new SKRoundRect();
+                rr.SetRectRadii(rt, dir == GoDirectionHV.Vertical
+                    ? new[] { new SKPoint(r, r), new SKPoint(r, r), new SKPoint(0, 0), new SKPoint(0, 0) }   // 위(값) 모서리
+                    : new[] { new SKPoint(0, 0), new SKPoint(r, r), new SKPoint(r, r), new SKPoint(0, 0) });  // 오른쪽(값) 모서리
+                canvas.DrawRoundRect(rr, p);
+            }
+            sh?.Dispose();
+        }
+
+        /// <summary>디자인 타임 전용. 설정된 <see cref="Series"/>에 맞춰 결정적(사인 기반) 미리보기 데이터를 생성합니다. 시리즈가 없으면 표시하지 않습니다.</summary>
+        void GenDesignSample()
+        {
+            datas.Clear();
+            if (Series.Count == 0) return;
+
+            const int cats = 8;
+            double lo = Minimum ?? 0, hi = Maximum ?? 100;
+            if (hi <= lo) hi = lo + 100;
+
+            for (int i = 0; i < cats; i++)
+            {
+                var gv = new GoGraphValue { Name = $"{i + 1:00}" };
+                for (int s = 0; s < Series.Count; s++)
+                {
+                    var ser = Series[s];
+                    if (string.IsNullOrEmpty(ser.Name) || gv.Values.ContainsKey(ser.Name)) continue;
+                    var w = (Math.Sin((i * 0.7) + (s * 1.3)) + 1) / 2.0;   // 0..1 결정적
+                    gv.Values[ser.Name] = lo + (hi - lo) * (0.15 + 0.7 * w);
+                }
+                datas.Add(gv);
+            }
         }
         #endregion
 

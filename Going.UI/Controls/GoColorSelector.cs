@@ -31,35 +31,35 @@ namespace Going.UI.Controls
         /// <summary>
         /// 글꼴 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoFontNameProperty(PCategory.Control, 0)] public string FontName { get; set; } = "나눔고딕";
+        [GoFontNameProperty(PCategory.Control, 1)] public string FontName { get; set; } = "나눔고딕";
         /// <summary>
         /// 글꼴 스타일을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 1)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Control, 2)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         /// <summary>
         /// 글꼴 크기를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 2)] public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 3)] public float FontSize { get; set; } = 12;
 
         /// <summary>
         /// 텍스트 색상의 테마 색상 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 3)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Control, 4)] public string TextColor { get; set; } = "Fore";
         /// <summary>
         /// 입력 영역 배경 색상의 테마 색상 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 4)] public string InputColor { get; set; } = "Base1";
+        [GoProperty(PCategory.Control, 5)] public string InputColor { get; set; } = "Base1";
         /// <summary>
         /// 테두리 색상의 테마 색상 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 5)] public string BorderColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Control, 6)] public string BorderColor { get; set; } = "Base3";
         /// <summary>테두리 두께</summary>
-        [GoProperty(PCategory.Control, 8)] public float BorderWidth { get; set; } = 1.5F;
+        [GoProperty(PCategory.Control, 7)] public float BorderWidth { get; set; } = 1.5F;
 
         /// <summary>
         /// 콘텐츠 정렬 방식을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 6)] public GoContentAlignment ContentAlignment { get; set; } = GoContentAlignment.MiddleCenter;
+        [GoProperty(PCategory.Control, 8)] public GoContentAlignment ContentAlignment { get; set; } = GoContentAlignment.MiddleCenter;
 
         /// <summary>내부용: 입력 모드에서 텍스트 숨김 여부</summary>
         [JsonIgnore, Browsable(false), EditorBrowsable(EditorBrowsableState.Never)] public bool _InputModeInvisibleText_ { get; set; } = false;
@@ -70,7 +70,7 @@ namespace Going.UI.Controls
         /// 현재 선택된 색상 값을 가져오거나 설정합니다.
         /// </summary>
         [JsonIgnore]
-        [GoProperty(PCategory.Control, 7)]
+        [GoProperty(PCategory.Control, 0)]
         public SKColor Value
         {
             get => Util.FromHsvDouble(nH, nS, nV);

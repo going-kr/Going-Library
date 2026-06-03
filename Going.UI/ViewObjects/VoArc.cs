@@ -15,19 +15,19 @@ namespace Going.UI.ViewObjects
     public class VoArc : GoControl
     {
         /// <summary>시작 각도(도). 3시=0, 시계방향 +. (예: 135 = 좌하단)</summary>
-        [GoProperty(PCategory.Control, 0)] public float StartAngle { get; set; } = 135F;
+        [GoProperty(PCategory.Control, 4)] public float StartAngle { get; set; } = 135F;
         /// <summary>스윕 각도(도). (예: 270 = 3/4 바퀴)</summary>
-        [GoProperty(PCategory.Control, 1)] public float SweepAngle { get; set; } = 270F;
+        [GoProperty(PCategory.Control, 5)] public float SweepAngle { get; set; } = 270F;
         /// <summary>호 두께.</summary>
-        [GoProperty(PCategory.Control, 2)] public float Thickness { get; set; } = 12F;
+        [GoProperty(PCategory.Control, 6)] public float Thickness { get; set; } = 12F;
         /// <summary>호 색 (테마 색 키).</summary>
-        [GoProperty(PCategory.Control, 3)] public string Color { get; set; } = "Point";
+        [GoProperty(PCategory.Control, 1)] public string Color { get; set; } = "Point";
         /// <summary>스윕 그라데이션 끝 색 (테마 색 키). null이면 단색.</summary>
-        [GoProperty(PCategory.Control, 4)] public string? Color2 { get; set; }
+        [GoProperty(PCategory.Control, 2)] public string? Color2 { get; set; }
         /// <summary>끝을 둥글게 처리할지.</summary>
-        [GoProperty(PCategory.Control, 5)] public bool RoundCap { get; set; } = true;
+        [GoProperty(PCategory.Control, 3)] public bool RoundCap { get; set; } = true;
         /// <summary>현재 값. 실제 그려지는 스윕 = SweepAngle × (Value/Max).</summary>
-        [GoProperty(PCategory.Control, 6)] public float Value { get; set; } = 100F;
+        [GoProperty(PCategory.Control, 0)] public float Value { get; set; } = 100F;
         /// <summary>값의 최대치.</summary>
         [GoProperty(PCategory.Control, 7)] public float Max { get; set; } = 100F;
 

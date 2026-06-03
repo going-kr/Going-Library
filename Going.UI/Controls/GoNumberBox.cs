@@ -26,30 +26,30 @@ namespace Going.UI.Controls
 
         #region Properties
         /// <summary>글꼴 이름</summary>
-        [GoFontNameProperty(PCategory.Control, 0)] public string FontName { get; set; } = "나눔고딕";
+        [GoFontNameProperty(PCategory.Control, 1)] public string FontName { get; set; } = "나눔고딕";
         /// <summary>글꼴 스타일</summary>
-        [GoProperty(PCategory.Control, 1)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Control, 2)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         /// <summary>글꼴 크기</summary>
-        [GoProperty(PCategory.Control, 2)] public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 3)] public float FontSize { get; set; } = 12;
 
         /// <summary>레이아웃 배치 방향 (가로/세로)</summary>
-        [GoProperty(PCategory.Control, 3)] public GoDirectionHV Direction { get; set; } = GoDirectionHV.Horizon;
+        [GoProperty(PCategory.Control, 11)] public GoDirectionHV Direction { get; set; } = GoDirectionHV.Horizon;
         /// <summary>텍스트 색상 (테마 색상 키)</summary>
-        [GoProperty(PCategory.Control, 4)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Control, 5)] public string TextColor { get; set; } = "Fore";
         /// <summary>테두리 색상 (테마 색상 키)</summary>
-        [GoProperty(PCategory.Control, 5)] public string BorderColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Control, 6)] public string BorderColor { get; set; } = "Base3";
         /// <summary>테두리 두께</summary>
-        [GoProperty(PCategory.Control, 17)] public float BorderWidth { get; set; } = 1.5F;
+        [GoProperty(PCategory.Control, 9)] public float BorderWidth { get; set; } = 1.5F;
         /// <summary>버튼 색상 (테마 색상 키)</summary>
-        [GoProperty(PCategory.Control, 6)] public string ButtonColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Control, 7)] public string ButtonColor { get; set; } = "Base3";
         /// <summary>값 표시 영역 배경 색상 (테마 색상 키)</summary>
-        [GoProperty(PCategory.Control, 7)] public string ValueColor { get; set; } = "Base1";
+        [GoProperty(PCategory.Control, 8)] public string ValueColor { get; set; } = "Base1";
         /// <summary>모서리 둥글기 유형</summary>
-        [GoProperty(PCategory.Control, 8)] public GoRoundType Round { get; set; } = GoRoundType.All;
+        [GoProperty(PCategory.Control, 10)] public GoRoundType Round { get; set; } = GoRoundType.All;
 
         private double nVal = 0;
         /// <summary>현재 값. 값이 변경되면 <see cref="ValueChanged"/> 이벤트가 발생합니다.</summary>
-        [GoProperty(PCategory.Control, 10)]
+        [GoProperty(PCategory.Control, 0)]
         public double Value
         {
             get => nVal;
@@ -64,18 +64,18 @@ namespace Going.UI.Controls
         }
 
         /// <summary>최솟값</summary>
-        [GoProperty(PCategory.Control, 11)] public double Minimum { get; set; } = 0D;
+        [GoProperty(PCategory.Control, 13)] public double Minimum { get; set; } = 0D;
         /// <summary>최댓값</summary>
-        [GoProperty(PCategory.Control, 12)] public double Maximum { get; set; } = 100D;
+        [GoProperty(PCategory.Control, 14)] public double Maximum { get; set; } = 100D;
         /// <summary>증감 단위</summary>
-        [GoProperty(PCategory.Control, 13)] public double Tick { get; set; } = 1D;
+        [GoProperty(PCategory.Control, 15)] public double Tick { get; set; } = 1D;
         /// <summary>값 표시 형식 문자열</summary>
-        [GoProperty(PCategory.Control, 14)] public string? Format { get; set; }
+        [GoProperty(PCategory.Control, 16)] public string? Format { get; set; }
         /// <summary>+/- 버튼 크기 (픽셀)</summary>
-        [GoProperty(PCategory.Control, 15)] public float ButtonSize { get; set; } = 40;
+        [GoProperty(PCategory.Control, 12)] public float ButtonSize { get; set; } = 40;
 
         /// <summary>자동 글꼴 크기 설정</summary>
-        [GoProperty(PCategory.Control, 16)] public GoAutoFontSize AutoFontSize { get; set; } = GoAutoFontSize.NotUsed;
+        [GoProperty(PCategory.Control, 4)] public GoAutoFontSize AutoFontSize { get; set; } = GoAutoFontSize.NotUsed;
 
         #endregion
 

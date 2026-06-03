@@ -43,53 +43,53 @@ namespace Going.UI.Controls
         /// <summary>
         /// 글꼴 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoFontNameProperty(PCategory.Control, 0)] public string FontName { get; set; } = "나눔고딕";
+        [GoFontNameProperty(PCategory.Control, 1)] public string FontName { get; set; } = "나눔고딕";
         /// <summary>
         /// 글꼴 스타일을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 1)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Control, 2)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         /// <summary>
         /// 글꼴 크기를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 2)] public float FontSize { get; set; } = 18;
+        [GoProperty(PCategory.Control, 3)] public float FontSize { get; set; } = 18;
         /// <summary>
         /// 값 레이블의 글꼴 크기를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 3)] public float ValueFontSize { get; set; } = 14;
+        [GoProperty(PCategory.Control, 4)] public float ValueFontSize { get; set; } = 14;
 
         /// <summary>
         /// 텍스트 색상의 테마 색상 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 4)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Control, 5)] public string TextColor { get; set; } = "Fore";
         /// <summary>
         /// 채워진 영역의 색상 테마 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 5)] public string FillColor { get; set; } = "Good";
+        [GoProperty(PCategory.Control, 6)] public string FillColor { get; set; } = "Good";
         /// <summary>
         /// 채움 그라데이션의 끝 색상 테마 이름을 가져오거나 설정합니다. null이면 단색(<see cref="FillColor"/>).
         /// </summary>
-        [GoProperty(PCategory.Control, 5)] public string? FillColor2 { get; set; } = null;
+        [GoProperty(PCategory.Control, 7)] public string? FillColor2 { get; set; } = null;
         /// <summary>
         /// 빈 영역의 색상 테마 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 6)] public string EmptyColor { get; set; } = "Base1";
+        [GoProperty(PCategory.Control, 8)] public string EmptyColor { get; set; } = "Base1";
         /// <summary>
         /// 테두리 색상의 테마 색상 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 7)] public string BorderColor { get; set; } = "Base1";
+        [GoProperty(PCategory.Control, 9)] public string BorderColor { get; set; } = "Base1";
         /// <summary>테두리 두께</summary>
-        [GoProperty(PCategory.Control, 17)] public float BorderWidth { get; set; } = 1.5F;
+        [GoProperty(PCategory.Control, 10)] public float BorderWidth { get; set; } = 1.5F;
 
         /// <summary>
         /// 프로그레스바의 진행 방향을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 8)] public ProgressDirection Direction { get; set; } = ProgressDirection.LeftToRight;
+        [GoProperty(PCategory.Control, 12)] public ProgressDirection Direction { get; set; } = ProgressDirection.LeftToRight;
 
         private double nValue = 0;
         /// <summary>
         /// 현재 값을 가져오거나 설정합니다. 값이 변경되면 <see cref="ValueChanged"/> 이벤트가 발생합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 9)]
+        [GoProperty(PCategory.Control, 0)]
         public double Value
         {
             get => nValue;
@@ -106,36 +106,36 @@ namespace Going.UI.Controls
         /// <summary>
         /// 최소값을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 10)] public double Minimum { get; set; } = 0;
+        [GoProperty(PCategory.Control, 14)] public double Minimum { get; set; } = 0;
         /// <summary>
         /// 최대값을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 11)] public double Maximum { get; set; } = 100;
+        [GoProperty(PCategory.Control, 15)] public double Maximum { get; set; } = 100;
 
         /// <summary>
         /// 값 표시 형식 문자열을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 12)] public string Format { get; set; } = "0";
+        [GoProperty(PCategory.Control, 16)] public string Format { get; set; } = "0";
         /// <summary>
         /// 바의 크기(두께)를 가져오거나 설정합니다. null이면 컨트롤 크기에 맞춥니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 15)] public int? BarSize { get; set; }
+        [GoProperty(PCategory.Control, 13)] public int? BarSize { get; set; }
         /// <summary>
         /// 값 레이블 표시 여부를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 16)] public bool ShowValueLabel { get; set; } = false;
+        [GoProperty(PCategory.Control, 17)] public bool ShowValueLabel { get; set; } = false;
 
         /// <summary>
         /// 바 모서리 반경. <c>null</c>이면 완전 둥근(pill) 모양(두께/2), 값이 있으면 해당 반경을 사용합니다.
         /// (반경은 두께/2를 넘지 않도록 제한됩니다.)
         /// </summary>
-        [GoProperty(PCategory.Control, 19)] public float? Corner { get; set; } = null;
+        [GoProperty(PCategory.Control, 11)] public float? Corner { get; set; } = null;
 
         /// <summary>
         /// 빈(트랙) 배경을 그릴지 여부. <c>false</c>면 <see cref="EmptyColor"/> 배경을 그리지 않고 채움만 표시합니다.
         /// 기본값은 <c>true</c>.
         /// </summary>
-        [GoProperty(PCategory.Control, 20)] public bool DrawEmpty { get; set; } = true;
+        [GoProperty(PCategory.Control, 18)] public bool DrawEmpty { get; set; } = true;
 
         #endregion
 

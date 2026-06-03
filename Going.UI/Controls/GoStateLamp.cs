@@ -22,14 +22,14 @@ namespace Going.UI.Controls
         /// 상태별 (색상/텍스트/OnOff) 정의 목록. <see cref="State"/> 와 일치하는 항목이 표시됩니다.
         /// </summary>
         [GoChildWrappers]
-        [GoProperty(PCategory.Control, 0)] public List<StateLamp> States { get; set; } = [];
+        [GoProperty(PCategory.Control, 9)] public List<StateLamp> States { get; set; } = [];
 
         private int bState = 0;
         /// <summary>
         /// 현재 상태 값. <see cref="States"/> 에서 일치하는 항목을 찾아 색상/텍스트/OnOff 톤으로 표시합니다.
         /// 일치하는 항목이 없으면 "Base3" 색상 OFF 톤 + "Not Matched" 텍스트로 표시합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 1)]
+        [GoProperty(PCategory.Control, 0)]
         public int State
         {
             get => bState;
@@ -44,22 +44,22 @@ namespace Going.UI.Controls
         }
 
         /// <summary>글꼴 이름을 가져오거나 설정합니다.</summary>
-        [GoFontNameProperty(PCategory.Control, 2)] public string FontName { get; set; } = "나눔고딕";
+        [GoFontNameProperty(PCategory.Control, 1)] public string FontName { get; set; } = "나눔고딕";
         /// <summary>글꼴 스타일을 가져오거나 설정합니다.</summary>
-        [GoProperty(PCategory.Control, 3)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Control, 2)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         /// <summary>글꼴 크기를 가져오거나 설정합니다.</summary>
-        [GoProperty(PCategory.Control, 4)] public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 3)] public float FontSize { get; set; } = 12;
         /// <summary>텍스트 색상의 테마 색상 이름을 가져오거나 설정합니다.</summary>
-        [GoProperty(PCategory.Control, 5)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Control, 7)] public string TextColor { get; set; } = "Fore";
 
         /// <summary>램프 아이콘 크기(픽셀)를 가져오거나 설정합니다.</summary>
-        [GoProperty(PCategory.Control, 6)] public int LampSize { get; set; } = 24;
+        [GoProperty(PCategory.Control, 5)] public int LampSize { get; set; } = 24;
         /// <summary>램프 아이콘과 텍스트 사이의 간격을 가져오거나 설정합니다.</summary>
-        [GoProperty(PCategory.Control, 7)] public int Gap { get; set; } = 10;
+        [GoProperty(PCategory.Control, 6)] public int Gap { get; set; } = 10;
         /// <summary>콘텐츠 정렬 방식을 가져오거나 설정합니다.</summary>
         [GoProperty(PCategory.Control, 8)] public GoContentAlignment ContentAlignment { get; set; } = GoContentAlignment.MiddleCenter;
         /// <summary>자동 글꼴 크기 조절 모드를 가져오거나 설정합니다.</summary>
-        [GoProperty(PCategory.Control, 9)] public GoAutoFontSize AutoFontSize { get; set; } = GoAutoFontSize.NotUsed;
+        [GoProperty(PCategory.Control, 4)] public GoAutoFontSize AutoFontSize { get; set; } = GoAutoFontSize.NotUsed;
         #endregion
 
         #region Event
@@ -122,9 +122,9 @@ namespace Going.UI.Controls
         /// <summary>이 항목이 표시될 상태 값.</summary>
         [GoProperty(PCategory.Control, 0)] public int State { get; set; }
         /// <summary>이 상태일 때 램프 색상 (테마 색상 키 또는 직접 지정).</summary>
-        [GoProperty(PCategory.Control, 1)] public string Color { get; set; } = "Good";
+        [GoProperty(PCategory.Control, 2)] public string Color { get; set; } = "Good";
         /// <summary>이 상태일 때 표시할 텍스트.</summary>
-        [GoMultiLineProperty(PCategory.Control, 2)] public string? Text { get; set; }
+        [GoMultiLineProperty(PCategory.Control, 1)] public string? Text { get; set; }
         /// <summary>이 상태일 때 램프 활성 톤 여부. <c>true</c> 면 밝게, <c>false</c> 면 같은 색의 어두운 톤으로 그려집니다.</summary>
         [GoProperty(PCategory.Control, 3)] public bool OnOff { get; set; } = true;
     }

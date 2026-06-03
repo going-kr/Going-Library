@@ -30,8 +30,10 @@ namespace Going.UI.Datas
         [GoProperty(PCategory.Basic, 1)] public string Alias { get; set; } = "";
         /// <summary>시리즈의 색상</summary>
         [GoProperty(PCategory.Basic, 2)] public string Color { get; set; } = "Red";
+        /// <summary>막대 그라데이션 끝 색상(값 축 방향). null/빈 값이면 단색(<see cref="Color"/>).</summary>
+        [GoProperty(PCategory.Basic, 3)] public string? Color2 { get; set; } = null;
         /// <summary>시리즈 표시 여부</summary>
-        [GoProperty(PCategory.Basic, 3)] public bool Visible { get; set; } = true;
+        [GoProperty(PCategory.Basic, 4)] public bool Visible { get; set; } = true;
 
         /// <summary>시리즈 이름을 반환합니다.</summary>
         public override string ToString() => Name;

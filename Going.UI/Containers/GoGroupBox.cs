@@ -31,28 +31,28 @@ namespace Going.UI.Containers
         /// <summary>
         /// 아이콘 크기를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 1)] public float IconSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 5)] public float IconSize { get; set; } = 12;
         /// <summary>
         /// 아이콘과 텍스트 사이의 간격을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 2)] public float IconGap { get; set; } = 5;
+        [GoProperty(PCategory.Control, 6)] public float IconGap { get; set; } = 5;
 
         /// <summary>
         /// 제목 텍스트를 가져오거나 설정합니다.
         /// </summary>
-        [GoMultiLineProperty(PCategory.Control, 3)] public string Text { get; set; } = "Panel";
+        [GoMultiLineProperty(PCategory.Control, 1)] public string Text { get; set; } = "Panel";
         /// <summary>
         /// 글꼴 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoFontNameProperty(PCategory.Control, 4)] public string FontName { get; set; } = "나눔고딕";
+        [GoFontNameProperty(PCategory.Control, 2)] public string FontName { get; set; } = "나눔고딕";
         /// <summary>
         /// 글꼴 스타일을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 5)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Control, 3)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         /// <summary>
         /// 글꼴 크기를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 6)] public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 4)] public float FontSize { get; set; } = 12;
 
         /// <summary>
         /// 텍스트 색상을 가져오거나 설정합니다. 테마 색상 이름을 사용합니다.
@@ -71,7 +71,7 @@ namespace Going.UI.Containers
         /// 제목 영역에 표시할 버튼 항목 목록을 가져오거나 설정합니다.
         /// </summary>
         [GoChildWrappers]
-        [GoProperty(PCategory.Control, 10)] public List<GoButtonItem> Buttons { get; set; } = [];
+        [GoProperty(PCategory.Control, 12)] public List<GoButtonItem> Buttons { get; set; } = [];
         /// <summary>
         /// 버튼 영역의 전체 너비를 가져오거나 설정합니다. null이면 버튼이 표시되지 않습니다.
         /// </summary>
@@ -79,7 +79,7 @@ namespace Going.UI.Containers
         /// <summary>
         /// 테두리 두께를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 12)] public float BorderWidth { get; set; } = 1;
+        [GoProperty(PCategory.Control, 10)] public float BorderWidth { get; set; } = 1;
 
         /// <summary>
         /// 자식 컨트롤 영역의 내부 여백을 가져오거나 설정합니다.

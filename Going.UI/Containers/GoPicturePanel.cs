@@ -32,11 +32,11 @@ namespace Going.UI.Containers
         /// <summary>
         /// 이미지 스케일 모드를 가져오거나 설정합니다. (Real, CenterImage, Stretch, Zoom)
         /// </summary>
-        [GoProperty(PCategory.Control, 1)] public GoImageScaleMode ScaleMode { get; set; } = GoImageScaleMode.Real;
+        [GoProperty(PCategory.Control, 2)] public GoImageScaleMode ScaleMode { get; set; } = GoImageScaleMode.Real;
         /// <summary>
         /// 모서리 라운드 타입을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 2)] public GoRoundType Round { get; set; } = GoRoundType.All;
+        [GoProperty(PCategory.Control, 1)] public GoRoundType Round { get; set; } = GoRoundType.All;
         #endregion
 
         #region Member Variable

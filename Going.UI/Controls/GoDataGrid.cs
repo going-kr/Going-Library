@@ -104,7 +104,7 @@ namespace Going.UI.Controls
         /// <summary>
         /// 컬럼 컬렉션을 가져옵니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 15)]
+        [GoProperty(PCategory.Control, 14)]
         [GoChildWrappers]
         [JsonObjectCreationHandling(JsonObjectCreationHandling.Populate)]
         public ObservableList<GoDataGridColumn> Columns { get; private set; } = [];

@@ -28,34 +28,34 @@ namespace Going.UI.Controls
         /// <summary>
         /// 글꼴 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoFontNameProperty(PCategory.Control, 0)] public string FontName { get; set; } = "나눔고딕";
+        [GoFontNameProperty(PCategory.Control, 1)] public string FontName { get; set; } = "나눔고딕";
         /// <summary>
         /// 글꼴 스타일을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 1)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Control, 2)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         /// <summary>
         /// 글꼴 크기를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 2)] public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 3)] public float FontSize { get; set; } = 12;
 
         /// <summary>
         /// 텍스트 색상의 테마 색상 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 3)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Control, 4)] public string TextColor { get; set; } = "Fore";
         /// <summary>
         /// 노브 본체 색상의 테마 색상 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 4)] public string KnobColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Control, 5)] public string KnobColor { get; set; } = "Base3";
         /// <summary>
         /// 노브 커서(지시선) 색상의 테마 색상 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 5)] public string CursorColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Control, 6)] public string CursorColor { get; set; } = "Fore";
 
         private double nValue = 0;
         /// <summary>
         /// 현재 값을 가져오거나 설정합니다. 값이 변경되면 <see cref="ValueChanged"/> 이벤트가 발생합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 6)]
+        [GoProperty(PCategory.Control, 0)]
         public double Value
         {
             get => nValue;
@@ -72,24 +72,24 @@ namespace Going.UI.Controls
         /// <summary>
         /// 최소값을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 7)] public double Minimum { get; set; } = 0;
+        [GoProperty(PCategory.Control, 8)] public double Minimum { get; set; } = 0;
         /// <summary>
         /// 최대값을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 8)] public double Maximum { get; set; } = 100;
+        [GoProperty(PCategory.Control, 9)] public double Maximum { get; set; } = 100;
         /// <summary>
         /// 값 변경 단위(틱)를 가져오거나 설정합니다. null이면 연속적으로 변경됩니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 9)] public double? Tick { get; set; } = null;
+        [GoProperty(PCategory.Control, 10)] public double? Tick { get; set; } = null;
 
         /// <summary>
         /// 값 표시 형식 문자열을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 10)] public string Format { get; set; } = "0";
+        [GoProperty(PCategory.Control, 11)] public string Format { get; set; } = "0";
         /// <summary>
         /// 노브의 회전 범위 각도를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 11)] public int SweepAngle { get; set; } = 270;
+        [GoProperty(PCategory.Control, 7)] public int SweepAngle { get; set; } = 270;
 
         /// <summary>
         /// 값 텍스트 표시 여부를 가져오거나 설정합니다.

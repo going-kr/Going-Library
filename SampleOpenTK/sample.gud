@@ -546,23 +546,27 @@
                   "Name": "Temp",
                   "Alias": "\uC628\uB3C4",
                   "Color": "Red",
+                  "Color2": "",
                   "Visible": true
                 },
                 {
                   "Name": "Hum",
                   "Alias": "\uC2B5\uB3C4",
                   "Color": "deepskyblue",
+                  "Color2": "",
                   "Visible": true
                 },
                 {
                   "Name": "Rad",
                   "Alias": "\uAD11\uB7C9",
                   "Color": "orange",
+                  "Color2": "",
                   "Visible": true
                 }
               ],
-              "BarSize": 20,
+              "BarSize": 24,
               "BarGap": 20,
+              "BarRound": 5,
               "Minimum": 0,
               "Maximum": 100,
               "Id": "223b8ee0-381d-48cd-83e8-f39841e1d396",
@@ -920,6 +924,9 @@
               "BackgroundDraw": true,
               "BorderWidth": 1,
               "Elevation": 2,
+              "DrawAccentStrip": false,
+              "AccentColor": "Point",
+              "AccentWidth": 4,
               "Padding": {
                 "Left": 8,
                 "Top": 8,
@@ -966,6 +973,9 @@
               "Buttons": [],
               "ButtonWidth": null,
               "Elevation": 2,
+              "DrawAccentStrip": false,
+              "AccentColor": "Point",
+              "AccentWidth": 4,
               "Padding": {
                 "Left": 8,
                 "Top": 8,
@@ -1010,6 +1020,8 @@
               "Format": "0",
               "BarSize": null,
               "ShowValueLabel": false,
+              "Corner": null,
+              "DrawEmpty": true,
               "Id": "d1275e6c-4188-4a83-9c3e-067575a038f2",
               "Name": null,
               "Visible": true,
@@ -1509,7 +1521,7 @@
                       "UseLongClick": false,
                       "LongClickTime": null,
                       "Selectable": false,
-                      "Bounds": "3,3,775,325",
+                      "Bounds": "3,3,760,310",
                       "Dock": 0,
                       "Margin": {
                         "Left": 3,
@@ -1548,7 +1560,7 @@
                       "UseLongClick": false,
                       "LongClickTime": null,
                       "Selectable": true,
-                      "Bounds": "3,331,192,405",
+                      "Bounds": "3,316,188,390",
                       "Dock": 0,
                       "Margin": {
                         "Left": 3,
@@ -1587,7 +1599,7 @@
                       "UseLongClick": false,
                       "LongClickTime": null,
                       "Selectable": true,
-                      "Bounds": "198,331,386,405",
+                      "Bounds": "194,316,378,390",
                       "Dock": 0,
                       "Margin": {
                         "Left": 3,
@@ -1626,7 +1638,7 @@
                       "UseLongClick": false,
                       "LongClickTime": null,
                       "Selectable": true,
-                      "Bounds": "392,331,580,405",
+                      "Bounds": "384,316,569,390",
                       "Dock": 0,
                       "Margin": {
                         "Left": 3,
@@ -1665,7 +1677,7 @@
                       "UseLongClick": false,
                       "LongClickTime": null,
                       "Selectable": true,
-                      "Bounds": "586,331,775,405",
+                      "Bounds": "575,316,760,390",
                       "Dock": 0,
                       "Margin": {
                         "Left": 3,
@@ -1684,7 +1696,7 @@
               "UseLongClick": false,
               "LongClickTime": null,
               "Selectable": false,
-              "Bounds": "10,10,789,419",
+              "Bounds": "10,10,774,404",
               "Dock": 5,
               "Margin": {
                 "Left": 10,
@@ -2082,7 +2094,7 @@
               "UseLongClick": false,
               "LongClickTime": null,
               "Selectable": false,
-              "Bounds": "3,3,796,426",
+              "Bounds": "3,3,781,411",
               "Dock": 5,
               "Margin": {
                 "Left": 3,
@@ -2144,6 +2156,9 @@
               "Buttons": [],
               "ButtonWidth": null,
               "Elevation": 2,
+              "DrawAccentStrip": false,
+              "AccentColor": "Point",
+              "AccentWidth": 4,
               "Padding": {
                 "Left": 8,
                 "Top": 8,
@@ -2191,6 +2206,9 @@
               "Buttons": [],
               "ButtonWidth": null,
               "Elevation": 2,
+              "DrawAccentStrip": false,
+              "AccentColor": "Point",
+              "AccentWidth": 4,
               "Padding": {
                 "Left": 8,
                 "Top": 8,
@@ -2238,6 +2256,9 @@
               "Buttons": [],
               "ButtonWidth": null,
               "Elevation": 2,
+              "DrawAccentStrip": false,
+              "AccentColor": "Point",
+              "AccentWidth": 4,
               "Padding": {
                 "Left": 8,
                 "Top": 8,
@@ -2272,6 +2293,98 @@
         },
         "Id": "828fab66-893d-4fb4-beb4-13ad309cff8e",
         "Name": "PageControl",
+        "Visible": true,
+        "Enabled": true,
+        "UseLongClick": false,
+        "LongClickTime": null,
+        "Selectable": false,
+        "Bounds": "0,50,800,480",
+        "Dock": 0,
+        "Margin": {
+          "Left": 4,
+          "Top": 4,
+          "Right": 4,
+          "Bottom": 4
+        }
+      }
+    },
+    "PageCircleGraph": {
+      "Type": "GoPage",
+      "Value": {
+        "Childrens": [
+          {
+            "Type": "GoCircleGraph",
+            "Value": {
+              "GridColor": "Base3",
+              "TextColor": "Fore",
+              "RemarkColor": "Base2",
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 12,
+              "Series": [
+                {
+                  "Name": "n1",
+                  "Alias": "n1",
+                  "Color": "Red",
+                  "Color2": "darkred",
+                  "Visible": true
+                },
+                {
+                  "Name": "n2",
+                  "Alias": "n2",
+                  "Color": "lime",
+                  "Color2": "green",
+                  "Visible": true
+                },
+                {
+                  "Name": "n3",
+                  "Alias": "n3",
+                  "Color": "deepskyblue",
+                  "Color2": "blue",
+                  "Visible": true
+                },
+                {
+                  "Name": "n4",
+                  "Alias": "n4",
+                  "Color": "magenta",
+                  "Color2": null,
+                  "Visible": true
+                },
+                {
+                  "Name": "n5",
+                  "Alias": "n5",
+                  "Color": "cyan",
+                  "Color2": null,
+                  "Visible": true
+                }
+              ],
+              "Id": "ea1df80a-4956-40e0-ae81-2657c613d0a5",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": true,
+              "Bounds": "17,10,677,414",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          }
+        ],
+        "BackgroundImage": null,
+        "Padding": {
+          "Left": 8,
+          "Top": 8,
+          "Right": 8,
+          "Bottom": 8
+        },
+        "Id": "303fe952-9420-4bdf-85c6-a3395d8ce32c",
+        "Name": "PageCircleGraph",
         "Visible": true,
         "Enabled": true,
         "UseLongClick": false,

@@ -31,28 +31,28 @@ namespace Going.UI.Containers
         /// <summary>
         /// 아이콘 크기를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 1)] public float IconSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 5)] public float IconSize { get; set; } = 12;
         /// <summary>
         /// 아이콘과 텍스트 사이의 간격을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 2)] public float IconGap { get; set; } = 5;
+        [GoProperty(PCategory.Control, 6)] public float IconGap { get; set; } = 5;
 
         /// <summary>
         /// 제목 텍스트를 가져오거나 설정합니다.
         /// </summary>
-        [GoMultiLineProperty(PCategory.Control, 3)] public string Text { get; set; } = "Panel";
+        [GoMultiLineProperty(PCategory.Control, 1)] public string Text { get; set; } = "Panel";
         /// <summary>
         /// 글꼴 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoFontNameProperty(PCategory.Control, 4)] public string FontName { get; set; } = "나눔고딕";
+        [GoFontNameProperty(PCategory.Control, 2)] public string FontName { get; set; } = "나눔고딕";
         /// <summary>
         /// 글꼴 스타일을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 5)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Control, 3)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         /// <summary>
         /// 글꼴 크기를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 6)] public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 4)] public float FontSize { get; set; } = 12;
 
         /// <summary>
         /// 텍스트 색상을 가져오거나 설정합니다. 테마 색상 이름을 사용합니다.
@@ -65,51 +65,66 @@ namespace Going.UI.Containers
         /// <summary>
         /// 패널 배경 그라데이션 끝 색상. null/빈 값이면 단색(<see cref="PanelColor"/>).
         /// </summary>
-        [GoProperty(PCategory.Control, 8)] public string? PanelColor2 { get; set; } = null;
+        [GoProperty(PCategory.Control, 9)] public string? PanelColor2 { get; set; } = null;
         /// <summary>
         /// 테두리 색상을 가져오거나 설정합니다. 테마 색상 이름을 사용합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 9)] public string BorderColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Control, 10)] public string BorderColor { get; set; } = "Base3";
         /// <summary>테두리 두께</summary>
-        [GoProperty(PCategory.Control, 18)] public float BorderWidth { get; set; } = 1.5F;
+        [GoProperty(PCategory.Control, 12)] public float BorderWidth { get; set; } = 1.5F;
         /// <summary>
         /// 모서리 라운드 타입을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 10)] public GoRoundType Round { get; set; } = GoRoundType.All;
+        [GoProperty(PCategory.Control, 13)] public GoRoundType Round { get; set; } = GoRoundType.All;
 
         /// <summary>
         /// 배경을 그릴지 여부를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 11)] public bool BackgroundDraw { get; set; } = true;
+        [GoProperty(PCategory.Control, 14)] public bool BackgroundDraw { get; set; } = true;
         /// <summary>
         /// 테두리만 그릴지 여부를 가져오거나 설정합니다. true이면 배경을 투명하게 하고 테두리만 표시합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 12)] public bool BorderOnly { get; set; } = false;
+        [GoProperty(PCategory.Control, 15)] public bool BorderOnly { get; set; } = false;
 
         /// <summary>
         /// 제목 영역의 높이를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 13)] public float TitleHeight { get; set; } = 40;
+        [GoProperty(PCategory.Control, 17)] public float TitleHeight { get; set; } = 40;
         /// <summary>
         /// 제목 영역과 콘텐츠 영역 사이의 구분선 표시 여부를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 14)] public bool TitleDivider { get; set; } = true;
+        [GoProperty(PCategory.Control, 20)] public bool TitleDivider { get; set; } = true;
 
         /// <summary>
         /// 제목 영역에 표시할 버튼 항목 목록을 가져오거나 설정합니다.
         /// </summary>
         [GoChildWrappers]
-        [GoProperty(PCategory.Control, 15)] public List<GoButtonItem> Buttons { get; set; } = [];
+        [GoProperty(PCategory.Control, 22)] public List<GoButtonItem> Buttons { get; set; } = [];
         /// <summary>
         /// 버튼 영역의 전체 너비를 가져오거나 설정합니다. null이면 버튼이 표시되지 않습니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 16)] public float? ButtonWidth { get; set; }
+        [GoProperty(PCategory.Control, 18)] public float? ButtonWidth { get; set; }
 
         /// <summary>
         /// Elevation 단계 (0~5). 0이면 그림자 없음, 1~5는 점진적으로 강한 드롭 그림자가 외곽에 그려져 카드가 떠있는 효과를 만듭니다.
         /// 그림자는 부모 컨테이너에서 그려지므로 카드 외부 여백이 충분해야 잘리지 않습니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 17)] public int Elevation { get; set; } = 0;
+        [GoProperty(PCategory.Control, 16)] public int Elevation { get; set; } = 0;
+
+        /// <summary>
+        /// 좌측 액센트 바를 그릴지 여부. <c>true</c>이면 박스의 둥근 모서리를 따라 좌측 가장자리에 세로 컬러 바를
+        /// 그리고(상태/카테고리 표시용), 자식 영역(<see cref="PanelBounds"/>)이 바 너비만큼 우측으로 인셋됩니다.
+        /// 기본값은 <c>false</c>.
+        /// </summary>
+        [GoProperty(PCategory.Control, 21)] public bool DrawAccentStrip { get; set; } = false;
+        /// <summary>
+        /// 좌측 액센트 바 색상 (테마 색상 이름). <see cref="DrawAccentStrip"/>이 true일 때 사용됩니다.
+        /// </summary>
+        [GoProperty(PCategory.Control, 11)] public string AccentColor { get; set; } = "Point";
+        /// <summary>
+        /// 좌측 액센트 바 너비.
+        /// </summary>
+        [GoProperty(PCategory.Control, 19)] public float AccentWidth { get; set; } = 4F;
 
         /// <summary>
         /// 자식 컨트롤 영역의 내부 여백을 가져오거나 설정합니다.
@@ -123,9 +138,18 @@ namespace Going.UI.Containers
         [GoChildList]
         [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
         /// <summary>
-        /// 자식 컨트롤이 배치되는 패널 영역을 가져옵니다. Padding만큼 인셋됩니다.
+        /// 자식 컨트롤이 배치되는 패널 영역을 가져옵니다. Padding만큼 인셋되고, 액센트 바가 있으면 좌측이 바 너비만큼 추가 인셋됩니다.
         /// </summary>
-        [JsonIgnore] public override SKRect PanelBounds => Util.FromRect(Areas()["Panel"], Padding);
+        [JsonIgnore] public override SKRect PanelBounds
+        {
+            get
+            {
+                var pb = Util.FromRect(Areas()["Panel"], Padding);
+                if (DrawAccentStrip && AccentWidth > 0)
+                    pb = new SKRect(pb.Left + AccentWidth, pb.Top, pb.Right, pb.Bottom);
+                return pb;
+            }
+        }
         #endregion
 
         #region Event
@@ -206,6 +230,21 @@ namespace Going.UI.Containers
                     canvas.DrawLine(rtTitle.Left + 10, rtTitle.Bottom, rtTitle.Right - 10, rtTitle.Bottom, p);
                 }
             }
+
+            // 좌측 액센트 바 — 박스 모양으로 클립해 둥근 모서리를 따라가게 함
+            if (DrawAccentStrip && !string.IsNullOrEmpty(AccentColor) && AccentWidth > 0)
+            {
+                using (new SKAutoCanvasRestore(canvas))
+                {
+                    if (Round == GoRoundType.Ellipse) { using var pth = new SKPath(); pth.AddOval(rtBox); canvas.ClipPath(pth, antialias: true); }
+                    else if (Round == GoRoundType.Rect) canvas.ClipRect(rtBox);
+                    else { using var rr = new SKRoundRect(rtBox, thm.Corner); canvas.ClipRoundRect(rr, SKClipOperation.Intersect, true); }
+
+                    using var pa = new SKPaint { IsAntialias = true, IsStroke = false, Color = thm.ToColor(AccentColor) };
+                    canvas.DrawRect(new SKRect(rtBox.Left, rtBox.Top, rtBox.Left + AccentWidth, rtBox.Bottom), pa);
+                }
+            }
+
             Util.DrawTextIcon(canvas, Text, FontName, FontStyle, FontSize, IconString, IconSize, GoDirectionHV.Horizon, IconGap, rtTitleText, cText, GoContentAlignment.MiddleLeft);
 
             if (Buttons.Count > 0 && ButtonWidth.HasValue)

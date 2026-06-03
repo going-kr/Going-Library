@@ -35,39 +35,39 @@ namespace Going.UI.Controls
         /// <summary>Off 상태 아이콘 문자열</summary>
         [GoProperty(PCategory.Control, 3)] public string? OffIconString { get; set; }
         /// <summary>글꼴 이름</summary>
-        [GoFontNameProperty(PCategory.Control, 4)] public string FontName { get; set; } = "나눔고딕";
+        [GoFontNameProperty(PCategory.Control, 5)] public string FontName { get; set; } = "나눔고딕";
         /// <summary>글꼴 스타일</summary>
-        [GoProperty(PCategory.Control, 5)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Control, 6)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         /// <summary>글꼴 크기</summary>
-        [GoProperty(PCategory.Control, 6)] public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 7)] public float FontSize { get; set; } = 12;
         /// <summary>아이콘 크기</summary>
-        [GoProperty(PCategory.Control, 7)] public float IconSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 9)] public float IconSize { get; set; } = 12;
         /// <summary>아이콘 배치 방향</summary>
-        [GoProperty(PCategory.Control, 8)] public GoDirectionHV IconDirection { get; set; }
+        [GoProperty(PCategory.Control, 20)] public GoDirectionHV IconDirection { get; set; }
         /// <summary>아이콘과 텍스트 사이 간격</summary>
         [GoProperty(PCategory.Control,10)] public float IconGap { get; set; } = 5;
 
         /// <summary>On 상태 텍스트 색상 (테마 색상 키)</summary>
-        [GoProperty(PCategory.Control,11)] public string OnTextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Control,12)] public string OnTextColor { get; set; } = "Fore";
         /// <summary>Off 상태 텍스트 색상 (테마 색상 키)</summary>
-        [GoProperty(PCategory.Control,12)] public string OffTextColor { get; set; } = "Base5";
+        [GoProperty(PCategory.Control,13)] public string OffTextColor { get; set; } = "Base5";
         /// <summary>배경 박스 색상 (테마 색상 키)</summary>
-        [GoProperty(PCategory.Control,13)] public string BoxColor { get; set; } = "Base1";
+        [GoProperty(PCategory.Control,14)] public string BoxColor { get; set; } = "Base1";
         /// <summary>테두리 색상 (테마 색상 키)</summary>
-        [GoProperty(PCategory.Control,14)] public string BorderColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Control,15)] public string BorderColor { get; set; } = "Base3";
         /// <summary>테두리 두께</summary>
-        [GoProperty(PCategory.Control, 21)] public float BorderWidth { get; set; } = 1.5F;
+        [GoProperty(PCategory.Control, 19)] public float BorderWidth { get; set; } = 1.5F;
         /// <summary>스위치 색상 (테마 색상 키)</summary>
-        [GoProperty(PCategory.Control,15)] public string SwitchColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Control,16)] public string SwitchColor { get; set; } = "Base3";
 
         /// <summary>On 상태 아이콘 색상 (테마 색상 키 또는 색상명)</summary>
-        [GoProperty(PCategory.Control,16)] public string OnIconColor { get; set; } = "lime";
+        [GoProperty(PCategory.Control,17)] public string OnIconColor { get; set; } = "lime";
         /// <summary>Off 상태 아이콘 색상 (테마 색상 키 또는 색상명)</summary>
-        [GoProperty(PCategory.Control,17)] public string OffIconColor { get; set; } = "red";
+        [GoProperty(PCategory.Control,18)] public string OffIconColor { get; set; } = "red";
 
         private bool bOnOff = false;
         /// <summary>On/Off 상태. 값이 변경되면 애니메이션과 함께 <see cref="OnOffChanged"/> 이벤트가 발생합니다.</summary>
-        [GoProperty(PCategory.Control,18)]
+        [GoProperty(PCategory.Control,4)]
         public bool OnOff
         {
             get => bOnOff;
@@ -86,9 +86,9 @@ namespace Going.UI.Controls
         }
 
         /// <summary>자동 글꼴 크기 설정</summary>
-        [GoProperty(PCategory.Control, 19)] public GoAutoFontSize AutoFontSize { get; set; } = GoAutoFontSize.NotUsed;
+        [GoProperty(PCategory.Control, 8)] public GoAutoFontSize AutoFontSize { get; set; } = GoAutoFontSize.NotUsed;
         /// <summary>자동 아이콘 크기 설정</summary>
-        [GoProperty(PCategory.Control, 20)] public GoAutoFontSize AutoIconSize { get; set; } = GoAutoFontSize.NotUsed;
+        [GoProperty(PCategory.Control, 11)] public GoAutoFontSize AutoIconSize { get; set; } = GoAutoFontSize.NotUsed;
 
         #endregion
 

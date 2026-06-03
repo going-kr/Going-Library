@@ -95,22 +95,22 @@ namespace Going.UI.FlowSystem
         /// <summary>
         /// 개방 시 표시 색상을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 0)] public string OnColor { get; set; } = "Lime";
+        [GoProperty(PCategory.Control, 1)] public string OnColor { get; set; } = "Lime";
 
         /// <summary>
         /// 폐쇄 시 표시 색상을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 1)] public string OffColor { get; set; } = "Red";
+        [GoProperty(PCategory.Control, 2)] public string OffColor { get; set; } = "Red";
 
         /// <summary>
         /// 프레임 색상을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 2)] public string FrameColor { get; set; } = "Base4";
+        [GoProperty(PCategory.Control, 3)] public string FrameColor { get; set; } = "Base4";
 
         /// <summary>
         /// 밸브의 개방/폐쇄 상태를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 3)]
+        [GoProperty(PCategory.Control, 0)]
         public bool OnOff
         {
             get => bOnOff;

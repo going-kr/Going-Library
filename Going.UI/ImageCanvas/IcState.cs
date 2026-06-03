@@ -24,11 +24,11 @@ namespace Going.UI.ImageCanvas
         /// 상태별 이미지 목록을 가져오거나 설정합니다.
         /// </summary>
         [GoChildWrappers]
-        [GoProperty(PCategory.Control, 0)] public List<StateImage> StateImages { get; set; } = [];
+        [GoProperty(PCategory.Control, 1)] public List<StateImage> StateImages { get; set; } = [];
         /// <summary>
         /// 현재 상태 값을 가져오거나 설정합니다. 이 값에 해당하는 이미지가 표시됩니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 1)] public int State { get; set; }
+        [GoProperty(PCategory.Control, 0)] public int State { get; set; }
         #endregion
 
         #region Member Variable
@@ -61,10 +61,10 @@ namespace Going.UI.ImageCanvas
         /// <summary>
         /// 이미지 리소스 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoImageProperty(PCategory.Control, 0)] public string? Image { get; set; }
+        [GoImageProperty(PCategory.Control, 1)] public string? Image { get; set; }
         /// <summary>
         /// 이 이미지가 표시될 상태 값을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 1)] public int State { get; set; }
+        [GoProperty(PCategory.Control, 0)] public int State { get; set; }
     }
 }

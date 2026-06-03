@@ -25,23 +25,23 @@ namespace Going.UI.ViewObjects
         /// <summary>배경/그라데이션 시작 색 (테마 색 키). null이면 칠하지 않습니다.</summary>
         [GoProperty(PCategory.Control, 0)] public string? Background { get; set; }
         /// <summary>채우기 방식 (단색/선형/방사형).</summary>
-        [GoProperty(PCategory.Control, 1)] public VoFillType FillType { get; set; } = VoFillType.Solid;
+        [GoProperty(PCategory.Control, 6)] public VoFillType FillType { get; set; } = VoFillType.Solid;
         /// <summary>그라데이션 끝 색 (테마 색 키). null이면 Background를 사용.</summary>
-        [GoProperty(PCategory.Control, 2)] public string? FillColor2 { get; set; }
+        [GoProperty(PCategory.Control, 1)] public string? FillColor2 { get; set; }
         /// <summary>선형 그라데이션 방향(도). 0=좌→우, 90=상→하.</summary>
-        [GoProperty(PCategory.Control, 3)] public float GradientAngle { get; set; } = 90F;
+        [GoProperty(PCategory.Control, 7)] public float GradientAngle { get; set; } = 90F;
 
         // ── Border ────────────────────────────────────────────
         /// <summary>테두리 색 (테마 색 키). null이면 그리지 않습니다.</summary>
-        [GoProperty(PCategory.Control, 4)] public string? BorderColor { get; set; }
+        [GoProperty(PCategory.Control, 2)] public string? BorderColor { get; set; }
         /// <summary>테두리 두께.</summary>
-        [GoProperty(PCategory.Control, 5)] public float BorderWidth { get; set; } = 1F;
+        [GoProperty(PCategory.Control, 4)] public float BorderWidth { get; set; } = 1F;
         /// <summary>모서리 반지름.</summary>
-        [GoProperty(PCategory.Control, 6)] public float BorderRadius { get; set; } = 0F;
+        [GoProperty(PCategory.Control, 5)] public float BorderRadius { get; set; } = 0F;
 
         // ── Shadow ────────────────────────────────────────────
         /// <summary>그림자 색 (테마 색 키). null이면 그림자 없음.</summary>
-        [GoProperty(PCategory.Control, 7)] public string? ShadowColor { get; set; }
+        [GoProperty(PCategory.Control, 3)] public string? ShadowColor { get; set; }
         /// <summary>그림자 X 오프셋.</summary>
         [GoProperty(PCategory.Control, 8)] public float ShadowX { get; set; } = 0F;
         /// <summary>그림자 Y 오프셋.</summary>

@@ -84,7 +84,7 @@ namespace Going.UI.FlowSystem
         /// <summary>
         /// 객체의 회전 각도를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 3)]
+        [GoProperty(PCategory.Control, 0)]
         public ObjectRotate Rotate
         {
             get => rotate;

@@ -119,48 +119,48 @@ namespace Going.UI.FlowSystem
         /// <summary>
         /// 기본 너비를 가져오거나 설정합니다. null이면 실제 너비를 사용합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 0)] public int? BaseWidth { get; set; }
+        [GoProperty(PCategory.Control, 3)] public int? BaseWidth { get; set; }
 
         /// <summary>
         /// 기본 높이를 가져오거나 설정합니다. null이면 실제 높이를 사용합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 1)] public int? BaseHeight { get; set; }
+        [GoProperty(PCategory.Control, 4)] public int? BaseHeight { get; set; }
 
         /// <summary>
         /// 패널 내 콘텐츠 정렬 방식을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 2)] public GoContentAlignment PanelAlignment { get; set; } = GoContentAlignment.MiddleCenter;
+        [GoProperty(PCategory.Control, 5)] public GoContentAlignment PanelAlignment { get; set; } = GoContentAlignment.MiddleCenter;
 
         /// <summary>
         /// 파이프의 두께를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 3)] public float PipeSize { get; set; } = 30;
+        [GoProperty(PCategory.Control, 6)] public float PipeSize { get; set; } = 30;
 
         /// <summary>
         /// 파이프 테두리의 두께를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 4)] public float FrameSize { get; set; } = 5;
+        [GoProperty(PCategory.Control, 7)] public float FrameSize { get; set; } = 5;
 
         /// <summary>
         /// 비어 있는 파이프의 색상을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 5)] public string EmptyColor { get; set; } = "Base1";
+        [GoProperty(PCategory.Control, 0)] public string EmptyColor { get; set; } = "Base1";
 
         /// <summary>
         /// 혼합 유체의 색상을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 5)] public string MixedColor { get; set; } = "Magenta";
+        [GoProperty(PCategory.Control, 1)] public string MixedColor { get; set; } = "Magenta";
 
         /// <summary>
         /// 파이프 테두리의 색상을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 6)] public string FrameColor { get; set; } = "Base4";
+        [GoProperty(PCategory.Control, 2)] public string FrameColor { get; set; } = "Base4";
 
         /// <summary>
         /// 플로우 연결 목록을 가져오거나 설정합니다.
         /// </summary>
         [GoChildWrappers]
-        [GoProperty(PCategory.Control, 7)] public List<FlowConnection> Connections { get; set; } = [];
+        [GoProperty(PCategory.Control, 8)] public List<FlowConnection> Connections { get; set; } = [];
 
         /// <summary>
         /// 자식 컨트롤이 배치되는 패널 영역을 가져옵니다.

@@ -21,21 +21,21 @@ namespace Going.UI.Controls
         /// <summary>아이콘 문자열 (FontAwesome 등)</summary>
         [GoProperty(PCategory.Control, 0)] public string? IconString { get; set; }
         /// <summary>아이콘 크기</summary>
-        [GoProperty(PCategory.Control, 1)] public float IconSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 7)] public float IconSize { get; set; } = 12;
         /// <summary>아이콘 배치 방향</summary>
-        [GoProperty(PCategory.Control, 2)] public GoDirectionHV IconDirection { get; set; }
+        [GoProperty(PCategory.Control, 16)] public GoDirectionHV IconDirection { get; set; }
         /// <summary>아이콘과 텍스트 사이 간격</summary>
-        [GoProperty(PCategory.Control, 3)] public float IconGap { get; set; } = 5;
+        [GoProperty(PCategory.Control, 8)] public float IconGap { get; set; } = 5;
         /// <summary>표시할 텍스트</summary>
-        [GoMultiLineProperty(PCategory.Control, 4)] public string Text { get; set; } = "label";
+        [GoMultiLineProperty(PCategory.Control, 1)] public string Text { get; set; } = "label";
         /// <summary>글꼴 이름</summary>
-        [GoFontNameProperty(PCategory.Control, 5)] public string FontName { get; set; } = "나눔고딕";
+        [GoFontNameProperty(PCategory.Control, 2)] public string FontName { get; set; } = "나눔고딕";
         /// <summary>글꼴 스타일</summary>
-        [GoProperty(PCategory.Control, 6)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Control, 3)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         /// <summary>글꼴 크기</summary>
-        [GoProperty(PCategory.Control, 7)] public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 4)] public float FontSize { get; set; } = 12;
         /// <summary>텍스트 영역의 내부 여백</summary>
-        [GoProperty(PCategory.Control, 8)] public GoPadding TextPadding { get; set; } = new GoPadding(0, 0, 0, 0);
+        [GoProperty(PCategory.Control, 17)] public GoPadding TextPadding { get; set; } = new GoPadding(0, 0, 0, 0);
         /// <summary>텍스트 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 9)] public string TextColor { get; set; } = "Fore";
         /// <summary>라벨 배경 색상 (테마 색상 키)</summary>
@@ -51,12 +51,12 @@ namespace Going.UI.Controls
         /// <summary>테두리만 그리기 여부</summary>
         [GoProperty(PCategory.Control, 15)] public bool BorderOnly{ get; set; } = false;
         /// <summary>콘텐츠 정렬 방식</summary>
-        [GoProperty(PCategory.Control, 16)] public GoContentAlignment ContentAlignment { get; set; } = GoContentAlignment.MiddleCenter;
+        [GoProperty(PCategory.Control, 18)] public GoContentAlignment ContentAlignment { get; set; } = GoContentAlignment.MiddleCenter;
 
         /// <summary>자동 글꼴 크기 설정</summary>
-        [GoProperty(PCategory.Control, 17)] public GoAutoFontSize AutoFontSize { get; set; } = GoAutoFontSize.NotUsed;
+        [GoProperty(PCategory.Control, 5)] public GoAutoFontSize AutoFontSize { get; set; } = GoAutoFontSize.NotUsed;
         /// <summary>자동 아이콘 크기 설정</summary>
-        [GoProperty(PCategory.Control, 18)] public GoAutoFontSize AutoIconSize { get; set; } = GoAutoFontSize.NotUsed;
+        [GoProperty(PCategory.Control, 6)] public GoAutoFontSize AutoIconSize { get; set; } = GoAutoFontSize.NotUsed;
 
         #endregion
 

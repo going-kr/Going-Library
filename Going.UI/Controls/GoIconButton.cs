@@ -21,9 +21,9 @@ namespace Going.UI.Controls
         /// <summary>아이콘 문자열 (FontAwesome 등)</summary>
         [GoProperty(PCategory.Control, 0)] public string? IconString { get; set; }
         /// <summary>아이콘 회전 각도</summary>
-        [GoProperty(PCategory.Control, 1)] public float Rotate { get; set; } = 0;
+        [GoProperty(PCategory.Control, 2)] public float Rotate { get; set; } = 0;
         /// <summary>버튼 색상 (테마 색상 키)</summary>
-        [GoProperty(PCategory.Control, 2)] public string ButtonColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Control, 1)] public string ButtonColor { get; set; } = "Base3";
         /// <summary>클릭 영역을 컨트롤 전체로 확장할지 여부. false이면 아이콘 경로 내부만 클릭 가능합니다.</summary>
         [GoProperty(PCategory.Control, 3)] public bool ClickBoundsExtends { get; set; } = false;
         #endregion

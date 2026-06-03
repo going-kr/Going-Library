@@ -28,41 +28,41 @@ namespace Going.UI.Containers
         /// <summary>
         /// 탭 아이콘 배치 방향을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 0)] public GoDirectionHV IconDirection { get; set; }
+        [GoProperty(PCategory.Control, 8)] public GoDirectionHV IconDirection { get; set; }
         /// <summary>
         /// 아이콘 크기를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 1)] public float IconSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 3)] public float IconSize { get; set; } = 12;
         /// <summary>
         /// 아이콘과 텍스트 사이의 간격을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 2)] public float IconGap { get; set; } = 5;
+        [GoProperty(PCategory.Control, 4)] public float IconGap { get; set; } = 5;
 
         /// <summary>
         /// 글꼴 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoFontNameProperty(PCategory.Control, 3)] public string FontName { get; set; } = "나눔고딕";
+        [GoFontNameProperty(PCategory.Control, 0)] public string FontName { get; set; } = "나눔고딕";
         /// <summary>
         /// 글꼴 스타일을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 4)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Control, 1)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         /// <summary>
         /// 글꼴 크기를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 5)] public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 2)] public float FontSize { get; set; } = 12;
 
         /// <summary>
         /// 텍스트 색상을 가져오거나 설정합니다. 테마 색상 이름을 사용합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 6)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Control, 5)] public string TextColor { get; set; } = "Fore";
         /// <summary>
         /// 탭 배경 색상을 가져오거나 설정합니다. 테마 색상 이름을 사용합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 7)] public string TabColor { get; set; } = "Base2";
+        [GoProperty(PCategory.Control, 6)] public string TabColor { get; set; } = "Base2";
         /// <summary>
         /// 탭 테두리 색상을 가져오거나 설정합니다. 테마 색상 이름을 사용합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 8)] public string TabBorderColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Control, 7)] public string TabBorderColor { get; set; } = "Base3";
         /// <summary>
         /// 탭 네비게이션의 위치를 가져오거나 설정합니다. (Up, Down, Left, Right)
         /// </summary>

@@ -19,50 +19,50 @@ namespace Going.UI.Controls
         /// <summary>표시할 텍스트.</summary>
         [GoProperty(PCategory.Control, 0)] public string Text { get; set; } = "Chip";
         /// <summary>글꼴 이름.</summary>
-        [GoFontNameProperty(PCategory.Control, 1)] public string FontName { get; set; } = "나눔고딕";
+        [GoFontNameProperty(PCategory.Control, 2)] public string FontName { get; set; } = "나눔고딕";
         /// <summary>글꼴 스타일.</summary>
-        [GoProperty(PCategory.Control, 2)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Bold;
+        [GoProperty(PCategory.Control, 3)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Bold;
         /// <summary>글꼴 크기.</summary>
-        [GoProperty(PCategory.Control, 3)] public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 4)] public float FontSize { get; set; } = 12;
         /// <summary>텍스트 색 (테마 색 키).</summary>
-        [GoProperty(PCategory.Control, 4)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Control, 9)] public string TextColor { get; set; } = "Fore";
 
         /// <summary>칩 배경(채움) 색 (테마 색 키). null이면 채우지 않습니다.</summary>
-        [GoProperty(PCategory.Control, 5)] public string? ChipColor { get; set; } = "Base2";
+        [GoProperty(PCategory.Control, 10)] public string? ChipColor { get; set; } = "Base2";
         /// <summary>테두리 색 (테마 색 키). null이면 그리지 않습니다.</summary>
-        [GoProperty(PCategory.Control, 6)] public string? BorderColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Control, 11)] public string? BorderColor { get; set; } = "Base3";
         /// <summary>테두리 두께.</summary>
-        [GoProperty(PCategory.Control, 7)] public float BorderWidth { get; set; } = 1F;
+        [GoProperty(PCategory.Control, 15)] public float BorderWidth { get; set; } = 1F;
 
         /// <summary>선행 아이콘(FontAwesome 등). 설정되면 dot 대신 아이콘을 그립니다.</summary>
-        [GoProperty(PCategory.Control, 8)] public string? IconString { get; set; } = null;
+        [GoProperty(PCategory.Control, 1)] public string? IconString { get; set; } = null;
         /// <summary>아이콘 색 (테마 색 키). null이면 <see cref="TextColor"/>를 사용.</summary>
-        [GoProperty(PCategory.Control, 9)] public string? IconColor { get; set; } = null;
+        [GoProperty(PCategory.Control, 12)] public string? IconColor { get; set; } = null;
         /// <summary>아이콘 크기.</summary>
-        [GoProperty(PCategory.Control, 10)] public float IconSize { get; set; } = 13F;
+        [GoProperty(PCategory.Control, 5)] public float IconSize { get; set; } = 13F;
 
         /// <summary>선행 상태 dot 색 (테마 색 키). <see cref="IconString"/>이 없고 이 값이 있으면 dot을 그립니다.</summary>
-        [GoProperty(PCategory.Control, 11)] public string? DotColor { get; set; } = null;
+        [GoProperty(PCategory.Control, 13)] public string? DotColor { get; set; } = null;
         /// <summary>상태 dot 지름.</summary>
-        [GoProperty(PCategory.Control, 12)] public float DotSize { get; set; } = 8F;
+        [GoProperty(PCategory.Control, 6)] public float DotSize { get; set; } = 8F;
         /// <summary>선행 요소와 텍스트 사이 간격.</summary>
-        [GoProperty(PCategory.Control, 13)] public float Gap { get; set; } = 7F;
+        [GoProperty(PCategory.Control, 7)] public float Gap { get; set; } = 7F;
 
         /// <summary>닫기(×) 버튼 표시 여부. true이면 텍스트 뒤에 닫기 아이콘을 그리고 클릭 시 <see cref="CloseClicked"/>를 발생시킵니다.</summary>
-        [GoProperty(PCategory.Control, 14)] public bool Closable { get; set; } = false;
+        [GoProperty(PCategory.Control, 19)] public bool Closable { get; set; } = false;
         /// <summary>닫기 아이콘(FontAwesome).</summary>
-        [GoProperty(PCategory.Control, 15)] public string CloseIcon { get; set; } = "fa-xmark";
+        [GoProperty(PCategory.Control, 20)] public string CloseIcon { get; set; } = "fa-xmark";
         /// <summary>닫기 아이콘 색 (테마 색 키). null이면 <see cref="TextColor"/>를 사용.</summary>
-        [GoProperty(PCategory.Control, 16)] public string? CloseColor { get; set; } = null;
+        [GoProperty(PCategory.Control, 14)] public string? CloseColor { get; set; } = null;
         /// <summary>닫기 아이콘 크기.</summary>
-        [GoProperty(PCategory.Control, 17)] public float CloseSize { get; set; } = 11F;
+        [GoProperty(PCategory.Control, 8)] public float CloseSize { get; set; } = 11F;
 
         /// <summary>모서리 반경. null이면 완전한 알약(pill, 높이/2) 모양, 값이 있으면 해당 반경.</summary>
-        [GoProperty(PCategory.Control, 18)] public float? Corner { get; set; } = null;
+        [GoProperty(PCategory.Control, 16)] public float? Corner { get; set; } = null;
         /// <summary>칩 내용의 정렬. 세로는 항상 가운데로 처리합니다.</summary>
-        [GoProperty(PCategory.Control, 19)] public GoContentAlignment ContentAlignment { get; set; } = GoContentAlignment.MiddleCenter;
+        [GoProperty(PCategory.Control, 17)] public GoContentAlignment ContentAlignment { get; set; } = GoContentAlignment.MiddleCenter;
         /// <summary>좌우 내부 여백.</summary>
-        [GoProperty(PCategory.Control, 20)] public float SidePadding { get; set; } = 12F;
+        [GoProperty(PCategory.Control, 18)] public float SidePadding { get; set; } = 12F;
         #endregion
 
         #region Event

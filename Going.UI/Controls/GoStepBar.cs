@@ -29,11 +29,11 @@ namespace Going.UI.Controls
         #region Properties
         /// <summary>스텝 항목 목록</summary>
         [GoChildWrappers]
-        [GoProperty(PCategory.Control, 0)] public ObservableList<GoStepItem> Steps { get; set; } = [];
+        [GoProperty(PCategory.Control, 16)] public ObservableList<GoStepItem> Steps { get; set; } = [];
 
         private int nStep = 0;
         /// <summary>현재 단계 (0=비활성, 1..Steps.Count=Steps[N-1] 활성)</summary>
-        [GoProperty(PCategory.Control, 1)]
+        [GoProperty(PCategory.Control, 0)]
         public int Step
         {
             get => nStep;
@@ -53,38 +53,38 @@ namespace Going.UI.Controls
         }
 
         /// <summary>표시 모드</summary>
-        [GoProperty(PCategory.Control, 2)] public GoStepBarMode Mode { get; set; } = GoStepBarMode.Story;
+        [GoProperty(PCategory.Control, 14)] public GoStepBarMode Mode { get; set; } = GoStepBarMode.Story;
         /// <summary>dot 클릭으로 Step 변경 가능 여부</summary>
-        [GoProperty(PCategory.Control, 3)] public bool UseClick { get; set; } = false;
+        [GoProperty(PCategory.Control, 15)] public bool UseClick { get; set; } = false;
 
         /// <summary>비활성 dot 테두리(링) 색 (테마 키)</summary>
-        [GoProperty(PCategory.Control, 4)] public string DotColor { get; set; } = "Base2";
+        [GoProperty(PCategory.Control, 5)] public string DotColor { get; set; } = "Base2";
         /// <summary>비활성 dot 내부 채움색 (테마 키). null/빈 값이면 테마 <c>Back</c>을 사용(기본).</summary>
-        [GoProperty(PCategory.Control, 16)] public string? DotFillColor { get; set; } = null;
+        [GoProperty(PCategory.Control, 6)] public string? DotFillColor { get; set; } = null;
         /// <summary>활성 dot 색 (테마 키)</summary>
-        [GoProperty(PCategory.Control, 5)] public string ActiveColor { get; set; } = "Select";
+        [GoProperty(PCategory.Control, 7)] public string ActiveColor { get; set; } = "Select";
         /// <summary>connector 직선 색 (테마 키, 단일)</summary>
-        [GoProperty(PCategory.Control, 6)] public string LineColor { get; set; } = "Base2";
+        [GoProperty(PCategory.Control, 8)] public string LineColor { get; set; } = "Base2";
         /// <summary>활성 라벨 색 (테마 키)</summary>
-        [GoProperty(PCategory.Control, 7)] public string ActiveTextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Control, 9)] public string ActiveTextColor { get; set; } = "Fore";
         /// <summary>비활성 라벨 색 (테마 키)</summary>
-        [GoProperty(PCategory.Control, 8)] public string InactiveTextColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Control, 10)] public string InactiveTextColor { get; set; } = "Base3";
 
         /// <summary>글꼴 이름</summary>
-        [GoFontNameProperty(PCategory.Control, 9)] public string FontName { get; set; } = "나눔고딕";
+        [GoFontNameProperty(PCategory.Control, 1)] public string FontName { get; set; } = "나눔고딕";
         /// <summary>글꼴 스타일</summary>
-        [GoProperty(PCategory.Control, 10)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Control, 2)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         /// <summary>글꼴 크기</summary>
-        [GoProperty(PCategory.Control, 11)] public float FontSize { get; set; } = 12F;
+        [GoProperty(PCategory.Control, 3)] public float FontSize { get; set; } = 12F;
 
         /// <summary>dot 외경 지름</summary>
-        [GoProperty(PCategory.Control, 12)] public float DotSize { get; set; } = 18F;
+        [GoProperty(PCategory.Control, 11)] public float DotSize { get; set; } = 18F;
         /// <summary>아이콘 크기</summary>
-        [GoProperty(PCategory.Control, 13)] public float IconSize { get; set; } = 12F;
+        [GoProperty(PCategory.Control, 4)] public float IconSize { get; set; } = 12F;
         /// <summary>dot 아래 라벨 간격</summary>
-        [GoProperty(PCategory.Control, 14)] public float LabelGap { get; set; } = 6F;
+        [GoProperty(PCategory.Control, 12)] public float LabelGap { get; set; } = 6F;
         /// <summary>connector 선 / dot 외곽선 두께</summary>
-        [GoProperty(PCategory.Control, 15)] public float LineWidth { get; set; } = 2F;
+        [GoProperty(PCategory.Control, 13)] public float LineWidth { get; set; } = 2F;
         #endregion
 
         #region Member Variable

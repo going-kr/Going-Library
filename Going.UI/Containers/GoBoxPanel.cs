@@ -36,41 +36,41 @@ namespace Going.UI.Containers
         /// <summary>
         /// 박스 배경 그라데이션 끝 색상. null/빈 값이면 단색(<see cref="BoxColor"/>).
         /// </summary>
-        [GoProperty(PCategory.Control, 1)] public string? BoxColor2 { get; set; } = null;
+        [GoProperty(PCategory.Control, 2)] public string? BoxColor2 { get; set; } = null;
         /// <summary>
         /// 모서리 라운드 타입을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 2)] public GoRoundType Round { get; set; } = GoRoundType.All;
+        [GoProperty(PCategory.Control, 4)] public GoRoundType Round { get; set; } = GoRoundType.All;
 
         /// <summary>
         /// 배경을 그릴지 여부를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 3)] public bool BackgroundDraw { get; set; } = true;
+        [GoProperty(PCategory.Control, 5)] public bool BackgroundDraw { get; set; } = true;
         /// <summary>
         /// 테두리 두께를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 4)] public float BorderWidth { get; set; } = 1.5F;
+        [GoProperty(PCategory.Control, 6)] public float BorderWidth { get; set; } = 1.5F;
 
         /// <summary>
         /// Elevation 단계 (0~5). 0이면 그림자 없음, 1~5는 점진적으로 강한 드롭 그림자가 외곽에 그려져 카드가 떠있는 효과를 만듭니다.
         /// 그림자는 부모 컨테이너에서 그려지므로 카드 외부 여백이 충분해야 잘리지 않습니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 5)] public int Elevation { get; set; } = 0;
+        [GoProperty(PCategory.Control, 8)] public int Elevation { get; set; } = 0;
 
         /// <summary>
         /// 좌측 액센트 바를 그릴지 여부. <c>true</c>이면 박스의 둥근 모서리를 따라 좌측 가장자리에 세로 컬러 바를
         /// 그리고(상태/카테고리 표시용), 자식 영역(<see cref="PanelBounds"/>)이 바 너비만큼 우측으로 인셋됩니다.
         /// 기본값은 <c>false</c>.
         /// </summary>
-        [GoProperty(PCategory.Control, 6)] public bool DrawAccentStrip { get; set; } = false;
+        [GoProperty(PCategory.Control, 9)] public bool DrawAccentStrip { get; set; } = false;
         /// <summary>
         /// 좌측 액센트 바 색상 (테마 색상 이름). <see cref="DrawAccentStrip"/>이 true일 때 사용됩니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 7)] public string AccentColor { get; set; } = "Point";
+        [GoProperty(PCategory.Control, 3)] public string AccentColor { get; set; } = "Point";
         /// <summary>
         /// 좌측 액센트 바 너비.
         /// </summary>
-        [GoProperty(PCategory.Control, 8)] public float AccentWidth { get; set; } = 4F;
+        [GoProperty(PCategory.Control, 7)] public float AccentWidth { get; set; } = 4F;
 
         /// <summary>
         /// 자식 컨트롤 영역의 내부 여백을 가져오거나 설정합니다.

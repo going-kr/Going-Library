@@ -21,53 +21,53 @@ namespace Going.UI.ImageCanvas
         /// <summary>
         /// 글꼴 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoFontNameProperty(PCategory.Control, 0)] public string FontName { get; set; } = "나눔고딕";
+        [GoFontNameProperty(PCategory.Control, 1)] public string FontName { get; set; } = "나눔고딕";
         /// <summary>
         /// 글꼴 스타일을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 1)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Control, 2)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         /// <summary>
         /// 글꼴 크기를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 2)] public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 3)] public float FontSize { get; set; } = 12;
         /// <summary>
         /// 텍스트 색상을 가져오거나 설정합니다. 테마 색상 이름을 사용합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 3)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Control, 4)] public string TextColor { get; set; } = "Fore";
 
         /// <summary>
         /// 비활성(배경) 상태 바 이미지 리소스 이름을 가져오거나 설정합니다. null이면 부모의 Off 이미지를 사용합니다.
         /// </summary>
-        [GoImageProperty(PCategory.Control, 4)] public string? OffBarImage { get; set; }
+        [GoImageProperty(PCategory.Control, 5)] public string? OffBarImage { get; set; }
         /// <summary>
         /// 활성(채움) 상태 바 이미지 리소스 이름을 가져오거나 설정합니다. null이면 부모의 On 이미지를 사용합니다.
         /// </summary>
-        [GoImageProperty(PCategory.Control, 5)] public string? OnBarImage { get; set; }
+        [GoImageProperty(PCategory.Control, 6)] public string? OnBarImage { get; set; }
         /// <summary>
         /// 비활성 상태의 커서 이미지 리소스 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoImageProperty(PCategory.Control, 6)] public string? OffCursorImage { get; set; }
+        [GoImageProperty(PCategory.Control, 7)] public string? OffCursorImage { get; set; }
         /// <summary>
         /// 활성(누름) 상태의 커서 이미지 리소스 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoImageProperty(PCategory.Control, 7)] public string? OnCursorImage { get; set; }
+        [GoImageProperty(PCategory.Control, 8)] public string? OnCursorImage { get; set; }
 
         /// <summary>
         /// 값 표시 서식 문자열을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 8)] public string FormatString { get; set; } = "0";
+        [GoProperty(PCategory.Control, 9)] public string FormatString { get; set; } = "0";
         /// <summary>
         /// 최솟값을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 9)] public double Minimum { get; set; } = 0D;
+        [GoProperty(PCategory.Control, 10)] public double Minimum { get; set; } = 0D;
         /// <summary>
         /// 최댓값을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 10)] public double Maximum { get; set; } = 100D;
+        [GoProperty(PCategory.Control, 11)] public double Maximum { get; set; } = 100D;
         /// <summary>
         /// 현재 값을 가져오거나 설정합니다. 값이 변경되면 <see cref="ValueChanged"/> 이벤트가 발생합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 11)]
+        [GoProperty(PCategory.Control, 0)]
         public double Value
         {
             get => nValue;

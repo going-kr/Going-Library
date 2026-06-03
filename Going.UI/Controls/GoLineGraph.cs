@@ -28,52 +28,52 @@ namespace Going.UI.Controls
         /// <summary>
         /// 그리드 색상의 테마 색상 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 0)] public string GridColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Control, 3)] public string GridColor { get; set; } = "Base3";
         /// <summary>
         /// 텍스트 색상의 테마 색상 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 1)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Control, 4)] public string TextColor { get; set; } = "Fore";
         /// <summary>
         /// 범례 배경 색상의 테마 색상 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 2)] public string RemarkColor { get; set; } = "Base2";
+        [GoProperty(PCategory.Control, 5)] public string RemarkColor { get; set; } = "Base2";
         /// <summary>
         /// 그래프 배경 색상의 테마 색상 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 3)] public string GraphColor { get; set; } = "Back";
+        [GoProperty(PCategory.Control, 6)] public string GraphColor { get; set; } = "Back";
 
         /// <summary>
         /// 글꼴 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoFontNameProperty(PCategory.Control, 4)] public string FontName { get; set; } = "나눔고딕";
+        [GoFontNameProperty(PCategory.Control, 0)] public string FontName { get; set; } = "나눔고딕";
         /// <summary>
         /// 글꼴 스타일을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 5)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Control, 1)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         /// <summary>
         /// 글꼴 크기를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 6)] public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 2)] public float FontSize { get; set; } = 12;
 
         /// <summary>
         /// Y축 눈금 개수를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 7)] public int GraduationCount { get; set; } = 10;
+        [GoProperty(PCategory.Control, 8)] public int GraduationCount { get; set; } = 10;
         /// <summary>
         /// 값 표시 형식 문자열을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 8)] public string? FormatString { get; set; } = null;
+        [GoProperty(PCategory.Control, 9)] public string? FormatString { get; set; } = null;
 
         /// <summary>
         /// 그래프 시리즈 목록을 가져오거나 설정합니다.
         /// </summary>
         [GoChildWrappers]
-        [GoProperty(PCategory.Control, 9)] public List<GoLineGraphSeries> Series { get; set; } = [];
+        [GoProperty(PCategory.Control, 10)] public List<GoLineGraphSeries> Series { get; set; } = [];
 
         /// <summary>
         /// 데이터 포인트 간격 너비(픽셀)를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 10)] public int PointWidth { get; set; } = 70;
+        [GoProperty(PCategory.Control, 7)] public int PointWidth { get; set; } = 70;
         #endregion
 
         #region Member Variable
@@ -106,6 +106,8 @@ namespace Going.UI.Controls
         /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
+            if (Design != null && Design.DesignMode) GenDesignSample();
+
             #region var
             var cGraph = thm.ToColor(GraphColor);
             var cGrid = thm.ToColor(GridColor);
@@ -480,6 +482,29 @@ namespace Going.UI.Controls
 
         #region Method
         #region SetDataSource
+        /// <summary>디자인 타임 전용. 설정된 <see cref="Series"/>(시리즈별 Min/Max)에 맞춰 결정적 미리보기 데이터를 생성합니다. 시리즈가 없으면 표시하지 않습니다.</summary>
+        void GenDesignSample()
+        {
+            datas.Clear();
+            if (Series.Count == 0) return;
+
+            const int cats = 10;
+            for (int i = 0; i < cats; i++)
+            {
+                var gv = new GoGraphValue { Name = $"{i + 1:00}" };
+                for (int s = 0; s < Series.Count; s++)
+                {
+                    var ser = Series[s];
+                    if (string.IsNullOrEmpty(ser.Name) || gv.Values.ContainsKey(ser.Name)) continue;
+                    double lo = ser.Minimum, hi = ser.Maximum;
+                    if (hi <= lo) hi = lo + 100;
+                    var w = (Math.Sin((i * 0.6) + (s * 1.1)) + 1) / 2.0;   // 0..1 결정적
+                    gv.Values[ser.Name] = lo + (hi - lo) * (0.15 + 0.7 * w);
+                }
+                datas.Add(gv);
+            }
+        }
+
         /// <summary>
         /// 데이터 소스를 설정합니다.
         /// </summary>

@@ -22,35 +22,35 @@ namespace Going.UI.ImageCanvas
         /// <summary>
         /// 아이콘 문자열을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 0)] public string? IconString { get; set; }
+        [GoProperty(PCategory.Control, 2)] public string? IconString { get; set; }
         /// <summary>
         /// 아이콘 크기를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 1)] public float IconSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 6)] public float IconSize { get; set; } = 12;
         /// <summary>
         /// 아이콘 배치 방향을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 2)] public GoDirectionHV IconDirection { get; set; } = GoDirectionHV.Horizon;
+        [GoProperty(PCategory.Control, 9)] public GoDirectionHV IconDirection { get; set; } = GoDirectionHV.Horizon;
         /// <summary>
         /// 아이콘과 텍스트 사이의 간격을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 3)] public float IconGap { get; set; } = 5;
+        [GoProperty(PCategory.Control, 7)] public float IconGap { get; set; } = 5;
         /// <summary>
         /// 표시할 텍스트를 가져오거나 설정합니다.
         /// </summary>
-        [GoMultiLineProperty(PCategory.Control, 4)] public string Text { get; set; } = "onoff";
+        [GoMultiLineProperty(PCategory.Control, 1)] public string Text { get; set; } = "onoff";
         /// <summary>
         /// 글꼴 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoFontNameProperty(PCategory.Control, 5)] public string FontName { get; set; } = "나눔고딕";
+        [GoFontNameProperty(PCategory.Control, 3)] public string FontName { get; set; } = "나눔고딕";
         /// <summary>
         /// 글꼴 스타일을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 6)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Control, 4)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         /// <summary>
         /// 글꼴 크기를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 7)] public float FontSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 5)] public float FontSize { get; set; } = 12;
         /// <summary>
         /// 텍스트 색상을 가져오거나 설정합니다. 테마 색상 이름을 사용합니다.
         /// </summary>
@@ -58,7 +58,7 @@ namespace Going.UI.ImageCanvas
         /// <summary>
         /// On/Off 상태 값을 가져오거나 설정합니다. 값이 변경되면 <see cref="ValueChanged"/> 이벤트가 발생합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 9)]
+        [GoProperty(PCategory.Control, 0)]
         public bool OnOff
         {
             get => bOnOff;

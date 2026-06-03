@@ -30,62 +30,76 @@ namespace Going.UI.Controls
     public abstract class GoInput : GoControl
     {
         #region Properties
-        /// <summary>아이콘 문자열 (FontAwesome 등)</summary>
-        [GoProperty(PCategory.Control, 0)] public string? IconString { get; set; }
-        /// <summary>아이콘 크기</summary>
-        [GoProperty(PCategory.Control, 1)] public float IconSize { get; set; } = 12;
-        /// <summary>아이콘과 텍스트 사이 간격</summary>
-        [GoProperty(PCategory.Control, 2)] public float IconGap { get; set; } = 5;
-
-        /// <summary>글꼴 이름</summary>
-        [GoFontNameProperty(PCategory.Control, 3)] public string FontName { get; set; } = "나눔고딕";
-        /// <summary>글꼴 스타일</summary>
-        [GoProperty(PCategory.Control, 4)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
-        /// <summary>글꼴 크기</summary>
-        [GoProperty(PCategory.Control, 5)] public float FontSize { get; set; } = 12;
-
-        /// <summary>레이아웃 배치 방향 (가로/세로)</summary>
-        [GoProperty(PCategory.Control, 6)] public GoDirectionHV Direction { get; set; } = GoDirectionHV.Horizon;
-        /// <summary>텍스트 색상 (테마 색상 키)</summary>
-        [GoProperty(PCategory.Control, 7)] public string TextColor { get; set; } = "Fore";
-        /// <summary>테두리 색상 (테마 색상 키)</summary>
-        [GoProperty(PCategory.Control, 8)] public string BorderColor { get; set; } = "Base3";
-        /// <summary>테두리 두께</summary>
-        [GoProperty(PCategory.Control, 19)] public float BorderWidth { get; set; } = 1.5F;
-        /// <summary>제목/버튼 영역 채우기 색상 (테마 색상 키)</summary>
-        [GoProperty(PCategory.Control, 9)] public string FillColor { get; set; } = "Base3";
-        /// <summary>값 영역 배경 색상 (테마 색상 키)</summary>
-        [GoProperty(PCategory.Control, 10)] public string ValueColor { get; set; } = "Base1";
-        /// <summary>모서리 둥글기 유형</summary>
-        [GoProperty(PCategory.Control, 11)] public GoRoundType Round { get; set; } = GoRoundType.All;
-
-        /// <summary>제목 영역 크기 (픽셀). null이면 제목 영역을 표시하지 않습니다.</summary>
-        [GoProperty(PCategory.Control, 12)] public float? TitleSize { get; set; }
+        // 콘텐츠 (0: Title, 1~9: 파생 클래스의 Value 묶음용 예약)
         /// <summary>제목 텍스트</summary>
-        [GoProperty(PCategory.Control, 13)] public string? Title { get; set; }
+        [GoProperty(PCategory.Control, 0)] public string? Title { get; set; }
 
-        /// <summary>버튼 영역 크기 (픽셀). null이면 버튼 영역을 표시하지 않습니다.</summary>
-        [GoProperty(PCategory.Control, 14)] public float? ButtonSize { get; set; }
-        /// <summary>버튼 항목 목록</summary>
-        [GoChildWrappers]
-        [GoProperty(PCategory.Control, 15)] public List<GoButtonItem> Buttons { get; set; } = [];
+        // 아이콘
+        /// <summary>아이콘 문자열 (FontAwesome 등)</summary>
+        [GoProperty(PCategory.Control, 10)] public string? IconString { get; set; }
+        /// <summary>아이콘 크기</summary>
+        [GoProperty(PCategory.Control, 11)] public float IconSize { get; set; } = 12;
+        /// <summary>아이콘과 텍스트 사이 간격</summary>
+        [GoProperty(PCategory.Control, 12)] public float IconGap { get; set; } = 5;
 
+        // 폰트
+        /// <summary>글꼴 이름</summary>
+        [GoFontNameProperty(PCategory.Control, 13)] public string FontName { get; set; } = "나눔고딕";
+        /// <summary>글꼴 스타일</summary>
+        [GoProperty(PCategory.Control, 14)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        /// <summary>글꼴 크기</summary>
+        [GoProperty(PCategory.Control, 15)] public float FontSize { get; set; } = 12;
         /// <summary>자동 글꼴 크기 설정</summary>
         [GoProperty(PCategory.Control, 16)] public GoAutoFontSize AutoFontSize { get; set; } = GoAutoFontSize.NotUsed;
         /// <summary>자동 아이콘 크기 설정</summary>
         [GoProperty(PCategory.Control, 17)] public GoAutoFontSize AutoIconSize { get; set; } = GoAutoFontSize.NotUsed;
 
-        /// <summary>Title 영역의 배경 박스(FillColor) 그리기 여부. false면 텍스트만 표시되고 외곽 round 가 Value 영역으로 흡수됨.</summary>
-        [GoProperty(PCategory.Control, 18)] public bool TitleBoxDraw { get; set; } = true;
+        // 레이아웃
+        /// <summary>레이아웃 배치 방향 (가로/세로)</summary>
+        [GoProperty(PCategory.Control, 18)] public GoDirectionHV Direction { get; set; } = GoDirectionHV.Horizon;
 
+        // 색상
+        /// <summary>값 영역 텍스트 색상 (테마 색상 키)</summary>
+        [GoProperty(PCategory.Control, 19)] public string TextColor { get; set; } = "Fore";
+        /// <summary>제목 영역 텍스트 색상 (테마 색상 키)</summary>
+        [GoProperty(PCategory.Control, 20)] public string TitleTextColor { get; set; } = "Fore";
+        /// <summary>제목 영역 채우기 색상 (테마 색상 키). 버튼은 <see cref="ButtonColor"/> 미지정 시 이 색을 사용합니다.</summary>
+        [GoProperty(PCategory.Control, 21)] public string FillColor { get; set; } = "Base3";
+        /// <summary>값 영역 배경 색상 (테마 색상 키)</summary>
+        [GoProperty(PCategory.Control, 22)] public string ValueColor { get; set; } = "Base1";
+        /// <summary>테두리 색상 (테마 색상 키)</summary>
+        [GoProperty(PCategory.Control, 23)] public string BorderColor { get; set; } = "Base3";
+
+        // 모양/테두리
+        /// <summary>모서리 둥글기 유형</summary>
+        [GoProperty(PCategory.Control, 24)] public GoRoundType Round { get; set; } = GoRoundType.All;
+        /// <summary>테두리 두께</summary>
+        [GoProperty(PCategory.Control, 25)] public float BorderWidth { get; set; } = 1.5F;
+
+        // 제목 영역
+        /// <summary>제목 영역 크기 (픽셀). null이면 제목 영역을 표시하지 않습니다.</summary>
+        [GoProperty(PCategory.Control, 26)] public float? TitleSize { get; set; }
         /// <summary>Title 영역 글꼴 크기. AutoTitleFontSize=NotUsed일 때 사용됩니다.</summary>
-        [GoProperty(PCategory.Control, 20)] public float TitleFontSize { get; set; } = 12F;
-        /// <summary>Title 텍스트/아이콘 정렬</summary>
-        [GoProperty(PCategory.Control, 21)] public GoContentAlignment TitleContentAlignment { get; set; } = GoContentAlignment.MiddleCenter;
+        [GoProperty(PCategory.Control, 27)] public float TitleFontSize { get; set; } = 12F;
         /// <summary>Title 영역 자동 글꼴 크기 설정</summary>
-        [GoProperty(PCategory.Control, 22)] public GoAutoFontSize AutoTitleFontSize { get; set; } = GoAutoFontSize.NotUsed;
+        [GoProperty(PCategory.Control, 28)] public GoAutoFontSize AutoTitleFontSize { get; set; } = GoAutoFontSize.NotUsed;
+        /// <summary>Title 텍스트/아이콘 정렬</summary>
+        [GoProperty(PCategory.Control, 29)] public GoContentAlignment TitleContentAlignment { get; set; } = GoContentAlignment.MiddleCenter;
         /// <summary>Title 영역 텍스트(+아이콘) 패딩</summary>
-        [GoProperty(PCategory.Control, 23)] public GoPadding TitleTextPadding { get; set; } = new GoPadding(0, 0, 0, 0);
+        [GoProperty(PCategory.Control, 30)] public GoPadding TitleTextPadding { get; set; } = new GoPadding(0, 0, 0, 0);
+        /// <summary>Title 영역의 배경 박스(FillColor) 그리기 여부. false면 텍스트만 표시되고 외곽 round 가 Value 영역으로 흡수됨.</summary>
+        [GoProperty(PCategory.Control, 31)] public bool TitleBoxDraw { get; set; } = true;
+
+        // 버튼 영역
+        /// <summary>버튼 영역 크기 (픽셀). null이면 버튼 영역을 표시하지 않습니다.</summary>
+        [GoProperty(PCategory.Control, 32)] public float? ButtonSize { get; set; }
+        /// <summary>버튼 항목 목록</summary>
+        [GoChildWrappers]
+        [GoProperty(PCategory.Control, 33)] public List<GoButtonItem> Buttons { get; set; } = [];
+        /// <summary>버튼 배경 색상 (테마 색상 키). null/빈 값이면 <see cref="FillColor"/>를 사용합니다.</summary>
+        [GoProperty(PCategory.Control, 34)] public string? ButtonColor { get; set; } = null;
+        /// <summary>버튼 배경 그라데이션 끝 색상 (테마 색상 키, 세로). null/빈 값이면 단색.</summary>
+        [GoProperty(PCategory.Control, 35)] public string? ButtonColor2 { get; set; } = null;
 
         /// <summary>입력 값의 유효성 여부</summary>
         [JsonIgnore] public virtual bool Valid => true;
@@ -122,9 +136,12 @@ namespace Going.UI.Controls
             #region var
             #region color
             var cText = thm.ToColor(TextColor);
+            var cTitleText = thm.ToColor(TitleTextColor);
             var cBorder = thm.ToColor(BorderColor);
             var cFill = thm.ToColor(FillColor);
             var cValue = thm.ToColor(ValueColor);
+            var cBtnBase = string.IsNullOrEmpty(ButtonColor) ? cFill : thm.ToColor(ButtonColor);
+            SKColor? cBtnBase2 = string.IsNullOrEmpty(ButtonColor2) ? (SKColor?)null : thm.ToColor(ButtonColor2);
             var cInput = !Valid ? thm.Error : thm.Highlight;
             #endregion
             #region bounds
@@ -160,7 +177,7 @@ namespace Going.UI.Controls
                     Util.DrawBox(canvas, rtTitle, cFill, rndTitle, thm.Corner);
                 var rtTitleText = Util.FromRect(rtTitle, TitleTextPadding);
                 var tfsz = Util.FontSize(AutoTitleFontSize, rtTitleText.Height) ?? TitleFontSize;
-                Util.DrawTextIcon(canvas, Title, FontName, FontStyle, tfsz, IconString, isz, GoDirectionHV.Horizon, IconGap, rtTitleText, cText, TitleContentAlignment);
+                Util.DrawTextIcon(canvas, Title, FontName, FontStyle, tfsz, IconString, isz, GoDirectionHV.Horizon, IconGap, rtTitleText, cTitleText, TitleContentAlignment);
             }
             #endregion
 
@@ -175,13 +192,14 @@ namespace Going.UI.Controls
                 buttonLoop((i, btn, rt) =>
                 {
                     var rnd = rndButtons[i];
-                    var cBtn = cFill.BrightnessTransmit(btn.Down ? thm.DownBrightness : 0);
                     var cTxt = cText.BrightnessTransmit(btn.Down ? thm.DownBrightness : 0);
-                    Util.DrawBox(canvas, rt, cBtn.BrightnessTransmit(btn.Hover ? thm.HoverFillBrightness : 0), rnd, thm.Corner);
+                    var c1 = cBtnBase.BrightnessTransmit(btn.Down ? thm.DownBrightness : 0).BrightnessTransmit(btn.Hover ? thm.HoverFillBrightness : 0);
+                    SKColor? c2 = cBtnBase2.HasValue ? cBtnBase2.Value.BrightnessTransmit(btn.Down ? thm.DownBrightness : 0).BrightnessTransmit(btn.Hover ? thm.HoverFillBrightness : 0) : (SKColor?)null;
+                    drawButtonBox(canvas, thm, rt, rnd, c1, c2);
 
                     if (i > 0)
                     {
-                        using var p = new SKPaint { IsAntialias = true, IsStroke = true, StrokeWidth = 1, Color = cFill.BrightnessTransmit(thm.BorderBrightness) };
+                        using var p = new SKPaint { IsAntialias = true, IsStroke = true, StrokeWidth = 1, Color = cBtnBase.BrightnessTransmit(thm.BorderBrightness) };
                         using var pe = SKPathEffect.CreateDash([2, 2], 2);
                         float x = Convert.ToInt32(rt.Left); x += 0.5F;
                         p.PathEffect = pe;
@@ -215,8 +233,7 @@ namespace Going.UI.Controls
                     if (btn.Hover)
                     {
                         var rnd = rndButtons[i];
-                        var cBtn = cFill.BrightnessTransmit(btn.Down ? thm.DownBrightness : 0);
-                        var cTxt = cText.BrightnessTransmit(btn.Down ? thm.DownBrightness : 0);
+                        var cBtn = cBtnBase.BrightnessTransmit(btn.Down ? thm.DownBrightness : 0);
                         Util.DrawBox(canvas, rt, SKColors.Transparent, cBtn.BrightnessTransmit(btn.Hover ? thm.HoverBorderBrightness : 0), rnd, thm.Corner);
                     }
                 });
@@ -330,6 +347,22 @@ namespace Going.UI.Controls
         #endregion
 
         #region Method
+        /// <summary>버튼 배경을 그립니다. <paramref name="c2"/>가 있으면 세로 그라데이션, 없으면 단색으로 그립니다.</summary>
+        static void drawButtonBox(SKCanvas canvas, GoTheme thm, SKRect rt, GoRoundType rnd, SKColor c1, SKColor? c2)
+        {
+            if (c2.HasValue && c1 != SKColors.Transparent)
+            {
+                using var p = new SKPaint { IsAntialias = true, IsStroke = false };
+                using var sh = SKShader.CreateLinearGradient(
+                    new SKPoint(rt.MidX, rt.Top), new SKPoint(rt.MidX, rt.Bottom),
+                    new[] { c1, c2.Value }, new[] { 0F, 1F }, SKShaderTileMode.Clamp);
+                p.Shader = sh;
+                if (rnd == GoRoundType.Ellipse) canvas.DrawOval(rt, p);
+                else { using var rr = new SKRoundRect(rt, thm.Corner); Util.SetRound(rr, rnd, thm.Corner); canvas.DrawRoundRect(rr, p); }
+            }
+            else Util.DrawBox(canvas, rt, c1, rnd, thm.Corner);
+        }
+
         void buttonLoop(Action<int, GoButtonItem, SKRect> act)
         {
             var rtButton = Areas()["Button"];
@@ -354,7 +387,7 @@ namespace Going.UI.Controls
         #region Properties
         private string sVal = "";
         /// <summary>입력 값</summary>
-        [GoProperty(PCategory.Control, 18)]
+        [GoProperty(PCategory.Control, 1)]
         public string Value
         {
             get => sVal;
@@ -416,7 +449,7 @@ namespace Going.UI.Controls
         #region Properties
         private T sVal = default(T);
         /// <summary>입력 값</summary>
-        [GoProperty(PCategory.Control, 18)]
+        [GoProperty(PCategory.Control, 1)]
         public T Value
         {
             get => sVal;
@@ -431,12 +464,12 @@ namespace Going.UI.Controls
         }
 
         /// <summary>최솟값. null이면 제한 없음.</summary>
-        [GoProperty(PCategory.Control, 19)] public T? Minimum { get; set; } = null;
+        [GoProperty(PCategory.Control, 2)] public T? Minimum { get; set; } = null;
         /// <summary>최댓값. null이면 제한 없음.</summary>
-        [GoProperty(PCategory.Control, 20)] public T? Maximum { get; set; } = null;
+        [GoProperty(PCategory.Control, 3)] public T? Maximum { get; set; } = null;
 
         /// <summary>값 표시 형식 문자열</summary>
-        [GoProperty(PCategory.Control, 21)] public string? FormatString { get; set; } = null;
+        [GoProperty(PCategory.Control, 4)] public string? FormatString { get; set; } = null;
 
         /// <summary>입력 값의 유효성 여부</summary>
         [JsonIgnore] public override bool Valid => bValid;
@@ -444,9 +477,9 @@ namespace Going.UI.Controls
         [JsonIgnore] public override bool IsKeyboardInput => true;
 
         /// <summary>단위 텍스트</summary>
-        [GoProperty(PCategory.Control, 22)] public string? Unit { get; set; }
+        [GoProperty(PCategory.Control, 5)] public string? Unit { get; set; }
         /// <summary>단위 표시 영역 크기 (픽셀). null이면 단위를 표시하지 않습니다.</summary>
-        [GoProperty(PCategory.Control, 23)] public float? UnitSize { get; set; } = null;
+        [GoProperty(PCategory.Control, 6)] public float? UnitSize { get; set; } = null;
         #endregion
 
         #region Event
@@ -560,7 +593,7 @@ namespace Going.UI.Controls
         #region Properties
         private bool sVal = false;
         /// <summary>입력 값</summary>
-        [GoProperty(PCategory.Control, 18)]
+        [GoProperty(PCategory.Control, 1)]
         public bool Value
         {
             get => sVal;
@@ -579,13 +612,13 @@ namespace Going.UI.Controls
         }
 
         /// <summary>On 상태 텍스트</summary>
-        [GoProperty(PCategory.Control, 19)] public string? OnText { get; set; } = "ON";
+        [GoProperty(PCategory.Control, 2)] public string? OnText { get; set; } = "ON";
         /// <summary>Off 상태 텍스트</summary>
-        [GoProperty(PCategory.Control, 20)] public string? OffText { get; set; } = "OFF";
+        [GoProperty(PCategory.Control, 3)] public string? OffText { get; set; } = "OFF";
         /// <summary>On 상태 아이콘 문자열</summary>
-        [GoProperty(PCategory.Control, 21)] public string? OnIconString { get; set; }
+        [GoProperty(PCategory.Control, 4)] public string? OnIconString { get; set; }
         /// <summary>Off 상태 아이콘 문자열</summary>
-        [GoProperty(PCategory.Control, 22)] public string? OffIconString { get; set; }
+        [GoProperty(PCategory.Control, 5)] public string? OffIconString { get; set; }
         #endregion
 
         #region Event
@@ -681,7 +714,7 @@ namespace Going.UI.Controls
         #region Properties
         /// <summary>콤보박스 항목 목록</summary>
         [GoChildWrappers]
-        [GoProperty(PCategory.Control, 18)] public List<GoListItem> Items { get; set; } = [];
+        [GoProperty(PCategory.Control, 1)] public List<GoListItem> Items { get; set; } = [];
 
         private int nSelIndex = -1;
         /// <summary>선택된 항목의 인덱스. -1이면 선택된 항목 없음.</summary>
@@ -703,9 +736,9 @@ namespace Going.UI.Controls
         [JsonIgnore] public GoListItem? SelectedItem => SelectedIndex >= 0 && SelectedIndex < Items.Count ? Items[SelectedIndex] : null;
 
         /// <summary>드롭다운 항목 높이 (픽셀)</summary>
-        [GoProperty(PCategory.Control, 19)] public int ItemHeight { get; set; } = 30;
+        [GoProperty(PCategory.Control, 2)] public int ItemHeight { get; set; } = 30;
         /// <summary>드롭다운에 표시할 최대 항목 수</summary>
-        [GoProperty(PCategory.Control, 20)] public int MaximumViewCount { get; set; } = 8;
+        [GoProperty(PCategory.Control, 3)] public int MaximumViewCount { get; set; } = 8;
         #endregion
 
         #region Event
@@ -798,7 +831,7 @@ namespace Going.UI.Controls
         #region Properties
         /// <summary>선택 가능한 항목 목록</summary>
         [GoChildWrappers]
-        [GoProperty(PCategory.Control, 18)] public List<GoListItem> Items { get; set; } = [];
+        [GoProperty(PCategory.Control, 1)] public List<GoListItem> Items { get; set; } = [];
 
         private int nSelIndex = -1;
         /// <summary>선택된 항목의 인덱스. -1이면 선택된 항목 없음.</summary>
@@ -1018,7 +1051,7 @@ namespace Going.UI.Controls
     {
         #region Properties
         /// <summary>선택된 색상 값</summary>
-        [GoProperty(PCategory.Control, 18)]
+        [GoProperty(PCategory.Control, 1)]
         public SKColor Value
         {
             get => cValue;
@@ -1125,7 +1158,7 @@ namespace Going.UI.Controls
     {
         #region Properties
         /// <summary>선택된 날짜/시간 값</summary>
-        [GoProperty(PCategory.Control, 18)]
+        [GoProperty(PCategory.Control, 1)]
         public DateTime Value
         {
             get => cValue;
@@ -1140,11 +1173,11 @@ namespace Going.UI.Controls
         }
 
         /// <summary>날짜/시간 표시 스타일 (날짜만/시간만/날짜+시간)</summary>
-        [GoProperty(PCategory.Control, 19)] public GoDateTimeKind DateTimeStyle { get; set; } = GoDateTimeKind.DateTime;
+        [GoProperty(PCategory.Control, 2)] public GoDateTimeKind DateTimeStyle { get; set; } = GoDateTimeKind.DateTime;
         /// <summary>날짜 표시 형식 문자열</summary>
-        [GoProperty(PCategory.Control, 20)] public string DateFormat { get; set; } = "yyyy-MM-dd";
+        [GoProperty(PCategory.Control, 3)] public string DateFormat { get; set; } = "yyyy-MM-dd";
         /// <summary>시간 표시 형식 문자열</summary>
-        [GoProperty(PCategory.Control, 21)] public string TimeFormat { get; set; } = "HH:mm:ss";
+        [GoProperty(PCategory.Control, 4)] public string TimeFormat { get; set; } = "HH:mm:ss";
         #endregion
 
         #region Event

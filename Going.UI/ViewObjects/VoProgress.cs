@@ -16,15 +16,15 @@ namespace Going.UI.ViewObjects
         /// <summary>현재 값.</summary>
         [GoProperty(PCategory.Control, 0)] public float Value { get; set; } = 0F;
         /// <summary>최대치.</summary>
-        [GoProperty(PCategory.Control, 1)] public float Max { get; set; } = 100F;
+        [GoProperty(PCategory.Control, 5)] public float Max { get; set; } = 100F;
         /// <summary>트랙(배경) 색.</summary>
-        [GoProperty(PCategory.Control, 2)] public string TrackColor { get; set; } = "Base3";
+        [GoProperty(PCategory.Control, 1)] public string TrackColor { get; set; } = "Base3";
         /// <summary>채움 시작 색.</summary>
-        [GoProperty(PCategory.Control, 3)] public string FillColor { get; set; } = "Point";
+        [GoProperty(PCategory.Control, 2)] public string FillColor { get; set; } = "Point";
         /// <summary>채움 끝 색 (그라데이션). null이면 단색.</summary>
-        [GoProperty(PCategory.Control, 4)] public string? FillColor2 { get; set; }
+        [GoProperty(PCategory.Control, 3)] public string? FillColor2 { get; set; }
         /// <summary>모서리 반지름.</summary>
-        [GoProperty(PCategory.Control, 5)] public float Radius { get; set; } = 6F;
+        [GoProperty(PCategory.Control, 4)] public float Radius { get; set; } = 6F;
 
         /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)

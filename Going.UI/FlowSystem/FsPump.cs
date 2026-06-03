@@ -98,32 +98,32 @@ namespace Going.UI.FlowSystem
         /// <summary>
         /// 가동 시 표시 색상을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 0)] public string OnColor { get; set; } = "Lime";
+        [GoProperty(PCategory.Control, 1)] public string OnColor { get; set; } = "Lime";
 
         /// <summary>
         /// 정지 시 표시 색상을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 1)] public string OffColor { get; set; } = "Red";
+        [GoProperty(PCategory.Control, 2)] public string OffColor { get; set; } = "Red";
 
         /// <summary>
         /// 비어있을 때의 색상을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 1)] public string EmptyColor { get; set; } = "Base1";
+        [GoProperty(PCategory.Control, 3)] public string EmptyColor { get; set; } = "Base1";
 
         /// <summary>
         /// 프레임 색상을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 2)] public string FrameColor { get; set; } = "Base4";
+        [GoProperty(PCategory.Control, 4)] public string FrameColor { get; set; } = "Base4";
 
         /// <summary>
         /// 흡입구 사용 여부를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 3)] public bool UseInlet { get; set; } = false;
+        [GoProperty(PCategory.Control, 6)] public bool UseInlet { get; set; } = false;
 
         /// <summary>
         /// 펌프의 가동/정지 상태를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 4)]
+        [GoProperty(PCategory.Control, 0)]
         public bool OnOff
         {
             get => bOnOff;
@@ -153,7 +153,7 @@ namespace Going.UI.FlowSystem
         /// <summary>
         /// 역방향 여부를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 6)] public bool Reverse { get; set; } = false;
+        [GoProperty(PCategory.Control, 7)] public bool Reverse { get; set; } = false;
 
         /// <summary>
         /// 흐름 여부를 가져옵니다. OnOff 상태에 따라 결정됩니다.

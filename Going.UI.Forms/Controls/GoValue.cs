@@ -27,6 +27,7 @@ namespace Going.UI.Forms.Controls
 
         public GoDirectionHV Direction { get => Control.Direction; set { if (Control.Direction != value) { Control.Direction = value; Invalidate(); } } }
         public string TextColor { get => Control.TextColor; set { if (Control.TextColor != value) { Control.TextColor = value; Invalidate(); } } }
+        public string TitleTextColor { get => Control.TitleTextColor; set { if (Control.TitleTextColor != value) { Control.TitleTextColor = value; Invalidate(); } } }
         public string BorderColor { get => Control.BorderColor; set { if (Control.BorderColor != value) { Control.BorderColor = value; Invalidate(); } } }
         public string FillColor { get => Control.FillColor; set { if (Control.FillColor != value) { Control.FillColor = value; Invalidate(); } } }
         public string ValueColor { get => Control.ValueColor; set { if (Control.ValueColor != value) { Control.ValueColor = value; Invalidate(); } } }
@@ -39,6 +40,8 @@ namespace Going.UI.Forms.Controls
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public List<GoButtonItem> Buttons { get => Control.Buttons; set { if (Control.Buttons != value) { Control.Buttons = value; Invalidate(); } } }
         public float? ButtonSize { get => Control.ButtonSize; set { if (Control.ButtonSize != value) { Control.ButtonSize = value; Invalidate(); } } }
+        public string? ButtonColor { get => Control.ButtonColor; set { if (Control.ButtonColor != value) { Control.ButtonColor = value; Invalidate(); } } }
+        public string? ButtonColor2 { get => Control.ButtonColor2; set { if (Control.ButtonColor2 != value) { Control.ButtonColor2 = value; Invalidate(); } } }
 
         public string Value { get => Control.Value; set { if (Control.Value != value) { Control.Value = value; Invalidate(); } } }
         #endregion
@@ -70,6 +73,7 @@ namespace Going.UI.Forms.Controls
         public GoDirectionHV Direction { get => Control.Direction; set { if (Control.Direction != value) { Control.Direction = value; Invalidate(); } } }
 
         public string TextColor { get => Control.TextColor; set { if (Control.TextColor != value) { Control.TextColor = value; Invalidate(); } } }
+        public string TitleTextColor { get => Control.TitleTextColor; set { if (Control.TitleTextColor != value) { Control.TitleTextColor = value; Invalidate(); } } }
         public string BorderColor { get => Control.BorderColor; set { if (Control.BorderColor != value) { Control.BorderColor = value; Invalidate(); } } }
         public string FillColor { get => Control.FillColor; set { if (Control.FillColor != value) { Control.FillColor = value; Invalidate(); } } }
         public string ValueColor { get => Control.ValueColor; set { if (Control.ValueColor != value) { Control.ValueColor = value; Invalidate(); } } }
@@ -82,6 +86,8 @@ namespace Going.UI.Forms.Controls
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public List<GoButtonItem> Buttons { get => Control.Buttons; set { if (Control.Buttons != value) { Control.Buttons = value; Invalidate(); } } }
         public float? ButtonSize { get => Control.ButtonSize; set { if (Control.ButtonSize != value) { Control.ButtonSize = value; Invalidate(); } } }
+        public string? ButtonColor { get => Control.ButtonColor; set { if (Control.ButtonColor != value) { Control.ButtonColor = value; Invalidate(); } } }
+        public string? ButtonColor2 { get => Control.ButtonColor2; set { if (Control.ButtonColor2 != value) { Control.ButtonColor2 = value; Invalidate(); } } }
 
         public T Value { get => Control.Value; set { if (!Control.Value.Equals(value)) { Control.Value = value; Invalidate(); } } }
         public string? FormatString { get => Control.FormatString; set { if (Control.FormatString != value) { Control.FormatString = value; Invalidate(); } } }
@@ -119,6 +125,7 @@ namespace Going.UI.Forms.Controls
         public GoDirectionHV Direction { get => Control.Direction; set { if (Control.Direction != value) { Control.Direction = value; Invalidate(); } } }
 
         public string TextColor { get => Control.TextColor; set { if (Control.TextColor != value) { Control.TextColor = value; Invalidate(); } } }
+        public string TitleTextColor { get => Control.TitleTextColor; set { if (Control.TitleTextColor != value) { Control.TitleTextColor = value; Invalidate(); } } }
         public string BorderColor { get => Control.BorderColor; set { if (Control.BorderColor != value) { Control.BorderColor = value; Invalidate(); } } }
         public string FillColor { get => Control.FillColor; set { if (Control.FillColor != value) { Control.FillColor = value; Invalidate(); } } }
         public string ValueColor { get => Control.ValueColor; set { if (Control.ValueColor != value) { Control.ValueColor = value; Invalidate(); } } }
@@ -131,6 +138,8 @@ namespace Going.UI.Forms.Controls
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public List<GoButtonItem> Buttons { get => Control.Buttons; set { if (Control.Buttons != value) { Control.Buttons = value; Invalidate(); } } }
         public float? ButtonSize { get => Control.ButtonSize; set { if (Control.ButtonSize != value) { Control.ButtonSize = value; Invalidate(); } } }
+        public string? ButtonColor { get => Control.ButtonColor; set { if (Control.ButtonColor != value) { Control.ButtonColor = value; Invalidate(); } } }
+        public string? ButtonColor2 { get => Control.ButtonColor2; set { if (Control.ButtonColor2 != value) { Control.ButtonColor2 = value; Invalidate(); } } }
 
         public bool Value { get => Control.Value; set { if (Control.Value != value) { Control.Value = value; Invalidate(); } } }
 

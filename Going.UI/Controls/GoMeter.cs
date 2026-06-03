@@ -46,51 +46,51 @@ namespace Going.UI.Controls
         /// <summary>
         /// 글꼴 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoFontNameProperty(PCategory.Control, 0)] public string FontName { get; set; } = "나눔고딕";
+        [GoFontNameProperty(PCategory.Control, 2)] public string FontName { get; set; } = "나눔고딕";
         /// <summary>
         /// 글꼴 스타일을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 1)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
+        [GoProperty(PCategory.Control, 3)] public GoFontStyle FontStyle { get; set; } = GoFontStyle.Normal;
         /// <summary>
         /// 값 텍스트의 글꼴 크기를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 2)] public float FontSize { get; set; } = 18;
+        [GoProperty(PCategory.Control, 4)] public float FontSize { get; set; } = 18;
 
         /// <summary>
         /// 제목 텍스트를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 3)] public string Title { get; set; } = "Title";
+        [GoProperty(PCategory.Control, 0)] public string Title { get; set; } = "Title";
         /// <summary>
         /// 제목 글꼴 크기를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 4)] public float TitleFontSize { get; set; } = 12;
+        [GoProperty(PCategory.Control, 5)] public float TitleFontSize { get; set; } = 12;
         /// <summary>
         /// 눈금 레이블의 글꼴 크기를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 5)] public float RemarkFontSize { get; set; } = 10;
+        [GoProperty(PCategory.Control, 6)] public float RemarkFontSize { get; set; } = 10;
 
         /// <summary>
         /// 텍스트 색상의 테마 색상 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 6)] public string TextColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Control, 7)] public string TextColor { get; set; } = "Fore";
         /// <summary>
         /// 바늘 색상의 테마 색상 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 7)] public string NeedleColor { get; set; } = "Fore";
+        [GoProperty(PCategory.Control, 8)] public string NeedleColor { get; set; } = "Fore";
         /// <summary>
         /// 바늘 끝점 색상의 테마 색상 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 8)] public string NeedlePointColor { get; set; } = "Red";
+        [GoProperty(PCategory.Control, 9)] public string NeedlePointColor { get; set; } = "Red";
         /// <summary>
         /// 눈금 색상의 테마 색상 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 9)] public string RemarkColor { get; set; } = "Base5";
+        [GoProperty(PCategory.Control, 10)] public string RemarkColor { get; set; } = "Base5";
 
         private double nValue = 0;
         /// <summary>
         /// 현재 값을 가져오거나 설정합니다. 값이 변경되면 <see cref="ValueChanged"/> 이벤트가 발생합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 10)]
+        [GoProperty(PCategory.Control, 1)]
         public double Value
         {
             get => nValue;
@@ -107,28 +107,28 @@ namespace Going.UI.Controls
         /// <summary>
         /// 최소값을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 11)] public double Minimum { get; set; } = 0;
+        [GoProperty(PCategory.Control, 12)] public double Minimum { get; set; } = 0;
         /// <summary>
         /// 최대값을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 12)] public double Maximum { get; set; } = 100;
+        [GoProperty(PCategory.Control, 13)] public double Maximum { get; set; } = 100;
 
         /// <summary>
         /// 큰 눈금 간격을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 13)] public double GraduationLarge { get; set; } = 10;
+        [GoProperty(PCategory.Control, 14)] public double GraduationLarge { get; set; } = 10;
         /// <summary>
         /// 작은 눈금 간격을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 14)] public double GraduationSmall { get; set; } = 2;
+        [GoProperty(PCategory.Control, 15)] public double GraduationSmall { get; set; } = 2;
         /// <summary>
         /// 값 표시 형식 문자열을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 15)] public string Format { get; set; } = "0";
+        [GoProperty(PCategory.Control, 16)] public string Format { get; set; } = "0";
         /// <summary>
         /// 값 텍스트와 제목 사이의 간격을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 16)] public int Gap { get; set; } = 0;
+        [GoProperty(PCategory.Control, 11)] public int Gap { get; set; } = 0;
 
         /// <summary>
         /// 컬러 구간 목록(안전/주의/위험 등). 눈금 안쪽에 색 호 띠로 표시됩니다.
