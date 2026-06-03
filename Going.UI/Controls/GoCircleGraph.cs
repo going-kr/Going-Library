@@ -104,7 +104,7 @@ namespace Going.UI.Controls
             // ── 새 디자인: 간격(gap) + 그림자 + radial 그라데이션 + hover pop + 중앙 라벨 ──
             if (sel >= 0 && sel < datas.Count)
             {
-                var wh = Math.Min(rtGraph.Width, rtGraph.Height) - 40;
+                var wh = Math.Min(rtGraph.Width, rtGraph.Height) - 10;
                 var rtF = MathTool.MakeRectangle(rtGraph, new SKSize(wh, wh));
                 var rtS = MathTool.MakeRectangle(rtGraph, new SKSize(wh * 0.5F, wh * 0.5F));
                 var cen = new SKPoint(rtF.MidX, rtF.MidY);
@@ -184,12 +184,15 @@ namespace Going.UI.Controls
                     sh?.Dispose();
                     #endregion
 
-                    #region 조각 라벨
-                    if (sw >= 12)
+                    #region 조각 라벨 (들어갈 공간이 있을 때만 — 작으면 생략하고 범례로 대체)
+                    var rMid = (rO + rI) / 2F;
+                    var arcLen = rMid * vang * (float)Math.PI / 180F;     // 조각의 중간반경 호 길이(px)
+                    var tw = Util.MeasureText(ser.Alias, FontName, FontStyle, FontSize).Width;
+                    if ((rO - rI) >= FontSize + 2 && arcLen >= tw * 0.85F)
                     {
-                        var lp = MathTool.GetPointWithAngle(cen, a + vang / 2F, (rO + rI) / 2F);
+                        var lp = MathTool.GetPointWithAngle(cen, a + vang / 2F, rMid);
                         lp.Offset(hp);
-                        Util.DrawText(canvas, ser.Alias, FontName, FontStyle, FontSize, Util.FromRect(lp.X - 50, lp.Y - 12, 100, 24), cText, c.BrightnessChange(-0.7F), nTextBorder);
+                        Util.DrawText(canvas, ser.Alias, FontName, FontStyle, FontSize, Util.FromRect(lp.X - tw / 2F - 2, lp.Y - 12, tw + 4, 24), cText, c.BrightnessChange(-0.7F), nTextBorder);
                     }
                     #endregion
 
@@ -297,20 +300,19 @@ namespace Going.UI.Controls
                 var box = FontSize + 2;
                 var gap = 10;
 
-                var csw = datas.Select(x => Util.MeasureText(x.Name, FontName, FontStyle, FontSize).Width );
                 var rsw = Series.Select(x => Util.MeasureText(x.Alias, FontName, FontStyle, FontSize).Width + gap + box);
                 var rw = rsw.Any() ? rsw.Max() + 20 : 20;
+                var csw = datas.Select(x => Util.MeasureText(x.Name, FontName, FontStyle, FontSize).Width);
                 var cw = csw.Any() ? csw.Max() + 20 : 20;
                 var rc = Math.Max(1, Series.Where(x => x.Visible).Count());
-                var rts = Util.Grid(rtContent, [$"100%", "10px", $"{rw}px"], ["20px", "10px", "100%", "10px", "40px", $"{Scroll.SC_WH}px"]);
 
-                var rtGraph = Util.Merge(rts, 0, 2, 1, 1);
-                var rtRemark = Util.Merge(rts, 2, 2, 1, 1);
+                // 좌: 그래프(위, 전체) + 카테고리 선택(하단 50px) / 우: 범례
+                var rts = Util.Grid(rtContent, [$"100%", "10px", $"{rw}px"], ["100%", "40px"]);
+                var rtGraph = Util.Merge(rts, 0, 0, 1, 1);
+                var rtCatArea = Util.Merge(rts, 0, 1, 1, 1);
+                var rtRemark = Util.Merge(rts, 2, 0, 1, 2);
 
-                var rtsCat = Util.Columns(MathTool.MakeRectangle(Util.Merge(rts, 0, 4, 1, 1), new SKSize(cw + 80, 40)), ["40px", "100%", "40px"]);
-                var rtCL = rtsCat[0];
-                var rtCT = rtsCat[1];
-                var rtCR = rtsCat[2];
+                var rtsCat = Util.Columns(MathTool.MakeRectangle(rtCatArea, new SKSize(cw + 80, 40)), ["40px", "100%", "40px"]);
 
                 dic["Graph"] = rtGraph;
                 dic["Remark"] = MathTool.MakeRectangle(rtRemark, new SKSize(rw, (box * rc) + (gap * (rc + 1))), GoContentAlignment.MiddleCenter);
