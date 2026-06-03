@@ -199,7 +199,7 @@ namespace Going.UI.Controls
 
                     if (i > 0)
                     {
-                        using var p = new SKPaint { IsAntialias = true, IsStroke = true, StrokeWidth = 1, Color = cBtnBase.BrightnessTransmit(thm.BorderBrightness) };
+                        using var p = new SKPaint { IsAntialias = true, IsStroke = true, StrokeWidth = 1, Color = cBorder };
                         using var pe = SKPathEffect.CreateDash([2, 2], 2);
                         float x = Convert.ToInt32(rt.Left); x += 0.5F;
                         p.PathEffect = pe;
