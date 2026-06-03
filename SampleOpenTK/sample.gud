@@ -1277,6 +1277,8 @@
               "FillColor": "Base3",
               "ValueColor": "Base2",
               "BorderColor": "Base4",
+              "ButtonColor": "Base3",
+              "ButtonColor2": "Base3-dark",
               "Round": 1,
               "BorderWidth": 1.5,
               "TitleSize": null,
@@ -1305,8 +1307,6 @@
                   "Size": "100%"
                 }
               ],
-              "ButtonColor": "Base3",
-              "ButtonColor2": "Base3-dark",
               "Id": "5bda0624-983a-4133-83fa-f4e2278223d0",
               "Name": null,
               "Visible": true,
@@ -1348,6 +1348,8 @@
               "FillColor": "Base3",
               "ValueColor": "Base1",
               "BorderColor": "Base4",
+              "ButtonColor": "Base3",
+              "ButtonColor2": "Base3-dark",
               "Round": 1,
               "BorderWidth": 1.5,
               "TitleSize": null,
@@ -1376,8 +1378,6 @@
                   "Size": "100%"
                 }
               ],
-              "ButtonColor": "Base3",
-              "ButtonColor2": "Base3-dark",
               "Id": "be052541-f019-47c3-a083-1e06e9dd574b",
               "Name": null,
               "Visible": true,
@@ -1386,6 +1386,51 @@
               "LongClickTime": null,
               "Selectable": true,
               "Bounds": "72,266,261,306",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          },
+          {
+            "Type": "GoSparkline",
+            "Value": {
+              "GraphColor": "Back",
+              "TextColor": "Fore",
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 10,
+              "Minimum": 0,
+              "Maximum": 100,
+              "MaximumXScale": "00:10:00",
+              "XScale": "00:01:00",
+              "Interval": 1000,
+              "ValueFormatString": null,
+              "AreaDraw": true,
+              "LineWidth": 1.5,
+              "Baselines": [],
+              "Series": [
+                {
+                  "Name": "t1",
+                  "Alias": "T1",
+                  "Color": "Red",
+                  "Visible": true,
+                  "Minimum": 0,
+                  "Maximum": 100
+                }
+              ],
+              "IsStart": false,
+              "Id": "1df87562-4b4c-49a9-b5af-aafe50ebdd37",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": false,
+              "Bounds": "393,316,553,404",
               "Dock": 0,
               "Margin": {
                 "Left": 4,
@@ -2507,7 +2552,7 @@
               "UseLongClick": false,
               "LongClickTime": null,
               "Selectable": true,
-              "Bounds": "17,10,677,414",
+              "Bounds": "17,10,480,414",
               "Dock": 0,
               "Margin": {
                 "Left": 4,

@@ -123,6 +123,11 @@ namespace Going.UI.Design
         [JsonIgnore] public bool IsDrag => dragItem != null;
         /// <summary>UIEditor 에서 디자인 모드로 사용 중인지 여부를 가져오거나 설정합니다.</summary>
         [JsonIgnore, EditorBrowsable(EditorBrowsableState.Never)] public bool DesignMode { get; set; } = false;
+        /// <summary>
+        /// 그래프 등의 디자인 타임 샘플 데이터를 디자인 모드가 아닐 때도 출력할지 여부.
+        /// (예: gudx-cli render 처럼 DesignMode를 켜면 레이아웃 격자가 보여 곤란한 경우, 이 플래그만 켜서 샘플만 표시)
+        /// </summary>
+        [JsonIgnore, EditorBrowsable(EditorBrowsableState.Never)] public bool SampleDataDraw { get; set; } = false;
 
         /// <summary>
         /// 타이틀바 사용 여부를 가져오거나 설정합니다.

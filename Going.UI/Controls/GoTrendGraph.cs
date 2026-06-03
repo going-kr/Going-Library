@@ -168,7 +168,7 @@ namespace Going.UI.Controls
         /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
-            if (Design != null && Design.DesignMode) GenDesignSample();
+            if (Design != null && (Design.DesignMode || Design.SampleDataDraw)) GenDesignSample();
 
             #region var
             var cGraph = thm.ToColor(GraphColor);
