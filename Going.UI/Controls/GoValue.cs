@@ -61,37 +61,37 @@ namespace Going.UI.Controls
         [GoProperty(PCategory.Control, 22)] public string ValueColor { get; set; } = "Base2";
         /// <summary>테두리 색상 (테마 색상 키)</summary>
         [GoProperty(PCategory.Control, 23)] public string BorderColor { get; set; } = "Base3";
+        /// <summary>버튼 배경 색상 (테마 색상 키). null/빈 값이면 <see cref="FillColor"/>를 사용합니다.</summary>
+        [GoProperty(PCategory.Control, 24)] public string ButtonColor { get; set; } = "Base3";
+        /// <summary>버튼 배경 그라데이션 끝 색상 (테마 색상 키, 세로). null/빈 값이면 단색.</summary>
+        [GoProperty(PCategory.Control, 25)] public string? ButtonColor2 { get; set; } = null;
 
         // 모양/테두리
         /// <summary>모서리 둥글기 유형</summary>
-        [GoProperty(PCategory.Control, 24)] public GoRoundType Round { get; set; } = GoRoundType.All;
+        [GoProperty(PCategory.Control, 26)] public GoRoundType Round { get; set; } = GoRoundType.All;
         /// <summary>테두리 두께</summary>
-        [GoProperty(PCategory.Control, 25)] public float BorderWidth { get; set; } = 1.5F;
+        [GoProperty(PCategory.Control, 27)] public float BorderWidth { get; set; } = 1.5F;
 
         // 제목 영역
         /// <summary>제목 영역 크기 (픽셀). null이면 제목 영역을 표시하지 않습니다.</summary>
-        [GoProperty(PCategory.Control, 26)] public float? TitleSize { get; set; }
+        [GoProperty(PCategory.Control, 28)] public float? TitleSize { get; set; }
         /// <summary>Title 영역 글꼴 크기. AutoTitleFontSize=NotUsed일 때 사용됩니다.</summary>
-        [GoProperty(PCategory.Control, 27)] public float TitleFontSize { get; set; } = 12F;
+        [GoProperty(PCategory.Control, 29)] public float TitleFontSize { get; set; } = 12F;
         /// <summary>Title 영역 자동 글꼴 크기 설정</summary>
-        [GoProperty(PCategory.Control, 28)] public GoAutoFontSize AutoTitleFontSize { get; set; } = GoAutoFontSize.NotUsed;
+        [GoProperty(PCategory.Control, 30)] public GoAutoFontSize AutoTitleFontSize { get; set; } = GoAutoFontSize.NotUsed;
         /// <summary>Title 텍스트/아이콘 정렬</summary>
-        [GoProperty(PCategory.Control, 29)] public GoContentAlignment TitleContentAlignment { get; set; } = GoContentAlignment.MiddleCenter;
+        [GoProperty(PCategory.Control, 31)] public GoContentAlignment TitleContentAlignment { get; set; } = GoContentAlignment.MiddleCenter;
         /// <summary>Title 영역 텍스트(+아이콘) 패딩</summary>
-        [GoProperty(PCategory.Control, 30)] public GoPadding TitleTextPadding { get; set; } = new GoPadding(0, 0, 0, 0);
+        [GoProperty(PCategory.Control, 32)] public GoPadding TitleTextPadding { get; set; } = new GoPadding(0, 0, 0, 0);
         /// <summary>Title 영역의 배경 박스(FillColor) 그리기 여부. false면 텍스트만 표시되고 외곽 round 가 Value 영역으로 흡수됨.</summary>
-        [GoProperty(PCategory.Control, 31)] public bool TitleBoxDraw { get; set; } = true;
+        [GoProperty(PCategory.Control, 33)] public bool TitleBoxDraw { get; set; } = true;
 
         // 버튼 영역
         /// <summary>버튼 영역 크기 (픽셀). null이면 버튼 영역을 표시하지 않습니다.</summary>
-        [GoProperty(PCategory.Control, 32)] public float? ButtonSize { get; set; }
+        [GoProperty(PCategory.Control, 34)] public float? ButtonSize { get; set; }
         /// <summary>버튼 항목 목록</summary>
         [GoChildWrappers]
-        [GoProperty(PCategory.Control, 33)] public List<GoButtonItem> Buttons { get; set; } = [];
-        /// <summary>버튼 배경 색상 (테마 색상 키). null/빈 값이면 <see cref="FillColor"/>를 사용합니다.</summary>
-        [GoProperty(PCategory.Control, 34)] public string? ButtonColor { get; set; } = null;
-        /// <summary>버튼 배경 그라데이션 끝 색상 (테마 색상 키, 세로). null/빈 값이면 단색.</summary>
-        [GoProperty(PCategory.Control, 35)] public string? ButtonColor2 { get; set; } = null;
+        [GoProperty(PCategory.Control, 35)] public List<GoButtonItem> Buttons { get; set; } = [];
 
         [JsonIgnore] private bool UseTitle => (int)(TitleSize ?? 0) > 0;
         [JsonIgnore] private bool UseButton => (int)(ButtonSize ?? 0) > 0 && Buttons.Count > 0;

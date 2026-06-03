@@ -1252,6 +1252,148 @@
                 "Bottom": 4
               }
             }
+          },
+          {
+            "Type": "GoValueNumber\u003Cint\u003E",
+            "Value": {
+              "Value": 0,
+              "FormatString": null,
+              "Unit": null,
+              "UnitFontSize": 12,
+              "UnitSize": null,
+              "AutoUnitFontSize": 0,
+              "Title": null,
+              "IconString": null,
+              "IconSize": 12,
+              "IconGap": 5,
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 12,
+              "AutoFontSize": 0,
+              "AutoIconSize": 0,
+              "Direction": 0,
+              "TextColor": "Fore",
+              "TitleTextColor": "Fore",
+              "FillColor": "Base3",
+              "ValueColor": "Base2",
+              "BorderColor": "Base4",
+              "Round": 1,
+              "BorderWidth": 1.5,
+              "TitleSize": null,
+              "TitleFontSize": 12,
+              "AutoTitleFontSize": 0,
+              "TitleContentAlignment": 4,
+              "TitleTextPadding": {
+                "Left": 0,
+                "Top": 0,
+                "Right": 0,
+                "Bottom": 0
+              },
+              "TitleBoxDraw": true,
+              "ButtonSize": 80,
+              "Buttons": [
+                {
+                  "Name": "plus",
+                  "Text": null,
+                  "IconString": "fa-plus",
+                  "Size": "100%"
+                },
+                {
+                  "Name": "minus",
+                  "Text": null,
+                  "IconString": "fa-minus",
+                  "Size": "100%"
+                }
+              ],
+              "ButtonColor": "Base3",
+              "ButtonColor2": "Base3-dark",
+              "Id": "5bda0624-983a-4133-83fa-f4e2278223d0",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": true,
+              "Bounds": "320,266,494,306",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
+          },
+          {
+            "Type": "GoInputNumber\u003Cint\u003E",
+            "Value": {
+              "Value": 0,
+              "Minimum": null,
+              "Maximum": null,
+              "FormatString": null,
+              "Unit": null,
+              "UnitSize": null,
+              "Title": null,
+              "IconString": null,
+              "IconSize": 12,
+              "IconGap": 5,
+              "FontName": "\uB098\uB214\uACE0\uB515",
+              "FontStyle": 0,
+              "FontSize": 12,
+              "AutoFontSize": 0,
+              "AutoIconSize": 0,
+              "Direction": 0,
+              "TextColor": "Fore",
+              "TitleTextColor": "Fore",
+              "FillColor": "Base3",
+              "ValueColor": "Base1",
+              "BorderColor": "Base4",
+              "Round": 1,
+              "BorderWidth": 1.5,
+              "TitleSize": null,
+              "TitleFontSize": 12,
+              "AutoTitleFontSize": 0,
+              "TitleContentAlignment": 4,
+              "TitleTextPadding": {
+                "Left": 0,
+                "Top": 0,
+                "Right": 0,
+                "Bottom": 0
+              },
+              "TitleBoxDraw": true,
+              "ButtonSize": 80,
+              "Buttons": [
+                {
+                  "Name": "plus",
+                  "Text": null,
+                  "IconString": "fa-plus",
+                  "Size": "100%"
+                },
+                {
+                  "Name": "minus",
+                  "Text": null,
+                  "IconString": "fa-minus",
+                  "Size": "100%"
+                }
+              ],
+              "ButtonColor": "Base3",
+              "ButtonColor2": "Base3-dark",
+              "Id": "be052541-f019-47c3-a083-1e06e9dd574b",
+              "Name": null,
+              "Visible": true,
+              "Enabled": true,
+              "UseLongClick": false,
+              "LongClickTime": null,
+              "Selectable": true,
+              "Bounds": "72,266,261,306",
+              "Dock": 0,
+              "Margin": {
+                "Left": 4,
+                "Top": 4,
+                "Right": 4,
+                "Bottom": 4
+              }
+            }
           }
         ],
         "BackgroundImage": null,
