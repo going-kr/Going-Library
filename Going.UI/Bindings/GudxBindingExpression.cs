@@ -120,17 +120,94 @@ public static class GudxBindingExpression
         if (format == null && cp.Setter != null)
             srcSet = v => cp.Setter!(root, v);
 
-        var (ctrlGet, ctrlSet) = BuildCtrlAccessors(ctrl.GetType(), pi);
+        WireCore(ctrl, pi, srcGet, srcSet);
+    }
 
-        var binding = new GoBinding
+    /// <summary>식(`{path}`)을 root에서 평가해 객체 값을 반환(스코프 파라미터 스냅샷용).</summary>
+    public static object? EvalExpr(string expr, object root)
+    {
+        var (path, _) = Parse(expr);
+        if (root is GoComponentScope sc) return EvalScopePath(sc, path);
+        return CompilePath(root.GetType(), path).Getter(root);
+    }
+
+    /// <summary>리터럴 문자열을 대상 타입으로 변환(스코프 값 파싱).</summary>
+    public static object? ParseLiteral(string raw, Type targetType)
+    {
+        if (targetType == typeof(string)) return raw;
+        try { return Convert.ChangeType(raw, Nullable.GetUnderlyingType(targetType) ?? targetType, CultureInfo.CurrentCulture); }
+        catch { return raw; }
+    }
+
+    private static (object? value, Type type) EvalScopeFirst(GoComponentScope scope, string first)
+    {
+        scope.Values.TryGetValue(first, out var v);
+        scope.Types.TryGetValue(first, out var t);
+        return (v, t ?? typeof(object));
+    }
+
+    private static object? EvalScopePath(GoComponentScope scope, string path)
+    {
+        int dot = path.IndexOf('.');
+        if (dot < 0) { scope.Values.TryGetValue(path, out var v0); return v0; }
+        var first = path.Substring(0, dot);
+        var rest = path.Substring(dot + 1);
+        var (obj, t) = EvalScopeFirst(scope, first);
+        if (obj == null) return null;
+        return CompilePath(t, rest).Getter(obj);
+    }
+
+    /// <summary>컴포넌트 스코프 기준 바인딩. 첫 구간=스코프, tail=선언 타입 CompilePath 재사용.</summary>
+    public static void WireScoped(GoControl ctrl, string propName, string expr, GoComponentScope scope)
+    {
+        var pi = ctrl.GetType().GetProperty(propName)
+            ?? throw new ArgumentException($"Binding target '{propName}' not found on {ctrl.GetType().Name}.");
+        if (!pi.CanWrite)
+            throw new ArgumentException($"Binding target '{propName}' on {ctrl.GetType().Name} is read-only.");
+
+        var (path, format) = Parse(expr);
+        int dot = path.IndexOf('.');
+        var targetType = pi.PropertyType;
+
+        Func<object?> srcGet;
+        Action<object?>? srcSet = null;
+
+        if (dot < 0)
+        {
+            // 파라미터 직접 — 단방향
+            var key = path;
+            if (format != null) srcGet = () => FormatValue(ScopeObj(scope, key), format);
+            else srcGet = () => Coerce(ScopeObj(scope, key), targetType);
+        }
+        else
+        {
+            var first = path.Substring(0, dot);
+            var rest = path.Substring(dot + 1);
+            var (_, t) = EvalScopeFirst(scope, first);
+            var cp = CompilePath(t, rest);
+            if (format != null) srcGet = () => FormatValue(cp.Getter(ScopeObj(scope, first)!), format);
+            else srcGet = () => Coerce(cp.Getter(ScopeObj(scope, first)!), targetType);
+            if (format == null && cp.Setter != null)
+                srcSet = v => cp.Setter!(ScopeObj(scope, first)!, v);
+        }
+
+        WireCore(ctrl, pi, srcGet, srcSet);
+    }
+
+    private static object? ScopeObj(GoComponentScope scope, string key)
+        => scope.Values.TryGetValue(key, out var v) ? v : null;
+
+    private static void WireCore(GoControl ctrl, PropertyInfo pi, Func<object?> srcGet, Action<object?>? srcSet)
+    {
+        var (ctrlGet, ctrlSet) = BuildCtrlAccessors(ctrl.GetType(), pi);
+        ctrl.AddOrReplaceBinding(new GoBinding
         {
             CtrlProperty = pi,
             CtrlGet = ctrlGet,
             CtrlSet = ctrlSet,
             SourceGet = srcGet,
             SourceSet = srcSet,
-        };
-        ctrl.AddOrReplaceBinding(binding);
+        });
     }
 
     private static (Func<GoControl, object?>, Action<GoControl, object?>) BuildCtrlAccessors(Type ctrlType, PropertyInfo pi)

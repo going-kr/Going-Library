@@ -216,6 +216,21 @@ public static class GoGudxConverter
     /// </remarks>
     public static XElement WriteAny(object obj, string? explicitTagName = null, ISet<string>? skipChildren = null)
     {
+        // 컴포넌트 인스턴스: 이름+본인 스칼라+파라미터만, 자식(템플릿 파생) 생략
+        if (obj is Going.UI.Containers.GoComponentInstance ci)
+        {
+            var ce = new XElement(ci.ComponentName);
+            foreach (var prop in ScalarProperties(typeof(Going.UI.Containers.GoComponentInstance)))
+            {
+                var pv = prop.GetValue(ci);
+                if (pv == null) continue;
+                var ps = FormatScalar(pv);
+                if (ps != null) ce.SetAttributeValue(prop.Name, ps);
+            }
+            foreach (var kv in ci.ParamValues) ce.SetAttributeValue(kv.Key, kv.Value);
+            return ce;
+        }
+
         var type = obj.GetType();
         var tagName = explicitTagName ?? TypeTagName(type);
         var elem = new XElement(tagName);
@@ -263,9 +278,37 @@ public static class GoGudxConverter
     public static GoDesign? ReadGoDesign(XElement elem)
     {
         if (elem.Name.LocalName != "GoDesign") return null;
+        RegisterComponents(elem);          // <Components>를 페이지보다 먼저 레지스트리에
         var d = new GoDesign();
         PopulateAny(elem, d);
         return d;
+    }
+
+    /// <summary>디자인 요소의 &lt;Components&gt; 그룹을 파싱해 컴포넌트 레지스트리에 등록.</summary>
+    internal static void RegisterComponents(XElement designElem)
+    {
+        var group = designElem.Element("Components");
+        if (group == null) return;
+        foreach (var compElem in group.Elements("GoComponent"))
+        {
+            var name = compElem.Attribute("name")?.Value;
+            if (string.IsNullOrEmpty(name)) continue;
+
+            var prms = new List<GoComponentParam>();
+            var roots = new List<XElement>();
+            foreach (var child in compElem.Elements())
+            {
+                if (child.Name.LocalName == "Param")
+                {
+                    var pn = child.Attribute("name")?.Value;
+                    var pt = child.Attribute("type")?.Value;
+                    if (string.IsNullOrEmpty(pn) || string.IsNullOrEmpty(pt)) continue;
+                    prms.Add(new GoComponentParam { Name = pn!, TypeName = pt!, Default = child.Attribute("default")?.Value });
+                }
+                else roots.Add(child);   // 내부 컨트롤 트리 루트
+            }
+            GoComponentTemplate.Registry.Register(new GoComponentTemplate { Name = name!, Params = prms, Roots = roots });
+        }
     }
 
     /// <summary>
@@ -410,6 +453,8 @@ public static class GoGudxConverter
 
         var dir = Path.GetDirectoryName(masterPath)!;
         var masterElem = XElement.Parse(File.ReadAllText(masterPath));
+
+        RegisterComponents(masterElem);   // 페이지 파일(컴포넌트 사용처) 읽기 전에 정의 등록
 
         var d = new GoDesign();
         // Suppress Pages/Windows dict population (handled below via *Ref groups + separate files).
@@ -706,7 +751,11 @@ public static class GoGudxConverter
     {
         var tagName = elem.Name.LocalName;
         if (!_gudxControlTypes.TryGetValue(tagName, out var type))
+        {
+            if (GoComponentTemplate.Registry.TryGet(tagName, out var template))
+                return BuildComponentInstance(elem, template);
             throw new InvalidOperationException($"Unknown Gudx tag: {tagName}");
+        }
 
         var instance = (IGoControl)Activator.CreateInstance(type)!;
         PopulateAny(elem, instance);
@@ -725,6 +774,37 @@ public static class GoGudxConverter
         // Defensive: ensure non-empty Id (P3 cell-index dict uses Id as key)
         EnsureNonEmptyId(instance);
         return instance;
+    }
+
+    /// <summary>컴포넌트 사용처 요소를 GoComponentInstance로 빌드(파라미터 분리 + 템플릿 트리 복제).</summary>
+    private static IGoControl BuildComponentInstance(XElement usage, GoComponentTemplate template)
+    {
+        var ci = new Going.UI.Containers.GoComponentInstance { ComponentName = template.Name, Template = template };
+        var paramNames = new HashSet<string>(System.StringComparer.Ordinal);
+        foreach (var p in template.Params) paramNames.Add(p.Name);
+
+        // 사용처 attribute 분리: 파라미터 vs 인스턴스 본인 스칼라(Bounds 등)
+        foreach (var attr in usage.Attributes())
+        {
+            var an = attr.Name.LocalName;
+            if (paramNames.Contains(an)) { ci.ParamValues[an] = attr.Value; continue; }
+
+            var prop = typeof(Going.UI.Containers.GoComponentInstance).GetProperty(an);
+            if (prop == null || !prop.CanWrite) continue;
+            if (Going.UI.Bindings.GudxBindingExpression.IsBinding(attr.Value)) { ci.AddPendingBinding(prop.Name, attr.Value); continue; }
+            var parsed = ParseScalar(prop.PropertyType, attr.Value);
+            if (parsed != null) prop.SetValue(ci, parsed);
+        }
+
+        // 생략된 파라미터는 default로 채움
+        foreach (var p in template.Params)
+            if (!ci.ParamValues.ContainsKey(p.Name) && p.Default != null) ci.ParamValues[p.Name] = p.Default;
+
+        // 템플릿 트리 복제(ReadElement 재귀 — {param} 식은 PendingBindings로 저장됨)
+        foreach (var rootElem in template.Roots)
+            ci.Childrens.Add(ReadElement(rootElem));
+
+        return ci;
     }
 
     /// <summary>
@@ -845,7 +925,8 @@ public static class GoGudxConverter
                     ?? Activator.CreateInstance(pType)!);
         foreach (var childElem in groupElem.Elements())
         {
-            if (!_gudxControlTypes.ContainsKey(childElem.Name.LocalName)) continue;
+            var tag = childElem.Name.LocalName;
+            if (!_gudxControlTypes.ContainsKey(tag) && !GoComponentTemplate.Registry.TryGet(tag, out _)) continue;
             list.Add(ReadElement(childElem));
         }
         if (childProp.CanWrite) childProp.SetValue(instance, list);

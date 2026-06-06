@@ -10,6 +10,12 @@
 
 ### Added
 
+- **Gudx 컴포넌트** — `<GoComponent name><Param .../>...`로 재사용 컴포넌트를 정의하고 `<MotorCard .../>`로 인스턴스화.
+  - 내부 `{param.path}`는 **인스턴스별 파라미터 스코프**에 바인딩(선언적 바인딩 재사용, root만 교체). 엔진·펌프 무수정.
+  - 파라미터는 리터럴(`Title="펌프 A"`) 또는 바깥 바인딩(`motor="{PumpA}"`). `<Param type="MotorVM">`의 타입이 내부 경로(`{motor.Rpm}`)를 타입 안전하게 컴파일하는 다리 — 별칭(`string`/`int`/...) + 로드 어셈블리 simple-name 자동 스캔.
+  - 사용처는 `GoComponentInstance : GoContainer`로 역직렬화(템플릿 트리 `ReadElement` 복제). 좌표는 컨테이너 기준이라 인스턴스는 일반 컨테이너처럼 배치(`Dock` 등 기존 레이아웃 그대로 사용).
+  - 라운드트립은 `<MotorCard Title=... motor="{PumpA}"/>`(이름+파라미터)만 보존 — 복제 자식은 미출력. 중첩 컴포넌트 지원(깊이 가드).
+  - 1차 한계: 슬롯/자식 투영, 컴포넌트 이벤트/상태, 에디터 저작 GUI, 자동 fill 미지원(후속).
 - **Gudx 선언적 바인딩** — 마크업 attribute에 `{path}` / `{path:fmt}` 식을 적어 바인딩.
   - `GoDesign.WireBindings(root)`로 컨텍스트 객체를 1회 주입하면, 모든 페이지·윈도우 트리의 `{path}` 식이 root 기준 경로로 해석되어 단/양방향 동기화. 경로 말단이 settable이고 포맷이 없으면 양방향.
   - `{Tank1.Level:F1}` 포맷 지정(`IFormattable`) 지원 — 숫자→문자열 표시. 포맷 적용 시 단방향.
