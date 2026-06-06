@@ -39,6 +39,19 @@ internal static class Smoke
         Console.WriteLine("--- after live update ---");
         PrintCard("card PumpA  ", (GoComponentInstance)page.Childrens[1]);
         Console.WriteLine($"log rows    : {((GoItemList)page.Childrens[4]).Childrens.Count}");
+
+        Console.WriteLine("--- bounds dump ---");
+        var cardA = (GoComponentInstance)page.Childrens[1];
+        Console.WriteLine($"page child count: {page.Childrens.Count}");
+        Console.WriteLine($"cardA bounds   : {cardA.Bounds}  children={cardA.Childrens.Count}");
+        var boxA = (GoBoxPanel)cardA.Childrens[0];
+        Console.WriteLine($"  box bounds   : {boxA.Bounds}  children={boxA.Childrens.Count}");
+        foreach (var c in boxA.Childrens)
+            Console.WriteLine($"    label      : {c.GetType().Name} {c.Bounds} text='{(c as GoLabel)?.Text}'");
+        var list2 = (GoItemList)page.Childrens[4];
+        Console.WriteLine($"list bounds    : {list2.Bounds}  rows={list2.Childrens.Count} ItemHeight={list2.ItemHeight}");
+        foreach (var r in list2.Childrens)
+            Console.WriteLine($"    row        : {r.GetType().Name} {r.Bounds}");
         Console.WriteLine("OK");
     }
 
