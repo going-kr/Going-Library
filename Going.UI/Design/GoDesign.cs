@@ -403,6 +403,21 @@ namespace Going.UI.Design
         }
 
         /// <summary>
+        /// gudx 마크업 바인딩(`{path}`)을 root 객체에 연결합니다. <see cref="Init"/> 이후 1회 호출하세요.
+        /// 모든 페이지·윈도우·바 트리를 순회하며 보류 바인딩을 실제 바인딩으로 전환합니다.
+        /// </summary>
+        /// <param name="root">바인딩 경로의 기준이 되는 컨텍스트 객체(예: 앱 허브/뷰).</param>
+        public void WireBindings(object root)
+        {
+            foreach (var page in Pages.Values) Going.UI.Bindings.GudxBinder.WireTree(page, root);
+            foreach (var wnd in Windows.Values) Going.UI.Bindings.GudxBinder.WireTree(wnd, root);
+            Going.UI.Bindings.GudxBinder.WireTree(TitleBar, root);
+            Going.UI.Bindings.GudxBinder.WireTree(LeftSideBar, root);
+            Going.UI.Bindings.GudxBinder.WireTree(RightSideBar, root);
+            Going.UI.Bindings.GudxBinder.WireTree(Footer, root);
+        }
+
+        /// <summary>
         /// 화면 갱신을 요청합니다.
         /// </summary>
         public void Invalidate() => RequestInvalidate?.Invoke();

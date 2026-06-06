@@ -206,6 +206,11 @@ namespace Going.UI.Controls
         private DateTime downTime;
         private List<GoBinding>? bindings;
         private bool disposed;
+
+        // gudx 선언적 바인딩: 역직렬화 시 {path} 식을 보관, WireBindings(root) 때 실제 바인딩으로 전환
+        internal Dictionary<string, string>? PendingBindings { get; private set; }
+        internal void AddPendingBinding(string propName, string expr)
+            => (PendingBindings ??= new Dictionary<string, string>(StringComparer.Ordinal))[propName] = expr;
         #endregion
 
         #region Method

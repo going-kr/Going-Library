@@ -221,8 +221,16 @@ public static class GoGudxConverter
         var elem = new XElement(tagName);
 
         // P1: scalar properties become attributes.
+        var pendBind = (obj as Going.UI.Controls.GoControl)?.PendingBindings;
         foreach (var prop in ScalarProperties(type))
         {
+            // 보류 바인딩이 있는 속성은 원본 {expr}를 그대로 재출력(라운드트립)
+            if (pendBind != null && pendBind.TryGetValue(prop.Name, out var bindExpr))
+            {
+                elem.SetAttributeValue(prop.Name, bindExpr);
+                continue;
+            }
+
             var value = prop.GetValue(obj);
             if (value == null) continue;
             var s = FormatScalar(value);
@@ -761,6 +769,15 @@ public static class GoGudxConverter
         {
             var prop = type.GetProperty(attr.Name.LocalName);
             if (prop == null || !prop.CanWrite) continue;
+
+            // gudx 선언적 바인딩: {path} 식은 리터럴 파싱 대신 보류 바인딩으로 보관
+            if (instance is Going.UI.Controls.GoControl gc
+                && Going.UI.Bindings.GudxBindingExpression.IsBinding(attr.Value))
+            {
+                gc.AddPendingBinding(prop.Name, attr.Value);
+                continue;
+            }
+
             var parsed = ParseScalar(prop.PropertyType, attr.Value);
             if (parsed != null) prop.SetValue(instance, parsed);
         }

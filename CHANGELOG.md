@@ -6,6 +6,19 @@
 
 ---
 
+## [Unreleased]
+
+### Added
+
+- **Gudx 선언적 바인딩** — 마크업 attribute에 `{path}` / `{path:fmt}` 식을 적어 바인딩.
+  - `GoDesign.WireBindings(root)`로 컨텍스트 객체를 1회 주입하면, 모든 페이지·윈도우 트리의 `{path}` 식이 root 기준 경로로 해석되어 단/양방향 동기화. 경로 말단이 settable이고 포맷이 없으면 양방향.
+  - `{Tank1.Level:F1}` 포맷 지정(`IFormattable`) 지원 — 숫자→문자열 표시. 포맷 적용 시 단방향.
+  - 역직렬화 시 `{...}` 식은 `PendingBindings`에 보관되며, gudx 재직렬화에서 원본 식 그대로 보존(라운드트립).
+  - 기존 런타임 바인딩 펌프(`FireUpdate` 폴링)·`GoBinding`을 그대로 재사용. 경로는 wire 시점 Expression으로 1회 컴파일 후 캐시.
+  - 1차 한계: 문자열 보간(`"... {x} ..."`), 컬렉션/명령 바인딩, `GoSwitchPanel`/`GoTabControl` 내부 컨트롤 wire는 미지원(후속).
+
+---
+
 ## [1.2.16] - 2026-05-09
 
 ### Added
