@@ -8,6 +8,13 @@
 
 ## [Unreleased]
 
+### Added
+
+- **GsShape 벡터 셰이프 패밀리** — `GsRect`/`GsCircle`/`GsLine`/`GsArc`/`GsPolygon`/`GsBezier` (`Going.UI.Controls.Shapes`).
+  - 공통 베이스 `GsShape`가 Fill(Solid/Linear/Radial), Stroke, Shadow, Glow, Rotation, Clip을 일괄 처리 — 각 셰이프는 `GetPath`로 기하만 정의.
+  - **Clip 옵션** — `GsShape.Clip=false`면 `GoControl.ClipToBounds`를 통해 `GUI.Draw`가 ClipRect를 생략 → 그림자/글로우/회전/굵은 stroke가 Bounds 밖으로 그려질 수 있음.
+  - Line/Polygon/Bezier의 점은 Bounds 정규화 좌표(공백 구분 `"x,y x,y"`, 0~1) — 크기에 따라 자동 스케일. gudx 자동 직렬화.
+
 ### Changed
 
 - **ViewObjects(Vo*) 정리** — 기존 컨트롤과 중복되는 Vo 패밀리를 제거하고 고유 기능만 승격.

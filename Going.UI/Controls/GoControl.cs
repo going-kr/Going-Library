@@ -227,6 +227,13 @@ namespace Going.UI.Controls
         /// <param name="canvas">SkiaSharp 캔버스</param>
         /// <param name="thm">테마</param>
         protected virtual void OnDraw(SKCanvas canvas, GoTheme thm) { Drawn?.Invoke(this, new GoDrawnEventArgs(canvas, thm)); }
+
+        /// <summary>
+        /// 컨테이너가 이 컨트롤을 그릴 때 Bounds로 클리핑할지 여부. 기본 true.
+        /// false면 GUI.Draw가 ClipRect를 생략 — 그림자/글로우/회전이 Bounds 밖으로 나가도 잘리지 않습니다.
+        /// (GsShape가 Clip 속성으로 구동)
+        /// </summary>
+        protected internal virtual bool ClipToBounds => true;
         /// <summary>컨트롤이 표시될 때 호출됩니다.</summary>
         protected virtual void OnShow() { View = true; }
         /// <summary>컨트롤이 숨겨질 때 호출됩니다.</summary>

@@ -85,7 +85,8 @@ namespace Going.UI.Utils
 
                     using (new SKAutoCanvasRestore(canvas))
                     {
-                        canvas.ClipRect(c.Bounds);
+                        // ClipToBounds=false (예: GsShape Clip=false)면 클리핑 생략 — 그림자/글로우/회전이 Bounds 밖으로 그려질 수 있음
+                        if ((c as GoControl)?.ClipToBounds ?? true) canvas.ClipRect(c.Bounds);
                         canvas.Translate(c.Left, c.Top);
                         c.FireDraw(canvas, thm);
                     }
