@@ -29,6 +29,23 @@ namespace Going.UI.Extensions
             return SKColor.FromHsl(h, s, l, color.Alpha);
         }
         #endregion
+        #region LightnessShift
+        /// <summary>
+        /// 색상의 HSL 명도(L)를 절대 포인트(0~100) 단위로 가산합니다.
+        /// 비율(<see cref="BrightnessTransmit"/>)과 달리 원본 밝기에 무관하게 동일한 폭으로 이동하므로,
+        /// 어두운 색에서도 단계가 균등하게 벌어집니다(다크 머티리얼 사다리/그라데이션 토큰용).
+        /// </summary>
+        /// <param name="color">원본 색상</param>
+        /// <param name="deltaL">명도 가산량(L 포인트). 양수는 밝게, 음수는 어둡게</param>
+        /// <returns>명도가 이동된 새 색상</returns>
+        public static SKColor LightnessShift(this SKColor color, float deltaL)
+        {
+            float h, s, l;
+            color.ToHsl(out h, out s, out l);
+            l = Convert.ToSingle(MathTool.Constrain(l + deltaL, 0, 100));
+            return SKColor.FromHsl(h, s, l, color.Alpha);
+        }
+        #endregion
         #region BrightnessChange
         /// <summary>
         /// 색상의 밝기를 절대값으로 변경합니다.

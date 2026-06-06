@@ -306,14 +306,29 @@ namespace Going.UI.Themes
                             #endregion
                     }
 
-                    if (lsv.Length == 2)
+                    // 명도 modifier: <token>-<light|dark>[-N]  (가산 방식, 단위 8L, N=1~9)
+                    //   -light = light-1(+8), -lightlight = light-2(+16), -dark = dark-1(-8), -darkdark = dark-2(-16)
+                    //   숫자형 -light-N / -dark-N 으로 무제한 단계(1~9). 어두운 색에서도 단계가 균등.
+                    if (lsv.Length == 2 || lsv.Length == 3)
                     {
-                        var sub = lsv[1];
-                        if (sub.ToLower() == "dark") ret = ret.BrightnessTransmit(-0.15F);
-                        else if (sub.ToLower() == "light") ret = ret.BrightnessTransmit(0.15F);
-                        if (sub.ToLower() == "darkdark") ret = ret.BrightnessTransmit(-0.3F);
-                        else if (sub.ToLower() == "lightlight") ret = ret.BrightnessTransmit(0.3F);
+                        const float STEP = 8F;
+                        var dir = lsv[1].ToLower();
+                        float delta = 0F;
 
+                        if (lsv.Length == 2)
+                        {
+                            if (dir == "light") delta = STEP;
+                            else if (dir == "dark") delta = -STEP;
+                            else if (dir == "lightlight") delta = STEP * 2F;
+                            else if (dir == "darkdark") delta = -STEP * 2F;
+                        }
+                        else if ((dir == "light" || dir == "dark") && int.TryParse(lsv[2], out var n))
+                        {
+                            n = Math.Max(1, Math.Min(9, n));
+                            delta = (dir == "light" ? STEP : -STEP) * n;
+                        }
+
+                        if (delta != 0F) ret = ret.LightnessShift(delta);
                     }
                 }
             }
