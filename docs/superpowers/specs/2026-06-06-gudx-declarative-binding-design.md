@@ -12,8 +12,8 @@
 - gudx 마크업 attribute 값에 바인딩 식을 직접 표기:
   `<GoLabel Text="{Data1.Title}" />`
 - 기존 런타임 바인딩 엔진(대칭 폴링 펌프) **재사용** — 새 엔진 없음
-- 호스트(Page/Window) 코드비하인드의 멤버에 경로로 접근, 단방향/양방향 자동
-- 유저 코드 0줄(호스트가 자기 자신을 root로 자동 wire)
+- 유저가 주입한 단일 root 객체의 멤버에 경로로 접근, 단방향/양방향 자동
+- 유저 코드는 `WireBindings(root)` 한 줄
 
 ## 비목표 (1차 범위 밖)
 
@@ -26,47 +26,40 @@
 
 ---
 
-## 핵심 결정: root = "Parent 체인 꼭대기의 호스트"
+## 핵심 결정: root = "유저가 1회 주입하는 단일 컨텍스트 객체"
 
 마크업은 closure가 없다. `{Data1.Title}`는 문자열일 뿐이라, 경로를 **어떤 객체부터 걷기 시작할지(root)** 를 외부에서 주입받아야 한다.
 
-**규칙 하나**: root는 컨트롤을 품은 **최상위 호스트** = `GoPage` 또는 `GoWindow`(둘 다 `GoContainer : GoControl`). 유저가 subclass한 코드비하인드가 곧 root다.
+**현 아키텍처 사실**: gudx의 페이지/윈도우는 유저 subclass가 아니라 **plain `GoPage`/`GoWindow`로 역직렬화**되어 `GoDesign.Pages`/`Windows`에 담긴다(데이터). 유저 데이터/코드는 뷰(`MainWindow : GoViewWindow`)나 허브(`Main`) 쪽에 살며 **컨트롤 트리 바깥**이다. 따라서 "Parent 체인을 타고 호스트를 찾는다"로는 유저 데이터에 닿을 수 없다.
+
+**규칙 하나**: 유저가 root 객체 하나를 `GoDesign.WireBindings(root)`로 1회 주입한다. 모든 `{path}`가 그 root에서 출발한다.
 
 ```csharp
-public partial class PageMain : GoPage      // 페이지 호스트
+GoDesign.DeserializeGudx("Master.gudx");   // 페이지=plain GoPage (데이터)
+var view = new MainWindow();
+view.Design.WireBindings(Main.Current);    // ← root 1회 주입
+view.Run();
+```
+
+```csharp
+public class Main           // 유저의 인스턴스 허브 (라이브러리는 이 타입을 몰라도 됨)
 {
-    public DataObject Data1 { get; } = new();
-}
-public partial class MainWindow : GoWindow  // 윈도우 호스트
-{
-    public DataObject Status { get; } = new();
+    public static Main Current { get; } = new();
+    public DataManager DataMgr { get; } = new();
+    public DataObject  Data1   { get; } = new();
 }
 ```
 
 ```xml
-<!-- PageMain 안의 컨트롤 → root = PageMain -->
-<GoLabel Text="{Data1.Title}" />
-<!-- MainWindow 안의 컨트롤 → root = MainWindow -->
-<GoLabel Text="{Status.Message}" />
+<GoLabel Text="{Data1.Title}" />              <!-- Main.Data1.Title -->
+<GoLabel Text="{DataMgr.Tank1.Level:F1}" />   <!-- Main.DataMgr.Tank1.Level, 1자리 포맷 -->
 ```
 
-엔진은 호스트 타입을 몰라도 된다 — Page냐 Window냐 무관하게 동일 규칙.
+엔진은 유저 타입(`Main`)을 컴파일 타임에 몰라도 된다 — `WireBindings(object root)`로 받은 인스턴스의 런타임 타입에서 reflection/Expression으로 경로를 해석한다.
 
-### 전역 허브는 특별 취급하지 않는다
+### 왜 단일 root 주입인가 (페이지별 코드비하인드를 안 쓰는 이유)
 
-통신 캐시·디바이스 매니저처럼 여러 페이지가 공유하는 데이터는, 엔진이 1급으로 아는 전역 root가 **아니라** 호스트가 노출하는 평범한 멤버로 처리한다:
-
-```csharp
-public abstract class AppPage : GoPage { public Main App => Main.Current; }  // 베이스 1회
-public partial class PageMain : AppPage { public DataObject Data1 { get; } = new(); }
-```
-
-```xml
-<GoLabel Text="{Data1.Title}" />              <!-- 페이지 로컬 -->
-<GoLabel Text="{App.DataMgr.Tank1.Level}" />  <!-- 허브 경유, 모든 페이지 동일 경로 -->
-```
-
-전역 root를 엔진에 박지 않는 이유: 라이브러리는 유저 타입(`Main`)을 알 수 없고, `RegisterRoot()` 같은 등록 API를 두면 이름 충돌·생명주기·"등록 깜빡" 버그가 따라온다. "root=호스트" 한 규칙이면 라이브러리는 호스트 인스턴스 하나만 받으면 되고, 허브는 유저가 노출한 프로퍼티로 자동 해결된다. **규칙은 하나, 표현력은 둘 다.**
+페이지를 유저 subclass(`PageMain : GoPage`)로 만들어 `Data1`을 들게 하는 안도 가능하지만, 그러려면 **"gudx 태그 → 유저 타입 인스턴스화 + 생명주기" 장치**를 GoDesign/gudx 흐름에 새로 박아야 한다. 현 구조(페이지=데이터, 뷰=코드)와 충돌하고 비용이 크다. 단일 root 주입은 **새 인스턴스화 장치 0**, `WireBindings(root)` 한 줄로 끝나며, 페이지 격리가 필요하면 유저가 root 안에서 `{Pages.Main.Data1.Title}`처럼 네임스페이스를 구성하면 된다.
 
 ---
 
@@ -117,25 +110,37 @@ internal void AddPendingBinding(string prop, string expr)
 
 > 라운드트립: 보류 바인딩이 있는 속성은 직렬화 시 리터럴 대신 원본 `{...}` 식을 다시 써야 한다(Write 경로에서 `PendingBindings` 우선). 이로써 gudx ↔ 객체 무손실.
 
-### 조각 2 — wire: 호스트 활성화 시 top-down 1회
+### 조각 2 — wire: `GoDesign.WireBindings(root)` 1회 top-down
 
-호스트(GoPage/GoWindow)가 활성화될 때(이미 트리를 순회하는 시점), 보류 바인딩이 있는 컨트롤마다 root=호스트 기준으로 경로를 **컴파일**하여 기존 `Bind`에 연결한다.
+유저가 root를 주입하면, GoDesign이 모든 페이지/윈도우(및 바) 트리를 훑으며 보류 바인딩이 있는 컨트롤마다 경로를 **컴파일**하여 기존 바인딩에 연결한다.
 
 ```csharp
-// GoContainer 또는 GoPage/GoWindow 활성화 훅
-internal void WireGudxBindings(object root)
+// GoDesign (신규 public 메서드)
+public void WireBindings(object root)
 {
-    foreach (var ctrl in EnumerateTree())          // 렌더가 이미 도는 순회에 편승
-    {
-        if (ctrl.PendingBindings is not { } pend) continue;
+    foreach (var page in Pages.Values)   GudxBinder.WireTree(page, root);
+    foreach (var wnd  in Windows.Values) GudxBinder.WireTree(wnd, root);
+    GudxBinder.WireTree(TitleBar, root);
+    GudxBinder.WireTree(LeftSideBar, root);
+    GudxBinder.WireTree(RightSideBar, root);
+    GudxBinder.WireTree(Footer, root);
+}
+
+// GudxBinder (신규) — IGoContainer.Childrens 재귀 순회
+internal static void WireTree(IGoControl node, object root)
+{
+    if (node is GoControl gc && gc.PendingBindings is { } pend)
         foreach (var (propName, expr) in pend)
-            GudxBindingExpression.Wire(ctrl, propName, expr, root);
-    }
+            GudxBindingExpression.Wire(gc, propName, expr, root);
+
+    if (node is IGoContainer cont)
+        foreach (var child in cont.Childrens) WireTree(child, root);
 }
 ```
 
-- **위로 거슬러 올라가는 search 없음**: 호스트에서 아래로 내려가므로 root는 항상 `this`.
-- 호출 시점: 호스트가 `CurrentPage`로 활성화되거나 Window가 열릴 때 1회. (정확한 훅 위치는 구현 단계에서 확정 — `FireInit`/활성화 경로 검토)
+- 트리 순회는 `IGoContainer.Childrens` 재귀 — Page/Window + 중첩 P2 패널 컨테이너 전부 커버.
+- **1차 한계(문서화)**: `GoSwitchPanel.Pages`(SubPage)·`GoTabControl.TabPages`(TabPage) **내부** 컨트롤은 `Childrens`에 직접 없어 1차 wire 대상 아님. 후속에서 wrapper 순회 추가. (아키텍처는 그대로 확장 가능)
+- 호출 시점: 유저가 `Init()` 이후 `WireBindings(root)` 호출. (자동화는 후속 — 1차는 명시 호출)
 
 ### 조각 3 — 펌프는 기존 것 그대로
 
@@ -184,11 +189,11 @@ internal void WireGudxBindings(object root)
 
 | 파일 | 변경 |
 |---|---|
-| `Going.UI/Bindings/GudxBindingExpression.cs` | **신규** — `IsBinding`, `Wire`, 경로 컴파일, 캐시 |
+| `Going.UI/Bindings/GudxBindingExpression.cs` | **신규** — `IsBinding`, `Parse`, `Wire`, 경로 Expression 컴파일, 캐시 |
+| `Going.UI/Bindings/GudxBinder.cs` | **신규** — `WireTree` 트리 순회 wire |
 | `Going.UI/Controls/GoControl.cs` | `PendingBindings` 보관소 + `AddPendingBinding` (직렬화 역할) |
-| `Going.UI/Gudx/GoGudxConverter.cs` | `PopulateAny` 읽기 루프에 `{...}` 분기; Write 경로에 보류식 우선 |
-| GoPage/GoWindow 활성화 경로 | `WireGudxBindings(this)` 호출 1지점 |
-| `GoGudxConverter` Write | 라운드트립: 보류 바인딩 속성은 원본 `{...}` 재출력 |
+| `Going.UI/Gudx/GoGudxConverter.cs` | `PopulateAny`(764) 읽기 루프에 `{...}` 분기; `WriteAny`(228) 보류식 우선 |
+| `Going.UI/Design/GoDesign.cs` | `WireBindings(object root)` public 메서드 |
 
 기존 펌프(`PumpBindings`), `GoBinding`, `AddOrReplaceBinding`, `IsBindingSuppressed`는 **무수정**.
 
@@ -209,7 +214,7 @@ internal void WireGudxBindings(object root)
 ## 열린 결정 (유저 리뷰에서 확정)
 
 1. **문자열 보간 1차 포함 여부**: `"{Tank1.Level:F1} ℃"`처럼 리터럴+바인딩 혼합. HMI Text 표시에 매우 흔하지만(단위 접미사), 본질적으로 단방향이고 composite formatter가 필요해 복잡도↑. → 1차는 **전체값 단일 식**만, 보간은 첫 후속으로 빼는 안을 권장. (이견 있으면 조정)
-2. **wire 호출 정확한 훅**: 페이지 활성화 / Window 오픈 / `FireInit` 중 어디서 1회 wire할지 — 구현 단계에서 생명주기 코드 확인 후 확정.
+2. **wire 자동 호출**: 1차는 유저가 `WireBindings(root)`를 명시 호출. `Init()`에 흡수하거나 뷰에서 자동 호출하는 건 후속(root 주입 시점 때문에 1차는 명시가 안전).
 
 ---
 
@@ -217,11 +222,11 @@ internal void WireGudxBindings(object root)
 
 | 항목 | 결정 |
 |---|---|
-| root | Parent 체인 꼭대기의 호스트(GoPage/GoWindow), 유저 코드비하인드 |
-| 전역 허브 | 엔진 1급 아님 — 호스트가 노출하는 멤버로 처리 |
+| root | 유저가 `GoDesign.WireBindings(root)`로 1회 주입하는 단일 컨텍스트 객체 |
+| 페이지 코드비하인드 | 도입 안 함 — 페이지는 plain GoPage(데이터) 유지, 새 인스턴스화 장치 0 |
 | 문법 | 전체값 `{path}` / `{path:fmt}`, `{{`escape. 보간은 후속 |
-| 방향 | 경로 전 구간 settable → 양방향, 아니면/포맷 → 단방향 |
+| 방향 | 경로 말단 settable → 양방향, 아니면/포맷 → 단방향 |
 | 평가 | wire 1회 Expression 컴파일, 매 프레임 델리게이트 호출 |
 | 엔진 | 기존 펌프·GoBinding·IsBindingSuppressed 재사용(무수정) |
-| 신규 코드 | `GudxBindingExpression` 한 조각 + GoControl 보류 보관소 + 파서 분기 |
-| wiring | 호스트 활성화 시 top-down 1회, 유저 코드 0줄 |
+| 신규 코드 | `GudxBindingExpression` + `GudxBinder` + GoControl 보류 보관소 + 파서/직렬화 분기 |
+| wiring | `WireBindings(root)` → 트리 top-down 1회. 1차는 명시 호출 |
