@@ -216,6 +216,7 @@ defensively but it's not the normal path.
 | GoPanel | Buttons | List&lt;GoButtonItem&gt; | P4 |
 | GoScrollablePanel | Childrens | List&lt;IGoControl&gt; | P2 |
 | GoScalePanel | Childrens | List&lt;IGoControl&gt; | P2 |
+| GoStackLayout | Childrens | List&lt;IGoControl&gt; | P2 |
 | GoPicturePanel | Childrens | List&lt;IGoControl&gt; | P2 |
 | GoTableLayoutPanel | Childrens | GoTableLayoutControlCollection | P3 |
 | GoSwitchPanel | Pages | List&lt;GoSubPage&gt; | P4 |

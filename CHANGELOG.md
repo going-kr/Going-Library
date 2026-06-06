@@ -8,6 +8,13 @@
 
 ## [Unreleased]
 
+### Changed
+
+- **ViewObjects(Vo*) 정리** — 기존 컨트롤과 중복되는 Vo 패밀리를 제거하고 고유 기능만 승격.
+  - 삭제: `VoBox`(≈GoBoxPanel), `VoGrid`(≈GoTableLayoutPanel/GoGridLayoutPanel), `VoProgress`(≈GoProgress), `VoText`(≈GoLabel), `VoArc`(≈GoCircleGraph/GoMeter), `VoEnums`.
+  - 신규 **`GoStackLayout`**(`Going.UI.Containers`) — `VoStack`(균등 분할)을 대체하며 **자식 크기 그대로** 순차 적층(true stack)으로 의미 변경. `Direction`(Horizon/Vertical), `Spacing`, 교차축 `Alignment`(Near/Center/Far/Fill).
+  - 저장된 디자인 영향 없음(Vo* 외부 참조 0). gudx 직렬화는 P2(`[GoChildList]`)로 자동.
+
 ### Added
 
 - **GoItemList + ItemTemplate** — 바인딩된 컬렉션(`Items="{Logs}"`)을 `<ItemTemplate>`으로 반복 렌더.

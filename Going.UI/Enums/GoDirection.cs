@@ -33,6 +33,21 @@ namespace Going.UI.Enums
     }
 
     /// <summary>
+    /// 스택 레이아웃의 교차축(cross-axis) 정렬 방식입니다.
+    /// </summary>
+    public enum GoStackAlignment
+    {
+        /// <summary>교차축 시작에 정렬(자식 크기 유지). 세로 스택이면 왼쪽, 가로 스택이면 위.</summary>
+        Near,
+        /// <summary>교차축 가운데 정렬(자식 크기 유지).</summary>
+        Center,
+        /// <summary>교차축 끝에 정렬(자식 크기 유지). 세로 스택이면 오른쪽, 가로 스택이면 아래.</summary>
+        Far,
+        /// <summary>교차축을 가득 채움(자식 크기 무시, Margin 인셋).</summary>
+        Fill
+    }
+
+    /// <summary>
     /// 컨트롤의 도킹 스타일을 정의하는 열거형입니다.
     /// </summary>
     public enum GoDockStyle
