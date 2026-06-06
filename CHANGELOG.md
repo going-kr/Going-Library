@@ -10,6 +10,11 @@
 
 ### Added
 
+- **GoItemList + ItemTemplate** — 바인딩된 컬렉션(`Items="{Logs}"`)을 `<ItemTemplate>`으로 반복 렌더.
+  - 각 행은 해당 아이템 객체에 평면 바인딩(`{Message}` 등). 아이템 타입은 런타임 추론(`type=` 선언 불필요).
+  - `GoScrollablePanel` 상속으로 스크롤, `ObservableList.Changed`(신규 `IGoObservable`)/Count로 변경 감지 → 행 전량 재생성. 행 wire는 `GudxBinder.WireTree(row, item)` 재사용.
+  - 라운드트립: `Items="{Logs}"` + `<ItemTemplate>` 보존(생성 행은 미출력). 비스칼라 바인딩 라운드트립 일반화.
+  - 1차 한계: diff 부분갱신·가변 행 높이·명명 컴포넌트 ItemTemplate 참조·선택/가상화 미지원(후속).
 - **Gudx 컴포넌트** — `<GoComponent name><Param .../>...`로 재사용 컴포넌트를 정의하고 `<MotorCard .../>`로 인스턴스화.
   - 내부 `{param.path}`는 **인스턴스별 파라미터 스코프**에 바인딩(선언적 바인딩 재사용, root만 교체). 엔진·펌프 무수정.
   - 파라미터는 리터럴(`Title="펌프 A"`) 또는 바깥 바인딩(`motor="{PumpA}"`). `<Param type="MotorVM">`의 타입이 내부 경로(`{motor.Rpm}`)를 타입 안전하게 컴파일하는 다리 — 별칭(`string`/`int`/...) + 로드 어셈블리 simple-name 자동 스캔.

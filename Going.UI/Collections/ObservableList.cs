@@ -12,7 +12,7 @@ namespace Going.UI.Collections
     /// 변경 감지를 지원하는 관찰 가능한 리스트입니다.
     /// </summary>
     /// <typeparam name="T">리스트에 저장할 요소의 타입</typeparam>
-    public class ObservableList<T> : IList<T>
+    public class ObservableList<T> : IList<T>, IGoObservable
     {
         [JsonInclude]
         private readonly List<T> ls = new List<T>();

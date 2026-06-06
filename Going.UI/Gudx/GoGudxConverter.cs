@@ -252,17 +252,29 @@ public static class GoGudxConverter
             if (s != null) elem.SetAttributeValue(prop.Name, s);
         }
 
+        // 비스칼라 PendingBinding(Items 등)도 라운드트립으로 보존
+        if (pendBind != null)
+            foreach (var kv in pendBind)
+                if (elem.Attribute(kv.Key) == null) elem.SetAttributeValue(kv.Key, kv.Value);
+
         // P2/P3/P4/P5/B1/B2: walk [GoChild*] properties.
+        // GoItemList의 Childrens는 런타임 생성 행이므로 직렬화 제외(ItemTemplate만 출력).
+        var isItemList = obj is Going.UI.Controls.GoItemList;
         foreach (var childProp in ChildProperties(type))
         {
             // Skip explicitly excluded children (Master split: skips Pages/Windows/Images/Fonts on master serialize)
             if (skipChildren != null && skipChildren.Contains(childProp.Name)) continue;
+            if (isItemList && childProp.Name == "Childrens") continue;
 
             var value = childProp.GetValue(obj);
             if (value == null) continue;
 
             DispatchChildWrite(elem, childProp, value, obj);
         }
+
+        // GoItemList: ItemTemplate 원본 재출력
+        if (obj is Going.UI.Controls.GoItemList ilw && ilw.ItemTemplateXml != null)
+            elem.Add(new XElement("ItemTemplate", new XElement(ilw.ItemTemplateXml)));
 
         return elem;
     }
@@ -759,6 +771,10 @@ public static class GoGudxConverter
 
         var instance = (IGoControl)Activator.CreateInstance(type)!;
         PopulateAny(elem, instance);
+
+        // GoItemList: <ItemTemplate>의 첫 컨트롤 요소를 행 복제 소스로 보관
+        if (instance is Going.UI.Controls.GoItemList il)
+            il.ItemTemplateXml = elem.Element("ItemTemplate")?.Elements().FirstOrDefault();
 
         // F2: prefer XML-provided Id over the Activator's auto-generated Guid.
         // This restores the exact Id that was serialized (needed for P3 cell-index keys).
