@@ -37,13 +37,14 @@ namespace Going.UI.OpenTK.Input
             get
             {
                 float tranY = 0;
-                if (InputControl != null)
+                var ctrl = InputControl;   // 백그라운드 clear 애니메이션이 중간에 null로 바꾸는 race 방지: 한 번만 캡처
+                if (ctrl != null)
                 {
                     switch (InputType)
                     {
                         case InputType.String:
                             {
-                                var rt = Util.FromRect(InputControl.ScreenX + InputBounds.Left, InputControl.ScreenY + InputBounds.Top, InputBounds.Width, InputBounds.Height);
+                                var rt = Util.FromRect(ctrl.ScreenX + InputBounds.Left, ctrl.ScreenY + InputBounds.Top, InputBounds.Width, InputBounds.Height);
                                 var kh = keyboard.GetHeight(ScreenSize);
                                 var rtk = Util.FromRect(0, ScreenSize.Height - kh, ScreenSize.Width, kh);
 
@@ -61,7 +62,7 @@ namespace Going.UI.OpenTK.Input
 
                         case InputType.Number:
                             {
-                                var rt = Util.FromRect(InputControl.ScreenX + InputBounds.Left, InputControl.ScreenY + InputBounds.Top, InputBounds.Width, InputBounds.Height);
+                                var rt = Util.FromRect(ctrl.ScreenX + InputBounds.Left, ctrl.ScreenY + InputBounds.Top, InputBounds.Width, InputBounds.Height);
                                 var kh = keypad.GetHeight(ScreenSize);
                                 var rtk = Util.FromRect(0, ScreenSize.Height - kh, ScreenSize.Width, kh);
 

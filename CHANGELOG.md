@@ -6,6 +6,16 @@
 
 ---
 
+## [1.2.32] - 2026-06-20
+
+### Fixed
+
+- **TKInputManager.TranslateY NRE (렌더 루프 크래시)** — 터치 입력(키보드/키패드) 종료 시 발생하던 `NullReferenceException` 수정.
+  - 원인: clear 애니메이션 완료 콜백(`GoInputEventer.ClearInputControl`)이 `Animation`의 백그라운드 `Task` 스레드에서 `InputControl=null`로 설정하는데, 렌더 스레드의 `TranslateY` getter가 `InputControl`을 null 체크 후 다시 역참조하는 TOCTOU race.
+  - 수정: `TranslateY`가 `InputControl`을 로컬 변수로 1회 캡처해 사용하도록 변경(`Going.UI.OpenTK/Input/TKInputManager.cs`). `GoItemList.RebuildRows()`가 입력 종료를 자주 유발하는 환경에서 재현율이 높았음.
+
+---
+
 ## [1.2.31] - 2026-06-06
 
 ### Added
