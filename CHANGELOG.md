@@ -13,6 +13,18 @@
 - **TKInputManager.TranslateY NRE (렌더 루프 크래시)** — 터치 입력(키보드/키패드) 종료 시 발생하던 `NullReferenceException` 수정.
   - 원인: clear 애니메이션 완료 콜백(`GoInputEventer.ClearInputControl`)이 `Animation`의 백그라운드 `Task` 스레드에서 `InputControl=null`로 설정하는데, 렌더 스레드의 `TranslateY` getter가 `InputControl`을 null 체크 후 다시 역참조하는 TOCTOU race.
   - 수정: `TranslateY`가 `InputControl`을 로컬 변수로 1회 캡처해 사용하도록 변경(`Going.UI.OpenTK/Input/TKInputManager.cs`). `GoItemList.RebuildRows()`가 입력 종료를 자주 유발하는 환경에서 재현율이 높았음.
+- **터치 키보드 과다 스크롤** — 키보드가 올라올 때 화면을 키보드 높이(`kh`) 전체만큼 밀어올려 입력부가 화면 위로 사라지던 문제 수정. 가려지는 만큼만(`Math.Min(0f, rtk.Top - rt.Bottom - 4)`) 올려 입력부 하단이 키보드 상단 바로 위에 오도록 변경(`Going.UI.OpenTK/Input/TKInputManager.cs`).
+- **GoOnOff 제어 먹통** — 빠른 토글 시 On/Off 상태가 갱신되지 않던 문제 수정.
+  - 원인: `bOnOff` 갱신과 `OnOffChanged` 발생을 애니메이션 완료 콜백에서만 처리했는데, `ani.Stop()` 직후에도 `IsPlaying`이 비동기로만 false가 되어 `ani.Start()`가 스킵되면 콜백이 호출되지 않아 값이 영영 반영되지 않음. 콜백이 백그라운드 스레드라 `OnOffChanged`도 잘못된 스레드에서 발생.
+  - 수정: setter에서 `bOnOff`/`OnOffChanged`를 즉시 동기 처리, 애니메이션은 시각 효과만 담당(`Going.UI/Controls/GoOnOff.cs`). 드래그 중에는 `IsBindingSuppressed`로 바인딩 펌프를 정지하고, 드래그 도중 라이브 값 갱신을 제거해 최종값은 놓을 때 확정.
+
+### Changed
+
+- **GoBinding command 바인딩** — ack 대기(pending) 구간에서 컨트롤이 다시 바뀌어도 source로 재명령하지 않도록 변경(`Going.UI/Controls/GoControl.cs`). 피드백 루프/깜빡임 방지. timeout 시 source 값으로 되돌리는 동작은 유지.
+
+### Internal
+
+- 컴파일 경고 정리 — `Going.UI.OpenTK`의 IME 관련 nullable 주석(`ImeHelper`/`TextBox`), 미사용 필드·using 제거(`ImeInputManager`), 빈 `catch` 정리. deprecated `PackageIconUrl` 제거(`Going.UI.OpenTK.csproj`).
 
 ---
 

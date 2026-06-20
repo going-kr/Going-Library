@@ -66,11 +66,9 @@ namespace Going.UI.Controls
                 if (bOnOff != value)
                 {
                     ani.Stop();
-                    ani.Start(Animation.Time200, value ? "ON" : "OFF", () =>
-                    {
-                        bOnOff = value;
-                        OnOffChanged?.Invoke(this, EventArgs.Empty);
-                    });
+                    bOnOff = value;
+                    OnOffChanged?.Invoke(this, EventArgs.Empty);
+                    ani.Start(Animation.Time200, value ? "ON" : "OFF");
                 }
             }
         }
@@ -107,6 +105,9 @@ namespace Going.UI.Controls
         #endregion
 
         #region Override
+        /// <inheritdoc/>
+        protected internal override bool IsBindingSuppressed => ptDown.HasValue;
+
         /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
         {
@@ -203,7 +204,6 @@ namespace Going.UI.Controls
             if (ptDown.HasValue)
             {
                 ptMove = new SKPoint(x, y);
-                bOnOff = x > rtContent.MidX;
             }
 
             base.OnMouseMove(x, y);

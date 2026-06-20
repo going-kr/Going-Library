@@ -13,7 +13,7 @@ namespace Going.UI.OpenTK.Ime
         private static extern bool ImmReleaseContext(IntPtr hWnd, IntPtr hIMC);
 
         [DllImport("imm32.dll")]
-        private static extern int ImmGetCompositionStringW(IntPtr hIMC, int dwIndex, byte[] lpBuf, int dwBufLen);
+        private static extern int ImmGetCompositionStringW(IntPtr hIMC, int dwIndex, byte[]? lpBuf, int dwBufLen);
 
         [DllImport("imm32.dll")]
         private static extern bool ImmSetCompositionWindow(IntPtr hIMC, ref COMPOSITIONFORM lpCompForm);

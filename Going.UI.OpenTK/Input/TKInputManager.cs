@@ -50,7 +50,8 @@ namespace Going.UI.OpenTK.Input
 
                                 if (CollisionTool.Check(rtk, rt))
                                 {
-                                    var ty = -kh;
+                                    // 키보드 전체 높이가 아니라 "가려지는 만큼"만 올린다(입력부 하단을 키보드 상단 바로 위로).
+                                    var ty = Math.Min(0f, rtk.Top - rt.Bottom - 4);
 
                                     if (ani.Variable == "set")
                                         tranY = ani.IsPlaying ? ani.Value(AnimationAccel.DCL, 0, ty) : ty;
@@ -68,7 +69,8 @@ namespace Going.UI.OpenTK.Input
 
                                 if (CollisionTool.Check(rtk, rt))
                                 {
-                                    var ty = -kh;
+                                    // 키보드 전체 높이가 아니라 "가려지는 만큼"만 올린다(입력부 하단을 키보드 상단 바로 위로).
+                                    var ty = Math.Min(0f, rtk.Top - rt.Bottom - 4);
 
                                     if (ani.Variable == "set")
                                         tranY = ani.IsPlaying ? ani.Value(AnimationAccel.DCL, 0, ty) : ty;

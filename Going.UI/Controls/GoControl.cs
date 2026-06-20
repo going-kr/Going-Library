@@ -411,29 +411,6 @@ namespace Going.UI.Controls
                     }
                     else if (Environment.TickCount64 - b.PendingCommandTick < b.CommandTimeout)
                     {
-                        object? cur;
-                        try { cur = b.CtrlGet(this); }
-                        catch (Exception ex)
-                        {
-                            Debug.WriteLine($"[GoBinding] control getter failed for {b.CtrlProperty.Name}: {ex.Message}");
-                            continue;
-                        }
-
-                        if (!object.Equals(cur, b.LastCtrlValue))
-                        {
-                            try
-                            {
-                                b.SourceSet?.Invoke(cur);
-                                b.LastCtrlValue = cur;
-                                b.PendingCommandValue = cur;
-                                b.PendingCommandTick = Environment.TickCount64;
-                            }
-                            catch (Exception ex)
-                            {
-                                Debug.WriteLine($"[GoBinding] source setter failed for {b.CtrlProperty.Name}: {ex.Message}");
-                            }
-                        }
-
                         continue;
                     }
                     else

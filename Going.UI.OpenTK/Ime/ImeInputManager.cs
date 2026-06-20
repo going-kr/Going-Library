@@ -6,7 +6,6 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -44,12 +43,9 @@ namespace Going.UI.OpenTK.Ime
         private TextBox txt;
         private delegate IntPtr WndProcDelegate(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
         private IntPtr _oldWndProc;
-        private WndProcDelegate _newWndProc;
+        private WndProcDelegate? _newWndProc;
         private IntPtr _hwnd;
         private bool _isMouseDown;
-        private bool _isDragging;
-        private Stopwatch _stopwatch;
-        private float _lastTime;
         #endregion
 
         #region Constructor
@@ -66,14 +62,11 @@ namespace Going.UI.OpenTK.Ime
             {
                 try
                 {
-                    _stopwatch = Stopwatch.StartNew();
-                    _lastTime = 0;
-
                     _hwnd = GLFW.GetWin32Window(WindowPtr);
                     _newWndProc = new WndProcDelegate(WndProc);
                     _oldWndProc = SetWindowLongPtr(_hwnd, GWL_WNDPROC, Marshal.GetFunctionPointerForDelegate(_newWndProc));
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                 }
             }
@@ -154,8 +147,6 @@ namespace Going.UI.OpenTK.Ime
             if (e.Button == MouseButton.Left)
             {
                 _isMouseDown = true;
-                _isDragging = false;
-
                 var mousePos = mouseState.Position;
                 bool isShift = keyboardState.IsKeyDown(Keys.LeftShift) || keyboardState.IsKeyDown(Keys.RightShift);
 
@@ -170,7 +161,6 @@ namespace Going.UI.OpenTK.Ime
             if (e.Button == MouseButton.Left)
             {
                 _isMouseDown = false;
-                _isDragging = false;
             }
         }
         #endregion
@@ -179,8 +169,6 @@ namespace Going.UI.OpenTK.Ime
         {
             if (_isMouseDown)
             {
-                _isDragging = true;
-
                 var mousePos = mouseState.Position;
 
                 if (txt.IsFocused)

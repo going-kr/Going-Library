@@ -316,7 +316,7 @@ namespace Going.UI.OpenTK.Ime
 
         #region Handler
         #region OnKeyPress
-        public void OnKeyPress(KeyboardKeyEventArgs e, string inputChar)
+        public void OnKeyPress(KeyboardKeyEventArgs e, string? inputChar)
         {
             if (!IsFocused) return;
 
@@ -756,7 +756,7 @@ namespace Going.UI.OpenTK.Ime
             {
                 TextCopy.ClipboardService.SetText(selectedText);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
         }
@@ -792,7 +792,7 @@ namespace Going.UI.OpenTK.Ime
                     UpdateScrollOffset();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
         }
