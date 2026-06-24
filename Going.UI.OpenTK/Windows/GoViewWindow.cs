@@ -205,10 +205,12 @@ namespace Going.UI.OpenTK.Windows
                         #endregion
 
                         OnDraw(canvas);
+
+                        // IME 입력 에디터는 Design/grid와 동일한 타이틀바 보정(canvas.Translate) 안에서
+                        // 그려야 위치가 일치한다. 블록 밖에서 그리면 타이틀바 높이만큼 위로 어긋난다.
+                        if (!TouchMode && OperatingSystem.IsWindows()) ImeInputManager.Current.OnDraw(canvas, thm);
                     }
                     #endregion
-
-                    if (!TouchMode && OperatingSystem.IsWindows()) ImeInputManager.Current.OnDraw(canvas, thm);
 
                     ctx.Flush();
                     SwapBuffers();
