@@ -66,35 +66,52 @@ namespace Going.UI.Controls
         /// </summary>
         [GoProperty(PCategory.Control, 6)] public string ColumnColor { get; set; } = "Base1";
         /// <summary>
+        /// 컬럼 헤더 텍스트 색상의 테마 색상 이름을 가져오거나 설정합니다.
+        /// </summary>
+        [GoProperty(PCategory.Control, 7)] public string ColumnTextColor { get; set; } = "Fore";
+        /// <summary>
+        /// 컬럼 헤더 테두리 색상의 테마 색상 이름을 가져오거나 설정합니다. 비어 있으면 자동 계산 색상을 사용합니다.
+        /// </summary>
+        [GoProperty(PCategory.Control, 8)] public string? ColumnBorderColor { get; set; }
+        /// <summary>
+        /// 행/요약/디바이더 테두리 색상의 테마 색상 이름을 가져오거나 설정합니다. 비어 있으면 자동 계산 색상을 사용합니다.
+        /// </summary>
+        [GoProperty(PCategory.Control, 9)] public string? BorderColor { get; set; }
+        /// <summary>
         /// 선택된 행의 배경 색상 테마 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 7)] public string SelectedRowColor { get; set; } = "Select";
+        [GoProperty(PCategory.Control, 10)] public string SelectedRowColor { get; set; } = "Select";
         /// <summary>
         /// 전체 배경 색상의 테마 색상 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 8)] public string BoxColor { get; set; } = "Base2";
+        [GoProperty(PCategory.Control, 11)] public string BoxColor { get; set; } = "Base2";
         /// <summary>
         /// 스크롤바 색상의 테마 색상 이름을 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 9)] public string ScrollBarColor { get; set; } = "Base1";
+        [GoProperty(PCategory.Control, 12)] public string ScrollBarColor { get; set; } = "Base1";
+
+        /// <summary>
+        /// 테두리 및 디바이더 선 굵기를 가져오거나 설정합니다.
+        /// </summary>
+        [GoProperty(PCategory.Control, 13)] public float BorderWidth { get; set; } = 1F;
 
         /// <summary>
         /// 행 높이(픽셀)를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 10)] public float RowHeight { get; set; } = 30F;
+        [GoProperty(PCategory.Control, 14)] public float RowHeight { get; set; } = 30F;
         /// <summary>
         /// 컬럼 헤더 높이(픽셀)를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 11)] public float ColumnHeight { get; set; } = 30F;
+        [GoProperty(PCategory.Control, 15)] public float ColumnHeight { get; set; } = 30F;
 
         /// <summary>
         /// 스크롤 모드를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 12)] public ScrollMode ScrollMode { get; set; } = ScrollMode.Vertical;
+        [GoProperty(PCategory.Control, 16)] public ScrollMode ScrollMode { get; set; } = ScrollMode.Vertical;
         /// <summary>
         /// 행 선택 모드를 가져오거나 설정합니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 13)] public GoDataGridSelectionMode SelectionMode { get; set; } = GoDataGridSelectionMode.Single;
+        [GoProperty(PCategory.Control, 17)] public GoDataGridSelectionMode SelectionMode { get; set; } = GoDataGridSelectionMode.Single;
 
         /// <summary>
         /// 컬럼 그룹 컬렉션을 가져옵니다.
@@ -104,7 +121,7 @@ namespace Going.UI.Controls
         /// <summary>
         /// 컬럼 컬렉션을 가져옵니다.
         /// </summary>
-        [GoProperty(PCategory.Control, 14)]
+        [GoProperty(PCategory.Control, 18)]
         [GoChildWrappers]
         [JsonObjectCreationHandling(JsonObjectCreationHandling.Populate)]
         public ObservableList<GoDataGridColumn> Columns { get; private set; } = [];
@@ -216,6 +233,14 @@ namespace Going.UI.Controls
         public event Func<GoDataGridCell, bool>? GetComboDropDownVisible;
         #endregion
 
+        #region Internal
+        internal SKColor GetBorderColor(GoTheme thm, SKColor autoColor) =>
+            string.IsNullOrWhiteSpace(BorderColor) ? autoColor : thm.ToColor(BorderColor);
+
+        internal SKColor GetColumnBorderColor(GoTheme thm, SKColor autoColor) =>
+            string.IsNullOrWhiteSpace(ColumnBorderColor) ? autoColor : thm.ToColor(ColumnBorderColor);
+        #endregion
+
         #region Constructor
         /// <summary><see cref="GoDataGrid"/> 클래스의 새 인스턴스를 초기화합니다.</summary>
         public GoDataGrid()
@@ -298,7 +323,7 @@ namespace Going.UI.Controls
                     using (new SKAutoCanvasRestore(canvas))
                     {
 
-                        Util.DrawBox(canvas, rtColumn, cCol, GoRoundType.Rect, thm.Corner);
+                        Util.DrawBox(canvas, rtColumn, cCol, cCol, GoRoundType.Rect, thm.Corner, true, BorderWidth);
                         using (new SKAutoCanvasRestore(canvas))
                         {
                             canvas.ClipRect(new SKRect(cl, rtColumn.Top, cr, rtColumn.Bottom));
@@ -316,8 +341,8 @@ namespace Going.UI.Controls
                             var rtChk = MathTool.MakeRectangle(Util.FromRect(rtColumn.Left, rtColumn.Top, 30, rtColumn.Height), new SKSize(20, 20));
 
                             var cF = cCol.BrightnessTransmit(CheckBoxBright * br);
-                            var cB = cCol.BrightnessTransmit(BorderBright * br);
-                            Util.DrawBox(canvas, rtChk, cF, cB, GoRoundType.Rect, thm.Corner);
+                            var cB = GetColumnBorderColor(thm, cCol.BrightnessTransmit(BorderBright * br));
+                            Util.DrawBox(canvas, rtChk, cF, cB, GoRoundType.Rect, thm.Corner, true, BorderWidth);
                             if (val) Util.DrawIcon(canvas, "fa-check", 12, rtChk, cText);
                         }
 
@@ -346,7 +371,7 @@ namespace Going.UI.Controls
                         }
 
                         var bsel = SelectionMode == GoDataGridSelectionMode.Selector;
-                        p.IsStroke = true; p.StrokeWidth = 1;
+                        p.IsStroke = true; p.StrokeWidth = BorderWidth;
                         p.PathEffect = pe;
                         foreach (var r in SummaryRows)
                         {
@@ -360,7 +385,7 @@ namespace Going.UI.Controls
 
                                 var cF = cSum;
                                 var cV = cF.BrightnessTransmit(r.RowIndex % 2 == 0 ? 0.05F : -0.05F);
-                                var cB = cV.BrightnessTransmit(BorderBright * br);
+                                var cB = GetBorderColor(thm, cV.BrightnessTransmit(BorderBright * br));
 
                                 var rx = Convert.ToInt32(rtSel.Right) + 0.5F;
                                 p.Color = cB;
@@ -373,12 +398,17 @@ namespace Going.UI.Controls
                 }
                 #endregion
                 #region Border
-                Util.DrawBox(canvas, rtColumn, SKColors.Transparent, cCol, GoRoundType.Rect, thm.Corner);
-                if (SummaryRows.Count > 0) Util.DrawBox(canvas, rtSummary, SKColors.Transparent, cSum, GoRoundType.Rect, thm.Corner);
+                p.IsStroke = true;
+                p.StrokeWidth = BorderWidth;
+                p.PathEffect = pe;
+                p.Color = GetColumnBorderColor(thm, cCol);
+                canvas.DrawLine(rtColumn.Left, Convert.ToInt32(rtColumn.Bottom) + 0.5F, rtColumn.Right, Convert.ToInt32(rtColumn.Bottom) + 0.5F, p);
+                p.PathEffect = null;
+                if (SummaryRows.Count > 0) Util.DrawBox(canvas, rtSummary, SKColors.Transparent, GetBorderColor(thm, cSum), GoRoundType.Rect, thm.Corner, true, BorderWidth);
                 #endregion
                 #region Rows
                 {
-                    Util.DrawBox(canvas, rtRow, cBox, cRow, GoRoundType.Rect, thm.Corner);
+                    Util.DrawBox(canvas, rtRow, cBox, cBox, GoRoundType.Rect, thm.Corner, true, BorderWidth);
 
                     using (new SKAutoCanvasRestore(canvas))
                     {
@@ -405,7 +435,7 @@ namespace Going.UI.Controls
                             }
 
                             var bsel = SelectionMode == GoDataGridSelectionMode.Selector;
-                            p.IsStroke = true; p.StrokeWidth = 1;
+                            p.IsStroke = true; p.StrokeWidth = BorderWidth;
                             p.PathEffect = pe;
                             for (int i = si; i <= ei; i++)
                             {
@@ -421,10 +451,10 @@ namespace Going.UI.Controls
 
                                     var cF = r.Selected ? cSel : cRow;
                                     var cV = cF.BrightnessTransmit(r.RowIndex % 2 == 0 ? 0.05F : -0.05F);
-                                    var cB = cV.BrightnessTransmit(BorderBright * br);
+                                    var cB = GetBorderColor(thm, cV.BrightnessTransmit(BorderBright * br));
 
                                     Util.DrawBox(canvas, rtSel, cV, GoRoundType.Rect, thm.Corner);
-                                    Util.DrawBox(canvas, rtChk, cV.BrightnessTransmit(InputBright * br), cB, GoRoundType.Rect, thm.Corner);
+                                    Util.DrawBox(canvas, rtChk, cV.BrightnessTransmit(InputBright * br), cB, GoRoundType.Rect, thm.Corner, true, BorderWidth);
                                     if (r.Selected) Util.DrawIcon(canvas, "fa-check", 12, rtChk, cText);
 
                                     var rx = Convert.ToInt32(rtSel.Right) + 0.5F;
@@ -440,7 +470,8 @@ namespace Going.UI.Controls
                 }
                 #endregion
                 #region Scroll
-                Util.DrawBox(canvas, rtScrollV, cVScroll, GoRoundType.Rect, thm.Corner);
+                if (usv) Util.DrawBox(canvas, rtScrollV, cVScroll, GoRoundType.Rect, thm.Corner);
+                if (ush) Util.DrawBox(canvas, rtScrollH, cVScroll, GoRoundType.Rect, thm.Corner);
                 #endregion
 
                 hscroll.Draw(canvas, thm, rtScrollH);

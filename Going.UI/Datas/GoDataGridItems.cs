@@ -148,12 +148,12 @@ namespace Going.UI.Datas
                 var cSel = thm.ToColor(SelectedCellBackColor ?? Grid.SelectedRowColor);
                 var cF = Row.Selected ? cSel : cBack;
                 var cV = cF.BrightnessTransmit(RowIndex % 2 == 0 ? 0.05F : -0.05F);
-                var cB = cV.BrightnessTransmit(thm.Dark ? GoDataGrid.BorderBright : -GoDataGrid.BorderBright);
+                var cB = Grid.GetBorderColor(thm, cV.BrightnessTransmit(thm.Dark ? GoDataGrid.BorderBright : -GoDataGrid.BorderBright));
                 
                 Util.DrawBox(canvas, Bounds, cV, GoRoundType.Rect, thm.Corner);
 
                 using var pe = SKPathEffect.CreateDash([2, 2,], 3);
-                using var p = new SKPaint { IsAntialias = true, IsStroke = true, StrokeWidth = 1, Color = cB, PathEffect = pe };
+                using var p = new SKPaint { IsAntialias = true, IsStroke = true, StrokeWidth = Grid.BorderWidth, Color = cB, PathEffect = pe };
                 var l = Convert.ToInt32(Bounds.Left) + 0.5F;
                 var r = Convert.ToInt32(Bounds.Right) + 0.5F;
                 var ci = ColumnIndex;
@@ -309,24 +309,29 @@ namespace Going.UI.Datas
         {
             if (Grid != null)
             {
-                var cText = thm.ToColor(TextColor ?? Grid.TextColor);
+                var cText = thm.ToColor(TextColor ?? Grid.ColumnTextColor);
                 var cBack = thm.ToColor(Grid.ColumnColor);
-                var cBorder = cBack.BrightnessTransmit(thm.Dark ? GoDataGrid.BorderBright : -GoDataGrid.BorderBright);
+                var cBorder = Grid.GetColumnBorderColor(thm, cBack.BrightnessTransmit(thm.Dark ? GoDataGrid.BorderBright : -GoDataGrid.BorderBright));
                 var cIF = cBack.BrightnessTransmit(thm.Dark ? GoDataGrid.InputBright : -GoDataGrid.InputBright);
                 var cIB = GoInputEventer.Current.InputControl == Grid && Grid.InputObject == this ? thm.Highlight : cBorder;
                 var isCol = Grid.Columns.Contains(this);
+                var isGroup = Grid.ColumnGroups.Contains(this);
+                var dividerIndex = isCol ? Grid.Columns.IndexOf(this) : isGroup ? Grid.ColumnGroups.IndexOf(this) : -1;
+                var dividerCount = isCol ? Grid.Columns.Count : isGroup ? Grid.ColumnGroups.Count : 0;
                 var (rtText, rtSort) = bounds();
 
-                Util.DrawBox(canvas, Bounds, SKColors.Transparent, cBorder, GoRoundType.Rect, thm.Corner);
+                using var pe = SKPathEffect.CreateDash([2, 2,], 3);
+                using var p = new SKPaint { IsAntialias = true, IsStroke = true, StrokeWidth = Grid.BorderWidth, Color = cBorder, PathEffect = pe };
+                DrawDivider(canvas, Bounds, p, dividerIndex > 0, dividerIndex >= 0 && dividerIndex < dividerCount - 1);
                 Util.DrawText(canvas, HeaderText, Grid.FontName, Grid.FontStyle, Grid.FontSize, rtText, cText);
 
                 if (isCol)
                 {
-                    if (FilterBounds.Height > 0) Util.DrawBox(canvas, FilterBounds, SKColors.Transparent, cBorder, GoRoundType.Rect, thm.Corner);
+                    if (FilterBounds.Height > 0) DrawDivider(canvas, FilterBounds, p, dividerIndex > 0, dividerIndex >= 0 && dividerIndex < dividerCount - 1);
                     if (UseFilter)
                     {
                         var rt = FilterBounds; rt.Inflate(InputInflateW, InputInflateH);
-                        Util.DrawBox(canvas, rt, cIF, cIB, GoRoundType.Rect, thm.Corner);
+                        Util.DrawBox(canvas, rt, cIF, cIB, GoRoundType.Rect, thm.Corner, true, Grid.BorderWidth);
                         Util.DrawText(canvas, FilterText, Grid.FontName, Grid.FontStyle, Grid.FontSize, rt, cText);
                     }
 
@@ -341,6 +346,14 @@ namespace Going.UI.Datas
 
                 OnDraw(canvas);
             }
+        }
+
+        void DrawDivider(SKCanvas canvas, SKRect bounds, SKPaint p, bool left, bool right)
+        {
+            var l = Convert.ToInt32(bounds.Left) + 0.5F;
+            var r = Convert.ToInt32(bounds.Right) + 0.5F;
+            if (left) canvas.DrawLine(l, bounds.Top, l, bounds.Bottom, p);
+            if (right) canvas.DrawLine(r, bounds.Top, r, bounds.Bottom, p);
         }
         #endregion
 
@@ -540,11 +553,11 @@ namespace Going.UI.Datas
                 var cBack = thm.ToColor(CellBackColor ?? Grid.SummaryRowColor);
                 var cF = cBack;
                 var cV = cF;
-                var cB = cV.BrightnessTransmit(thm.Dark ? GoDataGrid.BorderBright : -GoDataGrid.BorderBright);
+                var cB = Grid.GetBorderColor(thm, cV.BrightnessTransmit(thm.Dark ? GoDataGrid.BorderBright : -GoDataGrid.BorderBright));
 
                 Util.DrawBox(canvas, Bounds, cV, GoRoundType.Rect, thm.Corner);
 
-                using var p = new SKPaint { IsAntialias = true, IsStroke = true, StrokeWidth = 1, Color = cB };
+                using var p = new SKPaint { IsAntialias = true, IsStroke = true, StrokeWidth = Grid.BorderWidth, Color = cB };
                 var l = Convert.ToInt32(Bounds.Left) + 0.5F;
                 var r = Convert.ToInt32(Bounds.Right) + 0.5F;
                 canvas.DrawLine(l, Bounds.Top, l, Bounds.Bottom, p);
@@ -1096,11 +1109,11 @@ namespace Going.UI.Datas
             var cSel = thm.ToColor(SelectedCellBackColor ?? Grid.SelectedRowColor);
             var cF = Row.Selected ? cSel : cRow;
             var cV = cF.BrightnessTransmit(Row.RowIndex % 2 == 0 ? 0.05F : -0.05F);
-            var cB = cV.BrightnessTransmit(GoDataGrid.BorderBright * br);
+            var cB = Grid.GetBorderColor(thm, cV.BrightnessTransmit(GoDataGrid.BorderBright * br));
 
             var rtChk = MathTool.MakeRectangle(Bounds, new SKSize(20, 20));
 
-            Util.DrawBox(canvas, rtChk, cV.BrightnessTransmit(GoDataGrid.InputBright * br), cB, GoRoundType.Rect, thm.Corner);
+            Util.DrawBox(canvas, rtChk, cV.BrightnessTransmit(GoDataGrid.InputBright * br), cB, GoRoundType.Rect, thm.Corner, true, Grid.BorderWidth);
             if (Value is bool v && v) Util.DrawIcon(canvas, "fa-check", 12, rtChk, cText);
         }
         #endregion
@@ -1179,10 +1192,10 @@ namespace Going.UI.Datas
             var cSel = thm.ToColor(SelectedCellBackColor ?? Grid.SelectedRowColor);
             var cF = Row.Selected ? cSel : cRow;
             var cV = cF.BrightnessTransmit(Row.RowIndex % 2 == 0 ? 0.05F : -0.05F);
-            var cB = GoInputEventer.Current.InputControl == Grid && Grid.InputObject == this ? thm.Highlight : cV.BrightnessTransmit(GoDataGrid.BorderBright * br);
+            var cB = GoInputEventer.Current.InputControl == Grid && Grid.InputObject == this ? thm.Highlight : Grid.GetBorderColor(thm, cV.BrightnessTransmit(GoDataGrid.BorderBright * br));
 
             var rt = Bounds; rt.Inflate(InputInflateW, InputInflateH);
-            Util.DrawBox(canvas, rt, cV.BrightnessTransmit(GoDataGrid.InputBright * br), cB, GoRoundType.Rect, thm.Corner);
+            Util.DrawBox(canvas, rt, cV.BrightnessTransmit(GoDataGrid.InputBright * br), cB, GoRoundType.Rect, thm.Corner, true, Grid.BorderWidth);
 
             if (!(Grid._InputModeInvisibleText_ && Grid.InputObject == this))
             {
@@ -1269,12 +1282,12 @@ namespace Going.UI.Datas
             var cSel = thm.ToColor(SelectedCellBackColor ?? Grid.SelectedRowColor);
             var cF = Row.Selected ? cSel : cRow;
             var cV = cF.BrightnessTransmit(Row.RowIndex % 2 == 0 ? 0.05F : -0.05F);
-            var cB = GoInputEventer.Current.InputControl == Grid && Grid.InputObject == this ? thm.Highlight : cV.BrightnessTransmit(GoDataGrid.BorderBright * br);
+            var cB = GoInputEventer.Current.InputControl == Grid && Grid.InputObject == this ? thm.Highlight : Grid.GetBorderColor(thm, cV.BrightnessTransmit(GoDataGrid.BorderBright * br));
 
             var rt = Bounds; rt.Inflate(InputInflateW, InputInflateH);
             if (Convert.ToInt32(rt.Right) + 0.5F == Bounds.Right) rt.Right -= 1;
 
-            Util.DrawBox(canvas, rt, cV.BrightnessTransmit(GoDataGrid.InputBright * br), cB, GoRoundType.Rect, thm.Corner);
+            Util.DrawBox(canvas, rt, cV.BrightnessTransmit(GoDataGrid.InputBright * br), cB, GoRoundType.Rect, thm.Corner, true, Grid.BorderWidth);
 
             if (!(Grid._InputModeInvisibleText_ && Grid.InputObject == this))
             {
@@ -1361,13 +1374,13 @@ namespace Going.UI.Datas
             var cSel = thm.ToColor(SelectedCellBackColor ?? Grid.SelectedRowColor);
             var cF = Row.Selected ? cSel : cRow;
             var cV = cF.BrightnessTransmit(Row.RowIndex % 2 == 0 ? 0.05F : -0.05F);
-            var cB = GoInputEventer.Current.InputControl == Grid && Grid.InputObject == this ? thm.Highlight : cV.BrightnessTransmit(GoDataGrid.BorderBright * br);
+            var cB = GoInputEventer.Current.InputControl == Grid && Grid.InputObject == this ? thm.Highlight : Grid.GetBorderColor(thm, cV.BrightnessTransmit(GoDataGrid.BorderBright * br));
 
             var rt = Bounds; rt.Inflate(InputInflateW, InputInflateH);
             var rts = Util.Columns(rt, ["50%", "50%"]);
             var rtOff = rts[0];
             var rtOn = rts[1];
-            Util.DrawBox(canvas, rt, cV.BrightnessTransmit(GoDataGrid.InputBright * br), cB, GoRoundType.Rect, thm.Corner);
+            Util.DrawBox(canvas, rt, cV.BrightnessTransmit(GoDataGrid.InputBright * br), cB, GoRoundType.Rect, thm.Corner, true, Grid.BorderWidth);
 
             if (Value is bool v)
             {
@@ -1378,7 +1391,7 @@ namespace Going.UI.Datas
 
                 using var p = new SKPaint { IsAntialias = false };
                 using var pe = SKPathEffect.CreateDash([2, 2], 2);
-                p.StrokeWidth = 1;
+                p.StrokeWidth = Grid.BorderWidth;
                 p.IsStroke = false;
                 p.Color = Util.FromArgb(128, cB);
                 p.PathEffect = pe;
@@ -1474,10 +1487,10 @@ namespace Going.UI.Datas
             var cSel = thm.ToColor(SelectedCellBackColor ?? Grid.SelectedRowColor);
             var cF = Row.Selected ? cSel : cRow;
             var cV = cF.BrightnessTransmit(Row.RowIndex % 2 == 0 ? 0.05F : -0.05F);
-            var cB = dwndVisible ? thm.Highlight : cV.BrightnessTransmit(GoDataGrid.BorderBright * br);
+            var cB = dwndVisible ? thm.Highlight : Grid.GetBorderColor(thm, cV.BrightnessTransmit(GoDataGrid.BorderBright * br));
 
             var rt = Bounds; rt.Inflate(InputInflateW, InputInflateH);
-            Util.DrawBox(canvas, rt, cV.BrightnessTransmit(GoDataGrid.InputBright * br), cB, GoRoundType.Rect, thm.Corner);
+            Util.DrawBox(canvas, rt, cV.BrightnessTransmit(GoDataGrid.InputBright * br), cB, GoRoundType.Rect, thm.Corner, true, Grid.BorderWidth);
 
             var (rtText, rtArrow) = bounds(rt);
 
@@ -1496,7 +1509,7 @@ namespace Going.UI.Datas
             #region sep
             using var p = new SKPaint { IsAntialias = false };
             using var pe = SKPathEffect.CreateDash([2, 2], 2);
-            p.StrokeWidth = 1;
+            p.StrokeWidth = Grid.BorderWidth;
             p.IsStroke = false;
             p.Color = Util.FromArgb(128, cB);
             p.PathEffect = pe;
@@ -1610,10 +1623,10 @@ namespace Going.UI.Datas
             var cSel = thm.ToColor(SelectedCellBackColor ?? Grid.SelectedRowColor);
             var cF = Row.Selected ? cSel : cRow;
             var cV = cF.BrightnessTransmit(Row.RowIndex % 2 == 0 ? 0.05F : -0.05F);
-            var cB = dwndVisible ? thm.Highlight : cV.BrightnessTransmit(GoDataGrid.BorderBright * br);
+            var cB = dwndVisible ? thm.Highlight : Grid.GetBorderColor(thm, cV.BrightnessTransmit(GoDataGrid.BorderBright * br));
 
             var rt = Bounds; rt.Inflate(InputInflateW, InputInflateH);
-            Util.DrawBox(canvas, rt, cV.BrightnessTransmit(GoDataGrid.InputBright * br), cB, GoRoundType.Rect, thm.Corner);
+            Util.DrawBox(canvas, rt, cV.BrightnessTransmit(GoDataGrid.InputBright * br), cB, GoRoundType.Rect, thm.Corner, true, Grid.BorderWidth);
 
             var (rtText, rtArrow) = bounds(rt);
 
@@ -1632,7 +1645,7 @@ namespace Going.UI.Datas
             #region sep
             using var p = new SKPaint { IsAntialias = false };
             using var pe = SKPathEffect.CreateDash([2, 2], 2);
-            p.StrokeWidth = 1;
+            p.StrokeWidth = Grid.BorderWidth;
             p.IsStroke = false;
             p.Color = Util.FromArgb(128, cB);
             p.PathEffect = pe;
@@ -1732,10 +1745,10 @@ namespace Going.UI.Datas
             var cSel = thm.ToColor(SelectedCellBackColor ?? Grid.SelectedRowColor);
             var cF = Row.Selected ? cSel : cRow;
             var cV = cF.BrightnessTransmit(Row.RowIndex % 2 == 0 ? 0.05F : -0.05F);
-            var cB = dwndVisible ? thm.Highlight : cV.BrightnessTransmit(GoDataGrid.BorderBright * br);
+            var cB = dwndVisible ? thm.Highlight : Grid.GetBorderColor(thm, cV.BrightnessTransmit(GoDataGrid.BorderBright * br));
 
             var rt = Bounds; rt.Inflate(InputInflateW, InputInflateH);
-            Util.DrawBox(canvas, rt, cV.BrightnessTransmit(GoDataGrid.InputBright * br), cB, GoRoundType.Rect, thm.Corner);
+            Util.DrawBox(canvas, rt, cV.BrightnessTransmit(GoDataGrid.InputBright * br), cB, GoRoundType.Rect, thm.Corner, true, Grid.BorderWidth);
 
             var (rtText, rtArrow) = bounds(rt);
             #region Text
@@ -1748,7 +1761,7 @@ namespace Going.UI.Datas
             #region sep
             using var p = new SKPaint { IsAntialias = false };
             using var pe = SKPathEffect.CreateDash([2, 2], 2);
-            p.StrokeWidth = 1;
+            p.StrokeWidth = Grid.BorderWidth;
             p.IsStroke = false;
             p.Color = Util.FromArgb(128, cB);
             p.PathEffect = pe;
