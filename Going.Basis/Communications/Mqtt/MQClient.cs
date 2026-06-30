@@ -144,6 +144,8 @@ namespace Going.Basis.Communications.Mqtt
                         var token = cancel.Token;
 
                         double sec = 1.0;
+                        try
+                        {
                         while (!token.IsCancellationRequested && IsStart)
                         {
                             if (client != null)
@@ -190,16 +192,22 @@ namespace Going.Basis.Communications.Mqtt
                                 #endregion
                             }
 
-                            await Task.Delay(TimeSpan.FromSeconds(sec), token);
+                            try { await Task.Delay(TimeSpan.FromSeconds(sec), token); }
+                            catch (OperationCanceledException) { break; }
                         }
-
-
-                        if (client != null && client.IsConnected)
+                        }
+                        finally
                         {
-                            try { client.Disconnect(); }
-                            catch { }
+                            // 취소/예외 경로와 무관하게 항상 Disconnect 한다.
+                            // M2Mqtt(MqttClient)는 Connect 시 내부 수신 스레드/소켓을 잡으므로
+                            // Disconnect 하지 않으면 프로세스가 종료되지 않는다.
+                            if (client != null)
+                            {
+                                try { if (client.IsConnected) client.Disconnect(); }
+                                catch { }
+                                client = null;
+                            }
                         }
-                        client = null;
 
                     }, cancel.Token);
                 }
