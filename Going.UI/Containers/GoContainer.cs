@@ -19,7 +19,7 @@ namespace Going.UI.Containers
     /// <summary>
     /// 자식 컨트롤을 포함할 수 있는 컨테이너의 추상 기본 클래스입니다. GoControl을 상속하며 IGoContainer를 구현합니다.
     /// </summary>
-    public abstract class GoContainer : GoControl, IGoContainer
+    public abstract class JsonConstructorGoContainer : GoControl, IGoContainer
     {
         #region Properties
         /// <summary>

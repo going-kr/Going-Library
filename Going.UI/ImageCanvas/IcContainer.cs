@@ -1,15 +1,9 @@
-using Going.UI.Containers;
+using System.Text.Json.Serialization;
 using Going.UI.Controls;
 using Going.UI.Gudx;
 using Going.UI.Themes;
 using Going.UI.Utils;
 using SkiaSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace Going.UI.ImageCanvas
 {
@@ -36,6 +30,16 @@ namespace Going.UI.ImageCanvas
         /// </summary>
         [GoChildList]
         [JsonInclude] public override List<IGoControl> Childrens { get; } = [];
+
+        /// <summary>
+        /// <see cref="IcContainer"/> 클래스의 새 인스턴스를 초기화합니다.
+        /// </summary>
+        [JsonConstructor]
+        public IcContainer(List<IGoControl> childrens) : this() => Childrens = childrens ?? [];
+        /// <summary>
+        /// <see cref="IcContainer"/> 클래스의 새 인스턴스를 초기화합니다.
+        /// </summary>
+        public IcContainer() { }
 
         /// <inheritdoc/>
         protected override void OnDraw(SKCanvas canvas, GoTheme thm)
