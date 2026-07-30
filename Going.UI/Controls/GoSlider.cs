@@ -11,7 +11,7 @@ namespace Going.UI.Controls
     /// <summary>
     /// 슬라이더 컨트롤. 핸들을 드래그하여 값을 조절할 수 있으며, 수평/수직 방향을 지원합니다.
     /// </summary>
-    public class GoSlider : GoControl, IDisposable
+    public class GoSlider : GoControl
     {
         #region Properties
 
@@ -201,6 +201,7 @@ namespace Going.UI.Controls
         {
             Selectable = true;
             InitializeDefaults();
+            ApplyTextFont();
         }
 
         #endregion
@@ -451,8 +452,7 @@ namespace Going.UI.Controls
         {
             textPaint.Color = color;
             textAlign = SKTextAlign.Center;
-            textFont.Size = FontSize;
-            textFont.Typeface = SKTypeface.FromFamilyName(FontName);
+            ApplyTextFont();
 
             var textHeight = textFont.Size;
 
@@ -473,6 +473,18 @@ namespace Going.UI.Controls
         #endregion
 
         #region Functions
+
+        #region ApplyTextFont
+        /// <summary>
+        /// <see cref="FontName"/>, <see cref="FontSize"/>를 <see cref="textFont"/>에 반영합니다.
+        /// typeface는 <see cref="Util.GetTypeface"/>의 캐시를 재사용하므로 프레임마다 새로 만들지 않습니다.
+        /// </summary>
+        private void ApplyTextFont()
+        {
+            textFont.Size = FontSize;
+            textFont.Typeface = Util.GetTypeface(FontName, GoFontStyle.Normal);
+        }
+        #endregion
 
         #region InitializeDefaults
         private void InitializeDefaults()
@@ -648,7 +660,7 @@ namespace Going.UI.Controls
 
         #region Dispose
         /// <summary>슬라이더에서 사용하는 리소스를 해제합니다.</summary>
-        public void Dispose()
+        protected override void OnDispose()
         {
             trackPaint.Dispose();
             progressPaint.Dispose();
