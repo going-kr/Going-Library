@@ -130,8 +130,10 @@ namespace Going.UI.Controls.Shapes
                 StrokeWidth = asFill ? 0F : StrokeWidth,
                 StrokeCap = SKStrokeCap.Round,
                 StrokeJoin = SKStrokeJoin.Round,
-                ImageFilter = SKImageFilter.CreateDropShadowOnly(dx, dy, blur, blur, thm.ToColor(colorKey)),
             };
+            // SKPaint는 ImageFilter의 소유권을 갖지 않으므로 필터를 별도로 해제한다.
+            using var imgf = SKImageFilter.CreateDropShadowOnly(dx, dy, blur, blur, thm.ToColor(colorKey));
+            p.ImageFilter = imgf;
             canvas.DrawPath(path, p);
         }
 

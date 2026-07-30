@@ -202,7 +202,11 @@ namespace Going.UI.Controls
         #region Member Variable
         private SKRect bounds = new SKRect(0, 0, 70, 30);
         private float dx, dy, mx, my;
-        private bool bDown = false;
+        // 롱클릭 판정 워커(스레드풀)가 읽으므로 volatile.
+        // 쓰기는 FireMouseDown / FireMouseUp(UI 스레드)만 한다.
+        private volatile bool bDown = false;
+        // 롱클릭이 제스처를 소비했는지. true면 버튼을 뗄 때 Click을 발생시키지 않는다.
+        private volatile bool bLongClickConsumed = false;
         private DateTime downTime;
         private List<GoBinding>? bindings;
         private bool disposed;
@@ -536,6 +540,7 @@ namespace Going.UI.Controls
                     mx = dx = x;
                     my = dy = y;
                     bDown = true;
+                    bLongClickConsumed = false;
                     downTime = DateTime.Now;
                     OnMouseDown(x, y, button);
 
@@ -544,12 +549,14 @@ namespace Going.UI.Controls
                         {
                             var time = LongClickTime ?? GlobalLongClickTime;
 
-                            downTime = DateTime.Now;
                             while (bDown && (DateTime.Now - downTime).TotalMilliseconds < time) await Task.Delay(100);
 
+                            // bDown은 내리지 않는다 — 버튼을 뗀 시점은 FireMouseUp만 결정한다.
+                            // 여기서 내리면 FireMouseUp의 가드에 걸려 MouseUp 자체가 유실된다.
                             if (bDown)
                             {
-                                bDown = false;
+                                // 임계 시간이 지난 지점 — 롱클릭이든 취소든 제스처는 여기서 확정된다.
+                                bLongClickConsumed = true;
 
                                 if ((DateTime.Now - downTime).TotalMilliseconds >= time && CollisionTool.Check(rtContent, mx, my))
                                     OnMouseLongClick(x, y, button);
@@ -579,10 +586,14 @@ namespace Going.UI.Controls
 
                     OnMouseUp(x, y, button);
 
-                    var dist = Math.Abs(MathTool.GetDistance(new SKPoint(dx, dy), new SKPoint(x, y)));
-                    // 3픽셀 이내에 있을 때만 클릭으로 인정(터치가)
-                    // 그래서 감압식은 찍은 압력에 따라 좌표가 바뀌기 때문에 3픽셀을 늘이면 동작한다.
-                    if (CollisionTool.Check(Util.FromRect(0, 0, Width, Height), x, y) && dist < 3) OnMouseClick(x, y, button);
+                    // 롱클릭이 제스처를 소비했으면 Click은 발생시키지 않는다. MouseUp은 위에서 이미 발생.
+                    if (!bLongClickConsumed)
+                    {
+                        var dist = Math.Abs(MathTool.GetDistance(new SKPoint(dx, dy), new SKPoint(x, y)));
+                        // 3픽셀 이내에 있을 때만 클릭으로 인정(터치가)
+                        // 그래서 감압식은 찍은 압력에 따라 좌표가 바뀌기 때문에 3픽셀을 늘이면 동작한다.
+                        if (CollisionTool.Check(Util.FromRect(0, 0, Width, Height), x, y) && dist < 3) OnMouseClick(x, y, button);
+                    }
                 }
             }
         }
