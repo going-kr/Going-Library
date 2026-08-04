@@ -261,13 +261,15 @@ namespace Going.UI.FlowSystem
                 var r = PipeSize / 2F;
                 var baseColor = OnOff ? cOn : cOff;
                 using (var lampPaint = new SKPaint { IsAntialias = true })
+                // SKPaint는 Shader의 소유권을 갖지 않으므로 셰이더를 별도로 해제한다.
+                using (var shader = SKShader.CreateRadialGradient(
+                    new SKPoint(cx - r * 0.25F, cy - r * 0.25F),
+                    r,
+                    new SKColor[] { baseColor.BrightnessTransmit(0.4f), baseColor.BrightnessTransmit(-0.2f) },
+                    null,
+                    SKShaderTileMode.Clamp))
                 {
-                    lampPaint.Shader = SKShader.CreateRadialGradient(
-                        new SKPoint(cx - r * 0.25F, cy - r * 0.25F),
-                        r,
-                        new SKColor[] { baseColor.BrightnessTransmit(0.4f), baseColor.BrightnessTransmit(-0.2f) },
-                        null,
-                        SKShaderTileMode.Clamp);
+                    lampPaint.Shader = shader;
                     canvas.DrawCircle(cx, cy, r, lampPaint);
 
                     lampPaint.Shader = null;

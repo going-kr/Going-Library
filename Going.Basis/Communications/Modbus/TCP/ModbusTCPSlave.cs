@@ -332,350 +332,368 @@ namespace Going.Basis.Communications.Modbus.TCP
         #region Run
         async Task run(Socket sock, CancellationToken cancel)
         {
-            SocketConnected?.Invoke(this, new SocketEventArgs(sock));
-
-            #region var 
-            var lstResponse = new List<byte>();
-            var baResponse = new byte[1024];
-            var prev = DateTime.Now;
-            var isConnected = sock.Connected;
-            #endregion
-
-            while (!cancel.IsCancellationRequested && IsStart && isConnected)
+            try
             {
-                try
+                SocketConnected?.Invoke(this, new SocketEventArgs(sock));
+
+                #region var
+                var lstResponse = new List<byte>();
+                var baResponse = new byte[1024];
+                var prev = DateTime.Now;
+                var isConnected = sock.Connected;
+                #endregion
+
+                while (!cancel.IsCancellationRequested && IsStart && isConnected)
                 {
-                    #region DataRead
-                    if (sock.Available > 0)
+                    try
                     {
-                        try
+                        #region DataRead
+                        if (sock.Available > 0)
                         {
-                            int n = sock.Receive(baResponse);
-                            for (int i = 0; i < n; i++) lstResponse.Add(baResponse[i]);
-                            prev = DateTime.Now;
+                            try
+                            {
+                                int n = sock.Receive(baResponse);
+                                for (int i = 0; i < n; i++) lstResponse.Add(baResponse[i]);
+                                prev = DateTime.Now;
 
-                            if (n == 0) isConnected = false;
+                                if (n == 0) isConnected = false;
+                            }
+                            catch (TimeoutException) { }
                         }
-                        catch (TimeoutException) { }
-                    }
-                    #endregion
+                        #endregion
 
-                    #region Modbus Parse
-                    if (lstResponse.Count >= 10)
+                        #region Modbus Parse
+                        // MBAP Length(오프셋 4..5) 기반 프레이밍 — 한 세그먼트에 붙어 온 요청도 순서대로 전부 처리
+                        while (lstResponse.Count >= 7)
+                        {
+                            int protocolId = (lstResponse[2] << 8) | lstResponse[3];
+                            int mbapLength = (lstResponse[4] << 8) | lstResponse[5];
+
+                            if (protocolId != 0 || mbapLength < 2 || mbapLength > 254)
+                            {
+                                // 스트림 정렬이 깨진 상태 — 버퍼 폐기만으로는 경계를 복구할 수 없으므로
+                                // 연결을 끊어 마스터 재접속으로 재동기화한다
+                                lstResponse.Clear();
+                                isConnected = false;
+                                break;
+                            }
+
+                            int frameLength = 6 + mbapLength;
+                            if (lstResponse.Count < frameLength) break;
+
+                            var frame = new byte[frameLength];
+                            lstResponse.CopyTo(0, frame, 0, frameLength);
+                            lstResponse.RemoveRange(0, frameLength);
+
+                            ProcessFrame(sock, frame);
+                        }
+                        #endregion
+
+                        #region Buffer Clear
+                        if ((DateTime.Now - prev).TotalMilliseconds >= 50 && lstResponse.Count > 0) lstResponse.Clear();
+                        #endregion
+
+                        isConnected = isConnected && NetworkTool.IsSocketConnected(sock, 10000);
+
+                        await Task.Delay(10, cancel);
+                    }
+                    catch (SocketException ex)
                     {
-                        int Slave = lstResponse[6];
-                        ModbusFunction Function = (ModbusFunction)lstResponse[7];
-                        int StartAddress = (lstResponse[8] << 8) | lstResponse[9];
-
-                        switch (Function)
-                        {
-                            case ModbusFunction.BITREAD_F1:
-                            case ModbusFunction.BITREAD_F2:
-                                #region BitRead
-                                if (lstResponse.Count == 12)
-                                {
-                                    int Length = (lstResponse[10] << 8) | lstResponse[11];
-
-                                    if (BitReadRequest != null)
-                                    {
-                                        var args = new BitReadRequestArgs(lstResponse.ToArray());
-                                        BitReadRequest?.Invoke(this, args);
-
-                                        if (args.Success && args.ResponseData != null && args.ResponseData.Length == args.Length)
-                                        {
-                                            #region MakeData
-                                            List<byte> Datas = new List<byte>();
-                                            int nlen = args.ResponseData.Length / 8;
-                                            nlen += (args.ResponseData.Length % 8 == 0) ? 0 : 1;
-                                            for (int i = 0; i < nlen; i++)
-                                            {
-                                                byte val = 0;
-                                                for (int j = (i * 8), nTemp = 0; j < args.ResponseData.Length && j < (i * 8) + 8; j++, nTemp++)
-                                                    if (args.ResponseData[j])
-                                                        val |= Convert.ToByte(Math.Pow(2, nTemp));
-                                                Datas.Add(val);
-                                            }
-                                            #endregion
-                                            #region Write
-                                            List<byte> ret = new List<byte>();
-                                            ret.Add(lstResponse[0]);
-                                            ret.Add(lstResponse[1]);
-                                            ret.Add(0);
-                                            ret.Add(0);
-                                            ret.Add((byte)(((nlen + 3) & 0xFF00) >> 8));
-                                            ret.Add((byte)(((nlen + 3) & 0x00FF)));
-                                            ret.Add((byte)Slave);
-                                            ret.Add((byte)Function);
-                                            ret.Add((byte)Datas.Count);
-                                            ret.AddRange(Datas.ToArray());
-
-                                            byte[] send = ret.ToArray();
-                                            sock.Send(send);
-                                            #endregion
-                                        }
-                                    }
-                                    lstResponse.Clear();
-                                }
-                                #endregion
-                                break;
-                            case ModbusFunction.WORDREAD_F3:
-                            case ModbusFunction.WORDREAD_F4:
-                                #region WordRead
-                                if (lstResponse.Count == 12)
-                                {
-                                    int Length = (lstResponse[10] << 8) | lstResponse[11];
-
-                                    if (WordReadRequest != null)
-                                    {
-                                        var args = new WordReadRequestArgs(lstResponse.ToArray());
-                                        WordReadRequest?.Invoke(this, args);
-
-                                        if (args.Success && args.ResponseData != null && args.ResponseData.Length == args.Length)
-                                        {
-                                            #region MakeData
-                                            List<byte> Datas = new List<byte>();
-                                            for (int i = 0; i < args.ResponseData.Length; i++)
-                                            {
-                                                Datas.Add((byte)((args.ResponseData[i] & 0xFF00) >> 8));
-                                                Datas.Add((byte)((args.ResponseData[i] & 0x00FF)));
-                                            }
-                                            #endregion
-                                            #region Write
-                                            int nlen = Length * 2;
-                                            List<byte> ret = new List<byte>();
-                                            ret.Add(lstResponse[0]);
-                                            ret.Add(lstResponse[1]);
-                                            ret.Add(0);
-                                            ret.Add(0);
-                                            ret.Add((byte)(((nlen + 3) & 0xFF00) >> 8));
-                                            ret.Add((byte)(((nlen + 3) & 0x00FF)));
-                                            ret.Add((byte)Slave);
-                                            ret.Add((byte)Function);
-                                            ret.Add((byte)Datas.Count);
-                                            ret.AddRange(Datas.ToArray());
-
-                                            byte[] send = ret.ToArray();
-                                            sock.Send(send);
-                                            #endregion
-                                        }
-                                    }
-                                    lstResponse.Clear();
-                                }
-                                #endregion
-                                break;
-                            case ModbusFunction.BITWRITE_F5:
-                                #region BitWrite
-                                if (lstResponse.Count == 12)
-                                {
-                                    int WriteValue = (lstResponse[10] << 8) | lstResponse[11];
-                                    if (BitWriteRequest != null)
-                                    {
-                                        var args = new BitWriteRequestArgs(lstResponse.ToArray());
-                                        BitWriteRequest?.Invoke(this, args);
-
-                                        if (args.Success)
-                                        {
-                                            #region Write
-                                            int nv = args.WriteValue ? 0xFF00 : 0;
-                                            List<byte> ret = new List<byte>();
-                                            ret.Add(lstResponse[0]);
-                                            ret.Add(lstResponse[1]);
-                                            ret.Add(0);
-                                            ret.Add(0);
-                                            ret.Add(0);
-                                            ret.Add(6);
-                                            ret.Add((byte)Slave);
-                                            ret.Add((byte)Function);
-                                            ret.Add((byte)((StartAddress & 0xFF00) >> 8));
-                                            ret.Add((byte)((StartAddress & 0x00FF)));
-                                            ret.Add((byte)((nv & 0xFF00) >> 8));
-                                            ret.Add((byte)((nv & 0x00FF)));
-
-                                            byte[] send = ret.ToArray();
-                                            sock.Send(send);
-                                            #endregion
-                                        }
-                                    }
-                                    lstResponse.Clear();
-                                }
-                                #endregion
-                                break;
-                            case ModbusFunction.WORDWRITE_F6:
-                                #region WordWrite
-                                if (lstResponse.Count == 12)
-                                {
-                                    int WriteValue = (lstResponse[10] << 8) | lstResponse[11];
-
-                                    if (WordWriteRequest != null)
-                                    {
-                                        var args = new WordWriteRequestArgs(lstResponse.ToArray());
-                                        WordWriteRequest?.Invoke(this, args);
-
-                                        if (args.Success)
-                                        {
-                                            #region Write
-                                            List<byte> ret = new List<byte>();
-                                            ret.Add(lstResponse[0]);
-                                            ret.Add(lstResponse[1]);
-                                            ret.Add(0);
-                                            ret.Add(0);
-                                            ret.Add(0);
-                                            ret.Add(6);
-                                            ret.Add((byte)args.Slave);
-                                            ret.Add((byte)args.Function);
-                                            ret.Add((byte)((args.StartAddress & 0xFF00) >> 8));
-                                            ret.Add((byte)((args.StartAddress & 0x00FF)));
-                                            ret.Add((byte)((args.WriteValue & 0xFF00) >> 8));
-                                            ret.Add((byte)((args.WriteValue & 0x00FF)));
-
-                                            byte[] send = ret.ToArray();
-                                            sock.Send(send);
-                                            #endregion
-                                        }
-                                    }
-                                    lstResponse.Clear();
-                                }
-                                #endregion
-                                break;
-                            case ModbusFunction.MULTIBITWRITE_F15:
-                                #region MultiBitWrite
-                                if (lstResponse.Count >= 13)
-                                {
-                                    int ByteCount = lstResponse[12];
-                                    if (lstResponse.Count >= 13 + ByteCount)
-                                    {
-                                        var args = new MultiBitWriteRequestArgs(lstResponse.ToArray());
-                                        if (MultiBitWriteRequest != null)
-                                        {
-                                            MultiBitWriteRequest?.Invoke(this, args);
-
-                                            if (args.Success)
-                                            {
-                                                #region Write
-                                                List<byte> ret = new List<byte>();
-                                                ret.Add(lstResponse[0]);
-                                                ret.Add(lstResponse[1]);
-                                                ret.Add(0);
-                                                ret.Add(0);
-                                                ret.Add(0);
-                                                ret.Add(6);
-                                                ret.Add((byte)args.Slave);
-                                                ret.Add((byte)args.Function);
-                                                ret.Add((byte)((args.StartAddress & 0xFF00) >> 8));
-                                                ret.Add((byte)((args.StartAddress & 0x00FF)));
-                                                ret.Add((byte)((args.Length & 0xFF00) >> 8));
-                                                ret.Add((byte)((args.Length & 0x00FF)));
-
-                                                byte[] send = ret.ToArray();
-                                                sock.Send(send);
-                                                #endregion
-                                            }
-                                        }
-                                        lstResponse.Clear();
-                                    }
-                                }
-                                #endregion
-                                break;
-                            case ModbusFunction.MULTIWORDWRITE_F16:
-                                #region MultiWordWrite
-                                if (lstResponse.Count >= 13)
-                                {
-                                    int ByteCount = lstResponse[12];
-                                    if (lstResponse.Count >= 13 + ByteCount)
-                                    {
-                                        if (MultiWordWriteRequest != null)
-                                        {
-                                            var args = new MultiWordWriteRequestArgs(lstResponse.ToArray());
-                                            MultiWordWriteRequest?.Invoke(this, args);
-
-                                            if (args.Success)
-                                            {
-                                                #region Write
-                                                List<byte> ret = new List<byte>();
-                                                ret.Add(lstResponse[0]);
-                                                ret.Add(lstResponse[1]);
-                                                ret.Add(0);
-                                                ret.Add(0);
-                                                ret.Add(0);
-                                                ret.Add(6);
-                                                ret.Add((byte)args.Slave);
-                                                ret.Add((byte)args.Function);
-                                                ret.Add((byte)((args.StartAddress & 0xFF00) >> 8));
-                                                ret.Add((byte)((args.StartAddress & 0x00FF)));
-                                                ret.Add((byte)((args.Length & 0xFF00) >> 8));
-                                                ret.Add((byte)((args.Length & 0x00FF)));
-
-                                                byte[] send = ret.ToArray();
-                                                sock.Send(send);
-                                                #endregion
-                                            }
-                                        }
-                                        lstResponse.Clear();
-                                    }
-                                }
-                                #endregion
-                                break;
-                            case ModbusFunction.WORDBITSET_F26:
-                                #region WordBitSet
-                                if (lstResponse.Count == 13)
-                                {
-                                    if (WordBitSetRequest != null)
-                                    {
-                                        var args = new WordBitSetRequestArgs(lstResponse.ToArray());
-                                        WordBitSetRequest?.Invoke(this, args);
-
-                                        if (args.Success)
-                                        {
-                                            #region Write
-                                            int nv = args.WriteValue ? 0xFF00 : 0;
-                                            List<byte> ret = new List<byte>();
-                                            ret.Add(lstResponse[0]);
-                                            ret.Add(lstResponse[1]);
-                                            ret.Add(0);
-                                            ret.Add(0);
-                                            ret.Add(0);
-                                            ret.Add(6);
-                                            ret.Add((byte)args.Slave);
-                                            ret.Add((byte)args.Function);
-                                            ret.Add((byte)((args.StartAddress & 0xFF00) >> 8));
-                                            ret.Add((byte)((args.StartAddress & 0x00FF)));
-                                            ret.Add((byte)((nv & 0xFF00) >> 8));
-                                            ret.Add((byte)((nv & 0x00FF)));
-
-                                            byte[] send = ret.ToArray();
-                                            sock.Send(send);
-                                            #endregion
-                                        }
-                                    }
-                                    lstResponse.Clear();
-                                }
-                                #endregion
-                                break;
-                        }
+                        if (ex.SocketErrorCode == SocketError.TimedOut) { }
+                        else if (ex.SocketErrorCode == SocketError.ConnectionReset) { isConnected = false; }
+                        else if (ex.SocketErrorCode == SocketError.ConnectionAborted) { isConnected = false; }
+                        else if (ex.SocketErrorCode == SocketError.Shutdown) { isConnected = false; }
                     }
-                    #endregion
-
-                    #region Buffer Clear
-                    if ((DateTime.Now - prev).TotalMilliseconds >= 50 && lstResponse.Count > 0) lstResponse.Clear();
-                    #endregion
-
-                    isConnected = NetworkTool.IsSocketConnected(sock, 10000);
-
-                    await Task.Delay(10, cancel);
+                    catch (OperationCanceledException) { isConnected = false; }
+                    catch { }
                 }
-                catch (SocketException ex)
-                {
-                    if (ex.SocketErrorCode == SocketError.TimedOut) { }
-                    else if (ex.SocketErrorCode == SocketError.ConnectionReset) { isConnected = false; }
-                    else if (ex.SocketErrorCode == SocketError.ConnectionAborted) { isConnected = false; }
-                    else if (ex.SocketErrorCode == SocketError.Shutdown) { isConnected = false; }
-                }
-                catch (OperationCanceledException) { isConnected = false; }
-                catch { }
             }
+            catch { }
+            finally
+            {
+                try { if (sock.Connected) sock.Close(); } catch { }
+                try { SocketDisconnected?.Invoke(this, new SocketEventArgs(sock)); } catch { }
+            }
+        }
+        #endregion
 
-            if (sock.Connected) sock.Close();
-            SocketDisconnected?.Invoke(this, new SocketEventArgs(sock));
+        #region ProcessFrame
+        void ProcessFrame(Socket sock, byte[] frame)
+        {
+            try
+            {
+                int Slave = frame[6];
+                ModbusFunction Function = (ModbusFunction)frame[7];
+
+                switch (Function)
+                {
+                    case ModbusFunction.BITREAD_F1:
+                    case ModbusFunction.BITREAD_F2:
+                        #region BitRead
+                        {
+                            if (frame.Length != 12) { SendException(sock, frame, 0x03); break; }
+                            if (BitReadRequest == null) { SendException(sock, frame, 0x01); break; }
+
+                            var args = new BitReadRequestArgs(frame);
+                            BitReadRequest.Invoke(this, args);
+
+                            if (!args.Success) { SendException(sock, frame, 0x02); break; }
+                            if (args.ResponseData == null || args.ResponseData.Length != args.Length) { SendException(sock, frame, 0x04); break; }
+
+                            #region MakeData
+                            List<byte> Datas = new List<byte>();
+                            int nlen = args.ResponseData.Length / 8;
+                            nlen += (args.ResponseData.Length % 8 == 0) ? 0 : 1;
+                            for (int i = 0; i < nlen; i++)
+                            {
+                                byte val = 0;
+                                for (int j = (i * 8), nTemp = 0; j < args.ResponseData.Length && j < (i * 8) + 8; j++, nTemp++)
+                                    if (args.ResponseData[j])
+                                        val |= Convert.ToByte(Math.Pow(2, nTemp));
+                                Datas.Add(val);
+                            }
+                            #endregion
+                            #region Write
+                            List<byte> ret = new List<byte>();
+                            ret.Add(frame[0]);
+                            ret.Add(frame[1]);
+                            ret.Add(0);
+                            ret.Add(0);
+                            ret.Add((byte)(((nlen + 3) & 0xFF00) >> 8));
+                            ret.Add((byte)(((nlen + 3) & 0x00FF)));
+                            ret.Add((byte)Slave);
+                            ret.Add((byte)Function);
+                            ret.Add((byte)Datas.Count);
+                            ret.AddRange(Datas.ToArray());
+
+                            byte[] send = ret.ToArray();
+                            sock.Send(send);
+                            #endregion
+                        }
+                        #endregion
+                        break;
+                    case ModbusFunction.WORDREAD_F3:
+                    case ModbusFunction.WORDREAD_F4:
+                        #region WordRead
+                        {
+                            if (frame.Length != 12) { SendException(sock, frame, 0x03); break; }
+                            if (WordReadRequest == null) { SendException(sock, frame, 0x01); break; }
+
+                            var args = new WordReadRequestArgs(frame);
+                            WordReadRequest.Invoke(this, args);
+
+                            if (!args.Success) { SendException(sock, frame, 0x02); break; }
+                            if (args.ResponseData == null || args.ResponseData.Length != args.Length) { SendException(sock, frame, 0x04); break; }
+
+                            #region MakeData
+                            List<byte> Datas = new List<byte>();
+                            for (int i = 0; i < args.ResponseData.Length; i++)
+                            {
+                                Datas.Add((byte)((args.ResponseData[i] & 0xFF00) >> 8));
+                                Datas.Add((byte)((args.ResponseData[i] & 0x00FF)));
+                            }
+                            #endregion
+                            #region Write
+                            int nlen = args.Length * 2;
+                            List<byte> ret = new List<byte>();
+                            ret.Add(frame[0]);
+                            ret.Add(frame[1]);
+                            ret.Add(0);
+                            ret.Add(0);
+                            ret.Add((byte)(((nlen + 3) & 0xFF00) >> 8));
+                            ret.Add((byte)(((nlen + 3) & 0x00FF)));
+                            ret.Add((byte)Slave);
+                            ret.Add((byte)Function);
+                            ret.Add((byte)Datas.Count);
+                            ret.AddRange(Datas.ToArray());
+
+                            byte[] send = ret.ToArray();
+                            sock.Send(send);
+                            #endregion
+                        }
+                        #endregion
+                        break;
+                    case ModbusFunction.BITWRITE_F5:
+                        #region BitWrite
+                        {
+                            if (frame.Length != 12) { SendException(sock, frame, 0x03); break; }
+                            if (BitWriteRequest == null) { SendException(sock, frame, 0x01); break; }
+
+                            var args = new BitWriteRequestArgs(frame);
+                            BitWriteRequest.Invoke(this, args);
+
+                            if (!args.Success) { SendException(sock, frame, 0x02); break; }
+
+                            #region Write
+                            int nv = args.WriteValue ? 0xFF00 : 0;
+                            List<byte> ret = new List<byte>();
+                            ret.Add(frame[0]);
+                            ret.Add(frame[1]);
+                            ret.Add(0);
+                            ret.Add(0);
+                            ret.Add(0);
+                            ret.Add(6);
+                            ret.Add((byte)Slave);
+                            ret.Add((byte)Function);
+                            ret.Add((byte)((args.StartAddress & 0xFF00) >> 8));
+                            ret.Add((byte)((args.StartAddress & 0x00FF)));
+                            ret.Add((byte)((nv & 0xFF00) >> 8));
+                            ret.Add((byte)((nv & 0x00FF)));
+
+                            byte[] send = ret.ToArray();
+                            sock.Send(send);
+                            #endregion
+                        }
+                        #endregion
+                        break;
+                    case ModbusFunction.WORDWRITE_F6:
+                        #region WordWrite
+                        {
+                            if (frame.Length != 12) { SendException(sock, frame, 0x03); break; }
+                            if (WordWriteRequest == null) { SendException(sock, frame, 0x01); break; }
+
+                            var args = new WordWriteRequestArgs(frame);
+                            WordWriteRequest.Invoke(this, args);
+
+                            if (!args.Success) { SendException(sock, frame, 0x02); break; }
+
+                            #region Write
+                            List<byte> ret = new List<byte>();
+                            ret.Add(frame[0]);
+                            ret.Add(frame[1]);
+                            ret.Add(0);
+                            ret.Add(0);
+                            ret.Add(0);
+                            ret.Add(6);
+                            ret.Add((byte)args.Slave);
+                            ret.Add((byte)args.Function);
+                            ret.Add((byte)((args.StartAddress & 0xFF00) >> 8));
+                            ret.Add((byte)((args.StartAddress & 0x00FF)));
+                            ret.Add((byte)((args.WriteValue & 0xFF00) >> 8));
+                            ret.Add((byte)((args.WriteValue & 0x00FF)));
+
+                            byte[] send = ret.ToArray();
+                            sock.Send(send);
+                            #endregion
+                        }
+                        #endregion
+                        break;
+                    case ModbusFunction.MULTIBITWRITE_F15:
+                        #region MultiBitWrite
+                        {
+                            if (frame.Length < 14 || frame.Length != 13 + frame[12] || frame[12] != (((frame[10] << 8) | frame[11]) + 7) / 8) { SendException(sock, frame, 0x03); break; }
+                            if (MultiBitWriteRequest == null) { SendException(sock, frame, 0x01); break; }
+
+                            var args = new MultiBitWriteRequestArgs(frame);
+                            MultiBitWriteRequest.Invoke(this, args);
+
+                            if (!args.Success) { SendException(sock, frame, 0x02); break; }
+
+                            #region Write
+                            List<byte> ret = new List<byte>();
+                            ret.Add(frame[0]);
+                            ret.Add(frame[1]);
+                            ret.Add(0);
+                            ret.Add(0);
+                            ret.Add(0);
+                            ret.Add(6);
+                            ret.Add((byte)args.Slave);
+                            ret.Add((byte)args.Function);
+                            ret.Add((byte)((args.StartAddress & 0xFF00) >> 8));
+                            ret.Add((byte)((args.StartAddress & 0x00FF)));
+                            ret.Add((byte)((args.Length & 0xFF00) >> 8));
+                            ret.Add((byte)((args.Length & 0x00FF)));
+
+                            byte[] send = ret.ToArray();
+                            sock.Send(send);
+                            #endregion
+                        }
+                        #endregion
+                        break;
+                    case ModbusFunction.MULTIWORDWRITE_F16:
+                        #region MultiWordWrite
+                        {
+                            if (frame.Length < 14 || frame.Length != 13 + frame[12] || frame[12] != ((frame[10] << 8) | frame[11]) * 2) { SendException(sock, frame, 0x03); break; }
+                            if (MultiWordWriteRequest == null) { SendException(sock, frame, 0x01); break; }
+
+                            var args = new MultiWordWriteRequestArgs(frame);
+                            MultiWordWriteRequest.Invoke(this, args);
+
+                            if (!args.Success) { SendException(sock, frame, 0x02); break; }
+
+                            #region Write
+                            List<byte> ret = new List<byte>();
+                            ret.Add(frame[0]);
+                            ret.Add(frame[1]);
+                            ret.Add(0);
+                            ret.Add(0);
+                            ret.Add(0);
+                            ret.Add(6);
+                            ret.Add((byte)args.Slave);
+                            ret.Add((byte)args.Function);
+                            ret.Add((byte)((args.StartAddress & 0xFF00) >> 8));
+                            ret.Add((byte)((args.StartAddress & 0x00FF)));
+                            ret.Add((byte)((args.Length & 0xFF00) >> 8));
+                            ret.Add((byte)((args.Length & 0x00FF)));
+
+                            byte[] send = ret.ToArray();
+                            sock.Send(send);
+                            #endregion
+                        }
+                        #endregion
+                        break;
+                    case ModbusFunction.WORDBITSET_F26:
+                        #region WordBitSet
+                        {
+                            if (frame.Length != 13) { SendException(sock, frame, 0x03); break; }
+                            if (WordBitSetRequest == null) { SendException(sock, frame, 0x01); break; }
+
+                            var args = new WordBitSetRequestArgs(frame);
+                            WordBitSetRequest.Invoke(this, args);
+
+                            if (!args.Success) { SendException(sock, frame, 0x02); break; }
+
+                            #region Write
+                            int nv = args.WriteValue ? 0xFF00 : 0;
+                            List<byte> ret = new List<byte>();
+                            ret.Add(frame[0]);
+                            ret.Add(frame[1]);
+                            ret.Add(0);
+                            ret.Add(0);
+                            ret.Add(0);
+                            ret.Add(6);
+                            ret.Add((byte)args.Slave);
+                            ret.Add((byte)args.Function);
+                            ret.Add((byte)((args.StartAddress & 0xFF00) >> 8));
+                            ret.Add((byte)((args.StartAddress & 0x00FF)));
+                            ret.Add((byte)((nv & 0xFF00) >> 8));
+                            ret.Add((byte)((nv & 0x00FF)));
+
+                            byte[] send = ret.ToArray();
+                            sock.Send(send);
+                            #endregion
+                        }
+                        #endregion
+                        break;
+                    default:
+                        SendException(sock, frame, 0x01);
+                        break;
+                }
+            }
+            catch (SocketException) { throw; }
+            catch { SendException(sock, frame, 0x04); }
+        }
+        #endregion
+
+        #region SendException
+        /// <summary>
+        /// Modbus 예외 응답(FC|0x80 + 예외코드)을 전송합니다.
+        /// 01=Illegal Function, 02=Illegal Data Address, 03=Illegal Data Value, 04=Server Device Failure
+        /// </summary>
+        void SendException(Socket sock, byte[] frame, byte exceptionCode)
+        {
+            byte[] send = { frame[0], frame[1], 0, 0, 0, 3, frame[6], (byte)(frame[7] | 0x80), exceptionCode };
+            sock.Send(send);
         }
         #endregion
         #endregion

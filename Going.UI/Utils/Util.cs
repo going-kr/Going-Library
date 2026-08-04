@@ -32,14 +32,11 @@ namespace Going.UI.Utils
         /// 이미지 샘플링에 사용되는 기본 옵션입니다.
         /// </summary>
         public readonly static SKSamplingOptions Sampling = new(SKCubicResampler.Mitchell);
-        /// <summary>
-        /// 시스템 폰트 캐시 딕셔너리입니다.
-        /// </summary>
-        public static Dictionary<string, Dictionary<GoFontStyle, SKTypeface>> FontCache { get; } = new(StringComparer.OrdinalIgnoreCase);
-        /// <summary>
-        /// 외부 폰트 딕셔너리입니다.
-        /// </summary>
-        public static Dictionary<string, Dictionary<GoFontStyle, SKTypeface>> ExternalFonts { get; } = new(StringComparer.OrdinalIgnoreCase);
+        // 폰트 캐시는 여기서만 소유·해제한다. 외부에 노출하면 해제된 SKTypeface를 꽂아
+        // 넣거나 내부가 소유한 typeface를 임의로 Dispose할 수 있어 수명 보장이 깨진다.
+        // 등록/해제는 SetExternalFonts / UnloadExternalFonts 로만 한다.
+        private static readonly Dictionary<string, Dictionary<GoFontStyle, SKTypeface>> FontCache = new(StringComparer.OrdinalIgnoreCase);
+        private static readonly Dictionary<string, Dictionary<GoFontStyle, SKTypeface>> ExternalFonts = new(StringComparer.OrdinalIgnoreCase);
 
         private static SKTypeface DefaultFontR;
         private static SKTypeface DefaultFontB;
@@ -53,11 +50,21 @@ namespace Going.UI.Utils
                 using (var ms = asm.GetManifestResourceStream("Going.UI.Resources.NanumGothic.ttf")) DefaultFontR = SKTypeface.FromStream(ms);
                 using (var ms = asm.GetManifestResourceStream("Going.UI.Resources.NanumGothicBold.ttf")) DefaultFontB = SKTypeface.FromStream(ms);
 
-                ExternalFonts["나눔고딕"] = [];
-                ExternalFonts["나눔고딕"][GoFontStyle.Normal] = DefaultFontR;
-                ExternalFonts["나눔고딕"][GoFontStyle.Bold] = DefaultFontB;
+                ResetExternalFonts();
             }
             #endregion
+        }
+
+        /// <summary>
+        /// ExternalFonts를 비우고 내장 기본 폰트(나눔고딕)만 남깁니다.
+        /// 내장 폰트는 Util이 영구 소유하므로 절대 Dispose 대상이 아닙니다.
+        /// </summary>
+        static void ResetExternalFonts()
+        {
+            ExternalFonts.Clear();
+            ExternalFonts["나눔고딕"] = [];
+            ExternalFonts["나눔고딕"][GoFontStyle.Normal] = DefaultFontR;
+            ExternalFonts["나눔고딕"][GoFontStyle.Bold] = DefaultFontB;
         }
 
         #region Member Variable
@@ -214,10 +221,7 @@ namespace Going.UI.Utils
                 if(fontName != "나눔고딕")
                     disposeItems.AddRange(ExternalFonts[fontName].Values);
 
-            ExternalFonts.Clear();
-            ExternalFonts["나눔고딕"] = [];
-            ExternalFonts["나눔고딕"][GoFontStyle.Normal] = DefaultFontR;
-            ExternalFonts["나눔고딕"][GoFontStyle.Bold] = DefaultFontB;
+            ResetExternalFonts();
 
             foreach (var fontName in fonts.Keys)
             {
@@ -257,6 +261,10 @@ namespace Going.UI.Utils
             foreach (var fontName in ExternalFonts.Keys)
                 if (fontName != "나눔고딕")
                     disposeItems.AddRange(ExternalFonts[fontName].Values);
+
+            // 해제하기 전에 딕셔너리에서 먼저 제거한다.
+            // 제거하지 않으면 GetTypeface가 해제된 SKTypeface를 계속 반환한다(use-after-free).
+            ResetExternalFonts();
 
             foreach (var v in disposeItems) v.Dispose();
         }
@@ -303,7 +311,12 @@ namespace Going.UI.Utils
                         if (ls.TryGetValue(fontStyle, out var tp)) ret = tp;
                         else
                         {
-                            ret = SKFontManager.Default.MatchFamily(fontName, GetFontStyle(fontStyle));
+                            // MatchFamily는 없는 family에 대해 null을 반환한다.
+                            // null을 그대로 캐시하면 그 이름은 영구히 null이 되고, SKFont.Typeface에
+                            // null이 들어가면 Typeface가 Empty가 되어 아무것도 그려지지 않는다.
+                            // 실패 시엔 기본 폰트를 캐시해 재조회 비용 없이 non-null 계약을 지킨다.
+                            var matched = SKFontManager.Default.MatchFamily(fontName, GetFontStyle(fontStyle));
+                            if (matched != null) ret = matched;
                             FontCache[fontName][fontStyle] = ret;
                         }
                     }
@@ -1138,7 +1151,9 @@ namespace Going.UI.Utils
             var sc = new SKColor(shadowColor.Red, shadowColor.Green, shadowColor.Blue, alpha);
 
             using var p = new SKPaint { IsAntialias = true, Color = sc };
-            p.MaskFilter = SKMaskFilter.CreateBlur(SKBlurStyle.Normal, blur / 2f);
+            // SKPaint는 MaskFilter의 소유권을 갖지 않으므로 필터를 별도로 해제한다.
+            using var mf = SKMaskFilter.CreateBlur(SKBlurStyle.Normal, blur / 2f);
+            p.MaskFilter = mf;
 
             var rt = new SKRect(bounds.Left + ox, bounds.Top + oy, bounds.Right + ox, bounds.Bottom + oy);
 

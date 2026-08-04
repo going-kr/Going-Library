@@ -460,16 +460,58 @@ namespace Going.Basis.Communications.Modbus.TCP
             }
             if (w == null) return;
 
-                var bRepeat = true;
-                var nTimeoutCount = 0;
-                var Timeout = w.Timeout ?? this.Timeout;
+            var bRepeat = true;
+            var nTimeoutCount = 0;
+            var Timeout = w.Timeout ?? this.Timeout;
 
-                while (bRepeat)
+            while (bRepeat)
+            {
+                if (client != null && client.Connected) Drain(client);
+                Array.Clear(baResponse, 0, baResponse.Length);
+
+                #region write
+                try
                 {
-                    #region write
+                    client?.Send(w.Data);
+                }
+                catch (SocketException ex)
+                {
+                    if (ex.SocketErrorCode == SocketError.TimedOut) { }
+                    else if (ex.SocketErrorCode == SocketError.ConnectionReset) { bIsOpen = false; }
+                    else if (ex.SocketErrorCode == SocketError.ConnectionAborted) { bIsOpen = false; }
+                    else if (ex.SocketErrorCode == SocketError.Shutdown) { bIsOpen = false; }
+                }
+                catch (OperationCanceledException) { throw new SchedulerStopException(); }
+                catch { }
+                if (!IsOpen) throw new SchedulerStopException();
+                #endregion
+
+                #region read
+                var nRecv = 0;
+                var len = 0;
+                var prev = DateTime.Now;
+                var gap = TimeSpan.Zero;
+                var bCollecting = true;
+                while (bCollecting)
+                {
                     try
                     {
-                        client?.Send(w.Data);
+                        // 남은 공간이 0 이면 Receive 를 부르지 않는다 — 길이 0 으로 부르면 연결이
+                        // 멀쩡해도 0 이 돌아오고, 그것을 FIN 으로 오독하면 정상 연결을 끊게 된다.
+                        var room = baResponse.Length - nRecv;
+                        if (client != null && client.Connected && room > 0)
+                        {
+                            client.ReceiveTimeout = Timeout;
+                            client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, Timeout);
+
+                            len = client.Receive(baResponse, nRecv, Math.Min(room, w.ResponseCount - nRecv), SocketFlags.None);
+                            nRecv += len;
+
+                            // room>0 으로 요청했는데 0 이 왔다 = 상대의 정상 종료(FIN).
+                            // 위 가드가 있어야만 유효한 판정이다(가드 없이는 버퍼 포화와 구분되지 않는다).
+                            if (len == 0) 
+                                bIsOpen = false;
+                        }
                     }
                     catch (SocketException ex)
                     {
@@ -480,51 +522,20 @@ namespace Going.Basis.Communications.Modbus.TCP
                     }
                     catch (OperationCanceledException) { throw new SchedulerStopException(); }
                     catch { }
+
                     if (!IsOpen) throw new SchedulerStopException();
-                    #endregion
 
-                    #region read
-                    var nRecv = 0;
-                    var prev = DateTime.Now;
-                    var gap = TimeSpan.Zero;
-                    var bCollecting = true;
-                    while (bCollecting)
-                    {
-                        try
-                        {
-                            var len = 0;
-                            if (client != null && client.Connected)
-                            {
-                                client.ReceiveTimeout = Timeout;
-                                client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, Timeout);
+                    if (nRecv == w.ResponseCount) bCollecting = false;
 
-                                len = client.Receive(baResponse, nRecv, baResponse.Length - nRecv, SocketFlags.None);
-                                nRecv += len;
-                            }
-
-                            bIsOpen = len > 0;
-                        }
-                        catch (SocketException ex)
-                        {
-                            if (ex.SocketErrorCode == SocketError.TimedOut) { }
-                            else if (ex.SocketErrorCode == SocketError.ConnectionReset) { bIsOpen = false; }
-                            else if (ex.SocketErrorCode == SocketError.ConnectionAborted) { bIsOpen = false; }
-                            else if (ex.SocketErrorCode == SocketError.Shutdown) { bIsOpen = false; }
-                        }
-                        catch (OperationCanceledException) { throw new SchedulerStopException(); }
-                        catch { }
-
-                        if (!IsOpen) throw new SchedulerStopException();
-
-                        if (nRecv == w.ResponseCount) bCollecting = false;
-
-                        gap = DateTime.Now - prev;
-                        if (gap.TotalMilliseconds >= Timeout) break;
-                    }
-                    #endregion
-
-                    #region parse
-                    if (gap.TotalMilliseconds < Timeout)
+                    gap = DateTime.Now - prev;
+                    if (gap.TotalMilliseconds >= Timeout) break;
+                }
+                #endregion
+              
+                #region parse
+                if (gap.TotalMilliseconds < Timeout)
+                {
+                    if (nRecv == w.ResponseCount)
                     {
                         int Slave = baResponse[6];
                         ModbusFunction Func = (ModbusFunction)baResponse[7];
@@ -595,19 +606,19 @@ namespace Going.Basis.Communications.Modbus.TCP
                                 #endregion
                                 break;
                         }
-
-                        bRepeat = false;
                     }
-                    else
-                    {
-                        #region Timeout
-                        TimeoutReceived?.Invoke(this, new TimeoutEventArgs(w));
-                        nTimeoutCount++;
-                        if (nTimeoutCount >= (w.RepeatCount ?? 0)) bRepeat = false;
-                        #endregion
-                    }
+                    bRepeat = false;
+                }
+                else
+                {
+                    #region Timeout
+                    TimeoutReceived?.Invoke(this, new TimeoutEventArgs(w));
+                    nTimeoutCount++;
+                    if (nTimeoutCount >= (w.RepeatCount ?? 0)) bRepeat = false;
                     #endregion
                 }
+                #endregion
+            }
         }
         #endregion
 
@@ -687,6 +698,19 @@ namespace Going.Basis.Communications.Modbus.TCP
         /// <summary>현재 작업 큐를 모두 비웁니다.</summary>
         public void ClearWorkSchedule() { lock (workLock) WorkQueue.Clear(); }
         #endregion
+
+        int Drain(Socket s, int maxBytes = 64 * 1024)
+        {
+            var junk = new byte[4096];
+            int dropped = 0;
+            while (s.Available > 0 && dropped < maxBytes)
+            {
+                int n = s.Receive(junk, 0, Math.Min(s.Available, junk.Length), SocketFlags.None);
+                if (n <= 0) break;
+                dropped += n;
+            }
+            return dropped;
+        }
 
         #region AutoBitRead
         /// <summary>
