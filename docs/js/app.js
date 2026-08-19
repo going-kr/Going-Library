@@ -11,79 +11,85 @@ const NAV = {
     items: [
       { label: 'Overview', href: '../basis/index.html', type: 'page' },
       {
-        label: 'Modbus',
+        label: 'Communications',
         children: [
-          { label: 'ModbusRTUMaster', href: '../basis/communications-modbus.html#class-ModbusRTUMaster', type: 'class' },
-          { label: 'ModbusRTUSlave', href: '../basis/communications-modbus.html#class-ModbusRTUSlave', type: 'class' },
-          { label: 'ModbusTCPMaster', href: '../basis/communications-modbus.html#class-ModbusTCPMaster', type: 'class' },
-          { label: 'ModbusTCPSlave', href: '../basis/communications-modbus.html#class-ModbusTCPSlave', type: 'class' },
-          { label: 'MasterRTU', href: '../basis/communications-modbus.html#class-MasterRTU', type: 'class' },
-          { label: 'SlaveRTU', href: '../basis/communications-modbus.html#class-SlaveRTU', type: 'class' },
-          { label: 'MasterTCP', href: '../basis/communications-modbus.html#class-MasterTCP', type: 'class' },
-          { label: 'SlaveTCP', href: '../basis/communications-modbus.html#class-SlaveTCP', type: 'class' },
-          { label: 'ModbusCRC', href: '../basis/communications-modbus.html#class-ModbusCRC', type: 'static' },
-          { label: 'ModbusFunction', href: '../basis/communications-modbus.html#enum-ModbusFunction', type: 'enum' },
-          { label: 'Mems', href: '../basis/communications-modbus.html#class-Mems', type: 'class' },
-        ]
-      },
-      {
-        label: 'Modbus Events',
-        children: [
-          { label: 'Work', href: '../basis/communications-modbus.html#class-ModbusWork', type: 'class' },
-          { label: 'BitReadEventArgs', href: '../basis/communications-modbus.html#class-ModbusBitReadEventArgs', type: 'class' },
-          { label: 'WordReadEventArgs', href: '../basis/communications-modbus.html#class-ModbusWordReadEventArgs', type: 'class' },
-          { label: 'BitWriteEventArgs', href: '../basis/communications-modbus.html#class-ModbusBitWriteEventArgs', type: 'class' },
-          { label: 'WordWriteEventArgs', href: '../basis/communications-modbus.html#class-ModbusWordWriteEventArgs', type: 'class' },
-          { label: 'MultiBitWriteEventArgs', href: '../basis/communications-modbus.html#class-ModbusMultiBitWriteEventArgs', type: 'class' },
-          { label: 'MultiWordWriteEventArgs', href: '../basis/communications-modbus.html#class-ModbusMultiWordWriteEventArgs', type: 'class' },
-          { label: 'WordBitSetEventArgs', href: '../basis/communications-modbus.html#class-ModbusWordBitSetEventArgs', type: 'class' },
-          { label: 'TimeoutEventArgs', href: '../basis/communications-modbus.html#class-ModbusTimeoutEventArgs', type: 'class' },
-          { label: 'CRCErrorEventArgs', href: '../basis/communications-modbus.html#class-ModbusCRCErrorEventArgs', type: 'class' },
-          { label: 'BitReadRequestArgs', href: '../basis/communications-modbus.html#class-ModbusBitReadRequestArgs', type: 'class' },
-          { label: 'WordReadRequestArgs', href: '../basis/communications-modbus.html#class-ModbusWordReadRequestArgs', type: 'class' },
-          { label: 'BitWriteRequestArgs', href: '../basis/communications-modbus.html#class-ModbusBitWriteRequestArgs', type: 'class' },
-          { label: 'WordWriteRequestArgs', href: '../basis/communications-modbus.html#class-ModbusWordWriteRequestArgs', type: 'class' },
-          { label: 'MultiBitWriteRequestArgs (RTU)', href: '../basis/communications-modbus.html#class-ModbusMultiBitWriteRequestArgs-RTU', type: 'class' },
-          { label: 'MultiBitWriteRequestArgs (TCP)', href: '../basis/communications-modbus.html#class-ModbusMultiBitWriteRequestArgs-TCP', type: 'class' },
-          { label: 'MultiWordWriteRequestArgs (RTU)', href: '../basis/communications-modbus.html#class-ModbusMultiWordWriteRequestArgs-RTU', type: 'class' },
-          { label: 'MultiWordWriteRequestArgs (TCP)', href: '../basis/communications-modbus.html#class-ModbusMultiWordWriteRequestArgs-TCP', type: 'class' },
-          { label: 'WordBitSetRequestArgs', href: '../basis/communications-modbus.html#class-ModbusWordBitSetRequestArgs', type: 'class' },
-        ]
-      },
-      {
-        label: 'MQTT',
-        children: [
-          { label: 'MQClient', href: '../basis/communications-mqtt.html#class-MQClient', type: 'class' },
-          { label: 'MQQos', href: '../basis/communications-mqtt.html#enum-MQQos', type: 'enum' },
-          { label: 'MQSubscribe', href: '../basis/communications-mqtt.html#class-MQSubscribe', type: 'class' },
-          { label: 'MQReceiveArgs', href: '../basis/communications-mqtt.html#class-MQReceiveArgs', type: 'class' },
-        ]
-      },
-      {
-        label: 'LS CNet',
-        children: [
-          { label: 'CNet', href: '../basis/communications-ls.html#class-CNet', type: 'class' },
-          { label: 'CNetValue', href: '../basis/communications-ls.html#class-CNetValue', type: 'class' },
-          { label: 'CNetFunc', href: '../basis/communications-ls.html#enum-CNetFunc', type: 'enum' },
-          { label: 'SchedulerStopException', href: '../basis/communications-ls.html#class-SchedulerStopException', type: 'class' },
-          { label: 'DataReadEventArgs', href: '../basis/communications-ls.html#class-DataReadEventArgs', type: 'class' },
-          { label: 'BCCErrorEventArgs', href: '../basis/communications-ls.html#class-BCCErrorEventArgs', type: 'class' },
-          { label: 'NAKEventArgs', href: '../basis/communications-ls.html#class-NAKEventArgs', type: 'class' },
-          { label: 'WriteEventArgs', href: '../basis/communications-ls.html#class-WriteEventArgs-LS', type: 'class' },
-          { label: 'TimeoutEventArgs', href: '../basis/communications-ls.html#class-TimeoutEventArgs-LS', type: 'class' },
-        ]
-      },
-      {
-        label: 'Mitsubishi MC',
-        children: [
-          { label: 'MC', href: '../basis/communications-mitsubishi.html#class-MC', type: 'class' },
-          { label: 'MCFunc', href: '../basis/communications-mitsubishi.html#enum-MCFunc', type: 'enum' },
-          { label: 'WordDataReadEventArgs', href: '../basis/communications-mitsubishi.html#class-WordDataReadEventArgs', type: 'class' },
-          { label: 'BitDataReadEventArgs', href: '../basis/communications-mitsubishi.html#class-BitDataReadEventArgs', type: 'class' },
-          { label: 'CheckSumErrorEventArgs', href: '../basis/communications-mitsubishi.html#class-CheckSumErrorEventArgs', type: 'class' },
-          { label: 'NakErrorEventArgs', href: '../basis/communications-mitsubishi.html#class-NakErrorEventArgs', type: 'class' },
-          { label: 'WriteEventArgs', href: '../basis/communications-mitsubishi.html#class-WriteEventArgs-MC', type: 'class' },
-          { label: 'TimeoutEventArgs', href: '../basis/communications-mitsubishi.html#class-TimeoutEventArgs-MC', type: 'class' },
+          {
+            label: 'Modbus',
+            children: [
+              { label: 'ModbusRTUMaster', href: '../basis/communications-modbus.html#class-ModbusRTUMaster', type: 'class' },
+              { label: 'ModbusRTUSlave', href: '../basis/communications-modbus.html#class-ModbusRTUSlave', type: 'class' },
+              { label: 'ModbusTCPMaster', href: '../basis/communications-modbus.html#class-ModbusTCPMaster', type: 'class' },
+              { label: 'ModbusTCPSlave', href: '../basis/communications-modbus.html#class-ModbusTCPSlave', type: 'class' },
+              { label: 'MasterRTU', href: '../basis/communications-modbus.html#class-MasterRTU', type: 'class' },
+              { label: 'SlaveRTU', href: '../basis/communications-modbus.html#class-SlaveRTU', type: 'class' },
+              { label: 'MasterTCP', href: '../basis/communications-modbus.html#class-MasterTCP', type: 'class' },
+              { label: 'SlaveTCP', href: '../basis/communications-modbus.html#class-SlaveTCP', type: 'class' },
+              { label: 'ModbusCRC', href: '../basis/communications-modbus.html#class-ModbusCRC', type: 'static' },
+              { label: 'ModbusFunction', href: '../basis/communications-modbus.html#enum-ModbusFunction', type: 'enum' },
+              { label: 'Mems', href: '../basis/communications-modbus.html#class-Mems', type: 'class' },
+              {
+                label: 'EventArgs',
+                collapsed: true,
+                children: [
+                  { label: 'Work', href: '../basis/communications-modbus.html#class-ModbusWork', type: 'class' },
+                  { label: 'BitReadEventArgs', href: '../basis/communications-modbus.html#class-ModbusBitReadEventArgs', type: 'class' },
+                  { label: 'WordReadEventArgs', href: '../basis/communications-modbus.html#class-ModbusWordReadEventArgs', type: 'class' },
+                  { label: 'BitWriteEventArgs', href: '../basis/communications-modbus.html#class-ModbusBitWriteEventArgs', type: 'class' },
+                  { label: 'WordWriteEventArgs', href: '../basis/communications-modbus.html#class-ModbusWordWriteEventArgs', type: 'class' },
+                  { label: 'MultiBitWriteEventArgs', href: '../basis/communications-modbus.html#class-ModbusMultiBitWriteEventArgs', type: 'class' },
+                  { label: 'MultiWordWriteEventArgs', href: '../basis/communications-modbus.html#class-ModbusMultiWordWriteEventArgs', type: 'class' },
+                  { label: 'WordBitSetEventArgs', href: '../basis/communications-modbus.html#class-ModbusWordBitSetEventArgs', type: 'class' },
+                  { label: 'TimeoutEventArgs', href: '../basis/communications-modbus.html#class-ModbusTimeoutEventArgs', type: 'class' },
+                  { label: 'CRCErrorEventArgs', href: '../basis/communications-modbus.html#class-ModbusCRCErrorEventArgs', type: 'class' },
+                  { label: 'BitReadRequestArgs', href: '../basis/communications-modbus.html#class-ModbusBitReadRequestArgs', type: 'class' },
+                  { label: 'WordReadRequestArgs', href: '../basis/communications-modbus.html#class-ModbusWordReadRequestArgs', type: 'class' },
+                  { label: 'BitWriteRequestArgs', href: '../basis/communications-modbus.html#class-ModbusBitWriteRequestArgs', type: 'class' },
+                  { label: 'WordWriteRequestArgs', href: '../basis/communications-modbus.html#class-ModbusWordWriteRequestArgs', type: 'class' },
+                  { label: 'MultiBitWriteRequestArgs (RTU)', href: '../basis/communications-modbus.html#class-ModbusMultiBitWriteRequestArgs-RTU', type: 'class' },
+                  { label: 'MultiBitWriteRequestArgs (TCP)', href: '../basis/communications-modbus.html#class-ModbusMultiBitWriteRequestArgs-TCP', type: 'class' },
+                  { label: 'MultiWordWriteRequestArgs (RTU)', href: '../basis/communications-modbus.html#class-ModbusMultiWordWriteRequestArgs-RTU', type: 'class' },
+                  { label: 'MultiWordWriteRequestArgs (TCP)', href: '../basis/communications-modbus.html#class-ModbusMultiWordWriteRequestArgs-TCP', type: 'class' },
+                  { label: 'WordBitSetRequestArgs', href: '../basis/communications-modbus.html#class-ModbusWordBitSetRequestArgs', type: 'class' },
+                ]
+              },
+            ]
+          },
+          {
+            label: 'MQTT',
+            children: [
+              { label: 'MQClient', href: '../basis/communications-mqtt.html#class-MQClient', type: 'class' },
+              { label: 'MQQos', href: '../basis/communications-mqtt.html#enum-MQQos', type: 'enum' },
+              { label: 'MQSubscribe', href: '../basis/communications-mqtt.html#class-MQSubscribe', type: 'class' },
+              { label: 'MQReceiveArgs', href: '../basis/communications-mqtt.html#class-MQReceiveArgs', type: 'class' },
+            ]
+          },
+          {
+            label: 'LS CNet',
+            children: [
+              { label: 'CNet', href: '../basis/communications-ls.html#class-CNet', type: 'class' },
+              { label: 'CNetValue', href: '../basis/communications-ls.html#class-CNetValue', type: 'class' },
+              { label: 'CNetFunc', href: '../basis/communications-ls.html#enum-CNetFunc', type: 'enum' },
+              { label: 'SchedulerStopException', href: '../basis/communications-ls.html#class-SchedulerStopException', type: 'class' },
+              { label: 'DataReadEventArgs', href: '../basis/communications-ls.html#class-DataReadEventArgs', type: 'class' },
+              { label: 'BCCErrorEventArgs', href: '../basis/communications-ls.html#class-BCCErrorEventArgs', type: 'class' },
+              { label: 'NAKEventArgs', href: '../basis/communications-ls.html#class-NAKEventArgs', type: 'class' },
+              { label: 'WriteEventArgs', href: '../basis/communications-ls.html#class-WriteEventArgs-LS', type: 'class' },
+              { label: 'TimeoutEventArgs', href: '../basis/communications-ls.html#class-TimeoutEventArgs-LS', type: 'class' },
+            ]
+          },
+          {
+            label: 'Mitsubishi MC',
+            children: [
+              { label: 'MC', href: '../basis/communications-mitsubishi.html#class-MC', type: 'class' },
+              { label: 'MCFunc', href: '../basis/communications-mitsubishi.html#enum-MCFunc', type: 'enum' },
+              { label: 'WordDataReadEventArgs', href: '../basis/communications-mitsubishi.html#class-WordDataReadEventArgs', type: 'class' },
+              { label: 'BitDataReadEventArgs', href: '../basis/communications-mitsubishi.html#class-BitDataReadEventArgs', type: 'class' },
+              { label: 'CheckSumErrorEventArgs', href: '../basis/communications-mitsubishi.html#class-CheckSumErrorEventArgs', type: 'class' },
+              { label: 'NakErrorEventArgs', href: '../basis/communications-mitsubishi.html#class-NakErrorEventArgs', type: 'class' },
+              { label: 'WriteEventArgs', href: '../basis/communications-mitsubishi.html#class-WriteEventArgs-MC', type: 'class' },
+              { label: 'TimeoutEventArgs', href: '../basis/communications-mitsubishi.html#class-TimeoutEventArgs-MC', type: 'class' },
+            ]
+          },
         ]
       },
       {
@@ -410,29 +416,38 @@ function buildSidebar(currentFile) {
       </div>
       <div class="sidebar-group-body">`;
 
-    for (const item of proj.items) {
-      if (!item.children) {
-        const href = resolveHref(item.href, basePath);
-        html += `<a class="sidebar-item type-page" href="${href}" style="padding-left:16px">${item.label}</a>`;
-      } else {
-        html += `<div class="sidebar-ns">
-          <div class="sidebar-ns-header" onclick="toggleNs(this)">
-            <span class="ns-icon">▼</span>
-            ${item.label}
-          </div>
-          <div class="sidebar-ns-items">`;
-        for (const child of item.children) {
-          const href = resolveHref(child.href, basePath);
-          const active = isActive(child.href, currentFile) ? ' active' : '';
-          html += `<a class="sidebar-item type-${child.type}${active}" href="${href}">${child.label}</a>`;
-        }
-        html += `</div></div>`;
-      }
-    }
+    html += renderNavItems(proj.items, basePath, currentFile, 0);
 
     html += `</div></div>`;
   }
 
+  return html;
+}
+
+// 재귀 렌더: children 이 있으면 접을 수 있는 하위 트리, 없으면 링크 항목. depth 에 따라 들여쓰기.
+function renderNavItems(items, basePath, currentFile, depth) {
+  let html = '';
+  const indent = 22 + depth * 12;
+  for (const item of items) {
+    if (!item.children) {
+      const href = resolveHref(item.href, basePath);
+      const active = isActive(item.href, currentFile) ? ' active' : '';
+      const type = item.type || 'page';
+      const pad = type === 'page' ? 16 + depth * 12 : indent + 10;
+      html += `<a class="sidebar-item type-${type}${active}" href="${href}" style="padding-left:${pad}px">${item.label}</a>`;
+    } else {
+      const collapsed = item.collapsed ? ' collapsed' : '';
+      const display = item.collapsed ? 'display:none;' : '';
+      html += `<div class="sidebar-ns">
+        <div class="sidebar-ns-header${collapsed}" onclick="toggleNs(this)" style="padding-left:${indent}px">
+          <span class="ns-icon">▼</span>
+          ${item.label}
+        </div>
+        <div class="sidebar-ns-items" style="padding-left:0;${display}">`;
+      html += renderNavItems(item.children, basePath, currentFile, depth + 1);
+      html += `</div></div>`;
+    }
+  }
   return html;
 }
 
