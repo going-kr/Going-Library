@@ -12,7 +12,7 @@
   <div class="search-wrapper"><input type="text" id="search-input" placeholder="클래스, 메서드 검색..."></div>
   <nav class="header-nav">
     <a href="../index.html">Home</a>
-    <a href="../basis/index.html" class="active">Going.Basis</a>
+    <a href="index.html" class="active">Going.Basis</a>
     <a href="../ui/index.html">Going.UI</a>
   </nav>
 </header>
@@ -43,8 +43,8 @@
       </a>
       <a class="ns-card" href="communications-modbus.html">
         <h3>Communications.Modbus</h3>
-        <p>Modbus RTU/TCP 마스터·슬레이브. FC1~FC26 지원. CRC/LRC 유틸.</p>
-        <div class="class-count">ModbusRTUMaster · ModbusRTUSlave · ModbusTCPMaster · ModbusTCPSlave · MasterRTU · MasterTCP · SlaveRTU · SlaveTCP · ModbusCRC</div>
+        <p>Modbus RTU/TCP 마스터·슬레이브. FC1~6/15/16과 비표준 FC26 지원. CRC 유틸. 읽기/쓰기 이벤트·요청 인자 클래스 포함.</p>
+        <div class="class-count">ModbusRTUMaster · ModbusRTUSlave · ModbusTCPMaster · ModbusTCPSlave · MasterRTU · MasterTCP · SlaveRTU · SlaveTCP · ModbusCRC · ModbusFunction</div>
       </a>
       <a class="ns-card" href="communications-mqtt.html">
         <h3>Communications.Mqtt</h3>
@@ -54,7 +54,7 @@
       <a class="ns-card" href="datas.html">
         <h3>Datas / Memories</h3>
         <p>INI 파일, JSON/XML/Binary 직렬화 유틸, 비트·워드 메모리 (BitMemory, WordMemory, WordRef).</p>
-        <div class="class-count">INI · Seriealize · BitMemory · WordMemory · WordRef · BitAccessor</div>
+        <div class="class-count">INI · Serialize · BitMemory · IBitMemory · WordMemory · IWordMemory · WordRef · BitAccessor</div>
       </a>
       <a class="ns-card" href="extensions.html">
         <h3>Extensions</h3>
@@ -73,8 +73,8 @@
       </a>
       <a class="ns-card" href="utils.html">
         <h3>Utils</h3>
-        <p>비동기 루프 태스크, 외부 프로세스, 고해상도 타이머, 자연 정렬, 압축.</p>
-        <div class="class-count">EasyTask · ExternalProgram · HiResTimer · NaturalSortComparer · CompressionUtility</div>
+        <p>비동기 루프 태스크, 외부 프로세스, 고해상도 타이머, 자연 정렬, 압축, Modbus 워드 엔디안 변환.</p>
+        <div class="class-count">EasyTask · ExternalProgram · HiResTimer · NaturalSortComparer · NaturalSortExtensions · CompressionUtility · EndianParser · EndianOrder</div>
       </a>
     </div>
 

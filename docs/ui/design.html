@@ -28,7 +28,7 @@
     <p class="page-subtitle">네임스페이스 <code>Going.UI.Design</code> — UI 최상위 컨테이너 및 페이지/윈도우 관리</p>
 
     <!-- GoDesign -->
-    <div id="class-GoDesign" class="class-card" data-search="godesign class design root canvas page window theme image font">
+    <div id="class-GoDesign" class="class-card" data-search="godesign class design root canvas page window theme image font gudx binding wirebindings serializegudx deserializegudx">
       <div class="class-card-header" onclick="toggleCard(this)">
         <div class="class-signature">
           <span class="kw">public class</span> <span class="nm">GoDesign</span>
@@ -92,7 +92,8 @@
             <tr data-search="customtheme gotheme"><td class="col-type">GoTheme?</td><td class="col-name">CustomTheme <span class="accessor">get set</span></td><td class="col-desc">사용자 정의 테마 (null이면 DarkTheme 사용)</td></tr>
             <tr data-search="mouseposition skpoint"><td class="col-type">SKPoint</td><td class="col-name">MousePosition <span class="accessor">get</span></td><td class="col-desc">현재 마우스 위치</td></tr>
             <tr data-search="isdrag bool"><td class="col-type">bool</td><td class="col-name">IsDrag <span class="accessor">get</span></td><td class="col-desc">드래그 중 여부</td></tr>
-            <tr data-search="designmode bool"><td class="col-type">bool</td><td class="col-name">DesignMode <span class="accessor">get set</span></td><td class="col-desc">디자인 모드 여부 (편집기용)</td></tr>
+            <tr data-search="designmode bool"><td class="col-type">bool</td><td class="col-name">DesignMode <span class="accessor">get set</span></td><td class="col-desc">디자인 모드 여부 (편집기용). 기본값: false</td></tr>
+            <tr data-search="sampledatadraw bool"><td class="col-type">bool</td><td class="col-name">SampleDataDraw <span class="accessor">get set</span></td><td class="col-desc">DesignMode가 아니어도 그래프 등의 디자인 타임 샘플 데이터를 표시할지 여부. 기본값: false</td></tr>
           </table>
         </div>
 
@@ -120,9 +121,11 @@
           <div class="member-section-title">Methods — 렌더링 / 입력</div>
           <table class="api-table">
             <tr data-search="setsize void int"><td class="ret">void</td><td class="col-method-name">SetSize</td><td class="params">(<span class="tp">int</span> width, <span class="tp">int</span> height)</td><td class="col-desc">캔버스 크기 설정</td></tr>
-            <tr data-search="init void"><td class="ret">void</td><td class="col-method-name">Init</td><td class="params">()</td><td class="col-desc">초기화 (AddPage 후 최초 1회 호출)</td></tr>
+            <tr data-search="init void"><td class="ret">void</td><td class="col-method-name">Init</td><td class="params">()</td><td class="col-desc">페이지·윈도우·바(TitleBar/LeftSideBar/RightSideBar/Footer)를 모두 초기화. GoViewWindow가 최초 렌더링 시 자동 호출</td></tr>
+            <tr data-search="wirebindings void object root gudx binding"><td class="ret">void</td><td class="col-method-name">WireBindings</td><td class="params">(<span class="tp">object</span> root)</td><td class="col-desc">.gudx 마크업의 <code>{path}</code> 바인딩 식을 root 객체(예: 앱 허브)에 연결. Init() 이후 1회 호출</td></tr>
             <tr data-search="invalidate void"><td class="ret">void</td><td class="col-method-name">Invalidate</td><td class="params">()</td><td class="col-desc">다음 프레임 재렌더링 요청</td></tr>
             <tr data-search="draw void skcanvas"><td class="ret">void</td><td class="col-method-name">Draw</td><td class="params">(<span class="tp">SKCanvas</span> canvas)</td><td class="col-desc">전체 UI 렌더링</td></tr>
+            <tr data-search="drawpage void skcanvas gotheme gopage"><td class="ret">void</td><td class="col-method-name">DrawPage</td><td class="params">(<span class="tp">SKCanvas</span> canvas, <span class="tp">GoTheme</span> thm, <span class="tp">GoPage?</span> page = null)</td><td class="col-desc">특정 페이지만 렌더링. page가 null이면 현재 페이지</td></tr>
             <tr data-search="update void"><td class="ret">void</td><td class="col-method-name">Update</td><td class="params">()</td><td class="col-desc">프레임 업데이트 (매 프레임 호출)</td></tr>
             <tr data-search="mousedown void float button"><td class="ret">void</td><td class="col-method-name">MouseDown</td><td class="params">(<span class="tp">float</span> x, <span class="tp">float</span> y, <span class="tp">GoMouseButton</span> button)</td><td class="col-desc">마우스 누름 이벤트 전달</td></tr>
             <tr data-search="mouseup void float button"><td class="ret">void</td><td class="col-method-name">MouseUp</td><td class="params">(<span class="tp">float</span> x, <span class="tp">float</span> y, <span class="tp">GoMouseButton</span> button)</td><td class="col-desc">마우스 뗌 이벤트 전달</td></tr>
@@ -131,6 +134,7 @@
             <tr data-search="mousewheel void float delta"><td class="ret">void</td><td class="col-method-name">MouseWheel</td><td class="params">(<span class="tp">float</span> x, <span class="tp">float</span> y, <span class="tp">float</span> delta)</td><td class="col-desc">마우스 휠 이벤트 전달</td></tr>
             <tr data-search="keydown void bool gokeys"><td class="ret">void</td><td class="col-method-name">KeyDown</td><td class="params">(<span class="tp">bool</span> Shift, <span class="tp">bool</span> Control, <span class="tp">bool</span> Alt, <span class="tp">GoKeys</span> key)</td><td class="col-desc">키 누름 이벤트 전달</td></tr>
             <tr data-search="keyup void bool gokeys"><td class="ret">void</td><td class="col-method-name">KeyUp</td><td class="params">(<span class="tp">bool</span> Shift, <span class="tp">bool</span> Control, <span class="tp">bool</span> Alt, <span class="tp">GoKeys</span> key)</td><td class="col-desc">키 뗌 이벤트 전달</td></tr>
+            <tr data-search="dispose void idisposable"><td class="ret">void</td><td class="col-method-name">Dispose</td><td class="params">()</td><td class="col-desc">보유한 이미지·폰트 등 리소스 해제 (IDisposable)</td></tr>
           </table>
         </div>
 
@@ -164,11 +168,12 @@
         </div>
 
         <div class="member-section">
-          <div class="member-section-title">Methods — JSON 직렬화</div>
+          <div class="member-section-title">Methods — 저장/불러오기 (.gudx)</div>
           <table class="api-table">
-            <tr data-search="jsonserialize string"><td class="ret">string</td><td class="col-method-name">JsonSerialize</td><td class="params">()</td><td class="col-desc">GoDesign을 JSON 문자열로 직렬화</td></tr>
-            <tr data-search="jsondeserialize static godesign"><td class="ret">static GoDesign?</td><td class="col-method-name">JsonDeserialize</td><td class="params">(<span class="tp">string?</span> json)</td><td class="col-desc">JSON 문자열로 GoDesign 복원</td></tr>
+            <tr data-search="serializegudx void string masterpath gudx save"><td class="ret">void</td><td class="col-method-name">SerializeGudx</td><td class="params">(<span class="tp">string</span> masterPath)</td><td class="col-desc">이 GoDesign을 Master.gudx + Pages/&lt;name&gt;.gudx + Windows/&lt;name&gt;.gudx 파일들로 직렬화. Master 파일에는 디자인 속성·테마·리소스 참조·GoPageRef/GoWindowRef 포인터가 담김</td></tr>
+            <tr data-search="deserializegudx static godesign string masterpath gudx load"><td class="ret">static GoDesign?</td><td class="col-method-name">DeserializeGudx</td><td class="params">(<span class="tp">string</span> masterPath)</td><td class="col-desc">Master.gudx 파일에서 GoDesign을 불러오고 GoPageRef/GoWindowRef 참조를 해석</td></tr>
           </table>
+          <p style="margin:10px 2px;color:var(--text-muted);font-size:13px;">런타임에 단일 <code>.gudx</code> 파일 하나만 읽어 화면을 구성할 때는 <code>GoGudxConverter.ReadGoDesign(XElement)</code>를 직접 사용합니다 (README "빠른 시작" 참고). 내부적으로 <code>JsonSerialize</code>/<code>JsonDeserialize</code> 메서드도 남아있지만 <b>레거시</b>이며, 신규 코드는 <code>.gudx</code> 경로를 사용하세요.</p>
         </div>
 
         <div class="member-section">
@@ -206,8 +211,10 @@
             <tr data-search="textcolor string"><td class="col-type">string</td><td class="col-name">TextColor <span class="accessor">get set</span></td><td class="col-desc">제목 색상. 기본값: "Fore"</td></tr>
             <tr data-search="windowcolor string"><td class="col-type">string</td><td class="col-name">WindowColor <span class="accessor">get set</span></td><td class="col-desc">윈도우 배경 색상. 기본값: "Back"</td></tr>
             <tr data-search="bordercolor string"><td class="col-type">string</td><td class="col-name">BorderColor <span class="accessor">get set</span></td><td class="col-desc">테두리 색상. 기본값: "Base2"</td></tr>
+            <tr data-search="borderwidth float"><td class="col-type">float</td><td class="col-name">BorderWidth <span class="accessor">get set</span></td><td class="col-desc">테두리 두께. 기본값: 1.5</td></tr>
             <tr data-search="round goroundtype"><td class="col-type">GoRoundType</td><td class="col-name">Round <span class="accessor">get set</span></td><td class="col-desc">모서리 둥글기. 기본값: All</td></tr>
             <tr data-search="titleheight float"><td class="col-type">float</td><td class="col-name">TitleHeight <span class="accessor">get set</span></td><td class="col-desc">타이틀 바 높이 (px). 기본값: 40</td></tr>
+            <tr data-search="padding gopadding"><td class="col-type">GoPadding</td><td class="col-name">Padding <span class="accessor">get set</span></td><td class="col-desc">자식 컨트롤 영역(Panel)의 내부 여백. 기본값: (8,8,8,8)</td></tr>
             <tr data-search="childrens list"><td class="col-type">List&lt;IGoControl&gt;</td><td class="col-name">Childrens <span class="accessor">get</span></td><td class="col-desc">자식 컨트롤 목록</td></tr>
           </table>
         </div>
@@ -239,6 +246,7 @@
           <table class="api-table">
             <tr data-search="childrens list"><td class="col-type">List&lt;IGoControl&gt;</td><td class="col-name">Childrens <span class="accessor">get</span></td><td class="col-desc">페이지 자식 컨트롤 목록</td></tr>
             <tr data-search="backgroundimage string"><td class="col-type">string?</td><td class="col-name">BackgroundImage <span class="accessor">get set</span></td><td class="col-desc">배경 이미지 이름</td></tr>
+            <tr data-search="padding gopadding"><td class="col-type">GoPadding</td><td class="col-name">Padding <span class="accessor">get set</span></td><td class="col-desc">자식 컨트롤 영역의 내부 여백. 기본값: (8,8,8,8)</td></tr>
           </table>
         </div>
       </div>
@@ -292,6 +300,7 @@
             <tr data-search="realbarsize float"><td class="col-type">float</td><td class="col-name">RealBarSize <span class="accessor">internal get</span></td><td class="col-desc">애니메이션 적용된 실제 너비 (internal)</td></tr>
             <tr data-search="opening bool"><td class="col-type">bool</td><td class="col-name">Opening <span class="accessor">get</span></td><td class="col-desc">열리는 중 여부</td></tr>
             <tr data-search="closing bool"><td class="col-type">bool</td><td class="col-name">Closing <span class="accessor">get</span></td><td class="col-desc">닫히는 중 여부</td></tr>
+            <tr data-search="padding gopadding"><td class="col-type">GoPadding</td><td class="col-name">Padding <span class="accessor">get set</span></td><td class="col-desc">자식 컨트롤 영역의 내부 여백. 기본값: (8,8,8,8)</td></tr>
             <tr data-search="childrens list"><td class="col-type">List&lt;IGoControl&gt;</td><td class="col-name">Childrens <span class="accessor">get</span></td><td class="col-desc">사이드바 내부 컨트롤</td></tr>
           </table>
         </div>
@@ -331,6 +340,7 @@
           <table class="api-table">
             <tr data-search="windowcolor string"><td class="col-type">string</td><td class="col-name">WindowColor <span class="accessor">get set</span></td><td class="col-desc">팝업 배경 색상. 기본값: "Window"</td></tr>
             <tr data-search="bordercolor string"><td class="col-type">string</td><td class="col-name">BorderColor <span class="accessor">get set</span></td><td class="col-desc">팝업 테두리 색상. 기본값: "WindowBorder"</td></tr>
+            <tr data-search="borderwidth float"><td class="col-type">float</td><td class="col-name">BorderWidth <span class="accessor">get set</span></td><td class="col-desc">테두리 두께. 기본값: 1.5</td></tr>
             <tr data-search="round goroundtype"><td class="col-type">GoRoundType</td><td class="col-name">Round <span class="accessor">get set</span></td><td class="col-desc">모서리 둥글기</td></tr>
             <tr data-search="childrens list"><td class="col-type">List&lt;IGoControl&gt;</td><td class="col-name">Childrens <span class="accessor">get</span></td><td class="col-desc">내부 컨트롤</td></tr>
           </table>
@@ -342,6 +352,49 @@
             <tr data-search="hide virtual void"><td class="ret">virtual void</td><td class="col-method-name">Hide</td><td class="params">()</td><td class="col-desc">드롭다운 숨김</td></tr>
           </table>
         </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- GoViewWindow -->
+    <div id="class-GoViewWindow" class="class-card" data-search="goviewwindow class opentk gamewindow window render skcanvas viewwindow going.ui.opentk.windows">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature">
+          <span class="kw">public class</span> <span class="nm">GoViewWindow</span>
+          <span class="base">: GameWindow</span>
+        </div>
+        <div class="class-desc">Going.UI.OpenTK 패키지의 실행 윈도우. 네임스페이스 <code>Going.UI.OpenTK.Windows</code>. OpenTK(GLFW) 윈도우에 SkiaSharp 캔버스를 붙여 매 프레임 <code>Design</code>을 그리고, 마우스/키보드 입력을 <code>GoDesign</code>으로 전달합니다.</div>
+      </div>
+      <div class="class-card-body">
+
+        <div class="member-section">
+          <div class="member-section-title">Constructor</div>
+          <table class="api-table">
+            <tr data-search="goviewwindow constructor width height windowborder touchmode"><td class="col-method-name">GoViewWindow</td><td class="params">(<span class="tp">int</span> width, <span class="tp">int</span> height, <span class="tp">WindowBorder</span> Style, <span class="tp">bool</span> touchMode = true)</td><td class="col-desc">지정한 크기·테두리 스타일로 윈도우 생성. touchMode가 false이고 Windows일 경우 IME 입력을 사용</td></tr>
+          </table>
+        </div>
+
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="width int"><td class="col-type">int</td><td class="col-name">Width <span class="accessor">get</span></td><td class="col-desc">클라이언트 영역 너비 (px)</td></tr>
+            <tr data-search="height int"><td class="col-type">int</td><td class="col-name">Height <span class="accessor">get</span></td><td class="col-desc">클라이언트 영역 높이 (px)</td></tr>
+            <tr data-search="design godesign"><td class="col-type">GoDesign</td><td class="col-name">Design <span class="accessor">get set</span></td><td class="col-desc">렌더링할 GoDesign 인스턴스. 기본값: new GoDesign()</td></tr>
+            <tr data-search="titleiconstring string"><td class="col-type">string?</td><td class="col-name">TitleIconString <span class="accessor">get set</span></td><td class="col-desc">타이틀 아이콘 (Font Awesome 문자열)</td></tr>
+            <tr data-search="titleiconimage string"><td class="col-type">string?</td><td class="col-name">TitleIconImage <span class="accessor">get set</span></td><td class="col-desc">타이틀 아이콘 이미지 이름 (Design에 등록된 이미지)</td></tr>
+            <tr data-search="debug bool"><td class="col-type">bool</td><td class="col-name">Debug <span class="accessor">get set</span></td><td class="col-desc">프레임 업데이트 소요시간 표시 여부. 기본값: false</td></tr>
+            <tr data-search="touchmode bool"><td class="col-type">bool</td><td class="col-name">TouchMode <span class="accessor">get set</span></td><td class="col-desc">터치 입력 모드 여부. 기본값: true</td></tr>
+          </table>
+        </div>
+
+        <div class="member-section">
+          <div class="member-section-title">Methods (override point)</div>
+          <table class="api-table">
+            <tr data-search="ondraw virtual void skcanvas"><td class="ret">virtual void</td><td class="col-method-name">OnDraw</td><td class="params">(<span class="tp">SKCanvas</span> canvas)</td><td class="col-desc">매 프레임 Design.Draw() 이후 호출. 오버라이드하여 커스텀 오버레이를 그릴 수 있음</td></tr>
+          </table>
+        </div>
+
       </div>
     </div>
 

@@ -231,6 +231,12 @@
       </div>
       <div class="class-card-body">
         <div class="member-section">
+          <div class="member-section-title">Constructor</div>
+          <table class="api-table">
+            <tr data-search="bitaccessor constructor"><td class="col-method-name">BitAccessor</td><td class="params">(<span class="tp">byte[]</span> rawData, <span class="tp">int</span> byteOffset)</td><td class="col-desc">바이트 배열과 오프셋으로 생성</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
           <div class="member-section-title">Properties</div>
           <table class="api-table">
             <tr data-search="indexer bool bit">
@@ -267,17 +273,17 @@
           <div class="member-section-title">Static Methods — XML</div>
           <table class="api-table">
             <tr data-search="xmlserializetofile void static"><td class="ret">static void</td><td class="col-method-name">XmlSerializeToFile</td><td class="params">(<span class="tp">string</span> Path, <span class="tp">object</span> obj, <span class="tp">Type</span> type)</td><td class="col-desc">XML 파일로 저장</td></tr>
-            <tr data-search="xmldeserializefromfile static"><td class="ret">static object</td><td class="col-method-name">XmlDeserializeFromFile</td><td class="params">(<span class="tp">string</span> Path, <span class="tp">Type</span> type)</td><td class="col-desc">XML 파일 → 객체</td></tr>
+            <tr data-search="xmldeserializefromfile static"><td class="ret">static object?</td><td class="col-method-name">XmlDeserializeFromFile</td><td class="params">(<span class="tp">string</span> Path, <span class="tp">Type</span> type)</td><td class="col-desc">XML 파일 → 객체. 파일이 없으면 null</td></tr>
             <tr data-search="xmlserialize static byte"><td class="ret">static byte[]</td><td class="col-method-name">XmlSerialize</td><td class="params">(<span class="tp">object</span> obj, <span class="tp">Type</span> type)</td><td class="col-desc">XML → 바이트 배열</td></tr>
-            <tr data-search="xmldeserialize static object"><td class="ret">static object</td><td class="col-method-name">XmlDeserialize</td><td class="params">(<span class="tp">byte[]</span> rawdata, <span class="tp">Type</span> type)</td><td class="col-desc">바이트 배열 → 객체</td></tr>
+            <tr data-search="xmldeserialize static object"><td class="ret">static object?</td><td class="col-method-name">XmlDeserialize</td><td class="params">(<span class="tp">byte[]</span> rawdata, <span class="tp">Type</span> type)</td><td class="col-desc">바이트 배열 → 객체</td></tr>
           </table>
         </div>
         <div class="member-section">
           <div class="member-section-title">Static Methods — Raw (Binary/Struct)</div>
           <table class="api-table">
             <tr data-search="rawserialize static byte struct"><td class="ret">static byte[]</td><td class="col-method-name">RawSerialize</td><td class="params">(<span class="tp">object</span> obj)</td><td class="col-desc">구조체 → 바이트 배열</td></tr>
-            <tr data-search="rawdeserialize static object"><td class="ret">static object</td><td class="col-method-name">RawDeserialize</td><td class="params">(<span class="tp">byte[]</span> rawdata, <span class="tp">Type</span> type)</td><td class="col-desc">바이트 배열 → 구조체</td></tr>
-            <tr data-search="rawdeserialize static object offset"><td class="ret">static object</td><td class="col-method-name">RawDeserialize</td><td class="params">(<span class="tp">byte[]</span> ba, <span class="tp">int</span> offset, <span class="tp">int</span> size, <span class="tp">Type</span> type)</td><td class="col-desc">바이트 배열 부분 범위 → 구조체</td></tr>
+            <tr data-search="rawdeserialize static object"><td class="ret">static object?</td><td class="col-method-name">RawDeserialize</td><td class="params">(<span class="tp">byte[]</span> rawdata, <span class="tp">Type</span> type)</td><td class="col-desc">바이트 배열 → 구조체. 데이터 크기가 부족하면 null</td></tr>
+            <tr data-search="rawdeserialize static object offset"><td class="ret">static object?</td><td class="col-method-name">RawDeserialize</td><td class="params">(<span class="tp">byte[]</span> ba, <span class="tp">int</span> offset, <span class="tp">int</span> size, <span class="tp">Type</span> type)</td><td class="col-desc">바이트 배열 부분 범위 → 구조체. 데이터 크기가 부족하면 null</td></tr>
             <tr data-search="rawdeserialize generic static"><td class="ret">static T</td><td class="col-method-name">RawDeserialize&lt;T&gt;</td><td class="params">(<span class="tp">byte[]</span> rawdata) <span class="kw">where</span> T : struct</td><td class="col-desc">제네릭 구조체 역직렬화</td></tr>
             <tr data-search="rawdeserialize generic static offset"><td class="ret">static T</td><td class="col-method-name">RawDeserialize&lt;T&gt;</td><td class="params">(<span class="tp">byte[]</span> ba, <span class="tp">int</span> offset, <span class="tp">int</span> size)</td><td class="col-desc">제네릭 부분 범위 역직렬화</td></tr>
           </table>

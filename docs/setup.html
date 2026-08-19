@@ -27,11 +27,10 @@
     <nav class="sidebar-nav" style="padding:16px;">
       <h3 style="font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">Setup Guide</h3>
       <a href="#prerequisites" style="display:block;padding:4px 8px;color:var(--text);text-decoration:none;font-size:13px;border-radius:3px;margin-bottom:2px;">사전 요구사항</a>
-      <a href="#step1" style="display:block;padding:4px 8px;color:var(--text);text-decoration:none;font-size:13px;border-radius:3px;margin-bottom:2px;">Step 1. 스킬 설치</a>
-      <a href="#step2" style="display:block;padding:4px 8px;color:var(--text);text-decoration:none;font-size:13px;border-radius:3px;margin-bottom:2px;">Step 2. UIEditor 설치</a>
-      <a href="#step3" style="display:block;padding:4px 8px;color:var(--text);text-decoration:none;font-size:13px;border-radius:3px;margin-bottom:2px;">Step 3. 바로가기 생성</a>
-      <a href="#step4" style="display:block;padding:4px 8px;color:var(--text);text-decoration:none;font-size:13px;border-radius:3px;margin-bottom:2px;">Step 4. 완료 및 다음 단계</a>
-      <a href="#manual" style="display:block;padding:4px 8px;color:var(--text);text-decoration:none;font-size:13px;border-radius:3px;margin-bottom:2px;">수동 설치</a>
+      <a href="#packages" style="display:block;padding:4px 8px;color:var(--text);text-decoration:none;font-size:13px;border-radius:3px;margin-bottom:2px;">프로젝트 생성과 패키지</a>
+      <a href="#gudx-copy" style="display:block;padding:4px 8px;color:var(--text);text-decoration:none;font-size:13px;border-radius:3px;margin-bottom:2px;">.gudx 출력 복사 설정</a>
+      <a href="#deploy" style="display:block;padding:4px 8px;color:var(--text);text-decoration:none;font-size:13px;border-radius:3px;margin-bottom:2px;">Raspberry Pi 배포</a>
+      <a href="#senvas" style="display:block;padding:4px 8px;color:var(--text);text-decoration:none;font-size:13px;border-radius:3px;margin-bottom:2px;">시각 설계 · AI 워크플로우</a>
     </nav>
   </aside>
 
@@ -40,24 +39,13 @@
 
       <h1 class="page-title">개발 환경 구성</h1>
       <p class="page-subtitle">
-        Claude Code를 사용한 Going Library HMI 개발 환경 자동 셋업 가이드
+        Going Library를 사용하는 .NET 프로젝트를 만들고 배포하기 위한 최소 구성
       </p>
 
-      <div style="background:var(--panel-bg);border:1px solid var(--accent);border-radius:6px;padding:16px 20px;margin:24px 0;">
-        <p style="margin:0;color:var(--text);font-size:14px;">
-          <strong style="color:var(--accent);">Claude Code 사용자</strong> —
-          이 페이지 URL을 Claude에게 전달하고 <code style="background:var(--sidebar-bg);padding:2px 6px;border-radius:3px;">"개발 환경 구성해줘"</code>라고 요청하면 아래 절차가 자동으로 실행됩니다.
-        </p>
-      </div>
-
-      <!-- 자동 셋업 지시 (Claude Code가 읽고 실행할 절차) -->
-      <div id="claude-setup-instructions" style="background:var(--sidebar-bg);border:1px solid var(--border);border-radius:6px;padding:16px 20px;margin:24px 0;">
-        <p style="margin:0 0 8px;font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;">Claude Code 자동 실행 절차</p>
+      <div style="background:var(--panel-bg);border:1px solid var(--border);border-radius:6px;padding:16px 20px;margin:24px 0;">
         <p style="margin:0;color:var(--text);font-size:13px;">
-          사용자가 "개발 환경 구성"을 요청하면 <strong>아래 Step 1~3의 명령을 설명하지 말고 직접 실행</strong>하라.
-          각 단계의 코드 블록은 실행 가능한 명령이다. 사용자에게 설치 경로만 질문한 뒤 순서대로 수행하고, Step 4의 안내를 출력하라.
-          <strong>중요: 이 페이지에 명시된 명령을 정확히 사용하라. 임의로 레포/경로를 변경하지 마라.</strong>
-          UIEditor는 반드시 <code>going-kr/Going-Library</code> 릴리즈에서 다운로드한다 (<code>going-kr/going-ui-skill</code>이 아님).
+          Going Library는 NuGet 패키지로만 제공되는 일반 .NET 라이브러리입니다.
+          별도의 SDK 설치나 전용 도구 없이 <code style="background:var(--sidebar-bg);padding:2px 6px;border-radius:3px;">dotnet</code> CLI만으로 프로젝트를 만들고 실행할 수 있습니다.
         </p>
       </div>
 
@@ -69,7 +57,7 @@
         <thead>
           <tr style="border-bottom:1px solid var(--border);">
             <th style="text-align:left;padding:8px;color:var(--text-muted);">항목</th>
-            <th style="text-align:left;padding:8px;color:var(--text-muted);">최소 요구</th>
+            <th style="text-align:left;padding:8px;color:var(--text-muted);">요구</th>
             <th style="text-align:left;padding:8px;color:var(--text-muted);">확인 명령</th>
           </tr>
         </thead>
@@ -79,103 +67,118 @@
             <td style="padding:8px;">8.0 이상</td>
             <td style="padding:8px;"><code style="background:var(--sidebar-bg);padding:2px 6px;border-radius:3px;">dotnet --version</code></td>
           </tr>
-          <tr style="border-bottom:1px solid var(--border);">
-            <td style="padding:8px;">Git</td>
-            <td style="padding:8px;">설치 필요</td>
-            <td style="padding:8px;"><code style="background:var(--sidebar-bg);padding:2px 6px;border-radius:3px;">git --version</code></td>
-          </tr>
-          <tr style="border-bottom:1px solid var(--border);">
-            <td style="padding:8px;">GitHub CLI</td>
-            <td style="padding:8px;">설치 필요 (UIEditor 다운로드용)</td>
-            <td style="padding:8px;"><code style="background:var(--sidebar-bg);padding:2px 6px;border-radius:3px;">gh --version</code></td>
+          <tr>
+            <td style="padding:8px;">에디터</td>
+            <td style="padding:8px;">Visual Studio / VS Code / Rider 등 (선택)</td>
+            <td style="padding:8px;">—</td>
           </tr>
         </tbody>
       </table>
 
-      <!-- Step 1 -->
-      <h2 id="step1" style="font-size:16px;font-weight:400;color:#fff;margin:32px 0 16px;padding-bottom:8px;border-bottom:1px solid var(--border);">
-        <span style="color:var(--keyword);">Step 1</span> — Going UI Skill 설치
+      <!-- Packages -->
+      <h2 id="packages" style="font-size:16px;font-weight:400;color:#fff;margin:32px 0 16px;padding-bottom:8px;border-bottom:1px solid var(--border);">
+        <span style="color:var(--keyword);">프로젝트 생성과 패키지</span>
       </h2>
       <p style="color:var(--text);font-size:13px;margin-bottom:12px;">
-        Claude Code 전용 HMI 개발 스킬을 설치합니다.
+        콘솔 프로젝트를 만들고 UI 어댑터와 통신 라이브러리를 추가합니다.
       </p>
-      <pre style="background:var(--sidebar-bg);border:1px solid var(--border);border-radius:4px;padding:12px 16px;font-size:13px;overflow-x:auto;"><code><span style="color:var(--comment);"># 이미 존재하면 업데이트, 없으면 새로 설치</span>
-<span style="color:var(--keyword);">if</span> [ -d <span style="color:var(--string);">"$HOME/.claude/skills/going-ui-skill"</span> ]; <span style="color:var(--keyword);">then</span>
-  git -C <span style="color:var(--string);">"$HOME/.claude/skills/going-ui-skill"</span> pull
-<span style="color:var(--keyword);">else</span>
-  git clone https://github.com/going-kr/going-ui-skill <span style="color:var(--string);">"$HOME/.claude/skills/going-ui-skill"</span>
-<span style="color:var(--keyword);">fi</span></code></pre>
-
-      <!-- Step 2 -->
-      <h2 id="step2" style="font-size:16px;font-weight:400;color:#fff;margin:32px 0 16px;padding-bottom:8px;border-bottom:1px solid var(--border);">
-        <span style="color:var(--keyword);">Step 2</span> — UIEditor 다운로드 및 설치
-      </h2>
-      <p style="color:var(--text);font-size:13px;margin-bottom:12px;">
-        사용자에게 설치 경로를 질문한다 (기본값: <code style="background:var(--sidebar-bg);padding:2px 6px;border-radius:3px;">~/UIEditor</code>). GitHub Release에서 최신 UIEditor를 다운로드한다.
-      </p>
-      <pre style="background:var(--sidebar-bg);border:1px solid var(--border);border-radius:4px;padding:12px 16px;font-size:13px;overflow-x:auto;"><code><span style="color:var(--comment);"># 다운로드</span>
-gh release download --pattern <span style="color:var(--string);">"UIEditor.zip"</span> -R going-kr/Going-Library -D <span style="color:var(--string);">"&lt;설치경로&gt;"</span>
-
-<span style="color:var(--comment);"># 압축 해제 (Windows)</span>
-powershell -Command <span style="color:var(--string);">"Expand-Archive -Path '&lt;설치경로&gt;/UIEditor.zip' -DestinationPath '&lt;설치경로&gt;' -Force"</span>
-
-<span style="color:var(--comment);"># 압축 해제 (Linux/macOS)</span>
-unzip -o <span style="color:var(--string);">"&lt;설치경로&gt;/UIEditor.zip"</span> -d <span style="color:var(--string);">"&lt;설치경로&gt;"</span>
-
-<span style="color:var(--comment);"># zip 파일 삭제</span>
-rm <span style="color:var(--string);">"&lt;설치경로&gt;/UIEditor.zip"</span></code></pre>
-
-      <!-- Step 3 -->
-      <h2 id="step3" style="font-size:16px;font-weight:400;color:#fff;margin:32px 0 16px;padding-bottom:8px;border-bottom:1px solid var(--border);">
-        <span style="color:var(--keyword);">Step 3</span> — 바탕화면 바로가기 생성 <span style="color:var(--text-muted);font-size:12px;">(Windows)</span>
-      </h2>
-      <pre style="background:var(--sidebar-bg);border:1px solid var(--border);border-radius:4px;padding:12px 16px;font-size:13px;overflow-x:auto;"><code><span style="color:var(--comment);"># PowerShell</span>
-$ws = New-Object -ComObject WScript.Shell
-$sc = $ws.CreateShortcut(<span style="color:var(--string);">"$HOME\Desktop\UIEditor.lnk"</span>)
-$sc.TargetPath = <span style="color:var(--string);">"&lt;설치경로&gt;\Going.UIEditor.exe"</span>
-$sc.WorkingDirectory = <span style="color:var(--string);">"&lt;설치경로&gt;"</span>
-$sc.Save()</code></pre>
-
-      <!-- Step 4 -->
-      <h2 id="step4" style="font-size:16px;font-weight:400;color:#fff;margin:32px 0 16px;padding-bottom:8px;border-bottom:1px solid var(--border);">
-        <span style="color:var(--keyword);">Step 4</span> — 완료 및 다음 단계
-      </h2>
-      <div style="background:var(--panel-bg);border:1px solid var(--accent);border-radius:6px;padding:20px 24px;margin-bottom:16px;">
-        <p style="margin:0 0 12px;color:var(--accent);font-size:14px;font-weight:600;">개발 환경이 준비되었습니다!</p>
-        <p style="margin:0 0 12px;color:var(--text);font-size:13px;">
-          Claude에게 아래와 같이 말하면 프로젝트가 시작됩니다:
-        </p>
-        <pre style="background:var(--sidebar-bg);border:1px solid var(--border);border-radius:4px;padding:12px 16px;font-size:14px;margin:0 0 12px;"><code style="color:var(--string);">"새 HMI 프로젝트 시작할게요"</code></pre>
-        <p style="margin:0;color:var(--text-muted);font-size:12px;">
-          Claude가 프로젝트 인터뷰를 진행하며, 화면 구성 · 통신 · 배포까지 함께 설계합니다.<br>
-          기존 자료(화면 이미지, 레지스터 맵 엑셀 등)가 있다면 함께 전달하면 더 빠릅니다.
-        </p>
-      </div>
-      <p style="color:var(--text);font-size:13px;">
-        👉 전체 개발 과정이 궁금하다면: <a href="getting-start.html" style="color:var(--accent);">Getting Started — 모터 제어 패널 튜토리얼</a>
-      </p>
-
-      <!-- 수동 설치 -->
-      <h2 id="manual" style="font-size:16px;font-weight:400;color:#fff;margin:40px 0 16px;padding-bottom:8px;border-bottom:1px solid var(--border);">
-        <span style="color:var(--text-muted);">수동 설치</span>
-      </h2>
-
-      <h3 style="font-size:14px;color:var(--property);margin:16px 0 8px;">방법 1. Git Clone (CLI)</h3>
-      <pre style="background:var(--sidebar-bg);border:1px solid var(--border);border-radius:4px;padding:12px 16px;font-size:13px;overflow-x:auto;"><code><span style="color:var(--comment);"># 글로벌 설치 — 한 번 설치하면 모든 프로젝트에서 사용</span>
-git clone https://github.com/going-kr/going-ui-skill ~/.claude/skills/going-ui-skill</code></pre>
-
-      <h3 style="font-size:14px;color:var(--property);margin:16px 0 8px;">방법 2. Claude 데스크톱 앱</h3>
-      <p style="color:var(--text);font-size:13px;">
-        <code style="background:var(--sidebar-bg);padding:2px 6px;border-radius:3px;">설정 → 스킬 → 스킬 업로드</code>에서
-        <code style="background:var(--sidebar-bg);padding:2px 6px;border-radius:3px;">.zip</code> 파일을 드래그 앤 드롭하거나
-        <code style="background:var(--sidebar-bg);padding:2px 6px;border-radius:3px;">SKILL.md</code> 파일을 직접 업로드합니다.
-      </p>
-
-      <h3 style="font-size:14px;color:var(--property);margin:16px 0 8px;">방법 3. NuGet 패키지 (수동 프로젝트 생성)</h3>
       <pre style="background:var(--sidebar-bg);border:1px solid var(--border);border-radius:4px;padding:12px 16px;font-size:13px;overflow-x:auto;"><code>dotnet new console -n MyHMI
 cd MyHMI
+
+<span style="color:var(--comment);"># UI (OpenTK 어댑터 — Going.UI 코어를 함께 가져옵니다)</span>
 dotnet add package Going.UI.OpenTK
+
+<span style="color:var(--comment);"># 통신 (Modbus / MQTT / CNet / MC)</span>
 dotnet add package Going.Basis</code></pre>
+
+      <p style="color:var(--text);font-size:13px;margin:16px 0 8px;"><strong>어댑터 선택</strong></p>
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border);">
+            <th style="text-align:left;padding:8px;color:var(--text-muted);">패키지</th>
+            <th style="text-align:left;padding:8px;color:var(--text-muted);">용도</th>
+            <th style="text-align:left;padding:8px;color:var(--text-muted);">대상</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;color:var(--property);">Going.UI.OpenTK</td>
+            <td style="padding:8px;">임베디드 터치 패널, Raspberry Pi, 데스크톱</td>
+            <td style="padding:8px;"><code>net8.0</code></td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;color:var(--property);">Going.UI.Forms</td>
+            <td style="padding:8px;">WinForms 앱에 UI 캔버스를 얹는 경우</td>
+            <td style="padding:8px;"><code>net8.0-windows</code></td>
+          </tr>
+          <tr>
+            <td style="padding:8px;color:var(--property);">Going.UI</td>
+            <td style="padding:8px;">플랫폼 독립 코어만 필요한 경우 (어댑터가 참조)</td>
+            <td style="padding:8px;"><code>net8.0</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- gudx copy -->
+      <h2 id="gudx-copy" style="font-size:16px;font-weight:400;color:#fff;margin:32px 0 16px;padding-bottom:8px;border-bottom:1px solid var(--border);">
+        <span style="color:var(--keyword);">.gudx 출력 복사 설정</span>
+      </h2>
+      <p style="color:var(--text);font-size:13px;margin-bottom:12px;">
+        화면은 <code>.gudx</code> 마크업 파일을 런타임에 읽어 구성합니다.
+        마크업 파일이 실행 디렉터리에 있어야 하므로 <code>.csproj</code>에 복사 항목을 추가합니다.
+      </p>
+      <pre style="background:var(--sidebar-bg);border:1px solid var(--border);border-radius:4px;padding:12px 16px;font-size:13px;overflow-x:auto;"><code>&lt;<span style="color:var(--keyword);">ItemGroup</span>&gt;
+  &lt;<span style="color:var(--keyword);">None</span> <span style="color:var(--property);">Update</span>=<span style="color:var(--string);">"ui\**"</span> <span style="color:var(--property);">CopyToOutputDirectory</span>=<span style="color:var(--string);">"PreserveNewest"</span> /&gt;
+&lt;/<span style="color:var(--keyword);">ItemGroup</span>&gt;</code></pre>
+      <p style="color:var(--text-muted);font-size:12px;margin-top:8px;">
+        이미지·폰트 등 다른 리소스 폴더도 같은 방식으로 추가하면 됩니다.
+      </p>
+
+      <!-- Deploy -->
+      <h2 id="deploy" style="font-size:16px;font-weight:400;color:#fff;margin:32px 0 16px;padding-bottom:8px;border-bottom:1px solid var(--border);">
+        <span style="color:var(--keyword);">Raspberry Pi 배포</span>
+      </h2>
+      <p style="color:var(--text);font-size:13px;margin-bottom:12px;">
+        64비트 Raspberry Pi OS 등 <code>linux-arm64</code> 대상은 다음과 같이 게시합니다.
+        대상 장치에 .NET 런타임을 따로 설치하지 않으려면 <code>--self-contained</code>를 사용합니다.
+      </p>
+      <pre style="background:var(--sidebar-bg);border:1px solid var(--border);border-radius:4px;padding:12px 16px;font-size:13px;overflow-x:auto;"><code><span style="color:var(--comment);"># 런타임 포함 게시 (대상 장치에 .NET 설치 불필요)</span>
+dotnet publish -c Release -r linux-arm64 --self-contained true -o publish
+
+<span style="color:var(--comment);"># 대상 장치에 .NET 8 런타임이 이미 있는 경우</span>
+dotnet publish -c Release -r linux-arm64 --self-contained false -o publish</code></pre>
+      <p style="color:var(--text-muted);font-size:12px;margin-top:8px;">
+        <code>publish</code> 폴더를 장치로 복사한 뒤 실행 권한을 부여하고 실행합니다.
+        <code>ui/*.gudx</code>를 비롯한 리소스도 함께 복사되었는지 확인하세요.
+      </p>
+
+      <!-- Senvas -->
+      <h2 id="senvas" style="font-size:16px;font-weight:400;color:#fff;margin:40px 0 16px;padding-bottom:8px;border-bottom:1px solid var(--border);">
+        <span style="color:var(--keyword);">시각 설계 · AI 워크플로우</span>
+      </h2>
+      <div style="background:var(--panel-bg);border:1px solid var(--accent);border-radius:6px;padding:20px 24px;margin-bottom:16px;">
+        <p style="margin:0 0 12px;color:var(--accent);font-size:14px;font-weight:600;">Senvas — HMI UI 에디터 &amp; AI 개발</p>
+        <p style="margin:0 0 12px;color:var(--text);font-size:13px;">
+          화면을 손으로 배치하며 설계하거나, 프로젝트 골격 생성·AI 연동 워크플로우가 필요하다면
+          Going Library 위에 만들어진 통합 개발 도구 <strong>Senvas</strong>를 사용하세요.
+        </p>
+        <ul style="margin:0 0 12px;padding-left:18px;color:var(--text);font-size:13px;line-height:1.9;">
+          <li><code>.gudx</code> 화면을 시각적으로 설계하고 검증</li>
+          <li>MakeCode로 C# 프로젝트 골격 생성</li>
+          <li>Claude Code 등 외부 AI 도구와 연동된 프로젝트 생성·수정 워크플로우 (요구사항 인터뷰 → 설계 → 구현 → 검증)</li>
+          <li>빌드 및 대상 장치 배포</li>
+        </ul>
+        <p style="margin:0;font-size:13px;">
+          <a href="https://github.com/going-kr/Release.Senvas" target="_blank" rel="noopener" style="color:var(--accent);">github.com/going-kr/Release.Senvas ↗</a>
+        </p>
+      </div>
+      <p style="color:var(--text-muted);font-size:12px;">
+        라이브러리 자체는 Senvas 없이도 독립적으로 사용할 수 있습니다.
+      </p>
+
+      <p style="color:var(--text);font-size:13px;margin-top:24px;">
+        👉 첫 화면을 띄우는 방법: <a href="getting-start.html" style="color:var(--accent);">Getting Started</a>
+      </p>
 
     </div>
   </main>

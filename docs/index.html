@@ -33,7 +33,7 @@
 
       <h1 class="page-title">Going Library</h1>
       <p class="page-subtitle">
-        .NET 8.0 기반 SkiaSharp UI 프레임워크 &amp; 산업용 통신 라이브러리 API 문서
+        .NET 8.0 기반 산업용 HMI/SCADA UI 프레임워크 &amp; 통신 라이브러리 API 문서
       </p>
 
       <div class="project-grid">
@@ -42,12 +42,12 @@
           <h2>Going.Basis</h2>
           <p>
             산업용 프로토콜 통신(Modbus RTU/TCP, MQTT, LS CNet, Mitsubishi MC),
-            데이터 직렬화(JSON/XML/Binary), 측정 필터(채터링, 안정값),
+            데이터 직렬화(JSON/XML/Binary)와 비트·워드 메모리, 측정 필터(채터링, 안정값),
             암호화 및 수학 유틸리티를 제공하는 기반 라이브러리.
           </p>
           <div class="stats">
-            <span><strong>35</strong> 파일</span>
-            <span><strong>6</strong> 네임스페이스</span>
+            <span><strong>40</strong> 파일</span>
+            <span><strong>16</strong> 네임스페이스</span>
             <span><strong>.NET 8.0</strong></span>
           </div>
         </a>
@@ -57,39 +57,42 @@
           <h2>Going.UI</h2>
           <p>
             SkiaSharp 기반 크로스플랫폼 UI 엔진. 40여 종의 컨트롤(버튼, 슬라이더,
-            데이터그리드, 그래프, 게이지 등), 레이아웃 컨테이너, 다이얼로그 시스템,
-            테마 엔진, 이미지 캔버스를 포함한 완전한 UI 라이브러리.
+            데이터그리드, 그래프, 게이지 등)과 레이아웃 컨테이너, 벡터 셰이프(GsShape),
+            배관 흐름(FlowSystem), 다이얼로그, 테마 엔진, 그리고 <code>.gudx</code> 선언적 UI와 바인딩을 포함합니다.
           </p>
           <div class="stats">
-            <span><strong>107</strong> 파일</span>
-            <span><strong>14</strong> 네임스페이스</span>
-            <span><strong>SkiaSharp 3.x</strong></span>
+            <span><strong>155</strong> 파일</span>
+            <span><strong>19</strong> 네임스페이스</span>
+            <span><strong>SkiaSharp 4.150.1</strong></span>
           </div>
         </a>
-        <a class="project-card" href="setup.html">
-          <div class="pkg-badge" style="background:var(--success);">Setup</div>
-          <h2>개발 환경 구성</h2>
-          <p>
-            Claude Code를 사용한 자동 셋업 가이드.
-            Going UI Skill 설치, UIEditor 다운로드, 바탕화면 바로가기 생성까지 한 번에 구성합니다.
-          </p>
-          <div class="stats">
-            <span><strong>Claude Code</strong></span>
-            <span><strong>UIEditor</strong></span>
-            <span><strong>자동 셋업</strong></span>
-          </div>
-        </a>
+
         <a class="project-card" href="getting-start.html">
           <div class="pkg-badge" style="background:var(--keyword);">Tutorial</div>
           <h2>Getting Started</h2>
           <p>
-            모터 제어 패널 예제로 배우는 전체 개발 과정.
-            프로젝트 브리프 → .gud 디자인 → UIEditor → C# 코드 → 빌드까지 한 흐름으로 안내합니다.
+            라이브러리만으로 첫 화면을 띄우는 과정.
+            프로젝트 생성 → <code>ui/Main.gudx</code> 작성 → <code>Program.cs</code> 연결 → 실행까지 한 흐름으로 안내합니다.
           </p>
           <div class="stats">
-            <span><strong>2</strong> 페이지</span>
-            <span><strong>Modbus TCP</strong></span>
-            <span><strong>튜토리얼</strong></span>
+            <span><strong>.gudx</strong></span>
+            <span><strong>바인딩</strong></span>
+            <span><strong>OpenTK</strong></span>
+          </div>
+        </a>
+
+        <a class="project-card" href="https://github.com/going-kr/Release.Senvas" target="_blank" rel="noopener">
+          <div class="pkg-badge" style="background:var(--success);">Senvas</div>
+          <h2>HMI UI 에디터 &amp; AI 개발</h2>
+          <p>
+            Going Library 위에 만들어진 HMI 통합 개발 도구.
+            <code>.gudx</code> 화면을 시각적으로 설계·검증하고, MakeCode로 C# 프로젝트 골격을 생성하며,
+            외부 AI 도구와 연동된 프로젝트 생성·수정 워크플로우와 장치 배포를 지원합니다.
+          </p>
+          <div class="stats">
+            <span><strong>시각 설계</strong></span>
+            <span><strong>MakeCode</strong></span>
+            <span><strong>GitHub ↗</strong></span>
           </div>
         </a>
       </div>
@@ -101,7 +104,7 @@
       <div class="ns-list">
         <a class="ns-card" href="basis/communications-modbus.html">
           <h3>Going.Basis.Communications.Modbus</h3>
-          <p>Modbus RTU / TCP 마스터 및 슬레이브 구현. FC1~FC26 함수 코드 지원.</p>
+          <p>Modbus RTU / TCP 마스터 및 슬레이브 구현. FC1~6, FC15/16, 비표준 FC26 함수 코드 지원.</p>
           <div class="class-count">ModbusRTUMaster · ModbusRTUSlave · ModbusTCPMaster · ModbusTCPSlave</div>
         </a>
         <a class="ns-card" href="basis/communications-ls.html">
@@ -156,15 +159,30 @@
           <p>UI 캔버스 최상위 컨테이너, 페이지/윈도우 관리, 입력 이벤트 디스패치.</p>
           <div class="class-count">GoDesign · GoWindow · GoPage · GoTitleBar · GoSideBar · GoFooter</div>
         </a>
+        <a class="ns-card" href="ui/gudx.html">
+          <h3>Going.UI.Gudx / Bindings</h3>
+          <p><code>.gudx</code>(XML) 마크업 역직렬화와 <code>{path}</code> 바인딩 식 연결.</p>
+          <div class="class-count">GoGudxConverter · GoComponentTemplate · GoBinding · GudxBinder · GudxBindingExpression</div>
+        </a>
         <a class="ns-card" href="ui/controls.html">
           <h3>Going.UI.Controls</h3>
           <p>40여 종의 인터랙티브 UI 컨트롤. 버튼, 입력, 그래프, 게이지 등.</p>
           <div class="class-count">GoButton · GoLabel · GoCheckBox · GoSlider · GoDataGrid · GoLineGraph ...</div>
         </a>
+        <a class="ns-card" href="ui/shapes.html">
+          <h3>Going.UI.Controls.Shapes</h3>
+          <p>벡터 셰이프 컨트롤. 선, 사각형, 원, 호, 베지어, 다각형.</p>
+          <div class="class-count">GsShape · GsLine · GsRect · GsCircle · GsArc · GsBezier · GsPolygon</div>
+        </a>
         <a class="ns-card" href="ui/containers.html">
           <h3>Going.UI.Containers</h3>
           <p>레이아웃 컨테이너. 그리드, 박스, 스크롤, 탭, 테이블 패널.</p>
           <div class="class-count">GoContainer · GoGridLayoutPanel · GoScrollablePanel · GoTabControl ...</div>
+        </a>
+        <a class="ns-card" href="ui/flowsystem.html">
+          <h3>Going.UI.FlowSystem</h3>
+          <p>배관 흐름 다이어그램. 탱크, 펌프, 밸브, 배관 연결 요소.</p>
+          <div class="class-count">FsFlowSystemPanel · FsFlowObject · FsPump · FsValve · FsCylinderTank · FsSiloTank · FsCrossPipe · FsTeePipe</div>
         </a>
         <a class="ns-card" href="ui/dialogs.html">
           <h3>Going.UI.Dialogs</h3>
@@ -197,6 +215,42 @@
           <div class="class-count">IcButton · IcLabel · IcOnOff · IcProgress · IcSlider · IcState</div>
         </a>
       </div>
+
+      <!-- Packages -->
+      <h2 style="font-size:16px;font-weight:400;color:#fff;margin:40px 0 16px;padding-bottom:8px;border-bottom:1px solid var(--border);">
+        NuGet 패키지
+      </h2>
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border);">
+            <th style="text-align:left;padding:8px;color:var(--text-muted);">패키지</th>
+            <th style="text-align:left;padding:8px;color:var(--text-muted);">설명</th>
+            <th style="text-align:left;padding:8px;color:var(--text-muted);">대상</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;color:var(--property);">Going.UI</td>
+            <td style="padding:8px;">플랫폼 독립 UI 코어 (컨트롤, 컨테이너, 테마, 디자인, .gudx, 바인딩)</td>
+            <td style="padding:8px;"><code>net8.0</code></td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;color:var(--property);">Going.UI.OpenTK</td>
+            <td style="padding:8px;">OpenTK 어댑터 (임베디드 / Raspberry Pi / 데스크톱)</td>
+            <td style="padding:8px;"><code>net8.0</code></td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;color:var(--property);">Going.UI.Forms</td>
+            <td style="padding:8px;">WinForms 어댑터 (Windows 데스크톱)</td>
+            <td style="padding:8px;"><code>net8.0-windows</code></td>
+          </tr>
+          <tr>
+            <td style="padding:8px;color:var(--property);">Going.Basis</td>
+            <td style="padding:8px;">통신 및 유틸리티 (Modbus, MQTT, CNet, MC)</td>
+            <td style="padding:8px;"><code>net8.0</code></td>
+          </tr>
+        </tbody>
+      </table>
 
     </div>
   </main>

@@ -242,6 +242,18 @@ body {
   min-width: 0;
 }
 
+/* 본문 산문/표 안의 일반 링크 (카드·nav는 자체 스타일) */
+.main-content :is(p, li, td, dd, .class-desc, .ns-section) a:not([class]) {
+  color: #4fc1ff;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(79, 193, 255, .35);
+}
+.main-content :is(p, li, td, dd, .class-desc, .ns-section) a:not([class]):hover {
+  color: #8fd6ff;
+  border-bottom-color: currentColor;
+}
+.main-content :is(p, li, td, dd, .class-desc, .ns-section) a:not([class]):visited { color: #4fc1ff; }
+
 /* ─── Breadcrumb ─────────────────────────────────────────────────── */
 .breadcrumb {
   display: flex;

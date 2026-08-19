@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlowSystem - Going.UI API</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<header class="site-header">
+  <a class="logo" href="../index.html"><span class="pkg">API</span> Going Library</a>
+  <div class="search-wrapper"><input type="text" id="search-input" placeholder="클래스, 메서드 검색..."></div>
+  <nav class="header-nav">
+    <a href="../index.html">Home</a>
+    <a href="../basis/index.html">Going.Basis</a>
+    <a href="index.html" class="active">Going.UI</a>
+  </nav>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar" data-current="ui/flowsystem.html"></aside>
+  <main class="main-content">
+    <div class="breadcrumb">
+      <a href="../index.html">Going Library</a><span class="sep">›</span>
+      <a href="index.html">Going.UI</a><span class="sep">›</span>
+      <span>FlowSystem</span>
+    </div>
+    <h1 class="page-title">FlowSystem</h1>
+    <p class="page-subtitle">네임스페이스 <code>Going.UI.FlowSystem</code> — 산업용 배관 흐름 시뮬레이터</p>
+
+    <p>
+      <code>FsFlowSystemPanel</code>이 배관 네트워크 전체를 관리하는 컨테이너입니다. 펌프·밸브·탱크·파이프 분기 같은 컴포넌트(모두 <code>FsFlowObject</code> 파생)를
+      <code>Childrens</code>에 배치하고, 두 컴포넌트의 포트를 잇는 <code>FlowConnection</code>을 <code>Connections</code>에 추가해 배관을 연결합니다.
+      각 컴포넌트는 <code>IoPorts()</code>로 자신의 <code>ConnectPort</code>(입력/출력/양방향)를 노출하며,
+      <code>FlowConnection.StartControlId</code>/<code>StartPortName</code>과 <code>EndControlId</code>/<code>EndPortName</code>으로 두 포트를 참조합니다.
+      배치나 연결을 런타임에 바꾼 뒤에는 <code>FsFlowSystemPanel.RefreshCache()</code>를 호출해 내부 캐시를 갱신해야 합니다(초기 <code>OnInit</code> 시에는 자동 호출).
+    </p>
+    <p>
+      매 Draw 사이클마다 시작점(<code>UseOutlet=true</code>인 <code>FsCylinderTank</code>, 모든 <code>FsSiloTank</code>, <code>UseInlet=false</code>인 <code>FsPump</code>의 Outlet 포트)에서 출발해
+      연결된 포트를 따라 재귀적으로 흐름 상태와 유체 색을 전파합니다 — 경로상의 모든 컴포넌트가 <code>IsFlow=true</code>여야 흐름이 계속 전달되며,
+      <code>FsTeePipe</code>/<code>FsCrossPipe</code>에서 서로 다른 색이 합류하면 <code>MixedColor</code>로 표시됩니다.
+      흐름이 있는 배관에는 10ms 간격 내부 타이머가 300ms마다 흰색 반투명 버블을 흘려보내 시각적으로 흐름을 표현합니다.
+      <code>FsPump</code>/<code>FsValve</code>/<code>FsTeePipe</code>/<code>FsCrossPipe</code>는 <code>IRotatable</code>을 구현해 0/90/180/270도 회전 시 포트 위치·방향이 자동 재배치됩니다.
+      경로 스무딩/정규화 등 저수준 계산은 내부 <code>PipeTool</code> 유틸리티가 담당합니다(직접 호출 대상 아님).
+    </p>
+
+    <div id="class-FsFlowObject" class="class-card" data-search="fsflowobject abstract ioports getport isflow base">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature">
+          <span class="kw">public abstract class</span> <span class="nm">FsFlowObject</span>
+          <span class="base"> : GoControl</span>
+        </div>
+        <div class="class-desc">흐름 시스템의 모든 컴포넌트(펌프, 밸브, 배관, 탱크 등)의 추상 기반 클래스. FsFlowSystemPanel의 자식으로 배치되며, ConnectPort를 통해 다른 컴포넌트와 배관으로 연결됩니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="isflow bool"><td class="col-type">bool</td><td class="col-name">IsFlow <span class="accessor">get</span></td><td class="col-desc">이 객체가 현재 흐름을 통과시키는 상태인지(abstract)</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Methods</div>
+          <table class="api-table">
+            <tr data-search="ioports ienumerable connectport"><td class="ret">IEnumerable&lt;ConnectPort&gt;</td><td class="col-method-name">IoPorts</td><td class="params">()</td><td class="col-desc">모든 입출력 포트 반환(abstract)</td></tr>
+            <tr data-search="getport connectport name"><td class="ret">ConnectPort?</td><td class="col-method-name">GetPort</td><td class="params">(<span class="tp">string?</span> name)</td><td class="col-desc">지정된 이름의 포트 반환, 없으면 null(abstract)</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="class-FsFlowSystemPanel" class="class-card" data-search="fsflowsystempanel panel container connections childrens pipesize refreshcache">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature">
+          <span class="kw">public class</span> <span class="nm">FsFlowSystemPanel</span>
+          <span class="base"> : GoContainer</span>
+        </div>
+        <div class="class-desc">배관 네트워크의 전체 관리자 역할을 하는 FlowSystem의 핵심 패널 컨트롤. FsFlowObject 파생 컴포넌트들을 Childrens에 배치하고, Connections에 FlowConnection을 정의하여 배관 연결 네트워크를 구성합니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="childrens list igocontrol"><td class="col-type">List&lt;IGoControl&gt;</td><td class="col-name">Childrens <span class="accessor">get</span></td><td class="col-desc">자식 컨트롤 컬렉션(FsFlowObject 파생을 배치)</td></tr>
+            <tr data-search="basewidth int"><td class="col-type">int?</td><td class="col-name">BaseWidth <span class="accessor">get set</span></td><td class="col-desc">패널의 논리적 너비. null이면 실제 컨트롤 너비 사용, 값 지정 시 자동 스케일링</td></tr>
+            <tr data-search="baseheight int"><td class="col-type">int?</td><td class="col-name">BaseHeight <span class="accessor">get set</span></td><td class="col-desc">패널의 논리적 높이. null이면 실제 컨트롤 높이 사용, 값 지정 시 자동 스케일링</td></tr>
+            <tr data-search="panelalignment gocontentalignment"><td class="col-type">GoContentAlignment</td><td class="col-name">PanelAlignment <span class="accessor">get set</span></td><td class="col-desc">스케일링 시 콘텐츠 정렬 위치. 기본값: MiddleCenter</td></tr>
+            <tr data-search="pipesize float"><td class="col-type">float</td><td class="col-name">PipeSize <span class="accessor">get set</span></td><td class="col-desc">배관 굵기(픽셀). 기본값: 30</td></tr>
+            <tr data-search="framesize float"><td class="col-type">float</td><td class="col-name">FrameSize <span class="accessor">get set</span></td><td class="col-desc">배관 테두리 두께. 기본값: 5</td></tr>
+            <tr data-search="emptycolor string"><td class="col-type">string</td><td class="col-name">EmptyColor <span class="accessor">get set</span></td><td class="col-desc">유체가 흐르지 않는 빈 배관 색상. 기본값: "Base1"</td></tr>
+            <tr data-search="mixedcolor string"><td class="col-type">string</td><td class="col-name">MixedColor <span class="accessor">get set</span></td><td class="col-desc">서로 다른 유체가 혼합될 때 표시되는 색상. 기본값: "Magenta"</td></tr>
+            <tr data-search="framecolor string"><td class="col-type">string</td><td class="col-name">FrameColor <span class="accessor">get set</span></td><td class="col-desc">배관 외곽선 색상. 기본값: "Base4"</td></tr>
+            <tr data-search="connections list flowconnection"><td class="col-type">List&lt;FlowConnection&gt;</td><td class="col-name">Connections <span class="accessor">get set</span></td><td class="col-desc">플로우 연결(배관) 목록</td></tr>
+            <tr data-search="panelbounds skrect"><td class="col-type">SKRect</td><td class="col-name">PanelBounds <span class="accessor">get</span></td><td class="col-desc">자식 컨트롤이 배치되는 패널 영역. 디자인 모드=Editor 영역, 런타임=Scale 영역</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Methods</div>
+          <table class="api-table">
+            <tr data-search="refreshcache void"><td class="ret">void</td><td class="col-method-name">RefreshCache</td><td class="params">()</td><td class="col-desc">내부 캐시(자식/연결/시작 포트) 재구성. Childrens/Connections 변경 후 반드시 호출(OnInit 시 자동 호출)</td></tr>
+            <tr data-search="getcontrol fsflowobject id"><td class="ret">FsFlowObject?</td><td class="col-method-name">GetControl</td><td class="params">(<span class="tp">Guid?</span> id)</td><td class="col-desc">지정된 ID의 플로우 객체 반환</td></tr>
+            <tr data-search="getconnection flowconnection controlid portname"><td class="ret">FlowConnection?</td><td class="col-method-name">GetConnection</td><td class="params">(<span class="tp">Guid</span> controlid, <span class="tp">string</span> portName)</td><td class="col-desc">지정된 컨트롤/포트에 해당하는 연결 반환</td></tr>
+            <tr data-search="getconnections ienumerable flowconnection controlid"><td class="ret">IEnumerable&lt;FlowConnection&gt;</td><td class="col-method-name">GetConnections</td><td class="params">(<span class="tp">Guid</span> controlid)</td><td class="col-desc">지정된 컨트롤에 연결된 모든 연결 반환</td></tr>
+            <tr data-search="hasconnection bool controlid portname"><td class="ret">bool</td><td class="col-method-name">HasConnection</td><td class="params">(<span class="tp">Guid</span> controlid, <span class="tp">string</span> portName)</td><td class="col-desc">지정된 컨트롤/포트에 연결이 존재하는지 여부</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="class-FsPump" class="class-card" data-search="fspump pump onoff oncolor offcolor useinlet reverse rotate impeller irotatable">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature">
+          <span class="kw">public class</span> <span class="nm">FsPump</span>
+          <span class="base"> : FsFlowObject, IRotatable</span>
+        </div>
+        <div class="class-desc">유체를 토출하여 배관 흐름의 시작점 역할을 하는 펌프 컴포넌트. 원형 본체 내부에 임펠러를 가지며, OnOff가 true일 때 임펠러 회전 애니메이션과 함께 흐름을 발생시킵니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="pipesize float"><td class="col-type">float</td><td class="col-name">PipeSize <span class="accessor">get</span></td><td class="col-desc">파이프 크기. 부모 FsFlowSystemPanel에서 상속(기본 30)</td></tr>
+            <tr data-search="framesize float"><td class="col-type">float</td><td class="col-name">FrameSize <span class="accessor">get</span></td><td class="col-desc">프레임 크기. 부모 FsFlowSystemPanel에서 상속(기본 5)</td></tr>
+            <tr data-search="oncolor string"><td class="col-type">string</td><td class="col-name">OnColor <span class="accessor">get set</span></td><td class="col-desc">가동 시 표시 색상. 기본값: "Lime"</td></tr>
+            <tr data-search="offcolor string"><td class="col-type">string</td><td class="col-name">OffColor <span class="accessor">get set</span></td><td class="col-desc">정지 시 표시 색상. 기본값: "Red"</td></tr>
+            <tr data-search="emptycolor string"><td class="col-type">string</td><td class="col-name">EmptyColor <span class="accessor">get set</span></td><td class="col-desc">비어있을 때 색상. 기본값: "Base1"</td></tr>
+            <tr data-search="framecolor string"><td class="col-type">string</td><td class="col-name">FrameColor <span class="accessor">get set</span></td><td class="col-desc">프레임 색상. 기본값: "Base4"</td></tr>
+            <tr data-search="useinlet bool"><td class="col-type">bool</td><td class="col-name">UseInlet <span class="accessor">get set</span></td><td class="col-desc">흡입구(Inlet) 포트 활성화 여부. 기본값: false</td></tr>
+            <tr data-search="onoff bool"><td class="col-type">bool</td><td class="col-name">OnOff <span class="accessor">get set</span></td><td class="col-desc">가동/정지 상태. true면 흐름 발생 및 임펠러 회전</td></tr>
+            <tr data-search="rotate objectrotate"><td class="col-type">ObjectRotate</td><td class="col-name">Rotate <span class="accessor">get set</span></td><td class="col-desc">회전 각도(0/90/180/270도). 포트 위치·방향도 함께 변경</td></tr>
+            <tr data-search="reverse bool"><td class="col-type">bool</td><td class="col-name">Reverse <span class="accessor">get set</span></td><td class="col-desc">역방향 여부. true면 Outlet/Inlet 좌우 위치 반전. 기본값: false</td></tr>
+            <tr data-search="isflow bool"><td class="col-type">bool</td><td class="col-name">IsFlow <span class="accessor">get</span></td><td class="col-desc">흐름 여부. OnOff와 동일</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Ports</div>
+          <table class="api-table">
+            <tr data-search="outlet output"><td class="col-name">Outlet</td><td class="col-desc" colspan="2">Output. 항상 활성. Deg0 기준 오른쪽(R), Reverse=true면 왼쪽(L)</td></tr>
+            <tr data-search="inlet input useinlet"><td class="col-name">Inlet</td><td class="col-desc" colspan="2">Input. UseInlet=true일 때만 활성. Deg0 기준 왼쪽(L), Reverse=true면 오른쪽(R)</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="class-FsValve" class="class-card" data-search="fsvalve valve onoff oncolor offcolor rotate bidirectional globe lamp irotatable">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature">
+          <span class="kw">public class</span> <span class="nm">FsValve</span>
+          <span class="base"> : FsFlowObject, IRotatable</span>
+        </div>
+        <div class="class-desc">배관 흐름의 개폐를 제어하는 글로브 밸브 컴포넌트. OnOff가 true(열림)이면 유체가 통과하고, false(닫힘)이면 흐름이 차단됩니다. 상태 변경 시 200ms 핸들 개폐 애니메이션이 재생됩니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="pipesize float"><td class="col-type">float</td><td class="col-name">PipeSize <span class="accessor">get</span></td><td class="col-desc">파이프 크기. 부모 FsFlowSystemPanel에서 상속(기본 30)</td></tr>
+            <tr data-search="framesize float"><td class="col-type">float</td><td class="col-name">FrameSize <span class="accessor">get</span></td><td class="col-desc">프레임 크기. 부모 FsFlowSystemPanel에서 상속(기본 5)</td></tr>
+            <tr data-search="oncolor string"><td class="col-type">string</td><td class="col-name">OnColor <span class="accessor">get set</span></td><td class="col-desc">개방 시 램프 색상. 기본값: "Lime"</td></tr>
+            <tr data-search="offcolor string"><td class="col-type">string</td><td class="col-name">OffColor <span class="accessor">get set</span></td><td class="col-desc">폐쇄 시 램프 색상. 기본값: "Red"</td></tr>
+            <tr data-search="framecolor string"><td class="col-type">string</td><td class="col-name">FrameColor <span class="accessor">get set</span></td><td class="col-desc">본체/핸들 프레임 색상. 기본값: "Base4"</td></tr>
+            <tr data-search="onoff bool"><td class="col-type">bool</td><td class="col-name">OnOff <span class="accessor">get set</span></td><td class="col-desc">개방(true)/폐쇄(false) 상태. 변경 시 200ms 개폐 애니메이션 재생</td></tr>
+            <tr data-search="rotate objectrotate"><td class="col-type">ObjectRotate</td><td class="col-name">Rotate <span class="accessor">get set</span></td><td class="col-desc">회전 각도(0/90/180/270도). 포트 위치·방향도 함께 변경</td></tr>
+            <tr data-search="isflow bool"><td class="col-type">bool</td><td class="col-name">IsFlow <span class="accessor">get</span></td><td class="col-desc">흐름 여부. OnOff와 동일</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Ports</div>
+          <table class="api-table">
+            <tr data-search="port1 bidirectional"><td class="col-name">Port1</td><td class="col-desc" colspan="2">Bidirectional. Deg0 기준 왼쪽(L)</td></tr>
+            <tr data-search="port2 bidirectional"><td class="col-name">Port2</td><td class="col-desc" colspan="2">Bidirectional. Deg0 기준 오른쪽(R)</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="class-FsCrossPipe" class="class-card" data-search="fscrosspipe cross pipe 4way branch rotate irotatable">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature">
+          <span class="kw">public class</span> <span class="nm">FsCrossPipe</span>
+          <span class="base"> : FsFlowObject, IRotatable</span>
+        </div>
+        <div class="class-desc">십자형(+) 파이프 컴포넌트. 4방향 양방향 포트(Port1~Port4)를 제공하여 배관을 교차 분기시킵니다. IsFlow는 항상 true.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="rotate objectrotate"><td class="col-type">ObjectRotate</td><td class="col-name">Rotate <span class="accessor">get set</span></td><td class="col-desc">회전 각도(0/90/180/270도). 4개 포트가 함께 회전</td></tr>
+            <tr data-search="pipesize float"><td class="col-type">float</td><td class="col-name">PipeSize <span class="accessor">get</span></td><td class="col-desc">파이프 크기. 부모 FsFlowSystemPanel에서 상속(기본 30)</td></tr>
+            <tr data-search="framesize float"><td class="col-type">float</td><td class="col-name">FrameSize <span class="accessor">get</span></td><td class="col-desc">프레임 크기. 부모 FsFlowSystemPanel에서 상속(기본 5)</td></tr>
+            <tr data-search="isflow bool"><td class="col-type">bool</td><td class="col-name">IsFlow <span class="accessor">get</span></td><td class="col-desc">항상 true</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Ports (Deg0 기준)</div>
+          <table class="api-table">
+            <tr data-search="port1 left bidirectional"><td class="col-name">Port1</td><td class="col-desc" colspan="2">Bidirectional. 왼쪽(L)</td></tr>
+            <tr data-search="port2 top bidirectional"><td class="col-name">Port2</td><td class="col-desc" colspan="2">Bidirectional. 위쪽(T)</td></tr>
+            <tr data-search="port3 right bidirectional"><td class="col-name">Port3</td><td class="col-desc" colspan="2">Bidirectional. 오른쪽(R)</td></tr>
+            <tr data-search="port4 bottom bidirectional"><td class="col-name">Port4</td><td class="col-desc" colspan="2">Bidirectional. 아래쪽(B)</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="class-FsTeePipe" class="class-card" data-search="fsteepipe tee pipe 3way branch rotate irotatable">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature">
+          <span class="kw">public class</span> <span class="nm">FsTeePipe</span>
+          <span class="base"> : FsFlowObject, IRotatable</span>
+        </div>
+        <div class="class-desc">T자형 파이프 컴포넌트. 3방향 양방향 포트(Port1~Port3)를 제공하여 배관을 T자로 분기시킵니다. IsFlow는 항상 true.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="rotate objectrotate"><td class="col-type">ObjectRotate</td><td class="col-name">Rotate <span class="accessor">get set</span></td><td class="col-desc">회전 각도(0/90/180/270도). Port2가 항상 분기 방향</td></tr>
+            <tr data-search="pipesize float"><td class="col-type">float</td><td class="col-name">PipeSize <span class="accessor">get</span></td><td class="col-desc">파이프 크기. 부모 FsFlowSystemPanel에서 상속(기본 30)</td></tr>
+            <tr data-search="framesize float"><td class="col-type">float</td><td class="col-name">FrameSize <span class="accessor">get</span></td><td class="col-desc">프레임 크기. 부모 FsFlowSystemPanel에서 상속(기본 5)</td></tr>
+            <tr data-search="isflow bool"><td class="col-type">bool</td><td class="col-name">IsFlow <span class="accessor">get</span></td><td class="col-desc">항상 true</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Ports (Deg0 기준, ┬ 형태)</div>
+          <table class="api-table">
+            <tr data-search="port1 left bidirectional"><td class="col-name">Port1</td><td class="col-desc" colspan="2">Bidirectional. 왼쪽(L)</td></tr>
+            <tr data-search="port2 bottom branch bidirectional"><td class="col-name">Port2</td><td class="col-desc" colspan="2">Bidirectional. 아래쪽(B) — 분기 포트</td></tr>
+            <tr data-search="port3 right bidirectional"><td class="col-name">Port3</td><td class="col-desc" colspan="2">Bidirectional. 오른쪽(R)</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="class-FsCylinderTank" class="class-card" data-search="fscylindertank cylinder tank value level mixer inlet outlet fillcolor">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature">
+          <span class="kw">public class</span> <span class="nm">FsCylinderTank</span>
+          <span class="base"> : FsFlowObject</span>
+        </div>
+        <div class="class-desc">액체를 저장하고 수위를 시각적으로 표시하는 원통형 탱크 컴포넌트. Value/Minimum/Maximum으로 수위를 설정하며, 수위에 따라 채움 애니메이션과 파동 효과가 표현됩니다. 회전을 지원하지 않습니다(IRotatable 미구현).</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="fontname string"><td class="col-type">string</td><td class="col-name">FontName <span class="accessor">get set</span></td><td class="col-desc">텍스트 폰트 이름. 기본값: "나눔고딕"</td></tr>
+            <tr data-search="fontstyle gofontstyle"><td class="col-type">GoFontStyle</td><td class="col-name">FontStyle <span class="accessor">get set</span></td><td class="col-desc">텍스트 폰트 스타일. 기본값: Normal</td></tr>
+            <tr data-search="fontsize float"><td class="col-type">float</td><td class="col-name">FontSize <span class="accessor">get set</span></td><td class="col-desc">텍스트 폰트 크기. 기본값: 18</td></tr>
+            <tr data-search="textcolor string"><td class="col-type">string</td><td class="col-name">TextColor <span class="accessor">get set</span></td><td class="col-desc">텍스트 색상. 기본값: "Fore"</td></tr>
+            <tr data-search="fillcolor string"><td class="col-type">string</td><td class="col-name">FillColor <span class="accessor">get set</span></td><td class="col-desc">액체 채움 색상. 하류 배관 유체 색으로 전파됨. 기본값: "DeepSkyBlue"</td></tr>
+            <tr data-search="emptycolor string"><td class="col-type">string</td><td class="col-name">EmptyColor <span class="accessor">get set</span></td><td class="col-desc">빈 영역 색상. 기본값: "Base1"</td></tr>
+            <tr data-search="framecolor string"><td class="col-type">string</td><td class="col-name">FrameColor <span class="accessor">get set</span></td><td class="col-desc">프레임 색상. 기본값: "Base4"</td></tr>
+            <tr data-search="value double level"><td class="col-type">double</td><td class="col-name">Value <span class="accessor">get set</span></td><td class="col-desc">현재 수위 값. 기본값: 0</td></tr>
+            <tr data-search="minimum double"><td class="col-type">double</td><td class="col-name">Minimum <span class="accessor">get set</span></td><td class="col-desc">수위 최소값. 기본값: 0</td></tr>
+            <tr data-search="maximum double"><td class="col-type">double</td><td class="col-name">Maximum <span class="accessor">get set</span></td><td class="col-desc">수위 최대값. 기본값: 100</td></tr>
+            <tr data-search="format string"><td class="col-type">string</td><td class="col-name">Format <span class="accessor">get set</span></td><td class="col-desc">수위 값 표시 형식. 기본값: "0"</td></tr>
+            <tr data-search="useinlet bool"><td class="col-type">bool</td><td class="col-name">UseInlet <span class="accessor">get set</span></td><td class="col-desc">입구(Inlet) 포트 사용 여부. 기본값: true</td></tr>
+            <tr data-search="inletposition topportposition"><td class="col-type"><a href="enums.html#enum-TopPortPosition">TopPortPosition</a></td><td class="col-name">InletPosition <span class="accessor">get set</span></td><td class="col-desc">Inlet 포트 수평 위치. 기본값: TopCenter</td></tr>
+            <tr data-search="useoutlet bool"><td class="col-type">bool</td><td class="col-name">UseOutlet <span class="accessor">get set</span></td><td class="col-desc">출구(Outlet) 포트 사용 여부. 기본값: true</td></tr>
+            <tr data-search="outletposition bottomportposition"><td class="col-type"><a href="enums.html#enum-BottomPortPosition">BottomPortPosition</a></td><td class="col-name">OutletPosition <span class="accessor">get set</span></td><td class="col-desc">Outlet 포트 수평 위치. 기본값: BottomCenter</td></tr>
+            <tr data-search="usemixer bool"><td class="col-type">bool</td><td class="col-name">UseMixer <span class="accessor">get set</span></td><td class="col-desc">교반기 표시 여부. 기본값: false</td></tr>
+            <tr data-search="mixeronoff bool"><td class="col-type">bool</td><td class="col-name">MixerOnOff <span class="accessor">get set</span></td><td class="col-desc">교반기 가동 여부(회전 애니메이션 + 거품 효과). 기본값: false</td></tr>
+            <tr data-search="pipesize float"><td class="col-type">float</td><td class="col-name">PipeSize <span class="accessor">get</span></td><td class="col-desc">파이프 크기. 부모 FsFlowSystemPanel에서 상속(기본 30)</td></tr>
+            <tr data-search="framesize float"><td class="col-type">float</td><td class="col-name">FrameSize <span class="accessor">get</span></td><td class="col-desc">프레임 크기. 부모 FsFlowSystemPanel에서 상속(기본 5)</td></tr>
+            <tr data-search="isflow bool"><td class="col-type">bool</td><td class="col-name">IsFlow <span class="accessor">get</span></td><td class="col-desc">Value &gt; 0 &amp;&amp; UseOutlet일 때 true</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Ports</div>
+          <table class="api-table">
+            <tr data-search="inlet input top useinlet"><td class="col-name">Inlet</td><td class="col-desc" colspan="2">Input. 상단, UseInlet=true일 때만 활성. 방향 T</td></tr>
+            <tr data-search="outlet output bottom useoutlet"><td class="col-name">Outlet</td><td class="col-desc" colspan="2">Output. 하단, UseOutlet=true일 때만 활성. 방향 B</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="class-FsSiloTank" class="class-card" data-search="fssilotank silo tank hopper value level mixer inlet outlet fillcolor">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature">
+          <span class="kw">public class</span> <span class="nm">FsSiloTank</span>
+          <span class="base"> : FsFlowObject</span>
+        </div>
+        <div class="class-desc">하단이 깔때기(호퍼) 형태인 사일로 탱크 컴포넌트. FsCylinderTank와 유사하나 하단 출구가 항상 중앙에 고정되어 있고 항상 활성(UseOutlet 프로퍼티 없음). IsFlow는 Value &gt; 0만으로 결정. 회전을 지원하지 않습니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="fontname string"><td class="col-type">string</td><td class="col-name">FontName <span class="accessor">get set</span></td><td class="col-desc">텍스트 폰트 이름. 기본값: "나눔고딕"</td></tr>
+            <tr data-search="fontstyle gofontstyle"><td class="col-type">GoFontStyle</td><td class="col-name">FontStyle <span class="accessor">get set</span></td><td class="col-desc">텍스트 폰트 스타일. 기본값: Normal</td></tr>
+            <tr data-search="fontsize float"><td class="col-type">float</td><td class="col-name">FontSize <span class="accessor">get set</span></td><td class="col-desc">텍스트 폰트 크기. 기본값: 18</td></tr>
+            <tr data-search="textcolor string"><td class="col-type">string</td><td class="col-name">TextColor <span class="accessor">get set</span></td><td class="col-desc">텍스트 색상. 기본값: "Fore"</td></tr>
+            <tr data-search="fillcolor string"><td class="col-type">string</td><td class="col-name">FillColor <span class="accessor">get set</span></td><td class="col-desc">액체 채움 색상. 하류 배관 유체 색으로 전파됨. 기본값: "DeepSkyBlue"</td></tr>
+            <tr data-search="emptycolor string"><td class="col-type">string</td><td class="col-name">EmptyColor <span class="accessor">get set</span></td><td class="col-desc">빈 영역 색상. 기본값: "Base1"</td></tr>
+            <tr data-search="framecolor string"><td class="col-type">string</td><td class="col-name">FrameColor <span class="accessor">get set</span></td><td class="col-desc">프레임 색상. 기본값: "Base4"</td></tr>
+            <tr data-search="value double level"><td class="col-type">double</td><td class="col-name">Value <span class="accessor">get set</span></td><td class="col-desc">현재 수위 값. 기본값: 0</td></tr>
+            <tr data-search="minimum double"><td class="col-type">double</td><td class="col-name">Minimum <span class="accessor">get set</span></td><td class="col-desc">수위 최소값. 기본값: 0</td></tr>
+            <tr data-search="maximum double"><td class="col-type">double</td><td class="col-name">Maximum <span class="accessor">get set</span></td><td class="col-desc">수위 최대값. 기본값: 100</td></tr>
+            <tr data-search="format string"><td class="col-type">string</td><td class="col-name">Format <span class="accessor">get set</span></td><td class="col-desc">수위 값 표시 형식. 기본값: "0"</td></tr>
+            <tr data-search="useinlet bool"><td class="col-type">bool</td><td class="col-name">UseInlet <span class="accessor">get set</span></td><td class="col-desc">입구(Inlet) 포트 사용 여부. 기본값: true</td></tr>
+            <tr data-search="inletposition topportposition"><td class="col-type"><a href="enums.html#enum-TopPortPosition">TopPortPosition</a></td><td class="col-name">InletPosition <span class="accessor">get set</span></td><td class="col-desc">Inlet 포트 수평 위치. 기본값: TopCenter</td></tr>
+            <tr data-search="usemixer bool"><td class="col-type">bool</td><td class="col-name">UseMixer <span class="accessor">get set</span></td><td class="col-desc">교반기 표시 여부. 기본값: false</td></tr>
+            <tr data-search="mixeronoff bool"><td class="col-type">bool</td><td class="col-name">MixerOnOff <span class="accessor">get set</span></td><td class="col-desc">교반기 가동 여부(회전 애니메이션 + 거품 효과). 기본값: false</td></tr>
+            <tr data-search="pipesize float"><td class="col-type">float</td><td class="col-name">PipeSize <span class="accessor">get</span></td><td class="col-desc">파이프 크기. 부모 FsFlowSystemPanel에서 상속(기본 30)</td></tr>
+            <tr data-search="framesize float"><td class="col-type">float</td><td class="col-name">FrameSize <span class="accessor">get</span></td><td class="col-desc">프레임 크기. 부모 FsFlowSystemPanel에서 상속(기본 5)</td></tr>
+            <tr data-search="isflow bool"><td class="col-type">bool</td><td class="col-name">IsFlow <span class="accessor">get</span></td><td class="col-desc">Value &gt; 0일 때 true</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Ports</div>
+          <table class="api-table">
+            <tr data-search="inlet input top useinlet"><td class="col-name">Inlet</td><td class="col-desc" colspan="2">Input. 상단, UseInlet=true일 때만 활성. 방향 T</td></tr>
+            <tr data-search="outlet output bottom always"><td class="col-name">Outlet</td><td class="col-desc" colspan="2">Output. 하단 중앙 고정, 항상 활성. 방향 B</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="class-FlowConnection" class="class-card" data-search="flowconnection connection pipe connect points nodes tick draw">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature">
+          <span class="kw">public class</span> <span class="nm">FlowConnection</span>
+        </div>
+        <div class="class-desc">두 플로우 객체 간의 파이프 연결을 나타내는 클래스. 연결 경로, 유체 흐름 시각화, 버블 애니메이션 등을 관리합니다. FsFlowSystemPanel.Connections에 추가하여 사용합니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="id guid"><td class="col-type">Guid</td><td class="col-name">Id <span class="accessor">get set</span></td><td class="col-desc">연결의 고유 식별자. 기본값: 새 Guid</td></tr>
+            <tr data-search="startcontrolid guid"><td class="col-type">Guid?</td><td class="col-name">StartControlId <span class="accessor">get set</span></td><td class="col-desc">시작 컨트롤의 Id</td></tr>
+            <tr data-search="endcontrolid guid"><td class="col-type">Guid?</td><td class="col-name">EndControlId <span class="accessor">get set</span></td><td class="col-desc">끝 컨트롤의 Id</td></tr>
+            <tr data-search="startportname string"><td class="col-type">string?</td><td class="col-name">StartPortName <span class="accessor">get set</span></td><td class="col-desc">시작 포트 이름(예: "Inlet", "Outlet", "Port1")</td></tr>
+            <tr data-search="endportname string"><td class="col-type">string?</td><td class="col-name">EndPortName <span class="accessor">get set</span></td><td class="col-desc">끝 포트 이름</td></tr>
+            <tr data-search="nodes list pipenode"><td class="col-type">List&lt;PipeNode&gt;</td><td class="col-name">Nodes <span class="accessor">get set</span></td><td class="col-desc">중간 경유점 목록. 배관 경로를 꺾는 지점</td></tr>
+            <tr data-search="points list skpoint"><td class="col-type">List&lt;SKPoint&gt;</td><td class="col-name">Points <span class="accessor">get set</span></td><td class="col-desc">계산된 연결 경로 점 목록</td></tr>
+            <tr data-search="drawingpoints list skpoint"><td class="col-type">List&lt;SKPoint&gt;</td><td class="col-name">DrawingPoints <span class="accessor">get set</span></td><td class="col-desc">스무딩 처리된 그리기용 점 목록</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Methods</div>
+          <table class="api-table">
+            <tr data-search="update void fsflowsystempanel"><td class="ret">void</td><td class="col-method-name">Update</td><td class="params">(<span class="tp">FsFlowSystemPanel</span> pnl)</td><td class="col-desc">연결 경로 갱신(패널이 매 프레임 호출)</td></tr>
+            <tr data-search="collision bool x y pipesize"><td class="ret">bool</td><td class="col-method-name">Collision</td><td class="params">(<span class="tp">float</span> x, <span class="tp">float</span> y, <span class="tp">float</span> pipeSize)</td><td class="col-desc">지정 좌표가 이 배관 경로와 충돌하는지 확인</td></tr>
+            <tr data-search="draw void skcanvas"><td class="ret">void</td><td class="col-method-name">Draw</td><td class="params">(<span class="tp">SKCanvas</span> canvas, <span class="tp">GoTheme</span> thm, <span class="tp">SKPath</span> path, <span class="tp">SKColor</span> cFrame, <span class="tp">SKColor</span> cEmpty, <span class="tp">float</span> pipeSize, <span class="tp">float</span> frameSize)</td><td class="col-desc">배관을 캔버스에 그림(패널이 내부적으로 호출)</td></tr>
+            <tr data-search="tick void"><td class="ret">void</td><td class="col-method-name">Tick</td><td class="params">()</td><td class="col-desc">버블 애니메이션 한 프레임 진행(내부 타이머가 호출)</td></tr>
+            <tr data-search="getanchors list flowanchor"><td class="ret">List&lt;FlowAnchor&gt;</td><td class="col-method-name">GetAnchors</td><td class="params">()</td><td class="col-desc">이 연결의 앵커(중간 노드 사이 지점) 목록 반환</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="class-PipeNode" class="class-card" data-search="pipenode node direction position">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature">
+          <span class="kw">public class</span> <span class="nm">PipeNode</span>
+        </div>
+        <div class="class-desc">파이프 노드를 나타내는 클래스. FlowConnection.Nodes의 항목으로, 배관 경로가 꺾이는 중간 경유점을 정의합니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="direction portdirection"><td class="col-type">PortDirection</td><td class="col-name">Direction <span class="accessor">get set</span></td><td class="col-desc">파이프 노드의 방향(L/R/T/B)</td></tr>
+            <tr data-search="position float"><td class="col-type">float</td><td class="col-name">Position <span class="accessor">get set</span></td><td class="col-desc">파이프 노드의 위치(픽셀 좌표)</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="class-ConnectPort" class="class-card" data-search="connectport port name position type direction">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature">
+          <span class="kw">public class</span> <span class="nm">ConnectPort</span>
+        </div>
+        <div class="class-desc">플로우 객체의 연결 포트를 나타내는 클래스. FsFlowObject.IoPorts()/GetPort()가 반환하며, FlowConnection에서 StartPortName/EndPortName으로 참조됩니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="name string"><td class="col-type">string</td><td class="col-name">Name <span class="accessor">get set</span></td><td class="col-desc">포트 이름</td></tr>
+            <tr data-search="position skpoint"><td class="col-type">SKPoint</td><td class="col-name">Position <span class="accessor">get set</span></td><td class="col-desc">포트 위치</td></tr>
+            <tr data-search="type porttype"><td class="col-type">PortType</td><td class="col-name">Type <span class="accessor">get set</span></td><td class="col-desc">포트 타입(Input/Output/Bidirectional)</td></tr>
+            <tr data-search="direction portdirection"><td class="col-type">PortDirection</td><td class="col-name">Direction <span class="accessor">get set</span></td><td class="col-desc">포트 방향(L/R/T/B)</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="class-FlowAnchor" class="class-card" data-search="flowanchor anchor index start end position direction">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature">
+          <span class="kw">public class</span> <span class="nm">FlowAnchor</span>
+        </div>
+        <div class="class-desc">플로우 연결의 앵커 포인트를 나타내는 클래스. 두 파이프 노드 사이의 중간 지점을 제공합니다. FlowConnection.GetAnchors()로 얻습니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="index int"><td class="col-type">int</td><td class="col-name">Index <span class="accessor">get</span></td><td class="col-desc">시작 노드의 인덱스</td></tr>
+            <tr data-search="start pipenode"><td class="col-type">PipeNode</td><td class="col-name">Start <span class="accessor">get</span></td><td class="col-desc">시작 파이프 노드</td></tr>
+            <tr data-search="end pipenode"><td class="col-type">PipeNode</td><td class="col-name">End <span class="accessor">get</span></td><td class="col-desc">끝 파이프 노드</td></tr>
+            <tr data-search="position skpoint"><td class="col-type">SKPoint</td><td class="col-name">Position <span class="accessor">get</span></td><td class="col-desc">앵커의 중간 위치</td></tr>
+            <tr data-search="direction godirectionhv"><td class="col-type">GoDirectionHV</td><td class="col-name">Direction <span class="accessor">get</span></td><td class="col-desc">앵커의 방향(수직/수평)</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="class-IRotatable" class="class-card" data-search="irotatable interface rotate rotatable">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature">
+          <span class="kw">public interface</span> <span class="nm">IRotatable</span>
+        </div>
+        <div class="class-desc">회전 가능한 객체를 나타내는 인터페이스. FsPump/FsValve/FsTeePipe/FsCrossPipe가 구현합니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="rotate objectrotate"><td class="col-type">ObjectRotate</td><td class="col-name">Rotate <span class="accessor">get set</span></td><td class="col-desc">객체의 회전 각도</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="enum-PortDirection" class="class-card" data-search="portdirection enum l r t b left right top bottom">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature">
+          <span class="kw">public enum</span> <span class="nm">PortDirection</span>
+        </div>
+        <div class="class-desc">포트의 방향을 나타내는 열거형.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <table class="api-table">
+            <tr data-search="l left"><td class="col-name">L</td><td class="col-desc">왼쪽</td></tr>
+            <tr data-search="r right"><td class="col-name">R</td><td class="col-desc">오른쪽</td></tr>
+            <tr data-search="t top"><td class="col-name">T</td><td class="col-desc">위쪽</td></tr>
+            <tr data-search="b bottom"><td class="col-name">B</td><td class="col-desc">아래쪽</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="enum-PortType" class="class-card" data-search="porttype enum input output bidirectional">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature">
+          <span class="kw">public enum</span> <span class="nm">PortType</span>
+        </div>
+        <div class="class-desc">포트의 타입을 나타내는 열거형.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <table class="api-table">
+            <tr data-search="input"><td class="col-name">Input</td><td class="col-desc">입력</td></tr>
+            <tr data-search="output"><td class="col-name">Output</td><td class="col-desc">출력</td></tr>
+            <tr data-search="bidirectional"><td class="col-name">Bidirectional</td><td class="col-desc">양방향</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="enum-PortFlow" class="class-card" data-search="portflow enum none input output">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature">
+          <span class="kw">public enum</span> <span class="nm">PortFlow</span>
+        </div>
+        <div class="class-desc">포트의 흐름 방향을 나타내는 열거형.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <table class="api-table">
+            <tr data-search="none"><td class="col-name">None</td><td class="col-desc">없음</td></tr>
+            <tr data-search="input"><td class="col-name">Input</td><td class="col-desc">입력</td></tr>
+            <tr data-search="output"><td class="col-name">Output</td><td class="col-desc">출력</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="enum-FlowState" class="class-card" data-search="flowstate enum stop flow">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature">
+          <span class="kw">public enum</span> <span class="nm">FlowState</span>
+        </div>
+        <div class="class-desc">흐름 상태를 나타내는 열거형.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <table class="api-table">
+            <tr data-search="stop"><td class="col-name">Stop</td><td class="col-desc">정지</td></tr>
+            <tr data-search="flow"><td class="col-name">Flow</td><td class="col-desc">흐름</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="enum-ObjectRotate" class="class-card" data-search="objectrotate enum deg0 deg90 deg180 deg270 rotate">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature">
+          <span class="kw">public enum</span> <span class="nm">ObjectRotate</span>
+        </div>
+        <div class="class-desc">객체의 회전 각도를 나타내는 열거형.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <table class="api-table">
+            <tr data-search="deg0"><td class="col-name">Deg0</td><td class="col-desc">0도</td></tr>
+            <tr data-search="deg90"><td class="col-name">Deg90</td><td class="col-desc">90도</td></tr>
+            <tr data-search="deg180"><td class="col-name">Deg180</td><td class="col-desc">180도</td></tr>
+            <tr data-search="deg270"><td class="col-name">Deg270</td><td class="col-desc">270도</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <p style="margin-top:24px;">
+      탱크 포트 위치에 사용하는 <code>TopPortPosition</code> / <code>BottomPortPosition</code> 열거형(<code>Going.UI.Enums</code>)의 전체 멤버는
+      <a href="enums.html#enum-TopPortPosition">Enums › TopPortPosition</a> ·
+      <a href="enums.html#enum-BottomPortPosition">BottomPortPosition</a>에서 확인하세요.
+    </p>
+
+    <h2 style="margin-top:32px;">.gudx 예시</h2>
+    <p>탱크 → 펌프 → 밸브로 이어지는 배관 흐름입니다. Connections는 각 컴포넌트의 Id를 참조해 포트끼리 연결합니다.</p>
+    <pre style="background:var(--sidebar-bg);border:1px solid var(--border);border-radius:4px;padding:12px 16px;font-size:13px;overflow-x:auto;"><code>&lt;FsFlowSystemPanel Bounds="0,0,600,300" PipeSize="30" FrameSize="5"&gt;
+  &lt;Childrens&gt;
+    &lt;FsCylinderTank <span style="color:var(--property);">Id</span>="11111111-1111-1111-1111-111111111111"
+                    Bounds="40,40,160,240"
+                    FillColor="DeepSkyBlue" Value="60" UseOutlet="true" /&gt;
+    &lt;FsPump <span style="color:var(--property);">Id</span>="22222222-2222-2222-2222-222222222222"
+            Bounds="240,110,320,190"
+            UseInlet="true" OnOff="true" /&gt;
+    &lt;FsValve <span style="color:var(--property);">Id</span>="33333333-3333-3333-3333-333333333333"
+             Bounds="380,120,440,180"
+             OnOff="true" /&gt;
+  &lt;/Childrens&gt;
+  &lt;Connections&gt;
+    &lt;FlowConnection StartControlId="11111111-1111-1111-1111-111111111111" StartPortName="Outlet"
+                    EndControlId="22222222-2222-2222-2222-222222222222" EndPortName="Inlet" /&gt;
+    &lt;FlowConnection StartControlId="22222222-2222-2222-2222-222222222222" StartPortName="Outlet"
+                    EndControlId="33333333-3333-3333-3333-333333333333" EndPortName="Port1" /&gt;
+  &lt;/Connections&gt;
+&lt;/FsFlowSystemPanel&gt;</code></pre>
+
+    <div id="no-results" class="no-results">검색 결과가 없습니다.</div>
+  </main>
+</div>
+<button class="back-to-top" id="back-to-top" title="맨 위로">↑</button>
+<script src="../js/app.js"></script>
+</body>
+</html>

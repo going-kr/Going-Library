@@ -52,10 +52,10 @@
     </div>
 
     <!-- Class: ModbusCRC -->
-    <div id="class-ModbusCRC" class="class-card" data-search="modbuscrc crc lrc checksum">
+    <div id="class-ModbusCRC" class="class-card" data-search="modbuscrc crc checksum">
       <div class="class-card-header" onclick="toggleCard(this)">
         <div class="class-signature"><span class="kw">public class</span> <span class="nm">ModbusCRC</span></div>
-        <div class="class-desc">Modbus CRC-16 및 LRC 체크섬 계산 유틸리티</div>
+        <div class="class-desc">Modbus RTU 프로토콜의 CRC-16 오류 검출 코드를 계산하는 유틸리티 클래스</div>
       </div>
       <div class="class-card-body">
         <div class="member-section">
@@ -63,7 +63,6 @@
           <table class="api-table">
             <tr data-search="getcrc void byte array"><td class="ret">static void</td><td class="col-method-name">GetCRC</td><td class="params">(<span class="tp">byte[]</span> pby, <span class="tp">int</span> nSize, <span class="tp">ref byte</span> byFirstReturn, <span class="tp">ref byte</span> bySecondReturn)</td><td class="col-desc">바이트 배열의 CRC-16 계산</td></tr>
             <tr data-search="getcrc void list"><td class="ret">static void</td><td class="col-method-name">GetCRC</td><td class="params">(<span class="tp">List&lt;byte&gt;</span> pby, <span class="tp">int</span> startindex, <span class="tp">int</span> nSize, <span class="tp">ref byte</span> byFirstReturn, <span class="tp">ref byte</span> bySecondReturn)</td><td class="col-desc">리스트의 CRC-16 계산 (오프셋 지정)</td></tr>
-            <tr data-search="getlrc void lrc"><td class="ret">static void</td><td class="col-method-name">GetLRC</td><td class="params">(<span class="tp">byte[]</span> pby, <span class="tp">int</span> nSize, <span class="tp">ref byte</span> byFirstReturn, <span class="tp">ref byte</span> bySecondReturn)</td><td class="col-desc">LRC (ASCII 모드) 체크섬 계산</td></tr>
           </table>
         </div>
       </div>
@@ -91,7 +90,7 @@
             <tr data-search="buffersize int"><td class="col-type">int</td><td class="col-name">BufferSize <span class="accessor">get set</span></td><td class="col-desc">수신 버퍼 크기. 기본값: 1024</td></tr>
             <tr data-search="isopen bool"><td class="col-type">bool</td><td class="col-name">IsOpen <span class="accessor">get</span></td><td class="col-desc">포트 열림 여부</td></tr>
             <tr data-search="isstart bool"><td class="col-type">bool</td><td class="col-name">IsStart <span class="accessor">get</span></td><td class="col-desc">통신 시작 여부</td></tr>
-            <tr data-search="autoreconnect bool"><td class="col-type">bool</td><td class="col-name">AutoReconnect <span class="accessor">get set</span></td><td class="col-desc">자동 재연결</td></tr>
+            <tr data-search="autoreconnect bool"><td class="col-type">bool</td><td class="col-name">AutoReconnect <span class="accessor">get set</span></td><td class="col-desc">연결 끊김 시 자동 재연결. 기본값: false</td></tr>
             <tr data-search="isdisposed bool"><td class="col-type">bool</td><td class="col-name">IsDisposed <span class="accessor">get</span></td><td class="col-desc">Dispose 호출 여부</td></tr>
             <tr data-search="moduleid string"><td class="col-type">string</td><td class="col-name">ModuleId <span class="accessor">get</span></td><td class="col-desc">모듈 식별자 (GUID)</td></tr>
             <tr data-search="tag object"><td class="col-type">object?</td><td class="col-name">Tag <span class="accessor">get set</span></td><td class="col-desc">사용자 정의 데이터</td></tr>
@@ -342,6 +341,7 @@
             <tr data-search="timeout int"><td class="col-type">int</td><td class="col-name">Timeout <span class="accessor">get set</span></td><td class="col-desc">타임아웃 (ms)</td></tr>
             <tr data-search="isstart bool"><td class="col-type">bool</td><td class="col-name">IsStart <span class="accessor">get</span></td><td class="col-desc">통신 시작 여부</td></tr>
             <tr data-search="isopen bool"><td class="col-type">bool</td><td class="col-name">IsOpen <span class="accessor">get</span></td><td class="col-desc">포트 열림 여부</td></tr>
+            <tr data-search="autoreconnect bool"><td class="col-type">bool</td><td class="col-name">AutoReconnect <span class="accessor">get set</span></td><td class="col-desc">연결 끊김 시 자동 재연결 여부. 기본값: false</td></tr>
             <tr data-search="devices dictionary"><td class="col-type">Dictionary&lt;int, Mems&gt;</td><td class="col-name">Devices <span class="accessor">get</span></td><td class="col-desc">슬레이브별 비트/워드 최신값 저장소</td></tr>
             <tr data-search="lastreceived datetime"><td class="col-type">Dictionary&lt;int, DateTime&gt;</td><td class="col-name">LastReceived <span class="accessor">get</span></td><td class="col-desc">슬레이브별 최종 수신 시간</td></tr>
             <tr data-search="tag object"><td class="col-type">object?</td><td class="col-name">Tag <span class="accessor">get set</span></td><td class="col-desc">사용자 정의 데이터</td></tr>
@@ -396,6 +396,10 @@
             <tr data-search="stopbits"><td class="col-type">StopBits</td><td class="col-name">StopBits <span class="accessor">get set</span></td><td class="col-desc">정지 비트</td></tr>
             <tr data-search="isstart bool"><td class="col-type">bool</td><td class="col-name">IsStart <span class="accessor">get</span></td><td class="col-desc">통신 시작 여부</td></tr>
             <tr data-search="isopen bool"><td class="col-type">bool</td><td class="col-name">IsOpen <span class="accessor">get</span></td><td class="col-desc">포트 열림 여부</td></tr>
+            <tr data-search="coils bitmemory"><td class="col-type">BitMemory</td><td class="col-name">Coils <span class="accessor">get set</span></td><td class="col-desc">FC1 코일 영역. Modbus 주소를 0-base 인덱스로 사용. 기본 크기: 65536</td></tr>
+            <tr data-search="contacts bitmemory"><td class="col-type">BitMemory</td><td class="col-name">Contacts <span class="accessor">get set</span></td><td class="col-desc">FC2 이산 입력 영역. Modbus 주소를 0-base 인덱스로 사용. 기본 크기: 65536</td></tr>
+            <tr data-search="holdingregister wordmemory"><td class="col-type">WordMemory</td><td class="col-name">HoldingRegister <span class="accessor">get set</span></td><td class="col-desc">FC3 보유 레지스터 영역. Modbus 주소를 0-base 인덱스로 사용. 기본 크기: 65536</td></tr>
+            <tr data-search="inputregister wordmemory"><td class="col-type">WordMemory</td><td class="col-name">InputRegister <span class="accessor">get set</span></td><td class="col-desc">FC4 입력 레지스터 영역. Modbus 주소를 0-base 인덱스로 사용. 기본 크기: 65536</td></tr>
             <tr data-search="tag object"><td class="col-type">object?</td><td class="col-name">Tag <span class="accessor">get set</span></td><td class="col-desc">사용자 정의 데이터</td></tr>
           </table>
         </div>
@@ -434,6 +438,7 @@
             <tr data-search="timeout int"><td class="col-type">int</td><td class="col-name">Timeout <span class="accessor">get set</span></td><td class="col-desc">타임아웃 (ms)</td></tr>
             <tr data-search="isstart bool"><td class="col-type">bool</td><td class="col-name">IsStart <span class="accessor">get</span></td><td class="col-desc">통신 시작 여부</td></tr>
             <tr data-search="isopen bool"><td class="col-type">bool</td><td class="col-name">IsOpen <span class="accessor">get</span></td><td class="col-desc">소켓 연결 여부</td></tr>
+            <tr data-search="autoreconnect bool"><td class="col-type">bool</td><td class="col-name">AutoReconnect <span class="accessor">get set</span></td><td class="col-desc">연결 끊김 시 자동 재연결 여부. 기본값: true</td></tr>
             <tr data-search="devices dictionary"><td class="col-type">Dictionary&lt;int, Mems&gt;</td><td class="col-name">Devices <span class="accessor">get</span></td><td class="col-desc">슬레이브별 비트/워드 최신값 저장소</td></tr>
             <tr data-search="lastreceived datetime"><td class="col-type">Dictionary&lt;int, DateTime&gt;</td><td class="col-name">LastReceived <span class="accessor">get</span></td><td class="col-desc">슬레이브별 최종 수신 시간</td></tr>
             <tr data-search="tag object"><td class="col-type">object?</td><td class="col-name">Tag <span class="accessor">get set</span></td><td class="col-desc">사용자 정의 데이터</td></tr>
@@ -470,6 +475,10 @@
             <tr data-search="slave int"><td class="col-type">int</td><td class="col-name">Slave <span class="accessor">get set</span></td><td class="col-desc">슬레이브 주소. 기본값: 1</td></tr>
             <tr data-search="localport int"><td class="col-type">int</td><td class="col-name">LocalPort <span class="accessor">get set</span></td><td class="col-desc">로컬 포트</td></tr>
             <tr data-search="isstart bool"><td class="col-type">bool</td><td class="col-name">IsStart <span class="accessor">get</span></td><td class="col-desc">슬레이브 시작 여부</td></tr>
+            <tr data-search="coils bitmemory"><td class="col-type">BitMemory</td><td class="col-name">Coils <span class="accessor">get set</span></td><td class="col-desc">FC1 코일 영역. Modbus 주소를 0-base 인덱스로 사용. 기본 크기: 65536</td></tr>
+            <tr data-search="contacts bitmemory"><td class="col-type">BitMemory</td><td class="col-name">Contacts <span class="accessor">get set</span></td><td class="col-desc">FC2 이산 입력 영역. Modbus 주소를 0-base 인덱스로 사용. 기본 크기: 65536</td></tr>
+            <tr data-search="holdingregister wordmemory"><td class="col-type">WordMemory</td><td class="col-name">HoldingRegister <span class="accessor">get set</span></td><td class="col-desc">FC3 보유 레지스터 영역. Modbus 주소를 0-base 인덱스로 사용. 기본 크기: 65536</td></tr>
+            <tr data-search="inputregister wordmemory"><td class="col-type">WordMemory</td><td class="col-name">InputRegister <span class="accessor">get set</span></td><td class="col-desc">FC4 입력 레지스터 영역. Modbus 주소를 0-base 인덱스로 사용. 기본 크기: 65536</td></tr>
             <tr data-search="tag object"><td class="col-type">object?</td><td class="col-name">Tag <span class="accessor">get set</span></td><td class="col-desc">사용자 정의 데이터</td></tr>
           </table>
         </div>
@@ -506,6 +515,436 @@
             <tr data-search="contacts dictionary"><td class="col-type">Dictionary&lt;int, bool&gt;</td><td class="col-name">Contacts <span class="accessor">get</span></td><td class="col-desc">FC2 접점 값</td></tr>
             <tr data-search="holdingregister dictionary"><td class="col-type">Dictionary&lt;int, int&gt;</td><td class="col-name">HoldingRegister <span class="accessor">get</span></td><td class="col-desc">FC3 보유 레지스터 값</td></tr>
             <tr data-search="inputregister dictionary"><td class="col-type">Dictionary&lt;int, int&gt;</td><td class="col-name">InputRegister <span class="accessor">get</span></td><td class="col-desc">FC4 입력 레지스터 값</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- Class: Work (Master 공통) -->
+    <div id="class-ModbusWork" class="class-card" data-search="work class modbus master workitem rtu tcp">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">Work</span></div>
+        <div class="class-desc">Modbus 통신 작업 단위. RTU/TCP 공통 (ModbusRTUMaster.Work / ModbusTCPMaster.Work)</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="messageid int"><td class="col-type">int</td><td class="col-name">MessageID <span class="accessor">get</span></td><td class="col-desc">작업을 식별하는 메시지 ID</td></tr>
+            <tr data-search="data byte array"><td class="col-type">byte[]</td><td class="col-name">Data <span class="accessor">get</span></td><td class="col-desc">전송할 Modbus 프레임 데이터</td></tr>
+            <tr data-search="responsecount int"><td class="col-type">int</td><td class="col-name">ResponseCount <span class="accessor">get</span></td><td class="col-desc">예상되는 응답 바이트 수</td></tr>
+            <tr data-search="repeatcount int"><td class="col-type">int?</td><td class="col-name">RepeatCount <span class="accessor">get set</span></td><td class="col-desc">타임아웃 발생 시 재시도 횟수 (null이면 재시도 안 함)</td></tr>
+            <tr data-search="timeout int"><td class="col-type">int?</td><td class="col-name">Timeout <span class="accessor">get set</span></td><td class="col-desc">이 작업에 대한 개별 타임아웃 값 (ms, null이면 기본값 사용)</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- Class: BitReadEventArgs -->
+    <div id="class-ModbusBitReadEventArgs" class="class-card" data-search="bitreadeventargs class event modbus master rtu tcp">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">BitReadEventArgs</span> <span class="base">: EventArgs</span></div>
+        <div class="class-desc">비트 읽기(FC1/FC2) 응답 수신 시 전달되는 이벤트 인자. RTU/TCP 공통 (ModbusRTUMaster / ModbusTCPMaster 공통 중첩 클래스)</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="messageid int"><td class="col-type">int</td><td class="col-name">MessageID <span class="accessor">get</span></td><td class="col-desc">요청 메시지 ID</td></tr>
+            <tr data-search="slave int"><td class="col-type">int</td><td class="col-name">Slave <span class="accessor">get</span></td><td class="col-desc">슬레이브 주소</td></tr>
+            <tr data-search="function modbusfunction"><td class="col-type">ModbusFunction</td><td class="col-name">Function <span class="accessor">get</span></td><td class="col-desc">Modbus 함수 코드</td></tr>
+            <tr data-search="startaddress int"><td class="col-type">int</td><td class="col-name">StartAddress <span class="accessor">get</span></td><td class="col-desc">시작 주소</td></tr>
+            <tr data-search="length int"><td class="col-type">int</td><td class="col-name">Length <span class="accessor">get</span></td><td class="col-desc">읽기 길이</td></tr>
+            <tr data-search="receivedata bool array"><td class="col-type">bool[]</td><td class="col-name">ReceiveData <span class="accessor">get</span></td><td class="col-desc">수신된 비트 데이터 배열</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- Class: WordReadEventArgs -->
+    <div id="class-ModbusWordReadEventArgs" class="class-card" data-search="wordreadeventargs class event modbus master rtu tcp">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">WordReadEventArgs</span> <span class="base">: EventArgs</span></div>
+        <div class="class-desc">워드 읽기(FC3/FC4) 응답 수신 시 전달되는 이벤트 인자. RTU/TCP 공통 (ModbusRTUMaster / ModbusTCPMaster 공통 중첩 클래스)</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="messageid int"><td class="col-type">int</td><td class="col-name">MessageID <span class="accessor">get</span></td><td class="col-desc">요청 메시지 ID</td></tr>
+            <tr data-search="slave int"><td class="col-type">int</td><td class="col-name">Slave <span class="accessor">get</span></td><td class="col-desc">슬레이브 주소</td></tr>
+            <tr data-search="function modbusfunction"><td class="col-type">ModbusFunction</td><td class="col-name">Function <span class="accessor">get</span></td><td class="col-desc">Modbus 함수 코드</td></tr>
+            <tr data-search="startaddress int"><td class="col-type">int</td><td class="col-name">StartAddress <span class="accessor">get</span></td><td class="col-desc">시작 주소</td></tr>
+            <tr data-search="length int"><td class="col-type">int</td><td class="col-name">Length <span class="accessor">get</span></td><td class="col-desc">읽기 길이</td></tr>
+            <tr data-search="receivedata int array"><td class="col-type">int[]</td><td class="col-name">ReceiveData <span class="accessor">get</span></td><td class="col-desc">수신된 워드 데이터 배열</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- Class: BitWriteEventArgs -->
+    <div id="class-ModbusBitWriteEventArgs" class="class-card" data-search="bitwriteeventargs class event modbus master rtu tcp">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">BitWriteEventArgs</span> <span class="base">: EventArgs</span></div>
+        <div class="class-desc">단일 비트 쓰기(FC5) 응답 수신 시 전달되는 이벤트 인자. RTU/TCP 공통 (ModbusRTUMaster / ModbusTCPMaster 공통 중첩 클래스)</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="messageid int"><td class="col-type">int</td><td class="col-name">MessageID <span class="accessor">get</span></td><td class="col-desc">요청 메시지 ID</td></tr>
+            <tr data-search="slave int"><td class="col-type">int</td><td class="col-name">Slave <span class="accessor">get</span></td><td class="col-desc">슬레이브 주소</td></tr>
+            <tr data-search="function modbusfunction"><td class="col-type">ModbusFunction</td><td class="col-name">Function <span class="accessor">get</span></td><td class="col-desc">Modbus 함수 코드</td></tr>
+            <tr data-search="startaddress int"><td class="col-type">int</td><td class="col-name">StartAddress <span class="accessor">get</span></td><td class="col-desc">시작 주소</td></tr>
+            <tr data-search="writevalue bool"><td class="col-type">bool</td><td class="col-name">WriteValue <span class="accessor">get</span></td><td class="col-desc">쓰기 값</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- Class: WordWriteEventArgs -->
+    <div id="class-ModbusWordWriteEventArgs" class="class-card" data-search="wordwriteeventargs class event modbus master rtu tcp">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">WordWriteEventArgs</span> <span class="base">: EventArgs</span></div>
+        <div class="class-desc">단일 워드 쓰기(FC6) 응답 수신 시 전달되는 이벤트 인자. RTU/TCP 공통 (ModbusRTUMaster / ModbusTCPMaster 공통 중첩 클래스)</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="messageid int"><td class="col-type">int</td><td class="col-name">MessageID <span class="accessor">get</span></td><td class="col-desc">요청 메시지 ID</td></tr>
+            <tr data-search="slave int"><td class="col-type">int</td><td class="col-name">Slave <span class="accessor">get</span></td><td class="col-desc">슬레이브 주소</td></tr>
+            <tr data-search="function modbusfunction"><td class="col-type">ModbusFunction</td><td class="col-name">Function <span class="accessor">get</span></td><td class="col-desc">Modbus 함수 코드</td></tr>
+            <tr data-search="startaddress int"><td class="col-type">int</td><td class="col-name">StartAddress <span class="accessor">get</span></td><td class="col-desc">시작 주소</td></tr>
+            <tr data-search="writevalue int"><td class="col-type">int</td><td class="col-name">WriteValue <span class="accessor">get</span></td><td class="col-desc">쓰기 값</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- Class: MultiBitWriteEventArgs -->
+    <div id="class-ModbusMultiBitWriteEventArgs" class="class-card" data-search="multibitwriteeventargs class event modbus master rtu tcp">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">MultiBitWriteEventArgs</span> <span class="base">: EventArgs</span></div>
+        <div class="class-desc">다중 비트 쓰기(FC15) 응답 수신 시 전달되는 이벤트 인자. RTU/TCP 공통 (ModbusRTUMaster / ModbusTCPMaster 공통 중첩 클래스)</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="messageid int"><td class="col-type">int</td><td class="col-name">MessageID <span class="accessor">get</span></td><td class="col-desc">요청 메시지 ID</td></tr>
+            <tr data-search="slave int"><td class="col-type">int</td><td class="col-name">Slave <span class="accessor">get</span></td><td class="col-desc">슬레이브 주소</td></tr>
+            <tr data-search="function modbusfunction"><td class="col-type">ModbusFunction</td><td class="col-name">Function <span class="accessor">get</span></td><td class="col-desc">Modbus 함수 코드</td></tr>
+            <tr data-search="startaddress int"><td class="col-type">int</td><td class="col-name">StartAddress <span class="accessor">get</span></td><td class="col-desc">시작 주소</td></tr>
+            <tr data-search="length int"><td class="col-type">int</td><td class="col-name">Length <span class="accessor">get</span></td><td class="col-desc">쓰기 길이</td></tr>
+            <tr data-search="writevalues bool array"><td class="col-type">bool[]</td><td class="col-name">WriteValues <span class="accessor">get</span></td><td class="col-desc">쓰기 값 배열</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- Class: MultiWordWriteEventArgs -->
+    <div id="class-ModbusMultiWordWriteEventArgs" class="class-card" data-search="multiwordwriteeventargs class event modbus master rtu tcp">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">MultiWordWriteEventArgs</span> <span class="base">: EventArgs</span></div>
+        <div class="class-desc">다중 워드 쓰기(FC16) 응답 수신 시 전달되는 이벤트 인자. RTU/TCP 공통 (ModbusRTUMaster / ModbusTCPMaster 공통 중첩 클래스)</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="messageid int"><td class="col-type">int</td><td class="col-name">MessageID <span class="accessor">get</span></td><td class="col-desc">요청 메시지 ID</td></tr>
+            <tr data-search="slave int"><td class="col-type">int</td><td class="col-name">Slave <span class="accessor">get</span></td><td class="col-desc">슬레이브 주소</td></tr>
+            <tr data-search="function modbusfunction"><td class="col-type">ModbusFunction</td><td class="col-name">Function <span class="accessor">get</span></td><td class="col-desc">Modbus 함수 코드</td></tr>
+            <tr data-search="startaddress int"><td class="col-type">int</td><td class="col-name">StartAddress <span class="accessor">get</span></td><td class="col-desc">시작 주소</td></tr>
+            <tr data-search="length int"><td class="col-type">int</td><td class="col-name">Length <span class="accessor">get</span></td><td class="col-desc">쓰기 길이</td></tr>
+            <tr data-search="writevalues int array"><td class="col-type">int[]</td><td class="col-name">WriteValues <span class="accessor">get</span></td><td class="col-desc">쓰기 값 배열</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- Class: WordBitSetEventArgs -->
+    <div id="class-ModbusWordBitSetEventArgs" class="class-card" data-search="wordbitseteventargs class event modbus master rtu tcp">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">WordBitSetEventArgs</span> <span class="base">: EventArgs</span></div>
+        <div class="class-desc">워드 비트 설정(FC26) 응답 수신 시 전달되는 이벤트 인자. RTU/TCP 공통 (ModbusRTUMaster / ModbusTCPMaster 공통 중첩 클래스)</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="messageid int"><td class="col-type">int</td><td class="col-name">MessageID <span class="accessor">get</span></td><td class="col-desc">요청 메시지 ID</td></tr>
+            <tr data-search="slave int"><td class="col-type">int</td><td class="col-name">Slave <span class="accessor">get</span></td><td class="col-desc">슬레이브 주소</td></tr>
+            <tr data-search="function modbusfunction"><td class="col-type">ModbusFunction</td><td class="col-name">Function <span class="accessor">get</span></td><td class="col-desc">Modbus 함수 코드</td></tr>
+            <tr data-search="startaddress int"><td class="col-type">int</td><td class="col-name">StartAddress <span class="accessor">get</span></td><td class="col-desc">시작 주소</td></tr>
+            <tr data-search="bitindex int"><td class="col-type">int</td><td class="col-name">BitIndex <span class="accessor">get</span></td><td class="col-desc">대상 비트 인덱스 (0~15)</td></tr>
+            <tr data-search="writevalue bool"><td class="col-type">bool</td><td class="col-name">WriteValue <span class="accessor">get</span></td><td class="col-desc">쓰기 값</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- Class: TimeoutEventArgs -->
+    <div id="class-ModbusTimeoutEventArgs" class="class-card" data-search="timeouteventargs class event modbus master rtu tcp">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">TimeoutEventArgs</span> <span class="base">: EventArgs</span></div>
+        <div class="class-desc">통신 타임아웃 발생 시 전달되는 이벤트 인자. RTU/TCP 공통 (ModbusRTUMaster / ModbusTCPMaster 공통 중첩 클래스)</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="messageid int"><td class="col-type">int</td><td class="col-name">MessageID <span class="accessor">get</span></td><td class="col-desc">요청 메시지 ID</td></tr>
+            <tr data-search="slave int"><td class="col-type">int</td><td class="col-name">Slave <span class="accessor">get</span></td><td class="col-desc">슬레이브 주소</td></tr>
+            <tr data-search="function modbusfunction"><td class="col-type">ModbusFunction</td><td class="col-name">Function <span class="accessor">get</span></td><td class="col-desc">Modbus 함수 코드</td></tr>
+            <tr data-search="startaddress int"><td class="col-type">int</td><td class="col-name">StartAddress <span class="accessor">get</span></td><td class="col-desc">시작 주소</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- Class: CRCErrorEventArgs -->
+    <div id="class-ModbusCRCErrorEventArgs" class="class-card" data-search="crcerroreventargs class event modbus master rtu tcp">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">CRCErrorEventArgs</span> <span class="base">: EventArgs</span></div>
+        <div class="class-desc">CRC 오류 발생 시 전달되는 이벤트 인자. RTU/TCP 공통 클래스 정의 — 단, CRCErrorReceived 이벤트는 ModbusRTUMaster에만 존재 (ModbusTCPMaster는 클래스만 정의)</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="messageid int"><td class="col-type">int</td><td class="col-name">MessageID <span class="accessor">get</span></td><td class="col-desc">요청 메시지 ID</td></tr>
+            <tr data-search="slave int"><td class="col-type">int</td><td class="col-name">Slave <span class="accessor">get</span></td><td class="col-desc">슬레이브 주소</td></tr>
+            <tr data-search="function modbusfunction"><td class="col-type">ModbusFunction</td><td class="col-name">Function <span class="accessor">get</span></td><td class="col-desc">Modbus 함수 코드</td></tr>
+            <tr data-search="startaddress int"><td class="col-type">int</td><td class="col-name">StartAddress <span class="accessor">get</span></td><td class="col-desc">시작 주소</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- Class: BitReadRequestArgs -->
+    <div id="class-ModbusBitReadRequestArgs" class="class-card" data-search="bitreadrequestargs class event modbus slave rtu tcp">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">BitReadRequestArgs</span> <span class="base">: EventArgs</span></div>
+        <div class="class-desc">비트 읽기(FC1/FC2) 요청 수신 시 전달되는 이벤트 인자. RTU/TCP 공통 (ModbusRTUSlave / ModbusTCPSlave 공통 중첩 클래스)</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="slave int"><td class="col-type">int</td><td class="col-name">Slave <span class="accessor">get</span></td><td class="col-desc">슬레이브 주소</td></tr>
+            <tr data-search="function modbusfunction"><td class="col-type">ModbusFunction</td><td class="col-name">Function <span class="accessor">get</span></td><td class="col-desc">Modbus 함수 코드</td></tr>
+            <tr data-search="startaddress int"><td class="col-type">int</td><td class="col-name">StartAddress <span class="accessor">get</span></td><td class="col-desc">시작 주소</td></tr>
+            <tr data-search="length int"><td class="col-type">int</td><td class="col-name">Length <span class="accessor">get</span></td><td class="col-desc">읽기 길이</td></tr>
+            <tr data-search="success bool"><td class="col-type">bool</td><td class="col-name">Success <span class="accessor">get set</span></td><td class="col-desc">처리 성공 여부 (핸들러에서 설정)</td></tr>
+            <tr data-search="responsedata bool array"><td class="col-type">bool[]?</td><td class="col-name">ResponseData <span class="accessor">get set</span></td><td class="col-desc">응답할 비트 데이터 (핸들러에서 설정)</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- Class: WordReadRequestArgs -->
+    <div id="class-ModbusWordReadRequestArgs" class="class-card" data-search="wordreadrequestargs class event modbus slave rtu tcp">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">WordReadRequestArgs</span> <span class="base">: EventArgs</span></div>
+        <div class="class-desc">워드 읽기(FC3/FC4) 요청 수신 시 전달되는 이벤트 인자. RTU/TCP 공통 (ModbusRTUSlave / ModbusTCPSlave 공통 중첩 클래스)</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="slave int"><td class="col-type">int</td><td class="col-name">Slave <span class="accessor">get</span></td><td class="col-desc">슬레이브 주소</td></tr>
+            <tr data-search="function modbusfunction"><td class="col-type">ModbusFunction</td><td class="col-name">Function <span class="accessor">get</span></td><td class="col-desc">Modbus 함수 코드</td></tr>
+            <tr data-search="startaddress int"><td class="col-type">int</td><td class="col-name">StartAddress <span class="accessor">get</span></td><td class="col-desc">시작 주소</td></tr>
+            <tr data-search="length int"><td class="col-type">int</td><td class="col-name">Length <span class="accessor">get</span></td><td class="col-desc">읽기 길이</td></tr>
+            <tr data-search="success bool"><td class="col-type">bool</td><td class="col-name">Success <span class="accessor">get set</span></td><td class="col-desc">처리 성공 여부 (핸들러에서 설정)</td></tr>
+            <tr data-search="responsedata int array"><td class="col-type">int[]?</td><td class="col-name">ResponseData <span class="accessor">get set</span></td><td class="col-desc">응답할 워드 데이터 (핸들러에서 설정)</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- Class: BitWriteRequestArgs -->
+    <div id="class-ModbusBitWriteRequestArgs" class="class-card" data-search="bitwriterequestargs class event modbus slave rtu tcp">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">BitWriteRequestArgs</span> <span class="base">: EventArgs</span></div>
+        <div class="class-desc">단일 비트 쓰기(FC5) 요청 수신 시 전달되는 이벤트 인자. RTU/TCP 공통 (ModbusRTUSlave / ModbusTCPSlave 공통 중첩 클래스)</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="slave int"><td class="col-type">int</td><td class="col-name">Slave <span class="accessor">get</span></td><td class="col-desc">슬레이브 주소</td></tr>
+            <tr data-search="function modbusfunction"><td class="col-type">ModbusFunction</td><td class="col-name">Function <span class="accessor">get</span></td><td class="col-desc">Modbus 함수 코드</td></tr>
+            <tr data-search="startaddress int"><td class="col-type">int</td><td class="col-name">StartAddress <span class="accessor">get</span></td><td class="col-desc">대상 주소</td></tr>
+            <tr data-search="writevalue bool"><td class="col-type">bool</td><td class="col-name">WriteValue <span class="accessor">get</span></td><td class="col-desc">쓰기 값</td></tr>
+            <tr data-search="success bool"><td class="col-type">bool</td><td class="col-name">Success <span class="accessor">get set</span></td><td class="col-desc">처리 성공 여부 (핸들러에서 설정)</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- Class: WordWriteRequestArgs -->
+    <div id="class-ModbusWordWriteRequestArgs" class="class-card" data-search="wordwriterequestargs class event modbus slave rtu tcp">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">WordWriteRequestArgs</span> <span class="base">: EventArgs</span></div>
+        <div class="class-desc">단일 워드 쓰기(FC6) 요청 수신 시 전달되는 이벤트 인자. RTU/TCP 공통 (ModbusRTUSlave / ModbusTCPSlave 공통 중첩 클래스)</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="slave int"><td class="col-type">int</td><td class="col-name">Slave <span class="accessor">get</span></td><td class="col-desc">슬레이브 주소</td></tr>
+            <tr data-search="function modbusfunction"><td class="col-type">ModbusFunction</td><td class="col-name">Function <span class="accessor">get</span></td><td class="col-desc">Modbus 함수 코드</td></tr>
+            <tr data-search="startaddress int"><td class="col-type">int</td><td class="col-name">StartAddress <span class="accessor">get</span></td><td class="col-desc">대상 주소</td></tr>
+            <tr data-search="writevalue ushort"><td class="col-type">ushort</td><td class="col-name">WriteValue <span class="accessor">get</span></td><td class="col-desc">쓰기 값</td></tr>
+            <tr data-search="success bool"><td class="col-type">bool</td><td class="col-name">Success <span class="accessor">get set</span></td><td class="col-desc">처리 성공 여부 (핸들러에서 설정)</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- Class: MultiBitWriteRequestArgs (RTU) -->
+    <div id="class-ModbusMultiBitWriteRequestArgs-RTU" class="class-card" data-search="multibitwriterequestargs class event modbus slave rtu">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">MultiBitWriteRequestArgs</span> <span class="base">: EventArgs</span></div>
+        <div class="class-desc">다중 비트 쓰기(FC15) 요청 수신 시 전달되는 이벤트 인자 — ModbusRTUSlave 중첩 클래스 (TCP 버전은 ByteCount 추가)</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="slave int"><td class="col-type">int</td><td class="col-name">Slave <span class="accessor">get</span></td><td class="col-desc">슬레이브 주소</td></tr>
+            <tr data-search="function modbusfunction"><td class="col-type">ModbusFunction</td><td class="col-name">Function <span class="accessor">get</span></td><td class="col-desc">Modbus 함수 코드</td></tr>
+            <tr data-search="startaddress int"><td class="col-type">int</td><td class="col-name">StartAddress <span class="accessor">get</span></td><td class="col-desc">시작 주소</td></tr>
+            <tr data-search="length int"><td class="col-type">int</td><td class="col-name">Length <span class="accessor">get</span></td><td class="col-desc">쓰기 길이</td></tr>
+            <tr data-search="writevalues bool array"><td class="col-type">bool[]</td><td class="col-name">WriteValues <span class="accessor">get</span></td><td class="col-desc">쓰기 값 배열</td></tr>
+            <tr data-search="success bool"><td class="col-type">bool</td><td class="col-name">Success <span class="accessor">get set</span></td><td class="col-desc">처리 성공 여부 (핸들러에서 설정)</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- Class: MultiBitWriteRequestArgs (TCP) -->
+    <div id="class-ModbusMultiBitWriteRequestArgs-TCP" class="class-card" data-search="multibitwriterequestargs class event modbus slave tcp">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">MultiBitWriteRequestArgs</span> <span class="base">: EventArgs</span></div>
+        <div class="class-desc">다중 비트 쓰기(FC15) 요청 수신 시 전달되는 이벤트 인자 — ModbusTCPSlave 중첩 클래스</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="slave int"><td class="col-type">int</td><td class="col-name">Slave <span class="accessor">get</span></td><td class="col-desc">슬레이브 주소</td></tr>
+            <tr data-search="function modbusfunction"><td class="col-type">ModbusFunction</td><td class="col-name">Function <span class="accessor">get</span></td><td class="col-desc">Modbus 함수 코드</td></tr>
+            <tr data-search="startaddress int"><td class="col-type">int</td><td class="col-name">StartAddress <span class="accessor">get</span></td><td class="col-desc">시작 주소</td></tr>
+            <tr data-search="length int"><td class="col-type">int</td><td class="col-name">Length <span class="accessor">get</span></td><td class="col-desc">쓰기 길이</td></tr>
+            <tr data-search="bytecount int"><td class="col-type">int</td><td class="col-name">ByteCount <span class="accessor">get</span></td><td class="col-desc">데이터 바이트 수</td></tr>
+            <tr data-search="writevalues bool array"><td class="col-type">bool[]</td><td class="col-name">WriteValues <span class="accessor">get</span></td><td class="col-desc">쓰기 값 배열</td></tr>
+            <tr data-search="success bool"><td class="col-type">bool</td><td class="col-name">Success <span class="accessor">get set</span></td><td class="col-desc">처리 성공 여부 (핸들러에서 설정)</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- Class: MultiWordWriteRequestArgs (RTU) -->
+    <div id="class-ModbusMultiWordWriteRequestArgs-RTU" class="class-card" data-search="multiwordwriterequestargs class event modbus slave rtu">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">MultiWordWriteRequestArgs</span> <span class="base">: EventArgs</span></div>
+        <div class="class-desc">다중 워드 쓰기(FC16) 요청 수신 시 전달되는 이벤트 인자 — ModbusRTUSlave 중첩 클래스 (TCP 버전은 ByteCount 추가)</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="slave int"><td class="col-type">int</td><td class="col-name">Slave <span class="accessor">get</span></td><td class="col-desc">슬레이브 주소</td></tr>
+            <tr data-search="function modbusfunction"><td class="col-type">ModbusFunction</td><td class="col-name">Function <span class="accessor">get</span></td><td class="col-desc">Modbus 함수 코드</td></tr>
+            <tr data-search="startaddress int"><td class="col-type">int</td><td class="col-name">StartAddress <span class="accessor">get</span></td><td class="col-desc">시작 주소</td></tr>
+            <tr data-search="length int"><td class="col-type">int</td><td class="col-name">Length <span class="accessor">get</span></td><td class="col-desc">쓰기 길이</td></tr>
+            <tr data-search="writevalues ushort array"><td class="col-type">ushort[]</td><td class="col-name">WriteValues <span class="accessor">get</span></td><td class="col-desc">쓰기 값 배열</td></tr>
+            <tr data-search="success bool"><td class="col-type">bool</td><td class="col-name">Success <span class="accessor">get set</span></td><td class="col-desc">처리 성공 여부 (핸들러에서 설정)</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- Class: MultiWordWriteRequestArgs (TCP) -->
+    <div id="class-ModbusMultiWordWriteRequestArgs-TCP" class="class-card" data-search="multiwordwriterequestargs class event modbus slave tcp">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">MultiWordWriteRequestArgs</span> <span class="base">: EventArgs</span></div>
+        <div class="class-desc">다중 워드 쓰기(FC16) 요청 수신 시 전달되는 이벤트 인자 — ModbusTCPSlave 중첩 클래스</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="slave int"><td class="col-type">int</td><td class="col-name">Slave <span class="accessor">get</span></td><td class="col-desc">슬레이브 주소</td></tr>
+            <tr data-search="function modbusfunction"><td class="col-type">ModbusFunction</td><td class="col-name">Function <span class="accessor">get</span></td><td class="col-desc">Modbus 함수 코드</td></tr>
+            <tr data-search="startaddress int"><td class="col-type">int</td><td class="col-name">StartAddress <span class="accessor">get</span></td><td class="col-desc">시작 주소</td></tr>
+            <tr data-search="length int"><td class="col-type">int</td><td class="col-name">Length <span class="accessor">get</span></td><td class="col-desc">쓰기 길이</td></tr>
+            <tr data-search="bytecount int"><td class="col-type">int</td><td class="col-name">ByteCount <span class="accessor">get</span></td><td class="col-desc">데이터 바이트 수</td></tr>
+            <tr data-search="writevalues ushort array"><td class="col-type">ushort[]</td><td class="col-name">WriteValues <span class="accessor">get</span></td><td class="col-desc">쓰기 값 배열</td></tr>
+            <tr data-search="success bool"><td class="col-type">bool</td><td class="col-name">Success <span class="accessor">get set</span></td><td class="col-desc">처리 성공 여부 (핸들러에서 설정)</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- Class: WordBitSetRequestArgs -->
+    <div id="class-ModbusWordBitSetRequestArgs" class="class-card" data-search="wordbitsetrequestargs class event modbus slave rtu tcp">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">WordBitSetRequestArgs</span> <span class="base">: EventArgs</span></div>
+        <div class="class-desc">워드 비트 설정(FC26) 요청 수신 시 전달되는 이벤트 인자. RTU/TCP 공통 (ModbusRTUSlave / ModbusTCPSlave 공통 중첩 클래스)</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="slave int"><td class="col-type">int</td><td class="col-name">Slave <span class="accessor">get</span></td><td class="col-desc">슬레이브 주소</td></tr>
+            <tr data-search="function modbusfunction"><td class="col-type">ModbusFunction</td><td class="col-name">Function <span class="accessor">get</span></td><td class="col-desc">Modbus 함수 코드</td></tr>
+            <tr data-search="startaddress int"><td class="col-type">int</td><td class="col-name">StartAddress <span class="accessor">get</span></td><td class="col-desc">대상 워드 주소</td></tr>
+            <tr data-search="bitindex int"><td class="col-type">int</td><td class="col-name">BitIndex <span class="accessor">get</span></td><td class="col-desc">대상 비트 인덱스 (0~15)</td></tr>
+            <tr data-search="writevalue bool"><td class="col-type">bool</td><td class="col-name">WriteValue <span class="accessor">get</span></td><td class="col-desc">설정할 값</td></tr>
+            <tr data-search="success bool"><td class="col-type">bool</td><td class="col-name">Success <span class="accessor">get set</span></td><td class="col-desc">처리 성공 여부 (핸들러에서 설정)</td></tr>
           </table>
         </div>
       </div>

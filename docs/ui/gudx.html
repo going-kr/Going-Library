@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gudx &amp; Binding - Going.UI API</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<header class="site-header">
+  <a class="logo" href="../index.html"><span class="pkg">API</span> Going Library</a>
+  <div class="search-wrapper"><input type="text" id="search-input" placeholder="클래스, 메서드 검색..."></div>
+  <nav class="header-nav">
+    <a href="../index.html">Home</a>
+    <a href="../basis/index.html">Going.Basis</a>
+    <a href="index.html" class="active">Going.UI</a>
+  </nav>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar" data-current="ui/gudx.html"></aside>
+  <main class="main-content">
+    <div class="breadcrumb">
+      <a href="../index.html">Going Library</a><span class="sep">›</span>
+      <a href="index.html">Going.UI</a><span class="sep">›</span>
+      <span>Gudx &amp; Binding</span>
+    </div>
+    <h1 class="page-title">Gudx &amp; Binding</h1>
+    <p class="page-subtitle">네임스페이스 <code>Going.UI.Gudx</code> / <code>Going.UI.Bindings</code> — <code>.gudx</code> XML 마크업과 선언적 바인딩</p>
+
+    <!-- ─────────────────────────────────────────────── 1. 개요 -->
+    <div class="ns-section">
+      <div class="ns-section-title">1. 개요 — .gudx 란</div>
+
+      <p style="color:var(--text);font-size:13px;margin-bottom:12px;">
+        <code style="background:var(--sidebar-bg);padding:2px 6px;border-radius:3px;">.gudx</code>는 화면(<code>GoDesign</code> 객체 그래프)을 그대로 담는 XML 마크업 포맷입니다.
+        태그는 컨트롤 클래스 이름, 속성은 컨트롤의 속성 이름을 PascalCase 그대로 씁니다.
+        코드 생성 도구 없이 라이브러리만으로 파일을 읽어 화면을 띄울 수 있고, 데이터 연결은 속성 값에 적는
+        <code style="background:var(--sidebar-bg);padding:2px 6px;border-radius:3px;">{path}</code> 바인딩 식으로 처리합니다.
+      </p>
+
+      <p style="color:var(--text);font-size:13px;margin-bottom:12px;">
+        변환은 <code>GoGudxConverter</code>가 리플렉션으로 수행합니다. <b>포함은 명시적</b>입니다 —
+        스칼라 속성은 <code>[GoProperty]</code> 계열이 붙은 것만 XML 속성이 되고, 자식은 <code>[GoChild*]</code> 마커가 붙은 속성만 자식 엘리먼트가 됩니다.
+        마커가 없으면 직렬화되지 않습니다.
+      </p>
+
+      <div style="background:var(--panel-bg);border:1px solid var(--border);border-radius:6px;padding:14px 18px;margin:16px 0;">
+        <p style="margin:0;color:var(--text);font-size:13px;">
+          <strong style="color:var(--keyword);">파일 구성</strong> — 두 가지를 모두 지원합니다.<br>
+          <b>단일 파일</b>: 한 개의 <code>.gudx</code>에 <code>&lt;GoDesign&gt;</code> 전체(페이지 포함)를 담고 <code>GoGudxConverter.ReadGoDesign(XElement)</code>으로 읽습니다.<br>
+          <b>Master 분할</b>: <code>Master.gudx</code>가 디자인 속성·테마·바(bar)·리소스 참조와
+          <code>&lt;GoPageRef File="Pages/Xxx.gudx"/&gt;</code> 포인터만 갖고, 페이지/윈도우는 별도 파일에 둡니다.
+          <code>GoDesign.DeserializeGudx(masterPath)</code>가 참조를 해석해 한 번에 읽습니다.
+        </p>
+      </div>
+
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);margin:20px 0 8px;">런타임 로드 경로</div>
+      <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:16px;">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border);">
+            <th style="text-align:left;padding:8px;color:var(--text-muted);">구성</th>
+            <th style="text-align:left;padding:8px;color:var(--text-muted);">읽기</th>
+            <th style="text-align:left;padding:8px;color:var(--text-muted);">쓰기</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;">단일 파일 / 메모리</td>
+            <td style="padding:8px;color:var(--method);">GoGudxConverter.ReadGoDesign(XElement)</td>
+            <td style="padding:8px;color:var(--method);">GoGudxConverter.WriteGoDesign(GoDesign)</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;">Master 분할 (파일 세트)</td>
+            <td style="padding:8px;color:var(--method);">GoDesign.DeserializeGudx(masterPath)</td>
+            <td style="padding:8px;color:var(--method);">GoDesign.SerializeGudx(masterPath)</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;">컨트롤 하나 (부분)</td>
+            <td style="padding:8px;color:var(--method);">GoGudxConverter.DeserializeControl(xml)</td>
+            <td style="padding:8px;color:var(--method);">GoGudxConverter.SerializeControl(control)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p style="color:var(--text);font-size:13px;margin-bottom:8px;">
+        읽은 <code>GoDesign</code>을 <code>GoViewWindow.Design</code>에 대입하고, 페이지를 지정한 뒤 바인딩을 연결하면 끝입니다.
+      </p>
+
+      <pre style="background:var(--sidebar-bg);border:1px solid var(--border);border-radius:4px;padding:12px 16px;font-size:13px;overflow-x:auto;"><code><span style="color:var(--keyword);">using</span> System.Xml.Linq;
+<span style="color:var(--keyword);">using</span> Going.UI.Design;
+<span style="color:var(--keyword);">using</span> Going.UI.Gudx;
+<span style="color:var(--keyword);">using</span> Going.UI.OpenTK.Windows;
+
+<span style="color:var(--keyword);">var</span> hub = <span style="color:var(--keyword);">new</span> <span style="color:var(--type);">AppHub</span>();
+<span style="color:var(--keyword);">var</span> design = <span style="color:var(--type);">GoGudxConverter</span>.<span style="color:var(--method);">ReadGoDesign</span>(<span style="color:var(--type);">XElement</span>.<span style="color:var(--method);">Load</span>(<span style="color:var(--string);">"ui/Main.gudx"</span>))
+             ?? <span style="color:var(--keyword);">throw new</span> <span style="color:var(--type);">InvalidOperationException</span>(<span style="color:var(--string);">"gudx 파싱 실패"</span>);
+
+<span style="color:var(--keyword);">using var</span> win = <span style="color:var(--keyword);">new</span> <span style="color:var(--type);">MainWindow</span>(design, hub);
+win.<span style="color:var(--method);">Run</span>();
+
+<span style="color:var(--keyword);">public sealed class</span> <span style="color:var(--property);">MainWindow</span> : <span style="color:var(--type);">GoViewWindow</span>
+{
+    <span style="color:var(--keyword);">private readonly</span> <span style="color:var(--type);">AppHub</span> hub;
+
+    <span style="color:var(--keyword);">public</span> <span style="color:var(--method);">MainWindow</span>(<span style="color:var(--type);">GoDesign</span> design, <span style="color:var(--type);">AppHub</span> hub)
+        : <span style="color:var(--keyword);">base</span>(<span style="color:var(--string);">1024</span>, <span style="color:var(--string);">600</span>, <span style="color:var(--type);">WindowBorder</span>.Hidden)
+    {
+        Design = design;
+        <span style="color:var(--keyword);">this</span>.hub = hub;
+    }
+
+    <span style="color:var(--keyword);">protected override void</span> <span style="color:var(--method);">OnLoad</span>()
+    {
+        <span style="color:var(--keyword);">base</span>.<span style="color:var(--method);">OnLoad</span>();
+        Design.<span style="color:var(--method);">SetPage</span>(<span style="color:var(--string);">"Main"</span>);
+        Design.<span style="color:var(--method);">WireBindings</span>(hub);   <span style="color:var(--comment);">// 마크업의 {…} 식을 hub에 연결</span>
+    }
+}</code></pre>
+
+      <p style="color:var(--text-muted);font-size:12px;margin:12px 0 0;">
+        <code>.gudx</code> 화면을 시각적으로 설계하고 검증하려면 Going Library 위에 만들어진 HMI 통합 개발 도구
+        <a href="https://github.com/going-kr/Release.Senvas" target="_blank" rel="noopener" style="color:var(--accent);">Senvas</a>를 사용하세요 — 라이브러리 자체는 위 예제처럼 독립적으로 동작합니다.
+      </p>
+    </div>
+
+    <!-- ─────────────────────────────────────────────── 2. 문법 -->
+    <div class="ns-section">
+      <div class="ns-section-title">2. 마크업 문법</div>
+
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);margin:0 0 8px;">기본 규칙</div>
+      <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:20px;">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border);">
+            <th style="text-align:left;padding:8px;color:var(--text-muted);width:180px;">규칙</th>
+            <th style="text-align:left;padding:8px;color:var(--text-muted);">내용</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;color:var(--property);">루트</td>
+            <td style="padding:8px;">디자인 전체는 <code>&lt;GoDesign&gt;</code>, 페이지 파일은 <code>&lt;GoPage&gt;</code>, 윈도우 파일은 <code>&lt;GoWindow&gt;</code>가 루트</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;color:var(--property);">태그</td>
+            <td style="padding:8px;">컨트롤 클래스 이름 그대로 (PascalCase). 제네릭은 <code>Type&lt;arg&gt;</code> → <code>Type_arg</code> (예: <code>&lt;GoInputNumber_double&gt;</code>)</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;color:var(--property);">속성</td>
+            <td style="padding:8px;"><code>[GoProperty]</code> 계열이 붙은 스칼라 속성만 XML 속성으로 출력 (P1). 이름은 속성 이름 그대로</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;color:var(--property);">Bounds</td>
+            <td style="padding:8px;"><code>Bounds="Left,Top,Right,Bottom"</code> — SKRect 원시값이라 Width/Height가 아닌 <b>우하단 좌표</b>입니다. <code>Width</code>/<code>Height</code>는 <code>[JsonIgnore]</code> 런타임 별칭이라 직렬화되지 않습니다</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;color:var(--property);">Margin / Padding</td>
+            <td style="padding:8px;"><code>Margin="L,T,R,B"</code> 형식</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;color:var(--property);">컬렉션</td>
+            <td style="padding:8px;">모든 컬렉션은 <b>속성 이름 그룹 엘리먼트</b> 안에 들어갑니다 (<code>&lt;Childrens&gt;</code>, <code>&lt;Menus&gt;</code>, <code>&lt;TabPages&gt;</code>, <code>&lt;Series&gt;</code> …). v1.2.1부터의 XAML 스타일 규칙이며, 빈 컬렉션은 그룹 자체가 생략됩니다</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;color:var(--property);">Cell</td>
+            <td style="padding:8px;">셀 인덱스 컨테이너의 자식에 붙는 attached 속성. <code>Cell="col,row"</code> 또는 병합 시 <code>Cell="col,row,colSpan,rowSpan"</code></td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;color:var(--property);">크기 문자열</td>
+            <td style="padding:8px;"><code>Columns</code>/<code>Rows</code>/<code>Size</code> 등: <code>"50%"</code>(남은 공간의 %) · <code>"100px"</code>(고정) · <code>"*"</code>(미지정 % 잔여 균등 분배). 단위 없는 <code>"100"</code>은 지원하지 않습니다</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);margin:0 0 8px;">패턴 (P1~P5 / B1 / B2)</div>
+      <p style="color:var(--text-muted);font-size:12px;margin-bottom:12px;">
+        변환기는 속성에 붙은 마커 어트리뷰트 <b>타입</b>으로 처리 방식을 결정합니다. 아래 7가지가 전부입니다.
+      </p>
+      <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:20px;">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border);">
+            <th style="text-align:left;padding:8px;color:var(--text-muted);width:60px;">패턴</th>
+            <th style="text-align:left;padding:8px;color:var(--text-muted);width:190px;">마커</th>
+            <th style="text-align:left;padding:8px;color:var(--text-muted);">XML 형태</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;color:var(--property);">P1</td>
+            <td style="padding:8px;"><code>[GoProperty]</code> 계열</td>
+            <td style="padding:8px;">엘리먼트의 XML 속성 — <code>&lt;GoButton Text="Hello" FontSize="14"/&gt;</code></td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;color:var(--property);">P2</td>
+            <td style="padding:8px;"><code>[GoChildList]</code></td>
+            <td style="padding:8px;"><code>List&lt;T&gt; where T : IGoControl</code> → <code>&lt;Childrens&gt;</code> 그룹 + 컨트롤 클래스명 자식</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;color:var(--property);">P3</td>
+            <td style="padding:8px;"><code>[GoChildCells]</code></td>
+            <td style="padding:8px;">셀 인덱스 컬렉션 → 그룹 + 자식마다 <code>Cell="col,row"</code> (GoTableLayoutPanel / GoGridLayoutPanel)</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;color:var(--property);">P4</td>
+            <td style="padding:8px;"><code>[GoChildWrappers]</code></td>
+            <td style="padding:8px;"><code>IGoControl</code>이 아닌 래퍼 리스트 → 그룹 + 래퍼 클래스명 자식 (<code>&lt;Menus&gt;&lt;GoMenuItem/&gt;</code>, <code>&lt;TabPages&gt;&lt;GoTabPage&gt;</code>, <code>&lt;Series&gt;</code>, <code>&lt;Steps&gt;</code> …)</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;color:var(--property);">P5</td>
+            <td style="padding:8px;"><code>[GoChildMap]</code></td>
+            <td style="padding:8px;"><code>Dictionary&lt;string, T&gt;</code> → 그룹 + <code>&lt;T Name="key" …/&gt;</code> (<code>GoDesign.Pages</code>, <code>GoDesign.Windows</code>)</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;color:var(--property);">B1</td>
+            <td style="padding:8px;"><code>[GoChildSingle]</code></td>
+            <td style="padding:8px;">단일 자식 객체 → <b>속성 이름</b>이 태그 (<code>&lt;TitleBar&gt;</code> <code>&lt;LeftSideBar&gt;</code> <code>&lt;RightSideBar&gt;</code> <code>&lt;Footer&gt;</code>). <code>[GudxTagName]</code>으로 태그 변경 (<code>CustomTheme</code> → <code>&lt;Theme&gt;</code>)</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;color:var(--property);">B2</td>
+            <td style="padding:8px;"><code>[GoChildResource]</code></td>
+            <td style="padding:8px;">외부 파일 참조 → <code>&lt;TagName Name="…" File="…"/&gt;</code>. 바이트는 인라인(base64)하지 않고 디스크에 둡니다 (<code>&lt;Images&gt;</code>, <code>&lt;Fonts&gt;</code>)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);margin:0 0 8px;">Master.gudx 예</div>
+      <pre style="background:var(--sidebar-bg);border:1px solid var(--border);border-radius:4px;padding:12px 16px;font-size:13px;overflow-x:auto;"><code>&lt;<span style="color:var(--type);">GoDesign</span> <span style="color:var(--property);">Name</span>=<span style="color:var(--string);">"TempControlSystem"</span> <span style="color:var(--property);">DesignWidth</span>=<span style="color:var(--string);">"1024"</span> <span style="color:var(--property);">DesignHeight</span>=<span style="color:var(--string);">"600"</span>
+          <span style="color:var(--property);">UseTitleBar</span>=<span style="color:var(--string);">"true"</span> <span style="color:var(--property);">UseLeftSideBar</span>=<span style="color:var(--string);">"false"</span> <span style="color:var(--property);">BarColor</span>=<span style="color:var(--string);">"Base2"</span>&gt;
+
+  <span style="color:var(--comment);">&lt;!-- B1: 속성 이름이 곧 태그 --&gt;</span>
+  &lt;<span style="color:var(--type);">TitleBar</span> <span style="color:var(--property);">BarSize</span>=<span style="color:var(--string);">"50"</span> <span style="color:var(--property);">FontName</span>=<span style="color:var(--string);">"나눔고딕"</span> <span style="color:var(--property);">Bounds</span>=<span style="color:var(--string);">"0,0,1024,50"</span>&gt;
+    &lt;<span style="color:var(--type);">Childrens</span>&gt;                             <span style="color:var(--comment);">&lt;!-- P2 그룹 --&gt;</span>
+      &lt;<span style="color:var(--type);">GoTableLayoutPanel</span> <span style="color:var(--property);">Columns</span>=<span style="color:var(--string);">"220px,100%,380px"</span> <span style="color:var(--property);">Rows</span>=<span style="color:var(--string);">"100%"</span> <span style="color:var(--property);">Dock</span>=<span style="color:var(--string);">"Fill"</span>&gt;
+        &lt;<span style="color:var(--type);">Childrens</span>&gt;                         <span style="color:var(--comment);">&lt;!-- P3 그룹 --&gt;</span>
+          &lt;<span style="color:var(--type);">GoNavigator</span> <span style="color:var(--property);">Direction</span>=<span style="color:var(--string);">"Horizon"</span> <span style="color:var(--property);">Cell</span>=<span style="color:var(--string);">"1,0"</span> <span style="color:var(--property);">Dock</span>=<span style="color:var(--string);">"Fill"</span>&gt;
+            &lt;<span style="color:var(--type);">Menus</span>&gt;                         <span style="color:var(--comment);">&lt;!-- P4 그룹 --&gt;</span>
+              &lt;<span style="color:var(--type);">GoMenuItem</span> <span style="color:var(--property);">Text</span>=<span style="color:var(--string);">"Dashboard"</span> <span style="color:var(--property);">PageName</span>=<span style="color:var(--string);">"MonitoringPage"</span> /&gt;
+              &lt;<span style="color:var(--type);">GoMenuItem</span> <span style="color:var(--property);">Text</span>=<span style="color:var(--string);">"Logs"</span>      <span style="color:var(--property);">PageName</span>=<span style="color:var(--string);">"LogPage"</span> /&gt;
+            &lt;/<span style="color:var(--type);">Menus</span>&gt;
+          &lt;/<span style="color:var(--type);">GoNavigator</span>&gt;
+        &lt;/<span style="color:var(--type);">Childrens</span>&gt;
+      &lt;/<span style="color:var(--type);">GoTableLayoutPanel</span>&gt;
+    &lt;/<span style="color:var(--type);">Childrens</span>&gt;
+  &lt;/<span style="color:var(--type);">TitleBar</span>&gt;
+
+  <span style="color:var(--comment);">&lt;!-- B1 + [GudxTagName("Theme")] --&gt;</span>
+  &lt;<span style="color:var(--type);">Theme</span> <span style="color:var(--property);">Dark</span>=<span style="color:var(--string);">"true"</span> <span style="color:var(--property);">Fore</span>=<span style="color:var(--string);">"#FFE0EAF0"</span> <span style="color:var(--property);">Back</span>=<span style="color:var(--string);">"#FF1A2530"</span> <span style="color:var(--property);">Point</span>=<span style="color:var(--string);">"#FF4FC3F7"</span> <span style="color:var(--property);">Corner</span>=<span style="color:var(--string);">"5"</span> /&gt;
+
+  <span style="color:var(--comment);">&lt;!-- B2: 외부 리소스 (바이트는 디스크에) --&gt;</span>
+  &lt;<span style="color:var(--type);">Images</span>&gt;&lt;<span style="color:var(--type);">Image</span> <span style="color:var(--property);">Name</span>=<span style="color:var(--string);">"logo"</span> <span style="color:var(--property);">File</span>=<span style="color:var(--string);">"resources/logo.png"</span>/&gt;&lt;/<span style="color:var(--type);">Images</span>&gt;
+  &lt;<span style="color:var(--type);">Fonts</span>&gt;&lt;<span style="color:var(--type);">Font</span> <span style="color:var(--property);">Name</span>=<span style="color:var(--string);">"Pretendard"</span> <span style="color:var(--property);">File</span>=<span style="color:var(--string);">"resources/fonts/Pretendard.ttf"</span>/&gt;&lt;/<span style="color:var(--type);">Fonts</span>&gt;
+
+  <span style="color:var(--comment);">&lt;!-- Master 분할: 페이지는 별도 .gudx 파일 --&gt;</span>
+  &lt;<span style="color:var(--type);">Pages</span>&gt;
+    &lt;<span style="color:var(--type);">GoPageRef</span> <span style="color:var(--property);">File</span>=<span style="color:var(--string);">"Pages/MonitoringPage.gudx"</span> /&gt;
+    &lt;<span style="color:var(--type);">GoPageRef</span> <span style="color:var(--property);">File</span>=<span style="color:var(--string);">"Pages/LogPage.gudx"</span> /&gt;
+  &lt;/<span style="color:var(--type);">Pages</span>&gt;
+&lt;/<span style="color:var(--type);">GoDesign</span>&gt;</code></pre>
+
+      <p style="color:var(--text-muted);font-size:12px;margin:12px 0 0;">
+        단일 파일 구성에서는 <code>&lt;Pages&gt;</code> 안에 <code>&lt;GoPageRef/&gt;</code> 대신 <code>&lt;GoPage Name="…"&gt;</code>를 직접 넣습니다(P5).
+        Master 분할 모드에서는 <code>&lt;Pages&gt;</code>/<code>&lt;Windows&gt;</code> 자식으로 <code>&lt;GoPageRef&gt;</code>/<code>&lt;GoWindowRef&gt;</code>만 허용됩니다.
+      </p>
+    </div>
+
+    <!-- ─────────────────────────────────────────────── 3. 선언적 바인딩 -->
+    <div class="ns-section">
+      <div class="ns-section-title">3. 선언적 바인딩</div>
+
+      <p style="color:var(--text);font-size:13px;margin-bottom:12px;">
+        속성 값 <b>전체</b>를 <code>{…}</code>로 쓰면 리터럴 대신 바인딩 식으로 해석됩니다.
+        역직렬화 시점에는 식이 보류 상태로 보관되고, <code>GoDesign.WireBindings(root)</code>를 한 번 호출하면
+        모든 페이지·윈도우·바 트리를 순회하며 <code>root</code> 기준 경로로 컴파일해 실제 바인딩으로 전환합니다.
+        경로는 wire 시점에 Expression으로 <b>1회 컴파일 후 캐시</b>되고, 값은 매 프레임(<code>FireUpdate</code> 펌프)마다 읽힙니다.
+      </p>
+
+      <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:20px;">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border);">
+            <th style="text-align:left;padding:8px;color:var(--text-muted);width:220px;">식</th>
+            <th style="text-align:left;padding:8px;color:var(--text-muted);width:120px;">방향</th>
+            <th style="text-align:left;padding:8px;color:var(--text-muted);">설명</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;color:var(--string);">{Path.To.Member}</td>
+            <td style="padding:8px;">양방향 / 단방향</td>
+            <td style="padding:8px;">경로 말단이 settable이면 양방향, 아니면 단방향</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;color:var(--string);">{Path.To.Member:F1}</td>
+            <td style="padding:8px;">단방향</td>
+            <td style="padding:8px;"><code>IFormattable.ToString(fmt)</code> 결과를 표시. 포맷이 붙으면 역변환 불가라 항상 단방향</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;color:var(--string);">{{</td>
+            <td style="padding:8px;">—</td>
+            <td style="padding:8px;">리터럴 중괄호 escape (바인딩으로 판정하지 않음)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p style="color:var(--text);font-size:13px;margin-bottom:8px;">
+        값이 <code>{</code>로 시작해 <code>}</code>로 끝나고 <code>{{</code> escape가 아닐 때만 바인딩입니다. 그 외에는 전부 리터럴입니다.
+        재직렬화 시 원본 식이 그대로 보존되므로 라운드트립해도 리터럴로 굳지 않습니다.
+      </p>
+
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);margin:20px 0 8px;">컴포넌트 — &lt;GoComponent&gt; / &lt;Param&gt;</div>
+      <p style="color:var(--text);font-size:13px;margin-bottom:12px;">
+        파라미터를 받는 재사용 마크업 모듈입니다. 정의는 <code>&lt;Components&gt;</code> 그룹에 모아 두며(페이지보다 먼저 레지스트리에 등록됨),
+        사용처는 컴포넌트 이름을 새 태그처럼 씁니다. 파라미터는 리터럴(<code>Title="펌프 A"</code>) 또는 바깥 바인딩(<code>motor="{PumpA}"</code>)으로 넘깁니다.
+        <code>&lt;Param type="…"&gt;</code>의 타입이 내부 경로(<code>{motor.Rpm}</code>)를 타입 안전하게 컴파일하는 다리 역할을 합니다 —
+        <code>string</code>/<code>int</code>/<code>double</code> 등 별칭과 로드된 어셈블리의 클래스 simple name을 인식합니다.
+        인스턴스는 <code>GoComponentInstance</code>(컨테이너)로 역직렬화되므로 <code>Bounds</code>·<code>Dock</code> 등 기존 레이아웃을 그대로 씁니다.
+      </p>
+
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);margin:20px 0 8px;">컬렉션 반복 — GoItemList + &lt;ItemTemplate&gt;</div>
+      <p style="color:var(--text);font-size:13px;margin-bottom:12px;">
+        <code>Items="{Logs}"</code>로 컬렉션을 바인딩하고 <code>&lt;ItemTemplate&gt;</code> 트리를 아이템마다 복제해 렌더합니다.
+        각 행은 <b>그 아이템 객체</b>를 root로 wire되므로 <code>{Message}</code> 같은 평면 경로가 아이템 멤버에 직접 닿습니다.
+        아이템 타입은 런타임 추론이라 <code>type</code> 선언이 필요 없습니다.
+        <code>ObservableList</code>의 <code>Changed</code> 또는 개수 변화가 감지되면 행을 전량 재생성합니다.
+        직렬화에는 <code>Items</code> 식과 <code>&lt;ItemTemplate&gt;</code>만 남고 생성된 행은 출력되지 않습니다.
+      </p>
+
+      <pre style="background:var(--sidebar-bg);border:1px solid var(--border);border-radius:4px;padding:12px 16px;font-size:13px;overflow-x:auto;"><code>&lt;<span style="color:var(--type);">GoDesign</span>&gt;
+
+  <span style="color:var(--comment);">&lt;!-- 재사용 컴포넌트 정의: motor(MotorVM) 하나를 받아 내부에서 바인딩 --&gt;</span>
+  &lt;<span style="color:var(--type);">Components</span>&gt;
+    &lt;<span style="color:var(--type);">GoComponent</span> <span style="color:var(--property);">name</span>=<span style="color:var(--string);">"MotorCard"</span>&gt;
+      &lt;<span style="color:var(--type);">Param</span> <span style="color:var(--property);">name</span>=<span style="color:var(--string);">"motor"</span> <span style="color:var(--property);">type</span>=<span style="color:var(--string);">"MotorVM"</span>/&gt;
+      &lt;<span style="color:var(--type);">GoBoxPanel</span> <span style="color:var(--property);">Bounds</span>=<span style="color:var(--string);">"0,0,340,64"</span> <span style="color:var(--property);">BoxColor</span>=<span style="color:var(--string);">"Base2"</span> <span style="color:var(--property);">BorderColor</span>=<span style="color:var(--string);">"Base3"</span>&gt;&lt;<span style="color:var(--type);">Childrens</span>&gt;
+        &lt;<span style="color:var(--type);">GoLabel</span> <span style="color:var(--property);">Text</span>=<span style="color:var(--string);">"{motor.Name}"</span>   <span style="color:var(--property);">Bounds</span>=<span style="color:var(--string);">"12,8,210,36"</span>  <span style="color:var(--property);">FontSize</span>=<span style="color:var(--string);">"15"</span>/&gt;
+        &lt;<span style="color:var(--type);">GoLabel</span> <span style="color:var(--property);">Text</span>=<span style="color:var(--string);">"{motor.Rpm:F0}"</span> <span style="color:var(--property);">Bounds</span>=<span style="color:var(--string);">"210,8,330,56"</span> <span style="color:var(--property);">FontSize</span>=<span style="color:var(--string);">"26"</span> <span style="color:var(--property);">TextColor</span>=<span style="color:var(--string);">"Point"</span>/&gt;
+      &lt;/<span style="color:var(--type);">Childrens</span>&gt;&lt;/<span style="color:var(--type);">GoBoxPanel</span>&gt;
+    &lt;/<span style="color:var(--type);">GoComponent</span>&gt;
+  &lt;/<span style="color:var(--type);">Components</span>&gt;
+
+  &lt;<span style="color:var(--type);">Pages</span>&gt;
+    &lt;<span style="color:var(--type);">GoPage</span> <span style="color:var(--property);">Name</span>=<span style="color:var(--string);">"Main"</span> <span style="color:var(--property);">BackColor</span>=<span style="color:var(--string);">"Back"</span>&gt;&lt;<span style="color:var(--type);">Childrens</span>&gt;
+
+      <span style="color:var(--comment);">&lt;!-- 선언적 바인딩: 허브 멤버에 직접 --&gt;</span>
+      &lt;<span style="color:var(--type);">GoLabel</span> <span style="color:var(--property);">Text</span>=<span style="color:var(--string);">"{PlantStatus}"</span> <span style="color:var(--property);">Bounds</span>=<span style="color:var(--string);">"12,10,348,44"</span> <span style="color:var(--property);">FontSize</span>=<span style="color:var(--string);">"20"</span> <span style="color:var(--property);">TextColor</span>=<span style="color:var(--string);">"Point"</span>/&gt;
+
+      <span style="color:var(--comment);">&lt;!-- 컴포넌트 인스턴스: 각각 다른 모터를 바인딩 --&gt;</span>
+      &lt;<span style="color:var(--type);">MotorCard</span> <span style="color:var(--property);">motor</span>=<span style="color:var(--string);">"{PumpA}"</span> <span style="color:var(--property);">Bounds</span>=<span style="color:var(--string);">"10,52,350,116"</span>/&gt;
+      &lt;<span style="color:var(--type);">MotorCard</span> <span style="color:var(--property);">motor</span>=<span style="color:var(--string);">"{PumpB}"</span> <span style="color:var(--property);">Bounds</span>=<span style="color:var(--string);">"10,124,350,188"</span>/&gt;
+
+      <span style="color:var(--comment);">&lt;!-- 컬렉션을 ItemTemplate으로 반복 --&gt;</span>
+      &lt;<span style="color:var(--type);">GoItemList</span> <span style="color:var(--property);">Items</span>=<span style="color:var(--string);">"{Logs}"</span> <span style="color:var(--property);">ItemHeight</span>=<span style="color:var(--string);">"26"</span> <span style="color:var(--property);">Bounds</span>=<span style="color:var(--string);">"10,226,350,458"</span>&gt;
+        &lt;<span style="color:var(--type);">ItemTemplate</span>&gt;
+          &lt;<span style="color:var(--type);">GoBoxPanel</span> <span style="color:var(--property);">Bounds</span>=<span style="color:var(--string);">"0,0,340,26"</span> <span style="color:var(--property);">BoxColor</span>=<span style="color:var(--string);">"Base1"</span>&gt;&lt;<span style="color:var(--type);">Childrens</span>&gt;
+            &lt;<span style="color:var(--type);">GoLabel</span> <span style="color:var(--property);">Text</span>=<span style="color:var(--string);">"{Message}"</span> <span style="color:var(--property);">Bounds</span>=<span style="color:var(--string);">"10,3,330,24"</span> <span style="color:var(--property);">FontSize</span>=<span style="color:var(--string);">"12"</span>/&gt;
+          &lt;/<span style="color:var(--type);">Childrens</span>&gt;&lt;/<span style="color:var(--type);">GoBoxPanel</span>&gt;
+        &lt;/<span style="color:var(--type);">ItemTemplate</span>&gt;
+      &lt;/<span style="color:var(--type);">GoItemList</span>&gt;
+
+    &lt;/<span style="color:var(--type);">Childrens</span>&gt;&lt;/<span style="color:var(--type);">GoPage</span>&gt;
+  &lt;/<span style="color:var(--type);">Pages</span>&gt;
+&lt;/<span style="color:var(--type);">GoDesign</span>&gt;</code></pre>
+
+      <p style="color:var(--text);font-size:13px;margin:12px 0 8px;">
+        위 마크업의 <code>{PlantStatus}</code>·<code>{PumpA}</code>·<code>{Logs}</code>는 <code>WireBindings(hub)</code>에 넘긴 단일 컨텍스트 객체의 멤버입니다.
+      </p>
+
+      <pre style="background:var(--sidebar-bg);border:1px solid var(--border);border-radius:4px;padding:12px 16px;font-size:13px;overflow-x:auto;"><code><span style="color:var(--keyword);">public sealed class</span> <span style="color:var(--property);">MotorVM</span>
+{
+    <span style="color:var(--keyword);">public string</span> Name { <span style="color:var(--keyword);">get; set;</span> } = <span style="color:var(--string);">""</span>;
+    <span style="color:var(--keyword);">public double</span> Rpm  { <span style="color:var(--keyword);">get; set;</span> }
+}
+
+<span style="color:var(--keyword);">public sealed class</span> <span style="color:var(--property);">LogVM</span> { <span style="color:var(--keyword);">public string</span> Message { <span style="color:var(--keyword);">get; set;</span> } = <span style="color:var(--string);">""</span>; }
+
+<span style="color:var(--comment);">/// 마크업의 모든 {…} 경로가 이 객체에서 출발한다.</span>
+<span style="color:var(--keyword);">public sealed class</span> <span style="color:var(--property);">AppHub</span>
+{
+    <span style="color:var(--keyword);">public string</span> PlantStatus { <span style="color:var(--keyword);">get; set;</span> } = <span style="color:var(--string);">"RUN"</span>;
+    <span style="color:var(--keyword);">public</span> <span style="color:var(--type);">MotorVM</span> PumpA { <span style="color:var(--keyword);">get;</span> } = <span style="color:var(--keyword);">new</span>() { Name = <span style="color:var(--string);">"펌프 A"</span>, Rpm = <span style="color:var(--string);">1450</span> };
+    <span style="color:var(--keyword);">public</span> <span style="color:var(--type);">MotorVM</span> PumpB { <span style="color:var(--keyword);">get;</span> } = <span style="color:var(--keyword);">new</span>() { Name = <span style="color:var(--string);">"펌프 B"</span>, Rpm = <span style="color:var(--string);">980</span> };
+    <span style="color:var(--keyword);">public</span> <span style="color:var(--type);">ObservableList</span>&lt;<span style="color:var(--type);">LogVM</span>&gt; Logs { <span style="color:var(--keyword);">get;</span> } = <span style="color:var(--keyword);">new</span>();
+}</code></pre>
+
+      <div style="background:var(--panel-bg);border:1px solid var(--warning);border-radius:6px;padding:14px 18px;margin:20px 0 0;">
+        <p style="margin:0 0 6px;color:var(--warning);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;">1차 한계</p>
+        <ul style="margin:0;padding-left:18px;color:var(--text);font-size:13px;">
+          <li>문자열 보간(<code>"속도: {x} m/s"</code>) 미지원 — 속성 값 전체가 하나의 식이어야 합니다</li>
+          <li>일반 속성으로의 컬렉션/명령 바인딩 미지원 (컬렉션은 <code>GoItemList</code> + <code>&lt;ItemTemplate&gt;</code> 사용)</li>
+          <li><code>GoSwitchPanel</code> / <code>GoTabControl</code> <b>내부</b> 컨트롤은 아직 wire 대상이 아닙니다</li>
+          <li>컴포넌트: 슬롯/자식 투영, 컴포넌트 이벤트·상태, 자동 fill 미지원</li>
+          <li><code>GoItemList</code>: diff 부분 갱신, 가변 행 높이, 명명 컴포넌트 <code>ItemTemplate</code> 참조, 선택/가상화 미지원</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ─────────────────────────────────────────────── 4. 코드 바인딩 -->
+    <div class="ns-section">
+      <div class="ns-section-title">4. 코드 바인딩</div>
+
+      <p style="color:var(--text);font-size:13px;margin-bottom:12px;">
+        마크업 없이 코드로 직접 바인딩할 수도 있습니다. 선언적 바인딩도 결국 같은 펌프 위에서 동작합니다 —
+        매 <code>FireUpdate</code>에 양쪽을 폴링해 동기화하므로 이벤트 구독이 필요 없습니다.
+        컨트롤이 <code>Dispose</code>되면 자동으로 해제되고, <code>Unbind</code> / <code>UnbindAll</code>로 명시 해제할 수 있습니다.
+      </p>
+
+      <pre style="background:var(--sidebar-bg);border:1px solid var(--border);border-radius:4px;padding:12px 16px;font-size:13px;overflow-x:auto;"><code><span style="color:var(--keyword);">using</span> Going.UI.Bindings;
+
+<span style="color:var(--comment);">// 단방향 — 소스 → 컨트롤</span>
+lblRpm.<span style="color:var(--method);">Bind</span>(c =&gt; c.Text, () =&gt; hub.Motor.Rpm.<span style="color:var(--method);">ToString</span>(<span style="color:var(--string);">"F0"</span>));
+
+<span style="color:var(--comment);">// 양방향 — setter를 주면 컨트롤 변경도 소스로 흐른다</span>
+sldSpeed.<span style="color:var(--method);">Bind</span>(c =&gt; c.Value, () =&gt; hub.Motor.Target, v =&gt; hub.Motor.Target = v);
+
+<span style="color:var(--comment);">// 명령(command) 바인딩 — setter 후 getter 반영이 늦는 통신 속성용</span>
+swPower.<span style="color:var(--method);">Bind</span>(c =&gt; c.OnOff, () =&gt; hub.Power, v =&gt; hub.Power = v, timeout: <span style="color:var(--string);">500</span>);
+
+<span style="color:var(--comment);">// 해제</span>
+sldSpeed.<span style="color:var(--method);">Unbind</span>(c =&gt; c.Value);
+lblRpm.<span style="color:var(--method);">UnbindAll</span>();</code></pre>
+
+      <p style="color:var(--text);font-size:13px;margin:12px 0 0;">
+        <b>조작 중 억제</b> — <code>GoControl.IsBindingSuppressed</code>(<code>protected internal virtual</code>)가 <code>true</code>인 동안 해당 컨트롤의 펌프가 정지합니다.
+        사용자가 조작 중일 때 소스 값이 컨트롤을 덮어쓰는 것을 막고, 조작이 끝나면 컨트롤 값을 소스로 1회 flush합니다.
+        <code>GoSlider</code>·<code>GoRangeSlider</code>·<code>GoKnob</code>·<code>GoOnOff</code>가 이 플래그를 재정의합니다.
+      </p>
+      <p style="color:var(--text);font-size:13px;margin:8px 0 0;">
+        <b>명령 바인딩</b> — <code>timeout</code> 오버로드는 setter 호출 후 getter가 같은 값에 도달하거나 timeout이 지날 때까지
+        이전 getter 값으로 컨트롤을 되돌리지 않습니다. 통신 ack 지연이 있는 속성에서 값이 깜빡이는 것을 막습니다.
+      </p>
+    </div>
+
+    <!-- ─────────────────────────────────────────────── 5. API -->
+    <div class="ns-section">
+      <div class="ns-section-title">5. API</div>
+
+    <div id="class-GoGudxConverter" class="class-card" data-search="gogudxconverter static gudx converter serialize deserialize xml readgodesign writegodesign">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature">
+          <span class="kw">public static class</span> <span class="nm">GoGudxConverter</span>
+        </div>
+        <div class="class-desc">GoControl 객체 그래프 ↔ Gudx XML 변환기. 리플렉션 기반 — 태그는 컨트롤 클래스 이름, 속성은 <code>[GoProperty]</code> 스칼라, 자식은 <code>[GoChild*]</code> 마킹 속성.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Methods</div>
+          <table class="api-table">
+            <tr data-search="serializecontrol string igocontrol"><td class="ret">string</td><td class="col-method-name">SerializeControl</td><td class="params">(<span class="tp">IGoControl</span> control)</td><td class="col-desc">컨트롤 하나를 XML 문자열로 직렬화</td></tr>
+            <tr data-search="deserializecontrol igocontrol xml"><td class="ret">IGoControl</td><td class="col-method-name">DeserializeControl</td><td class="params">(<span class="tp">string</span> xml)</td><td class="col-desc">XML 문자열에서 컨트롤 하나를 역직렬화</td></tr>
+            <tr data-search="writeany xelement object tagname skipchildren"><td class="ret">XElement</td><td class="col-method-name">WriteAny</td><td class="params">(<span class="tp">object</span> obj, <span class="tp">string?</span> explicitTagName = null, <span class="tp">ISet&lt;string&gt;?</span> skipChildren = null)</td><td class="col-desc">IGoControl이 아닌 루트(GoDesign 등) 포함 임의 객체를 XElement로 직렬화. 태그는 런타임 타입에서 유도하며 <code>explicitTagName</code>으로 재지정</td></tr>
+            <tr data-search="writegodesign xelement godesign"><td class="ret">XElement</td><td class="col-method-name">WriteGoDesign</td><td class="params">(<span class="tp">GoDesign</span> design)</td><td class="col-desc">GoDesign을 XElement로 직렬화 (WriteAny 편의 래퍼)</td></tr>
+            <tr data-search="readgodesign godesign xelement"><td class="ret">GoDesign?</td><td class="col-method-name">ReadGoDesign</td><td class="params">(<span class="tp">XElement</span> elem)</td><td class="col-desc">XElement에서 GoDesign 역직렬화. 루트 태그가 <code>GoDesign</code>이 아니면 null. <code>&lt;Components&gt;</code>를 페이지보다 먼저 등록</td></tr>
+            <tr data-search="serializegodesigntofiles void master path"><td class="ret">void</td><td class="col-method-name">SerializeGoDesignToFiles</td><td class="params">(<span class="tp">GoDesign</span> d, <span class="tp">string</span> masterPath)</td><td class="col-desc">Master + Pages/*.gudx + Windows/*.gudx + resources 파일 세트로 저장. 하위 폴더를 정리 후 재기록해 디스크와 동기화</td></tr>
+            <tr data-search="deserializegodesignfromfiles godesign master path"><td class="ret">GoDesign?</td><td class="col-method-name">DeserializeGoDesignFromFiles</td><td class="params">(<span class="tp">string</span> masterPath)</td><td class="col-desc">Master.gudx에서 GoPageRef/GoWindowRef 참조와 Images/Fonts 리소스를 해석해 로드. 파일이 없으면 null</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Remarks</div>
+          <table class="api-table">
+            <tr data-search="godesign serializegudx deserializegudx"><td class="col-desc" colspan="3">고수준 진입점은 <code>GoDesign.SerializeGudx(masterPath)</code> / <code>GoDesign.DeserializeGudx(masterPath)</code>이며, 내부적으로 위 파일 세트 메서드를 호출합니다.</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="class-GoControlBindingExtensions" class="class-card" data-search="gocontrolbindingextensions static bind unbind unbindall extension binding">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature">
+          <span class="kw">public static class</span> <span class="nm">GoControlBindingExtensions</span>
+        </div>
+        <div class="class-desc">GoControl 바인딩 확장 메서드. 매 <code>FireUpdate</code>에 양쪽을 폴링해 동기화하며 이벤트 의존성이 없습니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Extension Methods</div>
+          <table class="api-table">
+            <tr data-search="bind void oneway getter"><td class="ret">void</td><td class="col-method-name">Bind&lt;TC,TV&gt;<span class="accessor">where TC : GoControl</span></td><td class="params">(<span class="tp">this TC</span> ctrl, <span class="tp">Expression&lt;Func&lt;TC,TV&gt;&gt;</span> ctrlProp, <span class="tp">Func&lt;TV&gt;</span> getter)</td><td class="col-desc">단방향 바인딩. 매 FireUpdate에 소스 → 컨트롤로 값이 흐릅니다</td></tr>
+            <tr data-search="bind void twoway setter"><td class="ret">void</td><td class="col-method-name">Bind&lt;TC,TV&gt;<span class="accessor">where TC : GoControl</span></td><td class="params">(<span class="tp">this TC</span> ctrl, <span class="tp">Expression&lt;Func&lt;TC,TV&gt;&gt;</span> ctrlProp, <span class="tp">Func&lt;TV&gt;</span> getter, <span class="tp">Action&lt;TV&gt;</span> setter)</td><td class="col-desc">양방향 바인딩. 소스 → 컨트롤은 매 FireUpdate, 컨트롤 → 소스는 값 변경 감지 시</td></tr>
+            <tr data-search="bind void command timeout"><td class="ret">void</td><td class="col-method-name">Bind&lt;TC,TV&gt;<span class="accessor">where TC : GoControl</span></td><td class="params">(<span class="tp">this TC</span> ctrl, <span class="tp">Expression&lt;Func&lt;TC,TV&gt;&gt;</span> ctrlProp, <span class="tp">Func&lt;TV&gt;</span> getter, <span class="tp">Action&lt;TV&gt;</span> setter, <span class="tp">int</span> timeout = 500)</td><td class="col-desc">명령 바인딩. setter 호출 후 getter가 같은 값에 도달하거나 timeout이 지날 때까지 이전 값으로 되돌리지 않습니다</td></tr>
+            <tr data-search="unbind void property"><td class="ret">void</td><td class="col-method-name">Unbind&lt;TC,TV&gt;<span class="accessor">where TC : GoControl</span></td><td class="params">(<span class="tp">this TC</span> ctrl, <span class="tp">Expression&lt;Func&lt;TC,TV&gt;&gt;</span> ctrlProp)</td><td class="col-desc">지정한 속성의 바인딩을 해제</td></tr>
+            <tr data-search="unbindall void gocontrol"><td class="ret">void</td><td class="col-method-name">UnbindAll</td><td class="params">(<span class="tp">this GoControl</span> ctrl)</td><td class="col-desc">컨트롤의 모든 바인딩을 해제</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Remarks</div>
+          <table class="api-table">
+            <tr data-search="expression simple property access"><td class="col-desc" colspan="3"><code>ctrlProp</code>는 단순 속성 접근(<code>c =&gt; c.Value</code>)이어야 합니다. 필드·메서드·복합 식이면 <code>ArgumentException</code>. 같은 속성에 다시 <code>Bind</code>하면 기존 바인딩을 교체합니다(마지막 승).</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="class-GudxBinder" class="class-card" data-search="gudxbinder static wiretree pending binding component scope">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature">
+          <span class="kw">public static class</span> <span class="nm">GudxBinder</span>
+        </div>
+        <div class="class-desc">컨트롤 트리를 재귀 순회하며 보류 바인딩을 root 기준 실제 바인딩으로 연결. <code>GoDesign.WireBindings</code>의 구현부입니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Methods</div>
+          <table class="api-table">
+            <tr data-search="wiretree void igocontrol root"><td class="ret">void</td><td class="col-method-name">WireTree</td><td class="params">(<span class="tp">IGoControl</span> node, <span class="tp">object</span> root)</td><td class="col-desc">node와 그 자손(<code>IGoContainer.Childrens</code>)의 보류 바인딩을 root에 연결</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Remarks</div>
+          <table class="api-table">
+            <tr data-search="component boundary scope depth guard"><td class="col-desc" colspan="3">컴포넌트 인스턴스 경계에서는 root를 파라미터 스코프(<code>GoComponentScope</code>)로 교체한 뒤 자식을 wire합니다. 중첩 깊이가 32를 넘으면 중단(<code>MaxDepth = 32</code>, 순환 컴포넌트 방어). 개별 바인딩 wire 실패는 해당 바인딩만 건너뛰고 로그를 남기므로 다른 바인딩·렌더에 영향이 없습니다.</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="class-GudxBindingExpression" class="class-card" data-search="gudxbindingexpression static parse compilepath wire wirescoped isbinding format">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature">
+          <span class="kw">public static class</span> <span class="nm">GudxBindingExpression</span>
+        </div>
+        <div class="class-desc">마크업 속성의 바인딩 식(<code>{path}</code> / <code>{path:fmt}</code>)을 파싱하고, 경로를 root 기준 델리게이트로 컴파일해 바인딩에 연결합니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Methods</div>
+          <table class="api-table">
+            <tr data-search="isbinding bool value escape"><td class="ret">bool</td><td class="col-method-name">IsBinding</td><td class="params">(<span class="tp">string?</span> value)</td><td class="col-desc">값이 <code>{…}</code> 바인딩 식인지 판정. <code>{{</code> escape와 미완성 식은 제외</td></tr>
+            <tr data-search="parse path format tuple"><td class="ret">(string Path, string? Format)</td><td class="col-method-name">Parse</td><td class="params">(<span class="tp">string</span> value)</td><td class="col-desc"><code>{path:fmt}</code> → (path, fmt). fmt가 없으면 null. 양끝 공백 trim</td></tr>
+            <tr data-search="compilepath compiledpath roottype cache"><td class="ret">CompiledPath</td><td class="col-method-name">CompilePath</td><td class="params">(<span class="tp">Type</span> rootType, <span class="tp">string</span> path)</td><td class="col-desc">root 타입 기준 <code>"A.B.C"</code> 경로를 컴파일(캐시됨). 멤버가 없거나 속성이 아니면 <code>ArgumentException</code></td></tr>
+            <tr data-search="wire void gocontrol propname expr root"><td class="ret">void</td><td class="col-method-name">Wire</td><td class="params">(<span class="tp">GoControl</span> ctrl, <span class="tp">string</span> propName, <span class="tp">string</span> expr, <span class="tp">object</span> root)</td><td class="col-desc">컨트롤 속성을 root 기준 식에 바인딩. 경로 말단이 settable이고 포맷이 없으면 양방향</td></tr>
+            <tr data-search="wirescoped void gocomponentscope"><td class="ret">void</td><td class="col-method-name">WireScoped</td><td class="params">(<span class="tp">GoControl</span> ctrl, <span class="tp">string</span> propName, <span class="tp">string</span> expr, <span class="tp">GoComponentScope</span> scope)</td><td class="col-desc">컴포넌트 스코프 기준 바인딩. 첫 구간은 파라미터, 나머지는 선언 타입으로 컴파일</td></tr>
+            <tr data-search="evalexpr object expr root snapshot"><td class="ret">object?</td><td class="col-method-name">EvalExpr</td><td class="params">(<span class="tp">string</span> expr, <span class="tp">object</span> root)</td><td class="col-desc">식을 root에서 평가해 객체 값을 반환 (스코프 파라미터 스냅샷용)</td></tr>
+            <tr data-search="parseliteral object raw targettype"><td class="ret">object?</td><td class="col-method-name">ParseLiteral</td><td class="params">(<span class="tp">string</span> raw, <span class="tp">Type</span> targetType)</td><td class="col-desc">리터럴 문자열을 대상 타입으로 변환 (스코프 값 파싱)</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Nested Type — CompiledPath</div>
+          <table class="api-table">
+            <tr data-search="getter func object"><td class="col-type">Func&lt;object, object?&gt;</td><td class="col-name">Getter <span class="accessor">required get init</span></td><td class="col-desc">root에서 경로 말단 값을 읽는 컴파일된 getter</td></tr>
+            <tr data-search="setter action object nullable"><td class="col-type">Action&lt;object, object?&gt;?</td><td class="col-name">Setter <span class="accessor">get init</span></td><td class="col-desc">말단이 settable일 때만 존재. null이면 단방향</td></tr>
+            <tr data-search="leaftype type"><td class="col-type">Type</td><td class="col-name">LeafType <span class="accessor">required get init</span></td><td class="col-desc">경로 말단 속성의 타입</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="class-GoComponentScope" class="class-card" data-search="gocomponentscope component parameter scope values types build">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature">
+          <span class="kw">public sealed class</span> <span class="nm">GoComponentScope</span>
+        </div>
+        <div class="class-desc">컴포넌트 인스턴스의 파라미터 스코프. 컴포넌트 내부 바인딩의 root 역할을 합니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="values dictionary string object"><td class="col-type">Dictionary&lt;string, object?&gt;</td><td class="col-name">Values <span class="accessor">get</span></td><td class="col-desc">파라미터 이름 → 값 (리터럴 파싱값 또는 바깥 바인딩 객체 참조)</td></tr>
+            <tr data-search="types dictionary string type"><td class="col-type">Dictionary&lt;string, Type&gt;</td><td class="col-name">Types <span class="accessor">get</span></td><td class="col-desc">파라미터 이름 → 선언 타입 (내부 경로 컴파일용)</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Methods</div>
+          <table class="api-table">
+            <tr data-search="build static gocomponentinstance outerroot"><td class="ret">GoComponentScope</td><td class="col-method-name"><span class="static-badge">static</span> Build</td><td class="params">(<span class="tp">GoComponentInstance</span> ci, <span class="tp">object</span> outerRoot)</td><td class="col-desc">인스턴스의 파라미터를 outerRoot 기준으로 평가해 스코프를 만듭니다</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="class-GoComponentTemplate" class="class-card" data-search="gocomponenttemplate component template registry params roots">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature">
+          <span class="kw">public sealed class</span> <span class="nm">GoComponentTemplate</span>
+        </div>
+        <div class="class-desc">역직렬화된 컴포넌트 템플릿 (파라미터 정의 + 내부 컨트롤 트리).</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="name string required"><td class="col-type">string</td><td class="col-name">Name <span class="accessor">required get init</span></td><td class="col-desc">컴포넌트 이름 (사용처 태그)</td></tr>
+            <tr data-search="params list gocomponentparam"><td class="col-type">List&lt;GoComponentParam&gt;</td><td class="col-name">Params <span class="accessor">required get init</span></td><td class="col-desc">파라미터 정의 목록</td></tr>
+            <tr data-search="roots list xelement"><td class="col-type">List&lt;XElement&gt;</td><td class="col-name">Roots <span class="accessor">required get init</span></td><td class="col-desc">내부 컨트롤 트리 루트(들). 인스턴스마다 복제됩니다</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Nested Static Class — Registry</div>
+          <table class="api-table">
+            <tr data-search="register void template duplicate"><td class="ret">void</td><td class="col-method-name"><span class="static-badge">static</span> Register</td><td class="params">(<span class="tp">GoComponentTemplate</span> t)</td><td class="col-desc">템플릿 등록. 동명이면 마지막 승</td></tr>
+            <tr data-search="tryget bool name template"><td class="ret">bool</td><td class="col-method-name"><span class="static-badge">static</span> TryGet</td><td class="params">(<span class="tp">string</span> name, <span class="tp">out GoComponentTemplate</span> template)</td><td class="col-desc">이름으로 조회</td></tr>
+            <tr data-search="clear void registry reload"><td class="ret">void</td><td class="col-method-name"><span class="static-badge">static</span> Clear</td><td class="params">()</td><td class="col-desc">레지스트리 비우기 (디자인 재로드/테스트)</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="class-GoComponentParam" class="class-card" data-search="gocomponentparam param name typename default resolvedtype resolvetype">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature">
+          <span class="kw">public sealed class</span> <span class="nm">GoComponentParam</span>
+        </div>
+        <div class="class-desc">컴포넌트 파라미터 정의 (<code>&lt;Param name type default&gt;</code>).</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="name string scope key"><td class="col-type">string</td><td class="col-name">Name <span class="accessor">required get init</span></td><td class="col-desc">파라미터 이름 (스코프 키, 내부 경로 첫 구간)</td></tr>
+            <tr data-search="typename string alias clr"><td class="col-type">string</td><td class="col-name">TypeName <span class="accessor">required get init</span></td><td class="col-desc">선언 타입 이름 (별칭 또는 CLR simple name)</td></tr>
+            <tr data-search="default string nullable"><td class="col-type">string?</td><td class="col-name">Default <span class="accessor">get init</span></td><td class="col-desc">사용처에서 생략 시 기본값 (없으면 null)</td></tr>
+            <tr data-search="resolvedtype type nullable"><td class="col-type">Type?</td><td class="col-name">ResolvedType <span class="accessor">get</span></td><td class="col-desc">해석된 CLR 타입 (실패 시 null)</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Methods</div>
+          <table class="api-table">
+            <tr data-search="resolvetype static type typename scan assemblies"><td class="ret">Type?</td><td class="col-method-name"><span class="static-badge">static</span> ResolveType</td><td class="params">(<span class="tp">string</span> typeName)</td><td class="col-desc">타입 이름을 CLR 타입으로 해석. 별칭(<code>string</code>/<code>int</code>/<code>long</code>/<code>short</code>/<code>byte</code>/<code>float</code>/<code>double</code>/<code>bool</code>) 우선, 그다음 로드된 어셈블리의 simple name 스캔</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="class-GoPageRef" class="class-card" data-search="gopageref master split page reference file">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature">
+          <span class="kw">public sealed class</span> <span class="nm">GoPageRef</span>
+        </div>
+        <div class="class-desc">Master.gudx가 별도 페이지 <code>.gudx</code> 파일을 가리키는 참조. <code>&lt;GoPageRef File="Pages/Dashboard.gudx"/&gt;</code>로 출력됩니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="file string nullable path"><td class="col-type">string?</td><td class="col-name">File <span class="accessor">get set</span></td><td class="col-desc">Master 파일 기준 상대 경로</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="class-GoWindowRef" class="class-card" data-search="gowindowref master split window reference file">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature">
+          <span class="kw">public sealed class</span> <span class="nm">GoWindowRef</span>
+        </div>
+        <div class="class-desc">Master.gudx가 별도 윈도우 <code>.gudx</code> 파일을 가리키는 참조. <code>&lt;GoWindowRef File="Windows/Settings.gudx"/&gt;</code>로 출력됩니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="file string nullable path"><td class="col-type">string?</td><td class="col-name">File <span class="accessor">get set</span></td><td class="col-desc">Master 파일 기준 상대 경로</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="class-GoChildAttribute" class="class-card" data-search="gochildattribute abstract child marker gochildlist gochildcells gochildwrappers gochildmap gochildsingle gochildresource">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature">
+          <span class="kw">public abstract class</span> <span class="nm">GoChildAttribute</span>
+          <span class="base"> : Attribute</span>
+        </div>
+        <div class="class-desc">Gudx 자식 마커 어트리뷰트의 추상 베이스. 변환기는 파생 어트리뷰트 <b>타입</b>으로 처리 패턴을 결정합니다. 커스텀 컨트롤을 직렬화에 참여시키려면 자식 보유 속성에 알맞은 파생 어트리뷰트를 붙이면 됩니다 (변환기 코드 수정 불필요).</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Derived Attributes</div>
+          <table class="api-table">
+            <tr data-search="gochildlistattribute p2 list igocontrol"><td class="col-type">P2</td><td class="col-name">GoChildListAttribute</td><td class="col-desc"><code>List&lt;T&gt; where T : IGoControl</code> — 그룹 엘리먼트 + 컨트롤 자식</td></tr>
+            <tr data-search="gochildcellsattribute p3 cell indexed"><td class="col-type">P3</td><td class="col-name">GoChildCellsAttribute</td><td class="col-desc"><code>IGoCellIndexedControlCollection</code> 구현 타입 — 자식마다 attached <code>Cell</code> 속성</td></tr>
+            <tr data-search="gochildwrappersattribute p4 wrapper list"><td class="col-type">P4</td><td class="col-name">GoChildWrappersAttribute</td><td class="col-desc"><code>List&lt;TWrapper&gt;</code> (TWrapper는 IGoControl 아님) — 래퍼 클래스명이 태그. 파생 구체 타입은 자동 탐색</td></tr>
+            <tr data-search="gochildmapattribute p5 dictionary keyed"><td class="col-type">P5</td><td class="col-name">GoChildMapAttribute</td><td class="col-desc"><code>Dictionary&lt;string, T&gt;</code> — <code>&lt;T Name="key"&gt;</code> 엔트리</td></tr>
+            <tr data-search="gochildsingleattribute b1 single child"><td class="col-type">B1</td><td class="col-name">GoChildSingleAttribute</td><td class="col-desc">단일 비컬렉션 자식 — 속성 이름이 기본 태그</td></tr>
+            <tr data-search="gochildresourceattribute b2 external file"><td class="col-type">B2</td><td class="col-name">GoChildResourceAttribute</td><td class="col-desc">외부 파일 참조 — 아래 카드 참조</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Remarks</div>
+          <table class="api-table">
+            <tr data-search="attributeusage property inherited multiple"><td class="col-desc" colspan="3">모두 <code>AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)</code>. 한 클래스가 여러 <code>[GoChild*]</code> 속성을 가질 수 있으며 변환기가 차례로 순회합니다. 변환기는 <code>Public | NonPublic</code> 인스턴스 속성을 모두 탐색하므로 private 속성도 마킹하면 직렬화됩니다.</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="class-GoChildResourceAttribute" class="class-card" data-search="gochildresourceattribute b2 resource tagname folder ext images fonts">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature">
+          <span class="kw">public sealed class</span> <span class="nm">GoChildResourceAttribute</span>
+          <span class="base"> : GoChildAttribute</span>
+        </div>
+        <div class="class-desc">속성을 외부 파일 리소스 참조로 표시 (B2). 바이트는 인라인(base64)하지 않고 디스크에 기록/로드합니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="tagname string element tag"><td class="col-type">string</td><td class="col-name">TagName <span class="accessor">get</span></td><td class="col-desc">리소스 엔트리마다 출력할 XML 태그 이름 (예: <code>Image</code>, <code>Font</code>)</td></tr>
+            <tr data-search="folder string nullable relative"><td class="col-type">string?</td><td class="col-name">Folder <span class="accessor">get set</span></td><td class="col-desc">Master <code>.gudx</code> 기준 리소스 폴더 (예: <code>resources</code>)</td></tr>
+            <tr data-search="ext string nullable extension"><td class="col-type">string?</td><td class="col-name">Ext <span class="accessor">get set</span></td><td class="col-desc">파일 확장자 힌트 (예: <code>.png</code>, <code>.ttf</code>)</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Example</div>
+          <table class="api-table">
+            <tr data-search="example images skimage png"><td class="col-desc" colspan="3"><code>[GoChildResource("Image", Folder = "resources", Ext = ".png")]</code> → <code>&lt;Images&gt;&lt;Image Name="logo" File="resources/logo.png"/&gt;&lt;/Images&gt;</code></td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="class-GudxTagNameAttribute" class="class-card" data-search="gudxtagnameattribute tag name override b1 theme">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature">
+          <span class="kw">public sealed class</span> <span class="nm">GudxTagNameAttribute</span>
+          <span class="base"> : Attribute</span>
+        </div>
+        <div class="class-desc">B1 단일 자식 속성의 XML 태그 이름을 재지정합니다. 기본은 속성 이름 (<code>LeftSideBar</code> → <code>&lt;LeftSideBar&gt;</code>).</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="name string tag"><td class="col-type">string</td><td class="col-name">Name <span class="accessor">get</span></td><td class="col-desc">사용할 태그 이름. 예: <code>CustomTheme</code> 속성에 <code>[GudxTagName("Theme")]</code> → <code>&lt;Theme&gt;</code></td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="class-GoNumericAliasAttribute" class="class-card" data-search="gonumericaliasattribute numeric alias generic wrapper close type">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature">
+          <span class="kw">public sealed class</span> <span class="nm">GoNumericAliasAttribute</span>
+          <span class="base"> : Attribute</span>
+        </div>
+        <div class="class-desc">1-arity 제네릭 래퍼 클래스에 붙여 numeric 타입 별칭 자동 등록을 표시합니다. 붙이면 <code>byte</code>/<code>sbyte</code>/<code>short</code>/<code>ushort</code>/<code>int</code>/<code>uint</code>/<code>long</code>/<code>ulong</code>/<code>float</code>/<code>double</code>/<code>decimal</code> 11종의 close generic 인스턴스와 별칭 태그(예: <code>GoDataGridNumberColumn_double</code>)가 자동 등록됩니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Remarks</div>
+          <table class="api-table">
+            <tr data-search="attributeusage class not inherited"><td class="col-desc" colspan="3"><code>AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)</code>. 붙이지 않은 1-arity 제네릭은 별칭 등록을 시도하지 않습니다(제약 위반 예외 회피).</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="class-GoPropertyAttribute" class="class-card" data-search="gopropertyattribute goproperty gosizeproperty gosizesproperty goimageproperty gofontnameproperty gomultilineproperty p1 scalar category order">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature">
+          <span class="kw">public class</span> <span class="nm">GoPropertyAttribute</span>
+          <span class="base"> : Attribute</span>
+        </div>
+        <div class="class-desc">네임스페이스 <code>Going.UI.Controls</code> — 스칼라 속성을 P1(XML 속성) 직렬화 대상으로 표시하고, 편집기에서의 카테고리·정렬 순서를 지정합니다. 이 계열이 없는 속성은 <code>.gudx</code>에 출력되지 않습니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Constructor / Properties</div>
+          <table class="api-table">
+            <tr data-search="constructor category order"><td class="col-type">ctor</td><td class="col-name">GoPropertyAttribute(string category, int order)</td><td class="col-desc">카테고리는 <code>PCategory</code> 상수 (<code>ID</code>/<code>Basic</code>/<code>Bounds</code>/<code>Control</code> …)</td></tr>
+            <tr data-search="category string"><td class="col-type">string</td><td class="col-name">Category <span class="accessor">get set</span></td><td class="col-desc">프로퍼티 카테고리</td></tr>
+            <tr data-search="order int"><td class="col-type">int</td><td class="col-name">Order <span class="accessor">get set</span></td><td class="col-desc">카테고리 내 정렬 순서</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Derived Attributes</div>
+          <table class="api-table">
+            <tr data-search="gosizepropertyattribute size string"><td class="col-type">class</td><td class="col-name">GoSizePropertyAttribute</td><td class="col-desc">값이 크기 표기 문자열 (<code>"100%"</code>, <code>"40px"</code>, <code>"*"</code>)</td></tr>
+            <tr data-search="gosizespropertyattribute sizes list"><td class="col-type">class</td><td class="col-name">GoSizesPropertyAttribute</td><td class="col-desc">값이 크기 표기 리스트 (<code>Columns</code>, <code>Rows</code>)</td></tr>
+            <tr data-search="goimagepropertyattribute image name"><td class="col-type">class</td><td class="col-name">GoImagePropertyAttribute</td><td class="col-desc">값이 <code>&lt;Images&gt;</code>에 등록된 이미지 이름</td></tr>
+            <tr data-search="gofontnamepropertyattribute font name"><td class="col-type">class</td><td class="col-name">GoFontNamePropertyAttribute</td><td class="col-desc">값이 <code>&lt;Fonts&gt;</code>에 등록된 폰트 이름</td></tr>
+            <tr data-search="gomultilinepropertyattribute multiline text"><td class="col-type">class</td><td class="col-name">GoMultiLinePropertyAttribute</td><td class="col-desc">값이 여러 줄 텍스트</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Remarks</div>
+          <table class="api-table">
+            <tr data-search="jsonignore skipped runtime alias"><td class="col-desc" colspan="3"><code>[JsonIgnore]</code>가 붙은 속성은 P1에서 제외됩니다 — <code>Bounds</code>에서 파생되는 <code>X</code>/<code>Y</code>/<code>Width</code>/<code>Height</code> 같은 런타임 별칭이 여기에 해당합니다. 읽고 쓸 수 있는 스칼라 타입(<code>bool</code>/<code>int</code>/<code>float</code>/<code>string</code>/enum/<code>Guid</code>/<code>TimeSpan</code>/<code>SKColor</code>/<code>SKRect</code>/<code>GoPadding</code>/<code>List&lt;string&gt;</code>/<code>Nullable&lt;T&gt;</code> + 숫자 타입)만 대상입니다.</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    </div>
+
+    <div id="no-results" class="no-results">검색 결과가 없습니다.</div>
+  </main>
+</div>
+<button class="back-to-top" id="back-to-top" title="맨 위로">↑</button>
+<script src="../js/app.js"></script>
+</body>
+</html>

@@ -25,7 +25,7 @@
       <span>Utils</span>
     </div>
     <h1 class="page-title">Utils</h1>
-    <p class="page-subtitle">네임스페이스 <code>Going.Basis.Utils</code> — 비동기 태스크, 외부 프로세스, 타이머, 정렬, 압축</p>
+    <p class="page-subtitle">네임스페이스 <code>Going.Basis.Utils</code> — 비동기 태스크, 외부 프로세스, 타이머, 정렬, 압축, Endian 변환</p>
 
     <!-- Class: EasyTask -->
     <div id="class-EasyTask" class="class-card" data-search="easytask class async loop task cancellation">
@@ -104,7 +104,7 @@
         <div class="member-section">
           <div class="member-section-title">Constructors</div>
           <table class="api-table">
-            <tr data-search="hirestimer constructor"><td class="col-method-name">HiResTimer</td><td class="params">()</td><td class="col-desc">기본 생성</td></tr>
+            <tr data-search="hirestimer constructor"><td class="col-method-name">HiResTimer</td><td class="params">()</td><td class="col-desc">기본 생성 (Interval = 1ms)</td></tr>
             <tr data-search="hirestimer constructor interval"><td class="col-method-name">HiResTimer</td><td class="params">(<span class="tp">float</span> interval)</td><td class="col-desc">주기 지정 생성 (ms)</td></tr>
           </table>
         </div>
@@ -112,7 +112,7 @@
           <div class="member-section-title">Properties</div>
           <table class="api-table">
             <tr data-search="interval float"><td class="col-type">float</td><td class="col-name">Interval <span class="accessor">get set</span></td><td class="col-desc">타이머 주기 (ms)</td></tr>
-            <tr data-search="ignoreelapsedthreshold float"><td class="col-type">float</td><td class="col-name">IgnoreElapsedThreshold <span class="accessor">get set</span></td><td class="col-desc">지연 무시 임계값. 이 값 초과 시 이벤트 건너뜀.</td></tr>
+            <tr data-search="ignoreelapsedthreshold float"><td class="col-type">float</td><td class="col-name">IgnoreElapsedThreshold <span class="accessor">get set</span></td><td class="col-desc">지연 무시 임계값(ms). 이 값 초과 시 이벤트 건너뜀. 기본값: Single.PositiveInfinity(건너뛰지 않음). 0 이하·NaN 설정 시 ArgumentOutOfRangeException</td></tr>
             <tr data-search="enabled bool"><td class="col-type">bool</td><td class="col-name">Enabled <span class="accessor">get set</span></td><td class="col-desc">타이머 활성 여부</td></tr>
           </table>
         </div>
@@ -137,7 +137,7 @@
     <!-- Class: NaturalSortComparer -->
     <div id="class-NaturalSortComparer" class="class-card" data-search="naturalsortcomparer class sort natural string compare">
       <div class="class-card-header" onclick="toggleCard(this)">
-        <div class="class-signature"><span class="kw">public class</span> <span class="nm">NaturalSortComparer</span> <span class="base">: IComparer&lt;string&gt;</span></div>
+        <div class="class-signature"><span class="kw">public partial class</span> <span class="nm">NaturalSortComparer</span> <span class="base">: IComparer&lt;string&gt;</span></div>
         <div class="class-desc">자연 정렬 비교자. 숫자 부분을 수치로 비교 ("item2" &lt; "item10").</div>
       </div>
       <div class="class-card-body">
@@ -199,6 +199,65 @@
             <tr data-search="decompressjson decompressionresult static"><td class="ret">static DecompressionResult&lt;T&gt;</td><td class="col-method-name">DecompressJson&lt;T&gt;</td><td class="params">(<span class="tp">string</span> base64Data, <span class="tp">bool</span> isCompressed, <span class="tp">int</span> originalSize)</td><td class="col-desc">Base64 데이터 해제 후 역직렬화</td></tr>
             <tr data-search="shouldcompress bool static"><td class="ret">static bool</td><td class="col-method-name">ShouldCompress</td><td class="params">(<span class="tp">int</span> dataSize)</td><td class="col-desc">데이터 크기 기반 압축 여부 판단</td></tr>
             <tr data-search="getcompressioninfo string static"><td class="ret">static string</td><td class="col-method-name">GetCompressionInfo</td><td class="params">(<span class="tp">int</span> originalSize, <span class="tp">int</span> processedSize, <span class="tp">bool</span> isCompressed)</td><td class="col-desc">압축 결과 설명 문자열</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- Enum: EndianOrder -->
+    <div id="enum-EndianOrder" class="class-card" data-search="endianorder enum abcd badc cdab dcba modbus wordorder byteorder">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public enum</span> <span class="nm">EndianOrder</span></div>
+        <div class="class-desc">32비트 값을 Modbus 워드 배열로 변환할 때 사용할 바이트/워드 순서. A, B, C, D는 원본 값을 big-endian 바이트 순서로 보았을 때의 각 바이트.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Values</div>
+          <div class="enum-values">
+            <span class="enum-value">ABCD <span class="val-eq">(Big-endian. bytes: A B C D, words: AB CD)</span></span>
+            <span class="enum-value">BADC <span class="val-eq">(Byte-swap. bytes: B A D C, words: BA DC)</span></span>
+            <span class="enum-value">CDAB <span class="val-eq">(Word-swap. bytes: C D A B, words: CD AB)</span></span>
+            <span class="enum-value">DCBA <span class="val-eq">(Little-endian. bytes: D C B A, words: DC BA)</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- Class: EndianParser -->
+    <div id="class-EndianParser" class="class-card" data-search="endianparser class static modbus word endian towords fromwords tryfromwords getwordcount">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public static class</span> <span class="nm">EndianParser</span></div>
+        <div class="class-desc">숫자 값을 Modbus 16비트 워드 배열로 변환하거나 다시 원래 값으로 복원한다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Static Methods — ToWords</div>
+          <table class="api-table">
+            <tr data-search="towords ushort static"><td class="ret">static int[]</td><td class="col-method-name">ToWords</td><td class="params">(<span class="tp">ushort</span> value, <span class="tp">EndianOrder</span> order = EndianOrder.ABCD)</td><td class="col-desc">16비트 부호 없는 정수를 1개 워드로 변환</td></tr>
+            <tr data-search="towords short static"><td class="ret">static int[]</td><td class="col-method-name">ToWords</td><td class="params">(<span class="tp">short</span> value, <span class="tp">EndianOrder</span> order = EndianOrder.ABCD)</td><td class="col-desc">16비트 부호 있는 정수를 1개 워드로 변환</td></tr>
+            <tr data-search="towords int static"><td class="ret">static int[]</td><td class="col-method-name">ToWords</td><td class="params">(<span class="tp">int</span> value, <span class="tp">EndianOrder</span> order = EndianOrder.ABCD)</td><td class="col-desc">32비트 부호 있는 정수를 2개 워드로 변환</td></tr>
+            <tr data-search="towords uint static"><td class="ret">static int[]</td><td class="col-method-name">ToWords</td><td class="params">(<span class="tp">uint</span> value, <span class="tp">EndianOrder</span> order = EndianOrder.ABCD)</td><td class="col-desc">32비트 부호 없는 정수를 2개 워드로 변환</td></tr>
+            <tr data-search="towords float static"><td class="ret">static int[]</td><td class="col-method-name">ToWords</td><td class="params">(<span class="tp">float</span> value, <span class="tp">EndianOrder</span> order = EndianOrder.ABCD)</td><td class="col-desc">32비트 부동소수점 값을 2개 워드로 변환</td></tr>
+            <tr data-search="towords generic static t"><td class="ret">static int[]</td><td class="col-method-name">ToWords&lt;T&gt;</td><td class="params">(<span class="tp">T</span> value, <span class="tp">EndianOrder</span> order = EndianOrder.ABCD) <span class="kw">where</span> T : struct</td><td class="col-desc">지원되는 숫자 값을 워드 배열로 변환. 지원 타입: short/ushort/int/uint/float</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Static Methods — FromWords</div>
+          <table class="api-table">
+            <tr data-search="fromwords generic static t"><td class="ret">static T</td><td class="col-method-name">FromWords&lt;T&gt;</td><td class="params">(<span class="tp">IReadOnlyList&lt;int&gt;</span> words, <span class="tp">EndianOrder</span> order = EndianOrder.ABCD) <span class="kw">where</span> T : struct</td><td class="col-desc">워드 배열에서 지정 타입 값을 복원. 지원 타입: short/ushort/int/uint/float</td></tr>
+            <tr data-search="fromwords generic static t index"><td class="ret">static T</td><td class="col-method-name">FromWords&lt;T&gt;</td><td class="params">(<span class="tp">IReadOnlyList&lt;int&gt;</span> words, <span class="tp">int</span> index, <span class="tp">EndianOrder</span> order = EndianOrder.ABCD) <span class="kw">where</span> T : struct</td><td class="col-desc">워드 배열의 지정 인덱스부터 값을 복원</td></tr>
+            <tr data-search="tryfromwords generic static bool out"><td class="ret">static bool</td><td class="col-method-name">TryFromWords&lt;T&gt;</td><td class="params">(<span class="tp">IReadOnlyList&lt;int&gt;</span> words, <span class="tp">EndianOrder</span> order, <span class="tp">out T</span> value) <span class="kw">where</span> T : struct</td><td class="col-desc">워드 배열에서 값 복원을 시도. 실패 시 false를 반환하고 value는 default</td></tr>
+            <tr data-search="tryfromwords generic static bool out index"><td class="ret">static bool</td><td class="col-method-name">TryFromWords&lt;T&gt;</td><td class="params">(<span class="tp">IReadOnlyList&lt;int&gt;</span> words, <span class="tp">int</span> index, <span class="tp">EndianOrder</span> order, <span class="tp">out T</span> value) <span class="kw">where</span> T : struct</td><td class="col-desc">워드 배열의 지정 인덱스부터 값 복원을 시도. 실패 시 false를 반환하고 value는 default</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Static Methods — 기타</div>
+          <table class="api-table">
+            <tr data-search="getwordcount generic static int"><td class="ret">static int</td><td class="col-method-name">GetWordCount&lt;T&gt;</td><td class="params">() <span class="kw">where</span> T : struct</td><td class="col-desc">지정 타입을 표현하는 데 필요한 Modbus 워드 수 반환</td></tr>
           </table>
         </div>
       </div>

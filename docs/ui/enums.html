@@ -25,19 +25,20 @@
       <span>Enums</span>
     </div>
     <h1 class="page-title">Enums</h1>
-    <p class="page-subtitle">네임스페이스 <code>Going.UI.Enums</code> — UI 프레임워크 열거형 타입 모음</p>
+    <p class="page-subtitle">Going.UI 전체의 public 열거형(enum) 모음 — 대부분 <code>Going.UI.Enums</code> 네임스페이스에 있으며, 일부는 사용처(Datas/Controls/Utils/Managers)에 함께 정의되어 있습니다.</p>
+    <p style="color:var(--comment); margin-bottom:1.5rem;">FlowSystem 전용 열거형(PortDirection, PortType, PortFlow, FlowState, ObjectRotate)은 <a href="flowsystem.html">FlowSystem</a> 페이지에서 다룹니다.</p>
 
     <div id="enum-GoContentAlignment" class="class-card" data-search="gocontentalignment enum alignment content">
       <div class="class-card-header" onclick="toggleCard(this)">
         <div class="class-signature"><span class="kw">public enum</span> <span class="nm">GoContentAlignment</span></div>
-        <div class="class-desc">컨텐츠 정렬 위치 (9방향)</div>
+        <div class="class-desc">콘텐츠의 수직 및 수평 정렬 방식을 조합하여 정의</div>
       </div>
       <div class="class-card-body">
         <div class="member-section"><div class="member-section-title">Values</div>
           <div class="enum-values">
-            <span class="enum-value">TopLeft</span><span class="enum-value">TopCenter</span><span class="enum-value">TopRight</span>
-            <span class="enum-value">MiddleLeft</span><span class="enum-value">MiddleCenter</span><span class="enum-value">MiddleRight</span>
-            <span class="enum-value">BottomLeft</span><span class="enum-value">BottomCenter</span><span class="enum-value">BottomRight</span>
+            <span class="enum-value">TopLeft <span class="val-eq">= 0</span></span><span class="enum-value">TopCenter <span class="val-eq">= 1</span></span><span class="enum-value">TopRight <span class="val-eq">= 2</span></span>
+            <span class="enum-value">MiddleLeft <span class="val-eq">= 3</span></span><span class="enum-value">MiddleCenter <span class="val-eq">= 4</span></span><span class="enum-value">MiddleRight <span class="val-eq">= 5</span></span>
+            <span class="enum-value">BottomLeft <span class="val-eq">= 6</span></span><span class="enum-value">BottomCenter <span class="val-eq">= 7</span></span><span class="enum-value">BottomRight <span class="val-eq">= 8</span></span>
           </div>
         </div>
       </div>
@@ -48,10 +49,11 @@
     <div id="enum-GoVerticalAlignment" class="class-card" data-search="goverticalalignment enum vertical">
       <div class="class-card-header" onclick="toggleCard(this)">
         <div class="class-signature"><span class="kw">public enum</span> <span class="nm">GoVerticalAlignment</span></div>
+        <div class="class-desc">수직 정렬 방식</div>
       </div>
       <div class="class-card-body">
         <div class="member-section"><div class="member-section-title">Values</div>
-          <div class="enum-values"><span class="enum-value">Top</span><span class="enum-value">Middle</span><span class="enum-value">Bottom</span></div>
+          <div class="enum-values"><span class="enum-value">Top <span class="val-eq">= 0</span></span><span class="enum-value">Middle <span class="val-eq">= 1</span></span><span class="enum-value">Bottom <span class="val-eq">= 2</span></span></div>
         </div>
       </div>
     </div>
@@ -61,10 +63,11 @@
     <div id="enum-GoHorizonAlignment" class="class-card" data-search="gohorizonalignment enum horizontal">
       <div class="class-card-header" onclick="toggleCard(this)">
         <div class="class-signature"><span class="kw">public enum</span> <span class="nm">GoHorizonAlignment</span></div>
+        <div class="class-desc">수평 정렬 방식</div>
       </div>
       <div class="class-card-body">
         <div class="member-section"><div class="member-section-title">Values</div>
-          <div class="enum-values"><span class="enum-value">Left</span><span class="enum-value">Center</span><span class="enum-value">Right</span></div>
+          <div class="enum-values"><span class="enum-value">Left <span class="val-eq">= 0</span></span><span class="enum-value">Center <span class="val-eq">= 1</span></span><span class="enum-value">Right <span class="val-eq">= 2</span></span></div>
         </div>
       </div>
     </div>
@@ -78,7 +81,7 @@
       </div>
       <div class="class-card-body">
         <div class="member-section"><div class="member-section-title">Values</div>
-          <div class="enum-values"><span class="enum-value">Left</span><span class="enum-value">Right</span><span class="enum-value">Up</span><span class="enum-value">Down</span></div>
+          <div class="enum-values"><span class="enum-value">Left <span class="val-eq">= 0</span></span><span class="enum-value">Right <span class="val-eq">= 1</span></span><span class="enum-value">Up <span class="val-eq">= 2</span></span><span class="enum-value">Down <span class="val-eq">= 3</span></span></div>
         </div>
       </div>
     </div>
@@ -88,11 +91,28 @@
     <div id="enum-GoDirectionHV" class="class-card" data-search="godirectionhv enum horizon vertical">
       <div class="class-card-header" onclick="toggleCard(this)">
         <div class="class-signature"><span class="kw">public enum</span> <span class="nm">GoDirectionHV</span></div>
-        <div class="class-desc">가로/세로 방향</div>
+        <div class="class-desc">수평 또는 수직 방향</div>
       </div>
       <div class="class-card-body">
         <div class="member-section"><div class="member-section-title">Values</div>
-          <div class="enum-values"><span class="enum-value">Horizon</span><span class="enum-value">Vertical</span></div>
+          <div class="enum-values"><span class="enum-value">Horizon <span class="val-eq">= 0</span></span><span class="enum-value">Vertical <span class="val-eq">= 1</span></span></div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <div id="enum-GoStackAlignment" class="class-card" data-search="gostackalignment enum stack near center far fill cross-axis gostackpanel">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public enum</span> <span class="nm">GoStackAlignment</span></div>
+        <div class="class-desc">스택 레이아웃(GoStackPanel)의 교차축(cross-axis) 정렬 방식</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section"><div class="member-section-title">Values</div>
+          <div class="enum-values">
+            <span class="enum-value">Near <span class="val-eq">= 0</span></span><span class="enum-value">Center <span class="val-eq">= 1</span></span><span class="enum-value">Far <span class="val-eq">= 2</span></span><span class="enum-value">Fill <span class="val-eq">= 3</span></span>
+          </div>
+          <p style="color:var(--comment); font-size:.85em; margin-top:.5rem;">Near: 교차축 시작(세로 스택=왼쪽, 가로 스택=위), 자식 크기 유지 · Center: 가운데, 자식 크기 유지 · Far: 교차축 끝(세로 스택=오른쪽, 가로 스택=아래), 자식 크기 유지 · Fill: 교차축을 가득 채움(자식 크기 무시, Margin 인셋)</p>
         </div>
       </div>
     </div>
@@ -102,11 +122,39 @@
     <div id="enum-GoDockStyle" class="class-card" data-search="godockstyle enum dock fill layout">
       <div class="class-card-header" onclick="toggleCard(this)">
         <div class="class-signature"><span class="kw">public enum</span> <span class="nm">GoDockStyle</span></div>
-        <div class="class-desc">컨트롤 Dock 스타일</div>
+        <div class="class-desc">컨트롤의 도킹 스타일</div>
       </div>
       <div class="class-card-body">
         <div class="member-section"><div class="member-section-title">Values</div>
-          <div class="enum-values"><span class="enum-value">None</span><span class="enum-value">Left</span><span class="enum-value">Top</span><span class="enum-value">Right</span><span class="enum-value">Bottom</span><span class="enum-value">Fill</span></div>
+          <div class="enum-values"><span class="enum-value">None <span class="val-eq">= 0</span></span><span class="enum-value">Left <span class="val-eq">= 1</span></span><span class="enum-value">Top <span class="val-eq">= 2</span></span><span class="enum-value">Right <span class="val-eq">= 3</span></span><span class="enum-value">Bottom <span class="val-eq">= 4</span></span><span class="enum-value">Fill <span class="val-eq">= 5</span></span></div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <div id="enum-TopPortPosition" class="class-card" data-search="topportposition enum tank top port position left center right">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public enum</span> <span class="nm">TopPortPosition</span></div>
+        <div class="class-desc">탱크(FsTank) 상단 포트 위치</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section"><div class="member-section-title">Values</div>
+          <div class="enum-values"><span class="enum-value">TopLeft <span class="val-eq">= 0</span></span><span class="enum-value">TopCenter <span class="val-eq">= 1</span></span><span class="enum-value">TopRight <span class="val-eq">= 2</span></span></div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <div id="enum-BottomPortPosition" class="class-card" data-search="bottomportposition enum tank bottom port position left center right">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public enum</span> <span class="nm">BottomPortPosition</span></div>
+        <div class="class-desc">탱크(FsTank) 하단 포트 위치</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section"><div class="member-section-title">Values</div>
+          <div class="enum-values"><span class="enum-value">BottomLeft <span class="val-eq">= 0</span></span><span class="enum-value">BottomCenter <span class="val-eq">= 1</span></span><span class="enum-value">BottomRight <span class="val-eq">= 2</span></span></div>
         </div>
       </div>
     </div>
@@ -116,11 +164,11 @@
     <div id="enum-GoFontStyle" class="class-card" data-search="gofontstyle enum font style bold italic">
       <div class="class-card-header" onclick="toggleCard(this)">
         <div class="class-signature"><span class="kw">public enum</span> <span class="nm">GoFontStyle</span></div>
-        <div class="class-desc">폰트 스타일</div>
+        <div class="class-desc">글꼴 스타일</div>
       </div>
       <div class="class-card-body">
         <div class="member-section"><div class="member-section-title">Values</div>
-          <div class="enum-values"><span class="enum-value">Normal</span><span class="enum-value">Italic</span><span class="enum-value">Bold</span><span class="enum-value">BoldItalic</span></div>
+          <div class="enum-values"><span class="enum-value">Normal <span class="val-eq">= 0</span></span><span class="enum-value">Italic <span class="val-eq">= 1</span></span><span class="enum-value">Bold <span class="val-eq">= 2</span></span><span class="enum-value">BoldItalic <span class="val-eq">= 3</span></span></div>
         </div>
       </div>
     </div>
@@ -130,11 +178,11 @@
     <div id="enum-GoAutoFontSize" class="class-card" data-search="goautofontsize enum auto size xs xl">
       <div class="class-card-header" onclick="toggleCard(this)">
         <div class="class-signature"><span class="kw">public enum</span> <span class="nm">GoAutoFontSize</span></div>
-        <div class="class-desc">자동 폰트 크기 조절 레벨</div>
+        <div class="class-desc">자동 글꼴 크기 프리셋</div>
       </div>
       <div class="class-card-body">
         <div class="member-section"><div class="member-section-title">Values</div>
-          <div class="enum-values"><span class="enum-value">NotUsed</span><span class="enum-value">XXS</span><span class="enum-value">XS</span><span class="enum-value">S</span><span class="enum-value">M</span><span class="enum-value">L</span><span class="enum-value">XL</span><span class="enum-value">XXL</span></div>
+          <div class="enum-values"><span class="enum-value">NotUsed <span class="val-eq">= 0</span></span><span class="enum-value">XXS <span class="val-eq">= 1</span></span><span class="enum-value">XS <span class="val-eq">= 2</span></span><span class="enum-value">S <span class="val-eq">= 3</span></span><span class="enum-value">M <span class="val-eq">= 4</span></span><span class="enum-value">L <span class="val-eq">= 5</span></span><span class="enum-value">XL <span class="val-eq">= 6</span></span><span class="enum-value">XXL <span class="val-eq">= 7</span></span></div>
         </div>
       </div>
     </div>
@@ -144,11 +192,28 @@
     <div id="enum-GoRoundType" class="class-card" data-search="goroundtype enum round corner all none">
       <div class="class-card-header" onclick="toggleCard(this)">
         <div class="class-signature"><span class="kw">public enum</span> <span class="nm">GoRoundType</span></div>
-        <div class="class-desc">모서리 둥글기 적용 위치</div>
+        <div class="class-desc">모서리 둥글기 유형</div>
       </div>
       <div class="class-card-body">
         <div class="member-section"><div class="member-section-title">Values</div>
-          <div class="enum-values"><span class="enum-value">Rect</span><span class="enum-value">All</span><span class="enum-value">L</span><span class="enum-value">R</span><span class="enum-value">T</span><span class="enum-value">B</span><span class="enum-value">LT</span><span class="enum-value">RT</span><span class="enum-value">LB</span><span class="enum-value">RB</span><span class="enum-value">Ellipse</span></div>
+          <div class="enum-values"><span class="enum-value">Rect <span class="val-eq">= 0</span></span><span class="enum-value">All <span class="val-eq">= 1</span></span><span class="enum-value">L <span class="val-eq">= 2</span></span><span class="enum-value">R <span class="val-eq">= 3</span></span><span class="enum-value">T <span class="val-eq">= 4</span></span><span class="enum-value">B <span class="val-eq">= 5</span></span><span class="enum-value">LT <span class="val-eq">= 6</span></span><span class="enum-value">RT <span class="val-eq">= 7</span></span><span class="enum-value">LB <span class="val-eq">= 8</span></span><span class="enum-value">RB <span class="val-eq">= 9</span></span><span class="enum-value">Ellipse <span class="val-eq">= 10</span></span></div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <div id="enum-GsFillType" class="class-card" data-search="gsfilltype enum fill solid linear radial gradient gsshape">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public enum</span> <span class="nm">GsFillType</span></div>
+        <div class="class-desc">GsShape(도형)의 채우기 방식</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section"><div class="member-section-title">Values</div>
+          <div class="enum-values">
+            <span class="enum-value">Solid <span class="val-eq">= 0</span></span><span class="enum-value">Linear <span class="val-eq">= 1</span></span><span class="enum-value">Radial <span class="val-eq">= 2</span></span>
+          </div>
+          <p style="color:var(--comment); font-size:.85em; margin-top:.5rem;">Solid: 단색 · Linear: 선형 그라데이션(Fill → FillColor2, GradientAngle 방향) · Radial: 방사형 그라데이션(중심 Fill → 외곽 FillColor2)</p>
         </div>
       </div>
     </div>
@@ -158,11 +223,11 @@
     <div id="enum-GoDialogResult" class="class-card" data-search="godialogresult enum ok cancel yes no dialog">
       <div class="class-card-header" onclick="toggleCard(this)">
         <div class="class-signature"><span class="kw">public enum</span> <span class="nm">GoDialogResult</span></div>
-        <div class="class-desc">다이얼로그 버튼 클릭 결과</div>
+        <div class="class-desc">대화 상자의 반환 결과</div>
       </div>
       <div class="class-card-body">
         <div class="member-section"><div class="member-section-title">Values</div>
-          <div class="enum-values"><span class="enum-value">Ok</span><span class="enum-value">Cancel</span><span class="enum-value">Yes</span><span class="enum-value">No</span></div>
+          <div class="enum-values"><span class="enum-value">Ok <span class="val-eq">= 0</span></span><span class="enum-value">Cancel <span class="val-eq">= 1</span></span><span class="enum-value">Yes <span class="val-eq">= 2</span></span><span class="enum-value">No <span class="val-eq">= 3</span></span></div>
         </div>
       </div>
     </div>
@@ -176,49 +241,95 @@
       </div>
       <div class="class-card-body">
         <div class="member-section"><div class="member-section-title">Values</div>
-          <div class="enum-values"><span class="enum-value">Left</span><span class="enum-value">Right</span><span class="enum-value">Middle</span></div>
+          <div class="enum-values"><span class="enum-value">Left <span class="val-eq">= 0</span></span><span class="enum-value">Right <span class="val-eq">= 1</span></span><span class="enum-value">Middle <span class="val-eq">= 2</span></span></div>
         </div>
       </div>
     </div>
 
     <hr class="class-separator">
 
-    <div id="enum-GoItemSelectionMode" class="class-card" data-search="goitemselectionmode enum selection single multiple none">
+    <div id="enum-GoItemSelectionMode" class="class-card" data-search="goitemselectionmode enum selection single multiple none multipc">
       <div class="class-card-header" onclick="toggleCard(this)">
         <div class="class-signature"><span class="kw">public enum</span> <span class="nm">GoItemSelectionMode</span></div>
-        <div class="class-desc">리스트/그리드 항목 선택 모드</div>
+        <div class="class-desc">항목 선택 모드</div>
       </div>
       <div class="class-card-body">
         <div class="member-section"><div class="member-section-title">Values</div>
-          <div class="enum-values"><span class="enum-value">None</span><span class="enum-value">Single</span><span class="enum-value">Multi</span><span class="enum-value">MultiPC</span></div>
+          <div class="enum-values"><span class="enum-value">None <span class="val-eq">= 0</span></span><span class="enum-value">Single <span class="val-eq">= 1</span></span><span class="enum-value">Multi <span class="val-eq">= 2</span></span><span class="enum-value">MultiPC <span class="val-eq">= 3</span></span></div>
+          <p style="color:var(--comment); font-size:.85em; margin-top:.5rem;">MultiPC: PC 스타일 다중 선택 (Ctrl/Shift 키 조합)</p>
         </div>
       </div>
     </div>
 
     <hr class="class-separator">
 
-    <div id="enum-GoButtonsMode" class="class-card" data-search="gobuttonsmode enum buttons single multiple toggle">
+    <div id="enum-GoDataGridSelectionMode" class="class-card" data-search="godatagridselectionmode enum datagrid selection none selector single multi multipc">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public enum</span> <span class="nm">GoDataGridSelectionMode</span></div>
+        <div class="class-desc">데이터 그리드(GoDataGrid)의 행 선택 모드</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section"><div class="member-section-title">Values</div>
+          <div class="enum-values"><span class="enum-value">None <span class="val-eq">= 0</span></span><span class="enum-value">Selector <span class="val-eq">= 1</span></span><span class="enum-value">Single <span class="val-eq">= 2</span></span><span class="enum-value">Multi <span class="val-eq">= 3</span></span><span class="enum-value">MultiPC <span class="val-eq">= 4</span></span></div>
+          <p style="color:var(--comment); font-size:.85em; margin-top:.5rem;">Selector: 체크박스 셀렉터를 통한 선택 · MultiPC: PC 스타일 다중 선택 (Ctrl/Shift 키 조합)</p>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <div id="enum-GoDataGridColumnSortState" class="class-card" data-search="godatagridcolumnsortstate enum datagrid sort none asc desc">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public enum</span> <span class="nm">GoDataGridColumnSortState</span></div>
+        <div class="class-desc">데이터 그리드 열의 정렬 상태</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section"><div class="member-section-title">Values</div>
+          <div class="enum-values"><span class="enum-value">None <span class="val-eq">= 0</span></span><span class="enum-value">Asc <span class="val-eq">= 1</span></span><span class="enum-value">Desc <span class="val-eq">= 2</span></span></div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <div id="enum-GoButtonsMode" class="class-card" data-search="gobuttonsmode enum buttons single multiple toggle radio">
       <div class="class-card-header" onclick="toggleCard(this)">
         <div class="class-signature"><span class="kw">public enum</span> <span class="nm">GoButtonsMode</span></div>
-        <div class="class-desc">GoButtons 컨트롤 선택 모드</div>
+        <div class="class-desc">버튼 그룹(GoButtons)의 동작 모드</div>
       </div>
       <div class="class-card-body">
         <div class="member-section"><div class="member-section-title">Values</div>
-          <div class="enum-values"><span class="enum-value">Button</span><span class="enum-value">Toggle</span><span class="enum-value">Radio</span></div>
+          <div class="enum-values"><span class="enum-value">Button <span class="val-eq">= 0</span></span><span class="enum-value">Toggle <span class="val-eq">= 1</span></span><span class="enum-value">Radio <span class="val-eq">= 2</span></span></div>
+          <p style="color:var(--comment); font-size:.85em; margin-top:.5rem;">Button: 일반 버튼 · Toggle: 클릭 시 선택/해제 전환 · Radio: 하나만 선택 가능</p>
         </div>
       </div>
     </div>
 
     <hr class="class-separator">
 
-    <div id="enum-GoButtonFillStyle" class="class-card" data-search="gobuttonfillstyle enum flat gradient button fill">
+    <div id="enum-GoButtonFillStyle" class="class-card" data-search="gobuttonfillstyle enum flat gradient button fill emboss">
       <div class="class-card-header" onclick="toggleCard(this)">
         <div class="class-signature"><span class="kw">public enum</span> <span class="nm">GoButtonFillStyle</span></div>
-        <div class="class-desc">버튼 배경 채우기 스타일</div>
+        <div class="class-desc">버튼의 채우기 스타일 (Going.UI.Datas 네임스페이스에 정의)</div>
       </div>
       <div class="class-card-body">
         <div class="member-section"><div class="member-section-title">Values</div>
-          <div class="enum-values"><span class="enum-value">Flat</span><span class="enum-value">Emboss</span><span class="enum-value">Gradient</span></div>
+          <div class="enum-values"><span class="enum-value">Flat <span class="val-eq">= 0</span></span><span class="enum-value">Emboss <span class="val-eq">= 1</span></span><span class="enum-value">Gradient <span class="val-eq">= 2</span></span></div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <div id="enum-GoBarGraphMode" class="class-card" data-search="gobargraphmode enum bar graph stack list gographseries">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public enum</span> <span class="nm">GoBarGraphMode</span></div>
+        <div class="class-desc">막대 그래프(GoBarGraph)의 표시 모드 (Going.UI.Datas 네임스페이스에 정의)</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section"><div class="member-section-title">Values</div>
+          <div class="enum-values"><span class="enum-value">Stack <span class="val-eq">= 0</span></span><span class="enum-value">List <span class="val-eq">= 1</span></span></div>
+          <p style="color:var(--comment); font-size:.85em; margin-top:.5rem;">Stack: 시리즈를 누적하여 표시 · List: 시리즈를 나란히 표시</p>
         </div>
       </div>
     </div>
@@ -228,50 +339,217 @@
     <div id="enum-GoDateTimeKind" class="class-card" data-search="godatetimekind enum datetime calendar date time">
       <div class="class-card-header" onclick="toggleCard(this)">
         <div class="class-signature"><span class="kw">public enum</span> <span class="nm">GoDateTimeKind</span></div>
-        <div class="class-desc">날짜/시간 선택기 표시 종류</div>
+        <div class="class-desc">날짜/시간 표시 유형</div>
       </div>
       <div class="class-card-body">
         <div class="member-section"><div class="member-section-title">Values</div>
-          <div class="enum-values"><span class="enum-value">DateTime</span><span class="enum-value">Date</span><span class="enum-value">Time</span></div>
+          <div class="enum-values"><span class="enum-value">DateTime <span class="val-eq">= 0</span></span><span class="enum-value">Date <span class="val-eq">= 1</span></span><span class="enum-value">Time <span class="val-eq">= 2</span></span></div>
         </div>
       </div>
     </div>
 
     <hr class="class-separator">
 
-    <div id="enum-GoImageScaleMode" class="class-card" data-search="goimagescalemode enum image scale stretch fit">
+    <div id="enum-GoImageScaleMode" class="class-card" data-search="goimagescalemode enum image scale stretch fit zoom">
       <div class="class-card-header" onclick="toggleCard(this)">
         <div class="class-signature"><span class="kw">public enum</span> <span class="nm">GoImageScaleMode</span></div>
-        <div class="class-desc">이미지 스케일 모드</div>
+        <div class="class-desc">이미지 크기 조정 모드</div>
       </div>
       <div class="class-card-body">
         <div class="member-section"><div class="member-section-title">Values</div>
-          <div class="enum-values"><span class="enum-value">Real</span><span class="enum-value">CenterImage</span><span class="enum-value">Stretch</span><span class="enum-value">Zoom</span></div>
+          <div class="enum-values"><span class="enum-value">Real <span class="val-eq">= 0</span></span><span class="enum-value">CenterImage <span class="val-eq">= 1</span></span><span class="enum-value">Stretch <span class="val-eq">= 2</span></span><span class="enum-value">Zoom <span class="val-eq">= 3</span></span></div>
+          <p style="color:var(--comment); font-size:.85em; margin-top:.5rem;">Real: 원본 크기 그대로 · CenterImage: 원본 크기 유지, 중앙 배치 · Stretch: 컨트롤 크기에 맞게 늘림 · Zoom: 비율 유지하며 확대/축소</p>
         </div>
       </div>
     </div>
 
     <hr class="class-separator">
 
-    <div id="enum-GoKeys" class="class-card" data-search="gokeys enum keyboard keys virtual">
+    <div id="enum-ProgressDirection" class="class-card" data-search="progressdirection enum progress direction lefttoright righttoleft bottomtotop toptobottom goprogress">
       <div class="class-card-header" onclick="toggleCard(this)">
-        <div class="class-signature"><span class="kw">public enum</span> <span class="nm">GoKeys</span></div>
-        <div class="class-desc">키보드 키 코드 열거형. KeyDown/KeyUp 이벤트에서 사용.</div>
+        <div class="class-signature"><span class="kw">public enum</span> <span class="nm">ProgressDirection</span></div>
+        <div class="class-desc">프로그레스바(GoProgress)의 진행 방향 (Going.UI.Controls 네임스페이스에 정의)</div>
       </div>
       <div class="class-card-body">
-        <div class="member-section"><div class="member-section-title">Values (주요 키)</div>
+        <div class="member-section"><div class="member-section-title">Values</div>
+          <div class="enum-values"><span class="enum-value">LeftToRight <span class="val-eq">= 0</span></span><span class="enum-value">RightToLeft <span class="val-eq">= 1</span></span><span class="enum-value">BottomToTop <span class="val-eq">= 2</span></span><span class="enum-value">TopToBottom <span class="val-eq">= 3</span></span></div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <div id="enum-GoStepBarMode" class="class-card" data-search="gostepbarmode enum stepbar story point gostepbar">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public enum</span> <span class="nm">GoStepBarMode</span></div>
+        <div class="class-desc">GoStepBar 표시 모드 (Going.UI.Controls 네임스페이스에 정의)</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section"><div class="member-section-title">Values</div>
+          <div class="enum-values"><span class="enum-value">Story <span class="val-eq">= 0</span></span><span class="enum-value">Point <span class="val-eq">= 1</span></span></div>
+          <p style="color:var(--comment); font-size:.85em; margin-top:.5rem;">Story: 지나온 단계 모두 채움(1..Step) · Point: 현재 단계 한 개만 채움(Step)</p>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <div id="enum-ScrollMode" class="class-card" data-search="scrollmode enum scroll horizon vertical both godatagrid">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public enum</span> <span class="nm">ScrollMode</span></div>
+        <div class="class-desc">스크롤 모드 (Going.UI.Utils 네임스페이스에 정의). 예: GoDataGrid.ScrollMode</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section"><div class="member-section-title">Values</div>
+          <div class="enum-values"><span class="enum-value">Horizon <span class="val-eq">= 0</span></span><span class="enum-value">Vertical <span class="val-eq">= 1</span></span><span class="enum-value">Both <span class="val-eq">= 2</span></span></div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <div id="enum-ScrollDirection" class="class-card" data-search="scrolldirection enum scroll horizon vertical">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public enum</span> <span class="nm">ScrollDirection</span></div>
+        <div class="class-desc">스크롤 방향 (Going.UI.Utils 네임스페이스에 정의, 내부 Scroll 유틸리티에서 사용)</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section"><div class="member-section-title">Values</div>
+          <div class="enum-values"><span class="enum-value">Horizon <span class="val-eq">= 0</span></span><span class="enum-value">Vertical <span class="val-eq">= 1</span></span></div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <div id="enum-AnimationAccel" class="class-card" data-search="animationaccel enum animation accel linear acl dcl">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public enum</span> <span class="nm">AnimationAccel</span></div>
+        <div class="class-desc">애니메이션 가속도 타입 (Going.UI.Utils 네임스페이스에 정의)</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section"><div class="member-section-title">Values</div>
+          <div class="enum-values"><span class="enum-value">Linear <span class="val-eq">= 0</span></span><span class="enum-value">ACL <span class="val-eq">= 1</span></span><span class="enum-value">DCL <span class="val-eq">= 2</span></span></div>
+          <p style="color:var(--comment); font-size:.85em; margin-top:.5rem;">Linear: 선형 보간 · ACL: 가속 보간 · DCL: 감속 보간</p>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <div id="enum-AnimationType" class="class-card" data-search="animationtype enum animation slidev slideh drill fade none transition">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public enum</span> <span class="nm">AnimationType</span></div>
+        <div class="class-desc">애니메이션 전환 타입 (Going.UI.Utils 네임스페이스에 정의)</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section"><div class="member-section-title">Values</div>
+          <div class="enum-values"><span class="enum-value">SlideV <span class="val-eq">= 0</span></span><span class="enum-value">SlideH <span class="val-eq">= 1</span></span><span class="enum-value">Drill <span class="val-eq">= 2</span></span><span class="enum-value">Fade <span class="val-eq">= 3</span></span><span class="enum-value">None <span class="val-eq">= 4</span></span></div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <div id="enum-InputType" class="class-card" data-search="inputtype enum input string number goinputeventer">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public enum</span> <span class="nm">InputType</span></div>
+        <div class="class-desc">입력 타입 (Going.UI.Managers 네임스페이스, GoInputEventer에서 정의)</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section"><div class="member-section-title">Values</div>
+          <div class="enum-values"><span class="enum-value">String <span class="val-eq">= 0</span></span><span class="enum-value">Number <span class="val-eq">= 1</span></span></div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <div id="enum-GoKeyModifiers" class="class-card" data-search="gokeymodifiers enum flags keyboard modifier shift control alt super capslock numlock">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">[Flags] public enum</span> <span class="nm">GoKeyModifiers</span></div>
+        <div class="class-desc">키보드 보조 키(modifier key) 플래그. 비트 조합으로 여러 키를 동시에 표현.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section"><div class="member-section-title">Values</div>
           <div class="enum-values">
-            <span class="enum-value">None</span><span class="enum-value">Back</span><span class="enum-value">Tab</span><span class="enum-value">Return</span>
-            <span class="enum-value">Shift</span><span class="enum-value">Control</span><span class="enum-value">Alt</span><span class="enum-value">Escape</span>
-            <span class="enum-value">Space</span><span class="enum-value">Delete</span><span class="enum-value">Insert</span><span class="enum-value">Home</span><span class="enum-value">End</span>
-            <span class="enum-value">Left / Right / Up / Down</span>
-            <span class="enum-value">D0~D9</span><span class="enum-value">A~Z</span>
-            <span class="enum-value">F1~F25</span>
-            <span class="enum-value">NumPad0~NumPad9</span>
-            <span class="enum-value">LeftShift / RightShift</span>
-            <span class="enum-value">LeftControl / RightControl</span>
-            <span class="enum-value">LeftAlt / RightAlt</span>
+            <span class="enum-value">Shift <span class="val-eq">= 0x0001</span></span>
+            <span class="enum-value">Control <span class="val-eq">= 0x0002</span></span>
+            <span class="enum-value">Alt <span class="val-eq">= 0x0004</span></span>
+            <span class="enum-value">Super <span class="val-eq">= 0x0008</span></span>
+            <span class="enum-value">CapsLock <span class="val-eq">= 0x0010</span></span>
+            <span class="enum-value">NumLock <span class="val-eq">= 0x0020</span></span>
           </div>
+          <p style="color:var(--comment); font-size:.85em; margin-top:.5rem;">Super: Windows/Command 키</p>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <div id="enum-GoKeys" class="class-card" data-search="gokeys enum keyboard keys virtual keycode">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public enum</span> <span class="nm">GoKeys</span> <span class="base">: int</span></div>
+        <div class="class-desc">키보드 키 코드 열거형. KeyDown/KeyUp 이벤트에서 사용. (GLFW 키 코드 기반)</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section"><div class="member-section-title">Values (전체 목록 — 연속된 구간은 범위로 축약. 원본은 GoKeys.cs)</div>
+          <div class="enum-values">
+            <span class="enum-value">Unknown <span class="val-eq">= -1</span></span>
+            <span class="enum-value">Space <span class="val-eq">= 32</span></span>
+            <span class="enum-value">Apostrophe <span class="val-eq">= 39</span></span>
+            <span class="enum-value">Comma <span class="val-eq">= 44</span></span>
+            <span class="enum-value">Minus <span class="val-eq">= 45</span></span>
+            <span class="enum-value">Period <span class="val-eq">= 46</span></span>
+            <span class="enum-value">Slash <span class="val-eq">= 47</span></span>
+            <span class="enum-value">D0 ~ D9 <span class="val-eq">= 48~57</span></span>
+            <span class="enum-value">Semicolon <span class="val-eq">= 59</span></span>
+            <span class="enum-value">Equal <span class="val-eq">= 61</span></span>
+            <span class="enum-value">A ~ Z <span class="val-eq">= 65~90</span></span>
+            <span class="enum-value">LeftBracket <span class="val-eq">= 91</span></span>
+            <span class="enum-value">Backslash <span class="val-eq">= 92</span></span>
+            <span class="enum-value">RightBracket <span class="val-eq">= 93</span></span>
+            <span class="enum-value">GraveAccent <span class="val-eq">= 96</span></span>
+            <span class="enum-value">Escape <span class="val-eq">= 256</span></span>
+            <span class="enum-value">Enter <span class="val-eq">= 257</span></span>
+            <span class="enum-value">Tab <span class="val-eq">= 258</span></span>
+            <span class="enum-value">Backspace <span class="val-eq">= 259</span></span>
+            <span class="enum-value">Insert <span class="val-eq">= 260</span></span>
+            <span class="enum-value">Delete <span class="val-eq">= 261</span></span>
+            <span class="enum-value">Right <span class="val-eq">= 262</span></span>
+            <span class="enum-value">Left <span class="val-eq">= 263</span></span>
+            <span class="enum-value">Down <span class="val-eq">= 264</span></span>
+            <span class="enum-value">Up <span class="val-eq">= 265</span></span>
+            <span class="enum-value">PageUp <span class="val-eq">= 266</span></span>
+            <span class="enum-value">PageDown <span class="val-eq">= 267</span></span>
+            <span class="enum-value">Home <span class="val-eq">= 268</span></span>
+            <span class="enum-value">End <span class="val-eq">= 269</span></span>
+            <span class="enum-value">CapsLock <span class="val-eq">= 280</span></span>
+            <span class="enum-value">ScrollLock <span class="val-eq">= 281</span></span>
+            <span class="enum-value">NumLock <span class="val-eq">= 282</span></span>
+            <span class="enum-value">PrintScreen <span class="val-eq">= 283</span></span>
+            <span class="enum-value">Pause <span class="val-eq">= 284</span></span>
+            <span class="enum-value">F1 ~ F25 <span class="val-eq">= 290~314</span></span>
+            <span class="enum-value">KeyPad0 ~ KeyPad9 <span class="val-eq">= 320~329</span></span>
+            <span class="enum-value">KeyPadDecimal <span class="val-eq">= 330</span></span>
+            <span class="enum-value">KeyPadDivide <span class="val-eq">= 331</span></span>
+            <span class="enum-value">KeyPadMultiply <span class="val-eq">= 332</span></span>
+            <span class="enum-value">KeyPadSubtract <span class="val-eq">= 333</span></span>
+            <span class="enum-value">KeyPadAdd <span class="val-eq">= 334</span></span>
+            <span class="enum-value">KeyPadEnter <span class="val-eq">= 335</span></span>
+            <span class="enum-value">KeyPadEqual <span class="val-eq">= 336</span></span>
+            <span class="enum-value">LeftShift <span class="val-eq">= 340</span></span>
+            <span class="enum-value">LeftControl <span class="val-eq">= 341</span></span>
+            <span class="enum-value">LeftAlt <span class="val-eq">= 342</span></span>
+            <span class="enum-value">LeftSuper <span class="val-eq">= 343</span></span>
+            <span class="enum-value">RightShift <span class="val-eq">= 344</span></span>
+            <span class="enum-value">RightControl <span class="val-eq">= 345</span></span>
+            <span class="enum-value">RightAlt <span class="val-eq">= 346</span></span>
+            <span class="enum-value">RightSuper <span class="val-eq">= 347</span></span>
+            <span class="enum-value">Menu <span class="val-eq">= 348</span></span>
+            <span class="enum-value">LastKey <span class="val-eq">= Menu (348)</span></span>
+          </div>
+          <p style="color:var(--comment); font-size:.85em; margin-top:.5rem;">보조 키(Shift/Control/Alt 등의 눌림 상태) 조합은 GoKeys가 아닌 <a href="#enum-GoKeyModifiers">GoKeyModifiers</a> 플래그로 별도 전달됩니다.</p>
         </div>
       </div>
     </div>

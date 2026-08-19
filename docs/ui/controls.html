@@ -27,8 +27,50 @@
     <h1 class="page-title">Controls</h1>
     <p class="page-subtitle">네임스페이스 <code>Going.UI.Controls</code> — 모든 UI 컨트롤</p>
 
+    <!-- Interface: IGoControl -->
+    <div id="class-IGoControl" class="class-card" data-search="igocontrol interface control contract bounds dock margin visible enabled fire">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public interface</span> <span class="nm">IGoControl</span></div>
+        <div class="class-desc">Going.UI 컨트롤의 공통 인터페이스. 위치, 크기, 이벤트 처리 등의 기본 계약을 정의합니다. GoControl이 구현합니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="id guid"><td class="col-type">Guid</td><td class="col-name">Id <span class="accessor">get init</span></td><td class="col-desc">컨트롤의 고유 식별자</td></tr>
+            <tr data-search="name string"><td class="col-type">string?</td><td class="col-name">Name <span class="accessor">get set</span></td><td class="col-desc">컨트롤 이름</td></tr>
+            <tr data-search="bounds skrect"><td class="col-type">SKRect</td><td class="col-name">Bounds <span class="accessor">get set</span></td><td class="col-desc">컨트롤의 경계 영역</td></tr>
+            <tr data-search="margin gopadding"><td class="col-type">GoPadding</td><td class="col-name">Margin <span class="accessor">get set</span></td><td class="col-desc">컨트롤의 외부 여백</td></tr>
+            <tr data-search="dock godockstyle"><td class="col-type">GoDockStyle</td><td class="col-name">Dock <span class="accessor">get set</span></td><td class="col-desc">컨트롤의 도킹 스타일</td></tr>
+            <tr data-search="visible bool"><td class="col-type">bool</td><td class="col-name">Visible <span class="accessor">get set</span></td><td class="col-desc">컨트롤 표시 여부</td></tr>
+            <tr data-search="enabled bool"><td class="col-type">bool</td><td class="col-name">Enabled <span class="accessor">get set</span></td><td class="col-desc">컨트롤 활성화 여부</td></tr>
+            <tr data-search="x y left top right bottom width height float"><td class="col-type">float</td><td class="col-name">X / Y / Left / Top / Right / Bottom / Width / Height <span class="accessor">get set</span></td><td class="col-desc">좌표·크기 (직렬화 제외)</td></tr>
+            <tr data-search="firstrender bool"><td class="col-type">bool</td><td class="col-name">FirstRender <span class="accessor">get</span></td><td class="col-desc">첫 번째 렌더링 여부 (직렬화 제외)</td></tr>
+            <tr data-search="parent igocontainer"><td class="col-type">IGoContainer?</td><td class="col-name">Parent <span class="accessor">get</span></td><td class="col-desc">부모 컨테이너 (직렬화 제외)</td></tr>
+            <tr data-search="design godesign"><td class="col-type">GoDesign?</td><td class="col-name">Design <span class="accessor">get</span></td><td class="col-desc">소속된 GoDesign 인스턴스 (직렬화 제외)</td></tr>
+            <tr data-search="screenx screeny float"><td class="col-type">float</td><td class="col-name">ScreenX / ScreenY <span class="accessor">get</span></td><td class="col-desc">화면 기준 좌표 (직렬화 제외)</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Methods — Fire* (프레임워크 내부에서 호출)</div>
+          <table class="api-table">
+            <tr data-search="fireinit void"><td class="ret">void</td><td class="col-method-name">FireInit</td><td class="params">(<span class="tp">GoDesign?</span> design)</td><td class="col-desc">컨트롤을 초기화합니다</td></tr>
+            <tr data-search="firedraw void"><td class="ret">void</td><td class="col-method-name">FireDraw</td><td class="params">(<span class="tp">SKCanvas</span> canvas, <span class="tp">GoTheme</span> thm)</td><td class="col-desc">컨트롤을 그립니다</td></tr>
+            <tr data-search="fireupdate void"><td class="ret">void</td><td class="col-method-name">FireUpdate</td><td class="params">()</td><td class="col-desc">컨트롤 상태를 업데이트합니다</td></tr>
+            <tr data-search="fireshow firehide void"><td class="ret">void</td><td class="col-method-name">FireShow / FireHide</td><td class="params">()</td><td class="col-desc">표시/숨김 시 호출</td></tr>
+            <tr data-search="firemousedown void"><td class="ret">void</td><td class="col-method-name">FireMouseDown / FireMouseUp / FireMouseDoubleClick</td><td class="params">(<span class="tp">float</span> x, <span class="tp">float</span> y, <span class="tp">GoMouseButton</span> button)</td><td class="col-desc">마우스 버튼 이벤트를 발생시킵니다</td></tr>
+            <tr data-search="firemousemove void"><td class="ret">void</td><td class="col-method-name">FireMouseMove</td><td class="params">(<span class="tp">float</span> x, <span class="tp">float</span> y)</td><td class="col-desc">마우스 이동 이벤트를 발생시킵니다</td></tr>
+            <tr data-search="firemousewheel void"><td class="ret">void</td><td class="col-method-name">FireMouseWheel</td><td class="params">(<span class="tp">float</span> x, <span class="tp">float</span> y, <span class="tp">float</span> delta)</td><td class="col-desc">마우스 휠 이벤트를 발생시킵니다</td></tr>
+            <tr data-search="firekeydown void"><td class="ret">void</td><td class="col-method-name">FireKeyDown / FireKeyUp</td><td class="params">(<span class="tp">bool</span> Shift, <span class="tp">bool</span> Control, <span class="tp">bool</span> Alt, <span class="tp">GoKeys</span> key)</td><td class="col-desc">키 이벤트를 발생시킵니다</td></tr>
+            <tr data-search="dispose void"><td class="ret">void</td><td class="col-method-name">Dispose</td><td class="params">()</td><td class="col-desc">리소스를 해제합니다</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
     <!-- Class: GoControl (base) -->
-    <div id="class-GoControl" class="class-card" data-search="gocontrol class base control bounds dock margin visible enabled events">
+    <div id="class-GoControl" class="class-card" data-search="gocontrol class base control bounds dock margin visible enabled events bind unbind binding">
       <div class="class-card-header" onclick="toggleCard(this)">
         <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoControl</span> <span class="base">: IGoControl, IDisposable</span></div>
         <div class="class-desc">모든 컨트롤의 기반 클래스. 위치·크기·도킹·이벤트 처리 등 공통 기능을 제공합니다.</div>
@@ -41,6 +83,7 @@
             <tr data-search="name string"><td class="col-type">string?</td><td class="col-name">Name <span class="accessor">get set</span></td><td class="col-desc">컨트롤 이름</td></tr>
             <tr data-search="visible bool"><td class="col-type">bool</td><td class="col-name">Visible <span class="accessor">get set</span></td><td class="col-desc">표시 여부. 기본값: true</td></tr>
             <tr data-search="enabled bool"><td class="col-type">bool</td><td class="col-name">Enabled <span class="accessor">get set</span></td><td class="col-desc">활성화 여부. 기본값: true</td></tr>
+            <tr data-search="selectable bool"><td class="col-type">bool</td><td class="col-name">Selectable <span class="accessor">get protected set</span></td><td class="col-desc">디자이너에서 선택 가능 여부. 기본값: false (서브클래스가 설정)</td></tr>
             <tr data-search="uselongclick bool"><td class="col-type">bool</td><td class="col-name">UseLongClick <span class="accessor">get set</span></td><td class="col-desc">롱클릭 사용 여부. 기본값: false</td></tr>
             <tr data-search="longclicktime int"><td class="col-type">int?</td><td class="col-name">LongClickTime <span class="accessor">get set</span></td><td class="col-desc">롱클릭 시간(ms). null이면 GlobalLongClickTime(1000ms) 사용</td></tr>
             <tr data-search="globallongclicktime int static"><td class="col-type">static int</td><td class="col-name">GlobalLongClickTime <span class="accessor">get set</span></td><td class="col-desc">전역 롱클릭 시간(ms). 기본값: 1000</td></tr>
@@ -53,7 +96,7 @@
             <tr data-search="bounds skrect"><td class="col-type">SKRect</td><td class="col-name">Bounds <span class="accessor">get set</span></td><td class="col-desc">전체 영역 (Left, Top, Right, Bottom)</td></tr>
             <tr data-search="x float"><td class="col-type">float</td><td class="col-name">X / Y / Width / Height / Left / Top / Right / Bottom <span class="accessor">get set</span></td><td class="col-desc">개별 위치·크기 속성</td></tr>
             <tr data-search="dock godockstyle"><td class="col-type">GoDockStyle</td><td class="col-name">Dock <span class="accessor">get set</span></td><td class="col-desc">도킹 스타일. 기본값: None</td></tr>
-            <tr data-search="margin gopadding"><td class="col-type">GoPadding</td><td class="col-name">Margin <span class="accessor">get set</span></td><td class="col-desc">외부 여백. 기본값: GoPadding(3,3,3,3)</td></tr>
+            <tr data-search="margin gopadding"><td class="col-type">GoPadding</td><td class="col-name">Margin <span class="accessor">get set</span></td><td class="col-desc">외부 여백. 기본값: GoPadding(4,4,4,4)</td></tr>
             <tr data-search="screenx float"><td class="col-type">float</td><td class="col-name">ScreenX / ScreenY <span class="accessor">get</span></td><td class="col-desc">화면 절대 좌표 (직렬화 제외)</td></tr>
           </table>
         </div>
@@ -63,6 +106,8 @@
             <tr data-search="parent igocontainer"><td class="col-type">IGoContainer?</td><td class="col-name">Parent <span class="accessor">get</span></td><td class="col-desc">부모 컨테이너</td></tr>
             <tr data-search="design godesign"><td class="col-type">GoDesign?</td><td class="col-name">Design <span class="accessor">get</span></td><td class="col-desc">소속된 GoDesign 인스턴스</td></tr>
             <tr data-search="firstrender bool"><td class="col-type">bool</td><td class="col-name">FirstRender <span class="accessor">get</span></td><td class="col-desc">최초 렌더링 여부</td></tr>
+            <tr data-search="isbindingsuppressed bool protected"><td class="col-type">protected internal virtual bool</td><td class="col-name">IsBindingSuppressed <span class="accessor">get</span></td><td class="col-desc">true를 반환하도록 재정의하면 바인딩 펌프(소스→컨트롤) 적용을 일시 중단합니다. 기본값: false</td></tr>
+            <tr data-search="cliptobounds bool protected"><td class="col-type">protected internal virtual bool</td><td class="col-name">ClipToBounds <span class="accessor">get</span></td><td class="col-desc">true면 렌더링을 Bounds로 클리핑합니다. 기본값: true</td></tr>
           </table>
         </div>
         <div class="member-section">
@@ -78,6 +123,16 @@
             <tr data-search="mousewheel event"><td class="event-args">EventHandler&lt;GoMouseWheelEventArgs&gt;</td><td class="col-method-name">MouseWheel</td><td class="col-desc">마우스 휠 시</td></tr>
             <tr data-search="drawn event"><td class="event-args">EventHandler&lt;GoDrawnEventArgs&gt;</td><td class="col-method-name">Drawn</td><td class="col-desc">그리기 완료 시. GoDrawnEventArgs: Canvas, Theme</td></tr>
             <tr data-search="dragdrop event"><td class="event-args">EventHandler&lt;GoDragEventArgs&gt;</td><td class="col-method-name">DragDrop</td><td class="col-desc">드래그앤드롭 수신 시</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Binding 확장 메서드 (Going.UI.Bindings.GoControlBindingExtensions)</div>
+          <table class="api-table">
+            <tr data-search="bind void extension"><td class="ret">void</td><td class="col-method-name">Bind&lt;TC, TV&gt;</td><td class="params">(<span class="tp">Expression&lt;Func&lt;TC, TV&gt;&gt;</span> ctrlProp, <span class="tp">Func&lt;TV&gt;</span> getter)</td><td class="col-desc">컨트롤 속성을 소스 식에 단방향 바인딩 (매 FireUpdate에 소스→컨트롤)</td></tr>
+            <tr data-search="bind void extension setter"><td class="ret">void</td><td class="col-method-name">Bind&lt;TC, TV&gt;</td><td class="params">(<span class="tp">...</span> ctrlProp, getter, <span class="tp">Action&lt;TV&gt;</span> setter)</td><td class="col-desc">양방향 바인딩. 소스→컨트롤은 매 FireUpdate, 컨트롤→소스는 값 변경 감지 시</td></tr>
+            <tr data-search="bind void extension command timeout"><td class="ret">void</td><td class="col-method-name">Bind&lt;TC, TV&gt;</td><td class="params">(<span class="tp">...</span> ctrlProp, getter, setter, <span class="tp">int</span> timeout = 500)</td><td class="col-desc">통신 명령처럼 setter 이후 getter 반영이 지연되는 속성용 바인딩</td></tr>
+            <tr data-search="unbind void extension"><td class="ret">void</td><td class="col-method-name">Unbind&lt;TC, TV&gt;</td><td class="params">(<span class="tp">Expression&lt;Func&lt;TC, TV&gt;&gt;</span> ctrlProp)</td><td class="col-desc">지정한 속성의 바인딩을 해제</td></tr>
+            <tr data-search="unbindall void extension"><td class="ret">void</td><td class="col-method-name">UnbindAll</td><td class="params">()</td><td class="col-desc">컨트롤의 모든 바인딩을 해제</td></tr>
           </table>
         </div>
       </div>
@@ -103,12 +158,12 @@
             <tr data-search="fontname string"><td class="col-type">string</td><td class="col-name">FontName / FontStyle / FontSize <span class="accessor">get set</span></td><td class="col-desc">텍스트 폰트 설정</td></tr>
             <tr data-search="textcolor string"><td class="col-type">string</td><td class="col-name">TextColor <span class="accessor">get set</span></td><td class="col-desc">텍스트 색상. 기본값: "Fore"</td></tr>
             <tr data-search="buttoncolor string"><td class="col-type">string</td><td class="col-name">ButtonColor <span class="accessor">get set</span></td><td class="col-desc">버튼 배경 색상. 기본값: "Base3"</td></tr>
+            <tr data-search="buttoncolor2 string"><td class="col-type">string?</td><td class="col-name">ButtonColor2 <span class="accessor">get set</span></td><td class="col-desc">버튼 배경 그라데이션 끝 색상 (세로). null/빈 값이면 단색</td></tr>
             <tr data-search="bordercolor string"><td class="col-type">string</td><td class="col-name">BorderColor <span class="accessor">get set</span></td><td class="col-desc">테두리 색상. 기본값: "Base3"</td></tr>
             <tr data-search="round goroundtype"><td class="col-type">GoRoundType</td><td class="col-name">Round <span class="accessor">get set</span></td><td class="col-desc">모서리 스타일. 기본값: All</td></tr>
-            <tr data-search="borderwidth float"><td class="col-type">float</td><td class="col-name">BorderWidth <span class="accessor">get set</span></td><td class="col-desc">테두리 두께. 기본값: 1</td></tr>
+            <tr data-search="borderwidth float"><td class="col-type">float</td><td class="col-name">BorderWidth <span class="accessor">get set</span></td><td class="col-desc">테두리 두께. 기본값: 1.5</td></tr>
             <tr data-search="backgrounddraw bool"><td class="col-type">bool</td><td class="col-name">BackgroundDraw <span class="accessor">get set</span></td><td class="col-desc">배경 그리기 여부. 기본값: true</td></tr>
             <tr data-search="borderonly bool"><td class="col-type">bool</td><td class="col-name">BorderOnly <span class="accessor">get set</span></td><td class="col-desc">테두리만 그리기 여부. 기본값: false</td></tr>
-            <tr data-search="fillstyle gobuttonfillstyle"><td class="col-type">GoButtonFillStyle</td><td class="col-name">FillStyle <span class="accessor">get set</span></td><td class="col-desc">버튼 채우기 스타일. 기본값: Flat</td></tr>
             <tr data-search="contentalignment gocontentalignment"><td class="col-type">GoContentAlignment</td><td class="col-name">ContentAlignment <span class="accessor">get set</span></td><td class="col-desc">내용 정렬. 기본값: MiddleCenter</td></tr>
             <tr data-search="autofontsize goautofontsize"><td class="col-type">GoAutoFontSize</td><td class="col-name">AutoFontSize / AutoIconSize <span class="accessor">get set</span></td><td class="col-desc">높이 기반 자동 크기 조절. 기본값: NotUsed</td></tr>
           </table>
@@ -201,8 +256,9 @@
             <tr data-search="buttoncolor string"><td class="col-type">string</td><td class="col-name">ButtonColor <span class="accessor">get set</span></td><td class="col-desc">버튼 배경 색상. 기본값: "Base3"</td></tr>
             <tr data-search="checkedbuttoncolor string"><td class="col-type">string</td><td class="col-name">CheckedButtonColor <span class="accessor">get set</span></td><td class="col-desc">체크 시 배경 색상. 기본값: "Select"</td></tr>
             <tr data-search="bordercolor string"><td class="col-type">string</td><td class="col-name">BorderColor / CheckedBorderColor <span class="accessor">get set</span></td><td class="col-desc">테두리 / 체크 시 테두리 색상</td></tr>
+            <tr data-search="buttoncolor2 string"><td class="col-type">string?</td><td class="col-name">ButtonColor2 <span class="accessor">get set</span></td><td class="col-desc">버튼 배경 그라데이션 끝 색상 (세로). null/빈 값이면 단색</td></tr>
             <tr data-search="round goroundtype"><td class="col-type">GoRoundType</td><td class="col-name">Round <span class="accessor">get set</span></td><td class="col-desc">모서리 스타일. 기본값: All</td></tr>
-            <tr data-search="borderwidth float"><td class="col-type">float</td><td class="col-name">BorderWidth <span class="accessor">get set</span></td><td class="col-desc">테두리 두께. 기본값: 1</td></tr>
+            <tr data-search="borderwidth float"><td class="col-type">float</td><td class="col-name">BorderWidth <span class="accessor">get set</span></td><td class="col-desc">테두리 두께. 기본값: 1.5</td></tr>
             <tr data-search="fillstyle"><td class="col-type">GoButtonFillStyle</td><td class="col-name">FillStyle <span class="accessor">get set</span></td><td class="col-desc">채우기 스타일. 기본값: Flat</td></tr>
             <tr data-search="checked bool"><td class="col-type">bool</td><td class="col-name">Checked <span class="accessor">get set</span></td><td class="col-desc">선택 상태. true 시 같은 부모의 다른 라디오 자동 해제</td></tr>
             <tr data-search="autofontsize"><td class="col-type">GoAutoFontSize</td><td class="col-name">AutoFontSize / AutoIconSize <span class="accessor">get set</span></td><td class="col-desc">자동 크기 조절. 기본값: NotUsed</td></tr>
@@ -273,6 +329,7 @@
             <tr data-search="ontextcolor string"><td class="col-type">string</td><td class="col-name">OnTextColor / OffTextColor <span class="accessor">get set</span></td><td class="col-desc">ON/OFF 텍스트 색상. 기본값: "Fore" / "Base5"</td></tr>
             <tr data-search="boxcolor string"><td class="col-type">string</td><td class="col-name">BoxColor <span class="accessor">get set</span></td><td class="col-desc">스위치 배경 색상. 기본값: "Base1"</td></tr>
             <tr data-search="bordercolor string"><td class="col-type">string</td><td class="col-name">BorderColor <span class="accessor">get set</span></td><td class="col-desc">테두리 색상. 기본값: "Base3"</td></tr>
+            <tr data-search="borderwidth float"><td class="col-type">float</td><td class="col-name">BorderWidth <span class="accessor">get set</span></td><td class="col-desc">테두리 두께. 기본값: 1.5</td></tr>
             <tr data-search="switchcolor string"><td class="col-type">string</td><td class="col-name">SwitchColor <span class="accessor">get set</span></td><td class="col-desc">스위치 핸들 색상. 기본값: "Base3"</td></tr>
             <tr data-search="oniconcolor string"><td class="col-type">string</td><td class="col-name">OnIconColor / OffIconColor <span class="accessor">get set</span></td><td class="col-desc">ON/OFF 아이콘 색상. 기본값: "lime" / "red"</td></tr>
             <tr data-search="autofontsize"><td class="col-type">GoAutoFontSize</td><td class="col-name">AutoFontSize / AutoIconSize <span class="accessor">get set</span></td><td class="col-desc">자동 크기 조절. 기본값: NotUsed</td></tr>
@@ -324,10 +381,7 @@
             <tr data-search="icondirection godirectionhv"><td class="col-type">GoDirectionHV</td><td class="col-name">IconDirection <span class="accessor">get set</span></td><td class="col-desc">아이콘 배치 방향</td></tr>
             <tr data-search="text string"><td class="col-type">string</td><td class="col-name">Text <span class="accessor">get set</span></td><td class="col-desc">슬라이더 라벨. 기본값: "slider"</td></tr>
             <tr data-search="fontname string"><td class="col-type">string</td><td class="col-name">FontName <span class="accessor">get set</span></td><td class="col-desc">폰트 이름. 기본값: "나눔고딕"</td></tr>
-            <tr data-search="fontstyle"><td class="col-type">GoFontStyle</td><td class="col-name">FontStyle <span class="accessor">get set</span></td><td class="col-desc">폰트 스타일. 기본값: Normal</td></tr>
             <tr data-search="fontsize float"><td class="col-type">float</td><td class="col-name">FontSize <span class="accessor">get set</span></td><td class="col-desc">폰트 크기. 기본값: 12</td></tr>
-            <tr data-search="autofontsize goautofontsize"><td class="col-type">GoAutoFontSize</td><td class="col-name">AutoFontSize <span class="accessor">get set</span></td><td class="col-desc">자동 폰트 크기 조절</td></tr>
-            <tr data-search="autoiconsize goautofontsize"><td class="col-type">GoAutoFontSize</td><td class="col-name">AutoIconSize <span class="accessor">get set</span></td><td class="col-desc">자동 아이콘 크기 조절</td></tr>
           </table>
         </div>
         <div class="member-section">
@@ -335,9 +389,10 @@
           <table class="api-table">
             <tr data-search="textcolor string"><td class="col-type">string</td><td class="col-name">TextColor <span class="accessor">get set</span></td><td class="col-desc">텍스트 색상. 기본값: "Fore"</td></tr>
             <tr data-search="boxcolor string"><td class="col-type">string</td><td class="col-name">BoxColor <span class="accessor">get set</span></td><td class="col-desc">배경 색상. 기본값: "Back"</td></tr>
-            <tr data-search="slidercolor string"><td class="col-type">string</td><td class="col-name">SliderColor <span class="accessor">get set</span></td><td class="col-desc">슬라이더 트랙 색상. 기본값: "Base5"</td></tr>
-            <tr data-search="progresscolor string"><td class="col-type">string</td><td class="col-name">ProgressColor <span class="accessor">get set</span></td><td class="col-desc">진행 바 색상. 기본값: "Base1"</td></tr>
+            <tr data-search="slidercolor string"><td class="col-type">string</td><td class="col-name">SliderColor <span class="accessor">get set</span></td><td class="col-desc">슬라이더 핸들 및 진행 바 색상. 기본값: "Base5"</td></tr>
+            <tr data-search="progresscolor string"><td class="col-type">string</td><td class="col-name">ProgressColor <span class="accessor">get set</span></td><td class="col-desc">트랙 배경 색상. 기본값: "Base1"</td></tr>
             <tr data-search="bordercolor string"><td class="col-type">string</td><td class="col-name">BorderColor <span class="accessor">get set</span></td><td class="col-desc">테두리 색상. 기본값: "danger"</td></tr>
+            <tr data-search="borderwidth float"><td class="col-type">float</td><td class="col-name">BorderWidth <span class="accessor">get set</span></td><td class="col-desc">테두리 두께. 기본값: 1.5</td></tr>
           </table>
         </div>
         <div class="member-section">
@@ -419,6 +474,7 @@
             <tr data-search="slidercolor string"><td class="col-type">string</td><td class="col-name">SliderColor <span class="accessor">get set</span></td><td class="col-desc">핸들 색상. 기본값: "Base5"</td></tr>
             <tr data-search="progresscolor string"><td class="col-type">string</td><td class="col-name">ProgressColor <span class="accessor">get set</span></td><td class="col-desc">범위 진행 색상. 기본값: "Base1"</td></tr>
             <tr data-search="bordercolor string"><td class="col-type">string</td><td class="col-name">BorderColor <span class="accessor">get set</span></td><td class="col-desc">테두리 색상. 기본값: "danger"</td></tr>
+            <tr data-search="borderwidth float"><td class="col-type">float</td><td class="col-name">BorderWidth <span class="accessor">get set</span></td><td class="col-desc">테두리 두께. 기본값: 1.5</td></tr>
             <tr data-search="round goroundtype"><td class="col-type">GoRoundType</td><td class="col-name">Round <span class="accessor">get set</span></td><td class="col-desc">모서리 둥글기. 기본값: All</td></tr>
             <tr data-search="direction godirectionhv"><td class="col-type">GoDirectionHV</td><td class="col-name">Direction <span class="accessor">get set</span></td><td class="col-desc">슬라이더 방향. 기본값: Horizon</td></tr>
             <tr data-search="backgrounddraw bool"><td class="col-type">bool</td><td class="col-name">BackgroundDraw <span class="accessor">get set</span></td><td class="col-desc">배경 그리기 여부</td></tr>
@@ -475,15 +531,20 @@
             <tr data-search="iconstring string"><td class="col-type">string?</td><td class="col-name">IconString / IconSize / IconGap <span class="accessor">get set</span></td><td class="col-desc">타이틀 아이콘 설정</td></tr>
             <tr data-search="fontname string"><td class="col-type">string</td><td class="col-name">FontName / FontStyle / FontSize <span class="accessor">get set</span></td><td class="col-desc">폰트 설정</td></tr>
             <tr data-search="direction godirectionhv"><td class="col-type">GoDirectionHV</td><td class="col-name">Direction <span class="accessor">get set</span></td><td class="col-desc">타이틀-값 배치 방향. 기본값: Horizon</td></tr>
-            <tr data-search="textcolor string"><td class="col-type">string</td><td class="col-name">TextColor / BorderColor / FillColor / ValueColor <span class="accessor">get set</span></td><td class="col-desc">색상 설정</td></tr>
+            <tr data-search="textcolor string"><td class="col-type">string</td><td class="col-name">TextColor / TitleTextColor / BorderColor / FillColor / ValueColor <span class="accessor">get set</span></td><td class="col-desc">색상 설정. TitleTextColor 기본값: "Fore"</td></tr>
+            <tr data-search="buttoncolor2 string"><td class="col-type">string?</td><td class="col-name">ButtonColor2 <span class="accessor">get set</span></td><td class="col-desc">버튼 배경 그라데이션 끝 색상 (세로). null/빈 값이면 단색</td></tr>
             <tr data-search="round goroundtype"><td class="col-type">GoRoundType</td><td class="col-name">Round <span class="accessor">get set</span></td><td class="col-desc">모서리 스타일</td></tr>
+            <tr data-search="borderwidth float"><td class="col-type">float</td><td class="col-name">BorderWidth <span class="accessor">get set</span></td><td class="col-desc">테두리 두께. 기본값: 1.5</td></tr>
             <tr data-search="titlefontsize float"><td class="col-type">float</td><td class="col-name">TitleFontSize <span class="accessor">get set</span></td><td class="col-desc">Title 영역 글꼴 크기 (기본 12)</td></tr>
             <tr data-search="titlecontentalignment gocontentalignment"><td class="col-type">GoContentAlignment</td><td class="col-name">TitleContentAlignment <span class="accessor">get set</span></td><td class="col-desc">Title 텍스트/아이콘 정렬 (기본 MiddleCenter)</td></tr>
             <tr data-search="autotitlefontsize goautofontsize"><td class="col-type">GoAutoFontSize</td><td class="col-name">AutoTitleFontSize <span class="accessor">get set</span></td><td class="col-desc">Title 자동 글꼴 크기 프리셋 (기본 NotUsed)</td></tr>
+            <tr data-search="titletextpadding gopadding"><td class="col-type">GoPadding</td><td class="col-name">TitleTextPadding <span class="accessor">get set</span></td><td class="col-desc">Title 영역 텍스트(+아이콘) 패딩. 기본값: 0,0,0,0</td></tr>
+            <tr data-search="titleboxdraw bool"><td class="col-type">bool</td><td class="col-name">TitleBoxDraw <span class="accessor">get set</span></td><td class="col-desc">Title 영역 배경 박스(FillColor) 그리기 여부. false면 텍스트만 표시. 기본값: true</td></tr>
             <tr data-search="titlesize float"><td class="col-type">float?</td><td class="col-name">TitleSize <span class="accessor">get set</span></td><td class="col-desc">타이틀 영역 크기(px). null이면 타이틀 없음</td></tr>
             <tr data-search="title string"><td class="col-type">string?</td><td class="col-name">Title <span class="accessor">get set</span></td><td class="col-desc">타이틀 텍스트</td></tr>
             <tr data-search="buttonsize float"><td class="col-type">float?</td><td class="col-name">ButtonSize <span class="accessor">get set</span></td><td class="col-desc">버튼 영역 크기(px). null이면 버튼 없음</td></tr>
             <tr data-search="buttons list gobuttonitem"><td class="col-type">List&lt;GoButtonItem&gt;</td><td class="col-name">Buttons <span class="accessor">get set</span></td><td class="col-desc">우측 버튼 목록</td></tr>
+            <tr data-search="valid bool"><td class="col-type">virtual bool</td><td class="col-name">Valid <span class="accessor">get</span></td><td class="col-desc">입력 값의 유효성 여부 (기본 true, 직렬화 제외)</td></tr>
             <tr data-search="autofontsize"><td class="col-type">GoAutoFontSize</td><td class="col-name">AutoFontSize / AutoIconSize <span class="accessor">get set</span></td><td class="col-desc">자동 크기 조절</td></tr>
           </table>
         </div>
@@ -498,6 +559,7 @@
           <div class="member-section-title">GoInputString</div>
           <table class="api-table">
             <tr data-search="value string goinputstring"><td class="col-type">string</td><td class="col-name">Value <span class="accessor">get set</span></td><td class="col-desc">입력된 문자열 값. 변경 시 ValueChanged 발생</td></tr>
+            <tr data-search="editing event goinputstring"><td class="event-args">Func&lt;string, bool&gt;</td><td class="col-method-name">Editing</td><td class="col-desc">값 편집 시 호출되는 필터 이벤트. false 반환 시 값 변경 거부</td></tr>
           </table>
         </div>
 
@@ -509,7 +571,7 @@
             <tr data-search="formatstring string"><td class="col-type">string?</td><td class="col-name">FormatString <span class="accessor">get set</span></td><td class="col-desc">표시 형식 문자열 (예: "0.00")</td></tr>
             <tr data-search="unit string"><td class="col-type">string?</td><td class="col-name">Unit <span class="accessor">get set</span></td><td class="col-desc">단위 표시 문자열 (예: "°C", "rpm")</td></tr>
             <tr data-search="unitsize float"><td class="col-type">float?</td><td class="col-name">UnitSize <span class="accessor">get set</span></td><td class="col-desc">단위 영역 너비(px). null이면 단위 없음</td></tr>
-            <tr data-search="valid bool"><td class="col-type">bool</td><td class="col-name">Valid <span class="accessor">get</span></td><td class="col-desc">현재 값이 유효 범위 내인지 여부 (직렬화 제외)</td></tr>
+            <tr data-search="editing event goinputnumber"><td class="event-args">Func&lt;T, bool&gt;</td><td class="col-method-name">Editing</td><td class="col-desc">값 편집 시 호출되는 필터 이벤트. false 반환 시 값 변경 거부</td></tr>
           </table>
         </div>
 
@@ -519,6 +581,7 @@
             <tr data-search="value bool goinputboolean"><td class="col-type">bool</td><td class="col-name">Value <span class="accessor">get set</span></td><td class="col-desc">ON/OFF 값. 변경 시 ValueChanged 발생</td></tr>
             <tr data-search="ontext string"><td class="col-type">string?</td><td class="col-name">OnText / OffText <span class="accessor">get set</span></td><td class="col-desc">ON/OFF 텍스트. 기본값: "ON"/"OFF"</td></tr>
             <tr data-search="oniconstring string"><td class="col-type">string?</td><td class="col-name">OnIconString / OffIconString <span class="accessor">get set</span></td><td class="col-desc">ON/OFF 아이콘</td></tr>
+            <tr data-search="editing event goinputboolean"><td class="event-args">Func&lt;bool, bool&gt;</td><td class="col-method-name">Editing</td><td class="col-desc">값 편집 시 호출되는 필터 이벤트. false 반환 시 값 변경 거부</td></tr>
           </table>
         </div>
 
@@ -579,16 +642,19 @@
             <tr data-search="valuefontsize float"><td class="col-type">float</td><td class="col-name">ValueFontSize <span class="accessor">get set</span></td><td class="col-desc">값 텍스트 폰트 크기. 기본값: 14</td></tr>
             <tr data-search="textcolor string"><td class="col-type">string</td><td class="col-name">TextColor <span class="accessor">get set</span></td><td class="col-desc">텍스트 색상. 기본값: "Fore"</td></tr>
             <tr data-search="fillcolor string"><td class="col-type">string</td><td class="col-name">FillColor <span class="accessor">get set</span></td><td class="col-desc">채움 색상. 기본값: "Good"</td></tr>
+            <tr data-search="fillcolor2 string"><td class="col-type">string?</td><td class="col-name">FillColor2 <span class="accessor">get set</span></td><td class="col-desc">채움 그라데이션 끝 색상. null이면 단색</td></tr>
             <tr data-search="emptycolor string"><td class="col-type">string</td><td class="col-name">EmptyColor <span class="accessor">get set</span></td><td class="col-desc">빈 영역 색상. 기본값: "Base1"</td></tr>
             <tr data-search="bordercolor string"><td class="col-type">string</td><td class="col-name">BorderColor <span class="accessor">get set</span></td><td class="col-desc">테두리 색상. 기본값: "Transparent"</td></tr>
+            <tr data-search="borderwidth float"><td class="col-type">float</td><td class="col-name">BorderWidth <span class="accessor">get set</span></td><td class="col-desc">테두리 두께. 기본값: 1.5</td></tr>
             <tr data-search="direction progressdirection"><td class="col-type">ProgressDirection</td><td class="col-name">Direction <span class="accessor">get set</span></td><td class="col-desc">진행 방향. 기본값: LeftToRight</td></tr>
             <tr data-search="minimum double"><td class="col-type">double</td><td class="col-name">Minimum / Maximum <span class="accessor">get set</span></td><td class="col-desc">값 범위. 기본값: 0 ~ 100</td></tr>
             <tr data-search="value double"><td class="col-type">double</td><td class="col-name">Value <span class="accessor">get set</span></td><td class="col-desc">현재 값</td></tr>
             <tr data-search="format string"><td class="col-type">string</td><td class="col-name">Format <span class="accessor">get set</span></td><td class="col-desc">값 표시 형식 문자열. 기본값: "0"</td></tr>
             <tr data-search="gap int"><td class="col-type">int</td><td class="col-name">Gap <span class="accessor">get set</span></td><td class="col-desc">간격. 기본값: 5</td></tr>
-            <tr data-search="cornerradius int"><td class="col-type">int</td><td class="col-name">CornerRadius <span class="accessor">get set</span></td><td class="col-desc">모서리 반지름. 기본값: 5</td></tr>
+            <tr data-search="corner float cornerradius"><td class="col-type">float?</td><td class="col-name">Corner <span class="accessor">get set</span></td><td class="col-desc">바 모서리 반경(px). null이면 완전 둥근(pill) 모양(두께/2). 반경은 두께/2를 넘지 않게 제한됨</td></tr>
             <tr data-search="barsize int"><td class="col-type">int?</td><td class="col-name">BarSize <span class="accessor">get set</span></td><td class="col-desc">바 두께 (null이면 자동)</td></tr>
             <tr data-search="showvaluelabel bool"><td class="col-type">bool</td><td class="col-name">ShowValueLabel <span class="accessor">get set</span></td><td class="col-desc">값 라벨 표시 여부. 기본값: false</td></tr>
+            <tr data-search="drawempty bool"><td class="col-type">bool</td><td class="col-name">DrawEmpty <span class="accessor">get set</span></td><td class="col-desc">빈 영역(EmptyColor) 그리기 여부. false면 채움만 표시. 기본값: true</td></tr>
           </table>
         </div>
         <div class="member-section">
@@ -627,8 +693,10 @@
             <tr data-search="fontsize float"><td class="col-type">float</td><td class="col-name">FontSize <span class="accessor">get set</span></td><td class="col-desc">값 폰트 크기. 기본값: 18</td></tr>
             <tr data-search="textcolor string"><td class="col-type">string</td><td class="col-name">TextColor <span class="accessor">get set</span></td><td class="col-desc">텍스트 색상. 기본값: "Fore"</td></tr>
             <tr data-search="fillcolor string"><td class="col-type">string</td><td class="col-name">FillColor <span class="accessor">get set</span></td><td class="col-desc">채움 색상. 기본값: "Good"</td></tr>
+            <tr data-search="fillcolor2 string"><td class="col-type">string?</td><td class="col-name">FillColor2 <span class="accessor">get set</span></td><td class="col-desc">채움 그라데이션 끝 색상. null이면 단색</td></tr>
             <tr data-search="emptycolor string"><td class="col-type">string</td><td class="col-name">EmptyColor <span class="accessor">get set</span></td><td class="col-desc">빈 영역 색상. 기본값: "Base1"</td></tr>
             <tr data-search="bordercolor string"><td class="col-type">string</td><td class="col-name">BorderColor <span class="accessor">get set</span></td><td class="col-desc">테두리 색상. 기본값: "Base1"</td></tr>
+            <tr data-search="borderwidth float"><td class="col-type">float</td><td class="col-name">BorderWidth <span class="accessor">get set</span></td><td class="col-desc">테두리 두께. 기본값: 1.5</td></tr>
           </table>
         </div>
         <div class="member-section">
@@ -662,6 +730,7 @@
             <tr data-search="textcolor string"><td class="col-type">string</td><td class="col-name">TextColor <span class="accessor">get set</span></td><td class="col-desc">텍스트 색상. 기본값: "Fore"</td></tr>
             <tr data-search="boxcolor string"><td class="col-type">string</td><td class="col-name">BoxColor <span class="accessor">get set</span></td><td class="col-desc">배경 색상. 기본값: "Base1"</td></tr>
             <tr data-search="bordercolor string"><td class="col-type">string</td><td class="col-name">BorderColor <span class="accessor">get set</span></td><td class="col-desc">테두리 색상. 기본값: "Base3"</td></tr>
+            <tr data-search="borderwidth float"><td class="col-type">float</td><td class="col-name">BorderWidth <span class="accessor">get set</span></td><td class="col-desc">테두리 두께. 기본값: 1.5</td></tr>
             <tr data-search="selectcolor string"><td class="col-type">string</td><td class="col-name">SelectColor <span class="accessor">get set</span></td><td class="col-desc">선택 색상. 기본값: "Select"</td></tr>
             <tr data-search="round goroundtype"><td class="col-type">GoRoundType</td><td class="col-name">Round <span class="accessor">get set</span></td><td class="col-desc">모서리 스타일. 기본값: All</td></tr>
             <tr data-search="backgrounddraw bool"><td class="col-type">bool</td><td class="col-name">BackgroundDraw <span class="accessor">get set</span></td><td class="col-desc">배경 그리기 여부. 기본값: true</td></tr>
@@ -703,6 +772,10 @@
             <tr data-search="textcolor string"><td class="col-type">string</td><td class="col-name">TextColor <span class="accessor">get set</span></td><td class="col-desc">텍스트 색상. 기본값: "Fore"</td></tr>
             <tr data-search="rowcolor string"><td class="col-type">string</td><td class="col-name">RowColor <span class="accessor">get set</span></td><td class="col-desc">행 색상. 기본값: "Base2"</td></tr>
             <tr data-search="columncolor string"><td class="col-type">string</td><td class="col-name">ColumnColor <span class="accessor">get set</span></td><td class="col-desc">헤더 색상. 기본값: "Base1"</td></tr>
+            <tr data-search="columntextcolor string"><td class="col-type">string</td><td class="col-name">ColumnTextColor <span class="accessor">get set</span></td><td class="col-desc">헤더 텍스트 색상. 기본값: "Fore"</td></tr>
+            <tr data-search="columnbordercolor string"><td class="col-type">string?</td><td class="col-name">ColumnBorderColor <span class="accessor">get set</span></td><td class="col-desc">헤더 테두리 색상. null이면 BorderColor 사용</td></tr>
+            <tr data-search="bordercolor string datagrid"><td class="col-type">string?</td><td class="col-name">BorderColor <span class="accessor">get set</span></td><td class="col-desc">셀 테두리 색상</td></tr>
+            <tr data-search="borderwidth float"><td class="col-type">float</td><td class="col-name">BorderWidth <span class="accessor">get set</span></td><td class="col-desc">테두리 두께. 기본값: 1</td></tr>
             <tr data-search="selectedrowcolor string"><td class="col-type">string</td><td class="col-name">SelectedRowColor <span class="accessor">get set</span></td><td class="col-desc">선택 행 색상. 기본값: "Select"</td></tr>
             <tr data-search="summaryrowcolor string"><td class="col-type">string</td><td class="col-name">SummaryRowColor <span class="accessor">get set</span></td><td class="col-desc">요약 행 색상. 기본값: "Base1"</td></tr>
             <tr data-search="boxcolor string"><td class="col-type">string</td><td class="col-name">BoxColor <span class="accessor">get set</span></td><td class="col-desc">배경 색상. 기본값: "Base2"</td></tr>
@@ -714,11 +787,43 @@
           <table class="api-table">
             <tr data-search="selectedchanged event"><td class="event-args">EventHandler</td><td class="col-method-name">SelectedChanged</td><td class="col-desc">선택 변경 시</td></tr>
             <tr data-search="sortchanged event"><td class="event-args">EventHandler</td><td class="col-method-name">SortChanged</td><td class="col-desc">정렬 변경 시</td></tr>
+            <tr data-search="columnmouseclick event"><td class="event-args">EventHandler&lt;GoDataGridColumnMouseEventArgs&gt;</td><td class="col-method-name">ColumnMouseClick</td><td class="col-desc">헤더 클릭 시</td></tr>
             <tr data-search="cellmouseclick event"><td class="event-args">EventHandler&lt;GoDataGridCellMouseEventArgs&gt;</td><td class="col-method-name">CellMouseClick</td><td class="col-desc">셀 클릭 시</td></tr>
             <tr data-search="cellmousedoubleclick event"><td class="event-args">EventHandler&lt;GoDataGridCellMouseEventArgs&gt;</td><td class="col-method-name">CellMouseDoubleClick</td><td class="col-desc">셀 더블클릭 시</td></tr>
             <tr data-search="cellmouselongclick event"><td class="event-args">EventHandler&lt;GoDataGridCellMouseEventArgs&gt;</td><td class="col-method-name">CellMouseLongClick</td><td class="col-desc">셀 롱클릭 시</td></tr>
             <tr data-search="cellbuttonclick event"><td class="event-args">EventHandler&lt;GoDataGridCellButtonClickEventArgs&gt;</td><td class="col-method-name">CellButtonClick</td><td class="col-desc">셀 버튼 클릭 시</td></tr>
             <tr data-search="valuechanged event"><td class="event-args">EventHandler&lt;GoDataGridCellValueChangedEventArgs&gt;</td><td class="col-method-name">ValueChanged</td><td class="col-desc">셀 값 변경 시</td></tr>
+            <tr data-search="datetimedropdownopening event"><td class="event-args">EventHandler&lt;GoDataGridDateTimeDropDownOpeningEventArgs&gt;</td><td class="col-method-name">DateTimeDropDownOpening</td><td class="col-desc">날짜/시간 셀 드롭다운 열기 전</td></tr>
+            <tr data-search="colordropdownopening event"><td class="event-args">EventHandler&lt;GoDataGridColorDropDownOpeningEventArgs&gt;</td><td class="col-method-name">ColorDropDownOpening</td><td class="col-desc">색상 셀 드롭다운 열기 전</td></tr>
+            <tr data-search="combodropdownopening event"><td class="event-args">EventHandler&lt;GoDataGridComboDropDownOpeningEventArgs&gt;</td><td class="col-method-name">ComboDropDownOpening</td><td class="col-desc">콤보 셀 드롭다운 열기 전</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Methods — 데이터</div>
+          <table class="api-table">
+            <tr data-search="setdatasource void datagrid"><td class="ret">void</td><td class="col-method-name">SetDataSource&lt;T&gt;</td><td class="params">(<span class="tp">IEnumerable&lt;T&gt;</span> values)</td><td class="col-desc">데이터 소스를 설정합니다. 컬럼 정의에 맞는 속성을 가진 객체 컬렉션을 바인딩</td></tr>
+            <tr data-search="refreshrows void"><td class="ret">void</td><td class="col-method-name">RefreshRows</td><td class="params">()</td><td class="col-desc">행 데이터를 새로고침합니다. 데이터 소스의 변경 사항을 그리드에 반영</td></tr>
+            <tr data-search="rowtoscreen skpoint"><td class="ret">SKPoint</td><td class="col-method-name">RowToScreen</td><td class="params">(<span class="tp">bool</span> fix, <span class="tp">float</span> x, <span class="tp">float</span> y)</td><td class="col-desc">행 내 좌표(고정 열 여부 포함)를 화면 좌표로 변환</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Methods — 셀 편집/이벤트 발생 (커스텀 셀 템플릿용)</div>
+          <table class="api-table">
+            <tr data-search="invokebuttonclick void"><td class="ret">void</td><td class="col-method-name">InvokeButtonClick</td><td class="params">(<span class="tp">GoDataGridCell</span> cell)</td><td class="col-desc">CellButtonClick 이벤트를 발생시킵니다</td></tr>
+            <tr data-search="invokevaluechange void"><td class="ret">void</td><td class="col-method-name">InvokeValueChange</td><td class="params">(<span class="tp">GoDataGridCell</span> cell, <span class="tp">object?</span> oldValue, <span class="tp">object?</span> newValue)</td><td class="col-desc">ValueChanged 이벤트를 발생시킵니다</td></tr>
+            <tr data-search="invokeedittext void"><td class="ret">void</td><td class="col-method-name">InvokeEditText</td><td class="params">(<span class="tp">GoDataGridCell</span> cell, <span class="tp">string?</span> value, [<span class="tp">SKRect</span> rt], [<span class="tp">Action&lt;string&gt;</span> act])</td><td class="col-desc">지정 셀(또는 영역)에 텍스트 편집 입력을 시작 (3개 오버로드)</td></tr>
+            <tr data-search="invokeeditnumber void"><td class="ret">void</td><td class="col-method-name">InvokeEditNumber&lt;T&gt;</td><td class="params">(<span class="tp">GoDataGridCell</span> cell, <span class="tp">T</span> value, <span class="tp">T?</span> min, <span class="tp">T?</span> max, [<span class="tp">SKRect</span> rt], [<span class="tp">Action&lt;string&gt;</span> act]) <span class="tp">where T : struct</span></td><td class="col-desc">지정 셀(또는 영역)에 숫자 편집 입력을 시작 (3개 오버로드)</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Methods — 드롭다운 (커스텀 셀 템플릿용)</div>
+          <table class="api-table">
+            <tr data-search="datetimedropdownvisible bool"><td class="ret">bool</td><td class="col-method-name">DateTimeDropDownVisible</td><td class="params">(<span class="tp">GoDataGridCell</span> cell)</td><td class="col-desc">지정 셀의 DateTime 드롭다운 표시 여부</td></tr>
+            <tr data-search="datetimedropdownopen void"><td class="ret">void</td><td class="col-method-name">DateTimeDropDownOpen</td><td class="params">(<span class="tp">GoDataGridCell</span> cell, <span class="tp">SKRect</span> rt, <span class="tp">DateTime</span> value, <span class="tp">GoDateTimeKind</span> style, <span class="tp">Action&lt;DateTime?&gt;</span> action)</td><td class="col-desc">DateTime 드롭다운을 엽니다</td></tr>
+            <tr data-search="colordropdownvisible bool"><td class="ret">bool</td><td class="col-method-name">ColorDropDownVisible</td><td class="params">(<span class="tp">GoDataGridCell</span> cell)</td><td class="col-desc">지정 셀의 색상 드롭다운 표시 여부</td></tr>
+            <tr data-search="colordropdownopen void"><td class="ret">void</td><td class="col-method-name">ColorDropDownOpen</td><td class="params">(<span class="tp">GoDataGridCell</span> cell, <span class="tp">SKRect</span> rt, <span class="tp">SKColor</span> value, <span class="tp">Action&lt;SKColor?&gt;</span> action)</td><td class="col-desc">색상 드롭다운을 엽니다</td></tr>
+            <tr data-search="combodropdownvisible bool"><td class="ret">bool</td><td class="col-method-name">ComboDropDownVisible</td><td class="params">(<span class="tp">GoDataGridCell</span> cell)</td><td class="col-desc">지정 셀의 콤보 드롭다운 표시 여부</td></tr>
+            <tr data-search="combodropdownopen void"><td class="ret">void</td><td class="col-method-name">ComboDropDownOpen</td><td class="params">(<span class="tp">GoDataGridCell</span> cell, <span class="tp">SKRect</span> rt, <span class="tp">float</span> itemHeight, <span class="tp">int</span> maximumViewCount, <span class="tp">List&lt;GoDataGridInputComboItem&gt;</span> items, <span class="tp">GoDataGridInputComboItem?</span> selectedItem, <span class="tp">Action&lt;GoDataGridInputComboItem?&gt;</span> action)</td><td class="col-desc">콤보 드롭다운을 엽니다</td></tr>
           </table>
         </div>
       </div>
@@ -747,6 +852,12 @@
             <tr data-search="pointwidth int"><td class="col-type">int</td><td class="col-name">PointWidth <span class="accessor">get set</span></td><td class="col-desc">데이터 포인트 간격(px). 기본값: 70</td></tr>
           </table>
         </div>
+        <div class="member-section">
+          <div class="member-section-title">Methods</div>
+          <table class="api-table">
+            <tr data-search="setdatasource void"><td class="ret">void</td><td class="col-method-name">SetDataSource&lt;T&gt;</td><td class="params">(<span class="tp">string</span> XAxisName, <span class="tp">IEnumerable&lt;T&gt;</span> values)</td><td class="col-desc">데이터 컬렉션으로부터 시리즈를 설정합니다. XAxisName은 X축으로 사용할 string 타입 속성 이름</td></tr>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -767,10 +878,17 @@
             <tr data-search="direction godirectionhv"><td class="col-type">GoDirectionHV</td><td class="col-name">Direction <span class="accessor">get set</span></td><td class="col-desc">바 방향. 기본값: Vertical</td></tr>
             <tr data-search="barsize int"><td class="col-type">int</td><td class="col-name">BarSize <span class="accessor">get set</span></td><td class="col-desc">바 두께. 기본값: 20</td></tr>
             <tr data-search="bargap int"><td class="col-type">int</td><td class="col-name">BarGap <span class="accessor">get set</span></td><td class="col-desc">바 간격. 기본값: 20</td></tr>
+            <tr data-search="barround float"><td class="col-type">float</td><td class="col-name">BarRound <span class="accessor">get set</span></td><td class="col-desc">바 모서리 둥글기. 기본값: 4</td></tr>
             <tr data-search="gridcolor string"><td class="col-type">string</td><td class="col-name">GridColor / TextColor / RemarkColor / GraphColor <span class="accessor">get set</span></td><td class="col-desc">색상 설정</td></tr>
             <tr data-search="fontname string"><td class="col-type">string</td><td class="col-name">FontName / FontStyle / FontSize <span class="accessor">get set</span></td><td class="col-desc">폰트 설정</td></tr>
             <tr data-search="graduationcount int"><td class="col-type">int</td><td class="col-name">GraduationCount <span class="accessor">get set</span></td><td class="col-desc">눈금 수. 기본값: 10</td></tr>
             <tr data-search="formatstring string"><td class="col-type">string?</td><td class="col-name">FormatString <span class="accessor">get set</span></td><td class="col-desc">값 표시 형식</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Methods</div>
+          <table class="api-table">
+            <tr data-search="setdatasource void"><td class="ret">void</td><td class="col-method-name">SetDataSource&lt;T&gt;</td><td class="params">(<span class="tp">string</span> XAxisName, <span class="tp">IEnumerable&lt;T&gt;</span> values)</td><td class="col-desc">데이터 컬렉션으로부터 시리즈를 설정합니다. XAxisName은 X축으로 사용할 string 타입 속성 이름</td></tr>
           </table>
         </div>
       </div>
@@ -792,6 +910,12 @@
             <tr data-search="textcolor string"><td class="col-type">string</td><td class="col-name">TextColor <span class="accessor">get set</span></td><td class="col-desc">텍스트 색상. 기본값: "Fore"</td></tr>
             <tr data-search="remarkcolor string"><td class="col-type">string</td><td class="col-name">RemarkColor <span class="accessor">get set</span></td><td class="col-desc">축 레이블 색상. 기본값: "Base2"</td></tr>
             <tr data-search="fontname string"><td class="col-type">string</td><td class="col-name">FontName / FontStyle / FontSize <span class="accessor">get set</span></td><td class="col-desc">폰트 설정</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Methods</div>
+          <table class="api-table">
+            <tr data-search="setdatasource void"><td class="ret">void</td><td class="col-method-name">SetDataSource&lt;T&gt;</td><td class="params">(<span class="tp">string</span> CategoryAxisName, <span class="tp">IEnumerable&lt;T&gt;</span> values)</td><td class="col-desc">데이터 컬렉션으로부터 시리즈를 설정합니다. CategoryAxisName은 카테고리 축으로 사용할 string 타입 속성 이름</td></tr>
           </table>
         </div>
       </div>
@@ -850,6 +974,7 @@
             <tr data-search="textcolor string"><td class="col-type">string</td><td class="col-name">TextColor <span class="accessor">get set</span></td><td class="col-desc">텍스트 색상. 기본값: "Fore"</td></tr>
             <tr data-search="boxcolor string"><td class="col-type">string</td><td class="col-name">BoxColor <span class="accessor">get set</span></td><td class="col-desc">배경 색상. 기본값: "Base1"</td></tr>
             <tr data-search="bordercolor string"><td class="col-type">string</td><td class="col-name">BorderColor <span class="accessor">get set</span></td><td class="col-desc">테두리 색상. 기본값: "Base3"</td></tr>
+            <tr data-search="borderwidth float"><td class="col-type">float</td><td class="col-name">BorderWidth <span class="accessor">get set</span></td><td class="col-desc">테두리 두께. 기본값: 1.5</td></tr>
             <tr data-search="cursorcolor string"><td class="col-type">string</td><td class="col-name">CursorColor <span class="accessor">get set</span></td><td class="col-desc">커서 색상. 기본값: "Base3"</td></tr>
             <tr data-search="oncolor string"><td class="col-type">string</td><td class="col-name">OnColor <span class="accessor">get set</span></td><td class="col-desc">ON 상태 아이콘 색상. 기본값: "lime"</td></tr>
             <tr data-search="offcolor string"><td class="col-type">string</td><td class="col-name">OffColor <span class="accessor">get set</span></td><td class="col-desc">OFF 상태 아이콘 색상. 기본값: "gray"</td></tr>
@@ -890,8 +1015,9 @@
             <tr data-search="bordercolor string"><td class="col-type">string</td><td class="col-name">BorderColor <span class="accessor">get set</span></td><td class="col-desc">테두리 색상. 기본값: "Base3"</td></tr>
             <tr data-search="oncolor string"><td class="col-type">string</td><td class="col-name">OnColor <span class="accessor">get set</span></td><td class="col-desc">ON 상태 램프 색상. 기본값: "Good"</td></tr>
             <tr data-search="offcolor string"><td class="col-type">string</td><td class="col-name">OffColor <span class="accessor">get set</span></td><td class="col-desc">OFF 상태 램프 색상. 기본값: "Base2"</td></tr>
+            <tr data-search="buttoncolor2 string"><td class="col-type">string?</td><td class="col-name">ButtonColor2 <span class="accessor">get set</span></td><td class="col-desc">버튼 배경 그라데이션 끝 색상 (세로). null/빈 값이면 단색</td></tr>
             <tr data-search="round goroundtype"><td class="col-type">GoRoundType</td><td class="col-name">Round <span class="accessor">get set</span></td><td class="col-desc">모서리 스타일. 기본값: All</td></tr>
-            <tr data-search="borderwidth float"><td class="col-type">float</td><td class="col-name">BorderWidth <span class="accessor">get set</span></td><td class="col-desc">테두리 두께. 기본값: 1</td></tr>
+            <tr data-search="borderwidth float"><td class="col-type">float</td><td class="col-name">BorderWidth <span class="accessor">get set</span></td><td class="col-desc">테두리 두께. 기본값: 1.5</td></tr>
             <tr data-search="fillstyle"><td class="col-type">GoButtonFillStyle</td><td class="col-name">FillStyle <span class="accessor">get set</span></td><td class="col-desc">채우기 스타일. 기본값: Flat</td></tr>
             <tr data-search="lampsize int"><td class="col-type">int</td><td class="col-name">LampSize <span class="accessor">get set</span></td><td class="col-desc">램프 크기(px). 기본값: 24</td></tr>
             <tr data-search="gap int"><td class="col-type">int</td><td class="col-name">Gap <span class="accessor">get set</span></td><td class="col-desc">램프-텍스트 간격. 기본값: 10</td></tr>
@@ -1017,7 +1143,7 @@
           <div class="member-section-title">Properties</div>
           <table class="api-table">
             <tr data-search="stepcount int"><td class="col-type">int</td><td class="col-name">StepCount <span class="accessor">get set</span></td><td class="col-desc">전체 단계 수. 기본값: 7</td></tr>
-            <tr data-search="step int"><td class="col-type">int</td><td class="col-name">Step <span class="accessor">get set</span></td><td class="col-desc">현재 단계 (0~StepCount-1). 변경 시 StepChagend 발생</td></tr>
+            <tr data-search="step int"><td class="col-type">int</td><td class="col-name">Step <span class="accessor">get set</span></td><td class="col-desc">현재 단계 (0~StepCount-1). 변경 시 StepChanged 발생</td></tr>
             <tr data-search="previconstring string"><td class="col-type">string?</td><td class="col-name">PrevIconString <span class="accessor">get set</span></td><td class="col-desc">이전 버튼 아이콘. 기본값: "fa-chevron-left"</td></tr>
             <tr data-search="nexticonstring string"><td class="col-type">string?</td><td class="col-name">NextIconString <span class="accessor">get set</span></td><td class="col-desc">다음 버튼 아이콘. 기본값: "fa-chevron-right"</td></tr>
             <tr data-search="buttoncolor string"><td class="col-type">string</td><td class="col-name">ButtonColor <span class="accessor">get set</span></td><td class="col-desc">이전/다음 버튼 색상. 기본값: "Base3"</td></tr>
@@ -1030,7 +1156,7 @@
         <div class="member-section">
           <div class="member-section-title">Events</div>
           <table class="api-table">
-            <tr data-search="stepchagend event"><td class="event-args">EventHandler</td><td class="col-method-name">StepChagend</td><td class="col-desc">Step 값 변경 시 발생</td></tr>
+            <tr data-search="stepchanged event"><td class="event-args">EventHandler</td><td class="col-method-name">StepChanged</td><td class="col-desc">Step 값 변경 시 발생</td></tr>
           </table>
         </div>
       </div>
@@ -1053,7 +1179,9 @@
             <tr><td class="col-type">GoStepBarMode</td><td class="col-name">Mode <span class="accessor">get set</span></td><td class="col-desc">Story | Point</td></tr>
             <tr><td class="col-type">bool</td><td class="col-name">UseClick <span class="accessor">get set</span></td><td class="col-desc">dot 클릭으로 Step 변경 (기본 false)</td></tr>
             <tr><td class="col-type">string</td><td class="col-name">DotColor / ActiveColor / LineColor / ActiveTextColor / InactiveTextColor <span class="accessor">get set</span></td><td class="col-desc">테마 색상 키 (기본 Base2 / Select / Base2 / Fore / Base3)</td></tr>
+            <tr><td class="col-type">string?</td><td class="col-name">DotFillColor <span class="accessor">get set</span></td><td class="col-desc">dot 채움 색상. null이면 DotColor 사용</td></tr>
             <tr><td class="col-type">float</td><td class="col-name">FontSize / DotSize / IconSize / LabelGap <span class="accessor">get set</span></td><td class="col-desc">기본 12 / 18 / 12 / 6</td></tr>
+            <tr><td class="col-type">float</td><td class="col-name">LineWidth <span class="accessor">get set</span></td><td class="col-desc">connector 선 두께. 기본값: 2</td></tr>
           </table>
         </div>
         <div class="member-section">
@@ -1101,15 +1229,20 @@
             <tr data-search="iconsize float"><td class="col-type">float</td><td class="col-name">IconSize / IconGap <span class="accessor">get set</span></td><td class="col-desc">아이콘 크기/간격. 기본값: 12 / 5</td></tr>
             <tr data-search="fontname string"><td class="col-type">string</td><td class="col-name">FontName / FontStyle / FontSize <span class="accessor">get set</span></td><td class="col-desc">폰트 설정</td></tr>
             <tr data-search="direction godirectionhv"><td class="col-type">GoDirectionHV</td><td class="col-name">Direction <span class="accessor">get set</span></td><td class="col-desc">배치 방향. 기본값: Horizon</td></tr>
-            <tr data-search="textcolor string"><td class="col-type">string</td><td class="col-name">TextColor <span class="accessor">get set</span></td><td class="col-desc">텍스트 색상. 기본값: "Fore"</td></tr>
+            <tr data-search="textcolor string"><td class="col-type">string</td><td class="col-name">TextColor / TitleTextColor <span class="accessor">get set</span></td><td class="col-desc">텍스트 색상. 기본값: "Fore"</td></tr>
             <tr data-search="bordercolor string"><td class="col-type">string</td><td class="col-name">BorderColor <span class="accessor">get set</span></td><td class="col-desc">테두리 색상. 기본값: "Base3"</td></tr>
+            <tr data-search="borderwidth float"><td class="col-type">float</td><td class="col-name">BorderWidth <span class="accessor">get set</span></td><td class="col-desc">테두리 두께. 기본값: 1.5</td></tr>
             <tr data-search="fillcolor string"><td class="col-type">string</td><td class="col-name">FillColor <span class="accessor">get set</span></td><td class="col-desc">채움 색상. 기본값: "Base3"</td></tr>
             <tr data-search="valuecolor string"><td class="col-type">string</td><td class="col-name">ValueColor <span class="accessor">get set</span></td><td class="col-desc">값 영역 색상. 기본값: "Base2"</td></tr>
+            <tr data-search="buttoncolor string"><td class="col-type">string</td><td class="col-name">ButtonColor <span class="accessor">get set</span></td><td class="col-desc">버튼 배경 색상. 기본값: "Base3"</td></tr>
+            <tr data-search="buttoncolor2 string"><td class="col-type">string?</td><td class="col-name">ButtonColor2 <span class="accessor">get set</span></td><td class="col-desc">버튼 배경 그라데이션 끝 색상 (세로). null/빈 값이면 단색</td></tr>
             <tr data-search="round goroundtype"><td class="col-type">GoRoundType</td><td class="col-name">Round <span class="accessor">get set</span></td><td class="col-desc">모서리 스타일. 기본값: All</td></tr>
             <tr data-search="title string"><td class="col-type">string?</td><td class="col-name">Title <span class="accessor">get set</span></td><td class="col-desc">타이틀 텍스트</td></tr>
             <tr data-search="titlefontsize float"><td class="col-type">float</td><td class="col-name">TitleFontSize <span class="accessor">get set</span></td><td class="col-desc">Title 영역 글꼴 크기 (기본 12)</td></tr>
             <tr data-search="titlecontentalignment gocontentalignment"><td class="col-type">GoContentAlignment</td><td class="col-name">TitleContentAlignment <span class="accessor">get set</span></td><td class="col-desc">Title 텍스트/아이콘 정렬 (기본 MiddleCenter)</td></tr>
             <tr data-search="autotitlefontsize goautofontsize"><td class="col-type">GoAutoFontSize</td><td class="col-name">AutoTitleFontSize <span class="accessor">get set</span></td><td class="col-desc">Title 자동 글꼴 크기 프리셋 (기본 NotUsed)</td></tr>
+            <tr data-search="titletextpadding gopadding"><td class="col-type">GoPadding</td><td class="col-name">TitleTextPadding <span class="accessor">get set</span></td><td class="col-desc">Title 영역 텍스트(+아이콘) 패딩. 기본값: 0,0,0,0</td></tr>
+            <tr data-search="titleboxdraw bool"><td class="col-type">bool</td><td class="col-name">TitleBoxDraw <span class="accessor">get set</span></td><td class="col-desc">Title 영역 배경 박스(FillColor) 그리기 여부. false면 텍스트만 표시. 기본값: true</td></tr>
             <tr data-search="titlesize float"><td class="col-type">float?</td><td class="col-name">TitleSize <span class="accessor">get set</span></td><td class="col-desc">타이틀 영역 크기(px). null이면 숨김</td></tr>
             <tr data-search="buttonsize float"><td class="col-type">float?</td><td class="col-name">ButtonSize <span class="accessor">get set</span></td><td class="col-desc">버튼 영역 크기(px). null이면 숨김</td></tr>
             <tr data-search="buttons list gobuttonitem"><td class="col-type">List&lt;GoButtonItem&gt;</td><td class="col-name">Buttons <span class="accessor">get set</span></td><td class="col-desc">버튼 항목 목록</td></tr>
@@ -1121,6 +1254,34 @@
           <table class="api-table">
             <tr data-search="buttonclicked event"><td class="event-args">EventHandler&lt;ButtonClickEventArgs&gt;</td><td class="col-method-name">ButtonClicked</td><td class="col-desc">버튼 클릭 시 발생</td></tr>
             <tr data-search="valueclicked event"><td class="event-args">EventHandler</td><td class="col-method-name">ValueClicked</td><td class="col-desc">값 영역 클릭 시 발생</td></tr>
+          </table>
+        </div>
+
+        <div class="member-section">
+          <div class="member-section-title">GoValueString</div>
+          <table class="api-table">
+            <tr data-search="value string govaluestring"><td class="col-type">string?</td><td class="col-name">Value <span class="accessor">get set</span></td><td class="col-desc">표시할 문자열 값</td></tr>
+          </table>
+        </div>
+
+        <div class="member-section">
+          <div class="member-section-title">GoValueNumber&lt;T&gt; where T : struct</div>
+          <table class="api-table">
+            <tr data-search="value t govaluenumber"><td class="col-type">T</td><td class="col-name">Value <span class="accessor">get set</span></td><td class="col-desc">표시할 숫자 값 (sbyte, short, int, long, byte, ushort, uint, ulong, float, double, decimal)</td></tr>
+            <tr data-search="formatstring string"><td class="col-type">string?</td><td class="col-name">FormatString <span class="accessor">get set</span></td><td class="col-desc">값 표시 형식 문자열</td></tr>
+            <tr data-search="unit string"><td class="col-type">string?</td><td class="col-name">Unit <span class="accessor">get set</span></td><td class="col-desc">단위 텍스트</td></tr>
+            <tr data-search="unitfontsize float"><td class="col-type">float</td><td class="col-name">UnitFontSize <span class="accessor">get set</span></td><td class="col-desc">단위 글꼴 크기. 기본값: 12</td></tr>
+            <tr data-search="unitsize float"><td class="col-type">float?</td><td class="col-name">UnitSize <span class="accessor">get set</span></td><td class="col-desc">단위 표시 영역 크기(px). null이면 단위를 표시하지 않음</td></tr>
+            <tr data-search="autounitfontsize goautofontsize"><td class="col-type">GoAutoFontSize</td><td class="col-name">AutoUnitFontSize <span class="accessor">get set</span></td><td class="col-desc">자동 단위 글꼴 크기 설정. 기본값: NotUsed</td></tr>
+          </table>
+        </div>
+
+        <div class="member-section">
+          <div class="member-section-title">GoValueBoolean</div>
+          <table class="api-table">
+            <tr data-search="value bool govalueboolean"><td class="col-type">bool</td><td class="col-name">Value <span class="accessor">get set</span></td><td class="col-desc">표시할 불리언 값</td></tr>
+            <tr data-search="ontext string"><td class="col-type">string?</td><td class="col-name">OnText / OffText <span class="accessor">get set</span></td><td class="col-desc">ON/OFF 상태 텍스트. 기본값: "ON"/"OFF"</td></tr>
+            <tr data-search="oniconstring string"><td class="col-type">string?</td><td class="col-name">OnIconString / OffIconString <span class="accessor">get set</span></td><td class="col-desc">ON/OFF 상태 아이콘 문자열</td></tr>
           </table>
         </div>
       </div>
@@ -1153,6 +1314,15 @@
             <tr data-search="needlecolor string"><td class="col-type">string</td><td class="col-name">NeedleColor <span class="accessor">get set</span></td><td class="col-desc">바늘 색상. 기본값: "Fore"</td></tr>
             <tr data-search="needlepointcolor string"><td class="col-type">string</td><td class="col-name">NeedlePointColor <span class="accessor">get set</span></td><td class="col-desc">바늘 끝 포인트 색상. 기본값: "Red"</td></tr>
             <tr data-search="remarkcolor string"><td class="col-type">string</td><td class="col-name">RemarkColor <span class="accessor">get set</span></td><td class="col-desc">눈금 색상. 기본값: "Base5"</td></tr>
+            <tr data-search="ranges list gometerrange"><td class="col-type">List&lt;GoMeterRange&gt;</td><td class="col-name">Ranges <span class="accessor">get set</span></td><td class="col-desc">색상 구간(From/To/Color) 목록. 눈금 안쪽에 구간별 색상 밴드를 표시</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">GoMeterRange</div>
+          <table class="api-table">
+            <tr data-search="from double gometerrange"><td class="col-type">double</td><td class="col-name">From <span class="accessor">get set</span></td><td class="col-desc">구간 시작값</td></tr>
+            <tr data-search="to double gometerrange"><td class="col-type">double</td><td class="col-name">To <span class="accessor">get set</span></td><td class="col-desc">구간 끝값</td></tr>
+            <tr data-search="color string gometerrange"><td class="col-type">string</td><td class="col-name">Color <span class="accessor">get set</span></td><td class="col-desc">구간 색상 (테마 색상 키). 기본값: "Good"</td></tr>
           </table>
         </div>
         <div class="member-section">
@@ -1217,8 +1387,9 @@
             <tr data-search="buttoncolor string"><td class="col-type">string</td><td class="col-name">ButtonColor <span class="accessor">get set</span></td><td class="col-desc">버튼 배경 색상. 기본값: "Base3"</td></tr>
             <tr data-search="checkedbuttoncolor string"><td class="col-type">string</td><td class="col-name">CheckedButtonColor <span class="accessor">get set</span></td><td class="col-desc">체크 시 배경 색상. 기본값: "Select"</td></tr>
             <tr data-search="bordercolor string"><td class="col-type">string</td><td class="col-name">BorderColor / CheckedBorderColor <span class="accessor">get set</span></td><td class="col-desc">테두리 / 체크 시 테두리 색상</td></tr>
+            <tr data-search="buttoncolor2 string"><td class="col-type">string?</td><td class="col-name">ButtonColor2 <span class="accessor">get set</span></td><td class="col-desc">버튼 배경 그라데이션 끝 색상 (세로). null/빈 값이면 단색</td></tr>
             <tr data-search="round goroundtype"><td class="col-type">GoRoundType</td><td class="col-name">Round <span class="accessor">get set</span></td><td class="col-desc">모서리 스타일. 기본값: All</td></tr>
-            <tr data-search="borderwidth float"><td class="col-type">float</td><td class="col-name">BorderWidth <span class="accessor">get set</span></td><td class="col-desc">테두리 두께. 기본값: 1</td></tr>
+            <tr data-search="borderwidth float"><td class="col-type">float</td><td class="col-name">BorderWidth <span class="accessor">get set</span></td><td class="col-desc">테두리 두께. 기본값: 1.5</td></tr>
             <tr data-search="fillstyle"><td class="col-type">GoButtonFillStyle</td><td class="col-name">FillStyle <span class="accessor">get set</span></td><td class="col-desc">채우기 스타일. 기본값: Flat</td></tr>
             <tr data-search="autofontsize"><td class="col-type">GoAutoFontSize</td><td class="col-name">AutoFontSize / AutoIconSize <span class="accessor">get set</span></td><td class="col-desc">자동 크기 조절. 기본값: NotUsed</td></tr>
           </table>
@@ -1254,6 +1425,7 @@
             <tr data-search="fontname string"><td class="col-type">string</td><td class="col-name">FontName / FontStyle / FontSize <span class="accessor">get set</span></td><td class="col-desc">폰트 설정</td></tr>
             <tr data-search="textcolor string"><td class="col-type">string</td><td class="col-name">TextColor <span class="accessor">get set</span></td><td class="col-desc">텍스트 색상. 기본값: "Fore"</td></tr>
             <tr data-search="bordercolor string"><td class="col-type">string</td><td class="col-name">BorderColor <span class="accessor">get set</span></td><td class="col-desc">테두리 색상. 기본값: "Base3"</td></tr>
+            <tr data-search="borderwidth float"><td class="col-type">float</td><td class="col-name">BorderWidth <span class="accessor">get set</span></td><td class="col-desc">테두리 두께. 기본값: 1.5</td></tr>
             <tr data-search="buttoncolor string"><td class="col-type">string</td><td class="col-name">ButtonColor <span class="accessor">get set</span></td><td class="col-desc">버튼 색상. 기본값: "Base3"</td></tr>
             <tr data-search="valuecolor string"><td class="col-type">string</td><td class="col-name">ValueColor <span class="accessor">get set</span></td><td class="col-desc">값 영역 색상. 기본값: "Base1"</td></tr>
             <tr data-search="round goroundtype"><td class="col-type">GoRoundType</td><td class="col-name">Round <span class="accessor">get set</span></td><td class="col-desc">모서리 스타일. 기본값: All</td></tr>
@@ -1292,8 +1464,9 @@
             <tr data-search="bordercolor string"><td class="col-type">string</td><td class="col-name">BorderColor <span class="accessor">get set</span></td><td class="col-desc">테두리 색상. 기본값: "Base3"</td></tr>
             <tr data-search="selectedbuttoncolor string"><td class="col-type">string</td><td class="col-name">SelectedButtonColor <span class="accessor">get set</span></td><td class="col-desc">선택 버튼 색상. 기본값: "Select"</td></tr>
             <tr data-search="selectedbordercolor string"><td class="col-type">string</td><td class="col-name">SelectedBorderColor <span class="accessor">get set</span></td><td class="col-desc">선택 테두리 색상. 기본값: "Select"</td></tr>
+            <tr data-search="buttoncolor2 string"><td class="col-type">string?</td><td class="col-name">ButtonColor2 <span class="accessor">get set</span></td><td class="col-desc">버튼 배경 그라데이션 끝 색상 (세로). null/빈 값이면 단색</td></tr>
             <tr data-search="round goroundtype"><td class="col-type">GoRoundType</td><td class="col-name">Round <span class="accessor">get set</span></td><td class="col-desc">모서리 스타일. 기본값: All</td></tr>
-            <tr data-search="borderwidth float"><td class="col-type">float</td><td class="col-name">BorderWidth <span class="accessor">get set</span></td><td class="col-desc">테두리 두께. 기본값: 1</td></tr>
+            <tr data-search="borderwidth float"><td class="col-type">float</td><td class="col-name">BorderWidth <span class="accessor">get set</span></td><td class="col-desc">테두리 두께. 기본값: 1.5</td></tr>
             <tr data-search="fillstyle"><td class="col-type">GoButtonFillStyle</td><td class="col-name">FillStyle <span class="accessor">get set</span></td><td class="col-desc">채우기 스타일. 기본값: Flat</td></tr>
           </table>
         </div>
@@ -1302,6 +1475,16 @@
           <table class="api-table">
             <tr data-search="buttonclicked event"><td class="event-args">EventHandler&lt;ButtonsClickEventArgs&gt;</td><td class="col-method-name">ButtonClicked</td><td class="col-desc">버튼 클릭 시 발생</td></tr>
             <tr data-search="selectedchanged event"><td class="event-args">EventHandler&lt;ButtonsSelectedEventArgs&gt;</td><td class="col-method-name">SelectedChanged</td><td class="col-desc">선택 변경 시 발생</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Methods</div>
+          <table class="api-table">
+            <tr data-search="selectitem void index"><td class="ret">void</td><td class="col-method-name">SelectItem</td><td class="params">(<span class="tp">int</span> index, <span class="tp">bool</span> raiseEvent = true)</td><td class="col-desc">지정 인덱스의 버튼만 선택 (나머지 해제)</td></tr>
+            <tr data-search="selectitem void item"><td class="ret">void</td><td class="col-method-name">SelectItem</td><td class="params">(<span class="tp">GoButtonsItem</span> item, <span class="tp">bool</span> raiseEvent = true)</td><td class="col-desc">지정 버튼만 선택 (나머지 해제)</td></tr>
+            <tr data-search="selectitems void items"><td class="ret">void</td><td class="col-method-name">SelectItems</td><td class="params">(<span class="tp">IEnumerable&lt;GoButtonsItem&gt;</span> items, <span class="tp">bool</span> raiseEvent = true)</td><td class="col-desc">지정 버튼들만 선택 상태로 설정</td></tr>
+            <tr data-search="selectitems void indices"><td class="ret">void</td><td class="col-method-name">SelectItems</td><td class="params">(<span class="tp">IEnumerable&lt;int&gt;</span> indices, <span class="tp">bool</span> raiseEvent = true)</td><td class="col-desc">지정 인덱스들의 버튼만 선택 상태로 설정</td></tr>
+            <tr data-search="deselectall void"><td class="ret">void</td><td class="col-method-name">DeselectAll</td><td class="params">(<span class="tp">bool</span> raiseEvent = true)</td><td class="col-desc">모든 버튼의 선택을 해제</td></tr>
           </table>
         </div>
       </div>
@@ -1355,6 +1538,7 @@
             <tr data-search="textcolor string"><td class="col-type">string</td><td class="col-name">TextColor <span class="accessor">get set</span></td><td class="col-desc">텍스트 색상. 기본값: "Fore"</td></tr>
             <tr data-search="boxcolor string"><td class="col-type">string</td><td class="col-name">BoxColor <span class="accessor">get set</span></td><td class="col-desc">배경 색상. 기본값: "Base1"</td></tr>
             <tr data-search="bordercolor string"><td class="col-type">string</td><td class="col-name">BorderColor <span class="accessor">get set</span></td><td class="col-desc">테두리 색상. 기본값: "Base3"</td></tr>
+            <tr data-search="borderwidth float"><td class="col-type">float</td><td class="col-name">BorderWidth <span class="accessor">get set</span></td><td class="col-desc">테두리 두께. 기본값: 1.5</td></tr>
             <tr data-search="selectcolor string"><td class="col-type">string</td><td class="col-name">SelectColor <span class="accessor">get set</span></td><td class="col-desc">선택 색상. 기본값: "Select"</td></tr>
             <tr data-search="round goroundtype"><td class="col-type">GoRoundType</td><td class="col-name">Round <span class="accessor">get set</span></td><td class="col-desc">모서리 스타일. 기본값: All</td></tr>
             <tr data-search="backgrounddraw bool"><td class="col-type">bool</td><td class="col-name">BackgroundDraw <span class="accessor">get set</span></td><td class="col-desc">배경 그리기 여부. 기본값: true</td></tr>
@@ -1367,6 +1551,12 @@
             <tr data-search="selectedchanged event"><td class="event-args">EventHandler</td><td class="col-method-name">SelectedChanged</td><td class="col-desc">선택 변경 시 발생</td></tr>
             <tr data-search="itemclicked event"><td class="event-args">EventHandler&lt;TreeNodeEventArgs&gt;</td><td class="col-method-name">ItemClicked</td><td class="col-desc">항목 클릭 시</td></tr>
             <tr data-search="dragstart event"><td class="event-args">EventHandler&lt;TreeNodeEventArgs&gt;</td><td class="col-method-name">DragStart</td><td class="col-desc">드래그 시작 시</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Methods</div>
+          <table class="api-table">
+            <tr data-search="gettreenode gotreenode"><td class="ret">GoTreeNode?</td><td class="col-method-name">GetTreeNode</td><td class="params">(<span class="tp">int</span> x, <span class="tp">int</span> y)</td><td class="col-desc">지정된 좌표에 있는 트리 노드를 가져옵니다. 없으면 null</td></tr>
           </table>
         </div>
       </div>
@@ -1391,6 +1581,7 @@
             <tr data-search="textcolor string"><td class="col-type">string</td><td class="col-name">TextColor <span class="accessor">get set</span></td><td class="col-desc">텍스트 색상. 기본값: "Fore"</td></tr>
             <tr data-search="boxcolor string"><td class="col-type">string</td><td class="col-name">BoxColor <span class="accessor">get set</span></td><td class="col-desc">배경 색상. 기본값: "Base1"</td></tr>
             <tr data-search="bordercolor string"><td class="col-type">string</td><td class="col-name">BorderColor <span class="accessor">get set</span></td><td class="col-desc">테두리 색상. 기본값: "Base3"</td></tr>
+            <tr data-search="borderwidth float"><td class="col-type">float</td><td class="col-name">BorderWidth <span class="accessor">get set</span></td><td class="col-desc">테두리 두께. 기본값: 1.5</td></tr>
             <tr data-search="selectcolor string"><td class="col-type">string</td><td class="col-name">SelectColor <span class="accessor">get set</span></td><td class="col-desc">선택 색상. 기본값: "Select"</td></tr>
             <tr data-search="categorycolor string"><td class="col-type">string</td><td class="col-name">CategoryColor <span class="accessor">get set</span></td><td class="col-desc">카테고리 헤더 색상. 기본값: "Base2"</td></tr>
             <tr data-search="round goroundtype"><td class="col-type">GoRoundType</td><td class="col-name">Round <span class="accessor">get set</span></td><td class="col-desc">모서리 스타일. 기본값: All</td></tr>
@@ -1427,6 +1618,7 @@
             <tr data-search="textcolor string"><td class="col-type">string</td><td class="col-name">TextColor <span class="accessor">get set</span></td><td class="col-desc">텍스트 색상. 기본값: "Fore"</td></tr>
             <tr data-search="inputcolor string"><td class="col-type">string</td><td class="col-name">InputColor <span class="accessor">get set</span></td><td class="col-desc">입력 영역 색상. 기본값: "Base1"</td></tr>
             <tr data-search="bordercolor string"><td class="col-type">string</td><td class="col-name">BorderColor <span class="accessor">get set</span></td><td class="col-desc">테두리 색상. 기본값: "Base3"</td></tr>
+            <tr data-search="borderwidth float"><td class="col-type">float</td><td class="col-name">BorderWidth <span class="accessor">get set</span></td><td class="col-desc">테두리 두께. 기본값: 1.5</td></tr>
             <tr data-search="contentalignment"><td class="col-type">GoContentAlignment</td><td class="col-name">ContentAlignment <span class="accessor">get set</span></td><td class="col-desc">내용 정렬. 기본값: MiddleCenter</td></tr>
           </table>
         </div>
@@ -1493,6 +1685,184 @@
             <tr data-search="yaxisgraduationcount int"><td class="col-type">int</td><td class="col-name">YAxisGraduationCount <span class="accessor">get set</span></td><td class="col-desc">Y축 눈금 수. 기본값: 10</td></tr>
             <tr data-search="timeformatstring string"><td class="col-type">string?</td><td class="col-name">TimeFormatString <span class="accessor">get set</span></td><td class="col-desc">시간 표시 형식</td></tr>
             <tr data-search="valueformatstring string"><td class="col-type">string?</td><td class="col-name">ValueFormatString <span class="accessor">get set</span></td><td class="col-desc">값 표시 형식</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Methods</div>
+          <table class="api-table">
+            <tr data-search="setdatasource void"><td class="ret">void</td><td class="col-method-name">SetDataSource&lt;T&gt;</td><td class="params">(<span class="tp">string</span> XAxisName, <span class="tp">IEnumerable&lt;T&gt;</span> values, <span class="tp">DateTime?</span> start = null, <span class="tp">DateTime?</span> end = null)</td><td class="col-desc">데이터 컬렉션으로부터 시리즈를 설정합니다. XAxisName은 X축으로 사용할 DateTime 타입 속성 이름. start/end는 표시 시간 범위(null이면 데이터의 처음/마지막 시간 사용)</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+    <!-- Class: GoChip -->
+    <div id="class-GoChip" class="class-card" data-search="gochip class control chip badge tag pill status close">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoChip</span> <span class="base">: GoControl</span></div>
+        <div class="class-desc">칩(chip / 배지 / 태그) 컨트롤. 알약(pill) 모양 영역에 선행 요소(아이콘 또는 상태 dot) + 텍스트 + 선택적 닫기(×) 버튼을 표시합니다. 상태 표시("● LIVE"), 아이콘 태그, 필터/제거 칩 등에 사용합니다. 선행 요소는 IconString이 우선이며, 없으면 DotColor를 씁니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties — 텍스트</div>
+          <table class="api-table">
+            <tr data-search="text string"><td class="col-type">string</td><td class="col-name">Text <span class="accessor">get set</span></td><td class="col-desc">표시할 텍스트. 기본값: "Chip"</td></tr>
+            <tr data-search="fontname string"><td class="col-type">string</td><td class="col-name">FontName / FontStyle / FontSize <span class="accessor">get set</span></td><td class="col-desc">폰트 설정. FontStyle 기본값: Bold, FontSize 기본값: 12</td></tr>
+            <tr data-search="textcolor string"><td class="col-type">string</td><td class="col-name">TextColor <span class="accessor">get set</span></td><td class="col-desc">텍스트 색상. 기본값: "Fore"</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Properties — 배경 / 테두리</div>
+          <table class="api-table">
+            <tr data-search="chipcolor string"><td class="col-type">string?</td><td class="col-name">ChipColor <span class="accessor">get set</span></td><td class="col-desc">칩 배경(채움) 색상. null이면 채우지 않음. 기본값: "Base2"</td></tr>
+            <tr data-search="bordercolor string"><td class="col-type">string?</td><td class="col-name">BorderColor <span class="accessor">get set</span></td><td class="col-desc">테두리 색상. null이면 그리지 않음. 기본값: "Base3"</td></tr>
+            <tr data-search="borderwidth float"><td class="col-type">float</td><td class="col-name">BorderWidth <span class="accessor">get set</span></td><td class="col-desc">테두리 두께. 기본값: 1</td></tr>
+            <tr data-search="corner float"><td class="col-type">float?</td><td class="col-name">Corner <span class="accessor">get set</span></td><td class="col-desc">모서리 반경. null이면 완전한 알약(pill, 높이/2) 모양</td></tr>
+            <tr data-search="contentalignment"><td class="col-type">GoContentAlignment</td><td class="col-name">ContentAlignment <span class="accessor">get set</span></td><td class="col-desc">칩 내용 정렬 (세로는 항상 가운데). 기본값: MiddleCenter</td></tr>
+            <tr data-search="sidepadding float"><td class="col-type">float</td><td class="col-name">SidePadding <span class="accessor">get set</span></td><td class="col-desc">좌우 내부 여백. 기본값: 12</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Properties — 선행 요소 (아이콘 / dot)</div>
+          <table class="api-table">
+            <tr data-search="iconstring string"><td class="col-type">string?</td><td class="col-name">IconString <span class="accessor">get set</span></td><td class="col-desc">선행 아이콘(FontAwesome 등). 설정되면 dot 대신 아이콘을 표시</td></tr>
+            <tr data-search="iconcolor string"><td class="col-type">string?</td><td class="col-name">IconColor <span class="accessor">get set</span></td><td class="col-desc">아이콘 색상. null이면 TextColor 사용</td></tr>
+            <tr data-search="iconsize float"><td class="col-type">float</td><td class="col-name">IconSize <span class="accessor">get set</span></td><td class="col-desc">아이콘 크기. 기본값: 13</td></tr>
+            <tr data-search="dotcolor string"><td class="col-type">string?</td><td class="col-name">DotColor <span class="accessor">get set</span></td><td class="col-desc">선행 상태 dot 색상. IconString이 없고 이 값이 있으면 dot을 표시</td></tr>
+            <tr data-search="dotsize float"><td class="col-type">float</td><td class="col-name">DotSize <span class="accessor">get set</span></td><td class="col-desc">상태 dot 지름. 기본값: 8</td></tr>
+            <tr data-search="gap float"><td class="col-type">float</td><td class="col-name">Gap <span class="accessor">get set</span></td><td class="col-desc">선행 요소와 텍스트 사이 간격. 기본값: 7</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Properties — 닫기 버튼</div>
+          <table class="api-table">
+            <tr data-search="closable bool"><td class="col-type">bool</td><td class="col-name">Closable <span class="accessor">get set</span></td><td class="col-desc">닫기(×) 버튼 표시 여부. true이면 클릭 시 CloseClicked 발생. 기본값: false</td></tr>
+            <tr data-search="closeicon string"><td class="col-type">string</td><td class="col-name">CloseIcon <span class="accessor">get set</span></td><td class="col-desc">닫기 아이콘(FontAwesome). 기본값: "fa-xmark"</td></tr>
+            <tr data-search="closecolor string"><td class="col-type">string?</td><td class="col-name">CloseColor <span class="accessor">get set</span></td><td class="col-desc">닫기 아이콘 색상. null이면 TextColor 사용</td></tr>
+            <tr data-search="closesize float"><td class="col-type">float</td><td class="col-name">CloseSize <span class="accessor">get set</span></td><td class="col-desc">닫기 아이콘 크기. 기본값: 11</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Events</div>
+          <table class="api-table">
+            <tr data-search="closeclicked event"><td class="event-args">EventHandler</td><td class="col-method-name">CloseClicked</td><td class="col-desc">닫기(×) 버튼 클릭 시 발생</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+    <!-- Class: GoItemList -->
+    <div id="class-GoItemList" class="class-card" data-search="goitemlist class control list itemtemplate binding scrollable repeat">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoItemList</span> <span class="base">: GoScrollablePanel</span></div>
+        <div class="class-desc">바인딩된 컬렉션을 ItemTemplate으로 반복 렌더하는 리스트. 각 행은 해당 아이템 객체에 바인딩됩니다. 스크롤은 GoScrollablePanel에서 상속. 주로 .gudx의 <code>Items="{Logs}"</code> 바인딩 패턴에 사용합니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="itemheight float"><td class="col-type">float</td><td class="col-name">ItemHeight <span class="accessor">get set</span></td><td class="col-desc">각 행의 높이. 기본값: 30</td></tr>
+            <tr data-search="itemssource ienumerable"><td class="col-type">IEnumerable?</td><td class="col-name">ItemsSource <span class="accessor">get set</span></td><td class="col-desc">바인딩으로 전달되는 컬렉션 참조. 매 프레임 펌프가 set (직렬화 제외)</td></tr>
+            <tr data-search="items ienumerable"><td class="col-type">IEnumerable?</td><td class="col-name">Items <span class="accessor">get set</span></td><td class="col-desc">마크업 attribute 이름(Items)용 별칭. ItemsSource와 동일 백킹 (직렬화 제외)</td></tr>
+            <tr data-search="itemtemplatexml xelement"><td class="col-type">XElement?</td><td class="col-name">ItemTemplateXml <span class="accessor">get set</span></td><td class="col-desc">ItemTemplate 원본(행 복제 소스) (직렬화 제외)</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Methods</div>
+          <table class="api-table">
+            <tr data-search="rebuildrows void"><td class="ret">void</td><td class="col-method-name">RebuildRows</td><td class="params">()</td><td class="col-desc">현재 ItemsSource로 행을 전량 재생성 (소스/개수 변경 시 자동 호출됨)</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+    <!-- Class: GoSparkline -->
+    <div id="class-GoSparkline" class="class-card" data-search="gosparkline class control trend mini graph line baseline realtime start stop">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoSparkline</span> <span class="base">: GoControl</span></div>
+        <div class="class-desc">축/범례/스크롤 없이 라인(+옵션 영역 채움)과 기준선, 최소/최대/XScale 텍스트만 표시하는 미니 트렌드 그래프. 여러 시리즈를 공통 Min/Max 스케일로 그립니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties — 스케일 / 데이터</div>
+          <table class="api-table">
+            <tr data-search="minimum maximum double"><td class="col-type">double</td><td class="col-name">Minimum / Maximum <span class="accessor">get set</span></td><td class="col-desc">Y축 최소/최대값 (모든 시리즈 공통). 기본값: 0 / 100</td></tr>
+            <tr data-search="maximumxscale timespan"><td class="col-type">TimeSpan</td><td class="col-name">MaximumXScale <span class="accessor">get set</span></td><td class="col-desc">데이터를 보관할 최대 시간 범위. 기본값: 10분</td></tr>
+            <tr data-search="xscale timespan"><td class="col-type">TimeSpan</td><td class="col-name">XScale <span class="accessor">get set</span></td><td class="col-desc">X축에 표시할 시간 범위. 기본값: 1분</td></tr>
+            <tr data-search="interval int"><td class="col-type">int</td><td class="col-name">Interval <span class="accessor">get set</span></td><td class="col-desc">데이터 수집 간격(ms). 기본값: 1000</td></tr>
+            <tr data-search="valueformatstring string"><td class="col-type">string?</td><td class="col-name">ValueFormatString <span class="accessor">get set</span></td><td class="col-desc">값 표시 형식 문자열</td></tr>
+            <tr data-search="series list golinegraphseries"><td class="col-type">List&lt;GoLineGraphSeries&gt;</td><td class="col-name">Series <span class="accessor">get set</span></td><td class="col-desc">그래프 시리즈 목록</td></tr>
+            <tr data-search="baselines list gobaseline"><td class="col-type">List&lt;GoBaseline&gt;</td><td class="col-name">Baselines <span class="accessor">get set</span></td><td class="col-desc">기준선 목록</td></tr>
+            <tr data-search="isstart bool"><td class="col-type">bool</td><td class="col-name">IsStart <span class="accessor">get</span></td><td class="col-desc">트렌드 수집 실행 여부</td></tr>
+            <tr data-search="pause bool"><td class="col-type">bool</td><td class="col-name">Pause <span class="accessor">get set</span></td><td class="col-desc">데이터 수집 일시정지 여부 (직렬화 제외)</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Properties — 외관</div>
+          <table class="api-table">
+            <tr data-search="graphcolor string"><td class="col-type">string</td><td class="col-name">GraphColor <span class="accessor">get set</span></td><td class="col-desc">그래프 배경 색상. 기본값: "Back"</td></tr>
+            <tr data-search="textcolor string"><td class="col-type">string</td><td class="col-name">TextColor <span class="accessor">get set</span></td><td class="col-desc">텍스트 색상. 기본값: "Fore"</td></tr>
+            <tr data-search="fontname string"><td class="col-type">string</td><td class="col-name">FontName / FontStyle / FontSize <span class="accessor">get set</span></td><td class="col-desc">폰트 설정. FontSize 기본값: 10</td></tr>
+            <tr data-search="areadraw bool"><td class="col-type">bool</td><td class="col-name">AreaDraw <span class="accessor">get set</span></td><td class="col-desc">라인 아래 영역을 시리즈 색상으로 채울지 여부. 기본값: false</td></tr>
+            <tr data-search="linewidth float"><td class="col-type">float</td><td class="col-name">LineWidth <span class="accessor">get set</span></td><td class="col-desc">라인 두께. 기본값: 1.5</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">GoBaseline</div>
+          <table class="api-table">
+            <tr data-search="name string gobaseline"><td class="col-type">string</td><td class="col-name">Name <span class="accessor">get set</span></td><td class="col-desc">기준선 왼쪽에 표시할 이름</td></tr>
+            <tr data-search="value double gobaseline"><td class="col-type">double</td><td class="col-name">Value <span class="accessor">get set</span></td><td class="col-desc">기준선 값 (Y축 스케일 기준)</td></tr>
+            <tr data-search="color string gobaseline"><td class="col-type">string</td><td class="col-name">Color <span class="accessor">get set</span></td><td class="col-desc">선/텍스트 색상. 기본값: "Base3"</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Methods</div>
+          <table class="api-table">
+            <tr data-search="start void"><td class="ret">void</td><td class="col-method-name">Start&lt;T&gt;</td><td class="params">(<span class="tp">T</span> value)</td><td class="col-desc">트렌드 데이터 수집 시작. T는 Series 프로퍼티와 매핑되는 숫자 필드를 가진 데이터 클래스</td></tr>
+            <tr data-search="stop void"><td class="ret">void</td><td class="col-method-name">Stop</td><td class="params">()</td><td class="col-desc">트렌드 데이터 수집 중지</td></tr>
+            <tr data-search="setdata void"><td class="ret">void</td><td class="col-method-name">SetData&lt;T&gt;</td><td class="params">(<span class="tp">T</span> Data)</td><td class="col-desc">데이터 소스 객체 교체</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+    <!-- Class: GoStateLamp -->
+    <div id="class-GoStateLamp" class="class-card" data-search="gostatelamp class control lamp state multi indicator tone">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoStateLamp</span> <span class="base">: GoControl</span></div>
+        <div class="class-desc">상태 값(State)에 따라 서로 다른 색상/텍스트/On-Off 톤을 표시하는 다중 상태 램프 컨트롤. 각 상태 항목(StateLamp)이 자체 OnOff 플래그를 가져 같은 색상에서도 활성/비활성 톤을 표현합니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="states list statelamp"><td class="col-type">List&lt;StateLamp&gt;</td><td class="col-name">States <span class="accessor">get set</span></td><td class="col-desc">상태별 (색상/텍스트/OnOff) 정의 목록. State와 일치하는 항목이 표시됨</td></tr>
+            <tr data-search="state int"><td class="col-type">int</td><td class="col-name">State <span class="accessor">get set</span></td><td class="col-desc">현재 상태 값. States에서 일치하는 항목이 없으면 "Base3" OFF 톤 + "Not Matched" 표시. 변경 시 StateChanged 발생</td></tr>
+            <tr data-search="fontname string"><td class="col-type">string</td><td class="col-name">FontName / FontStyle / FontSize <span class="accessor">get set</span></td><td class="col-desc">폰트 설정</td></tr>
+            <tr data-search="textcolor string"><td class="col-type">string</td><td class="col-name">TextColor <span class="accessor">get set</span></td><td class="col-desc">텍스트 색상. 기본값: "Fore"</td></tr>
+            <tr data-search="lampsize int"><td class="col-type">int</td><td class="col-name">LampSize <span class="accessor">get set</span></td><td class="col-desc">램프 크기(px). 기본값: 24</td></tr>
+            <tr data-search="gap int"><td class="col-type">int</td><td class="col-name">Gap <span class="accessor">get set</span></td><td class="col-desc">램프-텍스트 간격. 기본값: 10</td></tr>
+            <tr data-search="contentalignment"><td class="col-type">GoContentAlignment</td><td class="col-name">ContentAlignment <span class="accessor">get set</span></td><td class="col-desc">내용 정렬. 기본값: MiddleCenter</td></tr>
+            <tr data-search="autofontsize"><td class="col-type">GoAutoFontSize</td><td class="col-name">AutoFontSize <span class="accessor">get set</span></td><td class="col-desc">자동 폰트 크기. 기본값: NotUsed</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">StateLamp</div>
+          <table class="api-table">
+            <tr data-search="state int statelamp"><td class="col-type">int</td><td class="col-name">State <span class="accessor">get set</span></td><td class="col-desc">이 항목이 표시될 상태 값</td></tr>
+            <tr data-search="color string statelamp"><td class="col-type">string</td><td class="col-name">Color <span class="accessor">get set</span></td><td class="col-desc">이 상태일 때 램프 색상 (테마 색상 키 또는 직접 지정). 기본값: "Good"</td></tr>
+            <tr data-search="text string statelamp"><td class="col-type">string?</td><td class="col-name">Text <span class="accessor">get set</span></td><td class="col-desc">이 상태일 때 표시할 텍스트</td></tr>
+            <tr data-search="onoff bool statelamp"><td class="col-type">bool</td><td class="col-name">OnOff <span class="accessor">get set</span></td><td class="col-desc">활성 톤 여부. true면 밝게, false면 같은 색의 어두운 톤. 기본값: true</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Events</div>
+          <table class="api-table">
+            <tr data-search="statechanged event"><td class="event-args">EventHandler</td><td class="col-method-name">StateChanged</td><td class="col-desc">State 값 변경 시 발생</td></tr>
           </table>
         </div>
       </div>

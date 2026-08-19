@@ -64,7 +64,7 @@
     <!-- Class: MathTool -->
     <div id="class-MathTool" class="class-card" data-search="mathtool class static math geometry point rectangle angle distance">
       <div class="class-card-header" onclick="toggleCard(this)">
-        <div class="class-signature"><span class="kw">public static class</span> <span class="nm">MathTool</span></div>
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">MathTool</span></div>
         <div class="class-desc">값 범위 매핑, 제한, 각도/거리 계산, 사각형 생성, 점 변환 등 수학·기하 유틸리티</div>
       </div>
       <div class="class-card-body">
@@ -73,7 +73,7 @@
           <table class="api-table">
             <tr data-search="map long static"><td class="ret">static long</td><td class="col-method-name">Map</td><td class="params">(<span class="tp">long</span> val, <span class="tp">long</span> min, <span class="tp">long</span> max, <span class="tp">long</span> convert_min, <span class="tp">long</span> convert_max)</td><td class="col-desc">정수 범위 선형 매핑</td></tr>
             <tr data-search="map double static"><td class="ret">static double</td><td class="col-method-name">Map</td><td class="params">(<span class="tp">double</span> val, <span class="tp">double</span> min, <span class="tp">double</span> max, <span class="tp">double</span> convert_min, <span class="tp">double</span> convert_max)</td><td class="col-desc">실수 범위 선형 매핑</td></tr>
-            <tr data-search="constrain generic static"><td class="ret">static T</td><td class="col-method-name">Constrain&lt;T&gt;</td><td class="params">(<span class="tp">T</span> val, <span class="tp">T</span> min, <span class="tp">T</span> max)</td><td class="col-desc">값을 min~max 범위로 제한. byte/short/int/long/float/double 등 지원.</td></tr>
+            <tr data-search="constrain static byte short int long sbyte ushort uint ulong float double decimal swap"><td class="ret">static T</td><td class="col-method-name">Constrain</td><td class="params">(<span class="tp">T</span> val, <span class="tp">T</span> min, <span class="tp">T</span> max)</td><td class="col-desc">값을 min~max 범위로 제한. min이 max보다 크면 자동으로 교체(swap)한다. byte/short/int/long/sbyte/ushort/uint/ulong/float/double/decimal 11개 오버로드 지원.</td></tr>
           </table>
         </div>
         <div class="member-section">
@@ -102,10 +102,12 @@
             <tr data-search="centerpoint pointf rectf"><td class="ret">static PointF</td><td class="col-method-name">CenterPoint</td><td class="params">(<span class="tp">RectangleF</span> rt)</td><td class="col-desc">사각형 중심점 (부동소수점)</td></tr>
             <tr data-search="centerpoint point two"><td class="ret">static Point</td><td class="col-method-name">CenterPoint</td><td class="params">(<span class="tp">Point</span> p1, <span class="tp">Point</span> p2)</td><td class="col-desc">두 점의 중심점</td></tr>
             <tr data-search="centerpoint pointf two"><td class="ret">static PointF</td><td class="col-method-name">CenterPoint</td><td class="params">(<span class="tp">PointF</span> p1, <span class="tp">PointF</span> p2)</td><td class="col-desc">두 점의 중심점 (부동소수점)</td></tr>
+            <tr data-search="centerpoint list pointf centroid polygon"><td class="ret">static PointF</td><td class="col-method-name">CenterPoint</td><td class="params">(<span class="tp">List&lt;PointF&gt;</span> sourceList)</td><td class="col-desc">다각형 꼭짓점 목록의 무게중심(centroid) 계산</td></tr>
             <tr data-search="getpoints pointf array rectf"><td class="ret">static PointF[]</td><td class="col-method-name">GetPoints</td><td class="params">(<span class="tp">RectangleF</span> rt)</td><td class="col-desc">사각형의 4개 꼭짓점 배열 반환</td></tr>
             <tr data-search="makerectangle rectangle"><td class="ret">static Rectangle/RectangleF</td><td class="col-method-name">MakeRectangle</td><td class="params">(여러 오버로드)</td><td class="col-desc">두 점, 크기, 중심+크기 등으로 사각형 생성 (8+ 오버로드)</td></tr>
             <tr data-search="getpointwithangle pointf"><td class="ret">static PointF</td><td class="col-method-name">GetPointWithAngle</td><td class="params">(<span class="tp">PointF</span> p, <span class="tp">float</span> angle, <span class="tp">float</span> dist)</td><td class="col-desc">원점에서 각도·거리로 점 계산</td></tr>
             <tr data-search="getpointwithangle point"><td class="ret">static PointF</td><td class="col-method-name">GetPointWithAngle</td><td class="params">(<span class="tp">Point</span> p, <span class="tp">float</span> angle, <span class="tp">float</span> dist)</td><td class="col-desc">원점에서 각도·거리로 점 계산 (Point)</td></tr>
+            <tr data-search="getpointwithangle rectanglef ellipse"><td class="ret">static PointF</td><td class="col-method-name">GetPointWithAngle</td><td class="params">(<span class="tp">RectangleF</span> rt, <span class="tp">double</span> angle)</td><td class="col-desc">사각형에 내접하는 타원 위에서 지정 각도에 해당하는 점 계산</td></tr>
             <tr data-search="getx_withangle float pointf"><td class="ret">static float</td><td class="col-method-name">GetX_WithAngle</td><td class="params">(<span class="tp">PointF/Point</span> p, <span class="tp">float</span> angle, <span class="tp">float</span> dist)</td><td class="col-desc">각도·거리로 X 좌표 계산 (2개 오버로드)</td></tr>
             <tr data-search="gety_withangle float pointf"><td class="ret">static float</td><td class="col-method-name">GetY_WithAngle</td><td class="params">(<span class="tp">PointF/Point</span> p, <span class="tp">float</span> angle, <span class="tp">float</span> dist)</td><td class="col-desc">각도·거리로 Y 좌표 계산 (2개 오버로드)</td></tr>
             <tr data-search="linearequationy float"><td class="ret">static float</td><td class="col-method-name">LinearEquationY</td><td class="params">(<span class="tp">PointF</span> p1, <span class="tp">PointF</span> p2, <span class="tp">float</span> x)</td><td class="col-desc">두 점을 지나는 직선의 Y값 계산</td></tr>
@@ -128,12 +130,12 @@
           <div class="member-section-title">Static Methods</div>
           <table class="api-table">
             <tr data-search="validipv4 bool"><td class="ret">static bool</td><td class="col-method-name">ValidIPv4</td><td class="params">(<span class="tp">string</span> address)</td><td class="col-desc">IPv4 주소 형식 유효성 검사</td></tr>
-            <tr data-search="validdomain bool"><td class="ret">static bool</td><td class="col-method-name">ValidDomain</td><td class="params">(<span class="tp">string</span> address)</td><td class="col-desc">도메인 형식 유효성 검사</td></tr>
+            <tr data-search="validdomain bool"><td class="ret">static bool</td><td class="col-method-name">ValidDomain</td><td class="params">(<span class="tp">string</span> address)</td><td class="col-desc">도메인 또는 IPv4 주소 검증. 도메인은 <b>실제 DNS 조회</b>를 수행하므로 네트워크 상태에 영향을 받음</td></tr>
             <tr data-search="getlocalip string"><td class="ret">static string</td><td class="col-method-name">GetLocalIP</td><td class="params">()</td><td class="col-desc">현재 로컬 IP 주소 반환</td></tr>
             <tr data-search="setlocalip bool"><td class="ret">static bool</td><td class="col-method-name">SetLocalIP</td><td class="params">(<span class="tp">string</span> description, <span class="tp">string</span> ip, <span class="tp">string</span> subnet, <span class="tp">string</span> gateway)</td><td class="col-desc">NIC 고정 IP 설정</td></tr>
             <tr data-search="setdhcp bool"><td class="ret">static bool</td><td class="col-method-name">SetDHCP</td><td class="params">(<span class="tp">string</span> description)</td><td class="col-desc">NIC DHCP 설정</td></tr>
-            <tr data-search="getnicdescriptions string array"><td class="ret">static string[]</td><td class="col-method-name">GetNicDescriptions</td><td class="params">()</td><td class="col-desc">설치된 NIC 설명 목록 반환</td></tr>
-            <tr data-search="issocketconnected bool socket"><td class="ret">static bool</td><td class="col-method-name">IsSocketConnected</td><td class="params">(<span class="tp">Socket</span> s, <span class="tp">int</span> PollTime = 100)</td><td class="col-desc">소켓 연결 상태 확인</td></tr>
+            <tr data-search="getnicdescriptions string array"><td class="ret">static string[]</td><td class="col-method-name">GetNicDescriptions</td><td class="params">()</td><td class="col-desc">NIC 목록 반환 (Windows: Description, Linux: 인터페이스 이름). 루프백·터널·docker/br- 인터페이스는 제외. 그 외 OS는 NotSupportedException</td></tr>
+            <tr data-search="issocketconnected bool socket polltimemicros"><td class="ret">static bool</td><td class="col-method-name">IsSocketConnected</td><td class="params">(<span class="tp">Socket</span> s, <span class="tp">int</span> PollTimeMicros = 100)</td><td class="col-desc">소켓 연결 상태 확인 (폴링 대기 시간, 마이크로초 단위)</td></tr>
           </table>
         </div>
       </div>
@@ -153,7 +155,7 @@
           <table class="api-table">
             <tr data-search="setlocaltime void datetime"><td class="ret">static void</td><td class="col-method-name">SetLocalTime</td><td class="params">(<span class="tp">DateTime</span> Time)</td><td class="col-desc">Windows 로컬 시스템 시간 설정</td></tr>
             <tr data-search="setsystemtime void datetime"><td class="ret">static void</td><td class="col-method-name">SetSystemTime</td><td class="params">(<span class="tp">DateTime</span> Time)</td><td class="col-desc">Windows UTC 시스템 시간 설정</td></tr>
-            <tr data-search="preventsleep void"><td class="ret">static void</td><td class="col-method-name">PreventSleep</td><td class="params">()</td><td class="col-desc">디스플레이 절전 방지 (ES_DISPLAY_REQUIRED)</td></tr>
+            <tr data-search="preventsleep void"><td class="ret">static void</td><td class="col-method-name">PreventSleep</td><td class="params">()</td><td class="col-desc">시스템 절전 및 화면 꺼짐 방지 (ES_CONTINUOUS | ES_SYSTEM_REQUIRED | ES_AWAYMODE_REQUIRED | ES_DISPLAY_REQUIRED)</td></tr>
             <tr data-search="allowsleep void"><td class="ret">static void</td><td class="col-method-name">AllowSleep</td><td class="params">()</td><td class="col-desc">절전 방지 해제</td></tr>
           </table>
         </div>

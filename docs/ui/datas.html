@@ -25,7 +25,7 @@
       <span>Datas</span>
     </div>
     <h1 class="page-title">Datas</h1>
-    <p class="page-subtitle">네임스페이스 <code>Going.UI.Datas</code> — UI 데이터 모델 및 이벤트 인수 클래스</p>
+    <p class="page-subtitle">네임스페이스 <code>Going.UI.Datas</code> — UI 데이터 모델(항목/노드) 및 이벤트 인수 클래스</p>
 
     <!-- GoListItem -->
     <div id="class-GoListItem" class="class-card" data-search="golistitem class list item data">
@@ -57,7 +57,7 @@
     <div id="class-GoPadding" class="class-card" data-search="gopadding class padding margin spacing">
       <div class="class-card-header" onclick="toggleCard(this)">
         <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoPadding</span></div>
-        <div class="class-desc">컨트롤 여백(패딩/마진) 설정 클래스</div>
+        <div class="class-desc">컨트롤 여백(패딩/마진) 설정 클래스. TypeConverter(GoPaddingConverter)로 "left, top, right, bottom" 문자열과 상호 변환 가능.</div>
       </div>
       <div class="class-card-body">
         <div class="member-section">
@@ -77,25 +77,241 @@
             <tr data-search="bottom float"><td class="col-type">float</td><td class="col-name">Bottom <span class="accessor">get set</span></td><td class="col-desc">아래쪽 여백</td></tr>
           </table>
         </div>
+        <div class="member-section">
+          <div class="member-section-title">Methods</div>
+          <table class="api-table">
+            <tr data-search="tostring string override"><td class="ret">string</td><td class="col-method-name">ToString</td><td class="params">()</td><td class="col-desc">"Left, Top, Right, Bottom" 형식 문자열 반환</td></tr>
+          </table>
+        </div>
       </div>
     </div>
 
     <hr class="class-separator">
 
-    <!-- GoButtonItem -->
-    <div id="class-GoButtonItem" class="class-card" data-search="gobuttonitem class button item data icon">
+    <!-- GoButtonItem / GoButtonsItem -->
+    <div id="class-GoButtonItem" class="class-card" data-search="gobuttonitem gobuttonsitem class button item data icon selected">
       <div class="class-card-header" onclick="toggleCard(this)">
         <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoButtonItem</span></div>
-        <div class="class-desc">GoInput 컨트롤의 부가 버튼 항목 데이터</div>
+        <div class="class-desc">GoInput 컨트롤의 부가 버튼 항목 데이터. 채우기 스타일은 <code>GoButtonFillStyle</code> enum 참조.</div>
       </div>
       <div class="class-card-body">
         <div class="member-section">
           <div class="member-section-title">Properties</div>
           <table class="api-table">
-            <tr data-search="name string"><td class="col-type">string</td><td class="col-name">Name <span class="accessor">get set</span></td><td class="col-desc">버튼 식별자</td></tr>
-            <tr data-search="iconstring string"><td class="col-type">string?</td><td class="col-name">IconString <span class="accessor">get set</span></td><td class="col-desc">Font Awesome 아이콘 코드</td></tr>
+            <tr data-search="name string"><td class="col-type">string</td><td class="col-name">Name <span class="accessor">get set</span></td><td class="col-desc">버튼의 이름(식별자)</td></tr>
             <tr data-search="text string"><td class="col-type">string?</td><td class="col-name">Text <span class="accessor">get set</span></td><td class="col-desc">버튼 텍스트</td></tr>
-            <tr data-search="size string"><td class="col-type">string</td><td class="col-name">Size <span class="accessor">get set</span></td><td class="col-desc">버튼 크기 문자열. 기본값: "100%"</td></tr>
+            <tr data-search="iconstring string"><td class="col-type">string?</td><td class="col-name">IconString <span class="accessor">get set</span></td><td class="col-desc">Font Awesome 아이콘 코드</td></tr>
+            <tr data-search="size string"><td class="col-type">string</td><td class="col-name">Size <span class="accessor">get set</span></td><td class="col-desc">버튼 크기 문자열(퍼센트/픽셀). 기본값: "100%"</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Methods</div>
+          <table class="api-table">
+            <tr data-search="tostring string override"><td class="ret">string</td><td class="col-method-name">ToString</td><td class="params">()</td><td class="col-desc">Name 반환 (null이면 빈 문자열)</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">GoButtonsItem : GoButtonItem</div>
+          <table class="api-table">
+            <tr data-search="selected bool gobuttonsitem"><td class="col-type">bool</td><td class="col-name">Selected <span class="accessor">get set</span></td><td class="col-desc">버튼 그룹(GoButtons)에서 선택 상태. GoButtonsMode 참조.</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- GoMenuItem -->
+    <div id="class-GoMenuItem" class="class-card" data-search="gomenuitem class menu item data icon pagename">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoMenuItem</span></div>
+        <div class="class-desc">메뉴 컨트롤에서 사용되는 메뉴 항목 클래스</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="iconstring string"><td class="col-type">string?</td><td class="col-name">IconString <span class="accessor">get set</span></td><td class="col-desc">메뉴 항목 아이콘 문자열</td></tr>
+            <tr data-search="text string"><td class="col-type">string?</td><td class="col-name">Text <span class="accessor">get set</span></td><td class="col-desc">메뉴 항목 텍스트</td></tr>
+            <tr data-search="tag object"><td class="col-type">object?</td><td class="col-name">Tag <span class="accessor">get set</span></td><td class="col-desc">사용자 정의 데이터</td></tr>
+            <tr data-search="pagename string"><td class="col-type">string?</td><td class="col-name">PageName <span class="accessor">get set</span></td><td class="col-desc">메뉴 선택 시 이동할 페이지 이름</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Methods</div>
+          <table class="api-table">
+            <tr data-search="tostring string override"><td class="ret">string</td><td class="col-method-name">ToString</td><td class="params">()</td><td class="col-desc">"{Text} / Page : {PageName}" 형식 문자열 반환</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- GoStepItem -->
+    <div id="class-GoStepItem" class="class-card" data-search="gostepitem class step item icon text stepbar">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoStepItem</span></div>
+        <div class="class-desc">GoStepBar에서 사용되는 스텝 항목 클래스 (Text + Icon). v1.2.12에서 Controls에서 Datas로 이동됨.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="iconstring string"><td class="col-type">string?</td><td class="col-name">IconString <span class="accessor">get set</span></td><td class="col-desc">아이콘 문자열 (FontAwesome 등). 없으면 null</td></tr>
+            <tr data-search="text string"><td class="col-type">string?</td><td class="col-name">Text <span class="accessor">get set</span></td><td class="col-desc">표시 텍스트</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- GoToolItem -->
+    <div id="class-GoToolItem" class="class-card" data-search="gotoolitem class tool item toolbox data icon category">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoToolItem</span></div>
+        <div class="class-desc">도구 상자(GoToolBox) 컨트롤에서 사용되는 도구 항목 클래스</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="text string"><td class="col-type">string?</td><td class="col-name">Text <span class="accessor">get set</span></td><td class="col-desc">도구 항목 텍스트</td></tr>
+            <tr data-search="iconstring string"><td class="col-type">string?</td><td class="col-name">IconString <span class="accessor">get set</span></td><td class="col-desc">도구 항목 아이콘 문자열</td></tr>
+            <tr data-search="tag object"><td class="col-type">object?</td><td class="col-name">Tag <span class="accessor">get set</span></td><td class="col-desc">사용자 정의 데이터</td></tr>
+            <tr data-search="category gotoolcategory"><td class="col-type">GoToolCategory?</td><td class="col-name">Category <span class="accessor">get</span></td><td class="col-desc">이 항목이 속한 카테고리 (내부에서 설정)</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Events</div>
+          <table class="api-table">
+            <tr data-search="itemdraw event action"><td class="event-args">Action&lt;SKCanvas, GoTheme, GoToolBox, GoToolItem, SKRect&gt;?</td><td class="col-method-name">ItemDraw</td><td class="col-desc">항목 커스텀 그리기. 미지정 시 기본 텍스트+아이콘 렌더링</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Methods</div>
+          <table class="api-table">
+            <tr data-search="tostring string override"><td class="ret">string</td><td class="col-method-name">ToString</td><td class="params">()</td><td class="col-desc">Text 반환 (null이면 빈 문자열)</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- GoToolCategory -->
+    <div id="class-GoToolCategory" class="class-card" data-search="gotoolcategory class tool category toolbox group expand items">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoToolCategory</span></div>
+        <div class="class-desc">도구 상자(GoToolBox)의 카테고리(그룹)를 나타내는 클래스</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="text string"><td class="col-type">string?</td><td class="col-name">Text <span class="accessor">get set</span></td><td class="col-desc">카테고리 텍스트</td></tr>
+            <tr data-search="iconstring string"><td class="col-type">string?</td><td class="col-name">IconString <span class="accessor">get set</span></td><td class="col-desc">카테고리 아이콘 문자열</td></tr>
+            <tr data-search="tag object"><td class="col-type">object?</td><td class="col-name">Tag <span class="accessor">get set</span></td><td class="col-desc">사용자 정의 데이터</td></tr>
+            <tr data-search="items observablelist gotoolitem"><td class="col-type">ObservableList&lt;GoToolItem&gt;</td><td class="col-name">Items <span class="accessor">get set</span></td><td class="col-desc">카테고리에 포함된 도구 항목 컬렉션</td></tr>
+            <tr data-search="expand bool"><td class="col-type">bool</td><td class="col-name">Expand <span class="accessor">get set</span></td><td class="col-desc">카테고리 확장(펼침) 상태. 기본값: true</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Methods</div>
+          <table class="api-table">
+            <tr data-search="tostring string override"><td class="ret">string</td><td class="col-method-name">ToString</td><td class="params">()</td><td class="col-desc">Text 반환 (null이면 빈 문자열)</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- GoTreeNode -->
+    <div id="class-GoTreeNode" class="class-card" data-search="gotreenode class tree node treeview data icon nodes depth parent expand">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoTreeNode</span></div>
+        <div class="class-desc">트리뷰(GoTreeView) 컨트롤에서 사용되는 트리 노드 클래스</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="text string"><td class="col-type">string?</td><td class="col-name">Text <span class="accessor">get set</span></td><td class="col-desc">노드 텍스트</td></tr>
+            <tr data-search="iconstring string"><td class="col-type">string?</td><td class="col-name">IconString <span class="accessor">get set</span></td><td class="col-desc">노드 아이콘 문자열</td></tr>
+            <tr data-search="tag object"><td class="col-type">object?</td><td class="col-name">Tag <span class="accessor">get set</span></td><td class="col-desc">사용자 정의 데이터</td></tr>
+            <tr data-search="nodes observablelist gotreenode"><td class="col-type">ObservableList&lt;GoTreeNode&gt;</td><td class="col-name">Nodes <span class="accessor">get set</span></td><td class="col-desc">자식 노드 컬렉션</td></tr>
+            <tr data-search="expand bool"><td class="col-type">bool</td><td class="col-name">Expand <span class="accessor">get set</span></td><td class="col-desc">노드 확장(펼침) 상태. 기본값: true</td></tr>
+            <tr data-search="depth int"><td class="col-type">int</td><td class="col-name">Depth <span class="accessor">get</span></td><td class="col-desc">트리 내 노드 깊이 (루트 노드는 0)</td></tr>
+            <tr data-search="parent gotreenode"><td class="col-type">GoTreeNode?</td><td class="col-name">Parent <span class="accessor">get</span></td><td class="col-desc">부모 노드 (루트 노드이면 null)</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Methods</div>
+          <table class="api-table">
+            <tr data-search="tostring string override"><td class="ret">string</td><td class="col-method-name">ToString</td><td class="params">()</td><td class="col-desc">Text 반환 (null이면 빈 문자열)</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- GoGraphSeries / GoLineGraphSeries -->
+    <div id="class-GoGraphSeries" class="class-card" data-search="gographseries golinegraphseries class graph series bar line data color minimum maximum">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoGraphSeries</span></div>
+        <div class="class-desc">그래프(막대) 시리즈 정보 클래스. 막대 표시 모드는 <code>GoBarGraphMode</code> enum 참조.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="name string"><td class="col-type">string</td><td class="col-name">Name <span class="accessor">get set</span></td><td class="col-desc">시리즈의 데이터 바인딩 이름. 기본값: ""</td></tr>
+            <tr data-search="alias string"><td class="col-type">string</td><td class="col-name">Alias <span class="accessor">get set</span></td><td class="col-desc">시리즈 표시 이름(별칭). 기본값: ""</td></tr>
+            <tr data-search="color string"><td class="col-type">string</td><td class="col-name">Color <span class="accessor">get set</span></td><td class="col-desc">시리즈 색상. 기본값: "Red"</td></tr>
+            <tr data-search="color2 string gradient"><td class="col-type">string?</td><td class="col-name">Color2 <span class="accessor">get set</span></td><td class="col-desc">막대 그라데이션 끝 색상(값 축 방향). null/빈 값이면 단색(Color)</td></tr>
+            <tr data-search="visible bool"><td class="col-type">bool</td><td class="col-name">Visible <span class="accessor">get set</span></td><td class="col-desc">시리즈 표시 여부. 기본값: true</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Methods</div>
+          <table class="api-table">
+            <tr data-search="tostring string override"><td class="ret">string</td><td class="col-method-name">ToString</td><td class="params">()</td><td class="col-desc">Name 반환</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">GoLineGraphSeries</div>
+          <table class="api-table">
+            <tr data-search="name string linegraphseries"><td class="col-type">string</td><td class="col-name">Name / Alias / Color <span class="accessor">get set</span></td><td class="col-desc">GoGraphSeries와 동일 (단, Color2 없음)</td></tr>
+            <tr data-search="visible bool linegraphseries"><td class="col-type">bool</td><td class="col-name">Visible <span class="accessor">get set</span></td><td class="col-desc">시리즈 표시 여부. 기본값: true</td></tr>
+            <tr data-search="minimum double linegraphseries"><td class="col-type">double</td><td class="col-name">Minimum <span class="accessor">get set</span></td><td class="col-desc">Y축 최솟값. 기본값: 0</td></tr>
+            <tr data-search="maximum double linegraphseries"><td class="col-type">double</td><td class="col-name">Maximum <span class="accessor">get set</span></td><td class="col-desc">Y축 최댓값. 기본값: 100</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- InputBoxInfo -->
+    <div id="class-InputBoxInfo" class="class-card" data-search="inputboxinfo inputboxignoreattribute class input box template dialog minimum maximum title format items">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">InputBoxInfo</span></div>
+        <div class="class-desc">GoDialog.Showinputbox&lt;T&gt;() 템플릿 입력 박스의 항목별 추가 설정 정보. [InputBoxIgnore] 특성을 필드/프로퍼티에 지정하면 입력 박스에서 제외됩니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Properties</div>
+          <table class="api-table">
+            <tr data-search="minimum decimal"><td class="col-type">decimal?</td><td class="col-name">Minimum <span class="accessor">get set</span></td><td class="col-desc">입력 가능한 최솟값</td></tr>
+            <tr data-search="maximum decimal"><td class="col-type">decimal?</td><td class="col-name">Maximum <span class="accessor">get set</span></td><td class="col-desc">입력 가능한 최댓값</td></tr>
+            <tr data-search="title string"><td class="col-type">string?</td><td class="col-name">Title <span class="accessor">get set</span></td><td class="col-desc">입력 상자의 제목</td></tr>
+            <tr data-search="formatstring string"><td class="col-type">string?</td><td class="col-name">FormatString <span class="accessor">get set</span></td><td class="col-desc">값 표시 형식 문자열</td></tr>
+            <tr data-search="ontext string"><td class="col-type">string?</td><td class="col-name">OnText <span class="accessor">get set</span></td><td class="col-desc">불리언 값이 true일 때 표시할 텍스트</td></tr>
+            <tr data-search="offtext string"><td class="col-type">string?</td><td class="col-name">OffText <span class="accessor">get set</span></td><td class="col-desc">불리언 값이 false일 때 표시할 텍스트</td></tr>
+            <tr data-search="items list golistitem"><td class="col-type">List&lt;GoListItem&gt;?</td><td class="col-name">Items <span class="accessor">get set</span></td><td class="col-desc">선택 목록(콤보)에 표시할 항목 리스트</td></tr>
           </table>
         </div>
       </div>
@@ -106,8 +322,8 @@
     <!-- Event Args -->
     <div id="class-GoMouseEventArgs" class="class-card" data-search="gomouseeventargs class event mouse xy position">
       <div class="class-card-header" onclick="toggleCard(this)">
-        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoMouseEventArgs</span></div>
-        <div class="class-desc">마우스 이동·휠 이벤트 인수</div>
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoMouseEventArgs</span> <span class="base">: EventArgs</span></div>
+        <div class="class-desc">마우스 이벤트의 기본 인자 클래스</div>
       </div>
       <div class="class-card-body">
         <div class="member-section">
@@ -126,15 +342,13 @@
     <div id="class-GoMouseClickEventArgs" class="class-card" data-search="gomouseclickeventargs class event click mouse button">
       <div class="class-card-header" onclick="toggleCard(this)">
         <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoMouseClickEventArgs</span> <span class="base">: GoMouseEventArgs</span></div>
-        <div class="class-desc">마우스 클릭 이벤트 인수</div>
+        <div class="class-desc">마우스 클릭 이벤트 인자 클래스</div>
       </div>
       <div class="class-card-body">
         <div class="member-section">
           <div class="member-section-title">Constructor &amp; Properties</div>
           <table class="api-table">
             <tr data-search="gomouseclickeventargs constructor x y button"><td class="col-method-name">GoMouseClickEventArgs</td><td class="params">(<span class="tp">float</span> x, <span class="tp">float</span> y, <span class="tp">GoMouseButton</span> button)</td><td class="col-desc">클릭 위치 및 버튼</td></tr>
-            <tr data-search="x float"><td class="col-type">float</td><td class="col-name">X <span class="accessor">get</span></td><td class="col-desc">클릭 X 좌표</td></tr>
-            <tr data-search="y float"><td class="col-type">float</td><td class="col-name">Y <span class="accessor">get</span></td><td class="col-desc">클릭 Y 좌표</td></tr>
             <tr data-search="button gomousebutton"><td class="col-type">GoMouseButton</td><td class="col-name">Button <span class="accessor">get</span></td><td class="col-desc">클릭된 마우스 버튼</td></tr>
           </table>
         </div>
@@ -146,14 +360,14 @@
     <div id="class-GoMouseWheelEventArgs" class="class-card" data-search="gomousewheeleventargs class event mouse wheel delta">
       <div class="class-card-header" onclick="toggleCard(this)">
         <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoMouseWheelEventArgs</span> <span class="base">: GoMouseEventArgs</span></div>
-        <div class="class-desc">마우스 휠 이벤트 인수</div>
+        <div class="class-desc">마우스 휠 이벤트 인자 클래스</div>
       </div>
       <div class="class-card-body">
         <div class="member-section">
           <div class="member-section-title">Constructor &amp; Properties</div>
           <table class="api-table">
             <tr data-search="gomousewheeleventargs constructor"><td class="col-method-name">GoMouseWheelEventArgs</td><td class="params">(<span class="tp">float</span> x, <span class="tp">float</span> y, <span class="tp">float</span> delta)</td><td class="col-desc">휠 이벤트 생성</td></tr>
-            <tr data-search="delta float"><td class="col-type">float</td><td class="col-name">Delta <span class="accessor">get</span></td><td class="col-desc">휠 변화량</td></tr>
+            <tr data-search="delta float"><td class="col-type">float</td><td class="col-name">Delta <span class="accessor">get</span></td><td class="col-desc">휠 스크롤 양 (양수: 위로, 음수: 아래로)</td></tr>
           </table>
         </div>
       </div>
@@ -163,8 +377,8 @@
 
     <div id="class-GoCancelableEventArgs" class="class-card" data-search="gocancelableeventargs class event cancel closing">
       <div class="class-card-header" onclick="toggleCard(this)">
-        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoCancelableEventArgs</span></div>
-        <div class="class-desc">취소 가능 이벤트 인수. GoWindow.OnClosing에서 사용.</div>
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoCancelableEventArgs</span> <span class="base">: EventArgs</span></div>
+        <div class="class-desc">취소 가능한 이벤트 인자 클래스. GoWindow.OnClosing, 데이터 그리드 드롭다운 열림 이벤트 등에서 기반 클래스로 사용.</div>
       </div>
       <div class="class-card-body">
         <div class="member-section">
@@ -180,17 +394,17 @@
 
     <div id="class-GoDragEventArgs" class="class-card" data-search="godrageventargs class event drag drop item">
       <div class="class-card-header" onclick="toggleCard(this)">
-        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoDragEventArgs</span></div>
-        <div class="class-desc">드래그&amp;드롭 이벤트 인수</div>
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoDragEventArgs</span> <span class="base">: EventArgs</span></div>
+        <div class="class-desc">드래그 이벤트 인자 클래스</div>
       </div>
       <div class="class-card-body">
         <div class="member-section">
           <div class="member-section-title">Constructor &amp; Properties</div>
           <table class="api-table">
-            <tr data-search="godrageventargs constructor x y dragitem"><td class="col-method-name">GoDragEventArgs</td><td class="params">(<span class="tp">float</span> x, <span class="tp">float</span> y, <span class="tp">object</span> dragItem)</td><td class="col-desc">드롭 위치와 드래그 항목</td></tr>
-            <tr data-search="x float"><td class="col-type">float</td><td class="col-name">X <span class="accessor">get</span></td><td class="col-desc">드롭 X 좌표</td></tr>
-            <tr data-search="y float"><td class="col-type">float</td><td class="col-name">Y <span class="accessor">get</span></td><td class="col-desc">드롭 Y 좌표</td></tr>
-            <tr data-search="dragitem object"><td class="col-type">object</td><td class="col-name">DragItem <span class="accessor">get</span></td><td class="col-desc">드래그 중인 데이터 객체</td></tr>
+            <tr data-search="godrageventargs constructor x y dragitem"><td class="col-method-name">GoDragEventArgs</td><td class="params">(<span class="tp">float</span> x, <span class="tp">float</span> y, <span class="tp">object</span> dragItem)</td><td class="col-desc">드래그 위치와 드래그 항목</td></tr>
+            <tr data-search="x float"><td class="col-type">float</td><td class="col-name">X <span class="accessor">get</span></td><td class="col-desc">드래그 위치의 X 좌표</td></tr>
+            <tr data-search="y float"><td class="col-type">float</td><td class="col-name">Y <span class="accessor">get</span></td><td class="col-desc">드래그 위치의 Y 좌표</td></tr>
+            <tr data-search="dragitem object"><td class="col-type">object</td><td class="col-name">DragItem <span class="accessor">get</span></td><td class="col-desc">드래그 중인 객체</td></tr>
           </table>
         </div>
       </div>
@@ -198,18 +412,18 @@
 
     <hr class="class-separator">
 
-    <div id="class-GoDrawnEventArgs" class="class-card" data-search="godrewneventargs class event draw canvas theme">
+    <div id="class-GoDrawnEventArgs" class="class-card" data-search="godrawneventargs class event draw canvas theme">
       <div class="class-card-header" onclick="toggleCard(this)">
-        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoDrawnEventArgs</span></div>
-        <div class="class-desc">컨트롤 렌더링 완료 이벤트 인수. GoControl.Drawn 이벤트에서 사용.</div>
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoDrawnEventArgs</span> <span class="base">: EventArgs</span></div>
+        <div class="class-desc">컨트롤 그리기 완료 이벤트 인자 클래스</div>
       </div>
       <div class="class-card-body">
         <div class="member-section">
           <div class="member-section-title">Constructor &amp; Properties</div>
           <table class="api-table">
-            <tr data-search="godrewneventargs constructor canvas theme"><td class="col-method-name">GoDrawnEventArgs</td><td class="params">(<span class="tp">SKCanvas</span> canvas, <span class="tp">GoTheme</span> thm)</td><td class="col-desc">SkiaSharp 캔버스와 현재 테마</td></tr>
-            <tr data-search="canvas skcanvas"><td class="col-type">SKCanvas</td><td class="col-name">Canvas <span class="accessor">get</span></td><td class="col-desc">렌더링에 사용된 SKCanvas</td></tr>
-            <tr data-search="theme gotheme"><td class="col-type">GoTheme</td><td class="col-name">Theme <span class="accessor">get</span></td><td class="col-desc">현재 활성 테마</td></tr>
+            <tr data-search="godrawneventargs constructor canvas theme"><td class="col-method-name">GoDrawnEventArgs</td><td class="params">(<span class="tp">SKCanvas</span> canvas, <span class="tp">GoTheme</span> thm)</td><td class="col-desc">SkiaSharp 캔버스와 현재 테마</td></tr>
+            <tr data-search="theme gotheme"><td class="col-type">GoTheme</td><td class="col-name">Theme <span class="accessor">get</span></td><td class="col-desc">현재 적용된 테마</td></tr>
+            <tr data-search="canvas skcanvas"><td class="col-type">SKCanvas</td><td class="col-name">Canvas <span class="accessor">get</span></td><td class="col-desc">그리기에 사용된 SKCanvas</td></tr>
           </table>
         </div>
       </div>
@@ -220,12 +434,13 @@
     <div id="class-ButtonClickEventArgs" class="class-card" data-search="buttonclickeventargs class event button click">
       <div class="class-card-header" onclick="toggleCard(this)">
         <div class="class-signature"><span class="kw">public class</span> <span class="nm">ButtonClickEventArgs</span> <span class="base">: EventArgs</span></div>
-        <div class="class-desc">단일 버튼 클릭 이벤트 인수. GoGroupBox, GoPanel 등에서 사용.</div>
+        <div class="class-desc">단일 버튼 클릭 이벤트 인자 클래스. GoInput.ButtonClicked 등에서 사용.</div>
       </div>
       <div class="class-card-body">
         <div class="member-section">
-          <div class="member-section-title">Properties</div>
+          <div class="member-section-title">Constructor &amp; Properties</div>
           <table class="api-table">
+            <tr data-search="buttonclickeventargs constructor btn"><td class="col-method-name">ButtonClickEventArgs</td><td class="params">(<span class="tp">GoButtonItem</span> btn)</td><td class="col-desc">클릭된 버튼 항목</td></tr>
             <tr data-search="button gobuttonitem"><td class="col-type">GoButtonItem</td><td class="col-name">Button <span class="accessor">get</span></td><td class="col-desc">클릭된 버튼 항목</td></tr>
           </table>
         </div>
@@ -237,12 +452,13 @@
     <div id="class-ButtonsClickEventArgs" class="class-card" data-search="buttonsclickeventargs class event buttons click">
       <div class="class-card-header" onclick="toggleCard(this)">
         <div class="class-signature"><span class="kw">public class</span> <span class="nm">ButtonsClickEventArgs</span> <span class="base">: EventArgs</span></div>
-        <div class="class-desc">버튼 그룹 클릭 이벤트 인수. GoButtons 등에서 사용.</div>
+        <div class="class-desc">버튼 그룹의 버튼 클릭 이벤트 인자 클래스. GoButtons 등에서 사용.</div>
       </div>
       <div class="class-card-body">
         <div class="member-section">
-          <div class="member-section-title">Properties</div>
+          <div class="member-section-title">Constructor &amp; Properties</div>
           <table class="api-table">
+            <tr data-search="buttonsclickeventargs constructor btn"><td class="col-method-name">ButtonsClickEventArgs</td><td class="params">(<span class="tp">GoButtonsItem</span> btn)</td><td class="col-desc">클릭된 버튼 항목</td></tr>
             <tr data-search="button gobuttonsitem"><td class="col-type">GoButtonsItem</td><td class="col-name">Button <span class="accessor">get</span></td><td class="col-desc">클릭된 버튼 항목</td></tr>
           </table>
         </div>
@@ -254,14 +470,477 @@
     <div id="class-ButtonsSelectedEventArgs" class="class-card" data-search="buttonsselectedeventargs class event buttons selected deselected">
       <div class="class-card-header" onclick="toggleCard(this)">
         <div class="class-signature"><span class="kw">public class</span> <span class="nm">ButtonsSelectedEventArgs</span> <span class="base">: EventArgs</span></div>
-        <div class="class-desc">버튼 그룹 선택 변경 이벤트 인수. GoButtons 등에서 사용.</div>
+        <div class="class-desc">버튼 그룹에서 선택 변경 시 발생하는 이벤트 인자 클래스. GoButtons 등에서 사용.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Constructor &amp; Properties</div>
+          <table class="api-table">
+            <tr data-search="buttonsselectedeventargs constructor selbtn deselbtn"><td class="col-method-name">ButtonsSelectedEventArgs</td><td class="params">(<span class="tp">GoButtonsItem</span> selBtn, <span class="tp">GoButtonsItem?</span> deselBtn)</td><td class="col-desc">새로 선택된/선택 해제된 버튼</td></tr>
+            <tr data-search="selectedbutton gobuttonsitem"><td class="col-type">GoButtonsItem</td><td class="col-name">SelectedButton <span class="accessor">get</span></td><td class="col-desc">새로 선택된 버튼</td></tr>
+            <tr data-search="deselectedbutton gobuttonsitem"><td class="col-type">GoButtonsItem?</td><td class="col-name">DeselectedButton <span class="accessor">get</span></td><td class="col-desc">선택 해제된 버튼 (없으면 null)</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <div id="class-ListItemEventArgs" class="class-card" data-search="listitemeventargs class event list item golistitem">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">ListItemEventArgs</span> <span class="base">: EventArgs</span></div>
+        <div class="class-desc">리스트 항목 이벤트 인자 클래스</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Constructor &amp; Properties</div>
+          <table class="api-table">
+            <tr data-search="listitemeventargs constructor itm"><td class="col-method-name">ListItemEventArgs</td><td class="params">(<span class="tp">GoListItem</span> itm)</td><td class="col-desc">이벤트가 발생한 리스트 항목</td></tr>
+            <tr data-search="item golistitem"><td class="col-type">GoListItem</td><td class="col-name">Item <span class="accessor">get</span></td><td class="col-desc">이벤트가 발생한 리스트 항목</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <div id="class-ToolItemEventArgs" class="class-card" data-search="toolitemeventargs class event tool item gotoolitem">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">ToolItemEventArgs</span> <span class="base">: EventArgs</span></div>
+        <div class="class-desc">도구 항목 이벤트 인자 클래스</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Constructor &amp; Properties</div>
+          <table class="api-table">
+            <tr data-search="toolitemeventargs constructor itm"><td class="col-method-name">ToolItemEventArgs</td><td class="params">(<span class="tp">GoToolItem</span> itm)</td><td class="col-desc">이벤트가 발생한 도구 항목</td></tr>
+            <tr data-search="item gotoolitem"><td class="col-type">GoToolItem</td><td class="col-name">Item <span class="accessor">get</span></td><td class="col-desc">이벤트가 발생한 도구 항목</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <div id="class-TreeNodeEventArgs" class="class-card" data-search="treenodeeventargs class event tree node gotreenode">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">TreeNodeEventArgs</span> <span class="base">: EventArgs</span></div>
+        <div class="class-desc">트리 노드 이벤트 인자 클래스</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Constructor &amp; Properties</div>
+          <table class="api-table">
+            <tr data-search="treenodeeventargs constructor itm"><td class="col-method-name">TreeNodeEventArgs</td><td class="params">(<span class="tp">GoTreeNode</span> itm)</td><td class="col-desc">이벤트가 발생한 트리 노드</td></tr>
+            <tr data-search="item gotreenode"><td class="col-type">GoTreeNode</td><td class="col-name">Item <span class="accessor">get</span></td><td class="col-desc">이벤트가 발생한 트리 노드</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- DataGrid base: Cell / Column -->
+    <div id="class-GoDataGridCell" class="class-card" data-search="godatagridcell godatagridcolumn abstract class datagrid cell column base value bounds">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public abstract class</span> <span class="nm">GoDataGridCell</span></div>
+        <div class="class-desc">데이터 그리드 셀/열의 추상 기본 클래스. GoDataGridColumn.CellType으로 지정된 셀 타입이 각 행마다 생성됩니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">GoDataGridCell (abstract)</div>
+          <table class="api-table">
+            <tr data-search="name string cell"><td class="col-type">string?</td><td class="col-name">Name <span class="accessor">get set</span></td><td class="col-desc">셀의 이름 (데이터 바인딩 프로퍼티명)</td></tr>
+            <tr data-search="iskeyboardinput bool virtual"><td class="col-type">bool</td><td class="col-name">IsKeyboardInput <span class="accessor">get</span></td><td class="col-desc">키보드 입력을 사용하는 셀인지 여부(virtual). 기본값: false</td></tr>
+            <tr data-search="colspan int"><td class="col-type">int</td><td class="col-name">ColSpan <span class="accessor">get set</span></td><td class="col-desc">열 병합 수. 기본값: 1</td></tr>
+            <tr data-search="rowspan int"><td class="col-type">int</td><td class="col-name">RowSpan <span class="accessor">get set</span></td><td class="col-desc">행 병합 수. 기본값: 1</td></tr>
+            <tr data-search="columnindex int cell"><td class="col-type">int</td><td class="col-name">ColumnIndex <span class="accessor">get</span></td><td class="col-desc">셀이 속한 열 인덱스</td></tr>
+            <tr data-search="rowindex int cell"><td class="col-type">int</td><td class="col-name">RowIndex <span class="accessor">get</span></td><td class="col-desc">셀이 속한 행 인덱스</td></tr>
+            <tr data-search="visible bool cell"><td class="col-type">bool</td><td class="col-name">Visible <span class="accessor">get set</span></td><td class="col-desc">셀 표시 여부. 기본값: true</td></tr>
+            <tr data-search="enabled bool cell"><td class="col-type">bool</td><td class="col-name">Enabled <span class="accessor">get set</span></td><td class="col-desc">셀 활성화 여부. 기본값: true</td></tr>
+            <tr data-search="tag object cell"><td class="col-type">object?</td><td class="col-name">Tag <span class="accessor">get set</span></td><td class="col-desc">사용자 정의 데이터</td></tr>
+            <tr data-search="cellbackcolor string"><td class="col-type">string</td><td class="col-name">CellBackColor <span class="accessor">get set</span></td><td class="col-desc">셀 배경색. 기본값: Grid.RowColor</td></tr>
+            <tr data-search="selectedcellbackcolor string"><td class="col-type">string</td><td class="col-name">SelectedCellBackColor <span class="accessor">get set</span></td><td class="col-desc">선택 시 셀 배경색. 기본값: Grid.SelectedRowColor</td></tr>
+            <tr data-search="celltextcolor string"><td class="col-type">string</td><td class="col-name">CellTextColor <span class="accessor">get set</span></td><td class="col-desc">셀 텍스트 색상. 기본값: Grid.TextColor</td></tr>
+            <tr data-search="grid godatagrid cell"><td class="col-type">GoDataGrid</td><td class="col-name">Grid <span class="accessor">get</span></td><td class="col-desc">셀이 속한 데이터 그리드</td></tr>
+            <tr data-search="row godatagridrow"><td class="col-type">GoDataGridRow</td><td class="col-name">Row <span class="accessor">get</span></td><td class="col-desc">셀이 속한 행</td></tr>
+            <tr data-search="column godatagridcolumn"><td class="col-type">GoDataGridColumn</td><td class="col-name">Column <span class="accessor">get</span></td><td class="col-desc">셀이 속한 열</td></tr>
+            <tr data-search="value object cell"><td class="col-type">object?</td><td class="col-name">Value <span class="accessor">get set</span></td><td class="col-desc">셀에 바인딩된 데이터 값 (Row.Source의 Column.Name 프로퍼티)</td></tr>
+            <tr data-search="bounds skrect cell"><td class="col-type">SKRect</td><td class="col-name">Bounds <span class="accessor">get</span></td><td class="col-desc">셀의 화면 영역</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">GoDataGridCell 생성자</div>
+          <table class="api-table">
+            <tr data-search="godatagridcell constructor"><td class="col-method-name">GoDataGridCell</td><td class="params">(<span class="tp">GoDataGrid</span> Grid, <span class="tp">GoDataGridRow</span> Row, <span class="tp">GoDataGridColumn</span> Column)</td><td class="col-desc">데이터 그리드 셀 초기화</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">GoDataGridColumn (abstract)</div>
+          <table class="api-table">
+            <tr data-search="name string column"><td class="col-type">string?</td><td class="col-name">Name <span class="accessor">get set</span></td><td class="col-desc">열의 이름 (데이터 바인딩 프로퍼티명)</td></tr>
+            <tr data-search="groupname string"><td class="col-type">string?</td><td class="col-name">GroupName <span class="accessor">get set</span></td><td class="col-desc">열 그룹 이름 (헤더 그룹화에 사용)</td></tr>
+            <tr data-search="headertext string"><td class="col-type">string?</td><td class="col-name">HeaderText <span class="accessor">get set</span></td><td class="col-desc">열 헤더에 표시할 텍스트</td></tr>
+            <tr data-search="size string column"><td class="col-type">string?</td><td class="col-name">Size <span class="accessor">get set</span></td><td class="col-desc">열 너비 (퍼센트 또는 픽셀). 기본값: "100%"</td></tr>
+            <tr data-search="usefilter bool"><td class="col-type">bool</td><td class="col-name">UseFilter <span class="accessor">get set</span></td><td class="col-desc">필터 사용 여부</td></tr>
+            <tr data-search="filtertext string"><td class="col-type">string?</td><td class="col-name">FilterText <span class="accessor">get set</span></td><td class="col-desc">필터 텍스트</td></tr>
+            <tr data-search="usesort bool"><td class="col-type">bool</td><td class="col-name">UseSort <span class="accessor">get set</span></td><td class="col-desc">정렬 사용 여부</td></tr>
+            <tr data-search="sortstate godatagridcolumnsortstate"><td class="col-type">GoDataGridColumnSortState</td><td class="col-name">SortState <span class="accessor">get set</span></td><td class="col-desc">현재 정렬 상태. 기본값: None</td></tr>
+            <tr data-search="sortorder int"><td class="col-type">int</td><td class="col-name">SortOrder <span class="accessor">get</span></td><td class="col-desc">정렬 우선순위</td></tr>
+            <tr data-search="textcolor string column"><td class="col-type">string?</td><td class="col-name">TextColor <span class="accessor">get set</span></td><td class="col-desc">열 텍스트 색상</td></tr>
+            <tr data-search="fixed bool"><td class="col-type">bool</td><td class="col-name">Fixed <span class="accessor">get set</span></td><td class="col-desc">열 고정 여부</td></tr>
+            <tr data-search="celltype type"><td class="col-type">Type?</td><td class="col-name">CellType <span class="accessor">get set</span></td><td class="col-desc">이 열에 사용되는 셀 타입</td></tr>
+            <tr data-search="grid godatagrid column"><td class="col-type">GoDataGrid?</td><td class="col-name">Grid <span class="accessor">get</span></td><td class="col-desc">열이 속한 데이터 그리드</td></tr>
+            <tr data-search="bounds skrect column"><td class="col-type">SKRect</td><td class="col-name">Bounds <span class="accessor">get</span></td><td class="col-desc">열 헤더의 화면 영역</td></tr>
+            <tr data-search="filterbounds skrect"><td class="col-type">SKRect</td><td class="col-name">FilterBounds <span class="accessor">get</span></td><td class="col-desc">필터 영역의 화면 영역</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">GoDataGridColumn Methods</div>
+          <table class="api-table">
+            <tr data-search="tostring string override column"><td class="ret">string</td><td class="col-method-name">ToString</td><td class="params">()</td><td class="col-desc">"[DisplayName] Name : HeaderText" 형식 식별 문자열 반환 (CollectionEditor 등에서 사용)</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- GoDataGridRow -->
+    <div id="class-GoDataGridRow" class="class-card" data-search="godatagridrow class datagrid row cells source selected bounds">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoDataGridRow</span></div>
+        <div class="class-desc">데이터 그리드의 행을 나타내는 클래스</div>
       </div>
       <div class="class-card-body">
         <div class="member-section">
           <div class="member-section-title">Properties</div>
           <table class="api-table">
-            <tr data-search="selectedbutton gobuttonsitem"><td class="col-type">GoButtonsItem</td><td class="col-name">SelectedButton <span class="accessor">get</span></td><td class="col-desc">새로 선택된 버튼</td></tr>
-            <tr data-search="deselectedbutton gobuttonsitem"><td class="col-type">GoButtonsItem?</td><td class="col-name">DeselectedButton <span class="accessor">get</span></td><td class="col-desc">선택 해제된 이전 버튼 (없으면 null)</td></tr>
+            <tr data-search="rowindex int row"><td class="col-type">int</td><td class="col-name">RowIndex <span class="accessor">get</span></td><td class="col-desc">행 인덱스</td></tr>
+            <tr data-search="rowheight float"><td class="col-type">float</td><td class="col-name">RowHeight <span class="accessor">get set</span></td><td class="col-desc">행 높이</td></tr>
+            <tr data-search="cells list godatagridcell"><td class="col-type">List&lt;GoDataGridCell&gt;</td><td class="col-name">Cells <span class="accessor">get</span></td><td class="col-desc">행에 포함된 셀 목록</td></tr>
+            <tr data-search="source object"><td class="col-type">object?</td><td class="col-name">Source <span class="accessor">get</span></td><td class="col-desc">행에 바인딩된 원본 데이터 객체</td></tr>
+            <tr data-search="tag object row"><td class="col-type">object?</td><td class="col-name">Tag <span class="accessor">get set</span></td><td class="col-desc">사용자 정의 데이터</td></tr>
+            <tr data-search="selected bool row"><td class="col-type">bool</td><td class="col-name">Selected <span class="accessor">get set</span></td><td class="col-desc">행 선택 상태</td></tr>
+            <tr data-search="grid godatagrid row"><td class="col-type">GoDataGrid?</td><td class="col-name">Grid <span class="accessor">get</span></td><td class="col-desc">행이 속한 데이터 그리드</td></tr>
+            <tr data-search="bounds skrect row"><td class="col-type">SKRect</td><td class="col-name">Bounds <span class="accessor">get</span></td><td class="col-desc">행의 화면 영역</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- DataGrid Summary base + concrete -->
+    <div id="class-GoDataGridSummaryCell" class="class-card" data-search="godatagridsummarycell godatagridsummaryrow godatagridlabelsummarycell godatagridsumsummaryrow godatagridsumsummarycell godatagridaveragesummaryrow godatagridaveragesummarycell abstract class datagrid summary label sum average total calculate">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public abstract class</span> <span class="nm">GoDataGridSummaryCell</span></div>
+        <div class="class-desc">데이터 그리드 요약(합계/평균 등) 셀·행의 추상 기본 클래스와 내장 구현체(Label/Sum/Average)</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">GoDataGridSummaryCell (abstract)</div>
+          <table class="api-table">
+            <tr data-search="name string summarycell"><td class="col-type">string?</td><td class="col-name">Name <span class="accessor">get set</span></td><td class="col-desc">셀의 이름 (데이터 바인딩 프로퍼티명)</td></tr>
+            <tr data-search="colspan int summarycell"><td class="col-type">int</td><td class="col-name">ColSpan <span class="accessor">get set</span></td><td class="col-desc">열 병합 수. 기본값: 1</td></tr>
+            <tr data-search="rowspan int summarycell"><td class="col-type">int</td><td class="col-name">RowSpan <span class="accessor">get set</span></td><td class="col-desc">행 병합 수. 기본값: 1</td></tr>
+            <tr data-search="columnindex int summarycell"><td class="col-type">int</td><td class="col-name">ColumnIndex <span class="accessor">get</span></td><td class="col-desc">셀이 속한 열 인덱스</td></tr>
+            <tr data-search="rowindex int summarycell"><td class="col-type">int</td><td class="col-name">RowIndex <span class="accessor">get</span></td><td class="col-desc">셀이 속한 요약 행 인덱스</td></tr>
+            <tr data-search="visible bool summarycell"><td class="col-type">bool</td><td class="col-name">Visible <span class="accessor">get set</span></td><td class="col-desc">셀 표시 여부. 기본값: true</td></tr>
+            <tr data-search="enabled bool summarycell"><td class="col-type">bool</td><td class="col-name">Enabled <span class="accessor">get set</span></td><td class="col-desc">셀 활성화 여부. 기본값: true</td></tr>
+            <tr data-search="tag object summarycell"><td class="col-type">object?</td><td class="col-name">Tag <span class="accessor">get set</span></td><td class="col-desc">사용자 정의 데이터</td></tr>
+            <tr data-search="cellbackcolor string summarycell"><td class="col-type">string</td><td class="col-name">CellBackColor <span class="accessor">get set</span></td><td class="col-desc">셀 배경색. 기본값: Grid.SummaryRowColor</td></tr>
+            <tr data-search="celltextcolor string summarycell"><td class="col-type">string</td><td class="col-name">CellTextColor <span class="accessor">get set</span></td><td class="col-desc">셀 텍스트 색상. 기본값: Grid.TextColor</td></tr>
+            <tr data-search="grid godatagrid summarycell"><td class="col-type">GoDataGrid</td><td class="col-name">Grid <span class="accessor">get</span></td><td class="col-desc">셀이 속한 데이터 그리드</td></tr>
+            <tr data-search="row godatagridsummaryrow"><td class="col-type">GoDataGridSummaryRow</td><td class="col-name">Row <span class="accessor">get</span></td><td class="col-desc">셀이 속한 요약 행</td></tr>
+            <tr data-search="column godatagridcolumn summarycell"><td class="col-type">GoDataGridColumn</td><td class="col-name">Column <span class="accessor">get</span></td><td class="col-desc">셀이 속한 열</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">GoDataGridSummaryCell 생성자 &amp; Methods</div>
+          <table class="api-table">
+            <tr data-search="godatagridsummarycell constructor"><td class="col-method-name">GoDataGridSummaryCell</td><td class="params">(<span class="tp">GoDataGrid</span> Grid, <span class="tp">GoDataGridSummaryRow</span> Row, <span class="tp">GoDataGridColumn</span> Column)</td><td class="col-desc">데이터 그리드 요약 셀 초기화</td></tr>
+            <tr data-search="calculate void virtual"><td class="ret">void</td><td class="col-method-name">Calculate</td><td class="params">()</td><td class="col-desc">요약 값을 계산합니다 (virtual)</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">GoDataGridSummaryRow (abstract)</div>
+          <table class="api-table">
+            <tr data-search="rowindex int summaryrow"><td class="col-type">int</td><td class="col-name">RowIndex <span class="accessor">get</span></td><td class="col-desc">요약 행 인덱스</td></tr>
+            <tr data-search="rowheight int summaryrow"><td class="col-type">int</td><td class="col-name">RowHeight <span class="accessor">get set</span></td><td class="col-desc">요약 행 높이</td></tr>
+            <tr data-search="cells list godatagridsummarycell"><td class="col-type">List&lt;GoDataGridSummaryCell&gt;</td><td class="col-name">Cells <span class="accessor">get</span></td><td class="col-desc">요약 행에 포함된 셀 목록</td></tr>
+            <tr data-search="grid godatagrid summaryrow"><td class="col-type">GoDataGrid?</td><td class="col-name">Grid <span class="accessor">get</span></td><td class="col-desc">요약 행이 속한 데이터 그리드</td></tr>
+            <tr data-search="titlecolumnindex int"><td class="col-type">int</td><td class="col-name">TitleColumnIndex <span class="accessor">get set</span></td><td class="col-desc">제목 표시 시작 열 인덱스. 기본값: 0</td></tr>
+            <tr data-search="titlecolspan int"><td class="col-type">int</td><td class="col-name">TitleColSpan <span class="accessor">get set</span></td><td class="col-desc">제목이 차지하는 열 수. 기본값: 1</td></tr>
+            <tr data-search="title string summaryrow"><td class="col-type">string</td><td class="col-name">Title <span class="accessor">get set</span></td><td class="col-desc">요약 행 제목 텍스트. 기본값: ""</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">GoDataGridSummaryRow Methods</div>
+          <table class="api-table">
+            <tr data-search="calculate void summaryrow"><td class="ret">void</td><td class="col-method-name">Calculate</td><td class="params">()</td><td class="col-desc">요약 행의 모든 셀 값을 계산합니다</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Label — GoDataGridLabelSummaryCell : GoDataGridSummaryCell</div>
+          <table class="api-table">
+            <tr data-search="text string labelsummarycell"><td class="col-type">string</td><td class="col-name">Text <span class="accessor">get</span></td><td class="col-desc">표시할 텍스트 (내부에서 설정)</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Sum — GoDataGridSumSummaryRow / GoDataGridSumSummaryCell : GoDataGridSummaryCell</div>
+          <table class="api-table">
+            <tr data-search="value decimal sumsummarycell"><td class="col-type">decimal</td><td class="col-name">Value <span class="accessor">get</span></td><td class="col-desc">계산된 합계 값 (ViewRows 기준)</td></tr>
+            <tr data-search="formatstring string sumsummarycell"><td class="col-type">string?</td><td class="col-name">FormatString <span class="accessor">get</span></td><td class="col-desc">값 표시 형식 문자열</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Average — GoDataGridAverageSummaryRow / GoDataGridAverageSummaryCell : GoDataGridSummaryCell</div>
+          <table class="api-table">
+            <tr data-search="value decimal averagesummarycell"><td class="col-type">decimal</td><td class="col-name">Value <span class="accessor">get</span></td><td class="col-desc">계산된 평균 값 (ViewRows 기준)</td></tr>
+            <tr data-search="formatstring string averagesummarycell"><td class="col-type">string?</td><td class="col-name">FormatString <span class="accessor">get</span></td><td class="col-desc">값 표시 형식 문자열</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- DataGrid Column/Cell type family -->
+    <div id="class-GoDataGridLabelColumn" class="class-card" data-search="godatagridlabelcolumn godatagridlabelcell godatagridnumbercolumn godatagridnumbercell godatagridbuttoncolumn godatagridbuttoncell godatagridlampcolumn godatagridlampcell godatagridcheckboxcolumn godatagridcheckboxcell godatagridinputtextcolumn godatagridinputtextcell godatagridinputnumbercolumn godatagridinputnumbercell godatagridinputboolcolumn godatagridinputboolcell godatagridinputtimecolumn godatagridinputtimecell godatagridinputcolorcolumn godatagridinputcolorcell godatagridinputcombocolumn godatagridinputcombocell godatagridinputcomboitem gonumericalias datagrid column cell types">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoDataGrid*Column</span> <span class="base">: GoDataGridColumn</span> / <span class="nm">GoDataGrid*Cell</span> <span class="base">: GoDataGridCell</span></div>
+        <div class="class-desc">GoDataGrid에 내장된 열/셀 타입 모음. 각 Column은 생성자에서 CellType을 대응하는 Cell 타입으로 지정합니다. Number/InputNumber의 <b>Column</b>에는 <code>[GoNumericAlias]</code>가 지정되어 있어, .gudx 등에서 byte/sbyte/short/ushort/int/uint/long/ulong/float/double/decimal 11종 별칭(예: GoDataGridNumberColumn_double)으로 자동 등록됩니다. Cell 타입은 별칭 등록 대상이 아닙니다.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Label — GoDataGridLabelColumn / GoDataGridLabelCell</div>
+          <table class="api-table">
+            <tr data-search="textconverter func labelcolumn"><td class="col-type">Func&lt;object?, string?&gt;?</td><td class="col-name">TextConverter <span class="accessor">get set</span></td><td class="col-desc">(Column) 값을 표시 텍스트로 변환하는 함수</td></tr>
+            <tr data-search="formatstring string labelcolumn"><td class="col-type">string?</td><td class="col-name">FormatString <span class="accessor">get set</span></td><td class="col-desc">(Column) 값 표시 형식 문자열</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Number&lt;T&gt; where T : struct — GoDataGridNumberColumn&lt;T&gt; [GoNumericAlias] / GoDataGridNumberCell&lt;T&gt;</div>
+          <table class="api-table">
+            <tr data-search="formatstring string numbercolumn"><td class="col-type">string?</td><td class="col-name">FormatString <span class="accessor">get set</span></td><td class="col-desc">(Column) 값 표시 형식 문자열. 읽기 전용 숫자 표시 열/셀</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Button — GoDataGridButtonColumn / GoDataGridButtonCell</div>
+          <table class="api-table">
+            <tr data-search="buttoncolor string buttoncolumn"><td class="col-type">string</td><td class="col-name">ButtonColor <span class="accessor">get set</span></td><td class="col-desc">버튼 배경색. 기본값: "Base3"</td></tr>
+            <tr data-search="selectbuttoncolor string buttoncolumn"><td class="col-type">string</td><td class="col-name">SelectButtonColor <span class="accessor">get set</span></td><td class="col-desc">행 선택 시 버튼 배경색. Column 기본값: "Select-light", Cell 기본값: "Select"</td></tr>
+            <tr data-search="text string buttoncolumn"><td class="col-type">string?</td><td class="col-name">Text <span class="accessor">get set</span></td><td class="col-desc">버튼에 표시할 텍스트</td></tr>
+            <tr data-search="iconstring string buttoncolumn"><td class="col-type">string?</td><td class="col-name">IconString <span class="accessor">get set</span></td><td class="col-desc">버튼에 표시할 아이콘 문자열</td></tr>
+            <tr data-search="iconsize int buttoncolumn"><td class="col-type">int</td><td class="col-name">IconSize <span class="accessor">get set</span></td><td class="col-desc">아이콘 크기. 기본값: 12</td></tr>
+            <tr data-search="icongap int buttoncolumn"><td class="col-type">int</td><td class="col-name">IconGap <span class="accessor">get set</span></td><td class="col-desc">아이콘과 텍스트 사이 간격. 기본값: 5</td></tr>
+          </table>
+          <div class="member-section-title" style="margin-top:.5rem;">Button Events (GoDataGridButtonCell 클릭 시 GoDataGrid.CellButtonClick 발생)</div>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">Lamp — GoDataGridLampColumn / GoDataGridLampCell</div>
+          <table class="api-table">
+            <tr data-search="oncolor string lampcolumn"><td class="col-type">string</td><td class="col-name">OnColor <span class="accessor">get set</span></td><td class="col-desc">활성화 시 램프 색상. 기본값: "Good". 불리언 값을 램프(표시등)로 표시</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">CheckBox — GoDataGridCheckBoxColumn / GoDataGridCheckBoxCell</div>
+          <table class="api-table">
+            <tr data-search="checkbox column cell no extra properties"><td class="col-type">—</td><td class="col-name">(추가 프로퍼티 없음)</td><td class="col-desc">체크박스 클릭으로 bool 값을 토글. 클릭 시 GoDataGrid.CellValueChanged 발생</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">InputText — GoDataGridInputTextColumn / GoDataGridInputTextCell</div>
+          <table class="api-table">
+            <tr data-search="iskeyboardinput bool inputtextcell"><td class="col-type">bool</td><td class="col-name">IsKeyboardInput <span class="accessor">get</span></td><td class="col-desc">(Cell override) true. 클릭 시 GoDataGrid.InvokeEditText 호출</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">InputNumber&lt;T&gt; where T : struct — GoDataGridInputNumberColumn&lt;T&gt; [GoNumericAlias] / GoDataGridInputNumberCell&lt;T&gt;</div>
+          <table class="api-table">
+            <tr data-search="minimum t inputnumbercolumn"><td class="col-type">T?</td><td class="col-name">Minimum <span class="accessor">get set</span></td><td class="col-desc">입력 가능한 최솟값</td></tr>
+            <tr data-search="maximum t inputnumbercolumn"><td class="col-type">T?</td><td class="col-name">Maximum <span class="accessor">get set</span></td><td class="col-desc">입력 가능한 최댓값</td></tr>
+            <tr data-search="formatstring string inputnumbercolumn"><td class="col-type">string?</td><td class="col-name">FormatString <span class="accessor">get set</span></td><td class="col-desc">값 표시 형식 문자열</td></tr>
+            <tr data-search="iskeyboardinput bool inputnumbercell"><td class="col-type">bool</td><td class="col-name">IsKeyboardInput <span class="accessor">get</span></td><td class="col-desc">(Cell override) true. 클릭 시 GoDataGrid.InvokeEditNumber 호출</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">InputBool — GoDataGridInputBoolColumn / GoDataGridInputBoolCell</div>
+          <table class="api-table">
+            <tr data-search="ontext string inputboolcolumn"><td class="col-type">string?</td><td class="col-name">OnText <span class="accessor">get set</span></td><td class="col-desc">true일 때 표시할 텍스트. 기본값: "On"</td></tr>
+            <tr data-search="offtext string inputboolcolumn"><td class="col-type">string?</td><td class="col-name">OffText <span class="accessor">get set</span></td><td class="col-desc">false일 때 표시할 텍스트. 기본값: "Off"</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">InputTime — GoDataGridInputTimeColumn / GoDataGridInputTimeCell</div>
+          <table class="api-table">
+            <tr data-search="datetimestyle godatetimekind inputtimecolumn"><td class="col-type">GoDateTimeKind</td><td class="col-name">DateTimeStyle <span class="accessor">get set</span></td><td class="col-desc">날짜/시간 표시 유형. 기본값: DateTime</td></tr>
+            <tr data-search="dateformat string inputtimecolumn"><td class="col-type">string</td><td class="col-name">DateFormat <span class="accessor">get set</span></td><td class="col-desc">날짜 표시 형식. 기본값: "yyyy-MM-dd"</td></tr>
+            <tr data-search="timeformat string inputtimecolumn"><td class="col-type">string</td><td class="col-name">TimeFormat <span class="accessor">get set</span></td><td class="col-desc">시간 표시 형식. 기본값: "HH:mm:ss"</td></tr>
+          </table>
+          <div class="member-section-title" style="margin-top:.5rem;">클릭 시 GoDataGrid.DateTimeDropDownOpening 발생</div>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">InputColor — GoDataGridInputColorColumn / GoDataGridInputColorCell</div>
+          <table class="api-table">
+            <tr data-search="inputcolor column cell no extra properties"><td class="col-type">—</td><td class="col-name">(추가 프로퍼티 없음)</td><td class="col-desc">SKColor 값 입력. 클릭 시 GoDataGrid.ColorDropDownOpening 발생</td></tr>
+          </table>
+        </div>
+        <div class="member-section">
+          <div class="member-section-title">InputCombo — GoDataGridInputComboColumn / GoDataGridInputComboCell</div>
+          <table class="api-table">
+            <tr data-search="items list godatagridinputcomboitem inputcombocolumn"><td class="col-type">List&lt;GoDataGridInputComboItem&gt;</td><td class="col-name">Items <span class="accessor">get set</span></td><td class="col-desc">콤보박스에 표시할 항목 목록</td></tr>
+            <tr data-search="filter func inputcombocolumn"><td class="col-type">Func&lt;GoDataGridInputComboItem, bool&gt;?</td><td class="col-name">Filter <span class="accessor">get set</span></td><td class="col-desc">항목 필터링 함수</td></tr>
+            <tr data-search="maximumviewcount int inputcombocolumn"><td class="col-type">int</td><td class="col-name">MaximumViewCount <span class="accessor">get set</span></td><td class="col-desc">드롭다운에 표시할 최대 항목 수. 기본값: 8</td></tr>
+            <tr data-search="itemheight int inputcombocolumn"><td class="col-type">int</td><td class="col-name">ItemHeight <span class="accessor">get set</span></td><td class="col-desc">드롭다운 항목의 높이. 기본값: 30</td></tr>
+          </table>
+          <div class="member-section-title" style="margin-top:.5rem;">GoDataGridInputComboItem : GoListItem</div>
+          <table class="api-table">
+            <tr data-search="value object inputcomboitem"><td class="col-type">object?</td><td class="col-name">Value <span class="accessor">get set</span></td><td class="col-desc">항목에 연결된 실제 값 (IconString/Text는 GoListItem 상속)</td></tr>
+          </table>
+          <div class="member-section-title" style="margin-top:.5rem;">클릭 시 GoDataGrid.ComboDropDownOpening 발생</div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <!-- DataGrid EventArgs -->
+    <div id="class-GoDataGridCellButtonClickEventArgs" class="class-card" data-search="godatagridcellbuttonclickeventargs class event datagrid cell button click">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoDataGridCellButtonClickEventArgs</span> <span class="base">: EventArgs</span></div>
+        <div class="class-desc">셀 내 버튼 클릭 이벤트 인자 클래스. GoDataGrid.CellButtonClick에서 사용.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Constructor &amp; Properties</div>
+          <table class="api-table">
+            <tr data-search="godatagridcellbuttonclickeventargs constructor cell"><td class="col-method-name">GoDataGridCellButtonClickEventArgs</td><td class="params">(<span class="tp">GoDataGridCell</span> cell)</td><td class="col-desc">클릭된 셀</td></tr>
+            <tr data-search="cell godatagridcell"><td class="col-type">GoDataGridCell</td><td class="col-name">Cell <span class="accessor">get</span></td><td class="col-desc">클릭된 셀</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <div id="class-GoDataGridColumnMouseEventArgs" class="class-card" data-search="godatagridcolumnmouseeventargs class event datagrid column mouse">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoDataGridColumnMouseEventArgs</span> <span class="base">: EventArgs</span></div>
+        <div class="class-desc">열 헤더 마우스 이벤트 인자 클래스</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Constructor &amp; Properties</div>
+          <table class="api-table">
+            <tr data-search="godatagridcolumnmouseeventargs constructor column"><td class="col-method-name">GoDataGridColumnMouseEventArgs</td><td class="params">(<span class="tp">GoDataGridColumn</span> column)</td><td class="col-desc">이벤트가 발생한 열</td></tr>
+            <tr data-search="column godatagridcolumn"><td class="col-type">GoDataGridColumn</td><td class="col-name">Column <span class="accessor">get</span></td><td class="col-desc">이벤트가 발생한 열</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <div id="class-GoDataGridCellMouseEventArgs" class="class-card" data-search="godatagridcellmouseeventargs class event datagrid cell mouse">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoDataGridCellMouseEventArgs</span> <span class="base">: EventArgs</span></div>
+        <div class="class-desc">셀 마우스 이벤트 인자 클래스</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Constructor &amp; Properties</div>
+          <table class="api-table">
+            <tr data-search="godatagridcellmouseeventargs constructor cell"><td class="col-method-name">GoDataGridCellMouseEventArgs</td><td class="params">(<span class="tp">GoDataGridCell</span> cell)</td><td class="col-desc">이벤트가 발생한 셀</td></tr>
+            <tr data-search="cell godatagridcell mouse"><td class="col-type">GoDataGridCell</td><td class="col-name">Cell <span class="accessor">get</span></td><td class="col-desc">이벤트가 발생한 셀</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <div id="class-GoDataGridCellValueChangedEventArgs" class="class-card" data-search="godatagridcellvaluechangedeventargs class event datagrid cell value changed old new">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoDataGridCellValueChangedEventArgs</span> <span class="base">: EventArgs</span></div>
+        <div class="class-desc">셀 값 변경 이벤트 인자 클래스. GoDataGrid.CellValueChanged에서 사용.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Constructor &amp; Properties</div>
+          <table class="api-table">
+            <tr data-search="godatagridcellvaluechangedeventargs constructor cell oldvalue newvalue"><td class="col-method-name">GoDataGridCellValueChangedEventArgs</td><td class="params">(<span class="tp">GoDataGridCell</span> cell, <span class="tp">object?</span> oldValue, <span class="tp">object?</span> newValue)</td><td class="col-desc">값이 변경된 셀과 이전/새 값</td></tr>
+            <tr data-search="cell godatagridcell valuechanged"><td class="col-type">GoDataGridCell</td><td class="col-name">Cell <span class="accessor">get</span></td><td class="col-desc">값이 변경된 셀</td></tr>
+            <tr data-search="oldvalue object"><td class="col-type">object?</td><td class="col-name">OldValue <span class="accessor">get</span></td><td class="col-desc">이전 값</td></tr>
+            <tr data-search="newvalue object"><td class="col-type">object?</td><td class="col-name">NewValue <span class="accessor">get</span></td><td class="col-desc">새 값</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <div id="class-GoDataGridDateTimeDropDownOpeningEventArgs" class="class-card" data-search="godatagriddatetimedropdownopeningeventargs class event datagrid datetime dropdown opening cancel">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoDataGridDateTimeDropDownOpeningEventArgs</span> <span class="base">: GoCancelableEventArgs</span></div>
+        <div class="class-desc">날짜/시간 드롭다운 열림 이벤트 인자 클래스. 취소 가능(Cancel=true 시 기본 드롭다운 미표시).</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Constructor &amp; Properties</div>
+          <table class="api-table">
+            <tr data-search="godatagriddatetimedropdownopeningeventargs constructor"><td class="col-method-name">GoDataGridDateTimeDropDownOpeningEventArgs</td><td class="params">(<span class="tp">GoDataGridCell</span> cell, <span class="tp">SKRect</span> rt, <span class="tp">DateTime</span> value, <span class="tp">GoDateTimeKind</span> style, <span class="tp">Action&lt;DateTime?&gt;</span> action)</td><td class="col-desc">대상 셀, 표시 영역, 현재 값, 표시 유형, 선택 콜백</td></tr>
+            <tr data-search="cell godatagridcell datetimedropdown"><td class="col-type">GoDataGridCell</td><td class="col-name">Cell <span class="accessor">get</span></td><td class="col-desc">대상 셀</td></tr>
+            <tr data-search="bounds skrect datetimedropdown"><td class="col-type">SKRect</td><td class="col-name">Bounds <span class="accessor">get</span></td><td class="col-desc">드롭다운 표시 영역</td></tr>
+            <tr data-search="value datetime datetimedropdown"><td class="col-type">DateTime</td><td class="col-name">Value <span class="accessor">get</span></td><td class="col-desc">현재 날짜/시간 값</td></tr>
+            <tr data-search="style godatetimekind datetimedropdown"><td class="col-type">GoDateTimeKind</td><td class="col-name">Style <span class="accessor">get</span></td><td class="col-desc">날짜/시간 표시 유형</td></tr>
+            <tr data-search="action datetimedropdown"><td class="col-type">Action&lt;DateTime?&gt;</td><td class="col-name">Action <span class="accessor">get</span></td><td class="col-desc">선택 완료 시 호출할 콜백</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <div id="class-GoDataGridColorDropDownOpeningEventArgs" class="class-card" data-search="godatagridcolordropdownopeningeventargs class event datagrid color dropdown opening cancel">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoDataGridColorDropDownOpeningEventArgs</span> <span class="base">: GoCancelableEventArgs</span></div>
+        <div class="class-desc">색상 드롭다운 열림 이벤트 인자 클래스. 취소 가능.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Constructor &amp; Properties</div>
+          <table class="api-table">
+            <tr data-search="godatagridcolordropdownopeningeventargs constructor"><td class="col-method-name">GoDataGridColorDropDownOpeningEventArgs</td><td class="params">(<span class="tp">GoDataGridCell</span> cell, <span class="tp">SKRect</span> rt, <span class="tp">SKColor</span> value, <span class="tp">Action&lt;SKColor?&gt;</span> action)</td><td class="col-desc">대상 셀, 표시 영역, 현재 값, 선택 콜백</td></tr>
+            <tr data-search="cell godatagridcell colordropdown"><td class="col-type">GoDataGridCell</td><td class="col-name">Cell <span class="accessor">get</span></td><td class="col-desc">대상 셀</td></tr>
+            <tr data-search="bounds skrect colordropdown"><td class="col-type">SKRect</td><td class="col-name">Bounds <span class="accessor">get</span></td><td class="col-desc">드롭다운 표시 영역</td></tr>
+            <tr data-search="value skcolor colordropdown"><td class="col-type">SKColor</td><td class="col-name">Value <span class="accessor">get</span></td><td class="col-desc">현재 색상 값</td></tr>
+            <tr data-search="action colordropdown"><td class="col-type">Action&lt;SKColor?&gt;</td><td class="col-name">Action <span class="accessor">get</span></td><td class="col-desc">선택 완료 시 호출할 콜백</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="class-separator">
+
+    <div id="class-GoDataGridComboDropDownOpeningEventArgs" class="class-card" data-search="godatagridcombodropdownopeningeventargs class event datagrid combo dropdown opening cancel">
+      <div class="class-card-header" onclick="toggleCard(this)">
+        <div class="class-signature"><span class="kw">public class</span> <span class="nm">GoDataGridComboDropDownOpeningEventArgs</span> <span class="base">: GoCancelableEventArgs</span></div>
+        <div class="class-desc">콤보박스 드롭다운 열림 이벤트 인자 클래스. 취소 가능.</div>
+      </div>
+      <div class="class-card-body">
+        <div class="member-section">
+          <div class="member-section-title">Constructor &amp; Properties</div>
+          <table class="api-table">
+            <tr data-search="godatagridcombodropdownopeningeventargs constructor"><td class="col-method-name">GoDataGridComboDropDownOpeningEventArgs</td><td class="params">(<span class="tp">GoDataGridCell</span> cell, <span class="tp">SKRect</span> rt, <span class="tp">float</span> itemHeight, <span class="tp">int</span> maximumViewCount, <span class="tp">List&lt;GoDataGridInputComboItem&gt;</span> items, <span class="tp">GoDataGridInputComboItem?</span> selectedItem, <span class="tp">Action&lt;GoDataGridInputComboItem?&gt;</span> action)</td><td class="col-desc">대상 셀, 표시 영역, 항목 높이, 최대 표시 수, 항목 목록, 선택 항목, 콜백</td></tr>
+            <tr data-search="cell godatagridcell combodropdown"><td class="col-type">GoDataGridCell</td><td class="col-name">Cell <span class="accessor">get</span></td><td class="col-desc">대상 셀</td></tr>
+            <tr data-search="bounds skrect combodropdown"><td class="col-type">SKRect</td><td class="col-name">Bounds <span class="accessor">get</span></td><td class="col-desc">드롭다운 표시 영역</td></tr>
+            <tr data-search="itemheight float combodropdown"><td class="col-type">float</td><td class="col-name">ItemHeight <span class="accessor">get</span></td><td class="col-desc">항목 높이</td></tr>
+            <tr data-search="maximumviewcount int combodropdown"><td class="col-type">int</td><td class="col-name">MaximumViewCount <span class="accessor">get</span></td><td class="col-desc">최대 표시 항목 수</td></tr>
+            <tr data-search="items list combodropdown"><td class="col-type">List&lt;GoDataGridInputComboItem&gt;</td><td class="col-name">Items <span class="accessor">get</span></td><td class="col-desc">콤보박스 항목 목록</td></tr>
+            <tr data-search="selecteditem combodropdown"><td class="col-type">GoDataGridInputComboItem?</td><td class="col-name">SelectedItem <span class="accessor">get</span></td><td class="col-desc">현재 선택된 항목</td></tr>
+            <tr data-search="action combodropdown"><td class="col-type">Action&lt;GoDataGridInputComboItem?&gt;</td><td class="col-name">Action <span class="accessor">get</span></td><td class="col-desc">선택 완료 시 호출할 콜백</td></tr>
           </table>
         </div>
       </div>

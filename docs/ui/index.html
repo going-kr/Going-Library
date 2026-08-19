@@ -26,7 +26,7 @@
     <h1 class="page-title">Going.UI</h1>
     <p class="page-subtitle">
       SkiaSharp 기반 크로스플랫폼 UI 엔진 &nbsp;·&nbsp;
-      <code>NuGet: Going.UI</code> &nbsp;·&nbsp; <code>SkiaSharp 3.x</code> &nbsp;·&nbsp; <code>.NET 8.0</code>
+      <code>NuGet: Going.UI</code> &nbsp;·&nbsp; <code>SkiaSharp 4.150.1</code> &nbsp;·&nbsp; <code>.NET 8.0</code>
     </p>
 
     <div class="ns-list">
@@ -35,10 +35,25 @@
         <p>UI 렌더링 루트 컨테이너 및 페이지/윈도우 관리. 입력 이벤트 디스패치, 이미지·폰트 관리.</p>
         <div class="class-count">GoDesign · GoWindow · GoPage · GoTitleBar · GoSideBar · GoFooter · GoDropDownWindow</div>
       </a>
+      <a class="ns-card" href="gudx.html">
+        <h3>Going.UI.Gudx / Bindings</h3>
+        <p><code>.gudx</code>(XML) 마크업 역직렬화와 <code>{path}</code> 바인딩 식 연결. 재사용 컴포넌트, 컬렉션 반복.</p>
+        <div class="class-count">GoGudxConverter · GoComponentTemplate · GoComponentParam · GoBinding · GudxBinder · GudxBindingExpression</div>
+      </a>
       <a class="ns-card" href="controls.html">
         <h3>Going.UI.Controls</h3>
         <p>40여 종 인터랙티브 컨트롤. 버튼, 입력, 슬라이더, 데이터그리드, 그래프, 게이지 등.</p>
         <div class="class-count">GoButton · GoLabel · GoCheckBox · GoSlider · GoDataGrid · GoLineGraph · GoGauge ...</div>
+      </a>
+      <a class="ns-card" href="shapes.html">
+        <h3>Going.UI.Controls.Shapes</h3>
+        <p>벡터 셰이프 컨트롤. 선, 사각형, 원, 호, 베지어, 다각형.</p>
+        <div class="class-count">GsShape · GsLine · GsRect · GsCircle · GsArc · GsBezier · GsPolygon</div>
+      </a>
+      <a class="ns-card" href="flowsystem.html">
+        <h3>Going.UI.FlowSystem</h3>
+        <p>배관 흐름 다이어그램 요소. 탱크, 펌프, 밸브, 배관 연결.</p>
+        <div class="class-count">FsFlowSystemPanel · FsFlowObject · FsPump · FsValve · FsCylinderTank · FsSiloTank · FsCrossPipe · FsTeePipe</div>
       </a>
       <a class="ns-card" href="containers.html">
         <h3>Going.UI.Containers</h3>
@@ -87,6 +102,8 @@
       <div style="padding-left:20px">└── <span style="color:var(--type)">GoWindow</span> <span style="color:var(--text-muted)">← 모달/오버레이 윈도우</span></div>
       <div style="margin-top:8px"><span style="color:var(--keyword)">GoTheme</span> <span style="color:var(--text-muted)">← 색상 팔레트. Draw 시 thm 파라미터로 전달</span></div>
       <div><span style="color:var(--keyword)">GoDialogs</span> <span style="color:var(--text-muted)">← 정적 싱글턴 (MessageBox, InputBox, SelectorBox)</span></div>
+      <div style="margin-top:8px"><span style="color:var(--keyword)">GoGudxConverter</span><span style="color:var(--text-muted)">.ReadGoDesign(XElement) ← .gudx 마크업 → GoDesign</span></div>
+      <div><span style="color:var(--keyword)">GoDesign</span><span style="color:var(--text-muted)">.WireBindings(root) ← 마크업의 {path} 식을 데이터 객체에 연결</span></div>
     </div>
 
     <!-- Dependencies -->
@@ -95,7 +112,7 @@
       <table style="width:100%;font-family:Consolas,monospace;font-size:13px;border-collapse:collapse;">
         <tr style="border-bottom:1px solid var(--border);">
           <td style="padding:6px 12px;color:var(--property)">SkiaSharp</td>
-          <td style="padding:6px 12px;color:var(--string)">3.116.1</td>
+          <td style="padding:6px 12px;color:var(--string)">4.150.1</td>
           <td style="padding:6px 12px;color:var(--text-muted)">2D 렌더링 엔진</td>
         </tr>
         <tr>

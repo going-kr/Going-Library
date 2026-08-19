@@ -38,9 +38,9 @@
         <div class="member-section">
           <div class="member-section-title">Properties</div>
           <table class="api-table">
-            <tr data-search="backgroundcolor string"><td class="col-type">string</td><td class="col-name">BackgroundColor <span class="accessor">get set</span></td><td class="col-desc">OffImage 없을 때 사용할 배경 색상. 기본값: "white"</td></tr>
-            <tr data-search="offimage string"><td class="col-type">string?</td><td class="col-name">OffImage <span class="accessor">get set</span></td><td class="col-desc">OFF 상태 배경 이미지 키</td></tr>
-            <tr data-search="onimage string"><td class="col-type">string?</td><td class="col-name">OnImage <span class="accessor">get set</span></td><td class="col-desc">ON 상태 배경 이미지 키</td></tr>
+            <tr data-search="backgroundcolor string"><td class="col-type">string</td><td class="col-name">BackgroundColor <span class="accessor">get set</span></td><td class="col-desc">OffImage 없을 때 사용할 배경 색상. 기본값: "Back"</td></tr>
+            <tr data-search="offimage string"><td class="col-type">string?</td><td class="col-name">OffImage <span class="accessor">get set</span></td><td class="col-desc">비활성(Off) 상태 배경 이미지 리소스 이름</td></tr>
+            <tr data-search="onimage string"><td class="col-type">string?</td><td class="col-name">OnImage <span class="accessor">get set</span></td><td class="col-desc">활성(On) 상태 배경 이미지 리소스 이름</td></tr>
           </table>
         </div>
       </div>
@@ -58,9 +58,9 @@
         <div class="member-section">
           <div class="member-section-title">Properties</div>
           <table class="api-table">
-            <tr data-search="backgroundcolor string"><td class="col-type">string</td><td class="col-name">BackgroundColor <span class="accessor">get set</span></td><td class="col-desc">OffImage 없을 때 사용할 배경 색상. 기본값: "white"</td></tr>
-            <tr data-search="offimage string"><td class="col-type">string?</td><td class="col-name">OffImage <span class="accessor">get set</span></td><td class="col-desc">OFF 상태 배경 이미지 키</td></tr>
-            <tr data-search="onimage string"><td class="col-type">string?</td><td class="col-name">OnImage <span class="accessor">get set</span></td><td class="col-desc">ON 상태 배경 이미지 키</td></tr>
+            <tr data-search="backgroundcolor string"><td class="col-type">string</td><td class="col-name">BackgroundColor <span class="accessor">get set</span></td><td class="col-desc">OffImage 없을 때 사용할 배경 색상. 기본값: "Back"</td></tr>
+            <tr data-search="offimage string"><td class="col-type">string?</td><td class="col-name">OffImage <span class="accessor">get set</span></td><td class="col-desc">비활성(Off) 상태 배경 이미지 리소스 이름</td></tr>
+            <tr data-search="onimage string"><td class="col-type">string?</td><td class="col-name">OnImage <span class="accessor">get set</span></td><td class="col-desc">활성(On) 상태 배경 이미지 리소스 이름</td></tr>
             <tr data-search="childrens list"><td class="col-type">List&lt;IGoControl&gt;</td><td class="col-name">Childrens <span class="accessor">get</span></td><td class="col-desc">자식 컨트롤 목록</td></tr>
           </table>
         </div>
@@ -87,7 +87,7 @@
             <tr data-search="fontname string"><td class="col-type">string</td><td class="col-name">FontName <span class="accessor">get set</span></td><td class="col-desc">폰트 이름</td></tr>
             <tr data-search="fontstyle gofongtstyle"><td class="col-type">GoFontStyle</td><td class="col-name">FontStyle <span class="accessor">get set</span></td><td class="col-desc">폰트 스타일</td></tr>
             <tr data-search="fontsize float"><td class="col-type">float</td><td class="col-name">FontSize <span class="accessor">get set</span></td><td class="col-desc">폰트 크기. 기본값: 12</td></tr>
-            <tr data-search="textcolor string"><td class="col-type">string</td><td class="col-name">TextColor <span class="accessor">get set</span></td><td class="col-desc">텍스트 색상. 기본값: "Black"</td></tr>
+            <tr data-search="textcolor string"><td class="col-type">string</td><td class="col-name">TextColor <span class="accessor">get set</span></td><td class="col-desc">텍스트 색상. 테마 색상 이름 사용. 기본값: "Fore"</td></tr>
           </table>
         </div>
         <div class="member-section">
@@ -119,7 +119,7 @@
             <tr data-search="fontname string"><td class="col-type">string</td><td class="col-name">FontName <span class="accessor">get set</span></td><td class="col-desc">폰트 이름</td></tr>
             <tr data-search="fontstyle"><td class="col-type">GoFontStyle</td><td class="col-name">FontStyle <span class="accessor">get set</span></td><td class="col-desc">폰트 스타일</td></tr>
             <tr data-search="fontsize float"><td class="col-type">float</td><td class="col-name">FontSize <span class="accessor">get set</span></td><td class="col-desc">폰트 크기. 기본값: 12</td></tr>
-            <tr data-search="textcolor string"><td class="col-type">string</td><td class="col-name">TextColor <span class="accessor">get set</span></td><td class="col-desc">텍스트 색상. 기본값: "Black"</td></tr>
+            <tr data-search="textcolor string"><td class="col-type">string</td><td class="col-name">TextColor <span class="accessor">get set</span></td><td class="col-desc">텍스트 색상. 테마 색상 이름 사용. 기본값: "Fore"</td></tr>
             <tr data-search="contentalignment"><td class="col-type">GoContentAlignment</td><td class="col-name">ContentAlignment <span class="accessor">get set</span></td><td class="col-desc">텍스트 정렬. 기본값: MiddleCenter</td></tr>
           </table>
         </div>
@@ -144,7 +144,7 @@
             <tr data-search="icongap float"><td class="col-type">float</td><td class="col-name">IconGap <span class="accessor">get set</span></td><td class="col-desc">아이콘-텍스트 간격. 기본값: 5</td></tr>
             <tr data-search="text string"><td class="col-type">string</td><td class="col-name">Text <span class="accessor">get set</span></td><td class="col-desc">오버레이 텍스트. 기본값: "onoff"</td></tr>
             <tr data-search="fontname string"><td class="col-type">string</td><td class="col-name">FontName / FontStyle / FontSize <span class="accessor">get set</span></td><td class="col-desc">폰트 설정</td></tr>
-            <tr data-search="textcolor string"><td class="col-type">string</td><td class="col-name">TextColor <span class="accessor">get set</span></td><td class="col-desc">텍스트 색상. 기본값: "Black"</td></tr>
+            <tr data-search="textcolor string"><td class="col-type">string</td><td class="col-name">TextColor <span class="accessor">get set</span></td><td class="col-desc">텍스트 색상. 테마 색상 이름 사용. 기본값: "Fore"</td></tr>
             <tr data-search="onoff bool"><td class="col-type">bool</td><td class="col-name">OnOff <span class="accessor">get set</span></td><td class="col-desc">ON/OFF 상태. 변경 시 ValueChanged 발생</td></tr>
             <tr data-search="togglemode bool"><td class="col-type">bool</td><td class="col-name">ToggleMode <span class="accessor">get set</span></td><td class="col-desc">클릭 시 자동 토글 여부. 기본값: false</td></tr>
           </table>

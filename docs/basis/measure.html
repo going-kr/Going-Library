@@ -31,15 +31,15 @@
     <div id="enum-ChatteringMode" class="class-card" data-search="chatteringmode enum both on off">
       <div class="class-card-header" onclick="toggleCard(this)">
         <div class="class-signature"><span class="kw">public enum</span> <span class="nm">ChatteringMode</span></div>
-        <div class="class-desc">채터링 필터 적용 방향 설정</div>
+        <div class="class-desc">채터링 필터 동작 모드</div>
       </div>
       <div class="class-card-body">
         <div class="member-section">
           <div class="member-section-title">Values</div>
           <div class="enum-values">
-            <span class="enum-value">Both <span class="val-eq">(ON·OFF 양방향 필터)</span></span>
-            <span class="enum-value">On <span class="val-eq">(ON 방향만 필터)</span></span>
-            <span class="enum-value">Off <span class="val-eq">(OFF 방향만 필터)</span></span>
+            <span class="enum-value">Both <span class="val-eq">(On/Off 양방향 모두 채터링 필터 적용)</span></span>
+            <span class="enum-value">On <span class="val-eq">(On 상태에만 필터 적용 — On으로 전환될 때 지연)</span></span>
+            <span class="enum-value">Off <span class="val-eq">(Off 상태에만 필터 적용 — Off로 전환될 때 지연)</span></span>
           </div>
         </div>
       </div>
@@ -127,7 +127,7 @@
         <div class="member-section">
           <div class="member-section-title">Properties</div>
           <table class="api-table">
-            <tr data-search="value double"><td class="col-type">double</td><td class="col-name">Value <span class="accessor">get</span></td><td class="col-desc">안정화 판정된 최신값</td></tr>
+            <tr data-search="value double"><td class="col-type">double</td><td class="col-name">Value <span class="accessor">get</span></td><td class="col-desc">현재 입력 값 (Set 호출 시마다 갱신). 안정화된 값은 Measured 이벤트의 StableEventArgs.Value</td></tr>
             <tr data-search="errorrange double"><td class="col-type">double</td><td class="col-name">ErrorRange <span class="accessor">get set</span></td><td class="col-desc">허용 오차 범위. 기본값: 1.0</td></tr>
             <tr data-search="measuretime int"><td class="col-type">int</td><td class="col-name">MeasureTime <span class="accessor">get set</span></td><td class="col-desc">안정 판정 대기 시간 (ms). 기본값: 1000</td></tr>
             <tr data-search="mode stablemode"><td class="col-type">StableMode</td><td class="col-name">Mode <span class="accessor">get set</span></td><td class="col-desc">판정 기준 모드. 기본값: Relative</td></tr>
@@ -148,7 +148,7 @@
           <div class="member-section-title">Events</div>
           <table class="api-table">
             <tr data-search="measured event stableeventargs"><td class="event-args">EventHandler&lt;StableEventArgs&gt;</td><td class="col-method-name">Measured</td><td class="col-desc">안정 판정 완료 시 발생. StableEventArgs.Value에 안정화된 값</td></tr>
-            <tr data-search="measuring event stableeventargs"><td class="event-args">EventHandler&lt;StableEventArgs&gt;</td><td class="col-method-name">Measuring</td><td class="col-desc">측정 중 주기적으로 발생</td></tr>
+            <tr data-search="measuring event stableeventargs"><td class="event-args">EventHandler&lt;StableEventArgs&gt;</td><td class="col-method-name">Measuring</td><td class="col-desc">Set의 입력 값이 직전 값과 다를 때 발생 (같은 값이 반복되면 발생하지 않음)</td></tr>
           </table>
         </div>
       </div>
