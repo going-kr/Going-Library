@@ -19,16 +19,15 @@
 
 ## 개요
 
-**Going Library**는 C# .NET 8.0 기반의 산업용 HMI/SCADA UI 프레임워크입니다. SkiaSharp 커스텀 렌더링으로 구현되어 임베디드 터치 패널에 최적화된 40개 이상의 산업용 컨트롤을 제공합니다.
+**Going Library**는 C# .NET 8.0 기반의 산업용 HMI/SCADA UI 프레임워크입니다. SkiaSharp 커스텀 렌더링으로 구현되어 임베디드 터치 패널에 최적화된 산업용 컨트롤과 통신 스택을 제공합니다.
 
 ### 주요 특징
 
-- **40개 이상의 산업용 컨트롤** — GoButton, GoLamp, GoDataGrid, GoSlider, GoGauge, GoMeter, GoChart 등
-- **비주얼 UI 에디터** — 드래그 앤 드롭으로 .gud 파일 설계, C# 코드 자동 생성
+- **산업용 컨트롤** — GoButton, GoLamp, GoDataGrid, GoSlider, GoGauge, GoMeter, 그래프(Line/Bar/Circle/Time/Trend/Sparkline), 벡터 셰이프(GsShape), 배관 흐름(FlowSystem) 등
+- **선언적 UI(.gudx)** — XML 마크업으로 화면을 정의하고 런타임에 로드. `{path}` 식으로 데이터 객체에 단/양방향 바인딩, 재사용 컴포넌트(`<GoComponent>`), 컬렉션 반복(`GoItemList`)
 - **산업용 통신** — Modbus RTU/TCP, MQTT, LS Electric CNet, Mitsubishi MC
-- **크로스 플랫폼** — Raspberry Pi(linux-arm64), Windows, Linux 지원
-- **다크 테마 기본 제공** — 전문적인 다크 UI와 커스터마이징 가능한 테마
-- **AI 개발 지원** — [Claude Code 스킬](https://github.com/going-kr/going-ui-skill)을 통한 AI 기반 HMI 개발
+- **크로스 플랫폼** — Raspberry Pi(linux-arm64), Windows, Linux
+- **테마** — 다크 테마 기본 제공, 색상 토큰(Base0~5/Fore/Back/Good/Warning/Danger 등) 커스터마이징
 
 ---
 
@@ -36,71 +35,83 @@
 
 | 패키지 | 설명 | 대상 |
 |--------|------|------|
-| **Going.UI** | 플랫폼 독립 UI 코어 (컨트롤, 컨테이너, 테마, 디자인) | `net8.0` |
-| **Going.UI.OpenTK** | OpenTK 어댑터 (임베디드/Raspberry Pi) | `net8.0` |
+| **Going.UI** | 플랫폼 독립 UI 코어 (컨트롤, 컨테이너, 테마, 디자인, .gudx, 바인딩) | `net8.0` |
+| **Going.UI.OpenTK** | OpenTK 어댑터 (임베디드/Raspberry Pi/데스크톱) | `net8.0` |
 | **Going.UI.Forms** | WinForms 어댑터 (Windows 데스크톱) | `net8.0-windows` |
 | **Going.Basis** | 통신 및 유틸리티 (Modbus, MQTT, CNet, MC) | `net8.0` |
 
-## 개발 환경 구성
-
-> **[개발 환경 구성 가이드](https://going-kr.github.io/Going-Library/setup.html)** — Claude Code를 사용한 자동 셋업 (스킬 설치 + UIEditor 다운로드 + 바로가기 생성)
-
-Claude Code에 이렇게 말하세요:
-
-```
-https://going-kr.github.io/Going-Library/setup.html 여기 보고 개발 환경 구성해줘
-```
-
-### 수동 설치
-
-**Going UI Skill (Claude Code)**
-
 ```bash
-# 글로벌 설치 — 한 번 설치하면 모든 프로젝트에서 사용
-git clone https://github.com/going-kr/going-ui-skill ~/.claude/skills/going-ui-skill
-```
-
-또는 Claude 데스크톱 앱의 `설정 → 스킬 → 스킬 업로드`에서 `.zip` 또는 `SKILL.md`를 업로드합니다.
-
-**UIEditor**
-
-[Releases](https://github.com/going-kr/Going-Library/releases)에서 `UIEditor.zip`을 다운로드하여 원하는 경로에 압축 해제합니다.
-
-## 빠른 시작
-
-```bash
-dotnet new console -n MyHMI
-cd MyHMI
 dotnet add package Going.UI.OpenTK
 dotnet add package Going.Basis
 ```
 
+## 빠른 시작
+
+화면은 `.gudx` 마크업으로, 데이터 연결은 바인딩 식으로 처리합니다. 코드 생성 도구 없이 라이브러리만으로 동작합니다.
+
+**ui/Main.gudx**
+
+```xml
+<GoDesign>
+  <Pages>
+    <GoPage Name="Main" BackColor="Back">
+      <Childrens>
+        <GoLabel  Text="{Status}"      Bounds="12,10,348,44" FontSize="20" TextColor="Point"/>
+        <GoLabel  Text="{Motor.Rpm:F0}" Bounds="12,52,348,96" FontSize="26"/>
+        <GoButton Text="START"         Bounds="12,110,348,160" Name="btnStart"/>
+      </Childrens>
+    </GoPage>
+  </Pages>
+</GoDesign>
+```
+
+> `Bounds`는 `Left,Top,Right,Bottom` 입니다.
+
+**Program.cs**
+
 ```csharp
+using System.Xml.Linq;
+using Going.UI.Design;
+using Going.UI.Gudx;
 using Going.UI.OpenTK.Windows;
 using OpenTK.Windowing.Common;
 
-using var view = new MainWindow();
-view.Run();
+var hub = new AppHub();
+var design = GoGudxConverter.ReadGoDesign(XElement.Load("ui/Main.gudx"))
+             ?? throw new InvalidOperationException("gudx 파싱 실패");
 
-public class MainWindow : GoViewWindow
+using var win = new MainWindow(design, hub);
+win.Run();
+
+public sealed class MotorVM { public double Rpm { get; set; } }
+
+public sealed class AppHub
 {
-    public MainWindow() : base(1024, 600, WindowBorder.Hidden)
+    public string Status { get; set; } = "RUN";
+    public MotorVM Motor { get; } = new() { Rpm = 1450 };
+}
+
+public sealed class MainWindow : GoViewWindow
+{
+    private readonly AppHub hub;
+
+    public MainWindow(GoDesign design, AppHub hub)
+        : base(1024, 600, WindowBorder.Hidden)
     {
-        InitializeComponent();
+        Design = design;
+        this.hub = hub;
+    }
+
+    protected override void OnLoad()
+    {
+        base.OnLoad();
+        Design.SetPage("Main");
+        Design.WireBindings(hub);   // 마크업의 {…} 식을 hub에 연결
     }
 }
 ```
 
-## UI 에디터
-
-**Going UI Editor**는 `.gud` 파일을 시각적으로 설계하는 도구입니다. JSON 기반 UI 레이아웃을 만들고 C# 코드를 자동 생성합니다.
-
-```
-1. UIEditor에서 UI 설계 (.gud 파일)
-2. MakeCode → C# 프로젝트 자동 생성 (NuGet 패키지 참조 포함)
-3. 이벤트 핸들러 및 통신 코드 작성
-4. 빌드 및 대상 장치에 배포
-```
+렌더 루프가 매 프레임 `hub`와 컨트롤을 동기화하므로, `hub.Motor.Rpm`을 바꾸면 화면이 따라갑니다. 전체 예제는 [`SampleBinding`](SampleBinding)을 참고하세요.
 
 ## 통신
 
@@ -122,14 +133,24 @@ rtu.WriteHoldingRegister_FC6(1, 0, 100);    // 장치에 쓰기
 | LS Electric CNet | `CNet` |
 | Mitsubishi MC | `MC` |
 
+## Senvas — HMI UI 에디터 & AI 개발
+
+비주얼 UI 설계, 코드 생성, AI 기반 프로젝트 생성이 필요하다면 Going Library 위에 만들어진 HMI 통합 개발 도구 **[Senvas](https://github.com/going-kr/Release.Senvas)** 를 사용하세요.
+
+- `.gudx` 화면을 시각적으로 설계하고 검증
+- MakeCode로 C# 프로젝트 골격(Designer 파일, 매니저, 전역 바인딩 허브) 자동 생성
+- Claude Code 등 외부 AI 도구와 연동된 프로젝트 생성·수정 워크플로우 (요구사항 인터뷰 → 설계 → 구현 → 검증)
+- 빌드 및 대상 장치 배포
+
+라이브러리 자체는 Senvas 없이도 위 "빠른 시작"처럼 독립적으로 사용할 수 있습니다.
+
 ## 프로젝트 구조
 
 ```
-Going.UI           — 플랫폼 독립 UI 코어
-Going.UI.OpenTK    — OpenTK 어댑터 (임베디드/Raspberry Pi)
+Going.UI           — 플랫폼 독립 UI 코어 (.gudx, 바인딩 포함)
+Going.UI.OpenTK    — OpenTK 어댑터 (임베디드/Raspberry Pi/데스크톱)
 Going.UI.Forms     — WinForms 어댑터
 Going.Basis        — 통신 및 유틸리티
-Going.UIEditor     — 비주얼 UI 설계 도구
 ```
 
 ## 라이선스
